@@ -57,6 +57,35 @@
     if (hyp(b.vx, b.vy) < .015) { b.vx = 0; b.vy = 0; b.done = 'durdu'; ev(b, 'dur', b.alive ? 'Durdu' : 'Sönmüş hâlde durdu'); }
     return b;
   }
+  // Hız arama için aynı fizik adımı, nesnesiz: stepBall'un birebir aynı işlemleri aynı sırayla, yerel değişkenlerle (kayıt ve mesafe sayacı tutulmaz, sonucu etkilemezler).
+  // Çekirdek (hx,hy)'den L uzaklığa vardığında hızını döndürür; varamazsa -1. Pas hızı aramasında binlerce kez çağrılır.
+  function rollTo(x, y, vx, vy, team, ch, src, hx, hy, L, maxT) {
+    const p = P; let e = p.e0, alive = true, dead = 0;
+    for (let t = 0; t < maxT; t++) {
+      const k = K(src, x, y, team), sp0 = hyp(vx, vy), res = 1 - p.pierce * ch;
+      let drag = p.fric;
+      if (k < 0) drag += -k * p.oppDrag * res; else drag *= 1 - p.ownFlow * k;
+      if (alive) { e -= sp0 * p.attn + (k < 0 ? -k * sp0 * p.drain * res : 0); if (e <= 0) { e = 0; alive = false; dead = 0; } }
+      else { dead++; drag += Math.min(p.deadMax, p.deadRamp * dead); }
+      const f = 1 - drag; vx *= f; vy *= f;
+      const s1 = hyp(vx, vy); if (s1 > 0) { const r = Math.max(0, s1 - p.roll) / s1; vx *= r; vy *= r; }
+      let nx = x + vx, ny = y + vy, done = false;
+      if (nx <= .5) { const wx = .5, tt = Math.abs(vx) > 1e-9 ? (wx - x) / vx : 0, yy = y + vy * Math.max(0, Math.min(1, tt));
+        if (alive && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = true; }
+        else { nx = 1 - nx; vx = -vx * p.rest; vy *= p.rest; if (alive) e = Math.max(0, e - p.wallLoss); } }
+      if (!done && nx >= W - .5) { const wx = W - .5, tt = Math.abs(vx) > 1e-9 ? (wx - x) / vx : 0, yy = y + vy * Math.max(0, Math.min(1, tt));
+        if (alive && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = true; }
+        else { nx = 2 * W - 1 - nx; vx = -vx * p.rest; vy *= p.rest; if (alive) e = Math.max(0, e - p.wallLoss); } }
+      if (!done) {
+        if (ny < .5 || ny > H - .5) { ny = ny < .5 ? 1 - ny : 2 * H - 1 - ny; vy = -vy * p.rest; vx *= p.rest; if (alive) e = Math.max(0, e - p.wallLoss); }
+        x = nx; y = ny;
+        if (hyp(vx, vy) < .015) { vx = 0; vy = 0; done = true; }
+      }
+      if (hyp(x - hx, y - hy) >= L) return hyp(vx, vy);
+      if (done) return -1;
+    }
+    return -1;
+  }
   function clone(b) { return Object.assign({}, b, { log: [] }); }
   function predict(b0, src, p, maxT) { src = pack(src); const b = clone(b0); const pts = [{ x: b.x, y: b.y }]; for (let i = 0; i < (maxT || 900) && !b.done; i++) { stepBall(b, src, p); pts.push({ x: b.x, y: b.y, e: b.e, sp: hyp(b.vx, b.vy) }); } return { pts, end: b }; }
   // Hedefe pas: hedef noktaya `arrive` hızıyla ulaşan başlangıç hızını bul (alanlar dahil, düz hat varsayımı).
@@ -152,5 +181,5 @@
     choose(p, a0, a1, opps, rnd) { const ok = (p.a || {}).okuma ?? 10, err = Math.max(0, 16 - ok) * .2, lam = Math.max(.3, Math.min(1.1, .3 + (ok - 5) * .08)), sd = Turn.shortDir(a0, a1), seen = opps.map(o => ({ ...o, x: o.x + (rnd() - .5) * err, y: o.y + (rnd() - .5) * err })), C = [{ mode: 'dolaş', dir: sd }, { mode: 'dolaş', dir: -sd }, { mode: 'fiske', dir: sd }, { mode: 'fiske', dir: -sd }];
       for (const c of C) { const s = Turn.simulate(p, a0, a1, c, seen, null); c.keep = s.keep; c.cost = (s.t ?? 200) * TQ.timeK + lam * (1 - s.keep) + (rnd() - .5) * Math.max(0, 16 - ok) * .02; }
       return C.sort((x, y) => x.cost - y.cost)[0]; } };
-  window.AlanCore = { hyp, pack, oppReach, Turn, touchCap, W, H, KR, MOUTH, P, Q, bekR, infl, K, makeGrid, gridS, chgMul, makeBall, stepBall, predict, solveLaunch, ctrlP, contact, stepAll, thruP };
+  window.AlanCore = { hyp, pack, rollTo, oppReach, Turn, touchCap, W, H, KR, MOUTH, P, Q, bekR, infl, K, makeGrid, gridS, chgMul, makeBall, stepBall, predict, solveLaunch, ctrlP, contact, stepAll, thruP };
 })();
