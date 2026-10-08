@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F3FD1}a:hover{color:#E0531F}
+button{font:inherit;color:inherit}
+</style>
+<script src="alan-v3/core.js"></script>
+<script src="alan-v3/decide.js"></script>
+<script src="alan-v3/match.js"></script>
+<script src="alan-v3/shape.js"></script>
+<script src="alan-v3/shape-scenes.js"></script>
+</helmet>
+<div style="max-width:1500px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box">
+  <header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;background:#16150F;color:#F6F3EC;padding:14px 20px">
+    <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
+      <span style="font-size:28px;font-weight:800;letter-spacing:-.02em">ALAN v3</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;opacity:.85">Katman 4 · yerleşim · sabit sahneler</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:13px">
+      <span style="opacity:.85">{{ summary }}</span>
+      <button onClick="{{ rerun }}" style="background:#F6F3EC;color:#16150F;border:1.5px solid #F6F3EC;padding:6px 11px;cursor:pointer">Yeniden çalıştır</button>
+    </div>
+  </header>
+  <div style="font-size:16px;line-height:1.5;max-width:920px;text-wrap:pretty">Her sahnede iki takım 7'ye 7 diziliyor. Taşıyıcı sabit duruyor, diğer herkes kendi okumasıyla hedefine yürüyor. İnce çizgi yürüdüğü yol, ok işareti son hedefi. Oyuncunun altındaki etiket o anki işi: <b>bölge</b>, <b>pres</b>, <b>arkada</b>, <b>geri koşu</b>, <b>önde bekle</b>, <b>boşluk</b>, <b>güvence</b>, <b>kovala</b>, <b>alıcı</b>. Mavi sağa hücum ediyor.</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,560px),1fr));gap:16px">
+    <sc-for list="{{ cards }}" as="c" hint-placeholder-count="7">
+      <div style="border:2px solid #16150F;background:#F6F3EC;display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-bottom:2px solid #16150F">
+          <span style="font-size:18px;font-weight:700">{{ c.title }}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.06em;padding:4px 8px;background:{{ c.badgeBg }};color:#F6F3EC">{{ c.badge }}</span>
+        </div>
+        <canvas ref="{{ c.ref }}" width="1100" height="550" style="width:100%;aspect-ratio:2/1;display:block;border-bottom:2px solid #16150F"></canvas>
+        <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:14.5px;line-height:1.45;text-wrap:pretty">{{ c.why }}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.5"><span style="opacity:.65">Sonuç:</span> {{ c.info }}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { res: null };
+  refs = Array.from({ length: 12 }, () => React.createRef());
+  componentDidMount() { const w = () => { if (!window.AlanShapeScenes || !window.AlanShape || !window.AlanMatch) return setTimeout(w, 40); this.run(); }; w(); }
+  componentDidUpdate() { this.drawAll(); }
+  run() { const SS = window.AlanShapeScenes; this.setState({ res: SS.S.map(sc => SS.run(sc)) }); }
+  drawAll() {
+    const C = window.AlanCore, res = this.state.res; if (!res) return;
+    res.forEach((r, i) => {
+      const cv = this.refs[i].current; if (!cv) return; const x = cv.getContext('2d'), s = 11, m = r.m, A = '#1F3FD1', B = '#E0531F', INK = '#16150F';
+      x.fillStyle = '#F6F3EC'; x.fillRect(0, 0, 1100, 550);
+      for (let yy = 0; yy < 50; yy++) for (let xx = 0; xx < 100; xx++) { const k = C.K(m.ps, xx + .5, yy + .5, 0), ak = Math.abs(k); if (ak < .08) continue; x.globalAlpha = Math.min(.28, ak * .28); x.fillStyle = k > 0 ? A : B; x.fillRect(xx * s, yy * s, s + .5, s + .5); }
+      x.globalAlpha = 1; x.strokeStyle = 'rgba(22,21,15,.22)'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(550, 0); x.lineTo(550, 550); x.stroke();
+      x.fillStyle = INK; for (const kx of [0, 100]) { x.beginPath(); x.arc(kx * s, 275, C.KR * s, 0, 7); x.fill(); }
+      x.strokeStyle = '#F6F3EC'; x.lineWidth = 3; for (const kx of [0, 100]) { x.beginPath(); x.moveTo(kx * s, (25 - C.MOUTH) * s); x.lineTo(kx * s, (25 + C.MOUTH) * s); x.stroke(); }
+      if (m.ball) { const pr = C.predict(m.ball, m.ps, null, 200).pts; x.strokeStyle = INK; x.setLineDash([3, 5]); x.lineWidth = 2; x.beginPath(); pr.forEach((q, j) => j ? x.lineTo(q.x * s, q.y * s) : x.moveTo(q.x * s, q.y * s)); x.stroke(); x.setLineDash([]); }
+      m.ps.forEach((p, j) => {
+        const col = p.team === 0 ? A : B, tr = m.trail[j];
+        x.strokeStyle = col; x.globalAlpha = .45; x.lineWidth = 2; x.beginPath(); tr.forEach((q, k) => k ? x.lineTo(q.x * s, q.y * s) : x.moveTo(q.x * s, q.y * s)); x.lineTo(p.x * s, p.y * s); x.stroke();
+        if (p !== m.holder && Math.hypot(p.tx - p.x, p.ty - p.y) > .8) { x.globalAlpha = .8; x.setLineDash([5, 4]); x.beginPath(); x.moveTo(p.x * s, p.y * s); x.lineTo(p.tx * s, p.ty * s); x.stroke(); x.setLineDash([]); x.beginPath(); x.arc(p.tx * s, p.ty * s, 3.5, 0, 7); x.fillStyle = col; x.fill(); }
+        x.globalAlpha = 1;
+      });
+      for (const p of m.ps) {
+        x.fillStyle = p.team === 0 ? A : B; x.beginPath(); x.arc(p.x * s, p.y * s, p.role === 'Bekçi' ? 12 : 10.5, 0, 7); x.fill(); x.strokeStyle = p === m.holder ? INK : '#F6F3EC'; x.lineWidth = p === m.holder ? 3.5 : 2; x.stroke();
+        x.fillStyle = '#F6F3EC'; x.font = '600 11px JetBrains Mono'; x.textAlign = 'center'; x.fillText(p.name[0], p.x * s, p.y * s + 4);
+        const lab = p === m.holder ? 'taşıyıcı' : (p.job || '').split(' · ')[0]; if (lab && p.role !== 'Bekçi') { x.font = '600 11px JetBrains Mono'; const w = x.measureText(lab).width + 8; x.fillStyle = 'rgba(246,243,236,.92)'; x.fillRect(p.x * s - w / 2, p.y * s + 13, w, 15); x.fillStyle = INK; x.fillText(lab, p.x * s, p.y * s + 24); }
+      }
+      if (m.holder) { x.fillStyle = '#F6F3EC'; x.beginPath(); x.arc(m.holder.x * s, m.holder.y * s - 15, 6, 0, 7); x.fill(); x.strokeStyle = INK; x.lineWidth = 2.5; x.stroke(); }
+      else if (m.ball) { x.fillStyle = '#F6F3EC'; x.beginPath(); x.arc(m.ball.x * s, m.ball.y * s, 6, 0, 7); x.fill(); x.strokeStyle = INK; x.lineWidth = 2.5; x.stroke(); }
+      x.textAlign = 'left';
+    });
+  }
+  renderVals() {
+    const SS = window.AlanShapeScenes, res = this.state.res;
+    const cards = SS && res ? SS.S.map((sc, i) => ({ title: sc.title, why: sc.why, info: res[i].info, ref: this.refs[i], badge: res[i].pass ? 'GEÇTİ' : 'KALDI', badgeBg: res[i].pass ? '#1F3FD1' : '#E0531F' })) : [];
+    return { cards, summary: res ? `${res.filter(r => r.pass).length} / ${res.length} sahne geçti` : 'çalışıyor…', rerun: () => this.run() };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F3FD1}a:hover{color:#E0531F}
+button{font:inherit;color:inherit}
+</style>
+<script src="alan-engine.js"></script>
+</helmet>
+<div style="max-width:1480px;margin:0 auto;padding:28px;display:flex;flex-direction:column;gap:22px;box-sizing:border-box">
+
+  <header style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;border-bottom:2px solid #16150F;padding-bottom:20px">
+    <div style="display:flex;flex-direction:column;gap:10px;max-width:860px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase">ALAN · Taktik laboratuvarı</div>
+      <h1 style="margin:0;font-size:clamp(36px,5vw,56px);font-weight:800;letter-spacing:-.02em;line-height:1">Kim kazanıyor değil: kaç yol var, maç nasıl akıyor?</h1>
+      <p style="margin:0;font-size:18px;line-height:1.45;text-wrap:pretty">Yedi tarz birbirine karşı otomatik oynatılır. İki kadro aynı (Liman), yalnızca talimatlar farklı. Ölçülen şey kazanma oranı değil: <strong>çeşitlilik</strong> (birden fazla iyi cevap var mı, tarzlar birbirinden ayırt ediliyor mu) ve <strong>heyecan</strong> (skor dalgalanıyor mu, son evre önemli mi).</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end">
+      <div style="display:flex;gap:0;align-items:center;font-family:'JetBrains Mono',monospace;font-size:13px">
+        <span style="margin-right:10px;letter-spacing:.08em;text-transform:uppercase">Kadrolar</span>
+        <sc-for list="{{ farkOpts }}" as="o" hint-placeholder-count="2">
+          <button onClick="{{ o.set }}" style="background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid #16150F;margin-left:-1.5px;padding:7px 12px;cursor:pointer">{{ o.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:0;align-items:center;font-family:'JetBrains Mono',monospace;font-size:13px">
+        <span style="margin-right:10px;letter-spacing:.08em;text-transform:uppercase">Eşleşme başına maç</span>
+        <sc-for list="{{ nOpts }}" as="o" hint-placeholder-count="3">
+          <button onClick="{{ o.set }}" style="background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid #16150F;margin-left:-1.5px;padding:7px 12px;cursor:pointer">{{ o.label }}</button>
+        </sc-for>
+      </div>
+      <button onClick="{{ start }}" style="background:{{ startBg }};color:#F6F3EC;border:0;padding:12px 20px;font-size:17px;font-weight:700;cursor:pointer;min-width:220px">{{ startLabel }}</button>
+      <div style="width:100%;min-width:220px;height:8px;background:rgba(22,21,15,.12)"><div style="height:100%;width:{{ progress }};background:#16150F"></div></div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px">{{ progressText }}</div>
+    </div>
+  </header>
+
+  <section style="display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap"><span style="font-family:'JetBrains Mono',monospace;font-size:14px">01</span><h2 style="margin:0;font-size:28px;font-weight:800">Tarzlar</h2></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:10px">
+      <sc-for list="{{ styleCards }}" as="s" hint-placeholder-count="7">
+        <div style="background:#F6F3EC;border:2px solid #16150F;padding:12px 14px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;gap:10px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;background:#16150F;color:#F6F3EC;padding:2px 7px">{{ s.key }}</span><span style="font-size:18px;font-weight:700">{{ s.name }}</span></div>
+          <div style="font-size:14px;line-height:1.4">{{ s.desc }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <sc-if value="{{ showZor }}" hint-placeholder-val="{{ false }}">
+    <section style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap"><span style="font-family:'JetBrains Mono',monospace;font-size:14px">00</span><h2 style="margin:0;font-size:28px;font-weight:800">Zorlama testi</h2><span style="font-size:15px">Zayıf kadro, rakibin yapısına göre taktik seçerek ne kadar kazanıyor?</span></div>
+      <div style="display:flex;gap:28px;flex-wrap:wrap;background:#F6F3EC;border:2px solid #16150F;padding:16px 18px">
+        <div style="display:flex;flex-direction:column;gap:2px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase">Doğru taktiğin ortalama kazancı</span><span style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:600">{{ zorSum }}</span><span style="font-size:13px">sayı farkı, varsayılana göre</span></div>
+        <div style="display:flex;flex-direction:column;gap:2px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase">Zorlanabilen güçlü yapı</span><span style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:600">{{ zorCount }}</span><span style="font-size:13px">en iyi cevapla −0,5 ya da daha iyi</span></div>
+      </div>
+      <div style="background:#F6F3EC;border:2px solid #16150F;overflow-x:auto">
+        <div style="display:grid;grid-template-columns:150px 110px 150px 120px minmax(160px,1fr);min-width:700px;font-size:15px">
+          <div style="padding:9px 10px;border-bottom:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase">Güçlü rakip</div><div style="padding:9px 10px;border-bottom:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase">Varsayılanla</div><div style="padding:9px 10px;border-bottom:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase">En iyi cevap</div><div style="padding:9px 10px;border-bottom:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase">Sonuç</div><div style="padding:9px 10px;border-bottom:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase">Taktik kazancı</div>
+          <sc-for list="{{ zorRows }}" as="z" hint-placeholder-count="7">
+            <div style="padding:9px 10px;border-bottom:1px solid rgba(22,21,15,.2);font-weight:700">{{ z.strong }}</div>
+            <div style="padding:9px 10px;border-bottom:1px solid rgba(22,21,15,.2);font-family:'JetBrains Mono',monospace">{{ z.def }} <span style="font-size:11px">{{ z.defWdl }}</span></div>
+            <div style="padding:9px 10px;border-bottom:1px solid rgba(22,21,15,.2)">{{ z.bestName }}</div>
+            <div style="padding:9px 10px;border-bottom:1px solid rgba(22,21,15,.2);font-family:'JetBrains Mono',monospace">{{ z.best }} <span style="font-size:11px">{{ z.bestWdl }}</span></div>
+            <div style="padding:9px 10px;border-bottom:1px solid rgba(22,21,15,.2);display:flex;align-items:center;gap:8px"><div style="flex:1;height:10px;background:rgba(22,21,15,.1)"><div style="height:100%;width:{{ z.bar }};background:#1F3FD1"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:13px;width:40px;text-align:right">{{ z.imp }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+  <section style="display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap"><span style="font-family:'JetBrains Mono',monospace;font-size:14px">02</span><h2 style="margin:0;font-size:28px;font-weight:800">Kim kime karşı</h2><span style="font-size:15px">{{ matrixNote }}</span></div>
+    <div style="overflow-x:auto;background:#F6F3EC;border:2px solid #16150F">
+      <div style="display:grid;grid-template-columns:150px repeat(7,minmax(84px,1fr));min-width:760px">
+        <div style="padding:10px;border-bottom:2px solid #16150F;border-right:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase">Satır ↓ sütun →</div>
+        <sc-for list="{{ colHeads }}" as="h" hint-placeholder-count="7">
+          <div style="padding:10px 6px;border-bottom:2px solid #16150F;font-weight:700;font-size:14px;text-align:center">{{ h }}</div>
+        </sc-for>
+        <sc-for list="{{ matrix }}" as="r" hint-placeholder-count="7">
+          <div style="padding:10px;border-right:2px solid #16150F;border-bottom:1px solid rgba(22,21,15,.2);font-weight:700;font-size:14px;display:flex;align-items:center">{{ r.name }}</div>
+          <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="7">
+            <div style="padding:8px 4px;border-bottom:1px solid rgba(22,21,15,.2);border-left:1px solid rgba(22,21,15,.12);background:{{ c.bg }};color:{{ c.fg }};text-align:center;display:flex;flex-direction:column;gap:2px;justify-content:center;outline:{{ c.outline }};outline-offset:-3px">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600">{{ c.v }}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px">{{ c.sub }}</span>
+            </div>
+          </sc-for>
+        </sc-for>
+      </div>
+    </div>
+    <div style="font-size:14px;line-height:1.4">Çerçeveli hücre: o sütuna karşı en iyi plan ya da ona 0,75 sayıdan yakın olan "geçerli" planlar. Alt satır: galibiyet/beraberlik/yenilgi.</div>
+  </section>
+
+  <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:18px">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:baseline;gap:14px"><span style="font-family:'JetBrains Mono',monospace;font-size:14px">03</span><h2 style="margin:0;font-size:28px;font-weight:800">Çeşitlilik</h2></div>
+      <div style="background:#F6F3EC;border:2px solid #16150F;padding:16px 18px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;gap:28px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase">Rakip başına geçerli plan</span><span style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:600">{{ viableAvg }}</span><span style="font-size:13px">önerilen hedef: 2–4</span></div>
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase">Baskın tarz</span><span style="font-size:24px;font-weight:800;padding-top:6px">{{ dominant }}</span><span style="font-size:13px">{{ dominantNote }}</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column">
+          <sc-for list="{{ viableRows }}" as="v" hint-placeholder-count="7">
+            <div style="display:grid;grid-template-columns:130px 34px minmax(0,1fr);gap:10px;align-items:baseline;padding:7px 0;border-top:1px solid rgba(22,21,15,.18);font-size:15px">
+              <span>vs <strong>{{ v.name }}</strong></span><span style="font-family:'JetBrains Mono',monospace;font-weight:600">{{ v.n }}</span><span style="line-height:1.35">{{ v.list }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:baseline;gap:14px"><span style="font-family:'JetBrains Mono',monospace;font-size:14px">04</span><h2 style="margin:0;font-size:28px;font-weight:800">Heyecan</h2><span style="font-size:15px">bütün maçların ortalaması</span></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px">
+        <sc-for list="{{ excite }}" as="e" hint-placeholder-count="7">
+          <div style="background:#F6F3EC;border:2px solid {{ e.bd }};padding:12px 14px;display:flex;flex-direction:column;gap:4px">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;line-height:1.3">{{ e.label }}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600">{{ e.v }}</span>
+            <span style="font-size:12px;line-height:1.3">hedef {{ e.target }} · <strong>{{ e.verdict }}</strong></span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="font-size:13px;line-height:1.4">Hedefler benim önerim; oyunun hissine göre değiştirilebilir. Kıl payı = ıska + rakip Kuyu'suna 20 birimden yakın sönme. Üstünlük dalgası = 5 saniyelik ortalama alan kontrolünde, üstün olan tarafın kaç kez değiştiği. Çok azsa maç tek yönlü, çok fazlaysa gürültü.</div>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap"><span style="font-family:'JetBrains Mono',monospace;font-size:14px">05</span><h2 style="margin:0;font-size:28px;font-weight:800">Tarzların imzası</h2><span style="font-size:15px">Her tarz maçı gerçekten farklı mı oynatıyor?</span></div>
+    <div style="overflow-x:auto;background:#F6F3EC;border:2px solid #16150F">
+      <div style="display:grid;grid-template-columns:150px repeat(9,minmax(86px,1fr));min-width:980px;font-size:15px">
+        <sc-for list="{{ sigHead }}" as="h" hint-placeholder-count="10">
+          <div style="padding:10px 8px;border-bottom:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;text-transform:uppercase;line-height:1.3">{{ h }}</div>
+        </sc-for>
+        <sc-for list="{{ sigRows }}" as="r" hint-placeholder-count="7">
+          <div style="padding:9px 8px;border-bottom:1px solid rgba(22,21,15,.2);font-weight:700">{{ r.name }}</div>
+          <sc-for list="{{ r.vals }}" as="v" hint-placeholder-count="9">
+            <div style="padding:9px 8px;border-bottom:1px solid rgba(22,21,15,.2);font-family:'JetBrains Mono',monospace;background:{{ v.bg }}">{{ v.t }}</div>
+          </sc-for>
+        </sc-for>
+      </div>
+    </div>
+    <div style="font-size:14px;line-height:1.4">Koyu hücreler, o sütunda tarzlar arasında en uç değerler. Ayırt edilebilirlik: tarzın imzasının diğer tarzlara ortalama uzaklığı. Düşükse tarz, adı farklı olsa da aynı maçı oynatıyor demektir.</div>
+  </section>
+
+  <div style="display:flex;gap:20px;font-size:15px"><a href="ALAN Maç v2.dc.html">Maç ekranı →</a><a href="ALAN Kural Kitabı.dc.html">Kural kitabı →</a></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { n: 4, fark: 2, running: false, done: 0, total: 0, res: null };
+  STYLES = [
+    { key: 'DEN', name: 'Dengeli', desc: 'Varsayılan talimatlar. Alan savunması, dengeli ritim.', tac: {} },
+    { key: 'SAB', name: 'Sabırlı', desc: 'Sabırlı ritim, kısa aktarım, düşük tempo. Alan savunması.', tac: { ritim: 'Sabırlı', mesafe: .3, tempo: .3, risk: .3 } },
+    { key: 'DİK', name: 'Dikine', desc: 'Dikine ritim, uzun aktarım, yüksek tempo ve risk.', tac: { ritim: 'Dikine', mesafe: .75, tempo: .75, risk: .7 } },
+    { key: 'KON', name: 'Kontra', desc: 'Kuyu önü savunması, derin blok, kontra ritmi.', tac: { savunma: 'Kuyu önü', ritim: 'Kontra', blok: .2, hatlar: .3 } },
+    { key: 'KAN', name: 'Kanat', desc: 'Kanat ritmi, en geniş dizilim, Genişlik ile boşluk.', tac: { ritim: 'Kanat', genislik: 1, bosluk: 'Genişlik' } },
+    { key: 'ÖNA', name: 'Ön alan', desc: 'Ön alan savunması, her zaman ve çift pres, yüksek blok.', tac: { savunma: 'Ön alan', presTetik: 'Her zaman', pres: .9, blok: .8 } },
+    { key: 'ADA', name: 'Adam adama', desc: 'Adam adama savunma, Rotasyon ile boşluk, Kayıptan sonra pres.', tac: { savunma: 'Adam adama', bosluk: 'Rotasyon', presTetik: 'Kayıptan sonra' } }
+  ];
+  componentDidMount() {
+    try { const r = JSON.parse(localStorage.getItem('alan-lab-v1') || 'null'); if (r) this.setState({ res: r, n: r.n || 4 }); } catch (e) {}
+  }
+  componentWillUnmount() { clearTimeout(this.t); }
+  start() {
+    if (this.state.running || !window.AlanEngine) return;
+    const n = this.state.n, S = this.STYLES.length, jobs = [];
+    const fk = this.state.fark; this.runFark = fk;
+    for (let i = 0; i < S; i++) for (let j = fk ? 0 : i; j < S; j++) for (let k = 0; k < n; k++) jobs.push({ i, j, k, swap: k % 2 === 1 });
+    this.jobs = jobs; this.acc = { cell: {}, sig: this.STYLES.map(() => ({ n: 0, poss: 0, passLen: 0, ppp: 0, orta: 0, gond: 0, tas: 0, goals: 0, ttg: 0, ttgN: 0, block: 0, kes: 0 })), ex: { n: 0, goals: 0, lead: 0, eq: 0, late: 0, first: 0, firstN: 0, close: 0, near: 0, swing: 0 } };
+    this.setState({ running: true, done: 0, total: jobs.length });
+    const next = () => {
+      if (!this.jobs.length) { this.finish(); return; }
+      const jb = this.jobs.shift(); this.play(jb);
+      this.setState({ done: this.state.total - this.jobs.length });
+      this.t = setTimeout(next, 0);
+    };
+    this.t = setTimeout(next, 0);
+  }
+  play({ i, j, k, swap }) {
+    const E = window.AlanEngine, base = E.TEAMS[0], A = this.STYLES[i], B = this.STYLES[j];
+    const sA = swap ? 1 : 0, sB = 1 - sA, fk = this.runFark || 0;
+    const plus = d => { const T = JSON.parse(JSON.stringify(base)); T.players.forEach(p => { while (p[4].length < 10) p[4].push(Math.round((p[4][6] + p[4][2]) / 2)); p[4] = p[4].map(v => Math.max(1, Math.min(20, v + d))); }); return T; };
+    const teams = []; teams[sA] = plus(0); teams[sB] = plus(fk);
+    const m = E.createMatch(1000 + i * 977 + j * 131 + k * 7919, { teams, ai: [false, false] });
+    Object.assign(m.tac[sA], A.tac); Object.assign(m.tac[sB], B.tac);
+    const poss = [0, 0], possN = [0, 0], src = [{ orta: 0, gond: 0, tas: 0 }, { orta: 0, gond: 0, tas: 0 }], ttg = [[], []];
+    let lastAtt = null, lead = 0, eq = 0, late = 0, first = null, lastSign = 0, swing = 0, ctrlSign = 0, win = 0, winN = 0;
+    while (!m.over) {
+      const before = m.score[0] + m.score[1], diffB = m.score[0] - m.score[1];
+      E.step(m);
+      const c = m.core, att = c.flight ? c.flight.team : c.holder.team;
+      if (!c.flight) poss[att]++;
+      if (att !== lastAtt) { possN[att]++; lastAtt = att; }
+      if (m.tick % 30 === 0) { win += m.st.now[0] - m.st.now[1]; winN++; }
+      if (m.tick % 300 === 0 && winN) { const d = win / winN, sg = d > .08 ? 1 : d < -.08 ? -1 : 0; if (sg && ctrlSign && sg !== ctrlSign) swing++; if (sg) ctrlSign = sg; win = 0; winN = 0; }
+      if (m.score[0] + m.score[1] > before) {
+        const t = m.score[0] - m.score[1] > diffB ? 0 : 1;
+        const e0 = m.events[0].text, prev = m.events.slice(1, 4).map(x => x.text).join('|');
+        const kind = e0.includes('ulaştı') ? 'tas' : prev.includes('Orta') ? 'orta' : 'gond'; src[t][kind]++;
+        ttg[t].push((m.tick - (m.gainT || m.tick)) / 60);
+        if (first === null) first = t;
+        const dA = m.score[0] - m.score[1], sg = Math.sign(dA);
+        if (sg === 0) eq++; else if (lastSign && sg !== lastSign) lead++;
+        if (sg) lastSign = sg;
+        if (m.evre === 3) late++;
+      }
+    }
+    const goals = m.score[0] + m.score[1];
+    let near = m.st.miss[0] + m.st.miss[1];
+    for (const mk of m.st.marks) if (mk.type === 'kesme') { const ox = mk.team === 0 ? 0 : 100; if (Math.hypot(mk.x - ox, mk.y - 25) < 20) near++; }
+    const key = i + '-' + j, C = this.acc.cell[key] || (this.acc.cell[key] = { n: 0, gA: 0, gB: 0, w: 0, d: 0, l: 0 });
+    const gA = m.score[sA], gB = m.score[sB]; C.n++; C.gA += gA; C.gB += gB; if (gA > gB) C.w++; else if (gA < gB) C.l++; else C.d++;
+    [[i, sA], [j, sB]].forEach(([si, t]) => {
+      const G = this.acc.sig[si]; G.n++;
+      G.poss += poss[t] / Math.max(1, poss[0] + poss[1]); G.passLen += m.st.passLen[t] / Math.max(1, m.st.pass[t]); G.ppp += m.st.pass[t] / Math.max(1, possN[t]);
+      G.orta += src[t].orta; G.gond += src[t].gond; G.tas += src[t].tas; G.goals += m.score[t];
+      ttg[t].forEach(v => { G.ttg += v; G.ttgN++; });
+      G.block += m.st.blockN[t] ? m.st.blockX[t] / m.st.blockN[t] : 0; G.kes += m.st.kesme[t];
+    });
+    const X = this.acc.ex; X.n++; X.goals += goals; X.lead += lead; X.eq += eq; X.late += goals ? late / goals : 0; X.close += Math.abs(m.score[0] - m.score[1]) <= 1 ? 1 : 0; X.near += near; X.swing += swing;
+    if (first !== null) { X.firstN++; const w = m.score[0] > m.score[1] ? 0 : m.score[0] < m.score[1] ? 1 : -1; if (w === first) X.first++; }
+  }
+  finish() {
+    const res = { n: this.state.n, fark: this.runFark || 0, cell: this.acc.cell, sig: this.acc.sig, ex: this.acc.ex, at: Date.now() };
+    try { localStorage.setItem('alan-lab-v1', JSON.stringify(res)); } catch (e) {}
+    this.setState({ running: false, res });
+  }
+  renderVals() {
+    const S = this.STYLES, r = this.state.res, f1 = v => (v >= 0 ? '+' : '') + v.toFixed(1);
+    const cellOf = (i, j) => {
+      if (!r) return null;
+      if (r.fark) { const C = r.cell[i + '-' + j]; return C ? { v: (C.gA - C.gB) / C.n, w: C.w, d: C.d, l: C.l } : null; }
+      if (i <= j) { const C = r.cell[i + '-' + j]; return C ? { v: (C.gA - C.gB) / C.n, w: C.w, d: C.d, l: C.l } : null; }
+      const C = r.cell[j + '-' + i]; return C ? { v: (C.gB - C.gA) / C.n, w: C.l, d: C.d, l: C.w } : null;
+    };
+    const M = S.map((_, i) => S.map((__, j) => cellOf(i, j)));
+    const viable = S.map((_, j) => { const col = S.map((__, i) => (M[i][j] ? M[i][j].v : null)); const best = Math.max(...col.filter(v => v != null)); return { best, ok: col.map(v => v != null && v >= best - .75) }; });
+    const matrix = S.map((s, i) => ({ name: s.name, cells: S.map((_, j) => {
+      const c = M[i][j]; if (!c) return { v: '–', sub: '', bg: 'transparent', fg: '#16150F', outline: 'none' };
+      const a = Math.min(1, Math.abs(c.v) / 3), strong = a > .55;
+      return { v: f1(c.v), sub: `${c.w}/${c.d}/${c.l}`, bg: c.v >= 0 ? `rgba(31,63,209,${(.08 + .72 * a).toFixed(2)})` : `rgba(224,83,31,${(.08 + .72 * a).toFixed(2)})`, fg: strong ? '#F6F3EC' : '#16150F', outline: i !== j && viable[j].ok[i] ? '2.5px solid #16150F' : 'none' };
+    }) }));
+    let viableAvg = '–', dominant = '–', dominantNote = 'Henüz veri yok.', viableRows = [];
+    if (r) {
+      const counts = viable.map((v, j) => v.ok.filter((x, i) => x && i !== j).length);
+      viableAvg = (counts.reduce((a, b) => a + b, 0) / S.length).toFixed(1);
+      const bestCount = S.map((_, i) => S.filter((__, j) => j !== i && M[i][j] && M[i][j].v >= viable[j].best - .01).length);
+      const di = bestCount.indexOf(Math.max(...bestCount));
+      dominant = bestCount[di] >= 4 ? S[di].name : 'Yok';
+      dominantNote = bestCount[di] >= 4 ? `${bestCount[di]} rakibe karşı en iyi plan. Çeşitliliği öldürüyor.` : `En çok ${bestCount[di]} rakibe karşı en iyi olan tarz var; tek bir doğru cevap yok.`;
+      viableRows = S.map((s, j) => ({ name: s.name, n: String(counts[j]), list: S.filter((_, i) => i !== j && viable[j].ok[i]).map(x => x.name).join(', ') || '—' }));
+    }
+    const X = r && r.ex, ex = [];
+    if (X && X.n) {
+      const T = [
+        ['Sayı / maç', X.goals / X.n, v => v.toFixed(1), '3–6', v => v >= 3 && v <= 6],
+        ['Önde olanın değişmesi / maç', X.lead / X.n, v => v.toFixed(2), '≥ 0,5', v => v >= .5],
+        ['Eşitleme / maç', X.eq / X.n, v => v.toFixed(2), '≥ 0,8', v => v >= .8],
+        ['Son evredeki sayı payı', X.late / X.n, v => '%' + Math.round(v * 100), '%30–45', v => v >= .3 && v <= .45],
+        ['İlk sayıyı atan kazanır', X.firstN ? X.first / X.firstN : 0, v => '%' + Math.round(v * 100), '%55–70', v => v >= .55 && v <= .7],
+        ['Bir sayı farkla biten', X.close / X.n, v => '%' + Math.round(v * 100), '≥ %40', v => v >= .4],
+        ['Kıl payı / maç', X.near / X.n, v => v.toFixed(1), '≥ 4', v => v >= 4],
+        ['Üstünlük dalgası / maç', X.swing / X.n, v => v.toFixed(1), '2–6', v => v >= 2 && v <= 6]
+      ];
+      T.forEach(([label, v, fmt, target, ok]) => ex.push({ label, v: fmt(v), target, verdict: ok(v) ? 'tamam' : 'hedef dışı', bd: ok(v) ? '#16150F' : '#E0531F' }));
+    }
+    const sigHead = ['Tarz', 'Çekirdek bizde', 'Ort. aktarım', 'Aktarım / hücum', 'Sayı / maç', 'Ortadan', 'Göndererek', 'Taşıyarak', 'Kazanıp sayıya (sn)', 'Ayırt edilebilirlik'];
+    let sigRows = [];
+    if (r) {
+      const feats = r.sig.map(G => { const n = Math.max(1, G.n), gt = Math.max(1, G.orta + G.gond + G.tas); return [G.poss / n, G.passLen / n, G.ppp / n, G.goals / n, G.orta / gt, G.gond / gt, G.tas / gt, G.ttgN ? G.ttg / G.ttgN : 0]; });
+      const nF = feats[0].length, mean = [], sd = [];
+      for (let k = 0; k < nF; k++) { const col = feats.map(f => f[k]), mu = col.reduce((a, b) => a + b, 0) / col.length; mean.push(mu); sd.push(Math.sqrt(col.reduce((a, b) => a + (b - mu) ** 2, 0) / col.length) || 1); }
+      const z = feats.map(f => f.map((v, k) => (v - mean[k]) / sd[k]));
+      const dist = z.map((a, i) => z.reduce((s, b, j) => s + (i === j ? 0 : Math.sqrt(a.reduce((q, v, k) => q + (v - b[k]) ** 2, 0))), 0) / (z.length - 1));
+      const ext = k => { const col = feats.map(f => f[k]); return [Math.min(...col), Math.max(...col)]; };
+      const fm = [v => '%' + Math.round(v * 100), v => v.toFixed(1), v => v.toFixed(1), v => v.toFixed(1), v => '%' + Math.round(v * 100), v => '%' + Math.round(v * 100), v => '%' + Math.round(v * 100), v => v.toFixed(1)];
+      sigRows = S.map((s, i) => ({ name: s.name, vals: feats[i].map((v, k) => { const [lo, hi] = ext(k); return { t: fm[k](v), bg: v === lo || v === hi ? 'rgba(22,21,15,.12)' : 'transparent' }; }).concat([{ t: dist[i].toFixed(2), bg: 'transparent' }]) }));
+    }
+    const running = this.state.running, total = this.state.total || 1;
+    let zorRows = [], zorSum = '–', zorCount = '–', showZor = !!(r && r.fark);
+    if (showZor) {
+      const imps = [];
+      zorRows = S.map((s, j) => {
+        const def = M[0][j], col = S.map((_, i) => M[i][j]), bi = col.reduce((b, c, i) => (c && (b < 0 || c.v > col[b].v) ? i : b), -1), best = col[bi];
+        const imp = best && def ? best.v - def.v : 0; imps.push({ imp, best: best ? best.v : -9 });
+        return { strong: s.name, def: def ? f1(def.v) : '–', defWdl: def ? `${def.w}/${def.d}/${def.l}` : '', best: best ? f1(best.v) : '–', bestName: best ? S[bi].name : '–', bestWdl: best ? `${best.w}/${best.d}/${best.l}` : '', imp: (imp >= 0 ? '+' : '') + imp.toFixed(1), bar: Math.min(100, Math.max(0, imp / 4 * 100)) + '%' };
+      });
+      zorSum = (imps.reduce((a, b) => a + b.imp, 0) / imps.length).toFixed(1);
+      zorCount = `${imps.filter(x => x.best >= -.5).length} / ${S.length}`;
+    }
+    return {
+      styleCards: S.map(s => ({ key: s.key, name: s.name, desc: s.desc })),
+      colHeads: S.map(s => s.name), matrix, viableAvg, dominant, dominantNote, viableRows, excite: ex, sigHead, sigRows,
+      showZor, zorRows, zorSum, zorCount,
+      farkOpts: [[0, 'Eşit'], [2, '+2 güçlü']].map(([v, label]) => ({ label, bg: this.state.fark === v ? '#16150F' : 'transparent', fg: this.state.fark === v ? '#F6F3EC' : '#16150F', set: () => { if (!running) this.setState({ fark: v }); } })),
+      matrixNote: r && r.fark ? 'Satır: zayıf takımın tarzı. Sütun: +2 güçlü takımın tarzı. Değer zayıfın sayı farkı.' : 'Satırdaki tarzın sütundakine karşı ortalama sayı farkı. Mavi satırın lehine, turuncu aleyhine.',
+      nOpts: [2, 4, 8].map(n => ({ label: String(n), bg: this.state.n === n ? '#16150F' : 'transparent', fg: this.state.n === n ? '#F6F3EC' : '#16150F', set: () => { if (!running) this.setState({ n }); } })),
+      start: () => this.start(),
+      startLabel: running ? 'Oynatılıyor…' : r ? 'Yeniden çalıştır' : 'Laboratuvarı çalıştır',
+      startBg: running ? 'rgba(22,21,15,.45)' : '#1F3FD1',
+      progress: running ? Math.round(this.state.done / total * 100) + '%' : r ? '100%' : '0%',
+      progressText: running ? `${this.state.done} / ${this.state.total} maç` : r ? `Son çalıştırma: ${Object.values(r.cell).reduce((a, c) => a + c.n, 0)} maç · eşleşme başına ${r.n}` : `${(this.state.fark ? 49 : 28) * this.state.n} maç · birkaç dakika sürebilir`
+    };
+  }
+}
+</script>
+</body>
+</html>

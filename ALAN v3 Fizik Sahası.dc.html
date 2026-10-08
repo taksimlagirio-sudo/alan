@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F3FD1}a:hover{color:#E0531F}
+button,select{font:inherit;color:inherit}
+input[type=range]{accent-color:#16150F;width:100%;margin:0}
+</style>
+<script src="alan-v3/core.js"></script>
+</helmet>
+<div style="max-width:1680px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:18px;box-sizing:border-box">
+  <header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;background:#16150F;color:#F6F3EC;padding:14px 20px">
+    <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
+      <span style="font-size:28px;font-weight:800;letter-spacing:-.02em">ALAN v3</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;opacity:.85">Katman 1–2 · Çekirdek fiziği ve karşılama</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <sc-for list="{{ modes }}" as="md" hint-placeholder-count="4">
+        <button onClick="{{ md.set }}" style="background:{{ md.bg }};color:{{ md.fg }};border:1.5px solid #F6F3EC;padding:7px 12px;cursor:pointer">{{ md.label }}</button>
+      </sc-for>
+    </div>
+  </header>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+      <div style="font-size:16px;line-height:1.4;text-wrap:pretty">{{ hint }}</div>
+      <canvas ref="{{ cv }}" onMouseDown="{{ down }}" onMouseMove="{{ move }}" onMouseUp="{{ up }}" onMouseLeave="{{ up }}" width="1000" height="500" style="width:100%;aspect-ratio:2/1;display:block;background:#F6F3EC;border:2px solid #16150F;cursor:crosshair;touch-action:none"></canvas>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border:2px solid #16150F;background:#F6F3EC">
+        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="5">
+          <div style="padding:10px 12px;border-right:1.5px solid #16150F">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.7">{{ s.k }}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600">{{ s.v }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px">
+        <div style="border:2px solid #16150F;background:#F6F3EC;padding:10px 12px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.7;margin-bottom:6px">Hız (koyu) ve enerji (açık) · zaman</div>
+          <canvas ref="{{ cg }}" width="800" height="140" style="width:100%;height:140px;display:block"></canvas>
+        </div>
+        <div style="border:2px solid #16150F;background:#F6F3EC;padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.5;max-height:160px;overflow:auto">
+          <sc-for list="{{ log }}" as="e" hint-placeholder-count="3">
+            <div style="display:flex;gap:10px"><span style="opacity:.6;min-width:44px">{{ e.t }}</span><span>{{ e.txt }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <aside style="display:flex;flex-direction:column;gap:14px">
+      <div style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.7">Hazır denemeler</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <sc-for list="{{ presets }}" as="p" hint-placeholder-count="5">
+            <button onClick="{{ p.run }}" style="background:transparent;color:#16150F;border:1.5px solid #16150F;padding:6px 10px;cursor:pointer;font-size:14px">{{ p.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button onClick="{{ reset }}" style="background:#16150F;color:#F6F3EC;border:1.5px solid #16150F;padding:6px 10px;cursor:pointer;font-size:14px">Çekirdeği ortala</button>
+          <button onClick="{{ clearSrc }}" style="background:transparent;border:1.5px solid #16150F;padding:6px 10px;cursor:pointer;font-size:14px">Oyuncuları sil</button>
+          <button onClick="{{ togglePause }}" style="background:transparent;border:1.5px solid #16150F;padding:6px 10px;cursor:pointer;font-size:14px">{{ pauseLabel }}</button>
+        </div>
+      </div>
+      <div style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.7">Fırlatma</div>
+        <sc-for list="{{ launchSliders }}" as="s" hint-placeholder-count="3">
+          <label style="display:flex;flex-direction:column;gap:4px;font-size:14px">
+            <span style="display:flex;justify-content:space-between"><span>{{ s.label }}</span><span style="font-family:'JetBrains Mono',monospace">{{ s.disp }}</span></span>
+            <input type="range" min="{{ s.min }}" max="{{ s.max }}" step="{{ s.step }}" value="{{ s.val }}" onChange="{{ s.set }}" onInput="{{ s.set }}">
+          </label>
+        </sc-for>
+        <div style="display:flex;gap:6px">
+          <sc-for list="{{ teamBtns }}" as="b" hint-placeholder-count="2">
+            <button onClick="{{ b.set }}" style="flex:1;background:{{ b.bg }};color:{{ b.fg }};border:1.5px solid {{ b.bd }};padding:6px 10px;cursor:pointer;font-size:14px">{{ b.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.7">Son fırlatmayı 200 kez dene</div>
+        <button onClick="{{ monte }}" style="background:#16150F;color:#F6F3EC;border:1.5px solid #16150F;padding:6px 10px;cursor:pointer;font-size:14px">Dağılımı ölç</button>
+        <sc-for list="{{ monteRes }}" as="r" hint-placeholder-count="0">
+          <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:14px"><span>{{ r.k }}</span><span style="font-weight:600">{{ r.v }}</span></div>
+        </sc-for>
+      </div>
+      <div style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.7">Karşılama (katman 2)</div>
+        <sc-for list="{{ qSliders }}" as="s" hint-placeholder-count="6">
+          <label style="display:flex;flex-direction:column;gap:4px;font-size:14px">
+            <span style="display:flex;justify-content:space-between"><span>{{ s.label }}</span><span style="font-family:'JetBrains Mono',monospace">{{ s.disp }}</span></span>
+            <input type="range" min="{{ s.min }}" max="{{ s.max }}" step="{{ s.step }}" value="{{ s.val }}" onChange="{{ s.set }}" onInput="{{ s.set }}">
+          </label>
+        </sc-for>
+      </div>
+      <div style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.7">Fizik</div>
+        <sc-for list="{{ physSliders }}" as="s" hint-placeholder-count="8">
+          <label style="display:flex;flex-direction:column;gap:4px;font-size:14px">
+            <span style="display:flex;justify-content:space-between"><span>{{ s.label }}</span><span style="font-family:'JetBrains Mono',monospace">{{ s.disp }}</span></span>
+            <input type="range" min="{{ s.min }}" max="{{ s.max }}" step="{{ s.step }}" value="{{ s.val }}" onChange="{{ s.set }}" onInput="{{ s.set }}">
+          </label>
+        </sc-for>
+        <button onClick="{{ resetPhys }}" style="background:transparent;border:1.5px solid #16150F;padding:6px 10px;cursor:pointer;font-size:14px">Varsayılanlara dön</button>
+      </div>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1400,&quot;height&quot;:1000}}">
+class Component extends DCLogic {
+  state = { mode: 'firlat', team: 0, ch: .5, arrive: .3, power: 1.2, paused: false, tick: 0, phys: {}, qp: {}, srcR: 8, srcD: 1, tutus: 10, kesme: 10, monte: null };
+  cv = React.createRef(); cg = React.createRef();
+  src = []; ball = null; hist = []; drag = null; hover = null; heat = null; heatKey = ''; pred = null;
+  C() { return window.AlanCore; }
+  componentDidMount() {
+    const w = () => { if (!this.C()) return setTimeout(w, 40); this.setState({ phys: { ...this.C().P }, qp: { ...this.C().Q } }); this.ball = this.C().makeBall({ team: 0, ch: .5 }); this.loop(); };
+    w();
+  }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); }
+  P() { return Object.keys(this.state.phys).length ? this.state.phys : this.C().P; }
+  Qp() { return Object.keys(this.state.qp || {}).length ? this.state.qp : this.C().Q; }
+  monte() {
+    const C = this.C(), L = this.last; if (!L) return; const R = {}; let a = 7; const rnd = () => { a = (a * 1664525 + 1013904223) >>> 0; return a / 4294967296; };
+    for (let i = 0; i < 200; i++) { const b = C.makeBall({ x: L.x, y: L.y, vx: L.vx, vy: L.vy, team: L.team, ch: L.ch }); let res = null; for (let k = 0; k < 900 && !b.done; k++) { const r = C.stepAll(b, this.src, this.P(), this.Qp(), rnd); if (r && r.took) res = (r.p.team === L.team ? 'Arkadaş tuttu' : r.p.role === 'Bekçi' ? 'Bekçi tuttu' : 'Rakip tuttu'); } const k = res || (b.done === 'durdu' ? (b.alive ? 'Boşta durdu' : 'Söndü') : b.done && b.done.startsWith('kuyu') ? 'Kuyu' : 'Zaman aştı'); R[k] = (R[k] || 0) + 1; }
+    this.setState({ monte: Object.entries(R).sort((u, v) => v[1] - u[1]).map(([k, v]) => ({ k, v: `%${Math.round(v / 2)}` })) });
+  }
+  loop() {
+    const step = () => {
+      const C = this.C(), b = this.ball;
+      if (b && !this.state.paused && !b.done && (b.vx || b.vy)) { const r = C.stepAll(b, this.src, this.P(), this.Qp()); if (r) this.flash = { x: r.p.x, y: r.p.y, t: 18, took: r.took }; this.hist.push({ sp: Math.hypot(b.vx, b.vy), e: b.e }); if (b.log.length !== this.logN) { this.logN = b.log.length; this.forceUpdate(); }
+        if (this.seq && this.target && !b.done && Math.hypot(b.x - this.target.x, b.y - this.target.y) < 1.2) { b.done = 'alındı'; b.log.push({ t: b.t, k: 'al', txt: `Arkadaş aldı · varış hızı ${(Math.hypot(b.vx, b.vy) * 60).toFixed(1)} b/sn · enerji %${Math.round(b.e * 100)}` }); this.seqWait = 40; } }
+      if (this.seq && b && b.done && this.seqWait != null) { if (--this.seqWait <= 0) { this.seqWait = null; this.runSeq(); } }
+      else if (this.seq && b && b.done && this.seqWait == null) { this.seqWait = 40; }
+      this.draw(); this.fr = (this.fr || 0) + 1; if (this.fr % 6 === 0) this.setState({ tick: this.fr });
+      this.raf = requestAnimationFrame(step);
+    };
+    this.raf = requestAnimationFrame(step);
+  }
+  pos(e) { const r = this.cv.current.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * 100, y: (e.clientY - r.top) / r.height * 50 }; }
+  srcAt(p) { let best = null, bd = 2.5; for (const s of this.src) { const d = Math.hypot(s.x - p.x, s.y - p.y); if (d < bd) { bd = d; best = s; } } return best; }
+  launch(vx, vy) { const C = this.C(), b = this.ball; this.last = { x: b.x, y: b.y, vx, vy, team: this.state.team, ch: this.state.ch }; this.setState({ monte: null }); this.ball = C.makeBall({ x: b.x, y: b.y, vx, vy, team: this.state.team, ch: this.state.ch }); this.hist = []; this.logN = 0; this.ball.log.push({ t: 0, k: 'start', txt: `Fırlatıldı · hız ${(Math.hypot(vx, vy) * 60).toFixed(0)} birim/sn · şarj %${Math.round(this.state.ch * 100)}` }); this.forceUpdate(); }
+  down(e) {
+    const p = this.pos(e), m = this.state.mode, C = this.C();
+    if (m === 'mavi' || m === 'turuncu' || m === 'bekci') { const s = this.srcAt(p); if (s) this.drag = { kind: 'src', s }; else { this.src.push({ x: p.x, y: p.y, team: m === 'mavi' ? 0 : 1, R: m === 'bekci' ? 7 : this.state.srcR, D: m === 'bekci' ? 1.2 : this.state.srcD, role: m === 'bekci' ? 'Bekçi' : undefined, a: { tutus: this.state.tutus, kesme: this.state.kesme } }); this.heatKey = ''; } return; }
+    if (m === 'sil') { const s = this.srcAt(p); if (s) { this.src.splice(this.src.indexOf(s), 1); this.heatKey = ''; } return; }
+    if (m === 'hedef') { const sol = C.solveLaunch({ ...this.ball, team: this.state.team, ch: this.state.ch, alive: true, e: C.P.e0, done: null }, p, this.state.arrive, this.src, this.P()); const dx = p.x - this.ball.x, dy = p.y - this.ball.y, L = Math.hypot(dx, dy) || 1; this.launch(dx / L * sol.v0, dy / L * sol.v0); if (!sol.ok) this.ball.log.push({ t: 0, k: 'uyarı', txt: 'Bu hedefe bu varış hızıyla ulaşılamıyor; en yüksek hızla atıldı' }); return; }
+    const b = this.ball; if (Math.hypot(b.x - p.x, b.y - p.y) < 3 || b.done || (!b.vx && !b.vy)) { if (!(Math.hypot(b.x - p.x, b.y - p.y) < 3)) { b.x = p.x; b.y = p.y; b.vx = 0; b.vy = 0; b.done = null; } this.drag = { kind: 'aim', from: { x: b.x, y: b.y }, to: p }; }
+  }
+  move(e) {
+    const p = this.pos(e); this.hover = p;
+    if (!this.drag) return;
+    if (this.drag.kind === 'src') { this.drag.s.x = p.x; this.drag.s.y = p.y; this.heatKey = ''; return; }
+    this.drag.to = p; const v = this.aimV(); const C = this.C(); this.pred = C.predict({ ...C.makeBall({ x: this.drag.from.x, y: this.drag.from.y, team: this.state.team, ch: this.state.ch }), vx: v.x, vy: v.y }, this.src, this.P());
+  }
+  aimV() { const d = this.drag, dx = d.from.x - d.to.x, dy = d.from.y - d.to.y, L = Math.hypot(dx, dy), v = Math.min(3, L * .07 * this.state.power); return L < .5 ? { x: 0, y: 0 } : { x: dx / L * v, y: dy / L * v }; }
+  up() { if (this.drag && this.drag.kind === 'aim') { const v = this.aimV(); this.pred = null; if (v.x || v.y) { this.ball.x = this.drag.from.x; this.ball.y = this.drag.from.y; this.launch(v.x, v.y); } } this.drag = null; }
+  preset(k) {
+    const C = this.C(); this.src = []; this.heatKey = ''; this.seq = null; this.target = null;
+    const b = (x, y) => { this.ball = C.makeBall({ x, y, team: 0, ch: this.state.ch }); };
+    if (k === 'kisa') { b(40, 25); this.go({ x: 52, y: 25 }); }
+    if (k === 'uzun') { b(20, 15); this.go({ x: 62, y: 35 }); }
+    if (k === 'blok') { b(40, 25); this.src.push({ x: 50, y: 28, team: 1, R: 8, D: 1 }, { x: 56, y: 19, team: 1, R: 8, D: 1 }, { x: 70, y: 25, team: 0, R: 8, D: 1 }); this.go({ x: 70, y: 25 }); }
+    if (k === 'hat') { b(30, 25); this.src.push({ x: 40, y: 26.5, team: 1, R: 8, D: 1 }, { x: 50, y: 25, team: 0, R: 8, D: 1 }); this.go({ x: 50, y: 25 }); }
+    if (k === 'bekci') { b(80, 25); this.src.push({ x: 94, y: 25, team: 1, R: 7, D: 1.2, role: 'Bekçi' }); this.launch(2.6 * C.chgMul(this.state.ch, this.P()), 0); }
+    if (k === 'sert') { b(30, 25); this.src.push({ x: 42, y: 25, team: 0, R: 8, D: 1 }); const sv = this.state.arrive; this.state.arrive = .9; this.go({ x: 42, y: 25 }); this.state.arrive = sv; }
+    if (k === 'akinti') { b(30, 25); this.src.push({ x: 42, y: 25, team: 0, R: 9, D: 1 }, { x: 54, y: 25, team: 0, R: 9, D: 1 }); this.go({ x: 72, y: 25 }); }
+    if (k === 'kenar') { b(30, 40); this.src.push({ x: 50, y: 30, team: 1, R: 8, D: 1 }); const v = 1.6; this.launch(v * Math.cos(-.6), v * Math.sin(-.6)); }
+    if (k === 'gonder') { b(70, 25); this.src.push({ x: 93, y: 25, team: 1, R: 7, D: 1.2 }); this.launch(2.6 * C.chgMul(this.state.ch, this.P()), 0); }
+    if (k === 'plase') { b(75, 32); this.src.push({ x: 93, y: 26, team: 1, R: 7, D: 1.2 }); const dx = 100 - 75, dy = 23.5 - 32, L = Math.hypot(dx, dy), v = 1.7 * C.chgMul(this.state.ch, this.P()); this.launch(dx / L * v, dy / L * v); }
+    if (k === 'kurgu') { this.src.push({ x: 48, y: 20, team: 1, R: 8, D: 1 }, { x: 60, y: 30, team: 1, R: 8, D: 1 }, { x: 72, y: 22, team: 1, R: 8, D: 1 }, { x: 93, y: 25, team: 1, R: 7, D: 1.2 }, { x: 38, y: 38, team: 0, R: 8, D: 1 }, { x: 58, y: 12, team: 0, R: 8, D: 1 }, { x: 78, y: 36, team: 0, R: 8, D: 1 });
+      this.seq = [{ from: { x: 30, y: 25 }, to: { x: 38, y: 38 }, ch: .3 }, { from: { x: 38, y: 38 }, to: { x: 58, y: 12 }, ch: .45 }, { from: { x: 58, y: 12 }, to: { x: 78, y: 36 }, ch: .6 }, { from: { x: 78, y: 36 }, shot: { x: 100, y: 23.6 }, ch: .75 }]; this.seqI = 0; this.runSeq(); }
+    for (const s of this.src) if (!s.a) s.a = { tutus: this.state.tutus, kesme: this.state.kesme };
+    this.forceUpdate();
+  }
+  runSeq() {
+    const C = this.C(), s = this.seq && this.seq[this.seqI]; if (!s) { this.seq = null; return; }
+    this.ball = C.makeBall({ x: s.from.x, y: s.from.y, team: 0, ch: s.ch }); this.setState({ ch: s.ch });
+    if (s.shot) { const dx = s.shot.x - s.from.x, dy = s.shot.y - s.from.y, L = Math.hypot(dx, dy), v = 2.6 * C.chgMul(s.ch, this.P()); this.launch(dx / L * v, dy / L * v); this.ball.log.push({ t: 0, k: 'kurgu', txt: `${this.seqI + 1}. hamle · güçlü gönderme, şarj %${Math.round(s.ch * 100)}` }); this.target = null; }
+    else { this.go(s.to); this.ball.log.push({ t: 0, k: 'kurgu', txt: `${this.seqI + 1}. hamle · pas, şarj %${Math.round(s.ch * 100)}` }); }
+    this.seqI++;
+  }
+  go(to) { const C = this.C(), sol = C.solveLaunch({ ...this.ball, alive: true, e: C.P.e0 }, to, this.state.arrive, this.src, this.P()); const dx = to.x - this.ball.x, dy = to.y - this.ball.y, L = Math.hypot(dx, dy) || 1; this.launch(dx / L * sol.v0, dy / L * sol.v0); this.target = to; }
+  draw() {
+    const cv = this.cv.current, C = this.C(); if (!cv || !C) return; const ctx = cv.getContext('2d'), sc = 10, A = '#1F3FD1', B = '#E0531F', INK = '#16150F', team = this.state.team;
+    const key = JSON.stringify(this.src) + team; if (key !== this.heatKey) { this.heatKey = key; const oc = this.heat || (this.heat = document.createElement('canvas')); oc.width = 1000; oc.height = 500; const o = oc.getContext('2d'); o.fillStyle = '#F6F3EC'; o.fillRect(0, 0, 1000, 500); for (let y = 0; y < 50; y += 1) for (let x = 0; x < 100; x += 1) { const k = C.K(this.src, x + .5, y + .5, team), ak = Math.abs(k); if (ak < .06) continue; o.globalAlpha = Math.min(.6, ak * .6); o.fillStyle = k > 0 ? A : B; o.fillRect(x * sc, y * sc, sc, sc); } o.globalAlpha = 1; }
+    ctx.drawImage(this.heat, 0, 0);
+    ctx.fillStyle = INK; for (const kx of [0, 100]) { ctx.beginPath(); ctx.arc(kx * sc, 25 * sc, C.KR * sc, 0, 7); ctx.fill(); }
+    ctx.strokeStyle = '#F6F3EC'; ctx.lineWidth = 3; for (const kx of [0, 100]) { ctx.beginPath(); ctx.moveTo(kx * sc, (25 - C.MOUTH) * sc); ctx.lineTo(kx * sc, (25 + C.MOUTH) * sc); ctx.stroke(); }
+    for (const s of this.src) { ctx.fillStyle = s.team === 0 ? A : B; ctx.beginPath(); if (s.role === 'Bekçi') ctx.rect(s.x * sc - 11, s.y * sc - 11, 22, 22); else ctx.arc(s.x * sc, s.y * sc, 11, 0, 7); ctx.fill(); ctx.strokeStyle = '#F6F3EC'; ctx.lineWidth = 2; ctx.stroke(); }
+    if (this.flash && this.flash.t > 0) { const f = this.flash; ctx.strokeStyle = f.took ? INK : '#E0531F'; ctx.lineWidth = 3; ctx.globalAlpha = f.t / 18; ctx.beginPath(); ctx.arc(f.x * sc, f.y * sc, 16 + (18 - f.t) * 1.5, 0, 7); ctx.stroke(); ctx.globalAlpha = 1; f.t--; }
+    if (this.target && this.ball && !this.ball.done) { ctx.strokeStyle = INK; ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.arc(this.target.x * sc, this.target.y * sc, 8, 0, 7); ctx.stroke(); ctx.setLineDash([]); }
+    const b = this.ball; if (!b) return;
+    if (this.hist.length > 1 && b.trail) {} 
+    if (!b.path) b.path = []; if (!b.done && (b.vx || b.vy)) b.path.push({ x: b.x, y: b.y, a: b.alive });
+    if (b.path.length > 1) { ctx.lineWidth = 2.5; for (let i = 1; i < b.path.length; i++) { ctx.strokeStyle = b.path[i].a ? INK : '#9A958A'; ctx.globalAlpha = .25 + .75 * i / b.path.length; ctx.beginPath(); ctx.moveTo(b.path[i - 1].x * sc, b.path[i - 1].y * sc); ctx.lineTo(b.path[i].x * sc, b.path[i].y * sc); ctx.stroke(); } ctx.globalAlpha = 1; }
+    if (this.pred) { ctx.strokeStyle = INK; ctx.setLineDash([6, 6]); ctx.lineWidth = 1.5; ctx.beginPath(); this.pred.pts.forEach((p, i) => i ? ctx.lineTo(p.x * sc, p.y * sc) : ctx.moveTo(p.x * sc, p.y * sc)); ctx.stroke(); ctx.setLineDash([]); const e = this.pred.end; ctx.fillStyle = INK; ctx.font = '600 13px JetBrains Mono'; ctx.fillText(`${e.done === 'durdu' ? (e.alive ? 'durur' : 'söner') : e.done || ''} · ${e.dist.toFixed(0)} birim · ${(e.t / 60).toFixed(1)} sn`, Math.min(880, e.x * sc + 12), e.y * sc - 8); }
+    if (this.drag && this.drag.kind === 'aim') { ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(this.drag.from.x * sc, this.drag.from.y * sc); ctx.lineTo(this.drag.to.x * sc, this.drag.to.y * sc); ctx.stroke(); }
+    const r = 6 + 6 * b.ch; ctx.fillStyle = b.alive ? (team === 0 ? A : B) : '#9A958A'; ctx.beginPath(); ctx.arc(b.x * sc, b.y * sc, r, 0, 7); ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 2.5; ctx.stroke();
+    if (b.alive) { ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.globalAlpha = .5; ctx.beginPath(); ctx.arc(b.x * sc, b.y * sc, r + 5, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.max(0, Math.min(1, b.e))); ctx.stroke(); ctx.globalAlpha = 1; }
+    const g = this.cg.current; if (g) { const gc = g.getContext('2d'); gc.fillStyle = '#F6F3EC'; gc.fillRect(0, 0, 800, 140); const n = Math.max(120, this.hist.length); gc.lineWidth = 2; for (const [k, col, mx] of [['e', '#9A958A', 1], ['sp', INK, 2.5]]) { gc.strokeStyle = col; gc.beginPath(); this.hist.forEach((h, i) => { const x = i / n * 800, y = 136 - Math.min(1, h[k] / mx) * 128; i ? gc.lineTo(x, y) : gc.moveTo(x, y); }); gc.stroke(); } gc.fillStyle = INK; gc.font = '11px JetBrains Mono'; gc.fillText('0', 2, 136); gc.fillText(`${(n / 60).toFixed(1)} sn`, 760, 136); }
+  }
+  renderVals() {
+    const C = this.C(), b = this.ball, S = this.state, phys = this.P();
+    const on = v => v ? ['#F6F3EC', '#16150F'] : ['transparent', '#F6F3EC'];
+    const modes = [['firlat', 'Fırlat'], ['hedef', 'Hedefe pas'], ['mavi', 'Mavi oyuncu'], ['turuncu', 'Turuncu oyuncu'], ['bekci', 'Turuncu Bekçi'], ['sil', 'Sil']].map(([k, label]) => { const [bg, fg] = on(S.mode === k); return { label, bg, fg, set: () => this.setState({ mode: k }) }; });
+    const hints = { firlat: 'Çekirdeği tutup geriye çek ve bırak: sapan gibi. Çekerken kesikli çizgi öngörülen yolu gösterir. Çekirdek duruyorsa boş bir yere tıklayıp oradan da çekebilirsin.', hedef: 'Sahada bir noktaya tıkla: Çekirdek o noktaya seçtiğin varış hızıyla ulaşacak şekilde fırlatılır. Alanlar hesaba katılır.', mavi: 'Tıklayarak mavi alan ekle, sürükleyerek taşı. Çekirdek maviyse bu alanlar akıntı, turuncuysa direnç.', turuncu: 'Tıklayarak turuncu alan ekle, sürükleyerek taşı.', sil: 'Bir oyuncuya tıklayarak sil.', bekci: 'Tıklayarak turuncu Bekçi ekle (kare). Bekçi daha geniş menzille tutar.' };
+    const stats = b ? [
+      { k: 'Hız', v: `${(Math.hypot(b.vx, b.vy) * 60).toFixed(1)} b/sn` }, { k: 'Enerji', v: `%${Math.round(b.e * 100)}` }, { k: 'Yol', v: `${b.dist.toFixed(1)} birim` }, { k: 'Süre', v: `${(b.t / 60).toFixed(2)} sn` }, { k: 'Durum', v: b.done === 'durdu' ? (b.alive ? 'Durdu' : 'Söndü') : b.done === 'alındı' ? 'Alındı' : b.done === 'tutuldu' ? (b.holder && b.holder.team === b.team ? 'Arkadaş tuttu' : 'Rakip tuttu') : b.done ? 'Kuyu!' : (b.vx || b.vy) ? (b.alive ? 'Yolda' : 'Sönüyor') : 'Bekliyor' }
+    ] : [];
+    const sl = (key, label, min, max, step, fmt) => ({ label, min, max, step, val: phys[key], disp: fmt ? fmt(phys[key]) : phys[key], set: e => this.setState({ phys: { ...phys, [key]: +e.target.value } }) });
+    return {
+      modes, hint: hints[S.mode], stats, cv: this.cv, cg: this.cg, down: e => this.down(e), move: e => this.move(e), up: e => this.up(e),
+      log: b ? b.log.slice().reverse().map(e => ({ t: (e.t / 60).toFixed(2) + 's', txt: e.txt })) : [],
+      presets: [['kisa', 'Kısa pas · 12 birim'], ['uzun', 'Uzun pas · 46 birim'], ['blok', 'Rakip alanından pas'], ['akinti', 'Kendi alanından pas'], ['kenar', 'Kenardan sekme'], ['gonder', 'Güçlü gönderme'], ['plase', 'Plase gönderme'], ['kurgu', 'Kurgu: 3 pas + gönderme'], ['hat', 'K2 · Hatta rakip var'], ['sert', 'K2 · Sert pas, ilk dokunuş'], ['bekci', 'K2 · Bekçi karşılıyor']].map(([k, label]) => ({ label, run: () => this.preset(k) })),
+      reset: () => { this.ball = C.makeBall({ team: S.team, ch: S.ch }); this.hist = []; this.target = null; this.forceUpdate(); },
+      clearSrc: () => { this.src = []; this.heatKey = ''; this.forceUpdate(); },
+      togglePause: () => this.setState({ paused: !S.paused }), pauseLabel: S.paused ? 'Devam' : 'Duraklat',
+      launchSliders: [
+        { label: 'Şarj', min: 0, max: 1, step: .05, val: S.ch, disp: `%${Math.round(S.ch * 100)}`, set: e => { this.setState({ ch: +e.target.value }); if (this.ball) this.ball.ch = +e.target.value; } },
+        { label: 'Hedefe pas · varış hızı', min: 0, max: 1, step: .05, val: S.arrive, disp: `${(S.arrive * 60).toFixed(0)} b/sn`, set: e => this.setState({ arrive: +e.target.value }) },
+        { label: 'Sapan gücü', min: .5, max: 2.5, step: .1, val: S.power, disp: S.power.toFixed(1), set: e => this.setState({ power: +e.target.value }) },
+        { label: 'Oyuncu alanı · menzil', min: 4, max: 14, step: .5, val: S.srcR, disp: S.srcR, set: e => { const v = +e.target.value; this.src.forEach(s => s.R = v); this.heatKey = ''; this.setState({ srcR: v }); } },
+        { label: 'Oyuncu alanı · yoğunluk', min: .3, max: 2, step: .1, val: S.srcD, disp: S.srcD.toFixed(1), set: e => { const v = +e.target.value; this.src.forEach(s => s.D = v); this.heatKey = ''; this.setState({ srcD: v }); } },
+        { label: 'Oyuncuların Tutuş\'u', min: 4, max: 20, step: 1, val: S.tutus, disp: S.tutus, set: e => { const v = +e.target.value; this.src.forEach(s => { s.a = s.a || {}; s.a.tutus = v; }); this.setState({ tutus: v }); } },
+        { label: 'Oyuncuların Kesme\'si', min: 4, max: 20, step: 1, val: S.kesme, disp: S.kesme, set: e => { const v = +e.target.value; this.src.forEach(s => { s.a = s.a || {}; s.a.kesme = v; }); this.setState({ kesme: v }); } }
+      ],
+      monte: () => this.monte(), monteRes: S.monte || [],
+      qSliders: C ? [['reach', 'Kontrol menzili', .5, 3, .1], ['ctrl0', 'Tutma tabanı', .5, 1.3, .02], ['ctrlV', 'Hızın tutmayı zorlaştırması', 0, .6, .02], ['ctrlCh', 'Şarjın tutmayı zorlaştırması', 0, .8, .02], ['skill', 'Tutuş/Kesme puanı etkisi', 0, .08, .005], ['pressK', 'Baskı altında tutma cezası', 0, .8, .05], ['deflK', 'Sekmede kalan hız', .1, 1, .05], ['deflMate', 'Arkadaşın kaçırdığı Çekirdek yakına düşer', .1, 1, .05]].map(([key, label, min, max, step]) => { const q = this.Qp(); return { label, min, max, step, val: q[key], disp: q[key], set: e => this.setState({ qp: { ...q, [key]: +e.target.value } }) }; }) : [],
+      teamBtns: [[0, 'Çekirdek mavi', '#1F3FD1'], [1, 'Çekirdek turuncu', '#E0531F']].map(([t, label, col]) => ({ label, bg: S.team === t ? col : 'transparent', fg: S.team === t ? '#F6F3EC' : '#16150F', bd: col, set: () => { this.heatKey = ''; this.setState({ team: t }); if (this.ball) this.ball.team = t; } })),
+      physSliders: C ? [
+        sl('fric', 'Sürtünme', 0, .04, .001), sl('roll', 'Yuvarlanma freni', 0, .01, .0005), sl('oppDrag', 'Rakip alanı direnci', 0, .15, .005), sl('pierce', 'Şarjın direnci delmesi', 0, 1, .05), sl('chgV', 'Şarjın vuruş hızına etkisi', 0, 1.4, .05), sl('ownFlow', 'Kendi alanı akıntısı', 0, 1, .05),
+        sl('attn', 'Yolda enerji kaybı', 0, .01, .0005), sl('drain', 'Rakip alanında enerji kaybı', 0, .2, .005), sl('deadRamp', 'Sönme freni (artış)', 0, .02, .0005), sl('deadMax', 'Sönme freni (tavan)', 0, .2, .005), sl('rest', 'Kenar sekmesi', .2, 1, .02), sl('wallLoss', 'Kenarda enerji kaybı', 0, .3, .01)
+      ] : [],
+      resetPhys: () => this.setState({ phys: { ...C.P } })
+    };
+  }
+}
+</script>
+</body>
+</html>

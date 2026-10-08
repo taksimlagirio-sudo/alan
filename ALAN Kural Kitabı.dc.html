@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F3FD1}a:hover{color:#E0531F}
+</style>
+<script src="alan-engine.js"></script>
+</helmet>
+<div style="padding:40px 20px">
+<article style="max-width:900px;margin:0 auto;background:#F6F3EC;border:2px solid #16150F;padding:56px clamp(20px,6vw,72px);display:flex;flex-direction:column;gap:48px;box-sizing:border-box">
+
+  <header style="display:flex;flex-direction:column;gap:16px;border-bottom:2px solid #16150F;padding-bottom:32px">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Kural kitabı · v0.1 · 7v7 · Kuyu</div>
+    <h1 style="margin:0;font-size:clamp(48px,8vw,80px);font-weight:800;letter-spacing:-.03em;line-height:.95">ALAN</h1>
+    <p style="margin:0;font-size:21px;line-height:1.45;text-wrap:pretty">İki takım, yedişer oyuncu. Her oyuncu çevresine bir etki alanı yayar. Arenanın her noktası, oraya en çok etki eden takımın rengine boyanır. Tek bir <strong>Çekirdek</strong> var ve sadece kendi renginden güvenle geçebilir. Amaç onu rakibin <strong>Kuyu</strong>'suna ulaştırmak.</p>
+    <p style="margin:0;font-size:17px;line-height:1.45">Bu kitaptaki tüm sayılar <a href="ALAN Maç.dc.html">maç ekranındaki</a> simülasyonla birebir aynı.</p>
+  </header>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">01</span>Arena ve Kuyu</h2>
+    <canvas data-scene="arena" width="1600" height="800" style="width:100%;display:block;border:2px solid #16150F"></canvas>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty">Arena 100 × 50 birimlik bir dikdörtgen. Kısa kenarların ortasında yarıçapı 5 birim olan birer yarım daire var: Kuyu. Arenada çizgi, bölge ya da ofsayt yok. Bütün yapıyı oyuncuların alanları üretiyor.</p>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">02</span>Alan fiziği</h2>
+    <canvas data-scene="alan" width="1600" height="800" style="width:100%;display:block;border:2px solid #16150F"></canvas>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty">Her oyuncunun bir noktadaki etkisi, oyuncudan uzaklaştıkça yumuşakça azalır: <strong>Yoğunluk × e<sup>−(mesafe/Menzil)²</sup></strong>. Bir noktadaki kontrol, iki takımın toplam etkisinin farkıdır ve −1 ile +1 arasına sıkıştırılır.</p>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);border-top:1.5px solid #16150F;font-size:17px;line-height:1.4">
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Menzil (birim)</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">(6,4 + 0,15 × Menzil özelliği) × rol çarpanı</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Yoğunluk</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">(0,74 + 0,02 × Yoğunluk özelliği) × rol çarpanı × kondisyon etkisi</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Kondisyon etkisi</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">0,75 + 0,25 × kondisyon. Yorgun oyuncunun alanı solar.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Kontrol</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">tanh(1,3 × (Σ mavi − Σ turuncu))</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Boşluk</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Kontrolün mutlak değeri 0,15'in altında. Kimsenin değil.</div>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">03</span>Çekirdeği taşımak ve kaybetmek</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty">Çekirdeği taşıyan oyuncu %80 hızla hareket eder ve önündeki 7 yön arasından en çok kendi rengine açılan yolu seçer. <strong>Kopma:</strong> taşıyanın bulunduğu noktada rakip kontrolü <strong>0,55 + 0,015 × Tutuş</strong> eşiğine yaklaştıkça ve 3 birim içinde bir rakip varsa, her tik artan bir olasılıkla Çekirdek o rakibe geçer. Eşik tempo yükseldikçe düşer. Yani pres yalnızca rakibe yaklaşmak değil, onun durduğu yeri <em>boyamak</em> demek.</p>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">04</span>Aktarım ve kesme</h2>
+    <canvas data-scene="hat" width="1600" height="768" style="width:100%;display:block;border:2px solid #16150F"></canvas>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty">Taşıyan oyuncu her 8 tikte bir aktarım fırsatlarını tarar. Alıcı 6 ile 45 birim arasında olmalı ve kendi rengi üstünde durmalı. Hat boyunca 12 noktada kontrol ölçülür. En zayıf nokta takımın <strong>risk eşiğinin</strong> altındaysa hat kapalıdır (yukarıda kesik çizgi).</p>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);border-top:1.5px solid #16150F;font-size:17px;line-height:1.4">
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Risk eşiği</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">0,15 − 0,45 × takım riski − 0,01 × (Cesaret − 10)</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Uçuş hızı</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">1,5 × (0,8 + 0,02 × Aktarım) birim/tik. Çekirdek hareket eden alıcıyı takip eder.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Sönme</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Bkz. 04d. Kesme artık bir oyuncunun araya girmesi değil, Çekirdeğin rakip alanında enerjisini kaybetmesi.</div>
+    </div>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty">Takımlar hatları <strong>kendi gözleriyle</strong> değerlendirir, kesme ise gerçek alanda olur. Aradaki fark Gölge'den gelir (bkz. 06).</p>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">04b</span>Hizalanma, oyun dışı kalma, aşırtma</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty">Bu üç kural, özellik farkını <strong>yerleşim farkıyla</strong> yenmeyi mümkün kılıyor. Güçlü bir kadronun alanı her yerde biraz daha büyük. Yanlış yerde, yanlış yöne bakarak duruyorsa bu üstünlük işe yaramıyor.</p>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);border-top:1.5px solid #16150F;font-size:17px;line-height:1.4">
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Hizalanma</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Her oyuncunun alanı baktığı yöne tam, arkasına 0,55 menzille yayılır. Savunmacı Çekirdeğe döner, hücumcu koştuğu yöne bakar. Dönüş hızı her tik %8.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Oyun dışı kalma</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Çekirdek bir savunmacının 2 birim arkasına geçerse (Bekçi hariç), o oyuncunun yoğunluğu kademeli olarak ×0,35'e düşer. Tekrar Çekirdeğin önüne geçene kadar böyle kalır. Bir hattı aşan aktarım, o hattaki herkesi oyundan çıkarır.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Aşırtma</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Aktarım mesafesi talimatı 0,55'in üstündeyse, savunmanın en derin oyuncusunun arkasındaki bir arkadaşa 16–50 birimlik aşırtma atılabilir. Sadece kalkış noktası ve son %25 ölçülür, arada kesilemez. Yavaş uçar ve (20 − Aktarım) × 0,3 birim sapar. İnişte en yakın oyuncu Çekirdeği alır.</div>
+    </div>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty"><strong>Test (8'er maç):</strong> Bütün özellikleri +2 yüksek, yüksek blok ve çift pres oynayan bir kadroya karşı varsayılan taktik 8 maçın 8'ini kaybetti. Aynı zayıf kadro uzun aktarım + iki Sız ile 3 galibiyet, 4 beraberlik, 1 yenilgi aldı. Güçlü taraf derin bloğa geçince aynı karşı taktik çöktü: 1 galibiyet, 1 beraberlik, 6 yenilgi. Doğru cevap rakibe göre değişiyor.</p>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">04c</span>Oyuncu neden pas verir?</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty">Taşıyan oyuncu her karar anında bütün seçenekleri aynı ölçüyle tartar: <strong>başarı olasılığı × sonraki durumun değeri − başarısızlık olasılığı × Çekirdeği orada kaybetmenin bedeli</strong>. Pas, ancak taşımaya devam etmekten belirgin biçimde (+0,05) daha iyiyse verilir.</p>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);border-top:1.5px solid #16150F;font-size:17px;line-height:1.4">
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Konum değeri</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Kuyu'ya yakınlık (e<sup>−mesafe/22</sup>) × merkezîlik × o noktadaki açıklık. Rakip baskısı altındaki bir nokta, boş bir noktadan daha değersizdir.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Taşımaya devam</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Önündeki koşu yolu taranır: rakip baskısına çarpana kadar kaç birim boş var. Yol ne kadar uzunsa taşımanın değeri o kadar yüksek. Dibinde savunmacı varsa Sürme'ye göre ikili mücadeleyi kazanma olasılığı hesaba girer.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Aktarım</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Hat güvenliğinden kesilme olasılığı, alıcının baskısından ilk dokunuş olasılığı çıkar. Aşılan her savunmacı +0,04 değer ekler.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Aşırtma, orta, gönderme</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Aynı ölçüyle, kendi başarı modelleriyle tartılır.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Kişilik ve talimat</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Kayıp bedelinin ağırlığını risk talimatı, Cesaret ve ritim belirler (Sabırlı +0,4, Dikine −0,3). Okuma düşükse her değerlendirmeye ±(20 − Okuma) × 0,01 hata girer. Yani zayıf okuyan oyuncu yanlış seçeneği seçer.</div>
+    </div>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty"><strong>Eskisiyle karşılaştırma (aynı kadro iki tarafta, 5 maç):</strong></p>
+    <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr);border-top:1.5px solid #16150F;font-size:16px;line-height:1.35">
+      <div style="padding:8px 0;border-bottom:1px solid #16150F"></div><div style="padding:8px 0;border-bottom:1px solid #16150F;font-weight:700">Eski</div><div style="padding:8px 0;border-bottom:1px solid #16150F;font-weight:700">Yeni</div>
+      <div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">Baskıdan kaçmak için</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">%80</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">%86</div>
+      <div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">Hat kırmak için</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">%2</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">%5</div>
+      <div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">Daha tehlikeli bölgeye</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">%4</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">%4</div>
+      <div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">Sebepsiz</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">%15</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">%5</div>
+      <div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">Geriye ya da yana</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">%44</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">%38</div>
+      <div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">Aktarım başarısı</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">%89</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">%81</div>
+    </div>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty">Asıl sorun hâlâ şu: aktarımların %80'den fazlası baskı altında yapılıyor. Taşıyan, kendisine en yakın savunmacıdan %20 yavaş olduğu için neredeyse her seferinde yakalanıyor. Bu da sürekli, kısa ve yana giden bir paslaşma üretiyor.</p>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">04d</span>Baskı ve sönme: futbolsuz hâli</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty">İkisi de alan fiziğinden türüyor. Kimse topa kayarak müdahale etmiyor, kimse pas yoluna ayak uzatmıyor.</p>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);border-top:1.5px solid #16150F;font-size:17px;line-height:1.4">
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Çekirdek bir sinyal</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Gönderilen Çekirdeğin bir enerjisi var: 0,6 + 0,03 × Aktarım. Rakip rengindeki her birim yolda, oradaki kontrol × 0,3 × (1 + 0,03 × en güçlü rakibin Kesme'si) kadar enerji kaybettirir. Enerji biterse Çekirdek <strong>söner</strong> ve o noktada alanı en güçlü rakibe geçer. Aşırtma ve orta yolun sadece son çeyreğinde söner. Kuyu'ya gönderim 1,4 kat hızlı söner.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Pas kararı</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Taşıyan, hattın sonunda ne kadar enerji kalacağını tahmin eder. Kısa ama rakip renginden geçen bir hat, uzun ama temiz bir hattan daha riskli olabilir.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Baskı = kafes</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">İlk presçi taşıyanın üstüne değil, onunla kendi Kuyu'su arasına, 2,2 birim mesafeye girer. Taşıyanın alanını bastırır. Diğer presçiler taşıyanın sekiz yönden en değerli iki çıkışını hesaplar ve oraları tutar. Amaç Çekirdeği kapmak değil, çıkışları kapatıp alanı boğmak.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Hat örtüsü</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Alan ve Ön alan sistemlerinde blok oyuncuları, taşıyan ile en tehlikeli alıcı arasındaki hattın %55'ine doğru kayar (Alan'da %45 ağırlık). Alanlarıyla o hattı örterler.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Merkez çekimi</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Çekirdek savunanın Kuyu'suna yaklaştıkça blok yanlamasına Çekirdeği daha az takip eder, merkeze daha çok çekilir (%20'den %70'e). Bu yüzden kanatlar doğal olarak açık kalır.</div>
+    </div>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty"><strong>Ölçüm (aynı kadro iki tarafta, 5–8 maç):</strong> Maç başı yaklaşık 228 aktarım, %80 başarı ve 40 sönme. Sayıların çoğu ortadan geliyor (36 orta, 13 gönderme, 2 taşıma). Orta, merkez çekimi eklenmeden önce %97 başarılıydı, şimdi %76. Aktarımların %87'si hâlâ baskı altında yapılıyor ve %40'ı geriye ya da yana gidiyor. Taşıyan, zamanının yarısında boşta.</p>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">04e</span>Niyet ve şarj</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty">Taşıyan oyuncu Çekirdeği aldığında ve sonra her 30 tikte bir bir <strong>niyet</strong> seçer. Pas kararı (04c) bu niyete göre eğilir.</p>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);border-top:1.5px solid #16150F;font-size:17px;line-height:1.4">
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">İlerle</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Önündeki boş yol uzunsa seçilir, Hız artırır. Yol bitene kadar tutar.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Çek</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Yakında en fazla bir rakip varsa ve Sürme yüksekse seçilir. Tuzak talimatı ve Taşı yönelimi artırır. İki rakip üstüne gelene kadar tutar, sonra onların boşalttığı yere bırakır.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Değiştir</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Karşı taraf bu taraftan daha açıksa seçilir. Sabırlı ritim ve uzun aktarım talimatı artırır. Çekirdeği hemen karşı tarafa yollar.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Bekle</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Boşluğa koşan bir arkadaş varsa ya da şarj düşük ve çevre güvenliyse seçilir. Koşucunun varacağı yere aktarım yapmaya eğilimlidir.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Kaç</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Sekiz çıkış yönünden en fazla dördü açıksa seçilir. Okuma'sı yüksek oyuncu kafesi daha erken sezer.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Şarj</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Çekirdek kendi temiz alanında tutuldukça dolar (tik başına 0,006, Tutuş artırır), baskı altında boşalır. Gönderilen Çekirdeğin enerjisi 0,45 + 0,03 × Aktarım + 0,4 × şarj. Bırakılınca şarj 0,2'ye düşer: tek dokunuşla paslaşan takım sadece kısa ve temiz hatları kullanabilir.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Koşu yoluna aktarım</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Hareket eden alıcı için hem bulunduğu yer hem varacağı yer ayrı ayrı tartılır. Varacağı yere yapılan aktarımın başarısı Okuma'ya bağlı. Alıcı yetişemezse Çekirdeği o noktaya en yakın oyuncu alır.</div>
+    </div>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty"><strong>Pas anındaki niyet (5 maç):</strong> Aynı kadroların karşılaşmasında pasların %34'ü kaçış, %38'i ilerleme, %14'ü bekleme, %9'u yön değiştirme, %4'ü çekme. Sürme +6 olunca çekme %18'e çıkıyor. Tuzak talimatıyla %24. Sabırlı ritimde yön değiştirme %19, bekleme %20. Okuma +6 olunca kaçış %48'e çıkıyor (kafesi erken sezip kapanmadan bırakıyor) ve pasların %84'ü koşu yoluna gidiyor. Bu oranlar elle ayarlanmadı; özelliklerden ve talimatlardan kendiliğinden çıkıyor.</p>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty"><strong>İsabet:</strong> Şarj gücü belirliyor, isabeti ise bırakma anındaki sakinlik belirliyor. Sapma = 0,6 × (mesafe/20) × (1 + 2 × baskı) × (1 − Aktarım/30) × (1 − (Okuma − 10) × 0,02) × aşırı şarj çarpanı. Şarj 0,6 + (Tutuş − 10) × 0,02 eşiğini aşınca aşan her birim sapmayı ×1,5 oranında büyütüyor. Sapma alıcıyı değil atışı etkiliyor: Çekirdek alıcının yanına düşüyor ve 3 birimden uzağa düşerse en yakın oyuncu alıyor. Kuyu'ya gönderimde sapma 5 kat. Kuyu ağzının 2 biriminden çıkan gönderim ıskadır. Oyuncular kararlarında bu sapmayı da hesaba katıyor. Bu yüzden baskı altında nadiren gönderiyorlar ve ıska az (maç başı 0–0,3). İsabet, ıskadan çok "ne zaman gönderilir" kararını değiştiriyor.</p>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">04f</span>Kuyu'yu korumak</h2>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);border-top:1.5px solid #16150F;font-size:17px;line-height:1.4">
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Kuyu tarafı</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Çekirdek kendi Kuyu'suna 26 + 1,4 × Okuma − 8 × blok birimden fazla yaklaşınca blok oyuncuları Çekirdek ile Kuyu arasındaki hatta kaymaya başlar; Çekirdek yaklaştıkça bu kayma tamamlanır. Okuma'sı yüksek oyuncu daha erken geçer. Yüksek blok daha geç ve Kuyu'dan daha uzakta tutunur.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Geri koşu</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Çekirdek kaybedildiğinde Çekirdeğin önünde kalan oyuncular, 26 − 1,2 × Okuma tiklik bir tepki süresinden sonra %12 daha hızlı koşarak Kuyu tarafına döner. Bu koşu 2,5 kat kondisyon harcar ve en fazla 150 tik sürer. Hız ve Dayanıklılık burada belirleyici.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Bekçi açısı</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Bekçi, Kuyu'dan Çekirdeğe giden hatta 3–9 birim öne çıkar. Ne kadar öne çıkacağını Okuma artırır. Kuyu'ya gönderilen her Çekirdek Bekçi'nin alanından geçer.</div>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">04g</span>Tutma riski ve kafes</h2>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);border-top:1.5px solid #16150F;font-size:17px;line-height:1.4">
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Tutma riski</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Taşıyıcı, Çekirdeği tutarsa kaybetme ihtimalini motorun gerçek kurallarından hesaplar: en yakın rakiple ikili mücadele, çevresindeki destek, kafesteki rakip sayısı ve kopma riski. Okuma bu tahminin ne kadar isabetli olduğunu ve kafese kaç kişinin geldiğini ne kadar erken gördüğünü belirler.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Tek presçi: yavaşlatır</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Taşıyıcı ile Kuyu'su arasındaki 3 birim içinde bir rakip varsa taşıyıcının hızı 0,62 + 0,008 × Sürme ile çarpılır. Tek rakip ikili mücadeleyi yarı güçle yapar.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">İki presçi: kafes</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">4 birim içindeki her ek rakip, ikili mücadelede kaybetme ihtimaline bir kat daha ekler. Çekirdeği almak artık iki kişilik bir iş. Presçilerin sayısını pres ayarı ve pres tetikleyicisi belirler.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Pres ayarı</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Presçi sayısı: 1, pres 0,4'ün üstündeyse 2, 0,75'in üstündeyse 3. Presçinin Çekirdeğe koşmaya başladığı mesafe 8 + 22 × pres. Presçi (1 + 0,15 × pres) kat hızlı koşar ve kondisyon harcamaz.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Kilitlenme</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Pres başlayınca presçi 15 + 60 × pres tik boyunca Çekirdeği kovalar: Çekirdek pasla kaçsa da bloğa dönmez. Bölgesi bu sürede boş kalır, kimse otomatik doldurmaz. Hücum eden takım o boşluğu kendi alan hesabıyla görür ve oraya bırakır.</div>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">04h</span>Pozisyon alma</h2>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);border-top:1.5px solid #16150F;font-size:17px;line-height:1.4">
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Hücum: boşluk arama</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Oyuncu taktik yerinin çevresinde 2 + Okuma / 1,5 aday nokta tarar (yarıçap 8 + 0,6 × Okuma). Her noktayı dört şeye göre tartar: rakip alanından ne kadar boş, taşıyıcıdan oraya pas hattı ne kadar temiz, Kuyu için ne kadar tehlikeli ve en yakın takım arkadaşından ne kadar uzak (11 birimden yakınsa ceza). Mevcut hedefi küçük bir bonusla aday olarak kalır; oyuncu her kararda fikir değiştirmez.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Savunma: boşluk kapatma</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Blok oyuncusu taktik yerini bulduktan sonra 5 + 0,6 × Okuma yarıçapındaki en tehlikeli hücumcuyu seçer ve onun Kuyu tarafına kayar. Bir arkadaşı o hücumcuya zaten daha yakınsa onu daha az tehlikeli sayar; iki kişi aynı adama gitmez.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Okuma = algı</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Oyuncu rakipleri olduğu yerde değil, algıladığı yerde görür: hareket yönünde 1,5 × Okuma − 2 × (20 − Okuma) tik kaydırılmış. Okuma'sı yüksek oyuncu rakibin gideceği yeri önceden görür; düşük olan bir an önceki hâlini görür ve kapanmış boşluğa koşar. Okuma, diğer özelliklerden daha az sıkıştırılır (%80).</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Kaç kişi preslenir</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Tamamen menajerin kararı: 1 + 5 × pres² oyuncu (pres 0,5 → 2, pres 1 → 6, Bekçi hariç herkes). Kilitli presçiler bu sayıya dahil; kararın dışında kalan bloğa döner. Bedel kurala yazılmadı: preste olmayan alan boştur.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Presçilerin işi</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Birinci presçi taşıyıcının Kuyu tarafına girer. İkinci ve üçüncü, taşıyıcının en değerli iki çıkışını tutar. Dördüncüden itibaren her presçi en yakın pas seçeneğini alır ve onunla taşıyıcı arasındaki hatta durur. Seçeneğin nereye gideceğini Okuma'sı kadar önceden görür. Tam pres böylece kısa çıkışları kapatır; rakip uzağa ya da üstten oynamak zorunda kalır.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Aşırtmaya çıkış</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Aşırtmanın düşeceği noktaya sadece oraya en yakın savunmacı koşar (10 birim içindeyse). Diğerleri kendi işine devam eder.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Aşırtma herkesin</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Aşırtma artık uzun mesafe talimatına bağlı değil; o talimat sadece eğilimi artırır. Menzil 10 + 0,5 × Aktarım + 26 × şarj. Prese karşı doğal kaçış yolu bu.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Gölge yakında görünür</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Gölge, preste olduğunda ya da Çekirdeğe 8 birimden yakın olduğunda görünür. Uzakta, hatlarda gizli kalır.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Aralık</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Aynı takımdan iki oyuncunun hedefleri 6 birimden yakınsa birbirini iter.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Geride kalanlar</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Hücumda oyuncunun Çekirdeğe göre yeri (Derinlik − eşik) ile belirlenir. Eşik 0,25 + 0,4 × (1 − Risk); Dikine ritimde 0,06 düşer, Kontra ritimde 0,08 artar. Eşiğin altındaki oyuncular Çekirdeğin gerisinde kalır. Risk arttıkça daha çok oyuncu hücuma katılır, Çekirdek kaybedilince arkada daha az kişi kalır.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Dönme ve geri geri koşma</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Yüzünün tersine koşan oyuncu %60 hızla koşar. Savunmacı, Çekirdekten uzaklaşan bir hedefe 4 birimden fazla koşacaksa döner ve sırtını Çekirdeğe verir: tam hızla koşar ama alanının güçlü tarafı artık Çekirdeğe bakmaz. Kontraya yakalanan savunma ya yavaş geri gider ya da arkasını dönüp araya giren pasları kesemez.</div>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">05</span>Sayı ve maç akışı</h2>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);border-top:1.5px solid #16150F;font-size:17px;line-height:1.4">
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Taşıyarak sayı</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Taşıyan, rakip Kuyu'nun merkezine 8 birim yaklaşır.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Göndererek sayı</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">24 birim içinden, hat güvenliği −0,6'dan iyiyse Çekirdek Kuyu'ya gönderilir. Normal aktarımdan 1,7 kat hızlı uçar ve kesilmeden ulaşırsa sayı olur.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Süre</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">3 evre × 2400 tik. Oyun saatinde her evre 4 dakika, 1× hızda yaklaşık 40 saniye.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Evre arası</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Kondisyon +%35 yenilenir, başlama sırası değişir.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Sayıdan sonra</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Herkes kendi yarısına döner, sayı yiyen takım ortadan başlar.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Kondisyon</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Hızlı koşarken tik başına 0,000015 × (32 − Dayanıklılık) × tempo çarpanı azalır, en fazla 0,3'e kadar düşer.</div>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:20px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">06</span>Roller</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty">Rol, oyuncunun alanının <strong>şeklini</strong> belirler. Bir kadroda aynı rolden birden fazla oyuncu olabilir.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,360px),1fr));gap:20px">
+      <figure style="margin:0;display:flex;flex-direction:column;gap:10px"><canvas data-scene="Bekçi" width="900" height="480" style="width:100%;display:block;border:2px solid #16150F"></canvas><figcaption style="font-size:16px;line-height:1.4"><strong>Bekçi.</strong> Kendi Kuyu'suna 16 birimden yakınken yoğunluğu ×1,15, uzaklaşınca ×0,7. Yerinde kalmaya mahkûm.</figcaption></figure>
+      <figure style="margin:0;display:flex;flex-direction:column;gap:10px"><canvas data-scene="Çapa" width="900" height="480" style="width:100%;display:block;border:2px solid #16150F"></canvas><figcaption style="font-size:16px;line-height:1.4"><strong>Çapa.</strong> Menzil ×0,6, yoğunluk ×1,5. Küçük ama sökülmesi zor bir kilit.</figcaption></figure>
+      <figure style="margin:0;display:flex;flex-direction:column;gap:10px"><canvas data-scene="Gerer" width="900" height="480" style="width:100%;display:block;border:2px solid #16150F"></canvas><figcaption style="font-size:16px;line-height:1.4"><strong>Gerer.</strong> Menzil ×1,6, yoğunluk ×0,6. Çok yer tutar ama zayıftır; rakip savunmayı yaymak için var.</figcaption></figure>
+      <figure style="margin:0;display:flex;flex-direction:column;gap:10px"><canvas data-scene="Mıknatıs" width="900" height="480" style="width:100%;display:block;border:2px solid #16150F"></canvas><figcaption style="font-size:16px;line-height:1.4"><strong>Mıknatıs.</strong> 12 birim çevresindeki rakiplerin alan merkezini %35'e kadar kendine çeker. Rakip yerinde durur ama alanı kayar ve arkasında boşluk açılır.</figcaption></figure>
+      <figure style="margin:0;display:flex;flex-direction:column;gap:10px"><canvas data-scene="Delici" width="900" height="480" style="width:100%;display:block;border:2px solid #16150F"></canvas><figcaption style="font-size:16px;line-height:1.4"><strong>Delici.</strong> Koni şeklinde alan: koştuğu yöne 1,9×, arkasına 0,7×, yanlara 0,65×. Boşluğa sızar ve onu anında boyar. Hücumda +6 birim ileride konumlanır.</figcaption></figure>
+      <figure style="margin:0;display:flex;flex-direction:column;gap:10px"><canvas data-scene="Yankı" width="900" height="480" style="width:100%;display:block;border:2px solid #16150F"></canvas><figcaption style="font-size:16px;line-height:1.4"><strong>Yankı.</strong> En yakın arkadaşının alan şeklini ×0,8 güçle kopyalar. Burada Delici'nin yanında koni kazanıyor; bir Çapa'nın yanında kilit olur.</figcaption></figure>
+      <figure style="margin:0;display:flex;flex-direction:column;gap:10px"><canvas data-scene="Gölge" width="900" height="480" style="width:100%;display:block;border:2px solid #16150F"></canvas><figcaption style="font-size:16px;line-height:1.4"><strong>Gölge.</strong> Fizikte tam çalışır ama rakip takımın kararlarında görünmez. Rakip güvenli sandığı hatta aktarım yapar, Gölge keser. Görsel: rakip gözünden.</figcaption></figure>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">07</span>Oyuncu özellikleri</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5">Her özellik 1 ile 20 arasında. Hepsinin simülasyonda somut bir karşılığı var.</p>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);border-top:1.5px solid #16150F;font-size:17px;line-height:1.4">
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Menzil</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Alanın yarıçapı</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Yoğunluk</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Alanın gücü</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Hız</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">0,226 + 0,0055 × Hız birim/tik (kondisyon ve tempoyla değişir)</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Dayanıklılık</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Kondisyon kaybının yavaşlığı</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Okuma</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Hücumda boşluk ararken taranan aday nokta sayısı: 2 + Okuma/4</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Aktarım</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Uçuş hızı ve kesmeye direnç</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Tutuş</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Kopma eşiği</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Kesme</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Kesme anında Çekirdeği kimin alacağı</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Cesaret</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Kişisel risk eşiği; takım talimatının üstüne eklenir</div>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">08</span>Menajerin talimatları</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty">Talimatlar maç sırasında da verilebilir ve 90 tik (1× hızda yaklaşık 1,5 sn) sonra sahaya ulaşır. Rakip menajer evre aralarında skora göre ayar yapar.</p>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);border-top:1.5px solid #16150F;font-size:17px;line-height:1.4">
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Blok (0–1)</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Hücumda destek ne kadar ileride, savunmada blok ne kadar yüksek</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Genişlik (0–1)</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Dizilimin dikeyde ne kadar yayıldığı</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Risk (0–1)</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Aktarım hattı için kabul edilen en zayıf nokta</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Pres (0–1)</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">0,7 üstü: taşıyana iki oyuncu basar, ama blokta bir boşluk açılır</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Dizilim</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Her oyuncu için derinlik ve yan konum</div>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">08b</span>Taktik sistemleri</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty">Ayar çubuklarının üstünde dört sistem seçimi var. Ayrıca her rolün bir <strong>doğal bölgesi</strong> var: o bölgenin dışında oynatılan oyuncunun Okuma'sı 4 düşer. Savunmacıların yeniden konumlanma aralığı <strong>34 − Okuma</strong> tik (en az 8).</p>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);border-top:1.5px solid #16150F;font-size:17px;line-height:1.4">
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Savunma sistemi</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Alan · Adam adama · Ön alan · Kuyu önü</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Pres tetikleyicisi</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Her zaman · Kanatta · Kayıptan sonra · Kendi yarımızda</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Hücum ritmi</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Dengeli · Sabırlı · Dikine · Kontra · Kanat</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Boşluk yaratma</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Serbest · Rotasyon · Yükleme · Tuzak · Genişlik</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Diziliş</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">2-2-2 · 3-2-1 · 1-3-2 · 2-1-3 · Elmas, ya da elle sürükle</div>
+    </div>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty"><strong>Eşit kadrolarla test (her hücre 6 maç, bizim sayı – rakip sayı):</strong></p>
+    <div style="display:grid;grid-template-columns:minmax(0,1.2fr) repeat(5,minmax(0,1fr));border-top:1.5px solid #16150F;font-size:15px;line-height:1.3;font-family:'JetBrains Mono',monospace">
+      <div style="padding:8px 0;border-bottom:1px solid #16150F;font-family:'Bricolage Grotesque',sans-serif;font-weight:600">Rakip ↓ / ritim →</div><div style="padding:8px 0;border-bottom:1px solid #16150F">Dengeli</div><div style="padding:8px 0;border-bottom:1px solid #16150F">Sabırlı</div><div style="padding:8px 0;border-bottom:1px solid #16150F">Dikine</div><div style="padding:8px 0;border-bottom:1px solid #16150F">Kontra</div><div style="padding:8px 0;border-bottom:1px solid #16150F">Kanat</div>
+      <div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25);font-family:'Bricolage Grotesque',sans-serif">Alan</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">3,0–2,5</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">2,0–4,2</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">3,0–3,8</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">3,2–2,8</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">3,3–4,2</div>
+      <div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25);font-family:'Bricolage Grotesque',sans-serif">Adam adama</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">4,8–2,0</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">4,2–2,8</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">4,2–3,0</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">4,2–2,5</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">3,7–3,7</div>
+      <div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25);font-family:'Bricolage Grotesque',sans-serif">Ön alan</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">3,0–3,3</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">2,7–6,3</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">4,8–1,3</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">3,8–2,5</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">3,2–4,5</div>
+      <div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25);font-family:'Bricolage Grotesque',sans-serif">Kuyu önü</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">3,3–4,3</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">3,3–3,2</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">4,5–3,2</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">4,3–3,2</div><div style="padding:8px 0;border-bottom:1px solid rgba(22,21,15,.25)">2,0–4,3</div>
+    </div>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty">Diziliş de fark ediyor: aynanın varsayılanına (3,0–2,5) karşı 1-3-2 5,5–1,8, 2-1-3 5,7–2,0, 3-2-1 ise 1,8–3,8. Delici'yi geriye, Çapa'yı öne koymak 2,2–3,7 ile kaybettiriyor. Boşluk yaratma seçenekleri daha durumsal: Adam adamaya karşı Genişlik 5,0–1,5; Kuyu önüne karşı Yükleme en az sayı yediren (2,3–2,7).</p>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">08c</span>Boşluk nasıl oluşuyor: ölçümler</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty">Simülasyonu ölçüm araçlarıyla oynatıp şu sorulara baktık (aynı kadro iki tarafta, 4–12 maç):</p>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);border-top:1.5px solid #16150F;font-size:17px;line-height:1.4">
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Savunma merkezi mi kapatıyor?</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Evet, kendiliğinden. Son üçte birde merkezin %52'si savunmanın kontrolünde, kanatların %12–15'i. Kanatların yaklaşık %70'i boş. Ama hücum orada ancak %10–19 kontrol kuruyor: boşluk var, kullanılmıyordu.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Pas anlamlı mı?</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Yarı yarıya. Seçilen alıcı ilerleme açısından neredeyse hep en iyi 1–2 seçenekten biri. Ama alıcının üstündeki baskıya bakılmıyordu; seçim bu açıdan rastgeleden farksızdı. Aktarımların %96'sı tuttuğu için bu hata cezalandırılmıyordu.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Taşıma etkili mi?</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Değildi: ortalama 4 birim taşıma, kopma neredeyse hiç yok, savunmacı geçme yok. İkili mücadele ve Sürme özelliği eklendikten sonra maç başı yaklaşık 33 geçme, 25 kayıp.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Önünde blok olunca zorlaşıyor mu?</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Çok. Taşıyanın önünde 0–1 savunmacı varken 2 sn içinde sayı %23, kayıp %29. 2–3 savunmacıda sayı %1,7, kayıp %77. 4 ve üstünde sayı %1,6, kayıp %83.</div>
+    </div>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty"><strong>Eklenenler:</strong></p>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);border-top:1.5px solid #16150F;font-size:17px;line-height:1.4">
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">İkili mücadele</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Bir savunmacı taşıyana 2,4 birim yaklaşınca mücadele olur. Taşıyanın gücü 1,6 × Sürme + 0,4 × Hız (+3 Taşı yöneliminde), savunmacınınki Kesme + 0,5 × Yoğunluk. Geçilen savunmacı 45 tik boyunca oyun dışı kalır ve pres yapamaz.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">İlk dokunuş</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Baskı altında Çekirdek alan oyuncu, Tutuş'u düşükse Çekirdeği hemen kaptırabilir.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Alıcı seçimi</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Alıcının üstündeki baskı artık hesaba katılıyor. Okuma'sı düşük oyuncunun kararlarına daha fazla hata payı giriyor. Topsuz oyuncular da artık rakipten uzak noktaları arıyor.</div>
+      <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-weight:600">Ters koşu ve orta</div><div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25)">Çekirdek kanatta ve rakip Kuyu'ya 34 birimden yakınsa, Delici, Gölge ve Sız yönelimli oyunculardan iki tanesi Kuyu'nun uzak tarafına koşar. Taşıyan oraya orta açabilir. Orta havada kesilemez. İnişte koşucunun Hız ve Sürme'si ile savunmacının Kesme ve Yoğunluk'u karşılaşır. Savunmacılar Çekirdeğe baktığı için koşucu çoğu zaman arkalarında kalır. Kazanırsa Kuyu'ya hemen gönderir.</div>
+    </div>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty"><strong>Hâlâ zayıf olanlar:</strong> Kanat ritmi orta açıyor (maç başı 5–10, çoğu alıcısına ulaşıyor) ama Çekirdeği kaybedince takım geniş yakalanıp kontra yiyor. Okuma'nın etkisi küçük ve gürültü içinde kayboluyor. Okuma'yı topsuz oyundaki boşluk arayışına güçlü bağlamak takımı dağıttı ve kötüleştirdi.</p>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">09</span>İlk denge testleri</h2>
+    <p style="margin:0;font-size:18px;line-height:1.5;text-wrap:pretty">Yaklaşık 100 simüle maçtan çıkanlar:</p>
+    <ul style="margin:0;padding-left:22px;font-size:18px;line-height:1.5;display:flex;flex-direction:column;gap:8px">
+      <li>Savunma tam bilgiyle ve anında yer değiştirirse hiç sayı olmuyor. Bu yüzden blokta kalan savunmacılar yalnızca 22 tikte bir yeniden konumlanıyor. Sayıları bu gecikme üretiyor.</li>
+      <li>Liman, Liman'ın aynısıyla oynayınca maç başına yaklaşık 3,3 sayı çıkıyor.</li>
+      <li>Volta'nın ilk hâli (çift Çapa + çift pres) Liman'ı 1,5'e 0,4 eziyordu. Pres 0,6'ya inince sonuç yaklaşık 1,7'ye 1,25 oldu. Rol bileşimi sonucu belirgin biçimde değiştiriyor.</li>
+    </ul>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:30px;font-weight:800;display:flex;gap:14px;align-items:baseline"><span style="font-family:'JetBrains Mono',monospace;font-size:16px">10</span>Açık sorular</h2>
+    <ul style="margin:0;padding-left:22px;font-size:18px;line-height:1.5;display:flex;flex-direction:column;gap:8px">
+      <li>Gölge'yi rakibin Okuma özelliği kısmen ortaya çıkarabilmeli mi?</li>
+      <li>Tepki gecikmesi sabit mi kalsın, yoksa Okuma'ya mı bağlansın? Okuma'ya bağlamak şu an dengeyi bozuyor.</li>
+      <li>Evre arasında talimat değişikliği olsun mu? Bu "sadece izler" kuralını esnetir.</li>
+      <li>Kuyu her zaman orta noktada mı dursun, yoksa maç boyunca hareket mi etsin?</li>
+    </ul>
+  </section>
+</article>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() {
+    const go = () => (window.AlanEngine && document.querySelector('canvas[data-scene]') ? this.draw() : (this.t = setTimeout(go, 60)));
+    go();
+  }
+  componentWillUnmount() { clearTimeout(this.t); }
+  draw() {
+    const E = window.AlanEngine, mk = E.makePlayer;
+    const scenes = {
+      arena: () => { const m = E.createMatch(7); return [{ ps: m.ps, core: m.core }, {}]; },
+      alan: () => [{ w: 40, h: 20, kuyu: [], ps: [mk(0, 'Gerer', 11, 10, null, { name: 'A' }), mk(1, 'Çapa', 27, 6), mk(1, 'Çapa', 30, 14)] }, { cell: 1 }],
+      hat: () => {
+        const h = mk(0, 'Gerer', 8, 12), ps = [h, mk(0, 'Delici', 32, 5), mk(0, 'Mıknatıs', 36, 19), mk(1, 'Çapa', 23, 17), mk(1, 'Bekçi', 46, 10)];
+        return [{ w: 50, h: 24, kuyu: [], ps, core: { x: h.x, y: h.y, holder: h, flight: null } }, { lines: true, cell: 1 }];
+      },
+      'Bekçi': () => [{ w: 30, h: 16, kuyu: [0], ps: [mk(0, 'Bekçi', 5, 8)] }, { cell: .75 }],
+      'Çapa': () => [{ w: 30, h: 16, kuyu: [], ps: [mk(0, 'Çapa', 15, 8)] }, { cell: .75 }],
+      'Gerer': () => [{ w: 30, h: 16, kuyu: [], ps: [mk(0, 'Gerer', 15, 8)] }, { cell: .75 }],
+      'Mıknatıs': () => [{ w: 30, h: 16, kuyu: [], ps: [mk(0, 'Mıknatıs', 9, 8), mk(1, 'Çapa', 18, 8)] }, { cell: .75 }],
+      'Delici': () => [{ w: 30, h: 16, kuyu: [], ps: [mk(0, 'Delici', 7, 8)] }, { cell: .75 }],
+      'Yankı': () => [{ w: 30, h: 16, kuyu: [], ps: [mk(0, 'Delici', 4, 5), mk(0, 'Yankı', 9, 11)] }, { cell: .75 }],
+      'Gölge': () => [{ w: 30, h: 16, kuyu: [], ps: [mk(0, 'Gölge', 11, 8), mk(1, 'Çapa', 21, 8)] }, { cell: .75, view: 1 }]
+    };
+    document.querySelectorAll('canvas[data-scene]').forEach(c => {
+      const f = scenes[c.dataset.scene]; if (!f) return;
+      const [s, o] = f(); E.render(c.getContext('2d'), s, o);
+    });
+  }
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

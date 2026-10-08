@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F3FD1}a:hover{color:#E0531F}
+button{font:inherit;color:inherit}
+</style>
+</helmet>
+<div style="max-width:1400px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box">
+  <header style="display:flex;flex-wrap:wrap;align-items:baseline;gap:14px;background:#16150F;color:#F6F3EC;padding:14px 20px">
+    <span style="font-size:28px;font-weight:800;letter-spacing:-.02em">ALAN v3e</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Taktik laboratuvarı · tam saha 7'ye 7 · yeni motor</span>
+  </header>
+  <div style="font-size:16px;line-height:1.5;max-width:960px;text-wrap:pretty">İki takımın taktiğini ayarla, hücreyi kuyruğa ekle. Maçlar arka planda paralel oynanır; takımlar her maçta taraf değiştirir. Yeni motorda gövdeyle koruma, dönüş, fiske ve kenar çalımı, presçinin taşıyıcıyı yavaşlatması, kenardan pas, tek dokunuş (tekte pas, ver-kaç, tekte gönderme), tepki süreli pas kesme, şarj ve alanlar var.</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px">
+    <sc-for list="{{ teams }}" as="tm" hint-placeholder-count="2">
+      <div style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:9px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:{{ tm.col }}">{{ tm.label }}</div>
+        <sc-for list="{{ tm.rows }}" as="r" hint-placeholder-count="9">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span style="font-size:13px">{{ r.label }}</span>
+            <div style="display:flex;gap:4px;flex-wrap:wrap">
+              <sc-for list="{{ r.opts }}" as="o" hint-placeholder-count="3">
+                <button onClick="{{ o.set }}" style="flex:1;min-width:44px;background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid #16150F;padding:4px 6px;cursor:pointer;font-size:13px">{{ o.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+  </div>
+  <div style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end">
+    <sc-for list="{{ gen }}" as="r" hint-placeholder-count="2">
+      <div style="display:flex;flex-direction:column;gap:4px;min-width:200px">
+        <span style="font-size:13px">{{ r.label }}</span>
+        <div style="display:flex;gap:4px">
+          <sc-for list="{{ r.opts }}" as="o" hint-placeholder-count="3">
+            <button onClick="{{ o.set }}" style="flex:1;min-width:44px;background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid #16150F;padding:4px 8px;cursor:pointer;font-size:13px">{{ o.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+    <button onClick="{{ add }}" style="background:#16150F;color:#F6F3EC;border:2px solid #16150F;padding:8px 16px;cursor:pointer;font-weight:600">Hücreyi kuyruğa ekle</button>
+    <button onClick="{{ mirror }}" style="background:transparent;border:2px solid #16150F;padding:8px 16px;cursor:pointer">Ayna testi (A ve A)</button>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:13px">{{ pool }}</span>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <sc-for list="{{ cells }}" as="c" hint-placeholder-count="1">
+      <div style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline">
+          <span style="font-size:20px;font-weight:800">{{ c.title }}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px">{{ c.prog }}</span>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.5"><span style="color:#1F3FD1;font-weight:600">A:</span> {{ c.da }}<br><span style="color:#E0531F;font-weight:600">B:</span> {{ c.db }}</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border:1.5px solid #16150F">
+          <sc-for list="{{ c.stats }}" as="s" hint-placeholder-count="8">
+            <div style="padding:7px 10px;border-right:1.5px solid #16150F;border-bottom:1.5px solid #16150F">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase">{{ s.k }}</div>
+              <div style="display:flex;gap:8px;font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600"><span style="color:#1F3FD1">{{ s.a }}</span><span>·</span><span style="color:#E0531F">{{ s.b }}</span></div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.5;text-wrap:pretty">{{ c.note }}</div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  T0 = { sistem: 'Alan', pres: 1, arkada: 1, blok: 'Orta', genislik: 'Normal', tempo: .5, risk: .5, kazaninca: 'Dengeli', tek: 'açık' };
+  state = { A: { ...this.T0 }, B: { ...this.T0 }, qa: 10, qb: 10, len: 2700, n: 30, cells: [], tick: 0 };
+  componentDidMount() { const nW = Math.max(2, Math.min(4, (navigator.hardwareConcurrency || 4) - 1)), v = 'e' + Date.now(); this.pool = Array.from({ length: nW }, () => { const w = new Worker('alan-v3e/lab-worker.js?v=' + v); w.onmessage = e => this.got(w, e.data); w.onerror = er => { w.busy = false; this.err = String(er.message || er); this.pump(); }; return w; }); this.queue = []; this.iv = setInterval(() => this.setState({ tick: this.state.tick + 1 }), 1000); }
+  componentWillUnmount() { (this.pool || []).forEach(w => w.terminate()); clearInterval(this.iv); }
+  pump() { for (const w of this.pool) { if (w.busy || !this.queue.length) continue; w.busy = true; w.postMessage(this.queue.shift()); } }
+  enqueue(A, B, qa, qb, label) { const S = this.state, id = 'c' + Date.now() + Math.random().toString(36).slice(2, 5), cell = { id, label, A: { ...A }, B: { ...B }, qa, qb, len: S.len, n: S.n, res: [], t0: Date.now(), err: null };
+    for (let k = 0; k < S.n; k++) { const swap = k % 2 === 1, tac = swap ? [cell.B, cell.A] : [cell.A, cell.B], q = swap ? [qb, qa] : [qa, qb]; this.queue.push({ id: id + k, cell: id, k, swap, seed: 1000 + k * 7919, cfg: { tac, q, len: S.len } }); }
+    this.setState({ cells: [cell, ...S.cells] }, () => this.pump()); }
+  got(w, d) { w.busy = false; const c = this.state.cells.find(x => x.id === d.cell); if (c) { if (d.ok) { const a = d.swap ? 1 : 0, b = 1 - a, S = d.S, pick = arr => [arr[a], arr[b]]; c.res.push({ g: [d.score[a], d.score[b]], poss: pick(S.poss), shot: pick(S.shot), tekShot: pick(S.tekShot), pass: pick(S.pass), passOk: pick(S.passOk), tek: pick(S.tek), bank: pick(S.bank), bankOk: pick(S.bankOk), win: pick(S.win), gTek: pick(S.gTek), gKontra: pick(S.gKontra), gSabit: pick(S.gSabit), side: d.score[0] + ':' + d.score[1], ms: d.ms, aLeft: a === 0 }); } else c.err = d.msg; } this.pump(); this.setState({ tick: this.state.tick + 1 }); }
+  add = () => { const S = this.state; this.enqueue(S.A, S.B, S.qa, S.qb, 'A ve B'); };
+  mirror = () => { const S = this.state; this.enqueue(S.A, S.A, S.qa, S.qa, 'Ayna testi · A ve A'); };
+  desc(t, q) { const lv = v => v < .4 ? 'Düşük' : v < .7 ? 'Orta' : 'Yüksek'; return `${t.sistem} · pres ${t.pres} · arkada ${t.arkada} · blok ${t.blok} · genişlik ${t.genislik} · tempo ${lv(t.tempo)} · risk ${lv(t.risk)} · kazanınca ${t.kazaninca} · tek dokunuş ${t.tek} · kalite ${q}`; }
+  renderVals() {
+    const S = this.state, pick = (cur, v) => cur === v ? ['#16150F', '#F6F3EC'] : ['transparent', '#16150F'];
+    const trow = (side, k, label, vals, fmt) => ({ label, opts: vals.map(v => { const [bg, fg] = pick(S[side][k], v); return { label: fmt ? fmt(v) : String(v), bg, fg, set: () => this.setState({ [side]: { ...S[side], [k]: v } }) }; }) });
+    const lv = v => v < .4 ? 'Düşük' : v < .7 ? 'Orta' : 'Yüksek';
+    const rows = side => [trow(side, 'sistem', 'Savunma sistemi', ['Alan', 'Adam adama', 'Kenara sıkıştır']), trow(side, 'pres', 'Basan kişi sayısı', [0, 1, 2, 3]), trow(side, 'blok', 'Blok (ve pres çizgisi)', ['Düşük', 'Orta', 'Yüksek']), trow(side, 'arkada', 'Hücumda arkada kalan', [0, 1, 2]), trow(side, 'genislik', 'Hücum genişliği', ['Dar', 'Normal', 'Geniş']), trow(side, 'tempo', 'Tempo', [.2, .5, .8], lv), trow(side, 'risk', 'Risk', [.2, .5, .8], lv), trow(side, 'kazaninca', 'Kazanınca', ['Yerleş', 'Dengeli', 'Kontra']), trow(side, 'tek', 'Tek dokunuş', ['açık', 'kapalı'])];
+    const qrow = (k, label) => ({ label, opts: [6, 10, 14].map(v => { const [bg, fg] = pick(S[k], v); return { label: String(v), bg, fg, set: () => this.setState({ [k]: v }) }; }) });
+    const ta = rows('A'); ta.push(qrow('qa', 'Oyuncu kalitesi')); const tb = rows('B'); tb.push(qrow('qb', 'Oyuncu kalitesi'));
+    const gen = [{ label: 'Maç süresi', opts: [[2700, '45 sn'], [5400, '90 sn']].map(([v, l]) => { const [bg, fg] = pick(S.len, v); return { label: l, bg, fg, set: () => this.setState({ len: v }) }; }) }, { label: 'Hücre başına maç', opts: [10, 30].map(v => { const [bg, fg] = pick(S.n, v); return { label: String(v), bg, fg, set: () => this.setState({ n: v }) }; }) }];
+    const busy = this.pool ? this.pool.filter(w => w.busy).length : 0;
+    const cells = S.cells.map(c => { const R = c.res, n = R.length, sum = k => [R.reduce((s, r) => s + r[k][0], 0), R.reduce((s, r) => s + r[k][1], 0)], f1 = v => n ? (v / n).toFixed(2) : '–', pc = (a, b) => b ? '%' + Math.round(a / b * 100) : '–';
+      const g = sum('g'), poss = sum('poss'), shot = sum('shot'), ts = sum('tekShot'), pass = sum('pass'), pok = sum('passOk'), tek = sum('tek'), bk = sum('bank'), bko = sum('bankOk'), win = sum('win'), gt = sum('gTek'), gk = sum('gKontra'), gs = sum('gSabit');
+      let W = 0, D = 0, L = 0, leftG = 0, rightG = 0; for (const r of R) { if (r.g[0] > r.g[1]) W++; else if (r.g[0] < r.g[1]) L++; else D++; const [l, rr] = r.side.split(':').map(Number); leftG += l; rightG += rr; }
+      const pts = n ? (W + D * .5) / n : 0, ci = n ? 1.96 * Math.sqrt(Math.max(.01, pts * (1 - pts)) / n) : 0, el = (Date.now() - c.t0) / 1000;
+      return { title: c.label, prog: c.err ? 'hata: ' + c.err : `${n}/${c.n} maç · ${Math.round(el)} sn` + (n ? ` · maç başı ${(R.reduce((s, r) => s + r.ms, 0) / n / 1000).toFixed(1)} sn` : ''), da: this.desc(c.A, c.qa), db: this.desc(c.B, c.qb),
+        stats: n ? [{ k: 'Sayı / maç', a: f1(g[0]), b: f1(g[1]) }, { k: 'G / B / M (A)', a: W + '/' + D, b: String(L) }, { k: 'Topa sahip', a: pc(poss[0], poss[0] + poss[1]), b: pc(poss[1], poss[0] + poss[1]) }, { k: 'Gönderme / maç', a: f1(shot[0]), b: f1(shot[1]) }, { k: 'Pas / maç (tutan)', a: f1(pass[0]) + ' (' + pc(pok[0], pass[0]) + ')', b: f1(pass[1]) + ' (' + pc(pok[1], pass[1]) + ')' }, { k: 'Tekte pas / maç', a: f1(tek[0]), b: f1(tek[1]) }, { k: 'Kenardan pas (tutan)', a: f1(bk[0]) + ' (' + pc(bko[0], bk[0]) + ')', b: f1(bk[1]) + ' (' + pc(bko[1], bk[1]) + ')' }, { k: 'Kazanma / maç', a: f1(win[0]), b: f1(win[1]) }] : [],
+        note: n ? `A'nın puan oranı %${Math.round(pts * 100)} (şans payı ±%${Math.round(ci * 100)}) · sayı türleri A: tekte gönderme ${gt[0]}, kontra ${gk[0]}, kurulu ${gs[0]} · B: tekte gönderme ${gt[1]}, kontra ${gk[1]}, kurulu ${gs[1]} · tekte gönderme denemesi ${ts[0]} · ${ts[1]} · taraf etkisi: sağa hücum eden ${leftG}, sola hücum eden ${rightG} sayı` : (c.err ? '' : 'Kuyrukta…') }; });
+    return { teams: [{ label: 'A takımı', col: '#1F3FD1', rows: ta }, { label: 'B takımı', col: '#E0531F', rows: tb }], gen, add: this.add, mirror: this.mirror, pool: `${this.pool ? this.pool.length : 0} iş parçacığı · ${busy} meşgul · kuyrukta ${this.queue ? this.queue.length : 0} maç`, cells };
+  }
+}
+</script>
+</body>
+</html>

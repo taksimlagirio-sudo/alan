@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F3FD1}a:hover{color:#E0531F}
+button,select{font:inherit;color:inherit}
+input[type=range]{accent-color:#16150F;width:100%;margin:0}
+</style>
+<script src="alan-engine-fizik.js"></script>
+</helmet>
+<div style="max-width:1680px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:18px;box-sizing:border-box">
+
+  <header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;background:#16150F;color:#F6F3EC;padding:14px 20px">
+    <div style="display:flex;align-items:baseline;gap:14px">
+      <span style="font-size:28px;font-weight:800;letter-spacing:-.02em">ALAN</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;opacity:.85">Deneme · Çekirdek fiziği</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:10px;font-size:19px;font-weight:600"><span style="width:14px;height:14px;background:#1F3FD1;display:block"></span>Liman Kolektifi</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:600;background:#F6F3EC;color:#16150F;padding:0 14px">{{ score }}</div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:19px;font-weight:600">Volta 09<span style="width:14px;height:14px;background:#E0531F;display:block"></span></div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:17px;border:1.5px solid #F6F3EC;padding:5px 12px;min-width:92px;text-align:center">{{ clock }}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:14px">
+      <button onClick="{{ togglePlay }}" style="background:#F6F3EC;color:#16150F;border:0;padding:9px 16px;font-weight:600;cursor:pointer;min-width:104px">{{ playLabel }}</button>
+      <sc-for list="{{ speeds }}" as="s" hint-placeholder-count="3">
+        <button onClick="{{ s.set }}" style="background:{{ s.bg }};color:{{ s.fg }};border:1.5px solid #F6F3EC;padding:7px 12px;cursor:pointer">{{ s.label }}</button>
+      </sc-for>
+      <button onClick="{{ restart }}" style="background:transparent;color:#F6F3EC;border:1.5px solid #F6F3EC;padding:7px 12px;cursor:pointer">Yeni maç</button>
+      <button onClick="{{ vitrin }}" style="background:#F6F3EC;color:#16150F;border:1.5px solid #F6F3EC;padding:7px 12px;cursor:pointer">Taktik maçı</button>
+    </div>
+  </header>
+
+  <div style="display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start">
+    <main style="flex:1 1 680px;min-width:0;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:13px">
+        <div style="display:flex;align-items:center">
+          <span style="margin-right:10px;letter-spacing:.08em;text-transform:uppercase">Katman</span>
+          <sc-for list="{{ layers }}" as="v" hint-placeholder-count="3">
+            <button onClick="{{ v.set }}" style="background:{{ v.bg }};color:{{ v.fg }};border:1.5px solid #16150F;margin-left:-1.5px;padding:7px 12px;cursor:pointer">{{ v.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <button onClick="{{ toggleLines }}" style="background:{{ linesBg }};color:{{ linesFg }};border:1.5px solid #16150F;padding:7px 12px;cursor:pointer">Aktarım hatları</button>
+          <div style="display:flex;align-items:center">
+            <span style="margin-right:10px;letter-spacing:.08em;text-transform:uppercase">Görüş</span>
+            <sc-for list="{{ views }}" as="v" hint-placeholder-count="3">
+              <button onClick="{{ v.set }}" style="background:{{ v.bg }};color:{{ v.fg }};border:1.5px solid #16150F;margin-left:-1.5px;padding:7px 12px;cursor:pointer">{{ v.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      <div style="border:2px solid #16150F;background:#F6F3EC;line-height:0">
+        <canvas ref="{{ cv }}" width="2000" height="1000" style="width:100%;height:auto;display:block;aspect-ratio:2/1"></canvas>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 18px;font-size:15px;line-height:1.4">
+        <span>{{ layerNote }}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px">{{ holderInfo }}</span>
+      </div>
+
+      <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border:2px solid #16150F;background:#F6F3EC;margin-top:6px">
+        <div style="padding:14px 16px;border-right:1px solid #16150F;display:flex;flex-direction:column;gap:8px;grid-column:span 2;min-width:0">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase">Alan kontrolü · şu an</div>
+          <div style="display:flex;height:20px;border:1.5px solid #16150F"><div style="width:{{ ctrlA }};background:#1F3FD1"></div><div style="flex:1"></div><div style="width:{{ ctrlB }};background:#E0531F"></div></div>
+          <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:14px"><span>{{ ctrlA }}</span><span>boşluk {{ ctrlN }}</span><span>{{ ctrlB }}</span></div>
+        </div>
+        <sc-for list="{{ statRows }}" as="r" hint-placeholder-count="4">
+          <div style="padding:14px 16px;border-right:1px solid #16150F;display:flex;flex-direction:column;gap:6px">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase">{{ r.label }}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px 10px;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:600"><span style="color:#1F3FD1">{{ r.a }}</span><span style="color:#E0531F">{{ r.b }}</span></div>
+          </div>
+        </sc-for>
+      </section>
+    </main>
+
+    <aside style="flex:1 1 380px;max-width:480px;min-width:0;background:#F6F3EC;border:2px solid #16150F;display:flex;flex-direction:column">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);border-bottom:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.06em;text-transform:uppercase">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+          <button onClick="{{ t.set }}" style="background:{{ t.bg }};color:{{ t.fg }};border:0;border-right:1px solid #16150F;padding:12px 8px;cursor:pointer;display:flex;gap:6px;justify-content:center;align-items:center">{{ t.label }}<span style="font-size:11px;opacity:.8">{{ t.badge }}</span></button>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ tabTaktik }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:18px;padding:16px 18px 20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase">Dizilim · sürükle</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px">kendi Kuyu ← → hücum</div>
+          </div>
+          <div ref="{{ board }}" style="position:relative;aspect-ratio:2/1;border:2px solid #16150F;background:#EFEBE2;touch-action:none;user-select:none">
+            <div style="position:absolute;left:-2px;top:40%;width:10%;height:20%;background:#16150F;border-radius:0 999px 999px 0;transform:scaleX(.5);transform-origin:left"></div>
+            <div style="position:absolute;left:50%;top:0;bottom:0;border-left:1.5px dashed rgba(22,21,15,.35)"></div>
+            <sc-for list="{{ boardDots }}" as="d" hint-placeholder-count="7">
+              <div onPointerDown="{{ d.down }}" style="position:absolute;left:{{ d.left }};top:{{ d.top }};width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:#1F3FD1;color:#F6F3EC;border:2.5px solid {{ d.ring }};display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;cursor:grab;box-sizing:border-box">{{ d.k }}</div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-right:4px">Diziliş</span>
+              <sc-for list="{{ formations }}" as="f" hint-placeholder-count="5">
+                <button onClick="{{ f.set }}" style="background:transparent;border:1.5px solid #16150F;padding:5px 9px;font-family:'JetBrains Mono',monospace;font-size:13px;cursor:pointer">{{ f.label }}</button>
+              </sc-for>
+            </div>
+            <div style="font-size:13px;line-height:1.4">{{ zoneWarn }}</div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <sc-for list="{{ enumGroups }}" as="g" hint-placeholder-count="4">
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:16px;font-weight:600">{{ g.label }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#1F3FD1">{{ g.note }}</span></div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px">
+                  <sc-for list="{{ g.opts }}" as="o" hint-placeholder-count="4">
+                    <button onClick="{{ o.set }}" style="background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid {{ o.bd }};padding:6px 10px;font-size:14px;cursor:pointer">{{ o.label }}</button>
+                  </sc-for>
+                </div>
+                <div style="font-size:13px;line-height:1.4">{{ g.desc }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <sc-for list="{{ sliders }}" as="s" hint-placeholder-count="8">
+              <label style="display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:16px;font-weight:600">{{ s.label }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:{{ s.diffCol }}">{{ s.valText }}</span></div>
+                <input type="range" min="0" max="100" value="{{ s.value }}" onChange="{{ s.onChange }}">
+                <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;text-transform:uppercase"><span>{{ s.lo }}</span><span>{{ s.hi }}</span></div>
+              </label>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:0">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding-bottom:8px">Oyuncu yönelimleri</div>
+            <sc-for list="{{ oriRows }}" as="o" hint-placeholder-count="7">
+              <div style="display:grid;grid-template-columns:28px minmax(0,1fr) 120px;gap:10px;align-items:center;padding:6px 0;border-top:1px solid rgba(22,21,15,.18)">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600">{{ o.k }}</span>
+                <span style="font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.name }}</span>
+                <select value="{{ o.value }}" onChange="{{ o.onChange }}" style="background:#F6F3EC;border:1.5px solid #16150F;padding:4px 6px;font-size:14px">
+                  <option value="Dengeli">Dengeli</option><option value="Taşı">Taşı</option><option value="Aktar">Aktar</option><option value="Sız">Sız</option><option value="Destek">Destek</option><option value="Önde bekle">Önde bekle</option>
+                </select>
+              </div>
+            </sc-for>
+            <div style="font-size:13px;line-height:1.4;padding-top:8px">Taşı: daha uzun sürer · Aktar: hemen bırakır · Sız: savunma arkasına koşar · Destek: Çekirdeğe yakın durur · Önde bekle: savunmaya dönmez</div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px;position:sticky;bottom:0;background:#F6F3EC;padding-top:6px">
+            <button onClick="{{ send }}" style="background:{{ sendBg }};color:#F6F3EC;border:0;padding:13px 16px;font-size:17px;font-weight:700;cursor:pointer">{{ sendLabel }}</button>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.4">{{ pendingText }}</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ tabAnaliz }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:14px;padding:16px 18px 20px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:20px;font-weight:800">Volta 09 · keşif raporu</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px">{{ analysisMeta }}</div>
+          </div>
+          <sc-for list="{{ analysis }}" as="a" hint-placeholder-count="3">
+            <div style="border:1.5px solid #16150F;padding:12px 14px;display:flex;flex-direction:column;gap:6px">
+              <div style="font-size:17px;font-weight:700">{{ a.title }}</div>
+              <div style="font-size:15px;line-height:1.4">{{ a.body }}</div>
+              <div style="font-size:15px;line-height:1.4;background:#16150F;color:#F6F3EC;padding:6px 10px;margin-top:2px">Öneri: {{ a.fix }}</div>
+            </div>
+          </sc-for>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase">Rakip menajerin hamleleri</div>
+            <sc-for list="{{ oppMoves }}" as="e" hint-placeholder-count="1">
+              <div style="font-size:15px;line-height:1.4"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;margin-right:8px">{{ e.time }}</span>{{ e.text }}</div>
+            </sc-for>
+            <div style="font-size:14px;line-height:1.4">{{ oppMovesEmpty }}</div>
+          </div>
+          <div style="font-size:14px;line-height:1.4">Haritada görmek için Katman → <strong>Ortalama</strong> ya da <strong>Kayıplar</strong>.</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ tabOlay }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;max-height:900px;overflow:auto">
+          <sc-for list="{{ events }}" as="e" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:70px 12px 1fr;gap:10px;align-items:baseline;padding:9px 18px;border-bottom:1px solid rgba(22,21,15,.18);background:{{ e.bg }};color:{{ e.fg }};font-size:15px;line-height:1.35">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px">{{ e.time }}</span>
+              <span style="width:10px;height:10px;background:{{ e.dot }};display:block"></span>
+              <span style="font-weight:{{ e.weight }}">{{ e.text }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </aside>
+  </div>
+
+  <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:18px">
+    <sc-for list="{{ squads }}" as="sq" hint-placeholder-count="2">
+      <div style="background:#F6F3EC;border:2px solid #16150F">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 18px;border-bottom:2px solid #16150F">
+          <div style="display:flex;align-items:center;gap:10px;font-size:19px;font-weight:800"><span style="width:14px;height:14px;background:{{ sq.color }};display:block"></span>{{ sq.name }}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(0,1.3fr) 96px 84px minmax(0,1fr) minmax(0,1fr);gap:0 12px;padding:8px 18px 4px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase">
+          <span>Oyuncu</span><span>Rol</span><span>Yönelim</span><span>Alan payı</span><span>Kondisyon</span>
+        </div>
+        <sc-for list="{{ sq.players }}" as="p" hint-placeholder-count="7">
+          <div style="display:grid;grid-template-columns:minmax(0,1.3fr) 96px 84px minmax(0,1fr) minmax(0,1fr);gap:0 12px;align-items:center;padding:8px 18px;border-top:1px solid rgba(22,21,15,.18);font-size:15px;background:{{ p.rowBg }}">
+            <span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
+            <span>{{ p.role }}</span>
+            <span style="font-size:14px">{{ p.ori }}</span>
+            <div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:9px;background:rgba(22,21,15,.1)"><div style="height:100%;width:{{ p.etki }};background:{{ sq.color }}"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:12px;width:34px;text-align:right">{{ p.etki }}</span></div>
+            <div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:9px;background:rgba(22,21,15,.1)"><div style="height:100%;width:{{ p.st }};background:#16150F"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:12px;width:34px;text-align:right">{{ p.st }}</span></div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+  </section>
+  <div style="display:flex;gap:20px;font-size:15px"><a href="ALAN Kural Kitabı.dc.html">Kural kitabı →</a><a href="ALAN Maç.dc.html">Önceki sürüm (sadece izleme)</a></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  cv = React.createRef(); board = React.createRef();
+  state = { snap: null, playing: true, speed: 1, view: null, layer: 'live', lines: true, tab: 'taktik', draft: null, dirty: false };
+  componentDidMount() {
+    const go = () => (window.AlanEngine ? this.start() : (this.wt = setTimeout(go, 50)));
+    go();
+    this.onMove = e => this.dragMove(e); this.onUp = () => { this.drag = null; };
+    window.addEventListener('pointermove', this.onMove); window.addEventListener('pointerup', this.onUp);
+  }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); clearTimeout(this.wt); window.removeEventListener('pointermove', this.onMove); window.removeEventListener('pointerup', this.onUp); }
+  makeDraft() {
+    const m = this.m;
+    return { tac: Object.assign({}, m.tac[0]), players: m.ps.filter(p => p.team === 0).map(p => ({ id: p.id, name: p.name, role: p.role, sx: p.sx, sy: p.sy, ori: p.ori })) };
+  }
+  start(seed, preset) {
+    const E = window.AlanEngine;
+    this.vitrin = preset === 'vitrin';
+    if (this.vitrin) {
+      this.m = E.createMatch(seed, { ai: [false, false] });
+      Object.assign(this.m.tac[0], { ritim: 'Sabırlı', mesafe: .55, tempo: .35, risk: .35, genislik: .9, hatlar: .45, bosluk: 'Tuzak', savunma: 'Alan', blok: .55, pres: .55, presTetik: 'Kayıptan sonra', arkada: '1 kişi' });
+      Object.assign(this.m.tac[1], { ritim: 'Kontra', mesafe: .7, tempo: .7, risk: .5, genislik: .6, hatlar: .35, bosluk: 'Serbest', savunma: 'Kuyu önü', blok: .25, pres: .3, presTetik: 'Kendi yarımızda', arkada: '1 kişi' });
+      for (const p of this.m.ps) { p.a.okuma = Math.min(20, p.a.okuma + 3); p.a.aktarim = Math.min(20, p.a.aktarim + 2); }
+      this.m.events.unshift({ time: 'E1 00:00', type: 'talimat', team: 1, text: 'Volta: Kuyu önünde kompakt blok, arkada 1 kişi, Çekirdeği kazanınca kontra', n: this.m.evN++ }, { time: 'E1 00:00', type: 'talimat', team: 0, text: 'Liman: sabırlı dolaşım, geniş oyna, Tuzak ile savunmayı dışarı çek, arkada 1 kişi', n: this.m.evN++ });
+    }
+    let saved = null; try { saved = JSON.parse(localStorage.getItem('alan-mac-fizik') || 'null'); } catch (e) {}
+    if (saved && saved.tick >= window.AlanEngine.EV * 3 - 2) saved = null;
+    const restore = !this.vitrin && seed == null && saved;
+    if (seed == null) seed = saved ? saved.seed : 1 + Math.floor(Math.random() * 1e6);
+    if (!this.vitrin) this.m = E.createMatch(seed, { ai: [false, true] });
+    if (restore) {
+      const orders = saved.orders || []; let oi = 0;
+      while (this.m.tick < saved.tick && !this.m.over) {
+        while (oi < orders.length && orders[oi].tick <= this.m.tick) { E.order(this.m, 0, orders[oi].patch, orders[oi].label); oi++; }
+        E.step(this.m);
+      }
+    }
+    this.orders = restore ? (saved.orders || []) : [];
+    this.fr = 0;
+    this.setState({ draft: this.makeDraft(), dirty: false });
+    this.snap();
+    cancelAnimationFrame(this.raf);
+    const loop = () => {
+      const m = this.m; this.fr++;
+      if (this.state.playing && !m.over) for (let i = 0; i < this.state.speed; i++) E.step(m);
+      const c = this.cv.current;
+      if (c) {
+        const L = this.state.layer, o = { view: this.state.view, lines: this.state.lines && L === 'live' };
+        if (L === 'avg') { const n = Math.max(1, m.st.heatN); o.heatArr = Array.from(m.st.heat, v => v / n); o.lanes = true; }
+        if (L === 'marks') { o.heat = false; o.marks = m.st.marks; o.lanes = true; }
+        E.render(c.getContext('2d'), { ps: m.ps, core: m.core, tac: m.tac }, o);
+      }
+      if (this.fr % 8 === 0) this.snap();
+      if (this.fr % 60 === 0) this.save();
+      if (m.over && this.state.playing) this.setState({ playing: false });
+      this.raf = requestAnimationFrame(loop);
+    };
+    this.raf = requestAnimationFrame(loop);
+  }
+  save() { if (this.vitrin) return; try { localStorage.setItem('alan-mac-fizik', JSON.stringify({ seed: this.m.seed, tick: this.m.tick, orders: this.orders })); } catch (e) {} }
+  dragMove(e) {
+    if (this.drag == null || !this.board.current || !this.state.draft) return;
+    const r = this.board.current.getBoundingClientRect();
+    const sx = Math.max(0, Math.min(1, ((e.clientX - r.left) / r.width - .04) / .88));
+    const sy = Math.max(0, Math.min(1, ((e.clientY - r.top) / r.height - .08) / .84));
+    const players = this.state.draft.players.map(p => (p.id === this.drag ? Object.assign({}, p, { sx, sy }) : p));
+    this.setState({ draft: Object.assign({}, this.state.draft, { players }), dirty: true });
+  }
+  send() {
+    const E = window.AlanEngine, m = this.m, d = this.state.draft; if (!m || !d || !this.state.dirty) return;
+    const changes = [];
+    const NM = { blok: 'blok', hatlar: 'hatlar arası', genislik: 'genişlik', mesafe: 'aktarım mesafesi', tasima: 'oyun tarzı', tempo: 'tempo', risk: 'risk', pres: 'pres' };
+    for (const k of Object.keys(NM)) if (Math.abs(d.tac[k] - m.tac[0][k]) > .02) changes.push(NM[k]);
+    for (const k of ['savunma', 'arkada', 'presTetik', 'ritim', 'bosluk']) if (d.tac[k] !== m.tac[0][k]) changes.push(d.tac[k]);
+    const players = {};
+    d.players.forEach(p => { const q = m.ps[p.id]; if (Math.abs(q.sx - p.sx) > .01 || Math.abs(q.sy - p.sy) > .01 || q.ori !== p.ori) { players[p.id] = { sx: p.sx, sy: p.sy, ori: p.ori }; } });
+    if (Object.keys(players).length) changes.push(`${Object.keys(players).length} oyuncu`);
+    const label = changes.length ? changes.join(', ') : 'taktik';
+    const patch = { tac: Object.assign({}, d.tac), players };
+    E.order(m, 0, patch, label);
+    this.orders.push({ tick: m.tick, patch, label }); this.save();
+    this.setState({ dirty: false });
+  }
+  snap() {
+    const E = window.AlanEngine, m = this.m, st = m.st;
+    const pct = v => Math.round(v * 100) + '%';
+    const teamCol = t => (t === 0 ? '#1F3FD1' : t === 1 ? '#E0531F' : '#16150F');
+    const events = m.events.slice(0, 50).map(e => {
+      const big = e.type === 'sayi' || e.type === 'end';
+      return { time: e.time, text: e.text, dot: big ? '#F6F3EC' : teamCol(e.team), bg: big ? teamCol(e.team) : e.type === 'talimat' ? 'rgba(22,21,15,.07)' : 'transparent', fg: big ? '#F6F3EC' : '#16150F', weight: big || e.type === 'evre' || e.type === 'talimat' ? 700 : 400 };
+    });
+    const squads = [0, 1].map(t => {
+      const T = m.teams[t], ps = m.ps.filter(p => p.team === t);
+      const tot = ps.reduce((s, p) => s + st.etkiNow[p.id], 0) || 1;
+      return { name: T.name, color: T.color, players: ps.map(p => ({ name: p.name, role: p.role, ori: t === 0 ? p.ori : '?', etki: pct(st.etkiNow[p.id] / tot), st: pct(p.st), rowBg: m.core.holder === p && !m.core.flight ? 'rgba(22,21,15,.08)' : 'transparent' })) };
+    });
+    const pend = m.pending.filter(o => o.t === 0);
+    const pendingText = pend.length ? `İletiliyor: ${pend[0].label} · ${Math.max(0, pend[0].at - m.tick)} tik` : 'Talimatlar ~1,5 sn (90 tik) sonra sahaya ulaşır.';
+    const mins = Math.floor((m.tick / E.EV) * 4);
+    const oppMoves = m.events.filter(e => e.type === 'talimat' && e.team === 1).slice(0, 4).map(e => ({ time: e.time, text: e.text }));
+    this.setState({ snap: {
+      score: `${m.score[0]}–${m.score[1]}`, clock: m.over ? 'BİTTİ' : E.clock(m), events, eventCount: m.events.length, squads,
+      ctrlA: pct(st.now[0]), ctrlB: pct(st.now[1]), ctrlN: pct(Math.max(0, 1 - st.now[0] - st.now[1])),
+      statRows: [
+        { label: 'Aktarım', a: `${st.passOk[0]}/${st.pass[0]}`, b: `${st.passOk[1]}/${st.pass[1]}` },
+        { label: 'Gönderme', a: st.shot[0], b: st.shot[1] },
+        { label: 'Kesme', a: st.kesme[0], b: st.kesme[1] },
+        { label: 'Kopma', a: st.kopma[0], b: st.kopma[1] }
+      ],
+      holderInfo: m.core.flight ? 'Çekirdek havada' : m.core.holder ? `${m.core.holder.name} · niyet: ${m.core.holder.intent || '—'} · şarj %${Math.round((m.core.charge ?? .5) * 100)}` : '',
+      pendingText, analysis: E.analyze(m, 0), analysisMeta: `${mins} dakikalık oyun verisi · her an güncellenir`,
+      oppMoves, oppMovesEmpty: oppMoves.length ? '' : 'Henüz değişiklik yok. Rakip evre aralarında skora göre ayar yapıyor.'
+    } });
+  }
+  renderVals() {
+    const s = this.state.snap || { score: '0–0', clock: 'E1 00:00', events: [], eventCount: 0, squads: [], ctrlA: '0%', ctrlB: '0%', ctrlN: '100%', statRows: [], pendingText: '', analysis: [], analysisMeta: '', oppMoves: [], oppMovesEmpty: '' };
+    const on = b => (b ? ['#16150F', '#F6F3EC'] : ['transparent', '#16150F']);
+    const onD = b => (b ? ['#F6F3EC', '#16150F'] : ['transparent', '#F6F3EC']);
+    const [lb, lf] = on(this.state.lines);
+    const d = this.state.draft, m = this.m;
+    const SL = [['blok', 'Blok yüksekliği', 'Derin', 'Yüksek'], ['hatlar', 'Hatlar arası mesafe', 'Sıkı', 'Açık'], ['genislik', 'Genişlik', 'Dar', 'Geniş'], ['mesafe', 'Aktarım mesafesi', 'Kısa', 'Uzun'], ['tasima', 'Oyun tarzı', 'Aktar', 'Taşı'], ['tempo', 'Tempo', 'Sakin', 'Hızlı'], ['risk', 'Risk', 'Temkinli', 'Cesur'], ['pres', 'Pres', 'Tek oyuncu', 'Çift (0,7+)']];
+    const sliders = d ? SL.map(([k, label, lo, hi]) => {
+      const cur = m ? m.tac[0][k] : d.tac[k], changed = Math.abs(cur - d.tac[k]) > .02;
+      return { label, lo, hi, value: Math.round(d.tac[k] * 100), valText: changed ? `${Math.round(cur * 100)} → ${Math.round(d.tac[k] * 100)}` : String(Math.round(d.tac[k] * 100)), diffCol: changed ? '#1F3FD1' : '#16150F',
+        onChange: e => { const v = +e.target.value / 100; this.setState({ draft: Object.assign({}, this.state.draft, { tac: Object.assign({}, this.state.draft.tac, { [k]: v }) }), dirty: true }); } };
+    }) : [];
+    const ROLES = window.AlanEngine ? window.AlanEngine.ROLES : {};
+    const boardDots = d ? d.players.map(p => ({ k: ROLES[p.role] ? ROLES[p.role].k : '', left: (4 + p.sx * 88) + '%', top: (8 + p.sy * 84) + '%', ring: m && (Math.abs(m.ps[p.id].sx - p.sx) > .01 || Math.abs(m.ps[p.id].sy - p.sy) > .01) ? '#E0531F' : '#F6F3EC', down: e => { e.preventDefault(); this.drag = p.id; } })) : [];
+    const oriRows = d ? d.players.map(p => ({ k: ROLES[p.role] ? ROLES[p.role].k : '', name: p.name, value: p.ori,
+      onChange: e => { const v = e.target.value; this.setState({ draft: Object.assign({}, this.state.draft, { players: this.state.draft.players.map(q => (q.id === p.id ? Object.assign({}, q, { ori: v }) : q)) }), dirty: true }); } })) : [];
+    const EN = window.AlanEngine;
+    const setTac = (k, v) => this.setState({ draft: Object.assign({}, this.state.draft, { tac: Object.assign({}, this.state.draft.tac, { [k]: v }) }), dirty: true });
+    const GROUPS = [
+      ['savunma', 'Savunma sistemi', { 'Alan': 'Bölgeni koru, Çekirdeğe göre kay.', 'Adam adama': 'Her savunmacı bir hücumcuyu takip eder. Takip hızını Okuma belirler.', 'Ön alan': 'Rakip yarısında yüksek hat tutar; orada bir kişi fazla basar.', 'Kuyu önü': 'Herkes Kuyu önünde, alanlar ×1,2. En fazla bir kişi basar.' }],
+      ['arkada', 'Arkada kalan', { 'Yok': 'Herkes pres ve markaja katılır; arkası tamamen açık.', '1 kişi': 'En derindeki oyuncu baskıya katılmaz, en tehlikeli rakibin Kuyu tarafını kapatır.', '2 kişi': 'İki oyuncu arkada kalır; pres ve markaj iki kişi eksik.' }],
+      ['presTetik', 'Pres tetikleyicisi', { 'Her zaman': 'Pres ayarı kadar kişi her an basar.', 'Kanatta': 'Çekirdek kanattayken +1 kişi, merkezde tek kişi.', 'Kayıptan sonra': 'Kayıptan sonraki 1,5 sn +2 kişi, sonra azalır.', 'Kendi yarımızda': 'Kendi yarında +1 kişi, rakip yarısında hiç basmaz.' }],
+      ['ritim', 'Hücum ritmi', { 'Dengeli': 'Kararları diğer talimatlar belirler.', 'Sabırlı': 'Güvenli hatlar, daha zor Çekirdek kaybı, yavaş ilerleme.', 'Dikine': 'İleri aktarımın değeri ×2,5, riskli hatlar kabul.', 'Kontra': 'Kazandıktan sonraki 2,5 sn dikine, sonra sabırlı.', 'Kanat': 'Kanattan taşır, kanattaki alıcıları tercih eder.' }],
+      ['bosluk', 'Boşluk yaratma', { 'Serbest': 'Ek hareket yok.', 'Rotasyon': 'Her 5 sn’de oyuncular sağ-sol yer değiştirir.', 'Yükleme': 'Herkes Çekirdeğin tarafına yüklenir, bir oyuncu zayıf tarafta bekler.', 'Tuzak': 'Mıknatıs ve Gerer geri gelip savunmayı çeker, Delici arkaya koşar.', 'Genişlik': 'Dizilim en geniş hâline açılır.' }]
+    ];
+    const enumGroups = d && EN ? GROUPS.map(([k, label, desc]) => {
+      const cur = m ? m.tac[0][k] : d.tac[k], val = d.tac[k];
+      return { label, desc: desc[val], note: cur !== val ? `${cur} → ${val}` : '', opts: EN.ENUMS[k].map(o => ({ label: o, bg: val === o ? '#16150F' : 'transparent', fg: val === o ? '#F6F3EC' : '#16150F', bd: '#16150F', set: () => setTac(k, o) })) };
+    }) : [];
+    const formations = EN ? Object.keys(EN.FORMATIONS).map(f => ({ label: f, set: () => {
+      const pt = EN.formationPatch(this.state.draft.players, f);
+      this.setState({ draft: Object.assign({}, this.state.draft, { players: this.state.draft.players.map(p => (pt[p.id] ? Object.assign({}, p, pt[p.id]) : p)) }), dirty: true });
+    } })) : [];
+    const off = d && EN ? d.players.filter(p => !EN.inZone(p)) : [];
+    const zoneWarn = off.length ? `Doğal bölgesi dışında (Okuma −4): ${off.map(p => `${p.name} (${p.role})`).join(', ')}` : 'Herkes rolünün doğal bölgesinde.';
+    const tab = this.state.tab;
+    const LN = { live: 'Koyu kare sağlam kontrol, boş zemin boşluk. Halka taşıyanı, Çekirdeğin etrafındaki yay şarjını gösterir.', avg: 'Maç boyunca ortalama kontrol. Kesik çizgiler üç koridoru gösterir: üst kanat, merkez, alt kanat.', marks: '× kesme, ○ kopma, ◆ sayı. Renk, Çekirdeği kazanan takımı gösterir.' };
+    return {
+      ...s, cv: this.cv, board: this.board,
+      playLabel: m && m.over ? 'Bitti' : this.state.playing ? 'Duraklat' : 'Oynat',
+      togglePlay: () => { if (m && !m.over) this.setState({ playing: !this.state.playing }); },
+      vitrin: () => { try { localStorage.removeItem('alan-mac-fizik'); } catch (e) {} this.setState({ playing: true, speed: 1 }); this.start(424242, 'vitrin'); },
+      restart: () => { try { localStorage.removeItem('alan-mac-fizik'); } catch (e) {} this.setState({ playing: true }); this.start(1 + Math.floor(Math.random() * 1e6)); },
+      speeds: [1, 2, 4].map(n => { const [bg, fg] = onD(this.state.speed === n); return { label: n + '×', bg, fg, set: () => this.setState({ speed: n }) }; }),
+      views: [[null, 'Tarafsız'], [0, 'Liman'], [1, 'Volta']].map(([v, label]) => { const [bg, fg] = on(this.state.view === v); return { label, bg, fg, set: () => this.setState({ view: v }) }; }),
+      layers: [['live', 'Canlı'], ['avg', 'Ortalama'], ['marks', 'Kayıplar']].map(([v, label]) => { const [bg, fg] = on(this.state.layer === v); return { label, bg, fg, set: () => this.setState({ layer: v }) }; }),
+      layerNote: LN[this.state.layer],
+      linesBg: lb, linesFg: lf, toggleLines: () => this.setState({ lines: !this.state.lines }),
+      tabs: [['taktik', 'Taktik', this.state.dirty ? '●' : ''], ['analiz', 'Analiz', s.analysis.length ? String(s.analysis.length) : ''], ['olay', 'Olaylar', String(s.eventCount)]].map(([v, label, badge]) => { const [bg, fg] = on(tab === v); return { label, badge, bg, fg, set: () => this.setState({ tab: v }) }; }),
+      tabTaktik: tab === 'taktik', tabAnaliz: tab === 'analiz', tabOlay: tab === 'olay',
+      sliders, boardDots, oriRows, enumGroups, formations, zoneWarn,
+      send: () => this.send(),
+      sendLabel: this.state.dirty ? 'Talimatı gönder' : 'Değişiklik yok',
+      sendBg: this.state.dirty ? '#1F3FD1' : 'rgba(22,21,15,.45)'
+    };
+  }
+}
+</script>
+</body>
+</html>

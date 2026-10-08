@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F3FD1}a:hover{color:#E0531F}
+button{font:inherit;color:inherit}
+</style>
+<script src="alan-v3d/core.js?v=k2"></script>
+</helmet>
+<div style="max-width:1400px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box">
+  <header style="display:flex;flex-wrap:wrap;align-items:baseline;gap:14px;background:#16150F;color:#F6F3EC;padding:14px 20px">
+    <span style="font-size:28px;font-weight:800;letter-spacing:-.02em">ALAN v3d</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Kontrol sahası · ilk dokunuş</span>
+  </header>
+  <div style="font-size:16px;line-height:1.5;max-width:920px;text-wrap:pretty">Sahaya tıkla: Çekirdek tıkladığın yerden oyuncuya doğru, seçtiğin hızla gelir. Oyuncu tek dokunuşta Çekirdeğin kendisine göre hızının bir kısmını söndürebilir. Gelen hız bunun altındaysa tutar; üstündeyse kalan hız gövdesinden seker. Sıyırıp geçen az sapar, ortadan çarpan geri döner. Oyuncu kalan hızı istediği yöne (sağa, ok) bir miktar çevirebilir.</div>
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+      <canvas ref="{{ cv }}" onClick="{{ click }}" width="1000" height="500" style="width:100%;aspect-ratio:2/1;display:block;background:#F6F3EC;border:2px solid #16150F;cursor:crosshair"></canvas>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600">{{ last }}</div>
+    </div>
+    <aside style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:12px">
+      <sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:13px">{{ r.label }}</span>
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            <sc-for list="{{ r.opts }}" as="o" hint-placeholder-count="4">
+              <button onClick="{{ o.set }}" style="flex:1;min-width:44px;background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid #16150F;padding:4px 6px;cursor:pointer;font-size:13px">{{ o.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+      <div style="border-top:1.5px solid #16150F;padding-top:8px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6">
+        <div style="font-weight:600">Son yönden 200 deneme</div>
+        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4"><div>{{ s }}</div></sc-for>
+      </div>
+    </aside>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px;border-top:2px solid #16150F;padding-top:14px">
+    <span style="font-size:24px;font-weight:800;letter-spacing:-.01em">Bire bir · pas verecek kimse yok</span>
+    <div style="font-size:16px;line-height:1.5;max-width:920px;text-wrap:pretty">Dört yanı kapalı dar bir alan; Çekirdek bütün kenarlardan seker. Taşıyıcının işi Çekirdeği kaybetmeden kesik çizgiyi geçmek; 6 saniye kaybetmezse "korudu" sayılır. Taşıyıcı her karar anında seçeneklerini kafasında oynatır: gövdeyle korumak, bir yöne sürmek, fiske çalımı, kenar çalımı (Çekirdeği kenara çarptırıp presçinin arkasına sektirmek). Presçi de kendi planını kafasında tartar: doğrudan Çekirdeğe gitmek, bir yandan dolaşmak, önünü kesmek ya da bir yanı gösterip öbür yandan girmek (fake). Taşıyıcı presçinin gidişini Okuma'sı kadar önceden okuyup Çekirdeği ters tarafa saklar; fake bu okumayı kullanır. Presçi Çekirdeği alırsa sahne 2,5 saniye daha sürer: turuncu Çekirdeği taşır, mavi geri almaya çalışır.</div>
+  </div>
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+      <canvas ref="{{ ocv }}" onClick="{{ oGo }}" width="1000" height="500" style="width:100%;aspect-ratio:2/1;display:block;background:#F6F3EC;border:2px solid #16150F;cursor:pointer"></canvas>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600">{{ oLast }}</div>
+    </div>
+    <aside style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:12px">
+      <sc-for list="{{ oRows }}" as="r" hint-placeholder-count="9">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:13px">{{ r.label }}</span>
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            <sc-for list="{{ r.opts }}" as="o" hint-placeholder-count="3">
+              <button onClick="{{ o.set }}" style="flex:1;min-width:44px;background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid #16150F;padding:4px 6px;cursor:pointer;font-size:13px">{{ o.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+      <div style="border-top:1.5px solid #16150F;padding-top:8px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6">
+        <div style="font-weight:600">{{ oN }} deneme</div>
+        <sc-for list="{{ oStats }}" as="s" hint-placeholder-count="5"><div>{{ s }}</div></sc-for>
+      </div>
+    </aside>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px;border-top:2px solid #16150F;padding-top:14px">
+    <span style="font-size:24px;font-weight:800;letter-spacing:-.01em">Pas alma · pres altında karşıla, kontrol et, yönel</span>
+    <div style="font-size:16px;line-height:1.5;max-width:920px;text-wrap:pretty">Pasör (soluk) Çekirdeği alıcının ayağına, önüne, arkasına ya da yanına atar. Alıcı Çekirdeğin yolunda yetişebildiği yere gider; dokunuş fiziği ilk dokunuşla aynı (göreli hız, Tutuş). Çekirdek gövdenin hangi tarafına geldiyse orada kontrol edilir; alıcı sonra sağa (ok, Kuyu yönü) dönmek zorundadır ve dönüşü dönüş kuralıyla yapar. Presçi pasın çıkışını Okuma'sı kadar geç okuyup koşar; pası yolda kesebilir, kötü dokunuşu kapabilir, dönüş sırasında Çekirdeğe uzanabilir.</div>
+  </div>
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+      <canvas ref="{{ rcv }}" onClick="{{ rGo }}" width="1000" height="500" style="width:100%;aspect-ratio:2/1;display:block;background:#F6F3EC;border:2px solid #16150F;cursor:pointer"></canvas>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600">{{ rLast }}</div>
+    </div>
+    <aside style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:12px">
+      <sc-for list="{{ rRows }}" as="r" hint-placeholder-count="6">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:13px">{{ r.label }}</span>
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            <sc-for list="{{ r.opts }}" as="o" hint-placeholder-count="4">
+              <button onClick="{{ o.set }}" style="flex:1;min-width:44px;background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid #16150F;padding:4px 6px;cursor:pointer;font-size:13px">{{ o.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+      <div style="border-top:1.5px solid #16150F;padding-top:8px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6">
+        <div style="font-weight:600">300 deneme</div>
+        <sc-for list="{{ rStats }}" as="s" hint-placeholder-count="5"><div>{{ s }}</div></sc-for>
+      </div>
+    </aside>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px;border-top:2px solid #16150F;padding-top:14px">
+    <span style="font-size:24px;font-weight:800;letter-spacing:-.01em">Dönüş · Çekirdeği gövdenin öbür yanına geçirmek</span>
+    <div style="font-size:16px;line-height:1.5;max-width:920px;text-wrap:pretty">Çekirdek sol üstte kontrol edildi, oyuncu sağa gitmek istiyor (ok). Çekirdek gövdenin içinden geçemez: ya gövdenin etrafından dolaşır (kısa ya da uzun yoldan), ya da hızlı bir fiskeyle bir an gövdeden ayrılır. Dolaşma hızı Sürme'ye bağlı, taşıyıcı hızlandıkça yavaşlar. Rakip Çekirdeğe ancak gövde araya girmiyorsa uzanabilir. Otomatik modda yolu oyuncu kendisi seçer, riski Okuma'sı kadar iyi görür. Sahaya tıkla ya da bir ayar değiştir; yarı hızda oynar.</div>
+  </div>
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+      <canvas ref="{{ tcv }}" onClick="{{ tGo }}" width="1000" height="400" style="width:100%;aspect-ratio:5/2;display:block;background:#F6F3EC;border:2px solid #16150F;cursor:pointer"></canvas>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600">{{ tLast }}</div>
+    </div>
+    <aside style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:12px">
+      <sc-for list="{{ tRows }}" as="r" hint-placeholder-count="5">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:13px">{{ r.label }}</span>
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            <sc-for list="{{ r.opts }}" as="o" hint-placeholder-count="4">
+              <button onClick="{{ o.set }}" style="flex:1;min-width:44px;background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid #16150F;padding:4px 6px;cursor:pointer;font-size:13px">{{ o.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+      <div style="border-top:1.5px solid #16150F;padding-top:8px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6">
+        <div style="font-weight:600">300 deneme</div>
+        <sc-for list="{{ tStats }}" as="s" hint-placeholder-count="4"><div>{{ s }}</div></sc-for>
+      </div>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1400,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  ocv = React.createRef(); oN = 100; OA = { x0: 40, x1: 64, y0: 0, y1: 14 };
+  // Bire bir, dört yanı kapalı dar alan. Taşıyıcı da presçi de seçeneklerini kafasında oynatır; gerçek ve kafadaki oynama aynı adım fonksiyonunu kullanır (rnd null = beklenen değer).
+  oWalls(b) { const A = this.OA, r = .4, e = window.AlanCore.P.rest ?? .7; if (b.x < A.x0 + r) { b.x = A.x0 + r; b.vx = Math.abs(b.vx) * e; b.vy *= .9; } if (b.x > A.x1 - r) { b.x = A.x1 - r; b.vx = -Math.abs(b.vx) * e; b.vy *= .9; } if (b.y < A.y0 + r) { b.y = A.y0 + r; b.vy = Math.abs(b.vy) * e; b.vx *= .9; } if (b.y > A.y1 - r) { b.y = A.y1 - r; b.vy = -Math.abs(b.vy) * e; b.vx *= .9; } }
+  oBall(b, src) { window.AlanCore.stepBall(b, src); this.oWalls(b); }
+  oInit() { const S = this.state, y0 = S.oY === 'kenarda' ? 3.2 : 7, hz = { 'taşıyıcı hızlı': [12, 9], 'eşit': [10, 10], 'presçi hızlı': [9, 12] }[S.oHz];
+    const c = { x: 44, y: y0, vx: 0, vy: 0, team: 0, role: 'Orta', R: 8, D: 1, ca: 0, a: { surme: S.oSur, okuma: S.oOk, tutus: 10, hiz: hz[0], kesme: 10 } };
+    const p = { x: S.oFrom === 'önden' ? 51.5 : 50.5, y: S.oFrom === 'önden' ? y0 + (S.oY === 'kenarda' ? 1.2 : 0) : Math.min(12, y0 + 5), vx: 0, vy: 0, team: 1, role: 'Orta', R: 8, D: 1, cd: 0, looseT: -99, a: { kesme: S.oKes, okuma: S.oPok, tutus: 10, hiz: hz[1], surme: 10 } };
+    return { c, p, b: null, held: true, act: { k: 'kalkan' }, pp: { k: 'direkt', t0: 0 }, t: 0, keep: 1, res: null, kickT: -99, used: {}, pused: {}, wallUsed: false, gd: 1 }; }
+  oClone(st) { return { ...st, c: { ...st.c, route: st.c.route ? st.c.route.slice() : null }, p: { ...st.p }, b: st.b ? { ...st.b } : null }; }
+  oCore(st) { const B = window.AlanCore.Q.body; return st.held ? { x: st.c.x + Math.cos(st.c.ca) * B, y: st.c.y + Math.sin(st.c.ca) * B } : { x: st.b.x, y: st.b.y }; }
+  oKick(st, T) { const K = window.AlanCore, o = this.oCore(st), aim = T.my != null ? { x: T.x, y: 2 * T.my - T.y } : T, dx = aim.x - o.x, dy = aim.y - o.y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, want = T.v || .18;
+    const arr = v0 => { const b = K.makeBall({ x: o.x, y: o.y, vx: ux * v0, vy: uy * v0, team: 0, ch: .3 }); let best = 1e9, sp = 0; for (let i = 0; i < 200 && !b.done; i++) { this.oBall(b, []); const d = Math.hypot(b.x - T.x, b.y - T.y); if (d < best) { best = d; sp = Math.hypot(b.vx, b.vy); } else if (d > best + 1) break; } return best < 1.2 ? sp : (b.done ? 0 : 9); };
+    let lo = .1, hi = 2.2; for (let i = 0; i < 10; i++) { const m = (lo + hi) / 2; if (arr(m) < want) lo = m; else hi = m; }
+    const b = K.makeBall({ x: o.x, y: o.y, vx: ux * hi, vy: uy * hi, team: 0, ch: .3 }); b.t = 9; return b; }
+  oStart(st, A, rnd) { st.act = A; if (A.k !== 'fiske' && A.k !== 'kenar') return; const p = st.p, g = st.gd, O = this.OA, cx = v => Math.max(O.x0 + 1, Math.min(O.x1 - 1, v)), cy = v => Math.max(O.y0 + 1, Math.min(O.y1 - 1, v));
+    let T, W; if (A.k === 'fiske') { T = { x: cx(p.x + g * 3.5), y: cy(p.y + A.side * 2.6), v: .3 }; W = { x: cx(p.x + g * .3), y: cy(p.y - A.side * 2.8) }; }
+    else { const top = A.wall === 'üst', dw = top ? p.y - O.y0 : O.y1 - p.y; T = { x: cx(p.x + g * 4), y: top ? O.y0 + Math.max(1.2, dw * .35) : O.y1 - Math.max(1.2, dw * .35), my: top ? O.y0 : O.y1, v: .35 }; W = { x: cx(p.x + g * .3), y: cy(p.y + (top ? 2.8 : -2.8)) }; st.wallUsed = true; }
+    st.b = this.oKick(st, T); if (rnd) { const an = (rnd() - .5) * (20 - st.c.a.surme) * .024, cs = Math.cos(an), sn = Math.sin(an), vx = st.b.vx, vy = st.b.vy; st.b.vx = vx * cs - vy * sn; st.b.vy = vx * sn + vy * cs; }
+    st.held = false; st.kickT = st.t; st.p.looseT = st.t; st.c.route = [W]; }
+  // Presçinin planı: doğrudan Çekirdeğe, bir yandan dolaşarak, önünü keserek, ya da bir yanı gösterip öbür yandan girerek (fake).
+  oPTarget(st) { const c = st.c, p = st.p, pp = st.pp, co = this.oCore(st), base = Math.atan2(p.y - c.y, p.x - c.x), side = s => ({ x: c.x + Math.cos(base + s * 1.25) * 1.9, y: c.y + Math.sin(base + s * 1.25) * 1.9 });
+    if (pp.k === 'yan') return side(pp.s); if (pp.k === 'kes') return { x: c.x + st.gd * 2.2, y: c.y }; if (pp.k === 'fake') return st.t - pp.t0 < 9 ? side(pp.s) : side(-pp.s); return co; }
+  oStep(st, rnd) {
+    const K = window.AlanCore, T = K.Turn, Q = K.Q, O = this.OA, c = st.c, p = st.p, t = st.t, wrap = a => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; }, cl = (v, a, b) => v < a ? a : v > b ? b : v;
+    const pdC = Math.hypot(p.x - c.x, p.y - c.y), sC = (.17 + c.a.hiz * .006) * ((c.slowT || 0) > t ? .55 : 1) * (pdC < 1.9 ? .8 : 1), sP = (.17 + p.a.hiz * .006) * 1.2, src = [c, p];
+    if (st.held) { const A = st.act, la = 2 + c.a.okuma * .4, aw = Math.atan2(c.y - (p.y + p.vy * la), c.x - (p.x + p.vx * la)); let vx, vy, ta;
+      if (A.k === 'kalkan') { vx = Math.cos(aw) * sC * .3; vy = Math.sin(aw) * sC * .3; ta = aw; } else { vx = Math.cos(A.dir) * sC * .85; vy = Math.sin(A.dir) * sC * .85; ta = A.dir + cl(wrap(aw - A.dir), -1, 1) * .7; }
+      c.vx += (vx - c.vx) * .25; c.vy += (vy - c.vy) * .25;
+      const w = T.omega(c), d = wrap(ta - c.ca); if (Math.abs(d) > .02) { const pa = wrap(aw + Math.PI), m1 = wrap(c.ca + d / 2), m2 = wrap(c.ca + (d - Math.sign(d) * 2 * Math.PI) / 2), dir = Math.abs(wrap(m1 - pa)) < .9 && Math.abs(wrap(m2 - pa)) > Math.abs(wrap(m1 - pa)) ? -Math.sign(d) : Math.sign(d); c.ca = wrap(c.ca + dir * (dir === Math.sign(d) ? Math.min(w, Math.abs(d)) : w)); }
+    } else { const wp = c.route && c.route.length ? c.route[0] : null; if (wp && Math.hypot(wp.x - c.x, wp.y - c.y) < 1) c.route.shift(); const g = c.route && c.route.length ? c.route[0] : st.b, gx = g.x - c.x, gy = g.y - c.y, gl = Math.hypot(gx, gy) || 1; c.vx += (gx / gl * sC * 1.25 - c.vx) * .3; c.vy += (gy / gl * sC * 1.25 - c.vy) * .3; }
+    c.x = cl(c.x + c.vx, O.x0 + .9, O.x1 - .9); c.y = cl(c.y + c.vy, O.y0 + .9, O.y1 - .9);
+    if (st.held) { const B = Q.body, r = .4, kx = c.x + Math.cos(c.ca) * B, ky = c.y + Math.sin(c.ca) * B; if (ky < O.y0 + r) c.y += O.y0 + r - ky; if (ky > O.y1 - r) c.y -= ky - (O.y1 - r); if (kx < O.x0 + r) c.x += O.x0 + r - kx; if (kx > O.x1 - r) c.x -= kx - (O.x1 - r); } /* Çekirdek kenarın içine giremez: taşıyıcı Çekirdekle kenarın arasına sıkışamaz, Çekirdek kenara dayanır ve taşıyıcıyı geri iter */
+    const co = this.oCore(st), react = 14 - p.a.okuma * .5, tg = st.held ? this.oPTarget(st) : (t - p.looseT < react ? (p.tg || co) : st.b); if (st.held) p.tg = { x: co.x, y: co.y };
+    { const gx = tg.x - p.x, gy = tg.y - p.y, gl = Math.hypot(gx, gy); if (gl > .3) { p.vx += (gx / gl * Math.min(sP, gl) - p.vx) * .35; p.vy += (gy / gl * Math.min(sP, gl) - p.vy) * .35; } else { p.vx *= .7; p.vy *= .7; } p.x = cl(p.x + p.vx, O.x0 + .9, O.x1 - .9); p.y = cl(p.y + p.vy, O.y0 + .9, O.y1 - .9); const pd = Math.hypot(p.x - c.x, p.y - c.y) || 1; if (pd < 1.7) { p.x = c.x + (p.x - c.x) / pd * 1.7; p.y = c.y + (p.y - c.y) / pd * 1.7; } }
+    if (st.held) { const o = this.oCore(st), d = Math.hypot(o.x - p.x, o.y - p.y); if (d < Q.reach && !T.shielded(c, p, o.x, o.y) && t >= p.cd) { p.cd = t + 12; c.slowT = t + 18; c.vx *= .45; c.vy *= .45; const P = cl(.26 + (p.a.kesme - c.a.surme) * .035 + Math.hypot(c.vx, c.vy) * .4, .05, .9); if (rnd) { if (rnd() < P) { st.res = 'rakip aldı'; st.takeHow = 'uzanıp aldı'; st.takePlan = st.pp.k; } } else st.keep *= 1 - P; } }
+    else { const b = st.b, ox = b.x, oy = b.y; if (!b.done) this.oBall(b, src); const sx = b.x - ox, sy = b.y - oy, sl = sx * sx + sy * sy;
+      const dist = q => { const tt = sl > 0 ? cl(((q.x - ox) * sx + (q.y - oy) * sy) / sl, 0, 1) : 1; return Math.hypot(ox + sx * tt - q.x, oy + sy * tt - q.y); };
+      if (dist(p) < Q.reach && t >= p.cd) { p.cd = t + 6; const P = K.ctrlP(b, p, src); if (rnd) { if (rnd() < P) { st.res = 'rakip aldı'; st.takeHow = 'boştaki Çekirdeği kaptı'; st.takePlan = st.pp.k; } else { const an = Math.atan2(-b.vy, -b.vx) + (rnd() - .5) * 2, sp = Math.hypot(b.vx, b.vy) * .45; b.vx = Math.cos(an) * sp; b.vy = Math.sin(an) * sp; b.done = null; } } else st.keep *= 1 - P; }
+      else if (t - st.kickT > 4 && dist(c) < Q.reach && t >= (c.cd || 0)) { c.cd = t + 6; const P = K.ctrlP(b, c, src); if (rnd ? rnd() < P : true) { if (!rnd) st.keep *= P + (1 - P) * .5; st.held = true; c.ca = Math.atan2(b.y - c.y, b.x - c.x); c.route = null; st.b = null; st.act = { k: 'sür', dir: st.gd > 0 ? 0 : Math.PI }; st.need = true; } else { const an = Math.atan2(-b.vy, -b.vx) + (rnd() - .5) * 1.5, sp = Math.hypot(b.vx, b.vy) * .5; b.vx = Math.cos(an) * sp; b.vy = Math.sin(an) * sp; b.done = null; } } }
+    if (!st.res && st.held && st.gd === 1 && !st.post && c.x >= 60) st.res = 'geçti';
+    st.t++; }
+  oCands(st) { const c = st.c, p = st.p, g = st.gd, b0 = g > 0 ? 0 : Math.PI, out = [{ k: 'kalkan' }]; for (const d of [0, .5, -.5, 1.1, -1.1, Math.PI]) out.push({ k: 'sür', dir: b0 + d });
+    const near = Math.hypot(p.x - c.x, p.y - c.y) < 7 && (p.x - c.x) * g > -1; if (near) { out.push({ k: 'fiske', side: 1 }, { k: 'fiske', side: -1 }); if (this.state.oWall === 'açık') { if (c.y < 6 && p.y < 7) out.push({ k: 'kenar', wall: 'üst' }); if (c.y > this.OA.y1 - 6 && p.y > this.OA.y1 - 7) out.push({ k: 'kenar', wall: 'alt' }); } } return out; }
+  oValue(st, A, rnd) { const s = this.oClone(st), ok = s.c.a.okuma, err = Math.max(0, 16 - ok) * .15; s.p.x += (rnd() - .5) * err; s.p.y += (rnd() - .5) * err; s.pp = { k: 'direkt', t0: s.t }; s.keep = 1; s.c.route = null; this.oStart(s, A, null); const x0 = s.c.x;
+    for (let i = 0; i < 75 && !s.res; i++) this.oStep(s, null);
+    if (s.res === 'geçti') return s.keep * 2; if (s.res) return 0;
+    const own = s.held ? 1 : 1 / (1 + Math.exp((Math.hypot(s.b.x - s.c.x, s.b.y - s.c.y) - Math.hypot(s.b.x - s.p.x, s.b.y - s.p.y)) / 1.5)), passed = (s.c.x - s.p.x) * s.gd > 1 ? .6 : 0;
+    return s.keep * own * (1 + .05 * (s.c.x - x0) * s.gd + passed); }
+  oDecide(st, rnd) { const ok = st.c.a.okuma, C = this.oCands(st).map(A => ({ A, v: this.oValue(st, A, rnd) + (rnd() - .5) * Math.max(0, 16 - ok) * .03 })); C.sort((a, b) => b.v - a.v); return C[0].A; }
+  // Presçi de kafasında oynatır: taşıyıcının şu anki hareketini sürdüreceğini varsayıp her planla Çekirdeği alma ihtimalini tartar.
+  oPDecide(st, rnd) { const pl = this.state.oPlan, ok = st.p.a.okuma, C = [{ k: 'direkt' }, { k: 'yan', s: 1 }, { k: 'yan', s: -1 }, { k: 'kes' }, { k: 'fake', s: 1 }, { k: 'fake', s: -1 }].filter(P => pl === 'Otomatik' || (pl === 'Sadece direkt' ? P.k === 'direkt' : P.k !== 'fake'));
+    if (C.length === 1) return C[0];
+    const V = C.map(P => { const s = this.oClone(st); s.pp = { ...P, t0: s.t }; s.keep = 1; const x0 = s.c.x; for (let i = 0; i < 50 && !s.res; i++) this.oStep(s, null); const take = 1 - s.keep + (!s.held && s.b && Math.hypot(s.b.x - s.p.x, s.b.y - s.p.y) < Math.hypot(s.b.x - s.c.x, s.b.y - s.c.y) ? .4 : 0); return { P, v: take - .03 * (s.c.x - x0) * s.gd - (s.res === 'geçti' ? 1 : 0) + (rnd() - .5) * Math.max(0, 16 - ok) * .04 }; });
+    V.sort((a, b) => b.v - a.v); return V[0].P; }
+  oRun(rnd, rec) { const st = this.oInit(), fr = [];
+    const push = (s, swap) => { const o = this.oCore(s), B = swap ? s.p : s.c, Or = swap ? s.c : s.p; fr.push([B.x, B.y, Or.x, Or.y, o.x, o.y, s.held ? 0 : 1, s.act.k, swap ? 1 : 0, s.pp.k + (s.pp.k === 'fake' ? (s.t - s.pp.t0 < 9 ? '·gösteriyor' : '·giriyor') : '')]); };
+    const loop = (s, swap, maxT) => { let nd = s.t, npd = s.t; while (!s.res && s.t < maxT) {
+      if (s.held && (s.t >= nd || s.need)) { s.need = false; const A = this.oDecide(s, rnd), key = A.k === 'sür' ? (Math.abs(Math.cos(A.dir) * s.gd + 1) < .1 ? 'geri' : 'sür') : A.k; if (A.k === 'fiske' || A.k === 'kenar' || key !== s.lastKey) s.used[key] = (s.used[key] || 0) + 1; s.lastKey = key; this.oStart(s, A, rnd); nd = s.t + 10; }
+      if (s.held && s.t >= npd) { const P = this.oPDecide(s, rnd); s.pp = { ...P, t0: s.t }; s.pused[P.k] = (s.pused[P.k] || 0) + 1; npd = s.t + (P.k === 'fake' ? 18 : 8); }
+      this.oStep(s, rnd); if (rec) push(s, swap); } };
+    loop(st, false, 360);
+    const out = { res: st.res || 'korudu', t: st.t, used: st.used, pused: st.pused, wall: st.wallUsed, takeHow: st.takeHow, takePlan: st.takePlan, fr, takeF: null };
+    if (st.res === 'rakip aldı' && rec) { out.takeF = fr.length - 1; const co = this.oCore(st), s2 = { c: { ...st.p, ca: Math.atan2(co.y - st.p.y, co.x - st.p.x), route: null, slowT: 0, cd: 0 }, p: { ...st.c, cd: 0, looseT: -99, route: null }, b: null, held: true, act: { k: 'kalkan' }, pp: { k: 'direkt', t0: st.t }, t: st.t, keep: 1, res: null, kickT: -99, used: {}, pused: {}, gd: -1, post: true };
+      loop(s2, true, st.t + 150); if (s2.res) out.after = 'mavi geri kazandı'; }
+    return out; }
+  oGo = () => { if (!window.AlanCore || !window.AlanCore.Turn) return; this.oPlay = this.oRun(Math.random, true); this.of = 0; const C = {}, U = {}, TP = {}, TH = {}, N = this.oN; let wN = 0, wOk = 0;
+    for (let i = 0; i < N; i++) { const r = this.oRun(Math.random, false); C[r.res] = (C[r.res] || 0) + 1; for (const k in r.used) U[k] = (U[k] || 0) + 1; if (r.wall) { wN++; if (r.res === 'geçti') wOk++; } if (r.res === 'rakip aldı') { TP[r.takePlan] = (TP[r.takePlan] || 0) + 1; TH[r.takeHow] = (TH[r.takeHow] || 0) + 1; } }
+    const r0 = this.oPlay, pc = v => Math.round(v / N * 100), nm = { kalkan: 'gövdeyle korudu', sür: 'sürdü', geri: 'geri döndü', fiske: 'fiske çalımı', kenar: 'kenar çalımı' }, pn = { direkt: 'doğrudan', yan: 'yandan dolaşarak', kes: 'önünü keserek', fake: 'fake ile' }, nT = C['rakip aldı'] || 0;
+    const head = r0.res === 'rakip aldı' ? 'presçi ' + r0.takeHow + ' (' + pn[r0.takePlan] + ')' : r0.res;
+    this.setState({ oLast: 'Bu oynama: ' + head + ' · ' + (r0.t / 60).toFixed(1) + ' sn · taşıyıcı: ' + Object.keys(r0.used).map(k => nm[k]).join(', ') + (r0.after ? ' · sonra ' + r0.after : ''),
+      oStats: [...Object.entries(C).sort((a, b) => b[1] - a[1]).map(([k, v]) => k + ' %' + pc(v)), nT ? 'alış: ' + Object.entries(TH).map(([k, v]) => k + ' %' + Math.round(v / nT * 100)).join(' · ') : '', nT ? 'alırken planı: ' + Object.entries(TP).sort((a, b) => b[1] - a[1]).map(([k, v]) => pn[k] + ' %' + Math.round(v / nT * 100)).join(' · ') : '', 'taşıyıcı en az bir kez: ' + Object.entries(U).sort((a, b) => b[1] - a[1]).map(([k, v]) => nm[k] + ' %' + pc(v)).join(' · '), wN ? 'kenar çalımı denenen oynamaların %' + Math.round(wOk / wN * 100) + "'i geçti" : ''].filter(Boolean) }); };
+  oStepAnim() { if (!this.oPlay) return; this.ok2 = (this.ok2 || 0) + 1; if (this.ok2 % 2 === 0 && this.of < this.oPlay.fr.length - 1) this.of++; }
+  oDraw() { const cv = this.ocv.current, K = window.AlanCore; if (!cv || !K || !this.oPlay || !this.oPlay.fr.length) return; const x = cv.getContext('2d'), F = this.oPlay.fr, f = F[this.of], s = 35, INK = '#16150F', X = v => (v - 38) * s, Y = v => v * s + 5, O = this.OA, tf = this.oPlay.takeF;
+    x.fillStyle = '#E9E5DC'; x.fillRect(0, 0, 1000, 500); x.fillStyle = '#F6F3EC'; x.fillRect(X(O.x0), Y(O.y0), (O.x1 - O.x0) * s, (O.y1 - O.y0) * s); x.strokeStyle = INK; x.lineWidth = 8; x.strokeRect(X(O.x0) - 4, Y(O.y0) - 4, (O.x1 - O.x0) * s + 8, (O.y1 - O.y0) * s + 8);
+    x.strokeStyle = 'rgba(22,21,15,.45)'; x.setLineDash([8, 6]); x.lineWidth = 2; x.beginPath(); x.moveTo(X(60), Y(O.y0)); x.lineTo(X(60), Y(O.y1)); x.stroke(); x.setLineDash([]);
+    const i0 = Math.max(0, this.of - 90); x.strokeStyle = 'rgba(22,21,15,.3)'; x.lineWidth = 2; x.beginPath(); for (let i = i0; i <= this.of; i++) { const g = F[i]; i > i0 ? x.lineTo(X(g[4]), Y(g[5])) : x.moveTo(X(g[4]), Y(g[5])); } x.stroke();
+    x.strokeStyle = 'rgba(224,83,31,.45)'; x.setLineDash([5, 5]); x.beginPath(); x.arc(X(f[2]), Y(f[3]), K.Q.reach * s, 0, 7); x.stroke(); x.setLineDash([]); x.fillStyle = '#E0531F'; x.beginPath(); x.arc(X(f[2]), Y(f[3]), .8 * s, 0, 7); x.fill();
+    x.fillStyle = '#1F3FD1'; x.beginPath(); x.arc(X(f[0]), Y(f[1]), .8 * s, 0, 7); x.fill();
+    if (tf != null && this.of >= tf && this.of < tf + 50) { const g = F[tf], k = (this.of - tf) / 50; x.strokeStyle = '#E0531F'; x.globalAlpha = 1 - k; x.lineWidth = 5; x.beginPath(); x.arc(X(g[4]), Y(g[5]), (.6 + k * 2.5) * s, 0, 7); x.stroke(); x.globalAlpha = 1; }
+    x.fillStyle = f[6] ? '#C9C3B6' : '#F6F3EC'; x.beginPath(); x.arc(X(f[4]), Y(f[5]), .4 * s, 0, 7); x.fill(); x.strokeStyle = f[8] ? '#E0531F' : INK; x.lineWidth = 3; x.stroke();
+    const nm = { kalkan: 'gövdeyle koruyor', sür: 'sürüyor', fiske: 'fiske çalımı', kenar: 'kenar çalımı' }, pn = { direkt: 'doğrudan', yan: 'yandan dolaşıyor', kes: 'önünü kesiyor', 'fake·gösteriyor': 'fake: bir yanı gösteriyor', 'fake·giriyor': 'fake: öbür yandan giriyor' };
+    x.fillStyle = INK; x.font = "600 15px 'JetBrains Mono', monospace"; x.textAlign = 'left'; const end = this.of === F.length - 1; x.fillText((this.of / 60).toFixed(1) + ' sn', 14, 494); x.textAlign = 'right';
+    x.fillText(f[8] ? 'PRESÇİ ALDI · ' + this.oPlay.takeHow + ' · şimdi turuncu taşıyor' + (end && this.oPlay.after ? ' · ' + this.oPlay.after : '') : end ? this.oPlay.res : 'mavi: ' + (nm[f[7]] || '') + ' · turuncu: ' + (pn[f[9]] || f[9]), 986, 494); }
+  oRows() { const S = this.state, pick = (cur, v) => cur === v ? ['#16150F', '#F6F3EC'] : ['transparent', '#16150F'];
+    const row = (k, label, vals) => ({ label, opts: vals.map(v => { const [bg, fg] = pick(S[k], v); return { label: String(v), bg, fg, set: () => this.setState({ [k]: v }, () => this.oGo()) }; }) });
+    return [row('oWall', 'Kenar çalımı', ['açık', 'kapalı']), row('oY', 'Taşıyıcı', ['kenarda', 'ortada']), row('oFrom', 'Presçi geliyor', ['önden', 'iç taraftan']), row('oHz', 'Hız', ['taşıyıcı hızlı', 'eşit', 'presçi hızlı']), row('oPlan', 'Presçinin planı', ['Otomatik', 'Sadece direkt', 'Fake yok']), row('oSur', 'Taşıyıcının Sürme', [5, 10, 15]), row('oOk', 'Taşıyıcının Okuma', [5, 10, 15]), row('oKes', 'Presçinin Kesme', [5, 10, 15]), row('oPok', 'Presçinin Okuma', [5, 10, 15])]; }
+  rcv = React.createRef();
+  // Pas alma: pas → karşılama (dokunuş fiziği) → kontrol tarafı → dönüş (dönüş kuralı). Presçi aynı anda koşar.
+  recvRun(rnd, rec) {
+    const K = window.AlanCore, T = K.Turn, Q = K.Q, S = this.state, PX = 34, PY = 31;
+    const rp = { name: 'Alıcı', x: 50, y: 25, vx: 0, vy: 0, team: 0, role: 'Orta', R: 8, D: 1, a: { tutus: S.rTut, surme: S.rSur, okuma: S.rOk, hiz: 10 } };
+    const tg = { 'ayağına': [50, 25], 'önüne': [55, 25], 'arkasına': [45, 25], 'yanına': [50, 20.5] }[S.rTo];
+    const pq = { 'yok': null, 'Kuyu tarafından': [56, 25], 'yandan': [50, 18.5], 'pasör tarafından': [44, 27.5] }[S.rPr];
+    const op = pq ? { name: 'Presçi', x: pq[0], y: pq[1], vx: 0, vy: 0, team: 1, role: 'Orta', R: 8, D: 1, a: { kesme: 10, tutus: 10, okuma: 10, hiz: 10 } } : null, src = op ? [rp, op] : [rp];
+    const dx = tg[0] - PX, dy = tg[1] - PY, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
+    const arr = v0 => { const b = K.makeBall({ x: PX, y: PY, vx: ux * v0, vy: uy * v0, team: 0, ch: .3 }); for (let i = 0; i < 400 && !b.done; i++) { K.stepBall(b, []); if ((b.x - PX) * ux + (b.y - PY) * uy >= L) return Math.hypot(b.vx, b.vy); } return 0; };
+    let lo = S.rV, hi = 5; for (let i = 0; i < 14; i++) { const m = (lo + hi) / 2; if (arr(m) < S.rV) lo = m; else hi = m; }
+    const b = K.makeBall({ x: PX, y: PY, vx: ux * hi, vy: uy * hi, team: 0, ch: .3 }); b.t = 9;
+    const spd = p => (.17 + (p.a.hiz ?? 10) * .006), fr = [], cd = new Map(); let ph = 'pas', res = null, tCtrl = null, touches = 0, aim = null, a0 = 0, path = '';
+    const reactR = S.rRun === 'pasa koşuyor' ? 0 : 4, reactO = 14 - 10 * .5;
+    for (let t = 0; t < 300 && !res && ph !== 'dön'; t++) {
+      // alıcı: yörüngede yetişebildiği ilk yere (koşarak karşılarsa erken ve hızlı, bekliyorsa ancak gerekirse)
+      if (t >= reactR && (t % 6 === 0 || !aim)) { const pts = b.done ? [{ x: b.x, y: b.y }] : K.predict(b, src, null, 200).pts, v = spd(rp) * (S.rRun === 'pasa koşuyor' ? 1.25 : 1); aim = null; for (let i = 0; i < pts.length; i += 2) { const d = Math.hypot(pts[i].x - rp.x, pts[i].y - rp.y) - Q.reach * .7; if (d / v <= i) { aim = pts[i]; break; } } if (!aim) aim = pts[pts.length - 1]; }
+      if (aim) { const ax = aim.x - rp.x, ay = aim.y - rp.y, al = Math.hypot(ax, ay), v = spd(rp) * (S.rRun === 'pasa koşuyor' || ph === 'boşta' ? 1.25 : 1); const w = al > .3 ? Math.min(v, al) : 0; rp.vx += ((al ? ax / al * w : 0) - rp.vx) * .3; rp.vy += ((al ? ay / al * w : 0) - rp.vy) * .3; if (S.rRun !== 'pasa koşuyor' && ph === 'pas' && Math.hypot(b.x - rp.x, b.y - rp.y) > 8 && al < Q.reach * .7) { rp.vx *= .5; rp.vy *= .5; } rp.x += rp.vx; rp.y += rp.vy; }
+      if (op && t > reactO) { const g = ph === 'pas' && aim ? aim : b, gx = g.x - op.x, gy = g.y - op.y, gl = Math.hypot(gx, gy), v = spd(op) * 1.25; if (gl > .4) { op.vx += (gx / gl * v - op.vx) * .3; op.vy += (gy / gl * v - op.vy) * .3; op.x += op.vx; op.y += op.vy; } const pd = Math.hypot(op.x - rp.x, op.y - rp.y); if (pd < 1.7) { op.x = rp.x + (op.x - rp.x) / pd * 1.7; op.y = rp.y + (op.y - rp.y) / pd * 1.7; } }
+      const ox = b.x, oy = b.y; if (!b.done) K.stepBall(b, src);
+      const sx = b.x - ox, sy = b.y - oy, sl = sx * sx + sy * sy; let hit = null, hd = 1e9;
+      for (const p of src) { if ((cd.get(p) || 0) > t) continue; const tt = sl > 0 ? Math.max(0, Math.min(1, ((p.x - ox) * sx + (p.y - oy) * sy) / sl)) : 1, d = Math.hypot(ox + sx * tt - p.x, oy + sy * tt - p.y); if (d < Q.reach && d < hd) { hd = d; hit = p; } }
+      if (hit) { const Tc = K.touchCap(b, hit, src), u = Math.min(.999, Math.max(.001, rnd())), capE = Tc.cap + Tc.s * Math.log(u / (1 - u)); if (hit === rp) touches++;
+        if (Tc.vr <= capE) { if (hit === op) { res = ph === 'pas' ? 'rakip pası kesti' : 'rakip boştaki Çekirdeği aldı'; } else { tCtrl = t; a0 = Math.atan2(b.y - rp.y, b.x - rp.x); ph = 'dön'; } }
+        else { cd.set(hit, t + 6); let nx = b.x - hit.x, ny = b.y - hit.y, nl = Math.hypot(nx, ny) || 1; nx /= nl; ny /= nl; const left = Math.max(0, Tc.vr - Math.max(0, capE)), vx = Tc.vrx / (Tc.vr || 1), vy = Tc.vry / (Tc.vr || 1), dn = vx * nx + vy * ny; let rx = vx, ry = vy; if (dn < 0) { rx = vx - (1 + Q.rest2) * dn * nx; ry = vy - (1 + Q.rest2) * dn * ny; } const rl = Math.hypot(rx, ry) || 1; let fx = rx / rl, fy = ry / rl; if (hit === rp) { const st = Q.steer * Math.max(0, Math.min(1, capE / Tc.vr)) * (.5 + (Tc.sk - 10) * .04); fx = fx * (1 - st) + st; fy = fy * (1 - st); const fl = Math.hypot(fx, fy) || 1; fx /= fl; fy /= fl; } b.vx = (hit.vx || 0) + fx * left; b.vy = (hit.vy || 0) + fy * left; b.x = hit.x + nx * (Q.reach + .05); b.y = hit.y + ny * (Q.reach + .05); b.done = null; ph = 'boşta'; aim = null; } }
+      if (ph === 'boşta' && (b.x < 26 || b.x > 74 || b.y < 13 || b.y > 37)) res = 'Çekirdek kaçtı';
+      if (rec) fr.push([rp.x, rp.y, b.x, b.y, op ? op.x : null, op ? op.y : null, ph === 'boşta' ? 1 : 0]);
+    }
+    if (!res && ph === 'dön') {
+      const pc = { ...rp, vx: rp.vx * .5, vy: rp.vy * .5 }, oc = op ? [{ ...op, a: { ...op.a, okuma: 28 } }] : [], plan = T.choose(pc, a0, 0, oc, rnd), sim = T.simulate(pc, a0, 0, plan, oc, rnd, rec), ar = T.arc(a0, 0, plan.dir);
+      path = ar < .35 ? 'dönmeye gerek yok' : (plan.mode === 'fiske' ? 'fiske, ' : 'dolaştırdı, ') + (plan.dir === T.shortDir(a0, 0) ? 'kısa yol' : 'uzun yol');
+      if (rec) for (const f of sim.fr) fr.push([f[0], f[1], f[2], f[3], op ? f[5] : null, op ? f[6] : null, f[4] ? 1 : 2]);
+      res = sim.res === 'döndü' ? 'yöneldi' : sim.res === 'rakip aldı' ? 'dönerken rakip aldı' : 'fiske kaçtı';
+      return { res, tCtrl, tDone: sim.t != null ? tCtrl + sim.t : null, touches, path, fr, side: Math.round(a0 * 180 / Math.PI), op: !!op };
+    }
+    return { res: res || 'süre', tCtrl, tDone: null, touches, path, fr, op: !!op };
+  }
+  rGo = () => { if (!window.AlanCore || !window.AlanCore.Turn) return; this.rPlay = this.recvRun(Math.random, true); this.rf = 0; const C = {}, Pm = {}, N = 300; let ts = 0, tn = 0, first = 0;
+    for (let i = 0; i < N; i++) { const r = this.recvRun(Math.random, false); C[r.res] = (C[r.res] || 0) + 1; if (r.path) Pm[r.path] = (Pm[r.path] || 0) + 1; if (r.res === 'yöneldi') { ts += r.tDone; tn++; } if (r.tCtrl != null && r.touches <= 1) first++; }
+    const r0 = this.rPlay, pc = v => Math.round(v / N * 100);
+    this.setState({ rLast: `Bu oynama: ${r0.res}${r0.touches > 1 ? ' · ' + r0.touches + ' dokunuşta kontrol' : ''}${r0.path ? ' · ' + r0.path : ''}${r0.res === 'yöneldi' ? ' · ' + (r0.tDone / 60).toFixed(2) + ' sn' : ''}`,
+      rStats: [`yöneldi %${pc(C['yöneldi'] || 0)}${tn ? ' · pastan ort ' + (ts / tn / 60).toFixed(2) + ' sn' : ''}`, `ilk dokunuşta kontrol %${pc(first)}`, ...Object.entries(C).filter(([k]) => k !== 'yöneldi').sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} %${pc(v)}`), Object.keys(Pm).length ? 'dönüş: ' + Object.entries(Pm).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} %${pc(v)}`).join(' · ') : ''].filter(Boolean) }); };
+  rStep() { if (!this.rPlay) return; this.rk = (this.rk || 0) + 1; if (this.rk % 2 === 0 && this.rf < this.rPlay.fr.length - 1) this.rf++; }
+  rDraw() { const cv = this.rcv.current, K = window.AlanCore; if (!cv || !K || !this.rPlay || !this.rPlay.fr.length) return; const x = cv.getContext('2d'), F = this.rPlay.fr, f = F[this.rf], s = 22, INK = '#16150F', X = v => (v - 27) * s, Y = v => (v - 13.6) * s;
+    x.fillStyle = '#F6F3EC'; x.fillRect(0, 0, 1000, 500);
+    const tg = { 'ayağına': [50, 25], 'önüne': [55, 25], 'arkasına': [45, 25], 'yanına': [50, 20.5] }[this.state.rTo]; x.strokeStyle = 'rgba(22,21,15,.5)'; x.lineWidth = 2; x.beginPath(); x.moveTo(X(tg[0]) - 8, Y(tg[1]) - 8); x.lineTo(X(tg[0]) + 8, Y(tg[1]) + 8); x.moveTo(X(tg[0]) + 8, Y(tg[1]) - 8); x.lineTo(X(tg[0]) - 8, Y(tg[1]) + 8); x.stroke();
+    x.globalAlpha = .35; x.fillStyle = '#1F3FD1'; x.beginPath(); x.arc(X(34), Y(31), .8 * s, 0, 7); x.fill(); x.globalAlpha = 1;
+    x.strokeStyle = 'rgba(22,21,15,.35)'; x.lineWidth = 2; x.beginPath(); for (let i = 0; i <= this.rf; i++) { const g = F[i]; i ? x.lineTo(X(g[2]), Y(g[3])) : x.moveTo(X(g[2]), Y(g[3])); } x.stroke();
+    if (f[4] != null) { x.strokeStyle = 'rgba(224,83,31,.45)'; x.setLineDash([5, 5]); x.beginPath(); x.arc(X(f[4]), Y(f[5]), K.Q.reach * s, 0, 7); x.stroke(); x.setLineDash([]); x.fillStyle = '#E0531F'; x.beginPath(); x.arc(X(f[4]), Y(f[5]), .8 * s, 0, 7); x.fill(); }
+    x.strokeStyle = 'rgba(31,63,209,.35)'; x.setLineDash([4, 4]); x.beginPath(); x.arc(X(f[0]), Y(f[1]), K.Q.reach * s, 0, 7); x.stroke(); x.setLineDash([]); x.fillStyle = '#1F3FD1'; x.beginPath(); x.arc(X(f[0]), Y(f[1]), .8 * s, 0, 7); x.fill();
+    x.strokeStyle = INK; x.lineWidth = 3; const ax = X(f[0]) + 46, ay = Y(f[1]); x.beginPath(); x.moveTo(ax, ay); x.lineTo(ax + 40, ay); x.lineTo(ax + 31, ay - 7); x.moveTo(ax + 40, ay); x.lineTo(ax + 31, ay + 7); x.stroke();
+    x.fillStyle = f[6] === 1 ? '#C9C3B6' : '#F6F3EC'; x.beginPath(); x.arc(X(f[2]), Y(f[3]), .4 * s, 0, 7); x.fill(); x.strokeStyle = INK; x.lineWidth = 3; x.stroke();
+    x.fillStyle = INK; x.font = "600 16px 'JetBrains Mono', monospace"; x.textAlign = 'left'; x.fillText(`${(this.rf / 60).toFixed(2)} sn · ${f[6] === 2 ? 'kontrol edildi, dönüyor' : f[6] === 1 ? 'Çekirdek boşta' : this.rf === F.length - 1 ? this.rPlay.res : 'pas yolda'}`, 14, 26); }
+  rRows() { const S = this.state, pick = (cur, v) => cur === v ? ['#16150F', '#F6F3EC'] : ['transparent', '#16150F'];
+    const row = (k, label, vals, fmt) => ({ label, opts: vals.map(v => { const [bg, fg] = pick(S[k], v); return { label: fmt ? fmt(v) : String(v), bg, fg, set: () => this.setState({ [k]: v }, () => this.rGo()) }; }) });
+    return [row('rTo', 'Pas nereye', ['ayağına', 'önüne', 'arkasına', 'yanına']), row('rV', 'Pasın alıcıya varış hızı', [.4, .8, 1.2], v => v < .5 ? 'yumuşak' : v < 1 ? 'normal' : 'sert'), row('rPr', 'Presçi', ['yok', 'Kuyu tarafından', 'yandan', 'pasör tarafından']), row('rRun', 'Alıcı', ['bekliyor', 'pasa koşuyor']), row('rTut', 'Alıcının Tutuş', [5, 10, 15]), row('rSur', 'Alıcının Sürme', [5, 10, 15]), row('rOk', 'Alıcının Okuma', [5, 10, 15])]; }
+  tcv = React.createRef();
+  turnRun(rnd, rec) {
+    const K = window.AlanCore, T = K.Turn, TQ = T.TQ, S = this.state, body = K.Q.body, R = K.Q.reach;
+    const p = { x: 50, y: 25, vx: S.tV, vy: 0, a: { surme: S.tSur, okuma: S.tOk } };
+    const riv = ({ 'üstte': [[50.3, 22.4]], 'altta': [[50.3, 27.6]], 'iki yanda': [[50.3, 22.4], [50.3, 27.6]], 'yok': [] }[S.tRiv]).map(([x, y]) => ({ x, y, a: { kesme: 10, okuma: 10 }, cd: 0 }));
+    const a0 = Math.PI + .5, a1 = 0, sd = T.shortDir(a0, a1), plans = { 'Kısa yol': { mode: 'dolaş', dir: sd }, 'Uzun yol': { mode: 'dolaş', dir: -sd }, 'Fiske kısa': { mode: 'fiske', dir: sd }, 'Fiske uzun': { mode: 'fiske', dir: -sd } };
+    const plan = S.tMode === 'Otomatik' ? T.choose(p, a0, a1, riv, rnd) : plans[S.tMode], sim = T.simulate(p, a0, a1, plan, riv, rnd, rec), path = (plan.mode === 'fiske' ? 'fiske, ' : '') + (plan.dir === sd ? 'kısa yol' : 'uzun yol');
+    return { res: sim.res, t: sim.t, path, fr: sim.fr, nR: riv.length };
+  }
+  tGo = () => { if (!window.AlanCore || !window.AlanCore.Turn) return; this.tPlay = this.turnRun(Math.random, true); this.tf = 0; const C = {}, Pm = {}, N = 300; let ts = 0, tn = 0;
+    for (let i = 0; i < N; i++) { const r = this.turnRun(Math.random, false); C[r.res] = (C[r.res] || 0) + 1; Pm[r.path] = (Pm[r.path] || 0) + 1; if (r.res === 'döndü') { ts += r.t; tn++; } }
+    const r0 = this.tPlay, pc = k => Math.round((C[k] || 0) / N * 100);
+    this.setState({ tLast: `Bu oynama: ${r0.path} · ${r0.res}${r0.res === 'döndü' && r0.t != null ? ' (' + (r0.t / 60).toFixed(2) + ' sn)' : ''}`, tStats: [`döndü %${pc('döndü')}${tn ? ' · ort ' + (ts / tn / 60).toFixed(2) + ' sn' : ''}`, `rakip aldı %${pc('rakip aldı')}`, C['fiske kaçtı'] ? `fiske kaçtı %${pc('fiske kaçtı')}` : '', 'seçilen yol: ' + Object.entries(Pm).map(([k, v]) => `${k} %${Math.round(v / N * 100)}`).join(' · ')].filter(Boolean) }); };
+  tStep() { if (!this.tPlay) return; this.tk = (this.tk || 0) + 1; if (this.tk % 2 === 0 && this.tf < this.tPlay.fr.length - 1) this.tf++; }
+  tDraw() { const cv = this.tcv.current, K = window.AlanCore; if (!cv || !K || !this.tPlay) return; const x = cv.getContext('2d'), F = this.tPlay.fr, f = F[this.tf], s = 50, INK = '#16150F', X = v => 500 + (v - f[0]) * s, Y = v => 200 + (v - 25) * s;
+    x.fillStyle = '#F6F3EC'; x.fillRect(0, 0, 1000, 400);
+    x.strokeStyle = 'rgba(22,21,15,.35)'; x.lineWidth = 2; x.beginPath(); for (let i = 0; i <= this.tf; i++) { const g = F[i]; i ? x.lineTo(X(g[2]), Y(g[3])) : x.moveTo(X(g[2]), Y(g[3])); } x.stroke();
+    for (let k = 0; k < this.tPlay.nR; k++) { const ox = f[5 + k * 2], oy = f[6 + k * 2]; x.strokeStyle = 'rgba(224,83,31,.45)'; x.setLineDash([5, 5]); x.beginPath(); x.arc(X(ox), Y(oy), K.Q.reach * s, 0, 7); x.stroke(); x.setLineDash([]); x.fillStyle = '#E0531F'; x.beginPath(); x.arc(X(ox), Y(oy), .8 * s, 0, 7); x.fill(); }
+    x.strokeStyle = 'rgba(31,63,209,.3)'; x.setLineDash([4, 4]); x.beginPath(); x.arc(X(f[0]), Y(f[1]), K.Q.body * s, 0, 7); x.stroke(); x.setLineDash([]);
+    x.fillStyle = '#1F3FD1'; x.beginPath(); x.arc(X(f[0]), Y(f[1]), .8 * s, 0, 7); x.fill();
+    x.strokeStyle = INK; x.lineWidth = 3; const ax = X(f[0]) + 95; x.beginPath(); x.moveTo(ax, 200); x.lineTo(ax + 60, 200); x.lineTo(ax + 48, 190); x.moveTo(ax + 60, 200); x.lineTo(ax + 48, 210); x.stroke();
+    x.fillStyle = f[4] ? '#C9C3B6' : '#F6F3EC'; x.beginPath(); x.arc(X(f[2]), Y(f[3]), .35 * s, 0, 7); x.fill(); x.strokeStyle = INK; x.lineWidth = 3; x.stroke();
+    x.fillStyle = INK; x.font = "600 16px 'JetBrains Mono', monospace"; x.textAlign = 'left'; x.fillText(`${(this.tf / 60).toFixed(2)} sn · ${this.tPlay.path}${f[4] ? ' · Çekirdek boşta' : ''}`, 14, 26); }
+  tRows() { const S = this.state, pick = (cur, v) => cur === v ? ['#16150F', '#F6F3EC'] : ['transparent', '#16150F'];
+    const row = (k, label, vals, fmt) => ({ label, opts: vals.map(v => { const [bg, fg] = pick(S[k], v); return { label: fmt ? fmt(v) : String(v), bg, fg, set: () => this.setState({ [k]: v }, () => this.tGo()) }; }) });
+    return [row('tMode', 'Yol', ['Otomatik', 'Kısa yol', 'Uzun yol', 'Fiske kısa', 'Fiske uzun']), row('tRiv', 'Rakip', ['yok', 'üstte', 'altta', 'iki yanda'], v => v === 'üstte' ? 'kısa yolda' : v === 'altta' ? 'uzun yolda' : v), row('tSur', 'Sürme', [5, 10, 15, 18]), row('tOk', 'Okuma (Otomatik yol seçimi)', [5, 10, 15]), row('tV', 'Taşıyıcının hızı', [0, .12, .24], v => v === 0 ? 'duruyor' : v < .2 ? 'yürüyor' : 'koşuyor')]; }
+  state = { oWall: 'açık', oY: 'kenarda', oFrom: 'önden', oHz: 'eşit', oPlan: 'Otomatik', oPok: 10, oSur: 10, oOk: 10, oKes: 10, oLast: '', oStats: [], rTo: 'arkasına', rV: .8, rPr: 'Kuyu tarafından', rRun: 'bekliyor', rTut: 10, rSur: 10, rOk: 10, rLast: '', rStats: [], tSur: 10, tOk: 10, tV: 0, tRiv: 'üstte', tMode: 'Otomatik', tLast: '', tStats: [], v: 1, tutus: 10, ch: .3, mv: 'dur', press: 0, last: 'Sahaya tıkla.', stats: [] };
+  cv = React.createRef();
+  componentDidMount() { const w0 = () => { if (window.AlanCore && window.AlanCore.Turn) { this.tGo(); this.rGo(); this.oGo(); } else setTimeout(w0, 60); }; w0(); const f = () => { this.step(); this.draw(); this.tStep(); this.tDraw(); this.rStep(); this.rDraw(); this.oStepAnim(); this.oDraw(); this.raf = requestAnimationFrame(f); }; this.raf = requestAnimationFrame(f); }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); }
+  player() { const S = this.state, mv = S.mv === 'koşuyor' ? -1 : S.mv === 'kaçıyor' ? 1 : 0; return { name: 'Oyuncu', x: 60, y: 25, team: 0, a: { tutus: S.tutus }, role: 'Orta', tx: 75, ty: 25, vx: 0, vy: 0, mv, R: 8 }; }
+  opps() { return this.state.press ? [{ name: 'Rakip', x: 62, y: 23.5, team: 1, a: {}, role: 'Orta', R: 8, D: 1, noTouch: true }] : []; }
+  launch(fx, fy, rnd) { const K = window.AlanCore, p = this.player(), dx = p.x - fx, dy = p.y - fy, L = Math.hypot(dx, dy) || 1, b = K.makeBall({ x: fx, y: fy, vx: 0, vy: 0, team: 0, ch: this.state.ch }); b.from = { name: 'pasör' }; b.t = 9; return { b, p, dx: dx / L, dy: dy / L }; }
+  // Çekirdek oyuncuya seçilen hızla varsın: başlangıç hızı yol boyunca kayıplarla çözülür
+  shoot(fx, fy, rnd) { const K = window.AlanCore, o = this.launch(fx, fy, rnd), src = [o.p, ...this.opps()]; let lo = this.state.v, hi = 6; for (let i = 0; i < 14; i++) { const mid = (lo + hi) / 2, t = K.makeBall({ x: fx, y: fy, vx: o.dx * mid, vy: o.dy * mid, team: 0, ch: this.state.ch }); let s = 0; for (let k = 0; k < 400 && !t.done; k++) { K.stepBall(t, this.opps()); if (Math.hypot(t.x - o.p.x, t.y - o.p.y) < 1.7) { s = Math.hypot(t.vx, t.vy); break; } } if (s < this.state.v) lo = mid; else hi = mid; } o.b.vx = o.dx * hi; o.b.vy = o.dy * hi; o.src = src; return o; }
+  // Dokunuştan sonrası: tutarsa Çekirdeği istediği yöne (ok) sürerek götürür; tutamazsa seken Çekirdeğin peşine düşer ve yeniden dener. Rakip varsa o da Çekirdeğe koşar (tepki sonrası).
+  full(fx, fy, rnd, rec) {
+    const K = window.AlanCore, o = this.shoot(fx, fy, rnd), p = o.p, rv = this.opps()[0] ? { ...this.opps()[0], noTouch: false } : null, src = rv ? [p, rv] : [p], spd = .23, fr = [];
+    if (p.mv) { p.vx = p.mv < 0 ? -o.dx * .25 : o.dx * .25; p.vy = p.mv < 0 ? -o.dy * .25 : o.dy * .25; }
+    let holder = null, t1 = null, touches = 0, hitT = null, out = null;
+    for (let t = 0; t < 240; t++) {
+      if (!holder) { const r = K.stepAll(o.b, src, null, null, rnd); if (r) { touches += r.p === p ? 1 : 0; if (hitT == null) hitT = t; if (r.took) { holder = r.p; t1 = t; } } if (o.b.done && o.b.done !== 'tutuldu' && !holder && o.b.done !== 'durdu') { out = o.b.done; } }
+      // oyuncular: Çekirdek gelirken bekler/koşar; sektikten sonra peşine düşer; tutan istediği yöne sürer
+      const chase = (q, react) => { if (holder || (hitT == null && q === p) || (q === rv && t < react)) return; const dx = o.b.x - q.x, dy = o.b.y - q.y, L = Math.hypot(dx, dy); if (L > .3) { q.vx = dx / L * spd; q.vy = dy / L * spd; } };
+      if (hitT == null && p.mv) { p.x += p.vx; p.y += p.vy; } else chase(p, 0);
+      if (rv) chase(rv, 6);
+      if (holder) { holder.vx = (holder === p ? 1 : -1) * spd * .85; holder.vy = 0; }
+      for (const q of src) if (hitT != null || q === rv) { if (q === rv && !holder && t < 6) continue; q.x += q.vx || 0; q.y += q.vy || 0; if (q !== holder && holder) { q.vx *= .9; q.vy *= .9; } }
+      if (holder) { o.b.x = holder.x + Math.sign(holder.vx || 1) * K.Q.body; o.b.y = holder.y; }
+      if (rec) fr.push([p.x, p.y, rv ? rv.x : null, rv ? rv.y : null, o.b.x, o.b.y, holder === p ? 1 : holder === rv ? 2 : 0]);
+      if (holder && t - t1 > 60) break; if (out) break;
+    }
+    return { holder: holder === p ? 'biz' : holder === rv ? 'rakip' : out ? 'dışarı/Kuyu' : 'kimse', t1, touches, fr, P: K.ctrlP(K.makeBall({ x: p.x, y: p.y, vx: o.dx * this.state.v, vy: o.dy * this.state.v, team: 0, ch: this.state.ch }), this.player(), src) };
+  }
+  click = e => { const r = e.currentTarget.getBoundingClientRect(), fx = (e.clientX - r.left) / r.width * 100, fy = (e.clientY - r.top) / r.height * 50; this.fx = fx; this.fy = fy; this.cur = null; this.play = this.full(fx, fy, Math.random, true); this.pf = 0; const res = this.play; this.setState({ last: res.holder === 'biz' ? (res.touches <= 1 ? 'İlk dokunuşta kontrol etti, Çekirdeği istediği yöne sürüyor' : `İlk dokunuş kaçtı; ${res.touches}. dokunuşta kontrol etti (${(res.t1 / 60).toFixed(1)} sn)`) : res.holder === 'rakip' ? `Kontrol edemedi, Çekirdeği rakip kaptı (${res.touches} dokunuş)` : 'Kontrol edemedi, Çekirdek uzaklaştı' }); this.runStats(fx, fy); };
+  moveP(p) { if (p.mv) { const ux = this.cur ? -this.cur.dx : -1, uy = this.cur ? -this.cur.dy : 0; p.vx = -p.mv * ux * .25 * -1; p.vy = -p.mv * uy * .25 * -1; } }
+  simOne(fx, fy, rnd) { const K = window.AlanCore, o = this.shoot(fx, fy, rnd); const p = o.p; if (p.mv) { p.vx = -o.dx * .25 * p.mv * -1; p.vy = -o.dy * .25 * p.mv * -1; p.vx = p.mv < 0 ? -o.dx * .25 : o.dx * .25; p.vy = p.mv < 0 ? -o.dy * .25 : o.dy * .25; }
+    for (let t = 0; t < 400; t++) { const r = K.stepAll(o.b, o.src, null, null, rnd); if (r) return { took: r.took, vr: K.touchCap(o.b, p, o.src).vr, b: o.b }; if (o.b.done) return { took: false, none: true, b: o.b }; } return { none: true, b: o.b }; }
+  runStats(fx, fy) { this.cur = this.shoot(fx, fy); const agg = { biz: 0, rakip: 0, ilk: 0, t: 0, n: 0 }; for (let i = 0; i < 120; i++) { const r = this.full(fx, fy, Math.random, false); if (r.holder === 'biz') { agg.biz++; if (r.touches <= 1) agg.ilk++; else { agg.t += r.t1; agg.n++; } } else if (r.holder === 'rakip') agg.rakip++; } this.after = [`sonunda bizde ${Math.round(agg.biz / 1.2)}% (ilk dokunuşta ${Math.round(agg.ilk / 1.2)}%)`, agg.n ? `ilk dokunuş kaçınca toparlama ort ${(agg.t / agg.n / 60).toFixed(1)} sn` : '', this.state.press ? `rakip kaptı ${Math.round(agg.rakip / 1.2)}%` : '']; this.runStats0(fx, fy); }
+  runStats0(fx, fy) { let took = 0, back = 0, fwd = 0, side = 0, sp = 0, n = 200, k = 0; for (let i = 0; i < n; i++) { const r = this.simOne(fx, fy, Math.random); if (r.took) { took++; continue; } if (r.none) continue; k++; const o = this.cur, vx = r.b.vx, vy = r.b.vy, s = Math.hypot(vx, vy); sp += s; const al = (vx * o.dx + vy * o.dy) / (s || 1); if (al < -.4) back++; else if (al > .4) fwd++; else side++; }
+    const K = window.AlanCore, p = this.player(), b = K.makeBall({ x: p.x - this.cur.dx, y: p.y - this.cur.dy, vx: this.cur.dx * this.state.v, vy: this.cur.dy * this.state.v, team: 0, ch: this.state.ch }); if (p.mv) { p.vx = p.mv < 0 ? -this.cur.dx * .25 : this.cur.dx * .25; p.vy = p.mv < 0 ? -this.cur.dy * .25 : this.cur.dy * .25; } const T = K.touchCap(b, p, [p, ...this.opps()]);
+    this.setState({ stats: [...(this.after || []), `ilk dokunuşta tuttu ${Math.round(took / n * 100)}%`, `sekti ${k}: geri ${back} · yana ${side} · ileri ${fwd}`, k ? `sekmeden sonra ort hız ${(sp / k).toFixed(2)}` : '', `göreli hız ${T.vr.toFixed(2)} · söndürebildiği ${T.cap.toFixed(2)}`] }); }
+  step() { if (this.play) { if (this.pf < this.play.fr.length - 1) this.pf++; return; } const o = this.cur, K = window.AlanCore; if (!o || this.res) return; const p = o.p; if (p.mv && !o.started) { o.started = true; p.vx = p.mv < 0 ? -o.dx * .25 : o.dx * .25; p.vy = p.mv < 0 ? -o.dy * .25 : o.dy * .25; } if (p.mv && !o.b.done && !o.hit) { p.x += p.vx; p.y += p.vy; }
+    const r = o.hit ? (K.stepBall(o.b, this.opps()), null) : K.stepAll(o.b, o.src, null, null, Math.random); this.trail.push([o.b.x, o.b.y]);
+    if (r && r.took) { this.res = 'TUTTU'; this.setState({ last: `Tuttu (ihtimal %${Math.round(r.P * 100)})` }); }
+    else if (r) { o.hit = true; this.setState({ last: `Söndüremedi, sekti (tutma ihtimali %${Math.round(r.P * 100)}) · kalan hız ${Math.hypot(o.b.vx, o.b.vy).toFixed(2)}` }); }
+    if (o.b.done) this.res = o.b.done; }
+  draw() { const cv = this.cv.current, K = window.AlanCore; if (!cv || !K) return; const x = cv.getContext('2d'), s = 10, INK = '#16150F'; x.fillStyle = '#F6F3EC'; x.fillRect(0, 0, 1000, 500);
+    if (this.play && this.play.fr.length) { const F = this.play.fr, f = F[this.pf]; x.strokeStyle = 'rgba(22,21,15,.35)'; x.lineWidth = 2; x.beginPath(); for (let i = 0; i <= this.pf; i++) { const g = F[i]; i ? x.lineTo(g[4] * s, g[5] * s) : x.moveTo(g[4] * s, g[5] * s); } x.stroke();
+      if (f[2] != null) { x.fillStyle = '#E0531F'; x.beginPath(); x.arc(f[2] * s, f[3] * s, 10, 0, 7); x.fill(); }
+      x.fillStyle = '#1F3FD1'; x.beginPath(); x.arc(f[0] * s, f[1] * s, 10, 0, 7); x.fill(); x.strokeStyle = 'rgba(31,63,209,.35)'; x.setLineDash([4, 4]); x.beginPath(); x.arc(f[0] * s, f[1] * s, K.Q.reach * s, 0, 7); x.stroke(); x.setLineDash([]);
+      x.fillStyle = '#F6F3EC'; x.beginPath(); x.arc(f[4] * s, f[5] * s, 5 + 6 * this.state.ch, 0, 7); x.fill(); x.strokeStyle = f[6] === 2 ? '#E0531F' : INK; x.lineWidth = 2.5; x.stroke();
+      x.fillStyle = INK; x.font = "600 14px 'JetBrains Mono', monospace"; x.fillText((this.pf / 60).toFixed(1) + ' sn', 12, 22); return; }
+    const p = this.cur ? this.cur.p : this.player(); for (const o of this.opps()) { x.fillStyle = '#E0531F'; x.beginPath(); x.arc(o.x * s, o.y * s, 10, 0, 7); x.fill(); }
+    x.strokeStyle = 'rgba(31,63,209,.35)'; x.setLineDash([4, 4]); x.beginPath(); x.arc(p.x * s, p.y * s, K.Q.reach * s, 0, 7); x.stroke(); x.setLineDash([]);
+    x.fillStyle = '#1F3FD1'; x.beginPath(); x.arc(p.x * s, p.y * s, 10, 0, 7); x.fill(); x.strokeStyle = INK; x.lineWidth = 2; x.beginPath(); x.moveTo(p.x * s + 14, p.y * s); x.lineTo(p.x * s + 40, p.y * s); x.lineTo(p.x * s + 33, p.y * s - 5); x.moveTo(p.x * s + 40, p.y * s); x.lineTo(p.x * s + 33, p.y * s + 5); x.stroke();
+    if (this.trail && this.trail.length) { x.strokeStyle = 'rgba(22,21,15,.4)'; x.lineWidth = 2; x.beginPath(); this.trail.forEach(([a, b], i) => i ? x.lineTo(a * s, b * s) : x.moveTo(a * s, b * s)); x.stroke(); }
+    if (this.cur) { const b = this.cur.b, hd = this.res === 'TUTTU'; x.fillStyle = '#F6F3EC'; x.beginPath(); x.arc((hd ? p.x + 1.15 : b.x) * s, (hd ? p.y : b.y) * s, 5 + 6 * this.state.ch, 0, 7); x.fill(); x.strokeStyle = INK; x.lineWidth = 2.5; x.stroke(); } }
+  renderVals() {
+    const S = this.state, pick = (cur, v) => cur === v ? ['#16150F', '#F6F3EC'] : ['transparent', '#16150F'];
+    const row = (k, label, vals, fmt) => ({ label, opts: vals.map(v => { const [bg, fg] = pick(S[k], v); return { label: fmt ? fmt(v) : String(v), bg, fg, set: () => this.setState({ [k]: v }, () => this.cur && this.runStats(this.fx, this.fy)) }; }) });
+    return { ocv: this.ocv, oGo: this.oGo, oLast: S.oLast, oStats: S.oStats, oRows: this.oRows(), oN: this.oN, rcv: this.rcv, rGo: this.rGo, rLast: S.rLast, rStats: S.rStats, rRows: this.rRows(), tcv: this.tcv, tGo: this.tGo, tLast: S.tLast, tStats: S.tStats, tRows: this.tRows(), cv: this.cv, click: this.click, last: S.last, stats: S.stats.filter(Boolean),
+      rows: [row('v', 'Çekirdeğin oyuncuya varış hızı', [.4, .8, 1.2, 1.6, 2]), row('ch', 'Şarj', [0, .3, .6, 1], v => '%' + Math.round(v * 100)), row('tutus', 'Tutuş', [5, 10, 15, 18]), row('mv', 'Oyuncu', ['dur', 'koşuyor', 'kaçıyor'], v => v === 'koşuyor' ? 'Çekirdeğe koşuyor' : v === 'kaçıyor' ? 'Çekirdekle aynı yöne' : 'duruyor'), row('press', 'Yanında rakip (baskı)', [0, 1], v => v ? 'var' : 'yok')] };
+  }
+}
+</script>
+</body>
+</html>

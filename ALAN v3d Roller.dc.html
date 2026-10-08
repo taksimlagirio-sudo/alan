@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F3FD1}a:hover{color:#E0531F}
+button{font:inherit;color:inherit}
+</style>
+<script src="alan-v3d/core.js?v=r2"></script>
+</helmet>
+<div style="max-width:1400px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box">
+  <header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;background:#16150F;color:#F6F3EC;padding:14px 20px">
+    <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
+      <span style="font-size:28px;font-weight:800;letter-spacing:-.02em">ALAN v3d</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Roller · hücum takımı ve savunma takımı</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <sc-for list="{{ matchups }}" as="o" hint-placeholder-count="2">
+        <button onClick="{{ o.set }}" style="background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid #F6F3EC;padding:7px 12px;cursor:pointer">{{ o.label }}</button>
+      </sc-for>
+    </div>
+  </header>
+  <div style="font-size:16px;line-height:1.5;max-width:920px;text-wrap:pretty">Mavi hücum ediyor, Turuncu savunuyor; ikisi de kendi stili ve rolleriyle. Pozisyon sayıyla, ya da Çekirdek Turuncu'ya geçtikten sonra 12 saniye (kontrayı görmek için) oynanır. Oyuncunun altındaki yazı, o an geçerli rolü. Uyum: talimatın geçerli olduğu anlarda oyuncunun talimatın istediği yerde olduğu zamanın payı.</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,620px),1fr));gap:16px">
+    <sc-for list="{{ cards }}" as="c" hint-placeholder-count="3">
+      <div style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">
+          <span style="font-size:20px;font-weight:800">{{ c.title }}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;background:{{ c.resBg }};color:{{ c.resFg }};padding:3px 8px">{{ c.res }}</span>
+        </div>
+        <div style="font-size:14px;line-height:1.45">{{ c.why }}</div>
+        <canvas ref="{{ c.ref }}" width="1000" height="500" style="width:100%;aspect-ratio:2/1;display:block;background:#F6F3EC;border:1.5px solid #16150F"></canvas>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:13px">
+          <button onClick="{{ c.replay }}" style="background:#16150F;color:#F6F3EC;border:1.5px solid #16150F;padding:5px 10px;cursor:pointer">Yeni oynama</button>
+          <button onClick="{{ c.restart }}" style="background:transparent;border:1.5px solid #16150F;padding:5px 10px;cursor:pointer">Baştan izle</button>
+          <span>{{ c.clock }}</span>
+          <span>{{ c.summary }}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:10px">
+          <sc-for list="{{ c.teams }}" as="tm" hint-placeholder-count="2">
+            <div style="display:grid;grid-template-columns:minmax(52px,auto) minmax(0,1fr) 44px;gap:3px 8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;align-content:start">
+              <span style="grid-column:1 / -1;font-weight:600;color:{{ tm.col }}">{{ tm.title }}</span>
+              <sc-for list="{{ tm.rows }}" as="r" hint-placeholder-count="6">
+                <span>{{ r.name }}</span><span>{{ r.role }}</span><span style="text-align:right;font-weight:600">{{ r.p }}</span>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.5;max-height:120px;overflow:auto;border-top:1.5px solid #16150F;padding-top:6px">
+          <sc-for list="{{ c.events }}" as="e" hint-placeholder-count="4">
+            <div style="color:{{ e.col }}">{{ e.text }}</div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="font-size:14px;line-height:1.5;max-width:920px;text-wrap:pretty">Ölçütler · Kanat: orta çizgiden 13+ birim uzakta · Kurucu: Çekirdeğin gerisinde · Koşucu: rakibin son savunmacısıyla aynı hizada ya da arkasında · Pivot: Çekirdek rakip yarıdayken Kuyu'ya 28 birimden yakın ve ortada · Süpürücü: takımının en geride olanı (3 birim pay) · Presçi: basıyor · Markajcı: adamına 6 birimden yakın · Önde: rakip yarıda.</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  starts = ['kurulum', 'orta', 'kanat'];
+  meta = { kurulum: ['Arkadan kurulum', "Çekirdek Kurucu'da, kendi yarısının derininde. Savunma takımı yerleşik."], orta: ['Orta sahada', 'Çekirdek orta sahada, Serbest oyuncuda. Savunma bloğunun önü.'], kanat: ['Kanatta, son üçte bir', "Çekirdek Kanat'ta, rakip yarıda çizgiye yakın. Savunma Kuyu önünde yerleşik."] };
+  refs = this.starts.map(() => React.createRef());
+  state = { mu: 0, res: {}, n: 0 };
+  play = this.starts.map(() => ({ f: 0 }));
+  componentDidMount() { this.w = new Worker('alan-v3d/rol-worker.js?v=' + Date.now()); this.w.onmessage = e => this.got(e.data); this.runAll(); const tick = () => { this.draw(); this.raf = requestAnimationFrame(tick); }; this.raf = requestAnimationFrame(tick); this.iv = setInterval(() => this.setState({ n: this.state.n + 1 }), 250); }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); clearInterval(this.iv); this.w && this.w.terminate(); }
+  mus() { return [['Hücumcu', 'Savunmacı'], ['Savunmacı', 'Hücumcu']]; }
+  ask(i) { const [atk, def] = this.mus()[this.state.mu]; this.w.postMessage({ id: i, atk, def, start: this.starts[i], seed: 1 + Math.floor(Math.random() * 1e6), mu: this.state.mu }); }
+  runAll() { this.setState({ res: {} }); this.play.forEach(p => p.f = 0); this.starts.forEach((_, i) => this.ask(i)); }
+  got(d) { if (!d.ok) { this.setState({ res: { ...this.state.res, [d.id]: { err: d.msg } } }); return; } this.play[d.id].f = 0; this.setState({ res: { ...this.state.res, [d.id]: d.r } }); }
+  draw() {
+    this.starts.forEach((_, i) => {
+      const cv = this.refs[i].current, r = this.state.res[i]; if (!cv) return; const x = cv.getContext('2d'), s = 10, A = '#1F3FD1', B = '#E0531F', INK = '#16150F', C = window.AlanCore;
+      x.fillStyle = '#F6F3EC'; x.fillRect(0, 0, 1000, 500); x.strokeStyle = 'rgba(22,21,15,.3)'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(500, 0); x.lineTo(500, 500); x.stroke();
+      const KR = C ? C.KR : 5, MO = C ? C.MOUTH : 5.5; x.fillStyle = INK; for (const kx of [0, 100]) { x.beginPath(); x.arc(kx * s, 250, KR * s, 0, 7); x.fill(); } x.strokeStyle = '#F6F3EC'; x.lineWidth = 3; for (const kx of [0, 100]) { x.beginPath(); x.moveTo(kx * s, (25 - MO) * s); x.lineTo(kx * s, (25 + MO) * s); x.stroke(); }
+      if (!r || r.err || !r.frames) { x.fillStyle = INK; x.font = "600 22px 'JetBrains Mono', monospace"; x.textAlign = 'center'; x.fillText(r && r.err ? 'hata: ' + r.err : 'oynanıyor…', 500, 260); return; }
+      const P = this.play[i]; if (P.f < r.frames.length - 1) P.f++; const fr = r.frames[P.f], hi = fr[2], ph = fr[3];
+      x.font = "600 10px 'JetBrains Mono', monospace"; x.textAlign = 'center';
+      for (let k = 0; k < r.names.length; k++) { const px = fr[5 + k * 2] * s, py = fr[6 + k * 2] * s, t = r.teams[k], bek = r.rh[k] === 'Bekçi'; x.fillStyle = t ? B : A; x.beginPath(); x.arc(px, py, bek ? 12 : 10, 0, 7); x.fill(); x.strokeStyle = k === hi ? INK : '#F6F3EC'; x.lineWidth = k === hi ? 3.5 : 2; x.stroke(); x.fillStyle = '#F6F3EC'; x.fillText(bek ? 'B' : r.names[k][0], px, py + 3.5); if (!bek) { x.fillStyle = INK; x.font = "600 9px 'JetBrains Mono', monospace"; x.fillText(ph === t ? r.rh[k] : r.rs[k], px, py + 22); x.font = "600 10px 'JetBrains Mono', monospace"; } }
+      const bx = fr[0] * s, by = fr[1] * s; x.fillStyle = '#F6F3EC'; x.beginPath(); x.arc(bx, by, 5 + 6 * fr[4], 0, 7); x.fill(); x.strokeStyle = INK; x.lineWidth = 2.5; x.stroke();
+      if (r.lostT != null && P.f >= r.lostT) { x.fillStyle = B; x.font = "600 18px 'JetBrains Mono', monospace"; x.textAlign = 'left'; x.fillText('Turuncu kazandı · kontra ' + Math.max(0, (P.f - r.lostT) / 60).toFixed(1) + ' sn', 16, 28); }
+    });
+  }
+  renderVals() {
+    const S = this.state, pc = a => a && a[0] ? Math.round(a[1] / a[0] * 100) + '%' : '–';
+    return {
+      matchups: this.mus().map((m, k) => ({ label: `${m[0]} hücum · ${m[1]} savunma`, bg: S.mu === k ? '#F6F3EC' : 'transparent', fg: S.mu === k ? '#16150F' : '#F6F3EC', set: () => { this.setState({ mu: k }, () => this.runAll()); } })),
+      cards: this.starts.map((st, i) => { const r = S.res[i], [atk, def] = this.mus()[S.mu], ok = r && !r.err && r.frames, f = ok ? this.play[i].f : 0, res = !r ? 'oynanıyor' : r.err ? 'hata' : r.res, good = /SAYI/.test(res) && !/KONTRA/.test(res);
+        const rows = t => ok ? r.names.map((n, k) => ({ n, k })).filter(o => r.teams[o.k] === t && r.ra[o.k]).map(({ n, k }) => { const hk = t === 0 ? 'h' : 's', role = t === 0 ? r.rh[k] : r.rs[k] + (r.mk[k] ? ' → ' + r.mk[k] : ''); return { name: n, role, p: pc(r.ra[k][hk]) }; }) : [];
+        return { title: this.meta[st][0], why: this.meta[st][1], ref: this.refs[i], res, resBg: good ? '#1F3FD1' : /KONTRA|kaybetti|Bekçi/.test(res) ? '#E0531F' : '#16150F', resFg: '#F6F3EC',
+          replay: () => { this.setState({ res: { ...S.res, [i]: undefined } }); this.ask(i); }, restart: () => { this.play[i].f = 0; },
+          clock: ok ? `${(f / 60).toFixed(1)} / ${(r.frames.length / 60).toFixed(1)} sn` : '',
+          summary: ok ? `Mavi pas ${r.st.pass[0]} (tutan ${r.st.passOk[0]}) · gönderme ${r.st.shot[0]}` : '',
+          teams: [{ title: `Mavi · ${atk} · hücum rolleri`, col: '#1F3FD1', rows: rows(0) }, { title: `Turuncu · ${def} · savunma rolleri`, col: '#E0531F', rows: rows(1) }],
+          events: ok ? r.events.map(e => ({ text: `${e.t} ${e.text}`, col: e.team === 0 ? '#1F3FD1' : e.team === 1 ? '#E0531F' : '#16150F' })) : [] }; })
+    };
+  }
+}
+</script>
+</body>
+</html>

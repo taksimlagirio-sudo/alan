@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F3FD1}a:hover{color:#E0531F}
+button,select{font:inherit;color:inherit}
+</style>
+<script src="alan-v3d/core.js?v=r6"></script>
+<script src="alan-v3d/shot-table.js?v=r6"></script>
+<script src="alan-v3d/decide.js?v=r6"></script>
+<script src="alan-v3d/match.js?v=r6"></script>
+<script src="alan-v3d/shape.js?v=r6"></script>
+</helmet>
+<div style="max-width:1680px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box">
+  <header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;background:#16150F;color:#F6F3EC;padding:14px 20px">
+    <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
+      <span style="font-size:28px;font-weight:800;letter-spacing:-.02em">ALAN v3</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;opacity:.85">v3d · tam maç · tam beyin, tekrarsız</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:18px;font-family:'JetBrains Mono',monospace">
+      <span style="font-size:15px;color:#9DB0FF">Mavi</span>
+      <span style="font-size:34px;font-weight:600">{{ score }}</span>
+      <span style="font-size:15px;color:#FFB08A">Turuncu</span>
+      <span style="font-size:15px;opacity:.8">{{ clock }}</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button onClick="{{ toggle }}" style="background:#F6F3EC;color:#16150F;border:1.5px solid #F6F3EC;padding:7px 12px;cursor:pointer">{{ playLabel }}</button>
+      <sc-for list="{{ speeds }}" as="s" hint-placeholder-count="3">
+        <button onClick="{{ s.set }}" style="background:{{ s.bg }};color:{{ s.fg }};border:1.5px solid #F6F3EC;padding:7px 12px;cursor:pointer">{{ s.label }}</button>
+      </sc-for>
+      <button onClick="{{ restart }}" style="background:transparent;color:#F6F3EC;border:1.5px solid #F6F3EC;padding:7px 12px;cursor:pointer">Yeni maç</button>
+    </div>
+  </header>
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+      <canvas ref="{{ cv }}" width="1000" height="500" style="width:100%;aspect-ratio:2/1;display:block;background:#F6F3EC;border:2px solid #16150F"></canvas>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));border:2px solid #16150F;background:#F6F3EC">
+        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="6">
+          <div style="padding:9px 12px;border-right:1.5px solid #16150F">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.7">{{ s.k }}</div>
+            <div style="display:flex;gap:10px;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600"><span style="color:#1F3FD1">{{ s.a }}</span><span style="opacity:.4">·</span><span style="color:#E0531F">{{ s.b }}</span></div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="border:2px solid #16150F;background:#F6F3EC;padding:10px 12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.7;margin-bottom:6px">Son karar · {{ decName }} · kafasındaki seçenekler</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px">
+          <sc-for list="{{ dec }}" as="d" hint-placeholder-count="4">
+            <div style="border:1.5px solid #16150F;padding:6px 8px;background:{{ d.bg }};color:{{ d.fg }};font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.4">
+              <div style="font-weight:600">{{ d.kind }} {{ d.q }}</div>
+              <div>tahmin {{ d.P }} · değer {{ d.v }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    <aside style="display:flex;flex-direction:column;gap:14px">
+      <sc-for list="{{ teams }}" as="tm" hint-placeholder-count="2">
+        <div style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:9px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:{{ tm.col }};font-weight:600">{{ tm.label }} · taktik</div>
+          <sc-for list="{{ tm.rows }}" as="r" hint-placeholder-count="6">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <span style="font-size:13px;opacity:.8">{{ r.label }}</span>
+              <div style="display:flex;gap:4px;flex-wrap:wrap">
+                <sc-for list="{{ r.opts }}" as="o" hint-placeholder-count="3">
+                  <button onClick="{{ o.set }}" style="flex:1;min-width:44px;background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid #16150F;padding:4px 6px;cursor:pointer;font-size:13px">{{ o.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+      <div style="border:2px solid #16150F;background:#F6F3EC;padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.5;max-height:300px;overflow:auto">
+        <sc-for list="{{ events }}" as="e" hint-placeholder-count="6">
+          <div style="display:flex;gap:8px"><span style="opacity:.55;min-width:40px">{{ e.t }}</span><span style="color:{{ e.col }}">{{ e.text }}</span></div>
+        </sc-for>
+      </div>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1400,&quot;height&quot;:1000}}">
+class Component extends DCLogic {
+  state = { playing: true, speed: 1, n: 0, tac: [{}, {}] };
+  cv = React.createRef();
+  componentDidMount() { const w = () => { if (!window.AlanMatch) return setTimeout(w, 40); this.start(); this.loop(); }; w(); }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); }
+  start() { const M = window.AlanMatch, q = new URLSearchParams(location.search), sa = M.STYLES && M.STYLES[q.get('a')], sb = M.STYLES && M.STYLES[q.get('b')]; if ((sa || sb) && !this._styled) { this._styled = true; this.state.tac = [sa ? { ...sa.tac } : this.state.tac[0], sb ? { ...sb.tac } : this.state.tac[1]]; } this.m = M.createMatch(1 + Math.floor(Math.random() * 1e6), { tac: this.state.tac, roles: (sa || sb) ? [sa ? sa.roles : null, sb ? sb.roles : null] : null }); this.forceUpdate(); }
+  loop() { const f = () => { const M = window.AlanMatch; if (this.m && this.state.playing && !this.m.over) for (let i = 0; i < this.state.speed; i++) M.step(this.m); this.draw(); this.fr = (this.fr || 0) + 1; if (this.fr % 10 === 0) this.setState({ n: this.fr }); this.raf = requestAnimationFrame(f); }; this.raf = requestAnimationFrame(f); }
+  draw() {
+    const cv = this.cv.current, m = this.m, C = window.AlanCore; if (!cv || !m) return; const x = cv.getContext('2d'), s = 10, A = '#1F3FD1', B = '#E0531F', INK = '#16150F';
+    x.fillStyle = '#F6F3EC'; x.fillRect(0, 0, 1000, 500);
+    const t = m.holder ? m.holder.team : m.ball ? m.ball.team : 0;
+    for (let yy = 0; yy < 50; yy += 2) for (let xx = 0; xx < 100; xx += 2) { const k = C.K(m.ps, xx + 1, yy + 1, 0), ak = Math.abs(k); if (ak < .08) continue; x.globalAlpha = Math.min(.32, ak * .32); x.fillStyle = k > 0 ? A : B; x.fillRect(xx * s, yy * s, 2 * s, 2 * s); }
+    x.globalAlpha = 1; x.strokeStyle = 'rgba(22,21,15,.25)'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(500, 0); x.lineTo(500, 500); x.stroke();
+    x.fillStyle = INK; for (const kx of [0, 100]) { x.beginPath(); x.arc(kx * s, 250, C.KR * s, 0, 7); x.fill(); }
+    x.strokeStyle = '#F6F3EC'; x.lineWidth = 3; for (const kx of [0, 100]) { x.beginPath(); x.moveTo(kx * s, (25 - C.MOUTH) * s); x.lineTo(kx * s, (25 + C.MOUTH) * s); x.stroke(); }
+    const d = m.lastDec; if (d && m.holder && m.holder.name === d.name) { d.opts.forEach((o, i) => { if (!o.to) return; x.strokeStyle = INK; x.globalAlpha = i ? .25 : .7; x.setLineDash(i ? [4, 5] : []); x.lineWidth = i ? 1.5 : 2.5; x.beginPath(); x.moveTo(m.holder.x * s, m.holder.y * s); x.lineTo(o.to.x * s, o.to.y * s); x.stroke(); }); x.setLineDash([]); x.globalAlpha = 1; }
+    for (const p of m.ps) { x.fillStyle = p.team === 0 ? A : B; x.beginPath(); x.arc(p.x * s, p.y * s, p.role === 'Bekçi' ? 12 : 10, 0, 7); x.fill(); x.strokeStyle = p === m.holder ? INK : '#F6F3EC'; x.lineWidth = p === m.holder ? 3.5 : 2; x.stroke(); if (p.sprint) { x.strokeStyle = p.team === 0 ? A : B; x.globalAlpha = .4; x.lineWidth = 1.5; x.beginPath(); x.moveTo(p.x * s, p.y * s); x.lineTo(p.tx * s, p.ty * s); x.stroke(); x.globalAlpha = 1; } x.fillStyle = '#F6F3EC'; x.font = '600 10px JetBrains Mono'; x.textAlign = 'center'; x.fillText(p.role === 'Bekçi' ? 'B' : p.name[0], p.x * s, p.y * s + 3.5); }
+    x.font = "600 9px 'JetBrains Mono', monospace"; x.textAlign = 'center'; for (const p of m.ps) if (p.rh) { const atk = (m.holder ? m.holder.team : m.ball && m.ball.team) === p.team; x.fillStyle = '#16150F'; x.fillText(atk ? p.rh : p.rs, p.x * s, p.y * s + 22); }
+    const cp = window.AlanMatch.corePos(m), bx = cp.x, by = cp.y, alive = m.holder || m.ball.alive, r = 5 + 6 * m.ch;
+    if (this.trM !== m) { this.trM = m; this.tr = []; } if (this.trT !== m.tick) { this.trT = m.tick; this.tr.push([bx, by]); if (this.tr.length > 90) this.tr.shift(); }
+    x.strokeStyle = 'rgba(22,21,15,.3)'; x.lineWidth = 2; x.beginPath(); this.tr.forEach(([a, b2], i) => i ? x.lineTo(a * s, b2 * s) : x.moveTo(a * s, b2 * s)); x.stroke();
+    x.fillStyle = alive ? '#F6F3EC' : '#9A958A'; x.beginPath(); x.arc(bx * s, by * s, r, 0, 7); x.fill(); x.strokeStyle = INK; x.lineWidth = 2.5; x.stroke();
+    x.textAlign = 'left';
+  }
+  renderVals() {
+    const m = this.m, S = this.state, M = window.AlanMatch;
+    const pick = (cur, v) => cur === v ? ['#16150F', '#F6F3EC'] : ['transparent', '#16150F'];
+    const setT = (t, k, v) => { const tac = S.tac.map((o, i) => i === t ? { ...o, [k]: v } : o); this.setState({ tac }); if (this.m) this.m.tac[t][k] = v; };
+    const rows = t => { const cur = m ? m.tac[t] : M ? M.TAC0 : {}; return [
+      ['pres', 'Basan kişi sayısı', [0, 1, 2, 3]], ['arkada', 'Arkada kalan', [0, 1, 2]], ['kazaninca', 'Kazanınca', ['Yerleş', 'Dengeli', 'Kontra']], ['blok', 'Blok', ['Düşük', 'Orta', 'Yüksek']], ['genislik', 'Hücum genişliği', ['Dar', 'Normal', 'Geniş']], ['tempo', 'Tempo', [.2, .5, .8]], ['risk', 'Risk', [.2, .5, .8]]
+    ].map(([k, label, vals]) => ({ label, opts: vals.map(v => { const [bg, fg] = pick(cur[k], v); return { label: typeof v === 'number' && v < 1 && v > 0 ? (v < .4 ? 'Düşük' : v < .7 ? 'Orta' : 'Yüksek') : String(v), bg, fg, set: () => setT(t, k, v) }; }) })); };
+    const st = m ? m.st : null, pc = (a, b) => b ? `%${Math.round(a / b * 100)}` : '–', tot = st ? st.poss[0] + st.poss[1] : 0;
+    const s = Math.floor((m ? m.tick : 0) / 60);
+    return {
+      score: m ? `${m.score[0]} – ${m.score[1]}` : '0 – 0', clock: m ? `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}${m.over ? ' · bitti' : ''}` : '', cv: this.cv,
+      toggle: () => this.setState({ playing: !S.playing }), playLabel: S.playing ? 'Duraklat' : 'Oynat',
+      speeds: [1, 2, 4].map(v => ({ label: v + '×', bg: S.speed === v ? '#F6F3EC' : 'transparent', fg: S.speed === v ? '#16150F' : '#F6F3EC', set: () => this.setState({ speed: v }) })),
+      restart: () => this.start(),
+      stats: st ? [{ k: 'Topa sahip', a: pc(st.poss[0], tot), b: pc(st.poss[1], tot) }, { k: 'Pas (tutan)', a: `${st.pass[0]} (${pc(st.passOk[0], st.pass[0])})`, b: `${st.pass[1]} (${pc(st.passOk[1], st.pass[1])})` }, { k: 'Önüne', a: st.lead[0], b: st.lead[1] }, { k: 'Kenardan', a: st.bank[0], b: st.bank[1] }, { k: 'Gönderme', a: st.shot[0], b: st.shot[1] }, { k: 'Kazanma', a: st.steal[0], b: st.steal[1] }] : [],
+      decName: m && m.lastDec ? m.lastDec.name : '–',
+      dec: m && m.lastDec ? m.lastDec.opts.map((o, i) => ({ kind: o.kind, q: o.q ? '→ ' + o.q : '', P: o.P == null ? '–' : `%${Math.round(o.P * 100)}`, v: o.v.toFixed(3), bg: i ? 'transparent' : '#16150F', fg: i ? '#16150F' : '#F6F3EC' })) : [],
+      teams: [{ label: 'Mavi', col: '#1F3FD1', rows: rows(0) }, { label: 'Turuncu', col: '#E0531F', rows: rows(1) }],
+      events: m ? m.events.slice(0, 40).map(e => ({ t: e.t, text: e.text, col: e.type === 'sayi' ? '#16150F' : e.team === 0 ? '#1F3FD1' : '#E0531F' })) : []
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F3FD1}a:hover{color:#E0531F}
+button{font:inherit;color:inherit}
+</style>
+<script src="alan-v3d/core.js?v=s1"></script>
+<script src="alan-v3d/smallside.js?v=s6"></script>
+</helmet>
+<div style="max-width:1400px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box">
+  <header style="display:flex;flex-wrap:wrap;align-items:baseline;gap:14px;background:#16150F;color:#F6F3EC;padding:14px 20px">
+    <span style="font-size:28px;font-weight:800;letter-spacing:-.02em">ALAN v3d</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Küçük saha · 4'e 4 · pres sistemleri</span>
+  </header>
+  <div style="font-size:16px;line-height:1.5;max-width:960px;text-wrap:pretty">Dört yanı kapalı 40×24 alan, sağ kenarda Kuyu ve turuncu Bekçi. Mavi soldan kurar; işi sayı. <b>Tek dokunuş:</b> alıcı Çekirdeği durdurmadan yönlendirir: arkadaşına (tekte pas), pası verene geri, o koşarken (ver-kaç), ya da Kuyu'ya (tekte gönderme). Kontrol süresi olmadığı için presçi yetişemez; rakip son vuruştan hemen sonra yalnızca gövdesine çarpan Çekirdeği kesebilir, uzanmak için tepki süresi gerekir. Bedeli isabet: dönüş açısı büyüdükçe ve Çekirdek hızlı geldikçe sapma ve ıska artar (Aktarım azaltır). Pası veren bunu kafasında hesaplar: "ona veririm, o tekte şuna verir" diye. Taşıyıcı bire birdeki bütün hareketleri (gövde, sürme, fiske, kenar çalımı) ve pasları (ayağa, önüne, kenardan sektirerek) kafasında oynatıp seçer. Turuncu seçtiğin sistemle savunur: <b>Alan</b> (en yakın basar, diğerleri bölgedeki en tehlikeli hücumcuyu tutar), <b>Adam adama</b> (her savunmacının sabit adamı var), <b>Çift pres</b> (iki kişi basar: biri Çekirdeğe, biri önüne), <b>Kenara sıkıştır</b> (presçi içeriden gelip kenara iter, bir savunmacı kenar boyunca önde bekler). Turuncu Çekirdeği alırsa sahne 2,5 saniye daha sürer. Sahaya tıkla: yeni oynama.</div>
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+      <canvas ref="{{ cv }}" onClick="{{ again }}" width="1000" height="620" style="width:100%;aspect-ratio:1000/620;display:block;background:#E9E5DC;border:2px solid #16150F;cursor:pointer"></canvas>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600">{{ last }}</div>
+    </div>
+    <aside style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:12px">
+      <sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:13px">{{ r.label }}</span>
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            <sc-for list="{{ r.opts }}" as="o" hint-placeholder-count="4">
+              <button onClick="{{ o.set }}" style="flex:1;min-width:44px;background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid #16150F;padding:4px 6px;cursor:pointer;font-size:13px">{{ o.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+      <div style="border-top:1.5px solid #16150F;padding-top:8px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6">
+        <div style="font-weight:600">{{ prog }}</div>
+        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="5"><div>{{ s }}</div></sc-for>
+      </div>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1400,&quot;height&quot;:1000}}">class Component extends DCLogic {
+  state = { scn: 'Ver-kaç', one: 'açık', sys: 'Çift pres', shape: 'Geniş', atk: 10, def: 10, defHiz: 10, last: '', stats: [], done: 0 };
+  cv = React.createRef(); N = 30;
+  componentDidMount() { const w = () => { if (window.AlanSmall && window.AlanCore) this.go(); else setTimeout(w, 60); }; w(); const f = () => { if (this.play) { this.k = (this.k || 0) + 1; if (this.k % 2 === 0 && this.f < this.play.fr.length - 1) this.f++; this.draw(); } this.raf = requestAnimationFrame(f); }; this.raf = requestAnimationFrame(f); }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); clearTimeout(this.to); }
+  cfg() { const S = this.state; return { scn: S.scn === 'Serbest' ? undefined : S.scn, one: S.one, sys: S.sys, shape: S.shape, atk: S.atk, def: S.def, defHiz: S.defHiz }; }
+  again = () => { if (!window.AlanSmall) return; this.play = window.AlanSmall.run(this.cfg(), Math.random, true); this.f = 0; const r = this.play, NM = window.AlanSmall.NM;
+    this.setState({ last: 'Bu oynama: ' + (r.res === 'kaybetti' || r.res === 'Bekçi aldı' ? 'turuncu ' + r.how : r.res === 'SAYI' ? 'SAYI (' + r.how + ')' : r.res) + ' · ' + (r.t / 60).toFixed(1) + ' sn · ' + r.nPass + ' pas · ' + r.nTek + ' tekte pas · ' + Object.keys(r.used).map(k => NM[k]).join(', ') + (r.after ? ' · sonra ' + r.after : '') }); };
+  go() { clearTimeout(this.to); this.again(); this.acc = { R: {}, H: {}, U: {}, np: 0, tt: 0, n: 0 }; const cfg = this.cfg(), my = (this.gen = (this.gen || 0) + 1);
+    const chunk = () => { if (my !== this.gen) return; for (let i = 0; i < 3 && this.acc.n < this.N; i++) { const r = window.AlanSmall.run(cfg, Math.random, false), A = this.acc; A.R[r.res] = (A.R[r.res] || 0) + 1; if (r.how && (r.res === 'kaybetti' || r.res === 'Bekçi aldı')) A.H[r.how] = (A.H[r.how] || 0) + 1; for (const k in r.used) A.U[k] = (A.U[k] || 0) + 1; A.np += r.nPass; A.tt += r.t; A.ntk = (A.ntk || 0) + r.nTek; A.nbk = (A.nbk || 0) + r.nBank; A.nbko = (A.nbko || 0) + r.nBankOk; A.nsh = (A.nsh || 0) + r.nShot; A.ntks = (A.ntks || 0) + r.nTekShot; if (r.res === 'SAYI') { A.G = A.G || {}; A.G[r.how] = (A.G[r.how] || 0) + 1; } A.n++; } this.setState({ done: this.acc.n }); if (this.acc.n < this.N) this.to = setTimeout(chunk, 0); };
+    this.to = setTimeout(chunk, 30); }
+  draw() { const cv = this.cv.current, S = window.AlanSmall, K = window.AlanCore; if (!cv || !S || !this.play) return; const x = cv.getContext('2d'), AR = S.AR, s = 24, X = v => (v - AR.x0) * s + 20, Y = v => v * s + 20, F = this.play.fr; if (!F.length) return; const f = F[this.f], INK = '#16150F';
+    x.fillStyle = '#E9E5DC'; x.fillRect(0, 0, 1000, 620); x.fillStyle = '#F6F3EC'; x.fillRect(X(AR.x0), Y(AR.y0), (AR.x1 - AR.x0) * s, (AR.y1 - AR.y0) * s); x.strokeStyle = INK; x.lineWidth = 8; x.strokeRect(X(AR.x0) - 4, Y(AR.y0) - 4, (AR.x1 - AR.x0) * s + 8, (AR.y1 - AR.y0) * s + 8);
+    if (this.play.meta) { const src = this.play.meta.map((m, i) => ({ ...m, x: f.p[i][0], y: f.p[i][1] })); for (let yy = AR.y0; yy < AR.y1; yy += 1) for (let xx = AR.x0; xx < AR.x1; xx += 1) { let k = 0; for (const q of src) k += (q.team === 0 ? 1 : -1) * K.infl(q, xx + .5, yy + .5); const ak = Math.abs(k); if (ak < .08) continue; x.globalAlpha = Math.min(.3, ak * .3); x.fillStyle = k > 0 ? '#1F3FD1' : '#E0531F'; x.fillRect(X(xx), Y(yy), s, s); } x.globalAlpha = 1; }
+    const G = S.G; x.fillStyle = INK; x.fillRect(X(G.x) - 2, Y(G.y - G.h), 30, G.h * 2 * s); x.fillStyle = '#F6F3EC'; x.font = "600 13px 'JetBrains Mono', monospace"; x.textAlign = 'center'; x.save(); x.translate(X(G.x) + 14, Y(G.y)); x.rotate(Math.PI / 2); x.fillText('KUYU', 0, 4); x.restore();
+    const i0 = Math.max(0, this.f - 90); x.strokeStyle = 'rgba(22,21,15,.3)'; x.beginPath(); for (let i = i0; i <= this.f; i++) { const c = F[i].c; i > i0 ? x.lineTo(X(c[0]), Y(c[1])) : x.moveTo(X(c[0]), Y(c[1])); } x.stroke();
+    f.p.forEach((q, i) => { const t = i < 4 ? 0 : 1; if (t === 1 && q[2]) { x.strokeStyle = 'rgba(224,83,31,.5)'; x.setLineDash([5, 5]); x.beginPath(); x.arc(X(q[0]), Y(q[1]), K.Q.reach * s, 0, 7); x.stroke(); x.setLineDash([]); }
+      x.fillStyle = t ? '#E0531F' : '#1F3FD1'; x.beginPath(); x.arc(X(q[0]), Y(q[1]), .8 * s, 0, 7); x.fill(); if (f.h === i) { x.strokeStyle = INK; x.lineWidth = 3; x.stroke(); } x.fillStyle = '#F6F3EC'; x.font = "600 12px 'JetBrains Mono', monospace"; x.textAlign = 'center'; x.fillText(i === 8 ? 'B' : String(i % 4 + 1), X(q[0]), Y(q[1]) + 4);
+      if (t === 1 && q[2]) { x.fillStyle = INK; x.font = "600 11px 'JetBrains Mono', monospace"; x.fillText(q[2], X(q[0]), Y(q[1]) - 24); } });
+    const tf = this.play.takeF; if (tf != null && this.f >= tf && this.f < tf + 50) { const c = F[tf].c, k = (this.f - tf) / 50; x.strokeStyle = '#E0531F'; x.globalAlpha = 1 - k; x.lineWidth = 5; x.beginPath(); x.arc(X(c[0]), Y(c[1]), (.6 + k * 2.5) * s, 0, 7); x.stroke(); x.globalAlpha = 1; }
+    x.fillStyle = f.loose ? '#C9C3B6' : '#F6F3EC'; x.beginPath(); x.arc(X(f.c[0]), Y(f.c[1]), (.25 + .35 * (f.ch ?? .3)) * s, 0, 7); x.fill(); x.strokeStyle = f.after ? '#E0531F' : INK; x.lineWidth = 3; x.stroke();
+    x.fillStyle = INK; x.font = "600 15px 'JetBrains Mono', monospace"; x.textAlign = 'left'; x.fillText((this.f / 60).toFixed(1) + ' sn · şarj %' + Math.round((f.ch ?? .3) * 100), 20, 610); x.textAlign = 'right';
+    const end = this.f === F.length - 1; x.fillText(f.after ? 'TURUNCU ALDI · ' + this.play.how + (end && this.play.after ? ' · ' + this.play.after : '') : end ? this.play.res : 'mavi: ' + f.lab, 980, 610); }
+  renderVals() {
+    const S = this.state, pick = (cur, v) => cur === v ? ['#16150F', '#F6F3EC'] : ['transparent', '#16150F'], A = this.acc, n = A ? A.n : 0, pc = v => Math.round(v / Math.max(1, n) * 100), NM = window.AlanSmall ? window.AlanSmall.NM : {};
+    const row = (k, label, vals, fmt) => ({ label, opts: vals.map(v => { const [bg, fg] = pick(S[k], v); return { label: fmt ? fmt(v) : String(v), bg, fg, set: () => this.setState({ [k]: v }, () => this.go()) }; }) });
+    const nL = A ? (A.R['kaybetti'] || 0) + (A.R['Bekçi aldı'] || 0) : 0;
+    return { cv: this.cv, again: this.again, last: S.last, prog: n < this.N ? n + '/' + this.N + ' oynama…' : this.N + ' oynama',
+      rows: [row('scn', 'Başlangıç', ['Ver-kaç', 'Üçüncü adam', 'Tekte gönderme', 'Serbest']), row('one', 'Tek dokunuş (tekte pas, tekte gönderme)', ['açık', 'kapalı']), row('sys', 'Turuncu savunma sistemi', ['Alan', 'Adam adama', 'Çift pres', 'Kenara sıkıştır']), row('shape', 'Mavi diziliş', ['Geniş', 'Dar']), row('atk', 'Mavi kalitesi (Sürme, Okuma, Aktarım, Tutuş)', [6, 10, 14]), row('def', 'Turuncu kalitesi (Kesme, Okuma)', [6, 10, 14]), row('defHiz', 'Turuncu hızı', [8, 10, 12])],
+      stats: A && n ? [...Object.entries(A.R).sort((a, b) => b[1] - a[1]).map(([k, v]) => k + ' %' + pc(v)), nL ? 'turuncu nasıl aldı: ' + Object.entries(A.H).sort((a, b) => b[1] - a[1]).map(([k, v]) => k + ' %' + Math.round(v / nL * 100)).join(' · ') : '', A.G ? 'sayılar: ' + Object.entries(A.G).map(([k, v]) => k + ' ' + v).join(' · ') : '', 'oynama başına ' + (A.np / n).toFixed(1) + ' pas, ' + ((A.ntk || 0) / n).toFixed(1) + ' tekte pas, ' + ((A.nbk || 0) / n).toFixed(1) + ' kenardan pas (tutan %' + (A.nbk ? Math.round(A.nbko / A.nbk * 100) : 0) + '), ' + ((A.nsh || 0) / n).toFixed(1) + ' gönderme (' + (A.ntks || 0) + ' tekte) · ort ' + (A.tt / n / 60).toFixed(1) + ' sn', 'mavi en az bir kez: ' + Object.entries(A.U).sort((a, b) => b[1] - a[1]).map(([k, v]) => NM[k] + ' %' + pc(v)).join(' · ')].filter(Boolean) : [] };
+  }
+}</script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F3FD1}a:hover{color:#E0531F}
+button{font:inherit;color:inherit}
+</style>
+<script src="alan-v3d/core.js?v=p1"></script>
+</helmet>
+<div style="max-width:1400px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box">
+  <header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;background:#16150F;color:#F6F3EC;padding:14px 20px">
+    <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
+      <span style="font-size:28px;font-weight:800;letter-spacing:-.02em">ALAN v3d</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Pozisyonlar · pres</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:13px">Mavi (kuran)</span>
+      <sc-for list="{{ atks }}" as="o" hint-placeholder-count="2">
+        <button onClick="{{ o.set }}" style="background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid #F6F3EC;padding:7px 12px;cursor:pointer">{{ o.label }}</button>
+      </sc-for>
+      <button onClick="{{ rerun }}" style="background:transparent;color:#F6F3EC;border:1.5px solid #F6F3EC;padding:7px 12px;cursor:pointer">Yeniden oynat</button>
+    </div>
+  </header>
+  <div style="font-size:16px;line-height:1.5;max-width:920px;text-wrap:pretty">Mavi kendi yarısının derininden kuruyor; Turuncu yüksek blokla, karttaki sayıda oyuncuyla basıyor. Her kart {{ N }} kez oynanır; tekrar ilk oynamayı gösterir. Kaçış: Çekirdek pres hattının 3 birim ötesinde bir Mavi'ye ulaştı. Pozisyon sayıyla, Çekirdek Turuncu'ya geçtikten 3 sn sonra ya da kaçıştan 4 sn sonra biter.</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,620px),1fr));gap:16px">
+    <sc-for list="{{ cards }}" as="c" hint-placeholder-count="4">
+      <div style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">
+          <span style="font-size:20px;font-weight:800">{{ c.title }}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px">{{ c.prog }}</span>
+        </div>
+        <div style="font-size:14px;line-height:1.45">{{ c.why }}</div>
+        <canvas ref="{{ c.ref }}" width="1000" height="500" style="width:100%;aspect-ratio:2/1;display:block;background:#F6F3EC;border:1.5px solid #16150F"></canvas>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:13px">
+          <button onClick="{{ c.restart }}" style="background:transparent;border:1.5px solid #16150F;padding:5px 10px;cursor:pointer">Baştan izle</button>
+          <span>{{ c.clock }}</span>
+          <span style="font-weight:600">{{ c.res0 }}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:10px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.55">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <span style="font-weight:600;color:#E0531F">Pres doğru mu</span>
+            <sc-for list="{{ c.pres }}" as="r" hint-placeholder-count="4"><span>{{ r }}</span></sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <span style="font-weight:600;color:#1F3FD1">Presten kaçış</span>
+            <sc-for list="{{ c.esc }}" as="r" hint-placeholder-count="4"><span>{{ r }}</span></sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px;font-family:'JetBrains Mono',monospace;font-size:13px;border-top:1.5px solid #16150F;padding-top:6px">
+          <span style="font-weight:600;color:#E0531F">Presçi taşıyıcıya ulaşınca</span>
+          <sc-for list="{{ c.reach }}" as="r" hint-placeholder-count="3"><span>{{ r }}</span></sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px;font-family:'JetBrains Mono',monospace;font-size:13px;border-top:1.5px solid #16150F;padding-top:6px">
+          <span style="font-weight:600">Sonuçlar</span>
+          <sc-for list="{{ c.res }}" as="r" hint-placeholder-count="3"><span>{{ r }}</span></sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  ids = ['p1', 'p2', 'p3', 'pk'];
+  meta = { p1: ['Tek presçi', 'Taşıyıcıya tek kişi basıyor. Beklenen: tek presçi kolay geçilir ya da yanından oynanır; pres nadiren kazanır ama taşıyıcıyı acele ettirir.'], p2: ['İki presçi', 'İki kişi basıyor. Beklenen: biri taşıyıcıya, öbürü en yakın pas hattına. Daha çok kazanır, ama arkada bir Mavi daha boşta kalır.'], p3: ['Üç presçi', 'Üç kişi basıyor, arkada bir kişi. Beklenen: geride sık kazanır; geçilirse arkası boş ve kontra yer.'], pk: ['Kanatta sıkıştırma', 'Çekirdek çizgi kenarında, iki kişi basıyor. Beklenen: kenardan sektirme, içeri çıkış ya da çizgi boyunca presin arkasına.'] };
+  N = 6;
+  refs = this.ids.map(() => React.createRef());
+  state = { atk: 'Savunmacı', n: 0 };
+  data = {}; play = this.ids.map(() => ({ f: 0 }));
+  componentDidMount() { this.start(); const tick = () => { this.draw(); this.raf = requestAnimationFrame(tick); }; this.raf = requestAnimationFrame(tick); this.iv = setInterval(() => this.setState({ n: this.state.n + 1 }), 300); }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); clearInterval(this.iv); (this.pool || []).forEach(w => w.terminate()); }
+  start() {
+    (this.pool || []).forEach(w => w.terminate()); const v = Date.now(), nW = Math.max(2, Math.min(4, (navigator.hardwareConcurrency || 4) - 1));
+    this.pool = Array.from({ length: nW }, () => { const w = new Worker('alan-v3d/pres-worker.js?v=' + v); w.onmessage = e => this.got(w, e.data); w.onerror = () => { w.busy = false; this.pump(); }; return w; });
+    this.data = {}; this.ids.forEach(id => this.data[id] = { list: [], err: null }); this.play.forEach(p => p.f = 0);
+    this.queue = []; for (let k = 0; k < this.N; k++) this.ids.forEach(card => this.queue.push({ id: card + k, card, k, atk: this.state.atk, seed: 300 + k * 41 })); this.pump();
+  }
+  pump() { for (const w of this.pool) { if (w.busy || !this.queue.length) continue; w.busy = true; w.postMessage(this.queue.shift()); } }
+  got(w, d) { w.busy = false; const D = this.data[d.card]; if (d.ok) { D.list[d.k] = d.r; } else D.err = d.msg; this.pump(); }
+  draw() {
+    this.ids.forEach((id, i) => {
+      const cv = this.refs[i].current; if (!cv) return; const r = this.data[id] && this.data[id].list[0], x = cv.getContext('2d'), s = 10, A = '#1F3FD1', B = '#E0531F', INK = '#16150F', C = window.AlanCore;
+      x.fillStyle = '#F6F3EC'; x.fillRect(0, 0, 1000, 500); x.strokeStyle = 'rgba(22,21,15,.3)'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(500, 0); x.lineTo(500, 500); x.stroke();
+      const KR = C ? C.KR : 5.5, MO = C ? C.MOUTH : 5.5; x.fillStyle = INK; for (const kx of [0, 100]) { x.beginPath(); x.arc(kx * s, 250, KR * s, 0, 7); x.fill(); } x.strokeStyle = '#F6F3EC'; x.lineWidth = 3; for (const kx of [0, 100]) { x.beginPath(); x.moveTo(kx * s, (25 - MO) * s); x.lineTo(kx * s, (25 + MO) * s); x.stroke(); }
+      const err = this.data[id] && this.data[id].err; if (!r) { x.fillStyle = INK; x.font = "600 22px 'JetBrains Mono', monospace"; x.textAlign = 'center'; x.fillText(err ? 'hata: ' + err : 'oynanıyor…', 500, 260); return; }
+      x.setLineDash([6, 6]); x.strokeStyle = B; x.lineWidth = 2; x.beginPath(); x.moveTo(r.R.lineX * s, 0); x.lineTo(r.R.lineX * s, 500); x.stroke(); x.setLineDash([]);
+      const P = this.play[i]; if (P.f < r.frames.length - 1) P.f++; const fr = r.frames[P.f], hi = fr[2], ph = fr[3];
+      for (let k = 0; k < r.names.length; k++) { const px = fr[5 + k * 2] * s, py = fr[6 + k * 2] * s, t = r.teams[k], bek = r.rh[k] === 'Bekçi'; x.fillStyle = t ? B : A; x.beginPath(); x.arc(px, py, bek ? 12 : 10, 0, 7); x.fill(); x.strokeStyle = k === hi ? INK : '#F6F3EC'; x.lineWidth = k === hi ? 3.5 : 2; x.stroke(); x.font = "600 10px 'JetBrains Mono', monospace"; x.textAlign = 'center'; x.fillStyle = '#F6F3EC'; x.fillText(bek ? 'B' : r.names[k][0], px, py + 3.5); if (!bek) { x.fillStyle = INK; x.font = "600 9px 'JetBrains Mono', monospace"; x.fillText(ph === t ? r.rh[k] : r.rs[k], px, py + 22); } }
+      const bx = fr[0] * s, by = fr[1] * s; x.fillStyle = '#F6F3EC'; x.beginPath(); x.arc(bx, by, 5 + 6 * fr[4], 0, 7); x.fill(); x.strokeStyle = INK; x.lineWidth = 2.5; x.stroke();
+      x.font = "600 16px 'JetBrains Mono', monospace"; x.textAlign = 'left'; x.fillStyle = B; x.fillText('pres hattı', r.R.lineX * s + 6, 20);
+    });
+  }
+  renderVals() {
+    const S = this.state, f1 = (a, b) => b ? (a / b).toFixed(1) : '–', pc = (a, b) => b ? Math.round(a / b * 100) + '%' : '–';
+    return {
+      N: this.N,
+      atks: ['Savunmacı', 'Hücumcu'].map(v => ({ label: v, bg: S.atk === v ? '#F6F3EC' : 'transparent', fg: S.atk === v ? '#16150F' : '#F6F3EC', set: () => this.setState({ atk: v }, () => this.start()) })),
+      rerun: () => this.start(),
+      cards: this.ids.map((id, i) => {
+        const D = this.data[id] || { list: [] }, L = D.list.filter(Boolean), n = L.length, r0 = D.list[0], want = { p1: 1, p2: 2, p3: 3, pk: 2 }[id];
+        const sum = k => L.reduce((a, r) => a + r.R[k][0], 0), cnt = k => L.reduce((a, r) => a + r.R[k][1], 0);
+        const res = {}; L.forEach(r => res[r.R.res] = (res[r.R.res] || 0) + 1);
+        const wins = L.filter(r => r.R.res === 'pres kazandı'), esc = L.filter(r => r.R.escT != null);
+        const kinds = {}, outs = {}; L.forEach(r => { for (const k in r.R.kinds) kinds[k] = (kinds[k] || 0) + r.R.kinds[k]; for (const k in r.R.out) { outs[k] = outs[k] || [0, 0]; outs[k][0] += r.R.out[k][0]; outs[k][1] += r.R.out[k][1]; } });
+        const beat = L.reduce((a, r) => a + r.R.beat, 0);
+        return { title: this.meta[id][0], why: this.meta[id][1], ref: this.refs[i], prog: D.err ? 'hata' : `${n}/${this.N} oynama`,
+          restart: () => { this.play[i].f = 0; }, clock: r0 ? `${(this.play[i].f / 60).toFixed(1)} / ${(r0.frames.length / 60).toFixed(1)} sn` : '', res0: r0 ? 'bu oynama: ' + r0.R.res : '',
+          pres: n ? [`basan ort ${f1(sum('nP'), cnt('nP'))} (talimat ${want})`, `ilk presçi Kuyu tarafında ${pc(sum('gs'), cnt('gs'))}`, `ilk presçinin taşıyıcıya mesafesi ort ${f1(sum('dist'), cnt('dist'))}`, `pres kazandı ${wins.length}/${n}` + (wins.length ? ` · ort ${(wins.reduce((a, r) => a + r.R.winT, 0) / wins.length / 60).toFixed(1)} sn` : '')] : [],
+          esc: n ? [`kaçış ${esc.length}/${n}` + (esc.length ? ` · ort ${(esc.reduce((a, r) => a + r.R.escT, 0) / esc.length / 60).toFixed(1)} sn` : ''), `boştaki Mavi ort ${f1(sum('free'), cnt('free'))} (7+ birim boşta)`, `presçiyi ikilide geçti ${beat}`, 'baskı altında: ' + (Object.keys(kinds).length ? Object.entries(kinds).map(([k, v]) => `${k} ${v}${outs[k] ? ' (tuttu ' + outs[k][1] + ')' : ''}`).join(', ') : '–')] : [],
+          reach: n ? (() => { const rc = L.reduce((a, r) => a + (r.R.reach || 0), 0), ro = {}; L.forEach(r => { for (const k in (r.R.rOut || {})) ro[k] = (ro[k] || 0) + r.R.rOut[k]; }); const rp = L.reduce((a, r) => a + (r.R.rP || 0), 0), rt = L.reduce((a, r) => a + (r.R.rThr || 0), 0), cm = L.reduce((a, r) => a + (r.R.rCommit || 0), 0); return rc ? [`ulaşma ${rc} · ikiliye girdi ${cm} (${pc(cm, rc)})`, `ikiliyi kazanma ihtimali ort %${Math.round(rp / rc * 100)} · girme eşiği ort %${Math.round(rt / rc * 100)}`, Object.entries(ro).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v} (${pc(v, rc)})`).join(' · ')] : ['presçi taşıyıcıya hiç ulaşmadı']; })() : [],
+          res: n ? Object.entries(res).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k}: ${v}`) : [] };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

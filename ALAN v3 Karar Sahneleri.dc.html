@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F3FD1}a:hover{color:#E0531F}
+button{font:inherit;color:inherit}
+</style>
+<script src="alan-v3/core.js"></script>
+<script src="alan-v3/decide.js"></script>
+<script src="alan-v3/scenes.js"></script>
+</helmet>
+<div style="max-width:1500px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box">
+  <header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;background:#16150F;color:#F6F3EC;padding:14px 20px">
+    <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
+      <span style="font-size:28px;font-weight:800;letter-spacing:-.02em">ALAN v3</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;opacity:.85">Katman 3 · taşıyıcının kararı · sabit sahneler</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:13px">
+      <span style="opacity:.85">Taşıyıcının Okuma'sı</span>
+      <sc-for list="{{ okBtns }}" as="b" hint-placeholder-count="3">
+        <button onClick="{{ b.set }}" style="background:{{ b.bg }};color:{{ b.fg }};border:1.5px solid #F6F3EC;padding:6px 11px;cursor:pointer">{{ b.label }}</button>
+      </sc-for>
+      <button onClick="{{ rerun }}" style="background:#F6F3EC;color:#16150F;border:1.5px solid #F6F3EC;padding:6px 11px;cursor:pointer">Yeniden çalıştır</button>
+    </div>
+  </header>
+  <div style="font-size:16px;line-height:1.5;max-width:900px;text-wrap:pretty">Her sahne 20 kez çözülüyor. Taşıyıcı seçenekleri kafasında yeni fizikle simüle ediyor ve Okuma'sına göre rakipleri kusurlu görüyor. Kalın çizgi seçilen hamle, kesikli çizgiler diğer seçenekler. "Gerçek", aynı hamlenin hareket eden rakiplerle gerçekten oynandığında tutma oranı. Özet: <b>{{ summary }}</b></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:16px">
+    <sc-for list="{{ cards }}" as="c" hint-placeholder-count="6">
+      <div style="border:2px solid #16150F;background:#F6F3EC;display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-bottom:2px solid #16150F">
+          <span style="font-size:18px;font-weight:700">{{ c.title }}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.06em;padding:4px 8px;background:{{ c.badgeBg }};color:#F6F3EC">{{ c.badge }}</span>
+        </div>
+        <canvas ref="{{ c.ref }}" width="880" height="440" style="width:100%;aspect-ratio:2/1;display:block;border-bottom:2px solid #16150F"></canvas>
+        <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:14.5px;line-height:1.45;text-wrap:pretty">{{ c.why }}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.5"><span style="opacity:.65">Beklenen:</span> {{ c.expect }}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.5"><span style="opacity:.65">20 denemede:</span> {{ c.dist }}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.5"><span style="opacity:.65">Seçilen hamle tahmin / gerçek:</span> {{ c.cal }}</div>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px">
+            <sc-for list="{{ c.opts }}" as="o" hint-placeholder-count="4">
+              <div style="border:1.5px solid #16150F;padding:5px 7px;background:{{ o.bg }};color:{{ o.fg }};font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.4">
+                <div style="font-weight:600">{{ o.kind }}</div>
+                <div>tahmin {{ o.P }} · değer {{ o.v }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ok: 10, res: null };
+  refs = Array.from({ length: 12 }, () => React.createRef());
+  componentDidMount() { const w = () => { if (!window.AlanScenes || !window.AlanDecide) return setTimeout(w, 40); this.run(); }; w(); }
+  componentDidUpdate() { this.drawAll(); }
+  run() { const SC = window.AlanScenes; const res = SC.S.map(sc => SC.run(sc, 20, this.state.ok)); this.setState({ res }); }
+  drawAll() {
+    const SC = window.AlanScenes, C = window.AlanCore; if (!SC || !this.state.res) return;
+    SC.S.forEach((sc, i) => {
+      const cv = this.refs[i].current; if (!cv) return; const x = cv.getContext('2d'), s = 8.8, ps = sc.ps(), r = this.state.res[i], A = '#1F3FD1', B = '#E0531F', INK = '#16150F';
+      x.fillStyle = '#F6F3EC'; x.fillRect(0, 0, 880, 440);
+      for (let yy = 0; yy < 50; yy += 1) for (let xx = 0; xx < 100; xx += 1) { const k = C.K(ps, xx + .5, yy + .5, 0), ak = Math.abs(k); if (ak < .08) continue; x.globalAlpha = Math.min(.32, ak * .32); x.fillStyle = k > 0 ? A : B; x.fillRect(xx * s, yy * s, s + .5, s + .5); }
+      x.globalAlpha = 1; x.strokeStyle = 'rgba(22,21,15,.22)'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(440, 0); x.lineTo(440, 440); x.stroke();
+      x.fillStyle = INK; x.beginPath(); x.arc(880, 220, C.KR * s, 0, 7); x.fill(); x.strokeStyle = '#F6F3EC'; x.lineWidth = 3; x.beginPath(); x.moveTo(879, (25 - C.MOUTH) * s); x.lineTo(879, (25 + C.MOUTH) * s); x.stroke();
+      const h = ps[0];
+      r.last.opts.slice(0, 4).reverse().forEach((o, j, arr) => { if (!o.to) return; const top = j === arr.length - 1; x.strokeStyle = INK; x.globalAlpha = top ? .85 : .3; x.setLineDash(top ? [] : [5, 5]); x.lineWidth = top ? 3 : 1.5; x.beginPath(); x.moveTo(h.x * s, h.y * s); if (o.kind === 'kenardan') { x.lineTo(o.to.x * s, o.to.y * s); x.lineTo(o.q.x * s, o.q.y * s); } else x.lineTo(o.to.x * s, o.to.y * s); x.stroke(); });
+      x.setLineDash([]); x.globalAlpha = 1;
+      for (const p of ps) { x.fillStyle = p.team === 0 ? A : B; x.beginPath(); x.arc(p.x * s, p.y * s, p.role === 'Bekçi' ? 11 : 9.5, 0, 7); x.fill(); x.strokeStyle = p === h ? INK : '#F6F3EC'; x.lineWidth = p === h ? 3.5 : 2; x.stroke(); x.fillStyle = INK; x.font = '600 12px JetBrains Mono'; x.textAlign = 'center'; x.fillText(p.name, p.x * s, p.y * s - 15); }
+      const rr = 4 + 6 * sc.ch; x.fillStyle = '#F6F3EC'; x.beginPath(); x.arc(h.x * s, h.y * s - 1, rr, 0, 7); x.fill(); x.strokeStyle = INK; x.lineWidth = 2.5; x.stroke();
+      x.font = '600 12px JetBrains Mono'; x.textAlign = 'left'; x.fillStyle = INK; x.fillText(`şarj %${Math.round(sc.ch * 100)}`, 10, 430);
+    });
+  }
+  renderVals() {
+    const SC = window.AlanScenes, res = this.state.res, NM = { pas: 'ayağına pas', 'önüne': 'önüne pas', kenardan: 'kenardan sektir', 'gönder': 'gönder', 'sür': 'sür', tut: 'tut' };
+    const pc = v => v == null ? '–' : `%${Math.round(v * 100)}`;
+    const cards = SC && res ? SC.S.map((sc, i) => { const r = res[i]; return {
+      title: sc.title, why: sc.why, ref: this.refs[i], badge: r.pass ? 'GEÇTİ' : 'KALDI', badgeBg: r.pass ? '#1F3FD1' : '#E0531F',
+      expect: sc.expect.map(k => NM[k]).join(' / ') + (sc.forbid ? ` · olmamalı: ${sc.forbid.map(k => NM[k]).join(', ')}` : ''),
+      dist: Object.entries(r.dist).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${NM[k]} ${v}`).join(' · '),
+      cal: r.n ? `${pc(r.pred)} / ${pc(r.real)} (${r.n} atış)` : 'atış yok (tut / sür)',
+      opts: r.last.opts.slice(0, 4).map((o, j) => ({ kind: NM[o.kind] + (o.shot ? ' · ' + o.shot : '') + (o.q ? ' → ' + o.q.name : ''), P: o.det ? pc(o.kind === 'gönder' ? o.det.Pk : o.det.P) : '–', v: o.v.toFixed(3), bg: j ? 'transparent' : '#16150F', fg: j ? '#16150F' : '#F6F3EC' }))
+    }; }) : [];
+    const passN = res ? res.filter(r => r.pass).length : 0;
+    return {
+      cards, summary: res ? `${passN} / ${res.length} sahne geçti` : 'çalışıyor…',
+      okBtns: [5, 10, 15].map(v => ({ label: String(v), bg: this.state.ok === v ? '#F6F3EC' : 'transparent', fg: this.state.ok === v ? '#16150F' : '#F6F3EC', set: () => this.setState({ ok: v }, () => this.run()) })),
+      rerun: () => this.run()
+    };
+  }
+}
+</script>
+</body>
+</html>

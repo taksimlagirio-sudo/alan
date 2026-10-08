@@ -1,0 +1,2 @@
+// Topla oynamanın değeri: motorun kendi 18 maçından (77 sayı) ölçüldü. Hücre = (Kuyu'ya mesafe / 8 birim) × 3 + topa göre boşluk dilimi (decide.space: <0,1 · 0,1–0,25 · >0,25). Değer = bu duruma gelen hücumun sayıyla bitme oranı. valuelab.js table() ile üretildi.
+window.ALAN_VAL = { v: 5, nb: 13, ng: 3, cells: [0.254,0.33,0.33,0.254,0.33,0.33,0.254,0.33,0.33,0.202,0.33,0.33,0.202,0.33,0.33,0.202,0.33,0.33,0.202,0.33,0.33,0.202,0.33,0.33,0.202,0.288,0.288,0.202,0.202,0.202,0.202,0.202,0.202,0.202,0.202,0.202,0.202,0.202,0.202] };

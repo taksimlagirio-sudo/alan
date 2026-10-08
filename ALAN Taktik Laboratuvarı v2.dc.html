@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F3FD1}
+a:hover{color:#16150F}
+</style>
+<script src="alan-engine.js"></script>
+</helmet>
+<div style="max-width:1400px;margin:0 auto;padding:28px 24px 60px;display:flex;flex-direction:column;gap:28px;box-sizing:border-box">
+
+  <header style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.1em;text-transform:uppercase">ALAN · Taktik laboratuvarı v2</div>
+    <h1 style="margin:0;font-size:44px;line-height:1.05;font-weight:800;text-wrap:pretty">Hücum planı × savunma planı</h1>
+    <p style="margin:0;font-size:18px;line-height:1.5;max-width:860px;text-wrap:pretty">Her takım iki ayrı şey seçer: Çekirdek bizdeyken nasıl oynayacağını ve Çekirdek rakipteyken nasıl savunacağını. Her hücrede bir takım satırdaki hücum planıyla ve varsayılan Alan savunmasıyla oynar. Rakibi ise varsayılan hücumla ve sütundaki savunma planıyla oynar. Hücre, satırdaki takımın attığı ve yediği sayıyı gösterir.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:18px;align-items:center">
+      <div style="display:flex;align-items:center;font-family:'JetBrains Mono',monospace;font-size:13px">
+        <span style="margin-right:10px;letter-spacing:.08em;text-transform:uppercase">Güç farkı</span>
+        <sc-for list="{{ farkOpts }}" as="o" hint-placeholder-count="3">
+          <button onClick="{{ o.set }}" style="background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid #16150F;margin-left:-1.5px;padding:7px 12px;cursor:pointer;font-family:inherit;font-size:13px">{{ o.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display:flex;align-items:center;font-family:'JetBrains Mono',monospace;font-size:13px">
+        <span style="margin-right:10px;letter-spacing:.08em;text-transform:uppercase">Hücre başına maç</span>
+        <sc-for list="{{ nOpts }}" as="o" hint-placeholder-count="3">
+          <button onClick="{{ o.set }}" style="background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid #16150F;margin-left:-1.5px;padding:7px 12px;cursor:pointer;font-family:inherit;font-size:13px">{{ o.label }}</button>
+        </sc-for>
+      </div>
+      <button onClick="{{ start }}" style="background:{{ startBg }};color:#F6F3EC;border:0;padding:12px 20px;font-size:17px;font-weight:700;cursor:pointer;min-width:220px;font-family:inherit">{{ startLabel }}</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;max-width:860px">
+      <div style="height:8px;background:rgba(22,21,15,.12)"><div style="height:100%;width:{{ progress }};background:#16150F"></div></div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px">{{ progressText }}</div>
+    </div>
+  </header>
+
+  <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:18px">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:baseline;gap:12px"><span style="font-family:'JetBrains Mono',monospace;font-size:14px">01</span><h2 style="margin:0;font-size:26px;font-weight:800">Hücum planları · Çekirdek bizde</h2></div>
+      <div style="display:flex;flex-direction:column;border-top:1.5px solid #16150F">
+        <sc-for list="{{ attCards }}" as="a" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px;padding:9px 0;border-bottom:1px solid rgba(22,21,15,.25);font-size:16px;line-height:1.4"><span style="font-weight:700">{{ a.name }}</span><span>{{ a.desc }}</span></div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:baseline;gap:12px"><span style="font-family:'JetBrains Mono',monospace;font-size:14px">02</span><h2 style="margin:0;font-size:26px;font-weight:800">Savunma planları · Çekirdek rakipte</h2></div>
+      <div style="display:flex;flex-direction:column;border-top:1.5px solid #16150F">
+        <sc-for list="{{ defCards }}" as="d" hint-placeholder-count="4">
+          <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px;padding:9px 0;border-bottom:1px solid rgba(22,21,15,.25);font-size:16px;line-height:1.4"><span style="font-weight:700">{{ d.name }}</span><span>{{ d.desc }}</span></div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font-family:'JetBrains Mono',monospace;font-size:14px">03</span><h2 style="margin:0;font-size:26px;font-weight:800">Hangi hücum hangi savunmayı açıyor</h2><span style="font-size:15px">{{ matrixNote }}</span></div>
+    <div style="overflow-x:auto;background:#F6F3EC;border:2px solid #16150F">
+      <div style="display:grid;grid-template-columns:150px repeat(4,minmax(150px,1fr)) 130px;min-width:900px">
+        <div style="padding:10px;border-bottom:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase">Hücum ↓ · Savunma →</div>
+        <sc-for list="{{ defHeads }}" as="h" hint-placeholder-count="4">
+          <div style="padding:10px;border-bottom:2px solid #16150F;border-left:1px solid rgba(22,21,15,.2);font-weight:700;font-size:15px">{{ h }}</div>
+        </sc-for>
+        <div style="padding:10px;border-bottom:2px solid #16150F;border-left:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase">Ortalama</div>
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+          <div style="padding:12px 10px;border-bottom:1px solid rgba(22,21,15,.2);font-weight:700;font-size:16px">{{ r.name }}</div>
+          <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="4">
+            <div style="padding:10px;border-bottom:1px solid rgba(22,21,15,.2);border-left:1px solid rgba(22,21,15,.2);background:{{ c.bg }};outline:{{ c.outline }};outline-offset:-3px;display:flex;flex-direction:column;gap:2px">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:600">{{ c.score }}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px">{{ c.sub }}</span>
+            </div>
+          </sc-for>
+          <div style="padding:10px;border-bottom:1px solid rgba(22,21,15,.2);border-left:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600;display:flex;align-items:center">{{ r.avg }}</div>
+        </sc-for>
+        <div style="padding:10px;border-top:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase">Savunmanın yediği</div>
+        <sc-for list="{{ colAvg }}" as="c" hint-placeholder-count="4">
+          <div style="padding:10px;border-top:2px solid #16150F;border-left:1px solid rgba(22,21,15,.2);font-family:'JetBrains Mono',monospace;font-size:14px">{{ c }}</div>
+        </sc-for>
+        <div style="padding:10px;border-top:2px solid #16150F;border-left:2px solid #16150F"></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px 22px;font-size:14px;line-height:1.4">
+      <span><strong>Üst satır:</strong> satırdaki takımın attığı – yediği sayı (maç başı ortalama)</span>
+      <span><strong>Alt satır:</strong> galibiyet / beraberlik / mağlubiyet · Çekirdek bizde oranı</span>
+      <span><strong>Çerçeve:</strong> o savunmaya karşı en iyi hücum planı</span>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;align-items:baseline;gap:12px"><span style="font-family:'JetBrains Mono',monospace;font-size:14px">04</span><h2 style="margin:0;font-size:26px;font-weight:800">Okuma</h2></div>
+    <div style="display:flex;flex-direction:column;border-top:1.5px solid #16150F;max-width:960px">
+      <sc-for list="{{ insights }}" as="t" hint-placeholder-count="3">
+        <div style="padding:10px 0;border-bottom:1px solid rgba(22,21,15,.25);font-size:17px;line-height:1.45;text-wrap:pretty">{{ t }}</div>
+      </sc-for>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { n: 8, fark: 0, running: false, done: 0, total: 0, res: null };
+  ATT = [
+    { key: 'DEN', name: 'Dengeli', desc: 'Varsayılan hücum talimatları.', tac: {} },
+    { key: 'SAB', name: 'Sabırlı', desc: 'Kısa aktarım, düşük tempo, düşük risk. Çekirdeği tutar, şarj toplar, arkada adam bırakır.', tac: { ritim: 'Sabırlı', mesafe: .3, tempo: .3, risk: .3 } },
+    { key: 'DİK', name: 'Dikine', desc: 'Uzun aktarım, yüksek tempo ve risk. Çok oyuncu öne çıkar.', tac: { ritim: 'Dikine', mesafe: .75, tempo: .75, risk: .7 } },
+    { key: 'KAN', name: 'Kanat', desc: 'En geniş dizilim, Genişlik ile boşluk, kanattan orta.', tac: { ritim: 'Kanat', genislik: 1, bosluk: 'Genişlik' } },
+    { key: 'GEÇ', name: 'Geçiş', desc: 'Kontra ritmi: Çekirdeği kazanınca hızla dikine çıkar, hücumda arkada daha çok adam bırakır.', tac: { ritim: 'Kontra', risk: .4 } }
+  ];
+  DEF = [
+    { key: 'ALA', name: 'Alan', desc: 'Orta blok. Bölgeyi tutar, en tehlikeli hücumcunun Kuyu tarafına kayar.', tac: { savunma: 'Alan' } },
+    { key: 'ÖNA', name: 'Ön alan', desc: 'Yüksek blok, tam pres (5 kişi), her zaman basar.', tac: { savunma: 'Ön alan', presTetik: 'Her zaman', pres: .9, blok: .8 } },
+    { key: 'KUY', name: 'Kuyu önü', desc: 'Derin blok, az pres. Sadece kendi yarısında basar.', tac: { savunma: 'Kuyu önü', blok: .2, pres: .2, presTetik: 'Kendi yarımızda' } },
+    { key: 'ADA', name: 'Adam adama', desc: 'Her savunmacı bir hücumcuyu takip eder. Kayıptan sonra pres.', tac: { savunma: 'Adam adama', presTetik: 'Kayıptan sonra' } }
+  ];
+  componentDidMount() { try { const r = JSON.parse(localStorage.getItem('alan-lab2-v1') || 'null'); if (r) this.setState({ res: r }); } catch (e) {} }
+  componentWillUnmount() { this.stop = true; }
+  start() {
+    if (this.state.running || !window.AlanEngine) return;
+    const n = this.state.n, jobs = [];
+    for (let i = 0; i < this.ATT.length; i++) for (let j = 0; j < this.DEF.length; j++) for (let k = 0; k < n; k++) jobs.push({ i, j, k });
+    this.fk = this.state.fark; this.acc = {}; this.stop = false;
+    this.setState({ running: true, done: 0, total: jobs.length });
+    let idx = 0;
+    const next = () => {
+      if (this.stop) return;
+      if (idx >= jobs.length) {
+        const res = { n, fark: this.fk, cell: this.acc, at: Date.now() };
+        try { localStorage.setItem('alan-lab2-v1', JSON.stringify(res)); } catch (e) {}
+        this.setState({ running: false, res }); return;
+      }
+      this.play(jobs[idx++]); this.setState({ done: idx }); setTimeout(next, 0);
+    };
+    setTimeout(next, 30);
+  }
+  play({ i, j, k }) {
+    const E = window.AlanEngine, base = E.TEAMS[0], swap = k % 2 === 1, sA = swap ? 1 : 0, sB = 1 - sA;
+    const plus = d => { const T = JSON.parse(JSON.stringify(base)); T.players.forEach(p => { while (p[4].length < 10) p[4].push(Math.round((p[4][6] + p[4][2]) / 2)); p[4] = p[4].map(v => Math.max(1, Math.min(20, v + d))); }); return T; };
+    const teams = []; teams[sA] = plus(this.fk === 'att' ? 2 : 0); teams[sB] = plus(this.fk === 'def' ? 2 : 0);
+    const m = E.createMatch(5000 + i * 977 + j * 131 + k * 7919, { teams, ai: [false, false] });
+    Object.assign(m.tac[sA], this.ATT[i].tac); Object.assign(m.tac[sB], this.DEF[j].tac);
+    const poss = [0, 0];
+    while (!m.over) { E.step(m); const c = m.core; if (!c.flight && c.holder) poss[c.holder.team]++; }
+    const key = i + '-' + j, C = this.acc[key] || (this.acc[key] = { n: 0, gF: 0, gA: 0, w: 0, d: 0, l: 0, poss: 0 });
+    const gF = m.score[sA], gA = m.score[sB];
+    C.n++; C.gF += gF; C.gA += gA; C.poss += poss[sA] / Math.max(1, poss[0] + poss[1]);
+    if (gF > gA) C.w++; else if (gF < gA) C.l++; else C.d++;
+  }
+  renderVals() {
+    const r = this.state.res, A = this.ATT, D = this.DEF, running = this.state.running;
+    const on = v => v ? ['#16150F', '#F6F3EC'] : ['transparent', '#16150F'];
+    const f1 = v => v.toFixed(1).replace('.', ','), sg = v => (v >= 0 ? '+' : '−') + f1(Math.abs(v));
+    const get = (i, j) => r && r.cell[i + '-' + j];
+    const best = D.map((_, j) => { let b = -1, bv = -99; A.forEach((_, i) => { const C = get(i, j); if (C) { const v = (C.gF - C.gA) / C.n; if (v > bv) { bv = v; b = i; } } }); return b; });
+    const rows = A.map((a, i) => {
+      let tot = 0, cnt = 0;
+      const cells = D.map((d, j) => {
+        const C = get(i, j); if (!C) return { score: '–', sub: '', bg: 'transparent', outline: 'none' };
+        const net = (C.gF - C.gA) / C.n; tot += net; cnt++;
+        const al = Math.min(.45, Math.abs(net) / 4);
+        return { score: `${f1(C.gF / C.n)} – ${f1(C.gA / C.n)}`, sub: `${C.w}/${C.d}/${C.l} · %${Math.round(C.poss / C.n * 100)}`, bg: net >= 0 ? `rgba(31,63,209,${al})` : `rgba(224,83,31,${al})`, outline: best[j] === i ? '2.5px solid #16150F' : 'none' };
+      });
+      return { name: a.name, cells, avg: cnt ? sg(tot / cnt) : '–' };
+    });
+    const colAvg = D.map((_, j) => { let s = 0, c = 0; A.forEach((_, i) => { const C = get(i, j); if (C) { s += C.gF / C.n; c++; } }); return c ? `${f1(s / c)} yedi` : '–'; });
+    const insights = [];
+    if (r) {
+      const noise = 2.6 / Math.sqrt(r.n);
+      insights.push(`Hücre başına ${r.n} maç: tek bir hücrede ±${f1(noise)} sayıya kadar fark şans olabilir. Satır ve sütun ortalamaları daha güvenilir.`);
+      D.forEach((d, j) => { const b = best[j]; if (b < 0) return; const C = get(b, j), dflt = get(0, j); if (!C || !dflt) return; const gain = (C.gF - C.gA) / C.n - (dflt.gF - dflt.gA) / dflt.n; insights.push(`${d.name} savunmasına karşı en iyi hücum: ${A[b].name} (${f1(C.gF / C.n)} – ${f1(C.gA / C.n)}, ${C.w}/${C.d}/${C.l}). Dengeli hücuma göre ${sg(gain)} sayı fark.`); });
+    }
+    const farks = [[0, 'Eşit'], ['def', 'Savunan +2'], ['att', 'Hücum eden +2']];
+    const total = this.state.total || 1;
+    return {
+      attCards: A, defCards: D, defHeads: D.map(d => d.name), rows, colAvg, insights,
+      matrixNote: r ? (r.fark === 'def' ? 'Sütundaki savunmayı oynayan takım +2 güçlü.' : r.fark === 'att' ? 'Satırdaki hücumu oynayan takım +2 güçlü.' : 'Kadrolar eşit.') : 'Henüz çalıştırılmadı.',
+      farkOpts: farks.map(([v, label]) => { const [bg, fg] = on(this.state.fark === v); return { label, bg, fg, set: () => { if (!running) this.setState({ fark: v }); } }; }),
+      nOpts: [4, 8, 12].map(n => { const [bg, fg] = on(this.state.n === n); return { label: String(n), bg, fg, set: () => { if (!running) this.setState({ n }); } }; }),
+      start: () => this.start(),
+      startBg: running ? 'rgba(22,21,15,.45)' : '#16150F',
+      startLabel: running ? 'Çalışıyor…' : 'Çalıştır',
+      progress: running ? Math.round(this.state.done / total * 100) + '%' : (r ? '100%' : '0%'),
+      progressText: running ? `${this.state.done} / ${this.state.total} maç` : r ? `Son çalıştırma: ${20 * r.n} maç · hücre başına ${r.n}` : `${20 * this.state.n} maç · birkaç dakika sürebilir`
+    };
+  }
+}
+</script>
+</body>
+</html>

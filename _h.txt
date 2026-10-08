@@ -1,0 +1,13 @@
+
+window.harness = function(setup, moveTeams, ticks, tac) {
+  const M = window.AlanMatch, D = window.AlanDecide; const m = M.createMatch(3, { tac });
+  const pos = setup(); m.ps.forEach(p => { const q = pos[p.team][p.i]; p.x = q[0]; p.y = q[1]; p.vx = p.vy = 0; p.otx = null; });
+  const h = m.ps.find(p => p.team === 0 && p.i === pos.h); m.holder = h; m.ball = null; m.ch = .3;
+  const frozen = m.ps.filter(p => !moveTeams.includes(p.team) || p === h).map(p => [p, p.x, p.y]);
+  for (let t = 0; t < ticks; t++) { m.tick++; M.position(m); M.move(m); for (const [p, x, y] of frozen) { p.x = x; p.y = y; p.vx = p.vy = 0; } }
+  const r = D.decide(h, m.ps, m.ch, Math.random, null), best = {};
+  for (const o of r.opts) if (o.q && o.det) best[o.q.name] = Math.max(best[o.q.name] || 0, o.det.P);
+  return { m, h, open: Object.values(best).filter(v => v > .7).length, best, top: r.best.kind };
+};
+window.ATT = () => [[3,25],[38,10],[38,40],[52,25],[58,12],[70,40],[72,22]];
+window.DEFZ = () => [[97,25],[80,15],[80,35],[70,18],[70,32],[62,10],[62,40]];

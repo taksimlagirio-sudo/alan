@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F3FD1}a:hover{color:#E0531F}
+button{font:inherit;color:inherit}
+</style>
+<script src="alan-v3d/core.js"></script>
+<script src="alan-v3d/shot-table.js"></script>
+<script src="alan-v3d/value-table.js"></script>
+<script src="alan-v3d/decide.js"></script>
+<script src="alan-v3d/scenes.js"></script>
+<script src="alan-v3d/match.js"></script>
+<script src="alan-v3d/shape.js"></script>
+</helmet>
+<div style="max-width:1500px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box">
+  <header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;background:#16150F;color:#F6F3EC;padding:14px 20px">
+    <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
+      <span style="font-size:28px;font-weight:800;letter-spacing:-.02em">ALAN v3</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;opacity:.85">v3d · pozisyonlar (Kuyu önü · orta saha · savunma) canlı oynanıyor</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:13px">
+      <span style="opacity:.85">Taşıyıcının Okuma'sı</span>
+      <sc-for list="{{ okBtns }}" as="b" hint-placeholder-count="3">
+        <button onClick="{{ b.set }}" style="background:{{ b.bg }};color:{{ b.fg }};border:1.5px solid #F6F3EC;padding:6px 11px;cursor:pointer">{{ b.label }}</button>
+      </sc-for>
+    </div>
+  </header>
+  <nav style="display:flex;flex-wrap:wrap;gap:8px;font-family:'JetBrains Mono',monospace;font-size:13px"><a href="./ALAN%20v3d%20Poz%20Kuyu%20Onu.dc.html" style="border:1.5px solid #16150F;padding:5px 10px;text-decoration:none;color:#16150F">Kuyu önü</a><a href="./ALAN%20v3d%20Poz%20Orta%20Saha.dc.html" style="border:1.5px solid #16150F;padding:5px 10px;text-decoration:none;color:#16150F">Orta saha</a><a href="./ALAN%20v3d%20Poz%20Savunma.dc.html" style="border:1.5px solid #16150F;padding:5px 10px;text-decoration:none;color:#16150F">Savunma</a><a href="./ALAN%20v3d%20Poz%20Pres%20Kirma.dc.html" style="border:1.5px solid #16150F;padding:5px 10px;text-decoration:none;color:#16150F">Pres kırma</a><a href="./ALAN%20v3d%20Poz%20Kontra.dc.html" style="border:1.5px solid #16150F;padding:5px 10px;text-decoration:none;color:#16150F">Kontra</a></nav>
+  <div style="font-size:16px;line-height:1.5;max-width:920px;text-wrap:pretty">Her pozisyon gerçek maç motoruna konup 10 kez sonuna kadar oynanıyor (arka planda, sırayla; sayılar doldukça güncellenir): herkes hareket ediyor, savunma yerleşiyor, Bekçi açıyı kapatıyor. Hücum sayıyla, Çekirdek kaybıyla ya da 6 saniye dolunca bitiyor. "Tekrar oynat" bir oynamayı yarı hızda gösterir: kesikli çizgi her oyuncunun o an gitmek istediği yer, altındaki yazı görevi. Savunmacıda "ikisini kapat", taşıyıcının önü ile pas hattı arasında yer seçtiği anlar.</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:16px">
+    <sc-for list="{{ cards }}" as="c" hint-placeholder-count="5">
+      <div style="border:2px solid #16150F;background:#F6F3EC;display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-bottom:2px solid #16150F">
+          <span style="font-size:18px;font-weight:700">{{ c.title }}</span>
+          <button onClick="{{ c.replay }}" style="background:#16150F;color:#F6F3EC;border:1.5px solid #16150F;padding:5px 10px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px">Tekrar oynat</button>
+        </div>
+        <canvas ref="{{ c.ref }}" width="880" height="440" style="width:100%;aspect-ratio:2/1;display:block;border-bottom:2px solid #16150F"></canvas>
+        <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:14.5px;line-height:1.45;text-wrap:pretty">{{ c.why }}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.5"><span style="opacity:.65">İlk karar (20 deneme):</span> {{ c.dist }}</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));border:1.5px solid #16150F">
+            <sc-for list="{{ c.out }}" as="o" hint-placeholder-count="4">
+              <div style="padding:6px 8px;border-right:1.5px solid #16150F">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.7">{{ o.k }}</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:{{ o.col }}">{{ o.v }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.5;opacity:.85">{{ c.story }}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  grp = null; // bu sayfanın gösterdiği pozisyon grubu (null = hepsi)
+  state = { ok: 10, res: null };
+  refs = Array.from({ length: 16 }, () => React.createRef());
+  anim = {};
+  slow = true;
+  componentDidMount() { const w = () => { if (!window.AlanScenes || !window.AlanMatch || !window.AlanShape) return setTimeout(w, 40); this.run(); }; w(); }
+  componentWillUnmount() { this.dead = true; if (this.w) this.w.terminate(); Object.values(this.anim).forEach(cancelAnimationFrame); }
+  componentDidUpdate() { this.list().forEach((sc, i) => { if (!this.anim[i]) this.draw(i, null); }); }
+  list() { return window.AlanScenes.S.filter(s => s.group && (!this.grp || s.group === this.grp)); }
+  // Ağır hesap (ileriye bakış) ayrı iş parçacığında: sayfa hiç donmaz
+  worker() {
+    if (this.w) return this.w;
+    this.w = new Worker('alan-v3d/kuyu-worker.js');
+    this.w.onmessage = e => {
+      const m = e.data, res = this.res; if (this.dead) return;
+      if (m.type === 'replay') { this.playFrames(m.i, m.r); return; }
+      if (!res || m.job !== this.job) return; const r = res[m.i];
+      if (m.type === 'dec') r.d = { dist: m.dist };
+      else if (m.type === 'play') { const q = m.r; r.R[q.res] = (r.R[q.res] || 0) + 1; r.sh += q.shots; r.pa += q.passes; r.n++; if (q.frames && !r.ex) r.ex = q; }
+      else if (m.type === 'err') console.warn('oynama hatası', m.msg);
+      this.setState({ res: res.slice() });
+    };
+    this.w.onerror = e => console.warn('iş parçacığı hatası', e.message);
+    return this.w;
+  }
+  run() {
+    const N = 10, job = (this.job = (this.job || 0) + 1);
+    this.res = this.list().map(() => ({ d: { dist: {} }, R: {}, sh: 0, pa: 0, ex: null, n: 0, N }));
+    this.setState({ res: this.res.slice() });
+    this.worker().postMessage({ type: 'run', job, ok: this.state.ok, N, group: this.grp });
+  }
+  draw(i, f) {
+    const cv = this.refs[i] && this.refs[i].current, C = window.AlanCore, SC = window.AlanScenes, r = this.state.res && this.state.res[i]; if (!cv || !r) return;
+    const x = cv.getContext('2d'), s = 8.8, A = '#1F3FD1', B = '#E0531F', INK = '#16150F', sc = this.list()[i], ex = r.ex;
+    const pts = f ? f.ps : SC.place(sc.ps()).map(p => [p.x, p.y]), teams = f && ex ? ex.teams : sc.ps().map(p => p.team), names = f ? ex.names : sc.ps().map(p => p.name), ps = pts.map((q, j) => ({ x: q[0], y: q[1], team: teams[j], a: {}, R: 8, D: 1 }));
+    x.fillStyle = '#F6F3EC'; x.fillRect(0, 0, 880, 440);
+    for (let yy = 0; yy < 50; yy++) for (let xx = 0; xx < 100; xx++) { const k = C.K(ps, xx + .5, yy + .5, 0), ak = Math.abs(k); if (ak < .08) continue; x.globalAlpha = Math.min(.3, ak * .3); x.fillStyle = k > 0 ? A : B; x.fillRect(xx * s, yy * s, s + .5, s + .5); }
+    x.globalAlpha = 1; x.strokeStyle = 'rgba(22,21,15,.22)'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(440, 0); x.lineTo(440, 440); x.stroke();
+    x.fillStyle = INK; x.beginPath(); x.arc(880, 220, C.KR * s, 0, 7); x.fill(); x.strokeStyle = '#F6F3EC'; x.lineWidth = 3; x.beginPath(); x.moveTo(879, (25 - C.MOUTH) * s); x.lineTo(879, (25 + C.MOUTH) * s); x.stroke();
+    if (f && f.tg) ps.forEach((p, j) => { const t = f.tg[j]; if (!t || t[0] == null) return; x.strokeStyle = p.team === 0 ? A : B; x.globalAlpha = .55; x.setLineDash([4, 4]); x.lineWidth = 1.8; x.beginPath(); x.moveTo(p.x * s, p.y * s); x.lineTo(t[0] * s, t[1] * s); x.stroke(); x.setLineDash([]); x.globalAlpha = 1; x.beginPath(); x.arc(t[0] * s, t[1] * s, 3, 0, 7); x.fillStyle = p.team === 0 ? A : B; x.fill(); });
+    ps.forEach((p, j) => { x.fillStyle = p.team === 0 ? A : B; x.beginPath(); x.arc(p.x * s, p.y * s, 9.5, 0, 7); x.fill(); x.strokeStyle = j === 0 && !f ? INK : '#F6F3EC'; x.lineWidth = j === 0 && !f ? 3.5 : 2; x.stroke(); x.fillStyle = INK; x.font = '600 11.5px JetBrains Mono'; x.textAlign = 'center'; x.fillText(names[j], p.x * s, p.y * s - 14); if (f && f.job && f.job[j]) { x.font = '500 10.5px JetBrains Mono'; x.fillStyle = 'rgba(22,21,15,.7)'; x.fillText(f.job[j], p.x * s, p.y * s + 22); } });
+    const b = f ? f.b : pts[0]; if (b) { const air = f && f.air > 0, lift = air ? Math.min(14, f.air * 1.4) : 0, r0 = 4 + 6 * sc.ch + (air ? 2 : 0); if (air) { x.fillStyle = 'rgba(22,21,15,.25)'; x.beginPath(); x.ellipse(b[0] * s, b[1] * s, r0, r0 * .5, 0, 0, 7); x.fill(); } x.fillStyle = '#F6F3EC'; x.beginPath(); x.arc(b[0] * s, b[1] * s - lift, r0, 0, 7); x.fill(); x.strokeStyle = INK; x.lineWidth = 2.5; x.stroke(); if (air) { x.fillStyle = INK; x.font = '600 11px JetBrains Mono'; x.textAlign = 'center'; x.fillText('havada', b[0] * s, b[1] * s - lift - r0 - 5); } }
+    x.textAlign = 'left'; x.font = '600 12px JetBrains Mono'; x.fillStyle = INK; x.fillText(f ? `oynanıyor · ${ex.res}` : `şarj %${Math.round(sc.ch * 100)}`, 10, 430);
+  }
+  replay(i) { if (!this.state.res) return; this.worker().postMessage({ type: 'replay', i, seed: Math.floor(Math.random() * 1e6), ok: this.state.ok, group: this.grp }); }
+  playFrames(i, ex) {
+    const r = this.state.res && this.state.res[i]; if (!r) return; cancelAnimationFrame(this.anim[i]);
+    r.ex = ex; this.forceUpdate(); let k = 0;
+    const st = () => { const f = r.ex.frames[Math.min(Math.floor(k), r.ex.frames.length - 1)]; this.draw(i, f); k += (this.slow ? .5 : 1); if (k < r.ex.frames.length + 40) this.anim[i] = requestAnimationFrame(st); else { this.anim[i] = null; } }; st();
+  }
+  renderVals() {
+    const SC = window.AlanScenes, res = this.state.res, NM = { 'aşırt': 'aşırtma', pas: 'ayağına pas', 'önüne': 'önüne pas', kenardan: 'kenardan', 'gönder': 'gönder', 'sür': 'sür', tut: 'tut' };
+    const cards = SC && res ? this.list().map((sc, i) => { const r = res[i], R = r.R; return {
+      title: sc.title, why: sc.why, ref: this.refs[i], replay: () => this.replay(i),
+      dist: (Object.entries(r.d.dist || {}).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${NM[k]} ${v}`).join(' · ') || 'hesaplanıyor…') + ` · ${r.n ?? 0}/${r.N ?? 0} oynandı`,
+      out: [{ k: 'Sayı', v: R.SAYI || 0, col: '#1F3FD1' }, { k: 'Bekçi aldı', v: R['Bekçi aldı'] || 0, col: '#16150F' }, { k: 'Kaybetti', v: R.kaybetti || 0, col: '#E0531F' }, { k: 'Süre doldu', v: R['süre'] || 0, col: '#16150F' }, { k: 'Gönderme', v: r.n ? (r.sh / r.n).toFixed(1) : '–', col: '#16150F' }, { k: 'Pas', v: r.n ? (r.pa / r.n).toFixed(1) : '–', col: '#16150F' }],
+      story: r.ex ? `${r.ex.res}: ` + r.ex.events.map(e => e.text).slice(0, 5).join(' → ') : ''
+    }; }) : [];
+    return { cards, okBtns: [5, 10, 15].map(v => ({ label: String(v), bg: this.state.ok === v ? '#F6F3EC' : 'transparent', fg: this.state.ok === v ? '#16150F' : '#F6F3EC', set: () => this.setState({ ok: v }, () => this.run()) })) };
+  }
+}
+</script>
+</body>
+</html>

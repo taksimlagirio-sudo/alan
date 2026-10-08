@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F3FD1}a:hover{color:#E0531F}
+button{font:inherit;color:inherit}
+</style>
+<script src="alan-engine.js"></script>
+</helmet>
+<div style="max-width:1680px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:18px;box-sizing:border-box">
+  <header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;background:#16150F;color:#F6F3EC;padding:14px 20px">
+    <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
+      <span style="font-size:28px;font-weight:800;letter-spacing:-.02em">ALAN</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;opacity:.85">Maç özeti · Taktik maçı</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:10px;font-size:19px;font-weight:600"><span style="width:14px;height:14px;background:#1F3FD1;display:block"></span>Liman Kolektifi</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:600;background:#F6F3EC;color:#16150F;padding:0 14px">{{ score }}</div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:19px;font-weight:600">Volta 09<span style="width:14px;height:14px;background:#E0531F;display:block"></span></div>
+      <button onClick="{{ again }}" style="background:transparent;color:#F6F3EC;border:1.5px solid #F6F3EC;padding:7px 12px;cursor:pointer">Başka maç</button>
+    </div>
+  </header>
+  <div style="display:flex;flex-wrap:wrap;gap:8px 24px;align-items:baseline;justify-content:space-between">
+    <div style="font-size:17px;max-width:900px;text-wrap:pretty"><b style="color:#1F3FD1">Liman</b> sabırlı dolaşım, geniş dizilim, Tuzak ile savunmayı dışarı çekiyor. <b style="color:#E0531F">Volta</b> Kuyu önünde kompakt blok kuruyor, kazanınca kontraya çıkıyor. İki takımda da arkada 1 kişi.</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:13px">{{ status }}</div>
+  </div>
+  <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+    <div style="height:8px;border:2px solid #16150F;background:#F6F3EC"><div style="height:100%;background:#16150F;width:{{ progW }}"></div></div>
+  </sc-if>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,460px),1fr));gap:18px">
+    <sc-for list="{{ clips }}" as="c" hint-placeholder-count="6">
+      <div style="background:#F6F3EC;border:2px solid #16150F;display:flex;flex-direction:column;min-width:0">
+        <canvas ref="{{ c.ref }}" width="1000" height="500" style="width:100%;aspect-ratio:2/1;display:block;background:#F6F3EC"></canvas>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px 12px;border-top:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:13px">
+          <span style="background:{{ c.col }};color:#F6F3EC;padding:3px 8px;text-transform:uppercase;letter-spacing:.06em;font-weight:600">{{ c.kind }}</span>
+          <span>{{ c.time }}</span>
+          <span style="margin-left:auto;font-weight:600">{{ c.sc }}</span>
+        </div>
+        <div style="padding:0 12px 12px;font-size:16px;line-height:1.35;text-wrap:pretty">{{ c.text }}</div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { loading: true, prog: 0, clips: [], score: '0–0', status: 'Maç simüle ediliyor…' };
+  cvs = [];
+  componentDidMount() {
+    const wait = () => window.AlanEngine ? this.run(424242) : setTimeout(wait, 50);
+    wait();
+    const loop = (t) => { this.draw(t); this.raf = requestAnimationFrame(loop); };
+    this.raf = requestAnimationFrame(loop);
+  }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); clearTimeout(this.to); }
+  setup(E, seed) {
+    const m = E.createMatch(seed, { ai: [false, false] });
+    Object.assign(m.tac[0], { ritim: 'Sabırlı', mesafe: .55, tempo: .35, risk: .35, genislik: .9, hatlar: .45, bosluk: 'Tuzak', savunma: 'Alan', blok: .55, pres: .55, presTetik: 'Kayıptan sonra', arkada: '1 kişi' });
+    Object.assign(m.tac[1], { ritim: 'Kontra', mesafe: .7, tempo: .7, risk: .5, genislik: .6, hatlar: .35, bosluk: 'Serbest', savunma: 'Kuyu önü', blok: .25, pres: .3, presTetik: 'Kendi yarımızda', arkada: '1 kişi' });
+    for (const p of m.ps) { p.a.okuma = Math.min(20, p.a.okuma + 3); p.a.aktarim = Math.min(20, p.a.aktarim + 2); }
+    return m;
+  }
+  snap(m) {
+    const ps = m.ps.map(p => ({ ...p })), c = m.core, mp = q => (q && q.id != null && ps[q.id]) ? ps[q.id] : q;
+    return { ps, core: { ...c, holder: mp(c.holder), flight: c.flight ? { ...c.flight, from: mp(c.flight.from), recv: mp(c.flight.recv), to: { ...c.flight.to } } : null } };
+  }
+  classify(e) {
+    const t = e.text;
+    if (e.type === 'sayi') return ['Sayı', 3];
+    if (/Gönderme çalımı/.test(t)) return ['Gönderme çalımı', 2];
+    if (/^Geçiş ·/.test(t)) return ['Kontra', 2];
+    if (/aşırtma/.test(t) && e.type === 'pass') return ['Aşırtma', 1];
+    if (/^Orta ·/.test(t)) return ['Orta', 1];
+    if (/^Sürme ·/.test(t)) return ['Sürme', 1];
+    if (/Seken Çekirdeği/.test(t)) return ['Sekme', 1];
+    if (/kenardan sektirdi/.test(t)) return ['Kenardan sektirme', 2];
+    if (/kenardan seken aktarımı süpürdü/.test(t)) return ['Kenardan sektirme', 2];
+    if (/kenardan sektirerek/.test(t)) return null;
+    if (/boş alana atılan aktarımı süpürdü/.test(t)) return ['Süpürme', 1];
+    if (/boş alana, koşu yoluna/.test(t)) return ['Boş alana aktarım', /savunmacıyı aştı/.test(t) ? 2 : 1];
+    if (/savunmacıyı aşan/.test(t)) return ['Hat kıran aktarım', 1];
+    return null;
+  }
+  run(seed) {
+    const E = window.AlanEngine, m = this.setup(E, seed), total = E.EV * 3;
+    this.m = m; this.cvs = [];
+    const buf = [], done = []; let pend = null, lastN = m.evN - 1;
+    this.setState({ loading: true, prog: 0, clips: [], score: '0–0', status: this.tries ? `Kenardan sektirme çıkmadı, ${this.tries + 1}. maç simüle ediliyor…` : 'Maç simüle ediliyor…' });
+    const chunk = () => {
+      if (this.m !== m) return;
+      for (let i = 0; i < 360 && !m.over; i++) {
+        E.step(m);
+        const fresh = []; for (const e of m.events) { if (e.n <= lastN) break; fresh.push(e); }
+        if (fresh.length) lastN = fresh[0].n;
+        for (const e of fresh.reverse()) {
+          const k = this.classify(e); if (!k) continue;
+          const clip = { kind: k[0], pri: k[1], text: e.text, time: e.time, team: e.team, sc: `${m.score[0]}–${m.score[1]}` };
+          if (pend && (k[1] > pend.pri)) { Object.assign(pend, clip); pend.need = k[1] === 3 ? 0 : 40; }
+          else if (!pend) { pend = { ...clip, frames: buf.slice(-110), need: k[1] === 3 ? 0 : 40 }; }
+          if (pend && pend.need === 0) { done.push(pend); pend = null; }
+        }
+        if (m.tick % 2 === 0) { const f = this.snap(m); buf.push(f); if (buf.length > 120) buf.shift(); if (pend) { pend.frames.push(f); if (--pend.need <= 0) { done.push(pend); pend = null; } } }
+      }
+      this.setState({ prog: m.tick / total, score: `${m.score[0]}–${m.score[1]}` });
+      if (!m.over) { this.to = setTimeout(chunk, 0); return; }
+      const tries = this.tries || 0;
+      if (!done.some(c => c.kind === 'Kenardan sektirme') && tries < 4) { this.tries = tries + 1; this.run(seed + 7919); return; }
+      this.tries = 0;
+      const MAX = 10, goals = done.filter(c => c.pri === 3).slice(0, 4), rest = done.filter(c => c.pri < 3).sort((a, b) => b.pri - a.pri), pick = [...goals], kinds = new Set();
+      for (const [k, n] of [['Kenardan sektirme', 2], ['Boş alana aktarım', 2]]) { kinds.add(k); rest.filter(c => c.kind === k).slice(0, n).forEach(c => pick.push(c)); }
+      for (const c of rest) if (pick.length < MAX && !kinds.has(c.kind)) { kinds.add(c.kind); pick.push(c); }
+      for (const c of rest) if (pick.length < MAX && !pick.includes(c)) pick.push(c);
+      pick.sort((a, b) => done.indexOf(a) - done.indexOf(b));
+      this.clipData = pick;
+      this.setState({ loading: false, clips: pick.map((c, i) => ({ kind: c.kind, text: c.text, time: c.time, sc: c.sc, col: c.team === 0 ? '#1F3FD1' : '#E0531F', ref: el => { this.cvs[i] = el; } })), status: `${done.some(c => c.kind === 'Kenardan sektirme') ? '' : 'Bu maçlarda kenardan sektirme olmadı · '}${pick.length} an · ${goals.length} sayı · ${done.filter(c => c.kind === 'Kenardan sektirme').length} kenardan sektirme · ${done.filter(c => c.kind === 'Boş alana aktarım').length} boş alana aktarım` });
+    };
+    this.to = setTimeout(chunk, 0);
+  }
+  draw(t) {
+    const E = window.AlanEngine; if (!E || !this.clipData) return;
+    this.clipData.forEach((c, i) => {
+      const cv = this.cvs[i]; if (!cv || !c.frames.length) return;
+      const L = c.frames.length + 24, k = Math.floor(t / 33) % L, f = c.frames[Math.min(k, c.frames.length - 1)];
+      E.render(cv.getContext('2d'), { ps: f.ps, core: f.core, tac: this.m.tac }, { view: null });
+    });
+  }
+  renderVals() {
+    return {
+      loading: this.state.loading, progW: Math.round(this.state.prog * 100) + '%', clips: this.state.clips, score: this.state.score, status: this.state.status,
+      again: () => { clearTimeout(this.to); this.clipData = null; this.run(1 + Math.floor(Math.random() * 1e6)); }
+    };
+  }
+}
+</script>
+</body>
+</html>

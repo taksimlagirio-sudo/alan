@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F3FD1}a:hover{color:#E0531F}
+</style>
+</helmet>
+<section id="turn-2" style="padding:72px;display:flex;flex-direction:column;gap:48px;width:1960px;box-sizing:border-box;border-bottom:2px dashed #16150F">
+  <header style="display:flex;justify-content:space-between;align-items:flex-end;gap:48px;border-bottom:2px solid #16150F;padding-bottom:28px">
+    <div style="display:flex;flex-direction:column;gap:14px;max-width:1200px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;letter-spacing:.08em;text-transform:uppercase">Tur 2 · alan oyunu · <a href="#1a">1a</a> Koloni'den türetildi</div>
+      <h1 style="margin:0;font-size:64px;line-height:1;font-weight:800;letter-spacing:-.02em;text-wrap:pretty">Asıl oyun topla değil, boşlukla oynanıyor.</h1>
+      <p style="margin:0;font-size:22px;line-height:1.45;text-wrap:pretty">Futboldan sadece alan mantığını alıyoruz: bir <strong>odak</strong> var, herkes ona göre hizalanıyor, boşluk <strong>yaratılıyor, kullanılıyor, savunuluyor</strong>. Üç konseptte de “boşluk” ayrı bir fiziksel şey. Bu yüzden futbolda olması imkânsız oyuncu tipleri ortaya çıkıyor.</p>
+    </div>
+    <div style="display:flex;gap:20px;font-family:'JetBrains Mono',monospace;font-size:14px">
+      <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;background:#1F3FD1;display:block"></span>Senin kadron</div>
+      <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;background:#E0531F;display:block"></span>Rakip</div>
+      <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;background:#16150F;display:block;transform:rotate(45deg) scale(.8)"></span>Çekirdek</div>
+    </div>
+  </header>
+
+  <div style="display:flex;gap:40px;align-items:stretch">
+    <article id="2a" style="width:576px;background:#F6F3EC;border:2px solid #16150F;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:14px">
+        <span style="background:#16150F;color:#F6F3EC;padding:4px 10px;font-weight:600">2a</span><span>Boşluk = etki alanı</span>
+      </div>
+      <canvas ref="{{ ref4 }}" width="1104" height="520" style="width:100%;display:block;border-bottom:2px solid #16150F;background:#F6F3EC"></canvas>
+      <div style="padding:28px 24px;display:flex;flex-direction:column;gap:24px;flex:1">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <h2 style="margin:0;font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1">ALAN</h2>
+          <p style="margin:0;font-size:19px;line-height:1.45;text-wrap:pretty">Koloni'nin ızgarası sürekli bir arenaya dönüştü. Her oyuncu bir <strong>etki alanı</strong> yayıyor ve arena, her noktaya kim daha önce ulaşırsa onun rengine boyanıyor. Çekirdek sadece <strong>senin boyadığın alandan</strong> geçebiliyor.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Oyuncu tipleri</div>
+          <div style="display:grid;grid-template-columns:130px 1fr;gap:6px 14px;font-size:16px;line-height:1.35">
+            <strong>Mıknatıs</strong><span>Rakibin alanını kendine çeker, arkasında boşluk açar</span>
+            <strong>Delici</strong><span>Dar ve uzun koni şeklinde alan; açılan boşluğa sızar</span>
+            <strong>Çapa</strong><span>Küçük ama yoğun alan; bölgeyi kilitler</span>
+            <strong>Gölge</strong><span>Alanı rakibe görünmez; rakip onu hesaba katamaz</span>
+            <strong>Gerer</strong><span>Geniş ve zayıf alan; rakip savunmayı yayar</span>
+            <strong>Yankı</strong><span>Yakındaki bir arkadaşının alanını kopyalar</span>
+          </div>
+        </div>
+        <div style="font-size:17px;line-height:1.45"><strong>Özellikler alanı şekillendirir:</strong> menzil, yoğunluk, şekil, tepki süresi, okuma (boşluğu birkaç saniye önceden görme).</div>
+      </div>
+    </article>
+
+    <article id="2b" style="width:576px;background:#F6F3EC;border:2px solid #16150F;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:14px">
+        <span style="background:#16150F;color:#F6F3EC;padding:4px 10px;font-weight:600">2b</span><span>Boşluk = uzayın kendisi</span>
+      </div>
+      <canvas ref="{{ ref5 }}" width="1104" height="520" style="width:100%;display:block;border-bottom:2px solid #16150F;background:#F6F3EC"></canvas>
+      <div style="padding:28px 24px;display:flex;flex-direction:column;gap:24px;flex:1">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <h2 style="margin:0;font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1">KIVRIM</h2>
+          <p style="margin:0;font-size:19px;line-height:1.45;text-wrap:pretty">Mesafe sabit değil. Oyuncular uzayı büküyor: hücumcular <strong>katlıyor</strong> (iki noktayı birbirine yaklaştırıyor), savunmacılar <strong>geriyor</strong> (geçişi uzatıyor). Boşluk yaratmak burada kelimenin tam anlamıyla uzay üretmek demek.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Oyuncu tipleri</div>
+          <div style="display:grid;grid-template-columns:130px 1fr;gap:6px 14px;font-size:16px;line-height:1.35">
+            <strong>Katlayıcı</strong><span>Önündeki uzayı sıkıştırır, kısa yol açar</span>
+            <strong>Gerici</strong><span>Bölgesini genişletir; rakibi orada yavaşlatır</span>
+            <strong>Tünelci</strong><span>Katlanmış uzaydan en hızlı geçen</span>
+            <strong>Düğüm</strong><span>Bölgesindeki bükülmeyi sıfırlar (anti-taktik)</span>
+            <strong>Dalga</strong><span>Bükülmeyi arkadaşına zincirleme aktarır</span>
+            <strong>Pusula</strong><span>Bükülmüş uzayda doğru yolu en iyi okuyan</span>
+          </div>
+        </div>
+        <div style="font-size:17px;line-height:1.45"><strong>Özellikler bükülmeyi şekillendirir:</strong> bükme gücü, menzil, kararlılık (bükülmeyi ne kadar tutar), dayanıklılık (rakip bükülmeye direnç).</div>
+      </div>
+    </article>
+
+    <article id="2c" style="width:576px;background:#F6F3EC;border:2px solid #16150F;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:14px">
+        <span style="background:#16150F;color:#F6F3EC;padding:4px 10px;font-weight:600">2c</span><span>Boşluk = akıntı</span>
+      </div>
+      <canvas ref="{{ ref6 }}" width="1104" height="520" style="width:100%;display:block;border-bottom:2px solid #16150F;background:#F6F3EC"></canvas>
+      <div style="padding:28px 24px;display:flex;flex-direction:column;gap:24px;flex:1">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <h2 style="margin:0;font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1">AKINTI</h2>
+          <p style="margin:0;font-size:19px;line-height:1.45;text-wrap:pretty">Arena bir akışkan. Çekirdeği hiçbir oyuncu taşımıyor, onu <strong>akıntı</strong> taşıyor. Oyuncular birer girdap ve kaynak. Doğru dizilim, çekirdeği rakibin kuyusuna sürükleyen bir <strong>kanal</strong> açar.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Oyuncu tipleri</div>
+          <div style="display:grid;grid-template-columns:130px 1fr;gap:6px 14px;font-size:16px;line-height:1.35">
+            <strong>Kaynak</strong><span>Akış üretir; hücumun motoru</span>
+            <strong>Girdap</strong><span>Etrafında döndürür; çekirdeği tutar ya da fırlatır</span>
+            <strong>Set</strong><span>Akışı durdurur; kalecinin akışkan hâli</span>
+            <strong>Kanalcı</strong><span>İki girdap arasında hızlı bir koridor açar</span>
+            <strong>Türbülans</strong><span>Rakibin kanalını bozar ama kendi akışını da kirletir</span>
+            <strong>Dümen</strong><span>Akışın yönünü birkaç derece çevirir; ince ayar</span>
+          </div>
+        </div>
+        <div style="font-size:17px;line-height:1.45"><strong>Özellikler akışı şekillendirir:</strong> debi, dönüş hızı, viskozite (ne kadar yapışkan), konum disiplini, dayanıklılık (yorulunca akış zayıflar).</div>
+      </div>
+    </article>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:16px;width:1808px">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:14px;letter-spacing:.08em;text-transform:uppercase">Alan oyununun 5 bileşeni, üç farklı yorumla</div>
+    <div style="display:grid;grid-template-columns:300px repeat(3,1fr);column-gap:28px;border-top:2px solid #16150F;font-size:18px;line-height:1.4">
+      <div style="padding:14px 0;border-bottom:1px solid #16150F"></div>
+      <div style="padding:14px 0;border-bottom:1px solid #16150F;font-weight:800"><a href="#2a" style="color:#16150F">2a</a> Alan</div>
+      <div style="padding:14px 0;border-bottom:1px solid #16150F;font-weight:800"><a href="#2b" style="color:#16150F">2b</a> Kıvrım</div>
+      <div style="padding:14px 0;border-bottom:1px solid #16150F;font-weight:800"><a href="#2c" style="color:#16150F">2c</a> Akıntı</div>
+      <div style="padding:14px 0;border-bottom:1px solid #16150F;font-weight:600">Odak (top yerine)</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Çekirdek; sadece kendi alanından geçer, rakip alanında kesilir</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Çekirdek; bükülmüş uzayda her zaman en kısa yoldan gider</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Çekirdek; kimse dokunmaz, akıntıyla sürüklenir</div>
+      <div style="padding:14px 0;border-bottom:1px solid #16150F;font-weight:600">Boşluk yaratmak</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Mıknatıs rakip alanını çeker, kopuk bölge açılır</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Katlayıcı yeni bir kısa yol üretir</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Kaynaklar basınç farkı yaratır</div>
+      <div style="padding:14px 0;border-bottom:1px solid #16150F;font-weight:600">Boşluğu kullanmak</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Delici zamanında sızar, alan tam o an boyanır</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Tünelci kısa yoldan geçer</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Kanalcı çekirdeği hızlı akıma sokar</div>
+      <div style="padding:14px 0;border-bottom:1px solid #16150F;font-weight:600">Boşluğu savunmak</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Kompakt blok, Çapa'larla kilit</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Germe ile mesafeyi uzatmak, Düğüm ile sıfırlamak</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Set ve Türbülans</div>
+      <div style="padding:14px 0;border-bottom:1px solid #16150F;font-weight:600">Odağa göre hizalanma</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Alanların yönü çekirdeğe döner</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Bükülme merkezi çekirdeği takip eder</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Girdaplar dönüş yönünü çekirdeğe göre ayarlar</div>
+      <div style="padding:14px 0;border-bottom:1px solid #16150F;font-weight:600">Risk</div><div style="padding:14px 0;border-bottom:1px solid #16150F">En okunur olanı; futbola en yakın his</div><div style="padding:14px 0;border-bottom:1px solid #16150F">En yaratıcı olanı; öğrenmesi zor</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Kontrol hissi en düşük olanı</div>
+    </div>
+    <p style="margin:8px 0 0;font-size:18px;line-height:1.45;max-width:1200px;text-wrap:pretty">Önerim <a href="#2a">2a</a>'yı temel almak. Futboldaki alan sezgisini birebir taşıyor, ama Gölge ve Mıknatıs gibi tipler futbolda imkânsız. <a href="#2b">2b</a>'nin Katlayıcı'sı nadir bir oyuncu tipi olarak eklenebilir.</p>
+  </div>
+</section>
+<section id="turn-1" style="padding:72px;display:flex;flex-direction:column;gap:48px;width:1960px;box-sizing:border-box">
+  <header style="display:flex;justify-content:space-between;align-items:flex-end;gap:48px;border-bottom:2px solid #16150F;padding-bottom:28px">
+    <div style="display:flex;flex-direction:column;gap:14px;max-width:1100px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;letter-spacing:.08em;text-transform:uppercase">Tur 1 · 3 konsept · menajer sadece izler · FM derinliği</div>
+      <h1 style="margin:0;font-size:64px;line-height:1;font-weight:800;letter-spacing:-.02em;text-wrap:pretty">Saha yok, top yok, gol yok.</h1>
+      <p style="margin:0;font-size:22px;line-height:1.4;text-wrap:pretty">FM'den sadece iskeleti alıyoruz: <strong>kadro kur → özellikleri farklı etkileyen bireyler → önceden taktik → simülasyonu izle → sezon boyu yönet.</strong> Simüle edilen şey ise gerçek hayatta var olamayacak bir sistem.</p>
+    </div>
+    <div style="display:flex;gap:20px;font-family:'JetBrains Mono',monospace;font-size:14px">
+      <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;background:#1F3FD1;display:block"></span>Senin kadron</div>
+      <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;background:#E0531F;display:block"></span>Rakip</div>
+    </div>
+  </header>
+
+  <div style="display:flex;gap:40px;align-items:stretch">
+
+    <article id="1a" style="width:576px;background:#F6F3EC;border:2px solid #16150F;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:14px">
+        <span style="background:#16150F;color:#F6F3EC;padding:4px 10px;font-weight:600">1a</span><span>Mekansal · emergent</span>
+      </div>
+      <canvas ref="{{ ref1 }}" width="1104" height="520" style="width:100%;display:block;border-bottom:2px solid #16150F;background:#F6F3EC"></canvas>
+      <div style="padding:28px 24px;display:flex;flex-direction:column;gap:24px;flex:1">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <h2 style="margin:0;font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1">KOLONİ</h2>
+          <p style="margin:0;font-size:19px;line-height:1.45;text-wrap:pretty">Oyuncuların bir hücresel evrende yaşayan <strong>kural-varlıkları</strong>. Maç, iki kolonin aynı ızgaraya ekilip 2000 nesil boyunca birbirini yemesi, sarması, ya da onunla ortaklık kurması.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Oyuncu = bir kural seti</div>
+          <div style="display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:16px;line-height:1.35">
+            <strong>Yayılma</strong><span>Boş hücreye geçme olasılığı</span>
+            <strong>Dayanıklılık</strong><span>Kaç düşman komşuya kadar ayakta kalır</span>
+            <strong>Mutasyon</strong><span>Maç içinde kuralını kendiliğinden değiştirme</span>
+            <strong>Simbiyoz</strong><span>Takım arkadaşının yanında güçlenme</span>
+            <strong>Hafıza</strong><span>Kaybettiği bölgeyi geri isteme</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Pozisyon yerine roller</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;font-size:15px">
+            <span style="border:1.5px solid #16150F;padding:4px 10px">Tohum</span><span style="border:1.5px solid #16150F;padding:4px 10px">Duvar</span><span style="border:1.5px solid #16150F;padding:4px 10px">Avcı</span><span style="border:1.5px solid #16150F;padding:4px 10px">Katalizör</span><span style="border:1.5px solid #16150F;padding:4px 10px">Parazit</span><span style="border:1.5px solid #16150F;padding:4px 10px">Taşıyıcı</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:17px;line-height:1.45">
+          <div><strong>Taktik:</strong> ekim deseni, kural öncelik tablosu (“düşman ≥4 ise geri çekil”), besin dalgalarına göre zamanlama.</div>
+          <div><strong>Neden dijital:</strong> fiziği sen yazıyorsun; aynı kadro farklı ızgara kurallarında bambaşka oynar.</div>
+          <div><strong>Menajerlik:</strong> scouting = vahşi ızgaralarda mutant aramak; antrenman = kural evrimini yönlendirmek.</div>
+        </div>
+      </div>
+    </article>
+
+    <article id="1b" style="width:576px;background:#F6F3EC;border:2px solid #16150F;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:14px">
+        <span style="background:#16150F;color:#F6F3EC;padding:4px 10px;font-weight:600">1b</span><span>Ağ · sosyal</span>
+      </div>
+      <canvas ref="{{ ref2 }}" width="1104" height="520" style="width:100%;display:block;border-bottom:2px solid #16150F;background:#F6F3EC"></canvas>
+      <div style="padding:28px 24px;display:flex;flex-direction:column;gap:24px;flex:1">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <h2 style="margin:0;font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1">YANKI</h2>
+          <p style="margin:0;font-size:19px;line-height:1.45;text-wrap:pretty">Hayali bir takımadada 10.000 köylü var. İki kadro <strong>rakip efsaneleri</strong> yaymak için gönderiliyor. Maç 40 gün sürüyor; sonunda kimin efsanesine daha çok kişi inanıyorsa o kazanır.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Oyuncu = bir anlatıcı</div>
+          <div style="display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:16px;line-height:1.35">
+            <strong>Karizma</strong><span>Tek temasta ikna gücü</span>
+            <strong>Erişim</strong><span>Günde kaç düğüme dokunur</span>
+            <strong>Tutarlılık</strong><span>Efsane ondan geçerken ne kadar bozulur</span>
+            <strong>Şüphe</strong><span>Rakip efsaneyi söküp atma becerisi</span>
+            <strong>Sabır</strong><span>Dirençli kümelerde vazgeçmeme</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Pozisyon = ağdaki konum</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;font-size:15px">
+            <span style="border:1.5px solid #16150F;padding:4px 10px">Hatip</span><span style="border:1.5px solid #16150F;padding:4px 10px">Fısıltıcı</span><span style="border:1.5px solid #16150F;padding:4px 10px">Köprü</span><span style="border:1.5px solid #16150F;padding:4px 10px">Şüpheci</span><span style="border:1.5px solid #16150F;padding:4px 10px">Arşivci</span><span style="border:1.5px solid #16150F;padding:4px 10px">Kâhin</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:17px;line-height:1.45">
+          <div><strong>Taktik:</strong> hangi adaya kim iner, saf mesaj mı esnek mesaj mı, hücum mu (yay) savunma mı (sök).</div>
+          <div><strong>Neden dijital:</strong> topluluk her maç farklı üretilir; harita bir ağ, mesafe sosyal.</div>
+          <div><strong>Menajerlik:</strong> efsane yazımı (taktik dizilim yerine anlatı kurgusu), anlatıcı transferi, moral = inanç.</div>
+        </div>
+      </div>
+    </article>
+
+    <article id="1c" style="width:576px;background:#F6F3EC;border:2px solid #16150F;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:2px solid #16150F;font-family:'JetBrains Mono',monospace;font-size:14px">
+        <span style="background:#16150F;color:#F6F3EC;padding:4px 10px;font-weight:600">1c</span><span>Zamansal · işitsel</span>
+      </div>
+      <canvas ref="{{ ref3 }}" width="1104" height="520" style="width:100%;display:block;border-bottom:2px solid #16150F;background:#F6F3EC"></canvas>
+      <div style="padding:28px 24px;display:flex;flex-direction:column;gap:24px;flex:1">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <h2 style="margin:0;font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1">REZONANS</h2>
+          <p style="margin:0;font-size:19px;line-height:1.45;text-wrap:pretty">Mekân yok, sadece <strong>frekans ve zaman</strong>. Altı “ses” paylaşılan bir spektrumda çalıyor; rakibin dalgasını sönümlemek, kendi armonini baskın kılmak lazım. Maç 64 ölçü.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Oyuncu = bir ses</div>
+          <div style="display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:16px;line-height:1.35">
+            <strong>Genlik</strong><span>Ham güç, ama yorulur</span>
+            <strong>Tını</strong><span>Rakip girişimine karşı saflık</span>
+            <strong>Ritim</strong><span>Ölçüye kilitlenme disiplini</span>
+            <strong>Uyum</strong><span>Arkadaşıyla üst-ton üretme</span>
+            <strong>Doğaçlama</strong><span>Plandan sapıp boşluğu doldurma</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Pozisyon = frekans bandı</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;font-size:15px">
+            <span style="border:1.5px solid #16150F;padding:4px 10px">Kök</span><span style="border:1.5px solid #16150F;padding:4px 10px">Dron</span><span style="border:1.5px solid #16150F;padding:4px 10px">Nabız</span><span style="border:1.5px solid #16150F;padding:4px 10px">Melodi</span><span style="border:1.5px solid #16150F;padding:4px 10px">Sönümleyici</span><span style="border:1.5px solid #16150F;padding:4px 10px">Parıltı</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:17px;line-height:1.45">
+          <div><strong>Taktik:</strong> ölçü ölçü kompozisyon iskeleti, hangi bantta kim lider, ne zaman sessizlik (pres yerine).</div>
+          <div><strong>Neden dijital:</strong> maç izlenir <em>ve</em> dinlenir; her maç benzersiz bir parça bırakır.</div>
+          <div><strong>Menajerlik:</strong> akort = antrenman, yorgunluk = genlik kaybı, rakip analizi = spektrum okumak.</div>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:16px;width:1808px">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:14px;letter-spacing:.08em;text-transform:uppercase">Karşılaştırma</div>
+    <div style="display:grid;grid-template-columns:360px repeat(3,1fr);border-top:2px solid #16150F;font-size:18px">
+      <div style="padding:14px 0;border-bottom:1px solid #16150F"></div>
+      <div style="padding:14px 0;border-bottom:1px solid #16150F;font-weight:800"><a href="#1a" style="color:#16150F">1a</a> Koloni</div>
+      <div style="padding:14px 0;border-bottom:1px solid #16150F;font-weight:800"><a href="#1b" style="color:#16150F">1b</a> Yankı</div>
+      <div style="padding:14px 0;border-bottom:1px solid #16150F;font-weight:800"><a href="#1c" style="color:#16150F">1c</a> Rezonans</div>
+      <div style="padding:14px 0;border-bottom:1px solid #16150F">İzlemesi keyifli mi</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Çok — hipnotik, sürprizli</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Orta — yavaş dönüşler</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Çok — ses + görsel</div>
+      <div style="padding:14px 0;border-bottom:1px solid #16150F">Taktik derinliği</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Çok yüksek, matematiksel</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Yüksek, stratejik</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Yüksek, zamanlama odaklı</div>
+      <div style="padding:14px 0;border-bottom:1px solid #16150F">“Neden kaybettim?” okunur mu</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Zor — kaos riski</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Kolay — hikâye gibi</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Orta</div>
+      <div style="padding:14px 0;border-bottom:1px solid #16150F">Oyuncuya bağlanma</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Düşük — soyut</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Yüksek — karakterler</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Orta</div>
+      <div style="padding:14px 0;border-bottom:1px solid #16150F">En büyük risk</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Tek baskın strateji</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Politik algılanma</div><div style="padding:14px 0;border-bottom:1px solid #16150F">Ses tasarımı maliyeti</div>
+    </div>
+    <p style="margin:8px 0 0;font-size:18px;line-height:1.45;max-width:1100px">Birini seç (ya da ikisini karıştır, ör. Yankı'nın karakterleri + Koloni'nin ızgarası). Bir sonraki turda kurallar, sezon döngüsü ve izlenebilir maç ekranını derinleştiririm.</p>
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  ref1 = React.createRef(); ref2 = React.createRef(); ref3 = React.createRef(); ref4 = React.createRef(); ref5 = React.createRef(); ref6 = React.createRef();
+  componentDidMount() {
+    this.A = '#1F3FD1'; this.B = '#E0531F'; this.P = '#F6F3EC'; this.f = 0;
+    this.initColony(); this.initGraph(); this.initField(); this.initFlow();
+    const loop = () => { this.f++; this.stepColony(); this.drawColony(); if (this.f % 5 === 0) this.stepGraph(); this.drawGraph(); this.drawWave(); this.stepField(); this.drawField(); this.drawWarp(); this.drawFlow(); this.raf = requestAnimationFrame(loop); };
+    this.raf = requestAnimationFrame(loop);
+  }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); }
+  initColony() {
+    this.W = 92; this.H = 43; this.g = new Uint8Array(this.W * this.H); this.cf = 0;
+    for (let i = 0; i < 40; i++) {
+      const y = Math.floor(Math.random() * this.H);
+      this.g[y * this.W + Math.floor(Math.random() * 12)] = 1;
+      this.g[y * this.W + this.W - 1 - Math.floor(Math.random() * 12)] = 2;
+    }
+  }
+  stepColony() {
+    const { W, H, g } = this; this.cf++;
+    for (let k = 0; k < 900; k++) {
+      const x = Math.floor(Math.random() * W), y = Math.floor(Math.random() * H), i = y * W + x;
+      let a = 0, b = 0;
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+        if (!dx && !dy) continue; const nx = x + dx, ny = y + dy;
+        if (nx < 0 || ny < 0 || nx >= W || ny >= H) continue;
+        const v = g[ny * W + nx]; if (v === 1) a++; else if (v === 2) b++;
+      }
+      const c = g[i], r = Math.random();
+      if (c === 0) { if (a > b && r < 0.3) g[i] = 1; else if (b > a && r < 0.2) g[i] = 2; else if (a && a === b && r < 0.1) g[i] = r < 0.05 ? 1 : 2; }
+      else if (c === 1 && b >= 4 && r < 0.5) g[i] = 2;
+      else if (c === 2 && a >= 6 && r < 0.5) g[i] = 1;
+      else if (r < 0.003) g[i] = 0;
+    }
+    if (this.cf > 1400) this.initColony();
+  }
+  drawColony() {
+    const c = this.ref1.current; if (!c) return; const x = c.getContext('2d'), s = 12;
+    x.fillStyle = this.P; x.fillRect(0, 0, c.width, c.height);
+    let a = 0, b = 0;
+    for (let y = 0; y < this.H; y++) for (let i = 0; i < this.W; i++) {
+      const v = this.g[y * this.W + i]; if (!v) continue;
+      if (v === 1) a++; else b++;
+      x.fillStyle = v === 1 ? this.A : this.B; x.fillRect(i * s + 1, y * s + 1, s - 2, s - 2);
+    }
+    this.label(x, `NESİL ${String(this.cf).padStart(4, '0')}   ●${a}  ●${b}`);
+  }
+  label(x, t) {
+    x.font = '600 22px "JetBrains Mono", monospace'; const w = x.measureText(t).width;
+    x.fillStyle = '#16150F'; x.fillRect(16, 16, w + 24, 38); x.fillStyle = this.P; x.fillText(t, 28, 43);
+  }
+  initGraph() {
+    const n = 80, N = [];
+    for (let i = 0; i < n; i++) N.push({ x: 50 + Math.random() * 1004, y: 80 + Math.random() * 400, s: 0 });
+    const E = new Set();
+    N.forEach((p, i) => {
+      N.map((q, j) => [j, (p.x - q.x) ** 2 + (p.y - q.y) ** 2]).sort((u, v) => u[1] - v[1]).slice(1, 4)
+        .forEach(([j]) => E.add(i < j ? i + '-' + j : j + '-' + i));
+    });
+    this.edges = [...E].map(e => e.split('-').map(Number));
+    this.adj = N.map(() => []); this.edges.forEach(([i, j]) => { this.adj[i].push(j); this.adj[j].push(i); });
+    this.nodes = N; this.day = 0;
+  }
+  stepGraph() {
+    const N = this.nodes; this.day++;
+    if (!N.some(n => n.s === 1)) N[Math.floor(Math.random() * N.length)].s = 1;
+    if (!N.some(n => n.s === 2)) N[Math.floor(Math.random() * N.length)].s = 2;
+    const next = N.map(n => n.s);
+    N.forEach((n, i) => {
+      if (!n.s) return;
+      this.adj[i].forEach(j => {
+        const t = N[j].s, r = Math.random();
+        if (t === 0 && r < (n.s === 1 ? 0.07 : 0.1)) next[j] = n.s;
+        else if (t && t !== n.s && r < (n.s === 1 ? 0.03 : 0.01)) next[j] = n.s;
+      });
+      if (Math.random() < 0.006) next[i] = 0;
+    });
+    next.forEach((s, i) => N[i].s = s);
+    if (this.day > 400) this.initGraph();
+  }
+  drawGraph() {
+    const c = this.ref2.current; if (!c) return; const x = c.getContext('2d');
+    x.fillStyle = this.P; x.fillRect(0, 0, c.width, c.height);
+    x.strokeStyle = 'rgba(22,21,15,.25)'; x.lineWidth = 2;
+    this.edges.forEach(([i, j]) => { const a = this.nodes[i], b = this.nodes[j]; x.beginPath(); x.moveTo(a.x, a.y); x.lineTo(b.x, b.y); x.stroke(); });
+    let a = 0, b = 0;
+    this.nodes.forEach(n => {
+      x.beginPath(); x.arc(n.x, n.y, 9, 0, 7);
+      x.fillStyle = n.s === 1 ? this.A : n.s === 2 ? this.B : this.P; x.fill();
+      if (!n.s) { x.strokeStyle = '#16150F'; x.stroke(); }
+      if (n.s === 1) a++; if (n.s === 2) b++;
+    });
+    this.label(x, `GÜN ${String(Math.floor(this.day / 10) + 1).padStart(2, '0')}/40   ●${a}  ●${b}`);
+  }
+  drawWave() {
+    const c = this.ref3.current; if (!c) return; const x = c.getContext('2d'), t = this.f / 60;
+    x.fillStyle = this.P; x.fillRect(0, 0, c.width, c.height);
+    const fa = u => Math.sin(u * 2 + t * 3) * 0.6 + Math.sin(u * 6 + t * 5) * 0.3 * Math.sin(t * 0.7);
+    const fb = u => Math.sin(u * 2.4 - t * 2.5 + 1) * 0.55 + Math.sin(u * 9 + t * 4) * 0.25;
+    const lanes = [[150, fa, this.A, 50], [270, fb, this.B, 50], [420, u => fa(u) + fb(u), '#16150F', 45]];
+    x.strokeStyle = 'rgba(22,21,15,.15)'; x.lineWidth = 2;
+    for (let i = 1; i < 16; i++) { x.beginPath(); x.moveTo(i * 69, 70); x.lineTo(i * 69, 500); x.stroke(); }
+    lanes.forEach(([y0, f, col, amp]) => {
+      x.strokeStyle = col; x.lineWidth = 4; x.beginPath();
+      for (let px = 0; px <= 1104; px += 4) { const v = f(px / 80); px ? x.lineTo(px, y0 + v * amp) : x.moveTo(px, y0 + v * amp); }
+      x.stroke();
+    });
+    x.font = '600 18px "JetBrains Mono", monospace'; x.fillStyle = '#16150F';
+    x.fillText('SES A', 980, 105); x.fillText('SES B', 980, 225); x.fillText('GİRİŞİM', 950, 365);
+    this.label(x, `ÖLÇÜ ${String(Math.floor(t / 2) % 64 + 1).padStart(2, '0')}/64`);
+  }
+  initField(att) {
+    const slots = [[0, .12], [0, .88], [.5, .32], [.5, .68], [1, .2], [1, .8]];
+    const R = [150, 150, 110, 110, 90, 130];
+    this.ag = [];
+    [1, 2].forEach(t => slots.forEach((s, k) => this.ag.push({ t, k, s, r: R[k], x: t === 1 ? 300 - s[0] * 200 : 804 + s[0] * 200, y: s[1] * 520 })));
+    this.att = att || (Math.random() < .5 ? 1 : 2);
+    this.holder = this.ag.find(a => a.t === this.att && a.k === 2);
+    this.core = { x: this.holder.x, y: this.holder.y }; this.flight = null; this.ft = 0;
+    if (this.score === undefined) this.score = [0, 0];
+  }
+  ctrl(x, y) {
+    let c = 0; for (const a of this.ag) { const d = (a.x - x) ** 2 + (a.y - y) ** 2; c += (a.t === 1 ? 1 : -1) * Math.exp(-d / (a.r * a.r)); }
+    return Math.tanh(c * 1.4);
+  }
+  stepField() {
+    const att = this.att, dir = att === 1 ? 1 : -1, cx = this.core.x, cy = this.core.y; this.ft++;
+    const defs = this.ag.filter(a => a.t !== att);
+    let presser = defs.reduce((m, a) => ((a.x - cx) ** 2 + (a.y - cy) ** 2 < (m.x - cx) ** 2 + (m.y - cy) ** 2 ? a : m), defs[0]);
+    for (const a of this.ag) {
+      let tx, ty;
+      if (a === this.holder && !this.flight) { tx = a.x + dir * 40; ty = a.y + (260 - a.y) * .05; }
+      else if (a.t === att) { tx = cx + dir * (a.s[0] * 260 - 60); ty = a.s[1] * 520; }
+      else if (a === presser) { tx = cx; ty = cy; }
+      else { tx = cx + dir * (60 + (1 - a.s[0]) * 160); ty = cy + (a.s[1] - .5) * 300; }
+      tx = Math.max(20, Math.min(1084, tx)); ty = Math.max(20, Math.min(500, ty));
+      const sp = a === presser ? .035 : .022;
+      a.x += (tx - a.x) * sp + Math.sin(this.f * .03 + a.k) * .3; a.y += (ty - a.y) * sp;
+    }
+    if (this.flight) {
+      const fl = this.flight; fl.p += .05;
+      this.core.x = fl.x0 + (fl.to.x - fl.x0) * fl.p; this.core.y = fl.y0 + (fl.to.y - fl.y0) * fl.p;
+      const c = this.ctrl(this.core.x, this.core.y) * dir;
+      if (c < -.75 && fl.p > .2) { this.att = 3 - att; this.holder = presser; this.flight = null; this.ft = 0; return; }
+      if (fl.p >= 1) { this.holder = fl.to; this.flight = null; this.ft = 0; }
+      return;
+    }
+    this.core.x = this.holder.x; this.core.y = this.holder.y;
+    const pd = Math.hypot(presser.x - cx, presser.y - cy);
+    if ((att === 1 && cx > 1050) || (att === 2 && cx < 54)) { this.score[att - 1]++; this.initField(3 - att); return; }
+    if (this.ft > 50 && (pd < 70 || this.ft > 110)) {
+      const opts = this.ag.filter(a => a.t === att && a !== this.holder && this.ctrl(a.x, a.y) * dir > .1);
+      if (opts.length) {
+        const to = opts.reduce((m, a) => (a.x * dir > m.x * dir ? a : m), opts[0]);
+        this.flight = { x0: cx, y0: cy, to, p: 0 };
+      } else if (pd < 40) { this.att = 3 - att; this.holder = presser; this.ft = 0; }
+    }
+  }
+  drawField() {
+    const c = this.ref4.current; if (!c) return; const x = c.getContext('2d'), s = 24;
+    x.fillStyle = this.P; x.fillRect(0, 0, c.width, c.height);
+    for (let j = 0; j < 22; j++) for (let i = 0; i < 46; i++) {
+      const v = this.ctrl(i * s + 12, j * s + 12);
+      if (Math.abs(v) < .08) continue;
+      x.globalAlpha = Math.min(.55, Math.abs(v) * .6); x.fillStyle = v > 0 ? this.A : this.B; x.fillRect(i * s, j * s, s - 1, s - 1);
+    }
+    x.globalAlpha = 1;
+    x.fillStyle = '#16150F'; x.fillRect(0, 160, 8, 200); x.fillRect(1096, 160, 8, 200);
+    if (this.flight) { x.setLineDash([8, 8]); x.strokeStyle = '#16150F'; x.lineWidth = 2; x.beginPath(); x.moveTo(this.flight.x0, this.flight.y0); x.lineTo(this.flight.to.x, this.flight.to.y); x.stroke(); x.setLineDash([]); }
+    for (const a of this.ag) {
+      x.beginPath(); x.arc(a.x, a.y, 13, 0, 7); x.fillStyle = a.t === 1 ? this.A : this.B; x.fill();
+      x.strokeStyle = this.P; x.lineWidth = 3; x.stroke();
+    }
+    x.save(); x.translate(this.core.x, this.core.y); x.rotate(Math.PI / 4); x.fillStyle = '#16150F'; x.fillRect(-9, -9, 18, 18); x.restore();
+    this.label(x, `ALAN KONTROLÜ   ●${this.score[0]} – ${this.score[1]}●`);
+  }
+  drawWarp() {
+    const c = this.ref5.current; if (!c) return; const x = c.getContext('2d'), t = this.f / 90;
+    x.fillStyle = this.P; x.fillRect(0, 0, c.width, c.height);
+    const ag = [];
+    for (let k = 0; k < 4; k++) ag.push({ t: 1, x: 280 + 220 * Math.sin(t * .7 + k * 1.7), y: 260 + 180 * Math.sin(t * 1.1 + k * 2.3) });
+    for (let k = 0; k < 4; k++) ag.push({ t: 2, x: 820 + 200 * Math.sin(t * .8 + k * 1.3 + 2), y: 260 + 180 * Math.cos(t * .9 + k * 2.1) });
+    const warp = (px, py) => {
+      let dx = 0, dy = 0;
+      for (const a of ag) {
+        const ex = a.x - px, ey = a.y - py, d2 = ex * ex + ey * ey;
+        if (a.t === 1) { const w = .5 * Math.exp(-d2 / 19600); dx += ex * w; dy += ey * w; }
+        else { const d = Math.sqrt(d2) + 1, w = 34 * Math.exp(-d2 / 14400); dx -= ex / d * w; dy -= ey / d * w; }
+      }
+      return [px + dx, py + dy];
+    };
+    const G = 34, cols = 33, rows = 16;
+    const P = []; for (let j = 0; j < rows; j++) { P.push([]); for (let i = 0; i < cols; i++) P[j].push(warp(i * G + 8, j * G + 5)); }
+    x.strokeStyle = 'rgba(22,21,15,.4)'; x.lineWidth = 2;
+    for (let j = 0; j < rows; j++) { x.beginPath(); P[j].forEach((p, i) => i ? x.lineTo(p[0], p[1]) : x.moveTo(p[0], p[1])); x.stroke(); }
+    for (let i = 0; i < cols; i++) { x.beginPath(); for (let j = 0; j < rows; j++) j ? x.lineTo(P[j][i][0], P[j][i][1]) : x.moveTo(P[j][i][0], P[j][i][1]); x.stroke(); }
+    for (const a of ag) { x.beginPath(); x.arc(a.x, a.y, 13, 0, 7); x.fillStyle = a.t === 1 ? this.A : this.B; x.fill(); x.strokeStyle = this.P; x.lineWidth = 3; x.stroke(); }
+    this.label(x, 'KATLA ●   GER ●');
+  }
+  initFlow() {
+    this.pts = []; for (let i = 0; i < 600; i++) this.pts.push({ x: Math.random() * 1104, y: Math.random() * 520 });
+    this.fcore = { x: 80, y: 260 };
+  }
+  flowAt(px, py, ag) {
+    let vx = .6, vy = 0;
+    for (const a of ag) {
+      const ex = px - a.x, ey = py - a.y, d2 = ex * ex + ey * ey + 900, k = a.s * 2600 / d2;
+      vx += -ey * k * .02; vy += ex * k * .02;
+    }
+    return [vx, vy];
+  }
+  drawFlow() {
+    const c = this.ref6.current; if (!c) return; const x = c.getContext('2d'), t = this.f / 120;
+    const ag = [
+      { t: 1, s: 1.6, x: 360 + 60 * Math.sin(t), y: 160 }, { t: 1, s: -1.6, x: 360 + 60 * Math.sin(t), y: 360 },
+      { t: 1, s: 1.2, x: 640, y: 200 + 30 * Math.sin(t * 1.3) }, { t: 1, s: -1.2, x: 640, y: 320 + 30 * Math.sin(t * 1.3) },
+      { t: 2, s: 2.2 * Math.sin(t * .9), x: 820 + 80 * Math.cos(t * .7), y: 260 + 120 * Math.sin(t * .6) },
+      { t: 2, s: -1.8, x: 900, y: 120 + 60 * Math.sin(t) }, { t: 2, s: 1.8, x: 900, y: 400 + 60 * Math.cos(t) }
+    ];
+    x.fillStyle = 'rgba(246,243,236,.14)'; x.fillRect(0, 0, c.width, c.height);
+    x.lineWidth = 2;
+    for (const p of this.pts) {
+      const [vx, vy] = this.flowAt(p.x, p.y, ag);
+      let best = 1e12, tm = 1; for (const a of ag) { const d = (a.x - p.x) ** 2 + (a.y - p.y) ** 2; if (d < best) { best = d; tm = a.t; } }
+      x.strokeStyle = tm === 1 ? this.A : this.B; x.globalAlpha = .55;
+      x.beginPath(); x.moveTo(p.x, p.y); p.x += vx * 2.2; p.y += vy * 2.2; x.lineTo(p.x, p.y); x.stroke();
+      if (p.x > 1104 || p.x < 0 || p.y < 0 || p.y > 520 || Math.random() < .004) { p.x = Math.random() * 60; p.y = Math.random() * 520; }
+    }
+    x.globalAlpha = 1;
+    const fc = this.fcore, [cvx, cvy] = this.flowAt(fc.x, fc.y, ag);
+    fc.x += cvx * 1.6; fc.y += cvy * 1.6;
+    if (fc.x > 1104 || fc.x < 0 || fc.y < 0 || fc.y > 520) { fc.x = 80; fc.y = 200 + Math.random() * 120; }
+    for (const a of ag) { x.beginPath(); x.arc(a.x, a.y, 13, 0, 7); x.fillStyle = a.t === 1 ? this.A : this.B; x.fill(); x.strokeStyle = this.P; x.lineWidth = 3; x.stroke(); }
+    x.save(); x.translate(fc.x, fc.y); x.rotate(Math.PI / 4); x.fillStyle = '#16150F'; x.fillRect(-9, -9, 18, 18); x.restore();
+    x.fillStyle = '#16150F'; x.fillRect(1096, 160, 8, 200);
+    this.label(x, 'KANAL → KUYU');
+  }
+  renderVals() { return { ref1: this.ref1, ref2: this.ref2, ref3: this.ref3, ref4: this.ref4, ref5: this.ref5, ref6: this.ref6 }; }
+}
+</script>
+</body>
+</html>
