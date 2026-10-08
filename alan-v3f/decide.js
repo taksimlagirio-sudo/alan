@@ -230,7 +230,7 @@
         let sum = 0;
         for (let k = 0; k < n; k++) {
           let ss = seeds[k]; const rk = () => { ss = (ss * 1664525 + 1013904223) >>> 0; return ss / 4294967296; }; const m = M.createMatch(seeds[k], {}), map = new Map();
-          m.ps = src.map(p => { const c = { ...p, a: p.a, slot: p.slot }; if (p.team !== team && p !== h) { c.x += (rk() - .5) * err; c.y += (rk() - .5) * err; } map.set(p, c); return c; });
+          m.ps = src.map(p => { const c = { ...p, a: p.a, slot: p.slot, hist: p.hist && p.hist.slice(), past: p.past && p.past.slice() }; /* geçmiş kopyalanır: hayali maç gerçek oyuncunun hafızasına yazmasın */ if (p.team !== team && p !== h) { c.x += (rk() - .5) * err; c.y += (rk() - .5) * err; } map.set(p, c); return c; });
           if (tac) m.tac[team] = { ...m.tac[team], ...tac };
           const hc = map.get(h); m.holder = hc; m.ball = null; m.ch = ch; m.decT = 1; m.fl = null; m.tick = 0; m._lite = true; // kafadaki oyun: topsuz oyuncular hedeflerini yeniden seçmez, tek dokunuş düşünülmez (hız için)
           // ilk hamleyi zorla: maç kararı modül nesnesinden (window.AlanDecide.decide) çağırır; parametre nesnesi D'den değil
