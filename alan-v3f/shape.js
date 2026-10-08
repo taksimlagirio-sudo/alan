@@ -1,4 +1,5 @@
 (function () {
+  const hyp = window.AlanCore.hyp;
   // Katman 4 · Yerleşim. Herkes kendi algısıyla (Okuma) okur: rakibi kusurlu görür, hareketini öngörür, arkadaşının hedefini bilir.
   const C = () => window.AlanCore, Dd = () => window.AlanDecide, W = 100, H = 50;
   const cl = (v, a, b) => v < a ? a : v > b ? b : v, dirOf = t => t === 0 ? 1 : -1, ownX = t => t === 0 ? 0 : W, oppX = t => t === 0 ? W : 0;
@@ -31,7 +32,7 @@
   }
   const oppIn = (sn, x, y) => { let s = 0; for (const q of sn) s += C().infl(q, x, y); return s; };
   const laneIn = (sn, a, b, n) => { let s = 0; n = n || 4; for (let i = 1; i <= n; i++) { const t = i / (n + 1); s += oppIn(sn, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t); } return s / n; };
-  const gside = (a, t, off) => { const gx = ownX(t), dx = gx - a.x, dy = H / 2 - a.y, L = Math.hypot(dx, dy) || 1; return { x: a.x + dx / L * off, y: a.y + dy / L * off }; };
+  const gside = (a, t, off) => { const gx = ownX(t), dx = gx - a.x, dy = H / 2 - a.y, L = hyp(dx, dy) || 1; return { x: a.x + dx / L * off, y: a.y + dy / L * off }; };
   // Çekirdek uçarken: herkes yörüngede nereye, ne zaman varabileceğini hesaplar
   // Alıcı da Çekirdeğin gerçekte gideceği yeri okur (pası atanın niyetini değil): hedefi yörüngede yetişebildiği ilk nokta.
   function flightRead(m) {
@@ -39,17 +40,17 @@
     // kafadaki oyunda (lite) yörünge her tik değil, 6 tikte bir yeniden hesaplanır (aradaki tiklerde aynı yörünge, Çekirdeğin ilerlediği kadar kaydırılarak kullanılır)
     let pts; if (b.done) pts = [{ x: b.x, y: b.y }]; else if (m._lite && b._pc && b.t - b._pc.t < 6) pts = b._pc.pts.slice(b.t - b._pc.t); else { pts = K.predict(b, m.ps, null, 240).pts; if (m._lite) b._pc = { t: b.t, pts }; }
     for (const p of m.ps) {
-      if (p.role === 'Bekçi' && Math.hypot(p.x - ownX(p.team), p.y - 25) > 12) continue;
+      if (p.role === 'Bekçi' && hyp(p.x - ownX(p.team), p.y - 25) > 12) continue;
       const rc = p.team === b.team && m.fl && m.fl.q === p ? 0 : Math.max(0, 14 - ok(p) * S.react - (m.tick - (m.fl ? m.fl.t0 || m.tick : m.tick))), v = spd(p) * SPR; let best = null;
       const isRecv = p.team === b.team && m.fl && m.fl.q === p;
       if (isRecv) {
         // Alıcı en erken yetiştiği yere değil, yetişebildiği yerlerin en rahatına gider: rakipten uzak (boşluğu korur), rakipten önce varabildiği, fazla beklemeden. Geniş duran oyuncu kendiliğinden Çekirdeğe doğru içeri dalmaz.
         const opp = m.ps.filter(o => o.team !== p.team && o.role !== 'Bekçi'); let bs = -1e9;
-        for (let i = 0; i < pts.length; i += 2) { const q = pts[i]; const tr = rc + Math.max(0, Math.hypot(q.x - p.x, q.y - p.y) - 1.4) / v; if (tr > i) continue; let td = 1e9; for (const o of opp) td = Math.min(td, Math.max(0, 14 - ok(o) * S.react) + Math.max(0, Math.hypot(q.x - o.x, q.y - o.y) - 1.4) / (spd(o) * SPR)); if (td < i) continue; const abs = m.tick + i; if (p._rcvB === b && abs > p._rcvAbs + 2) continue; const margin = td - i, sc = Dd().freeAt(m.ps, p.team, q.x, q.y) - S.rcvRisk * Math.exp(-margin / S.rcvMarginT); if (sc > bs) { bs = sc; best = { t: i, x: q.x, y: q.y }; } }
+        for (let i = 0; i < pts.length; i += 2) { const q = pts[i]; const tr = rc + Math.max(0, hyp(q.x - p.x, q.y - p.y) - 1.4) / v; if (tr > i) continue; let td = 1e9; for (const o of opp) td = Math.min(td, Math.max(0, 14 - ok(o) * S.react) + Math.max(0, hyp(q.x - o.x, q.y - o.y) - 1.4) / (spd(o) * SPR)); if (td < i) continue; const abs = m.tick + i; if (p._rcvB === b && abs > p._rcvAbs + 2) continue; const margin = td - i, sc = Dd().freeAt(m.ps, p.team, q.x, q.y) - S.rcvRisk * Math.exp(-margin / S.rcvMarginT); if (sc > bs) { bs = sc; best = { t: i, x: q.x, y: q.y }; } }
         if (best) { p._rcvB = b; p._rcvAbs = m.tick + best.t; } // seçilen karşılama anı sonradan ileri kaydırılmaz: alıcı Çekirdekten kaçmaz, ona gelir
       }
-      if (!best) for (let i = 0; i < pts.length; i += 2) { const q = pts[i]; const tr = rc + Math.max(0, Math.hypot(q.x - p.x, q.y - p.y) - 1.4) / v; if (tr <= i) { best = { t: i, x: q.x, y: q.y }; break; } }
-      if (!best) { const q = pts[pts.length - 1]; best = { t: Math.max(pts.length, rc + Math.hypot(q.x - p.x, q.y - p.y) / v), x: q.x, y: q.y }; }
+      if (!best) for (let i = 0; i < pts.length; i += 2) { const q = pts[i]; const tr = rc + Math.max(0, hyp(q.x - p.x, q.y - p.y) - 1.4) / v; if (tr <= i) { best = { t: i, x: q.x, y: q.y }; break; } }
+      if (!best) { const q = pts[pts.length - 1]; best = { t: Math.max(pts.length, rc + hyp(q.x - p.x, q.y - p.y) / v), x: q.x, y: q.y }; }
       best.est = best.t * (1 + hsh(p.id, m.fl ? m.fl.t0 || 0 : 0, 3) * (20 - ok(p)) * .04); out.set(p, best);
     }
     let first = null; for (const [p, r] of out) if (!first || r.t < out.get(first).t) first = p;
@@ -63,7 +64,7 @@
     else { back = cl(Math.min(BLOK[tac.blok] || 34, bd - 6), 8, 62); len = 22; wid = 26; sh = .4; }
     return { x: cl(x0 + dir * (back + (s.d - .2) / .6 * len), 2, 98), y: cl(25 + s.l * wid / 2 + (E.y - 25) * sh, 2, 48) };
   }
-  function bekci(p, E) { const gx = ownX(p.team), dx = E.x - gx, dy = E.y - 25, L = Math.hypot(dx, dy) || 1, r = cl(L * (.14 + ok(p) * .004), 2.5, 9); return { x: gx + dx / L * r, y: 25 + dy / L * r }; }
+  function bekci(p, E) { const gx = ownX(p.team), dx = E.x - gx, dy = E.y - 25, L = hyp(dx, dy) || 1, r = cl(L * (.14 + ok(p) * .004), 2.5, 9); return { x: gx + dx / L * r, y: 25 + dy / L * r }; }
   function position(m) {
     const ps = m.ps, h = m.holder, sh = m.sh || (m.sh = {});
     for (const p of ps) { (p.hist || (p.hist = [])).push({ x: p.x, y: p.y, vx: p.vx || 0, vy: p.vy || 0 }); if (p.hist.length > 14) p.hist.shift(); }
@@ -80,18 +81,18 @@
       const mine = [...fr.arr].filter(([p]) => p.team === t && !p.noTouch); if (!mine.length) continue; const bestE = Math.min(...mine.map(([, r]) => r.est));
       const loose = !m.fl || !m.fl.q || m.ball.defl || m.ball.done, rq = m.fl && m.fl.q ? fr.arr.get(m.fl.q) : null, recvFirst = rq && rq.est <= bestE + 2;
       const toMate = !loose && m.ball.team === t && recvFirst;
-      for (const [p, r] of mine) { const recv = m.fl && m.fl.q === p && !loose; if (toMate && !recv) continue; const rt = loose ? S.reactLoose - ok(p) * S.reactLooseOk : 14 - ok(p) * S.react; if (!recv && p.chB !== m.ball && m.tick - sh.ballT < rt) continue; if (recv || r.est <= bestE + (20 - ok(p)) * S.marginT + 1) { chase.add(p); let rt0 = recv && m.fl.route && m.fl.route.length ? m.fl.route[0] : null; if (rt0 && Math.hypot(rt0.x - p.x, rt0.y - p.y) < 1) { m.fl.route.shift(); rt0 = m.fl.route[0] || null; } p.tx = rt0 ? rt0.x : r.x; p.ty = rt0 ? rt0.y : r.y; p.sprint = true; p.job = recv ? 'alıcı' : 'kovala'; p.chB = m.ball; } }
+      for (const [p, r] of mine) { const recv = m.fl && m.fl.q === p && !loose; if (toMate && !recv) continue; const rt = loose ? S.reactLoose - ok(p) * S.reactLooseOk : 14 - ok(p) * S.react; if (!recv && p.chB !== m.ball && m.tick - sh.ballT < rt) continue; if (recv || r.est <= bestE + (20 - ok(p)) * S.marginT + 1) { chase.add(p); let rt0 = recv && m.fl.route && m.fl.route.length ? m.fl.route[0] : null; if (rt0 && hyp(rt0.x - p.x, rt0.y - p.y) < 1) { m.fl.route.shift(); rt0 = m.fl.route[0] || null; } p.tx = rt0 ? rt0.x : r.x; p.ty = rt0 ? rt0.y : r.y; p.sprint = true; p.job = recv ? 'alıcı' : 'kovala'; p.chB = m.ball; } }
     }
-    if (m.fl && m.fl.kind === 'gönder' && m.ball && !m.ball.done) { const gx = oppX(m.ball.team), dr = dirOf(m.ball.team); for (const p of ps) { if (p.team !== m.ball.team || p.role === 'Bekçi' || p === m.ball.from || chase.has(p)) continue; if (Math.hypot(p.x - gx, p.y - 25) < 28 && m.tick - sh.ballT >= 14 - ok(p) * S.react) { chase.add(p); p.tx = gx - dr * (5 + (p.id % 3) * 2); p.ty = 25 + ((p.id % 4) - 1.5) * 4; p.sprint = true; p.job = 'sekme'; } } }
+    if (m.fl && m.fl.kind === 'gönder' && m.ball && !m.ball.done) { const gx = oppX(m.ball.team), dr = dirOf(m.ball.team); for (const p of ps) { if (p.team !== m.ball.team || p.role === 'Bekçi' || p === m.ball.from || chase.has(p)) continue; if (hyp(p.x - gx, p.y - 25) < 28 && m.tick - sh.ballT >= 14 - ok(p) * S.react) { chase.add(p); p.tx = gx - dr * (5 + (p.id % 3) * 2); p.ty = 25 + ((p.id % 4) - 1.5) * 4; p.sprint = true; p.job = 'sekme'; } } }
     const dt = 1 - att, dtac = m.tac[dt];
     // 2 · Savunma: arkada kalan, pres, geri koşu, bölge
     const defs = ps.filter(p => p.team === dt && p.role !== 'Bekçi' && !chase.has(p) && !p.noTouch);
     const nSup = defs.filter(p => p.rs === 'Süpürücü').length, nOn = defs.filter(p => p.rs === 'Önde').length, sweep = new Set(defs.filter(p => p.rs !== 'Önde').sort((u, v) => ((v.rs === 'Süpürücü') - (u.rs === 'Süpürücü')) || u.slot.d - v.slot.d).slice(0, Math.max(dtac.arkada, nSup))), up = new Set(defs.filter(p => !sweep.has(p)).sort((u, v) => ((v.rs === 'Önde') - (u.rs === 'Önde')) || v.slot.d - u.slot.d).slice(0, Math.max(nOn, dtac.onde || 0)));
     const press = [];
     if (h) {
-      const R = S.pressR[dtac.blok] ?? 20, cand = defs.filter(p => !sweep.has(p) && !up.has(p)).sort((u, v) => ((v.rs === 'Presçi') - (u.rs === 'Presçi')) * 1e3 + Math.hypot(u.x - h.x, u.y - h.y) - Math.hypot(v.x - h.x, v.y - h.y));
-      for (const p of cand) { if (press.length >= dtac.pres) break; if (p.lock > m.tick || Math.hypot(p.x - h.x, p.y - h.y) < R * (p.rs === 'Presçi' ? 1.5 : 1)) press.push(p); } // Presçi ilk basar ve daha uzaktan çıkar
-      press.sort((u, v) => (u.lock > m.tick ? u.lockAt : m.tick) - (v.lock > m.tick ? v.lockAt : m.tick) || Math.hypot(u.x - h.x, u.y - h.y) - Math.hypot(v.x - h.x, v.y - h.y));
+      const R = S.pressR[dtac.blok] ?? 20, cand = defs.filter(p => !sweep.has(p) && !up.has(p)).sort((u, v) => ((v.rs === 'Presçi') - (u.rs === 'Presçi')) * 1e3 + hyp(u.x - h.x, u.y - h.y) - hyp(v.x - h.x, v.y - h.y));
+      for (const p of cand) { if (press.length >= dtac.pres) break; if (p.lock > m.tick || hyp(p.x - h.x, p.y - h.y) < R * (p.rs === 'Presçi' ? 1.5 : 1)) press.push(p); } // Presçi ilk basar ve daha uzaktan çıkar
+      press.sort((u, v) => (u.lock > m.tick ? u.lockAt : m.tick) - (v.lock > m.tick ? v.lockAt : m.tick) || hyp(u.x - h.x, u.y - h.y) - hyp(v.x - h.x, v.y - h.y));
       for (const p of defs) if (!press.includes(p)) p.lock = 0;
     }
     const atkAll = ps.filter(q => q.team === att && q.role !== 'Bekçi'), atk = atkAll.filter(q => q !== h);
@@ -99,7 +100,7 @@
     press.forEach((p, k) => {
       if (!(p.lock > m.tick)) { p.lock = m.tick + S.lock; p.lockAt = m.tick + k * .01; } p.press = true; p.sprint = true; p.job = 'pres';
       const sn = seen(m, p);
-      if (k === 0) { const DD = window.AlanDecide, cs = DD.coreSide(h), B = C().Q.body, co = { x: h.x + cs.ux * B, y: h.y + cs.uy * B }, d0 = Math.hypot(p.x - h.x, p.y - h.y), trap = dtac.sistem === 'Kenara sıkıştır';
+      if (k === 0) { const DD = window.AlanDecide, cs = DD.coreSide(h), B = C().Q.body, co = { x: h.x + cs.ux * B, y: h.y + cs.uy * B }, d0 = hyp(p.x - h.x, p.y - h.y), trap = dtac.sistem === 'Kenara sıkıştır';
         if (d0 > 4) { const g = trap ? { x: h.x - dirOf(dt) * 1.2, y: h.y + (h.y < 25 ? 2 : -2) } : gside(h, dt, 2); p.tx = g.x; p.ty = g.y; return; }
         // presçinin planı: Çekirdek açıktaysa doğrudan, gövdenin arkasındaysa dolaşarak; Okuma'sı yüksekse bazen bir yanı gösterip öbür yandan girer (taşıyıcı onun gidişini okuyup Çekirdeği ters tarafa saklar, fake bunu kullanır)
         if (!p.pplan || m.tick >= p.pplan.until) { const shd = C().Turn.shielded(h, p, co.x, co.y), base = Math.atan2(p.y - h.y, p.x - h.x), ca = Math.atan2(cs.uy, cs.ux), side = Math.sign(Math.atan2(Math.sin(ca - base), Math.cos(ca - base))) || 1, rr = m.r ? m.r() : .5, fake = shd && ok(p) >= DD.DU.fakeOk && rr < (ok(p) - 6) * .08;
@@ -111,7 +112,7 @@
       // kafes: sonrakiler taşıyıcıya yapışır, en tehlikeli çıkışını (kendi okumasına göre) dibinden kapatır. Bu sırada kendi adamını/bölgesini bırakır.
       const opts = atk.map(q => ({ q, v: threat(att, q.x, q.y) * Math.exp(-laneIn(sn, h, q) * 2), an: Math.atan2(q.y - h.y, q.x - h.x) })).sort((a, b) => b.v - a.v), dA = (x, y) => Math.abs(Math.atan2(Math.sin(x - y), Math.cos(x - y)));
       const q = opts.find(o => covered.every(c => dA(o.an, c) > .8)) || opts[0]; if (!q) return; covered.push(q.an);
-      const dx = q.q.x - h.x, dy = q.q.y - h.y, L = Math.hypot(dx, dy) || 1; p.tx = h.x + dx / L * 2.5; p.ty = h.y + dy / L * 2.5;
+      const dx = q.q.x - h.x, dy = q.q.y - h.y, L = hyp(dx, dy) || 1; p.tx = h.x + dx / L * 2.5; p.ty = h.y + dy / L * 2.5;
     });
     // bölge eşleşmesi: her rakip, bölgesine düşen en yakın savunmacıya (Okuma bölgeyi büyütür); tehlikelisi önce
     const free = defs.filter(p => !sweep.has(p) && !up.has(p) && !press.includes(p)), base = new Map();
@@ -120,7 +121,7 @@
     for (const p of free) if (p.rs === 'Markajcı' && p.markRef && p.markRef.team === att && p.markRef !== h) { mark.set(p, p.markRef); taken.add(p); } // Markajcı bölgeye bakmaz, adamını takip eder
     const markedRef = new Set([...mark.values()]);
     for (const q of atk.slice().sort((a, b) => threat(att, b.x, b.y) - threat(att, a.x, a.y))) {
-      if (markedRef.has(q)) continue; let bp = null, bd = 1e9; for (const p of free) { if (taken.has(p)) continue; const sn = seen(m, p).find(o => o.ref === q), bs = base.get(p), d = Math.hypot(sn.x - bs.x, sn.y - bs.y); if (d < S.zoneR + ok(p) * S.zoneOk && d < bd) { bd = d; bp = p; } }
+      if (markedRef.has(q)) continue; let bp = null, bd = 1e9; for (const p of free) { if (taken.has(p)) continue; const sn = seen(m, p).find(o => o.ref === q), bs = base.get(p), d = hyp(sn.x - bs.x, sn.y - bs.y); if (d < S.zoneR + ok(p) * S.zoneOk && d < bd) { bd = d; bp = p; } }
       if (bp) { taken.add(bp); mark.set(bp, q); }
     }
     for (const p of defs) {
@@ -134,9 +135,9 @@
       const q = mark.get(p);
       if (q && p.rs === 'Markajcı') { const o = sn.find(o => o.ref === q), g = gside(o, dt, S.markOff); tx = g.x; ty = g.y; p.job = 'markaj · ' + (q.name || ''); p.tx = tx; p.ty = ty; continue; }
       if (q) { const o = sn.find(o => o.ref === q), g = gside(o, dt, S.markOff), w = S.markW * (.6 + ok(p) * .02); tx += (g.x - tx) * w; ty += (g.y - ty) * w; p.job = 'bölge · ' + (q.name || ''); }
-      else { const dx = ownX(dt) - E.x, dy = 25 - E.y, L = Math.hypot(dx, dy) || 1, u = ((tx - E.x) * dx + (ty - E.y) * dy) / L, px = E.x + dx / L * u, py = E.y + dy / L * u; tx += (px - tx) * .3; ty += (py - ty) * .3; p.job = 'bölge'; }
+      else { const dx = ownX(dt) - E.x, dy = 25 - E.y, L = hyp(dx, dy) || 1, u = ((tx - E.x) * dx + (ty - E.y) * dy) / L, px = E.x + dx / L * u, py = E.y + dy / L * u; tx += (px - tx) * .3; ty += (py - ty) * .3; p.job = 'bölge'; }
       // Kuyu tarafı: Çekirdek yaklaştıkça Çekirdek ile Kuyu arasına
-      const dk = Math.hypot(E.x - ownX(dt), E.y - 25), st = 26 + ok(p) * 1.4 - ((BLOK[dtac.blok] || 34) - 34) * .3, w = cl((st - dk) / Math.max(6, st - 10), 0, 1);
+      const dk = hyp(E.x - ownX(dt), E.y - 25), st = 26 + ok(p) * 1.4 - ((BLOK[dtac.blok] || 34) - 34) * .3, w = cl((st - dk) / Math.max(6, st - 10), 0, 1);
       if (w > 0) { const hold = 6 + p.slot.d * 10, f = Math.min(1, hold / Math.max(dk, 1)), gx = ownX(dt) + (E.x - ownX(dt)) * f, gy = 25 + (E.y - 25) * f + p.slot.l * 8; tx += (gx - tx) * w; ty += (gy - ty) * w; }
       p.tx = tx; p.ty = ty;
     }
@@ -144,28 +145,28 @@
     const hang = ps.filter(q => q.team === dt && q.role !== 'Bekçi' && (q.x - E.x) * dirOf(att) < -8), guard = new Map();
     { const kWin = m.tac[att].kazaninca === 'Kontra' && m.winTeam === att && m.tick - m.winT < 180, nG = Math.max(0, kWin ? Math.min(hang.length, m.tac[att].arkada ?? 1) : hang.length - (m.tac[att].risk > .7 ? 1 : 0)), // Kontrada geride sadece "Arkada kalan" kadar oyuncu güvence olur; kalanı ileri koşar
       pool = atk.filter(q => !chase.has(q)).sort((u, v) => u.slot.d - v.slot.d);
-      for (const hq of hang.sort((a, b) => threat(dt, b.x, b.y) - threat(dt, a.x, a.y)).slice(0, nG)) { let bi = null, bd = 1e9; for (const q of pool) { if (guard.has(q)) continue; const d = Math.hypot(q.x - hq.x, q.y - hq.y) + q.slot.d * 30; if (d < bd) { bd = d; bi = q; } } if (bi) guard.set(bi, hq); } }
+      for (const hq of hang.sort((a, b) => threat(dt, b.x, b.y) - threat(dt, a.x, a.y)).slice(0, nG)) { let bi = null, bd = 1e9; for (const q of pool) { if (guard.has(q)) continue; const d = hyp(q.x - hq.x, q.y - hq.y) + q.slot.d * 30; if (d < bd) { bd = d; bi = q; } } if (bi) guard.set(bi, hq); } }
     const Wt = S.W, kz = m.tac[att].kazaninca || 'Dengeli', win = m.winTeam === att && m.tick - m.winT < 180;
     // Kazanınca talimatı (geçiş penceresi, 3 sn): Kontra = öndeki 3 topsuz oyuncu dizilişe bağlılığı gevşetip rakip Kuyu'ya doğru boşluğa koşar; Yerleş = dizilişteki yere sıkı bağlılık, ileri koşu yok.
     if (win && kz === 'Kontra' && m._runT !== m.winT) { m._runT = m.winT; m._run = new Set(atk.filter(q => !guard.has(q) && q !== h).sort((u, v) => (v.x - u.x) * dirOf(att) + (v.slot.d - u.slot.d) * 10).slice(0, 3)); } // koşucular geçiş başında bir kez seçilir
     const runners = win && kz === 'Kontra' && m._run ? new Set([...m._run].filter(q => q !== h && !chase.has(q) && !guard.has(q))) : new Set();
     // Kontra koşusunun değeri: oraya rakipten önce varabilir miyim (tepki gecikmesiyle) × oranın tehlikesi. Pas seçeneği olmak değil, savunmanın arkasındaki boşluğu almak.
-    const runV = (p, c, sn) => { const ta = Math.hypot(c.x - p.x, c.y - p.y) / (spd(p) * SPR); let td = 1e9; for (const o of sn) { if (o.role === 'Bekçi') continue; td = Math.min(td, Math.max(0, 14 - ok(o) * S.react) + Math.hypot(c.x - o.x, c.y - o.y) / (spd(o) * SPR)); } return threat(att, c.x, c.y) / (1 + Math.exp((ta - td) / 8)); };
+    const runV = (p, c, sn) => { const ta = hyp(c.x - p.x, c.y - p.y) / (spd(p) * SPR); let td = 1e9; for (const o of sn) { if (o.role === 'Bekçi') continue; td = Math.min(td, Math.max(0, 14 - ok(o) * S.react) + hyp(c.x - o.x, c.y - o.y) / (spd(o) * SPR)); } return threat(att, c.x, c.y) / (1 + Math.exp((ta - td) / 8)); };
     const roleLeash = p => p.rh === 'Kurucu' ? 2 : p.rh === 'Pivot' || p.rh === 'Kanat' ? 1.5 : p.rh === 'Koşucu' ? .7 : 1;
-    const roleY = (p, c) => (p.rh === 'Pivot' && S.pivotGap ? 1 * Math.max(0, S.pivotGap - Math.hypot(c.x - oppX(att), c.y - 25)) / 4 : 0) + (p.rh === 'Kanat' ? S.kanatK * Math.max(0, 13 - Math.abs(c.y - 25)) / 13 : p.rh === 'Kurucu' ? S.kurucuK * Math.max(0, (c.x - E.x) * dirOf(att) + 2) / 10 : 0); // talimatın dışına çıkmanın bedeli
+    const roleY = (p, c) => (p.rh === 'Pivot' && S.pivotGap ? 1 * Math.max(0, S.pivotGap - hyp(c.x - oppX(att), c.y - 25)) / 4 : 0) + (p.rh === 'Kanat' ? S.kanatK * Math.max(0, 13 - Math.abs(c.y - 25)) / 13 : p.rh === 'Kurucu' ? S.kurucuK * Math.max(0, (c.x - E.x) * dirOf(att) + 2) / 10 : 0); // talimatın dışına çıkmanın bedeli
     const roleRun = p => p.rh === 'Koşucu' && !runners.has(p) ? S.runK * .6 : 0;
     const leashK = p => (win ? (kz === 'Kontra' ? (runners.has(p) ? .01 : .6) : kz === 'Yerleş' ? 2.5 : 1) : roleLeash(p));
     // savunma sistemi: Adam adama (her savunmacı, top el değiştirince seçtiği adamın Kuyu tarafında), Kenara sıkıştır (bir savunmacı kenar boyunca önde tuzakta bekler)
-    if (dtac.sistem === 'Adam adama') { const key = att + ':' + (m.winT || 0) + ':' + (m.kickT || 0); if (m._manKey !== key) { m._manKey = key; const used = new Set(); defs.map(d => atk.map(a => [d, a, Math.hypot(d.x - a.x, d.y - a.y)])).flat().sort((u, v) => u[2] - v[2]).forEach(([d, a]) => { if (d._mk !== key && !used.has(a)) { d._mk = key; d.manRef = a; used.add(a); } }); }
+    if (dtac.sistem === 'Adam adama') { const key = att + ':' + (m.winT || 0) + ':' + (m.kickT || 0); if (m._manKey !== key) { m._manKey = key; const used = new Set(); defs.map(d => atk.map(a => [d, a, hyp(d.x - a.x, d.y - a.y)])).flat().sort((u, v) => u[2] - v[2]).forEach(([d, a]) => { if (d._mk !== key && !used.has(a)) { d._mk = key; d.manRef = a; used.add(a); } }); }
       for (const p of defs) { if (press.includes(p) || sweep.has(p) || !p.manRef || p.manRef === h) continue; const g = gside(p.manRef, dt, S.markOff); p.tx = g.x; p.ty = g.y; p.job = 'adam adama · ' + (p.manRef.name || ''); } }
-    if (dtac.sistem === 'Kenara sıkıştır' && h && press.length) { const wp = { x: cl(h.x - dirOf(dt) * 5, 2, 98), y: h.y < 25 ? 3 : 47 }, w = defs.filter(p => !press.includes(p) && !sweep.has(p)).sort((u, v) => Math.hypot(u.x - wp.x, u.y - wp.y) - Math.hypot(v.x - wp.x, v.y - wp.y))[0]; if (w) { w.tx = wp.x; w.ty = wp.y; w.job = 'tuzak'; } }
+    if (dtac.sistem === 'Kenara sıkıştır' && h && press.length) { const wp = { x: cl(h.x - dirOf(dt) * 5, 2, 98), y: h.y < 25 ? 3 : 47 }, w = defs.filter(p => !press.includes(p) && !sweep.has(p)).sort((u, v) => hyp(u.x - wp.x, u.y - wp.y) - hyp(v.x - wp.x, v.y - wp.y))[0]; if (w) { w.tx = wp.x; w.ty = wp.y; w.job = 'tuzak'; } }
     for (const p of atk) {
       if (chase.has(p)) continue;
       if (p.vkUntil > m.tick && p.vkW) { p.tx = p.vkW.x; p.ty = p.vkW.y; p.sprint = true; p.job = 'ver-kaç koşusu'; continue; }
       if (guard.has(p)) { const g = gside(guard.get(p), att, 3 + (20 - ok(p)) * .2); p.tx = g.x; p.ty = g.y; p.job = 'güvence'; p.otx = null; continue; }
       const every = Math.max(8, Math.round(24 - ok(p))); if (m._lite && p.otx == null) { const bs0 = base.get(p); p.otx = bs0.x; p.oty = bs0.y; } // kafadaki oyunda planı olmayan arkadaş görev yerine gider (yeniden tartmaz)
       if (win && p._winSeen !== m.winT && !m._lite) { p._winSeen = m.winT; p.otx = null; } // geçiş başladı: plan yeniden tartılır
-      if (p.otx != null && (m._lite || (m.tick + p.id) % every)) { p.tx = p.otx; p.ty = p.oty; p.job = runners.has(p) ? 'kontra koşusu' : 'boşluk'; p.sprint = runners.has(p) || Math.hypot(p.tx - p.x, p.ty - p.y) > S.W.runSprint; continue; }
+      if (p.otx != null && (m._lite || (m.tick + p.id) % every)) { p.tx = p.otx; p.ty = p.oty; p.job = runners.has(p) ? 'kontra koşusu' : 'boşluk'; p.sprint = runners.has(p) || hyp(p.tx - p.x, p.ty - p.y) > S.W.runSprint; continue; }
       const bs = base.get(p), sn = seen(m, p), cands = [];
       if (p.otx != null) cands.push({ x: p.otx, y: p.oty, keep: 1 });
       for (let gx = -16; gx <= 16; gx += 8) for (let gy = -16; gy <= 16; gy += 8) cands.push({ x: bs.x + gx, y: bs.y + gy }); if (p.otx != null) for (let k = 0; k < 6; k++) { const an = k * 1.047; cands.push({ x: p.otx + Math.cos(an) * 4, y: p.oty + Math.sin(an) * 4 }); }
@@ -174,48 +175,48 @@
       if (runners.has(p)) { const lastO = sn.filter(o => o.role !== 'Bekçi').reduce((mx, o) => Math.max(mx, (o.x - ownX(att)) * dirOf(att)), 0); for (const fx of [12, 22, 32]) for (const yy of [10, 18, 25, 32, 40]) cands.push({ x: cl(p.x + dirOf(att) * fx, 3, 97), y: yy }); for (const yy of [12, 25, 38]) cands.push({ x: cl(ownX(att) + dirOf(att) * (lastO + 4), 3, 97), y: yy }); }
       // Açılan boşluk: yerini bırakmış (başka birini takip eden, prese çıkan) savunmacının bölgesi. Oyuncu bunu kendi algısıyla görür (rakibi kusurlu ve gecikmeli görür);
       // kaç tanesini fark ettiğini Okuma belirler. Oraya gitmek talimattan sapma sayılmaz (bağ gevşer): boşluğu kullanmak hücumcunun işi.
-      { const nV = Math.max(0, Math.round((ok(p) - S.vacOk0) / S.vacOkStep)); if (nV > 0) { const vac = []; for (const d of defs) { const bd = d.past && d.past.length >= 3 ? d.past[0] : null, sd = sn.find(o => o.ref === d); if (!bd || !sd) continue; if (Math.hypot(sd.x - bd.x, sd.y - bd.y) < S.vacLeft) continue; let near = 1e9; for (const o of sn) if (o.role !== 'Bekçi') near = Math.min(near, Math.hypot(o.x - bd.x, o.y - bd.y)); if (near < S.vacEmpty) continue; vac.push({ x: bd.x, y: bd.y, w: threat(att, bd.x, bd.y) }); }
+      { const nV = Math.max(0, Math.round((ok(p) - S.vacOk0) / S.vacOkStep)); if (nV > 0) { const vac = []; for (const d of defs) { const bd = d.past && d.past.length >= 3 ? d.past[0] : null, sd = sn.find(o => o.ref === d); if (!bd || !sd) continue; if (hyp(sd.x - bd.x, sd.y - bd.y) < S.vacLeft) continue; let near = 1e9; for (const o of sn) if (o.role !== 'Bekçi') near = Math.min(near, hyp(o.x - bd.x, o.y - bd.y)); if (near < S.vacEmpty) continue; vac.push({ x: bd.x, y: bd.y, w: threat(att, bd.x, bd.y) }); }
         vac.sort((a, b) => b.w - a.w).slice(0, nV).forEach(v => { cands.push({ x: v.x, y: v.y, vac: 1 }); cands.push({ x: v.x + dirOf(att) * 4, y: v.y, vac: 1 }); }); } }
       if (p.rh === 'Kanat') for (const dx of [-8, 0, 8, 16]) cands.push({ x: cl(bs.x + dirOf(att) * dx, 3, 97), y: (p.rslot.l < 0 ? 4 : 46) });
       if (Math.abs(E.x - oppX(att)) < 40 && (p.slot.d >= .45 || p.rh === 'Pivot' || p.rh === 'Koşucu') && p.rh !== 'Kurucu') for (const r of [11, 19]) for (const an of [-.8, -.27, .27, .8]) cands.push({ x: oppX(att) - dirOf(att) * r * Math.cos(an), y: 25 + r * Math.sin(an) });
       const mates = atkAll.filter(q => q !== p).map(q => q === h ? { x: h.x, y: h.y } : { x: q.tx ?? q.x, y: q.ty ?? q.y });
-      const nearOf = (x, y) => { let b = null, bd = 1e9; for (const o of sn) { if (o.role === 'Bekçi') continue; const d = Math.hypot(o.x - x, o.y - y); if (d < bd) { bd = d; b = o; } } return [b, bd]; };
+      const nearOf = (x, y) => { let b = null, bd = 1e9; for (const o of sn) { if (o.role === 'Bekçi') continue; const d = hyp(o.x - x, o.y - y); if (d < bd) { bd = d; b = o; } } return [b, bd]; };
       const mNear = mates.map(q => nearOf(q.x, q.y)), ePr = oppIn(sn, E.x, E.y), mateObjs = atk.filter(q => q !== p && !chase.has(q)).map(q => ({ x: q.tx ?? q.x, y: q.ty ?? q.y }));
       // iki aşama: önce dünyayı şu anki hâliyle (savunmanın cevabı olmadan) hızlıca tart, en umutlu birkaç noktada savunmanın cevabını da hesapla
-      const pre = cands.filter(c => c.x >= 2 && c.x <= 98 && c.y >= 2 && c.y <= 48).map(c => { const lsh = Math.hypot(c.x - bs.x, c.y - bs.y) / 12 * (c.vac ? S.vacLeash : 1); return { c, q: (runners.has(p) ? S.runK * runV(p, c, sn) : 0) + roleRun(p) * runV(p, c, sn) - roleY(p, c) + teamV(m, sn, att, E, c, mateObjs, 0) - Wt.leash * leashK(p) * lsh * lsh + (c.keep ? Wt.hyst : 0) }; }).sort((a, b) => b.q - a.q).slice(0, Wt.deep);
+      const pre = cands.filter(c => c.x >= 2 && c.x <= 98 && c.y >= 2 && c.y <= 48).map(c => { const lsh = hyp(c.x - bs.x, c.y - bs.y) / 12 * (c.vac ? S.vacLeash : 1); return { c, q: (runners.has(p) ? S.runK * runV(p, c, sn) : 0) + roleRun(p) * runV(p, c, sn) - roleY(p, c) + teamV(m, sn, att, E, c, mateObjs, 0) - Wt.leash * leashK(p) * lsh * lsh + (c.keep ? Wt.hyst : 0) }; }).sort((a, b) => b.q - a.q).slice(0, Wt.deep);
       let best = null, bv = -1e9;
       for (const { c } of pre) {
         // Tek ölçü: burada durursam, savunma en iyi cevabını verdiğinde takımın en iyi seçeneği ne kadar iyi? (taşıyıcının kullandığı aynı değer ve hat hesabıyla)
-        const lsh = Math.hypot(c.x - bs.x, c.y - bs.y) / 12 * (c.vac ? S.vacLeash : 1);
+        const lsh = hyp(c.x - bs.x, c.y - bs.y) / 12 * (c.vac ? S.vacLeash : 1);
         const v = (runners.has(p) ? S.runK * runV(p, c, sn) : 0) + roleRun(p) * runV(p, c, sn) - roleY(p, c) + Wt.tv * teamV(m, sn, att, E, c, mateObjs, ok(p)) - Wt.leash * leashK(p) * lsh * lsh + (c.keep ? Wt.hyst : 0) + hsh(p.id, Math.round(c.x * 3 + c.y * 7), Math.floor(m.tick / 30)) * (20 - ok(p)) * Wt.noise * 2;
         if (v > bv) { bv = v; best = c; }
       }
-      p.otx = best.x; p.oty = best.y; p.tx = best.x; p.ty = best.y; p.job = best.vac ? 'açılan boşluk' : p.rh && p.rh !== 'Serbest' ? p.rh.toLowerCase() : 'boşluk'; p.sprint = Math.hypot(p.tx - p.x, p.ty - p.y) > S.W.runSprint; // boşluğa koşu da koşudur: presçi nasıl koşarak geliyorsa, hücumcu da hedefi uzaksa koşarak gider
+      p.otx = best.x; p.oty = best.y; p.tx = best.x; p.ty = best.y; p.job = best.vac ? 'açılan boşluk' : p.rh && p.rh !== 'Serbest' ? p.rh.toLowerCase() : 'boşluk'; p.sprint = hyp(p.tx - p.x, p.ty - p.y) > S.W.runSprint; // boşluğa koşu da koşudur: presçi nasıl koşarak geliyorsa, hücumcu da hedefi uzaksa koşarak gider
     }
     for (const p of ps) if (p.noTouch && p !== h) { const g = gside(E, p.team, 5); p.tx = g.x; p.ty = g.y; p.job = 'geçildi'; }
-    if (h) { const dd = ps.filter(q => q.team !== att && q.role !== 'Bekçi' && !chase.has(q) && !q.noTouch).sort((u, v) => Math.hypot(u.x - h.x, u.y - h.y) - Math.hypot(v.x - h.x, v.y - h.y))[0]; if (dd && Math.hypot(dd.x - h.x, dd.y - h.y) < 12 && !dd.press) { if ((m.tick + dd.id) % 4 === 0 || dd._cb == null) dd._cb = coverBoth(m, dd, att, E, h); if (dd._cb) { dd.tx = dd._cb.x; dd.ty = dd._cb.y; dd.job = 'ikisini kapat'; } } }
+    if (h) { const dd = ps.filter(q => q.team !== att && q.role !== 'Bekçi' && !chase.has(q) && !q.noTouch).sort((u, v) => hyp(u.x - h.x, u.y - h.y) - hyp(v.x - h.x, v.y - h.y))[0]; if (dd && hyp(dd.x - h.x, dd.y - h.y) < 12 && !dd.press) { if ((m.tick + dd.id) % 4 === 0 || dd._cb == null) dd._cb = coverBoth(m, dd, att, E, h); if (dd._cb) { dd.tx = dd._cb.x; dd.ty = dd._cb.y; dd.job = 'ikisini kapat'; } } }
     for (const p of ps) if (p.role === 'Bekçi' && !chase.has(p) && p !== h) { const b = base.get(p); p.tx = b.x; p.ty = b.y; p.job = 'Bekçi'; }
     for (const p of ps) { p.tx = cl(p.tx, 1.5, 98.5); p.ty = cl(p.ty, 1.5, 48.5); if (p.role !== 'Bekçi' && window.AlanMatch.kuyuSafe) { const q = window.AlanMatch.kuyuSafe(p.tx, p.ty); if (q) { p.tx = q.x; p.ty = q.y; } } } // hedef siyah alanın içindeyse kenarına alınır
     m.E = E; m.att = att;
   }
   // Hat açık mı (gövde ve zaman): Çekirdek A'dan B'ye v hızla giderken, bir rakip tepki süresinden sonra koşup hatta yetişebilir mi? Alanların kaba toplamı değil, gerçek yetişme.
-  function laneOpen(w, att, A, B, v) { v = v || 1; const L = Math.hypot(B.x - A.x, B.y - A.y) || 1, ux = (B.x - A.x) / L, uy = (B.y - A.y) / L; let open = 1; for (const o of w) { if (o.team === att || o.role === 'Bekçi') continue; const al = (o.x - A.x) * ux + (o.y - A.y) * uy; if (al <= 0 || al >= L + 1) continue; const pe = Math.abs(-(o.x - A.x) * uy + (o.y - A.y) * ux), tb = al / v, R = 1.6 + Math.max(0, tb - (14 - (o.a.okuma ?? 10) * .5)) * (.17 + (o.a.hiz ?? 10) * .006) * 1.25; open *= 1 - 1 / (1 + Math.exp((pe - R) / .5)); } return open; }
+  function laneOpen(w, att, A, B, v) { v = v || 1; const L = hyp(B.x - A.x, B.y - A.y) || 1, ux = (B.x - A.x) / L, uy = (B.y - A.y) / L; let open = 1; for (const o of w) { if (o.team === att || o.role === 'Bekçi') continue; const al = (o.x - A.x) * ux + (o.y - A.y) * uy; if (al <= 0 || al >= L + 1) continue; const pe = Math.abs(-(o.x - A.x) * uy + (o.y - A.y) * ux), tb = al / v, R = 1.6 + Math.max(0, tb - (14 - (o.a.okuma ?? 10) * .5)) * (.17 + (o.a.hiz ?? 10) * .006) * 1.25; open *= 1 - 1 / (1 + Math.exp((pe - R) / .5)); } return open; }
   // Takım değeri: Çekirdek E'de. Seçenekler: taşıyıcı tutar ya da önü açıksa sürer; ya da bir arkadaşa verir.
   // Her seçeneğin değeri taşıyıcının kullandığı aynı değer (V: buradan topla oynamanın değeri, gönderme ihtimali dahil) × hattın açık olma ihtimali (gerçek yetişme).
   function teamBest(w2, att, E, mates, ch) {
-    const D = Dd(), Wt = S.W, gx = oppX(att), gd = Math.hypot(gx - E.x, 25 - E.y) || 1, st = Math.min(6, Math.max(0, gd - 6)), F = { x: E.x + (gx - E.x) / gd * st, y: E.y + (25 - E.y) / gd * st };
+    const D = Dd(), Wt = S.W, gx = oppX(att), gd = hyp(gx - E.x, 25 - E.y) || 1, st = Math.min(6, Math.max(0, gd - 6)), F = { x: E.x + (gx - E.x) / gd * st, y: E.y + (25 - E.y) / gd * st };
     let best = D.V(w2, att, E.x, E.y, ch); if (st > 0) best = Math.max(best, laneOpen(w2, att, E, F, .3) * D.V(w2, att, F.x, F.y, ch) * Wt.tvDrive);
     for (const q of mates) best = Math.max(best, laneOpen(w2, att, E, q) * D.V(w2, att, q.x, q.y, D.recvCh(w2, att, q.x, q.y, ch)) * Wt.tvPass);
     return best;
   }
   // Savunmacının cevap seçenekleri: taşıyıcının önü ile bir hücumcunun önü arasındaki hat üzerinde (ikisini birden kapatmaya çalışan ara noktalar dahil), yetişebildiği kadar
-  function coverSpots(o, att, E, targets, R) { const out = [{ x: o.x, y: o.y }], A = gside(E, 1 - att, 2.2); for (const P of targets) { const B = gside(P, 1 - att, 2.2); for (const t of [0, .5, 1]) { const g = { x: A.x + (B.x - A.x) * t, y: A.y + (B.y - A.y) * t }, d = Math.hypot(g.x - o.x, g.y - o.y); out.push(d <= R ? g : { x: o.x + (g.x - o.x) / d * R, y: o.y + (g.y - o.y) / d * R }); } } return out; }
+  function coverSpots(o, att, E, targets, R) { const out = [{ x: o.x, y: o.y }], A = gside(E, 1 - att, 2.2); for (const P of targets) { const B = gside(P, 1 - att, 2.2); for (const t of [0, .5, 1]) { const g = { x: A.x + (B.x - A.x) * t, y: A.y + (B.y - A.y) * t }, d = hyp(g.x - o.x, g.y - o.y); out.push(d <= R ? g : { x: o.x + (g.x - o.x) / d * R, y: o.y + (g.y - o.y) / d * R }); } } return out; }
   // Hücumcu için: burada durursam, savunmacılar (taşıyıcıya en yakın ve bana en yakın) en iyi cevaplarını verdiğinde takımın en iyisi ne kalır?
   // Dar durursam tek bir savunmacı ara bir noktadan ikimizi birden kapatır; biraz açılırsam kapatamaz, birini seçmek zorunda kalır. Bunu kural değil bu hesap söyler.
   // Okuma, savunmanın cevabını ne kadar hesaba kattığını belirler.
   function teamV(m, sn, att, E, c, mates, okP) {
     const ch = m.ch || .3, all = mates.concat([c]), w = cl((okP - 6) / 10, 0, 1); if (w <= 0) return teamBest(sn, att, E, all, ch);
-    const opp = sn.filter(o => o.team !== att && o.role !== 'Bekçi'), byE = opp.slice().sort((u, v) => Math.hypot(u.x - E.x, u.y - E.y) - Math.hypot(v.x - E.x, v.y - E.y)), byC = opp.slice().sort((u, v) => Math.hypot(u.x - c.x, u.y - c.y) - Math.hypot(v.x - c.x, v.y - c.y));
+    const opp = sn.filter(o => o.team !== att && o.role !== 'Bekçi'), byE = opp.slice().sort((u, v) => hyp(u.x - E.x, u.y - E.y) - hyp(v.x - E.x, v.y - E.y)), byC = opp.slice().sort((u, v) => hyp(u.x - c.x, u.y - c.y) - hyp(v.x - c.x, v.y - c.y));
     const rs = []; if (byE[0]) rs.push(byE[0]); if (byC[0] && byC[0] !== byE[0]) rs.push(byC[0]);
     const choices = rs.map(o => coverSpots(o, att, E, [c], S.W.dlReach).map(g => ({ o, ...g })));
     const combos = choices.length === 1 ? choices[0].map(k => [k]) : choices.length ? choices[0].flatMap(k => choices[1].map(j => [k, j])) : [[]];
@@ -229,12 +230,12 @@
   // Okuma düşükse sadece taşıyıcının önüne geçer; yüksekse pas seçeneğini de hesaba katar.
   function coverBoth(m, d, att, E, h) {
     const okD = ok(d), w = cl((okD - 6) / 10, 0, 1); if (w <= 0) return null;
-    const sn = seen(m, d), atk = m.ps.filter(q => q.team === att && q !== h && q.role !== 'Bekçi' && Math.hypot((q.tx ?? q.x) - E.x, (q.ty ?? q.y) - E.y) < 22).map(q => ({ x: q.x, y: q.y }));
+    const sn = seen(m, d), atk = m.ps.filter(q => q.team === att && q !== h && q.role !== 'Bekçi' && hyp((q.tx ?? q.x) - E.x, (q.ty ?? q.y) - E.y) < 22).map(q => ({ x: q.x, y: q.y }));
     if (!atk.length) return null;
     const me = sn.find(o => o.id === d.id) || d, spots = coverSpots(me, att, E, atk, S.W.defReach), ch = m.ch || .3;
-    let best = null, bv = 1e9; for (const g of spots) { const w2 = sn.map(o => o.id === d.id ? { ...o, x: g.x, y: g.y } : o); const v = teamBest(w2, att, E, atk, ch) + Math.hypot(g.x - me.x, g.y - me.y) * .004; if (v < bv) { bv = v; best = g; } }
+    let best = null, bv = 1e9; for (const g of spots) { const w2 = sn.map(o => o.id === d.id ? { ...o, x: g.x, y: g.y } : o); const v = teamBest(w2, att, E, atk, ch) + hyp(g.x - me.x, g.y - me.y) * .004; if (v < bv) { bv = v; best = g; } }
     const g0 = gside(E, 1 - att, 2.2); return { x: g0.x + (best.x - g0.x) * w, y: g0.y + (best.y - g0.y) * w };
   }
-  function metrics(m) { const bx = m.holder ? m.holder.x : m.ball.x, by = m.holder ? m.holder.y : m.ball.y; let n = 0; for (const p of m.ps) if (p !== m.holder && p.role !== 'Bekçi' && !p.press && Math.hypot(p.x - bx, p.y - by) < 8) n++; return { swarm: n }; }
+  function metrics(m) { const bx = m.holder ? m.holder.x : m.ball.x, by = m.holder ? m.holder.y : m.ball.y; let n = 0; for (const p of m.ps) if (p !== m.holder && p.role !== 'Bekçi' && !p.press && hyp(p.x - bx, p.y - by) < 8) n++; return { swarm: n }; }
   window.AlanShape = { S, position, metrics, seen, flightRead };
 })();
