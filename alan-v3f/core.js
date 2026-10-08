@@ -87,7 +87,35 @@
     return -1;
   }
   function clone(b) { return Object.assign({}, b, { log: [] }); }
-  function predict(b0, src, p, maxT) { src = pack(src); const b = clone(b0); const pts = [{ x: b.x, y: b.y }]; for (let i = 0; i < (maxT || 900) && !b.done; i++) { stepBall(b, src, p); pts.push({ x: b.x, y: b.y, e: b.e, sp: hyp(b.vx, b.vy) }); } return { pts, end: b }; }
+  // Yörünge tahmini: stepBall'un birebir aynı işlemleri yerel değişkenlerle (rollTo ile aynı gövde); sonunda Çekirdeğin son durumu ve olay kaydı kopyaya yazılır.
+  function predict(b0, src, p, maxT) {
+    src = pack(src); p = p || P; const b = clone(b0), pts = [{ x: b.x, y: b.y }], n = maxT || 900, team = b.team, ch = b.ch;
+    let x = b.x, y = b.y, vx = b.vx, vy = b.vy, e = b.e, alive = b.alive, dead = b.dead, t = b.t, dist = b.dist, walls = b.walls, done = b.done;
+    for (let i = 0; i < n && !done; i++) {
+      const k = K(src, x, y, team), sp0 = hyp(vx, vy), res = 1 - p.pierce * ch;
+      let drag = p.fric;
+      if (k < 0) drag += -k * p.oppDrag * res; else drag *= 1 - p.ownFlow * k;
+      if (alive) { e -= sp0 * p.attn + (k < 0 ? -k * sp0 * p.drain * res : 0); if (e <= 0) { e = 0; alive = false; dead = 0; b.log.push({ t, k: 'son', txt: 'Çekirdek söndü · boşta' }); } }
+      else { dead++; drag += Math.min(p.deadMax, p.deadRamp * dead); }
+      const f = 1 - drag; vx *= f; vy *= f;
+      const s1 = hyp(vx, vy); if (s1 > 0) { const r = Math.max(0, s1 - p.roll) / s1; vx *= r; vy *= r; }
+      let nx = x + vx, ny = y + vy;
+      if (nx <= .5) { const wx = .5, tt = Math.abs(vx) > 1e-9 ? (wx - x) / vx : 0, yy = y + vy * Math.max(0, Math.min(1, tt));
+        if (alive && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = 'kuyu-sol'; b.log.push({ t, k: 'kuyu', txt: `KUYU · sol Kuyu'ya girdi` }); }
+        else { nx = 1 - nx; vx = -vx * p.rest; vy *= p.rest; walls++; if (alive) e = Math.max(0, e - p.wallLoss); b.log.push({ t, k: 'kenar', txt: `Kenardan sekti (sol uç, Kuyu'nun dışı)` }); } }
+      if (!done && nx >= W - .5) { const wx = W - .5, tt = Math.abs(vx) > 1e-9 ? (wx - x) / vx : 0, yy = y + vy * Math.max(0, Math.min(1, tt));
+        if (alive && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = 'kuyu-sag'; b.log.push({ t, k: 'kuyu', txt: `KUYU · sağ Kuyu'ya girdi` }); }
+        else { nx = 2 * W - 1 - nx; vx = -vx * p.rest; vy *= p.rest; walls++; if (alive) e = Math.max(0, e - p.wallLoss); b.log.push({ t, k: 'kenar', txt: `Kenardan sekti (sağ uç, Kuyu'nun dışı)` }); } }
+      if (!done) {
+        if (ny < .5 || ny > H - .5) { ny = ny < .5 ? 1 - ny : 2 * H - 1 - ny; vy = -vy * p.rest; vx *= p.rest; walls++; if (alive) e = Math.max(0, e - p.wallLoss); b.log.push({ t, k: 'kenar', txt: `Kenardan sekti (${ny < H / 2 ? 'üst' : 'alt'})` }); }
+        dist += hyp(nx - x, ny - y); x = nx; y = ny; t++;
+        if (hyp(vx, vy) < .015) { vx = 0; vy = 0; done = 'durdu'; b.log.push({ t, k: 'dur', txt: alive ? 'Durdu' : 'Sönmüş hâlde durdu' }); }
+      }
+      pts.push({ x, y, e, sp: hyp(vx, vy) });
+    }
+    b.x = x; b.y = y; b.vx = vx; b.vy = vy; b.e = e; b.alive = alive; b.dead = dead; b.t = t; b.dist = dist; b.walls = walls; b.done = done;
+    return { pts, end: b };
+  }
   // Hedefe pas: hedef noktaya `arrive` hızıyla ulaşan başlangıç hızını bul (alanlar dahil, düz hat varsayımı).
   function solveLaunch(b0, to, arrive, src, p, vmax) {
     const dx = to.x - b0.x, dy = to.y - b0.y, L = hyp(dx, dy) || 1, ux = dx / L, uy = dy / L; vmax = vmax || 3; src = pack(src);
