@@ -6,7 +6,6 @@
   const ok = p => (p.a && p.a.okuma) ?? 10, spd = p => .17 + ((p.a && p.a.hiz) ?? 10) * .006, SPR = 1.25;
   const S = {
     errPos: .14,      // algı hatası: (20-Okuma) × bu birim
-    atkLen: 40, manEvery: 45, manMin: .2, manKeep: .7, // hücum şeklinin boyu (Çekirdekten); adam adama: yeniden tartma aralığı, tehlike eşiği (en tehlikelinin kesri), mevcut eşleşmeye bağlılık
     swR: 4, swOff: 2.5, swMove: .02, dzR: 4, dzLane: 1.5, dzLaneW: .8, dzCarrier: .9, dzMan: 1.6, dzManAA: 5, dzLeash: .04, // bölge: kapatma menzili, pas hattı genişliği ve etkisi, taşıyıcının tehlikesi, bölgesindeki adamın ağırlığı, dizilişe bağ // arkadakinin kapatma menzili, rakibin Kuyu tarafındaki mesafe, yer değiştirme bedeli
     look: .6, lag0: 10, lagOk: .4,  // algı gecikmesi: 10 - Okuma×0.4 tik; öngörü: (Okuma-6) × 0.6 tik ileri
     react: .5,        // pası okuma gecikmesi: 14 - Okuma × bu tik
@@ -45,13 +44,6 @@
     const gx = ownX(dt), dr = -dirOf(dt), cands = T.map(t => t.g).concat([{ x: p.x, y: p.y }]); for (const dx of [6, 12, 20]) for (const y of [10, 18, 25, 32, 40]) cands.push({ x: gx - dr * dx, y });
     let best = null, bv = 1e9; for (const c of cands) { if (c.x < 1 || c.x > 99 || c.y < 1 || c.y > 49) continue; let r = 0; T.forEach((t, k) => { r += t.w * (1 - Math.max(base[k], cov(c.x, c.y, t))); }); r += S.swMove * hyp(c.x - p.x, c.y - p.y) / 20; if (r < bv) { bv = r; best = c; } }
     return best || { x: p.x, y: p.y }; }
-  // Adam adama eşleşmesi: yakınlığa göre değil, rakibin tehlikesine göre. Tehlike = Kuyu'ya yakınlık × Çekirdeğin ona ulaşabilmesi (taşıyıcı ona pas verebilir mi).
-  // En tehlikeli rakipler önce, onlara en çabuk ulaşabilen savunmacıyla eşleşir. Tehlikesi takımın en tehlikeli rakibinin küçük bir kesrinden azsa (markajı hiçbir şeyi kapatmaz), kimse onu tutmaz; serbest kalan savunmacı bölge oynar.
-  // Eşleşme top el değiştirdiğinde ve her S.manEvery tikte yeniden tartılır; mevcut eşleşme ancak belirgin şekilde daha iyisi varsa bozulur (sürekli adam değiştirmez).
-  function manAssign(m, defs, atk, att, h) { const D = Dd(), A = atk.filter(a => a !== h).map(a => ({ a, w: D.threat(att, a.x, a.y) * (h ? .25 + .75 * D.laneOk(m.ps, att, h, a) : 1) })).sort((u, v) => v.w - u.w), wMax = A.length ? A[0].w : 0, free = new Set(defs), cost = (d, a) => hyp(d.x - a.x, d.y - a.y) / (spd(d) * 60);
-    for (const d of defs) d.manRef = null;
-    for (const { a, w } of A) { if (!free.size || w < wMax * S.manMin) break; let best = null, bc = 1e9; for (const d of free) { const c = cost(d, a) * (d._man === a ? S.manKeep : 1); if (c < bc) { bc = c; best = d; } } if (best) { best.manRef = a; best._man = a; free.delete(best); } }
-    for (const d of free) d._man = null; }
   // Açıkta kalan tehlike (bölge savunmacısının ölçüsü). Tehlike kaynakları:
   //  · her topsuz hücumcu: Kuyu'ya yakınlığı × Çekirdeğin ona ulaşabilmesi (taşıyıcıdan hat). Kapatmanın iki yolu var: onun Kuyu tarafında durmak ya da ona giden pas hattının üstünde durmak.
   //  · taşıyıcının kendisi: Kuyu'ya yakınlığı. Kapatmak = onunla Kuyu arasında durmak.
@@ -94,8 +86,8 @@
   function slotBase(m, p, E, att) {
     const t = p.team, tac = m.tac[t], s = att && p.rslot ? p.rslot : p.slot, x0 = ownX(t), dir = dirOf(t), bd = (E.x - x0) * dir;
     let back, len, wid, sh;
-    // hücum şekli: arka ve ön çizgi Çekirdeğe göre (şekil topla birlikte ilerler). Son savunmacının arkasına geçmek dizilişin işi değil, oraya pas gidip gidemeyeceğinin hesabı (offBall: runV, teamV).
-    if (att) { back = cl(bd - 18 - (1 - tac.risk) * 8, 10, 62); const front = Math.min(90, back + S.atkLen); len = front - back; wid = GEN[tac.genislik] || 38; sh = .15; }
+    // hücum şekli: arka çizgi Çekirdeğe göre, ön çizgi rakibin son savunmacısının omzunda (forvet son çizgiyi iter)
+    if (att) { back = cl(bd - 18 - (1 - tac.risk) * 8, 10, 62); let last = 0; for (const q of m.ps) if (q.team !== t && q.role !== 'Bekçi') last = Math.max(last, (q.x - x0) * dir); const front = Math.min(94, Math.max(back + 24, last + 1)); len = front - back; wid = GEN[tac.genislik] || 38; sh = .15; }
     else { back = cl(Math.min(BLOK[tac.blok] || 34, bd - 6), 8, 62); len = 22; wid = 26; sh = .4; }
     return { x: cl(x0 + dir * (back + (s.d - .2) / .6 * len), 2, 98), y: cl(25 + s.l * wid / 2 + (E.y - 25) * sh, 2, 48) };
   }
@@ -186,7 +178,7 @@
     const roleRun = p => p.rh === 'Koşucu' && !runners.has(p) ? S.runK * .6 : 0;
     const leashK = p => (win ? (kz === 'Kontra' ? (runners.has(p) ? .01 : .6) : kz === 'Yerleş' ? 2.5 : 1) : roleLeash(p));
     // savunma sistemi: Adam adama (her savunmacı, top el değiştirince seçtiği adamın Kuyu tarafında), Kenara sıkıştır (bir savunmacı kenar boyunca önde tuzakta bekler)
-    if (dtac.sistem === 'Adam adama') { const key = att + ':' + (m.winT || 0) + ':' + (m.kickT || 0); if (m._manKey !== key || m.tick - (m._manT || 0) >= S.manEvery) { m._manKey = key; m._manT = m.tick; manAssign(m, defs, atk, att, h); }
+    if (dtac.sistem === 'Adam adama') { const key = att + ':' + (m.winT || 0) + ':' + (m.kickT || 0); if (m._manKey !== key) { m._manKey = key; const used = new Set(); defs.map(d => atk.map(a => [d, a, hyp(d.x - a.x, d.y - a.y)])).flat().sort((u, v) => u[2] - v[2]).forEach(([d, a]) => { if (d._mk !== key && !used.has(a)) { d._mk = key; d.manRef = a; used.add(a); } }); }
       for (const p of defs) { if (press.includes(p) || sweep.has(p) || !p.manRef || p.manRef === h || !p._dz) continue; p.job = (p._dz.job.startsWith('bölge') || p._dz.job.startsWith('pas hattı') ? 'adam adama' : p._dz.job.split(' ·')[0]) + ' · ' + (p.manRef.name || ''); } }
     if (dtac.sistem === 'Kenara sıkıştır' && h && press.length) { const wp = { x: cl(h.x - dirOf(dt) * 5, 2, 98), y: h.y < 25 ? 3 : 47 }, w = defs.filter(p => !press.includes(p) && !sweep.has(p)).sort((u, v) => hyp(u.x - wp.x, u.y - wp.y) - hyp(v.x - wp.x, v.y - wp.y))[0]; if (w) { w.tx = wp.x; w.ty = wp.y; w.job = 'tuzak'; } }
     for (const p of atk) {

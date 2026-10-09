@@ -15,11 +15,11 @@ body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque'
 a{color:#1F3FD1}a:hover{color:#E0531F}
 button,select{font:inherit;color:inherit}
 </style>
-<script src="alan-v3f/core.js?v=f7"></script>
-<script src="alan-v3f/shot-table.js?v=f7"></script>
-<script src="alan-v3f/decide.js?v=f7"></script>
-<script src="alan-v3f/match.js?v=f7"></script>
-<script src="alan-v3f/shape.js?v=f7"></script>
+<script src="alan-v3f/core.js?v=f10"></script>
+<script src="alan-v3f/shot-table.js?v=f10"></script>
+<script src="alan-v3f/decide.js?v=f10"></script>
+<script src="alan-v3f/match.js?v=f10"></script>
+<script src="alan-v3f/shape.js?v=f10"></script>
 </helmet>
 <div style="max-width:1680px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box">
   <header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;background:#16150F;color:#F6F3EC;padding:14px 20px">
@@ -39,10 +39,14 @@ button,select{font:inherit;color:inherit}
         <button onClick="{{ s.set }}" style="background:{{ s.bg }};color:{{ s.fg }};border:1.5px solid #F6F3EC;padding:7px 12px;cursor:pointer">{{ s.label }}</button>
       </sc-for>
       <button onClick="{{ restart }}" style="background:transparent;color:#F6F3EC;border:1.5px solid #F6F3EC;padding:7px 12px;cursor:pointer">Yeni maç</button>
+      <button onClick="{{ rec }}" style="background:{{ recBg }};color:#F6F3EC;border:1.5px solid #F6F3EC;padding:7px 12px;cursor:pointer">{{ recLabel }}</button>
+      <sc-if value="{{ recUrl }}" hint-placeholder-val="{{ false }}">
+        <a href="{{ recUrl }}" download="{{ recName }}" style="color:#F6F3EC;border:1.5px solid #F6F3EC;padding:7px 12px;text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:14px">Videoyu indir</a>
+      </sc-if>
     </div>
   </header>
-  <div style="display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;align-items:start">
-    <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+  <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:12px;min-width:0;flex:1 1 640px">
       <canvas ref="{{ cv }}" width="1000" height="500" style="width:100%;aspect-ratio:2/1;display:block;background:#F6F3EC;border:2px solid #16150F"></canvas>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));border:2px solid #16150F;background:#F6F3EC">
         <sc-for list="{{ stats }}" as="s" hint-placeholder-count="6">
@@ -64,7 +68,7 @@ button,select{font:inherit;color:inherit}
         </div>
       </div>
     </div>
-    <aside style="display:flex;flex-direction:column;gap:14px">
+    <aside style="display:flex;flex-direction:column;gap:14px;flex:1 1 320px;max-width:100%">
       <sc-for list="{{ teams }}" as="tm" hint-placeholder-count="2">
         <div style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:9px">
           <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:{{ tm.col }};font-weight:600">{{ tm.label }} · taktik</div>
@@ -82,7 +86,7 @@ button,select{font:inherit;color:inherit}
       </sc-for>
       <div style="border:2px solid #16150F;background:#F6F3EC;padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.5;max-height:300px;overflow:auto">
         <sc-for list="{{ events }}" as="e" hint-placeholder-count="6">
-          <div style="display:flex;gap:8px"><span style="opacity:.55;min-width:40px">{{ e.t }}</span><span style="color:{{ e.col }}">{{ e.text }}</span></div>
+          <div style="display:flex;gap:8px;align-items:baseline"><span style="opacity:.55;min-width:40px;flex-shrink:0">{{ e.t }}</span><span style="color:{{ e.col }};min-width:0;flex:1">{{ e.text }}</span></div>
         </sc-for>
       </div>
     </aside>
@@ -94,11 +98,19 @@ class Component extends DCLogic {
   state = { playing: true, speed: 1, n: 0, tac: [{ sistem: 'Alan', pres: 1, arkada: 1, blok: 'Düşük', genislik: 'Dar', tempo: .8, risk: .8, kazaninca: 'Kontra' }, { sistem: 'Adam adama', pres: 2, arkada: 2, blok: 'Yüksek', genislik: 'Geniş', tempo: .2, risk: .2, kazaninca: 'Dengeli' }] };
   cv = React.createRef();
   componentDidMount() { const w = () => { if (!window.AlanMatch) return setTimeout(w, 40); this.start(); this.loop(); }; w(); }
-  componentWillUnmount() { cancelAnimationFrame(this.raf); if (this.w) this.w.terminate(); }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); if (this.w) this.w.terminate(); if (this.mr && this.mr.state !== 'inactive') this.mr.stop(); }
+  // Video kaydı: saha tuvali olduğu gibi kaydedilir (skor ve saat tuvalin içine yazılır). Safari mp4, diğerleri webm üretir.
+  recToggle = () => { if (this.mr && this.mr.state === 'recording') { this.mr.stop(); return; } const cv = this.cv.current; if (!cv || !cv.captureStream || !window.MediaRecorder) { alert('Bu tarayıcı video kaydını desteklemiyor.'); return; }
+    const types = ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm'], type = types.find(t => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || '';
+    const chunks = [], mr = new MediaRecorder(cv.captureStream(30), type ? { mimeType: type, videoBitsPerSecond: 4e6 } : undefined); this.mr = mr; this.recOn = true;
+    mr.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+    mr.onstop = () => { this.recOn = false; const t = mr.mimeType || type || 'video/webm', ext = t.includes('mp4') ? 'mp4' : 'webm'; if (this.state.recUrl) URL.revokeObjectURL(this.state.recUrl); this.setState({ recUrl: URL.createObjectURL(new Blob(chunks, { type: t })), recName: `ALAN-mac-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')}.${ext}` }); };
+    mr.start(1000); if (this.state.recUrl) { URL.revokeObjectURL(this.state.recUrl); } this.setState({ recUrl: null, recT0: Date.now() }); };
   // Maç ayrı bir iş parçacığında oynanır; sayfa sadece gelen anlık görüntüyü çizer (karar anlarındaki ağır hesap ekranı dondurmaz).
-  start() { if (!this.w) { this.w = new Worker('alan-v3f/live-worker.js?v=' + Date.now()); this.w.onmessage = e => { const s = e.data; s.holder = s.hi >= 0 ? s.ps[s.hi] : null; this.m = s; }; } this.w.postMessage({ type: 'new', seed: 1 + Math.floor(Math.random() * 1e6), tac: this.state.tac, len: 7200 }); this.w.postMessage({ type: 'speed', v: this.state.speed }); this.w.postMessage({ type: 'play', v: this.state.playing }); }
+  start() { if (!this.w) { this.w = new Worker('alan-v3f/live-worker.js?v=' + Date.now()); this.w.onmessage = e => { const s = e.data; if (s.diag) { try { localStorage.setItem('alan-v3f-diag', JSON.stringify(s.diag)); } catch (x) {} console.warn('[ALAN teşhis]', s.diag.why); return; } s.holder = s.hi >= 0 ? s.ps[s.hi] : null; this.m = s; }; } this.w.postMessage({ type: 'new', seed: 1 + Math.floor(Math.random() * 1e6), tac: this.state.tac, len: 7200 }); this.w.postMessage({ type: 'speed', v: this.state.speed }); this.w.postMessage({ type: 'play', v: this.state.playing }); }
   loop() { const f = () => { if (this.w) { if (this._sp !== this.state.speed) { this._sp = this.state.speed; this.w.postMessage({ type: 'speed', v: this._sp }); } if (this._pl !== this.state.playing) { this._pl = this.state.playing; this.w.postMessage({ type: 'play', v: this._pl }); } } this.draw(); this.fr = (this.fr || 0) + 1; if (this.fr % 10 === 0) this.setState({ n: this.fr }); this.raf = requestAnimationFrame(f); }; this.raf = requestAnimationFrame(f); }
-  draw() {
+  draw() { this.draw0(); if (this.recOn && this.m && this.cv.current) { const x = this.cv.current.getContext('2d'), s = Math.floor(this.m.tick / 60); x.save(); x.fillStyle = 'rgba(22,21,15,.85)'; x.fillRect(0, 0, 250, 34); x.fillStyle = '#F6F3EC'; x.font = "600 18px 'JetBrains Mono', monospace"; x.textAlign = 'left'; x.fillText(`${this.m.score[0]} – ${this.m.score[1]}   ${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`, 12, 23); x.restore(); } }
+  draw0() {
     const cv = this.cv.current, m = this.m, C = window.AlanCore; if (!cv || !m) return; const x = cv.getContext('2d'), s = 10, A = '#1F3FD1', B = '#E0531F', INK = '#16150F';
     x.fillStyle = '#F6F3EC'; x.fillRect(0, 0, 1000, 500);
     const t = m.holder ? m.holder.team : m.ball ? m.ball.team : 0;
@@ -125,10 +137,11 @@ class Component extends DCLogic {
     const st = m ? m.st : null, pc = (a, b) => b ? `%${Math.round(a / b * 100)}` : '–', tot = st ? st.poss[0] + st.poss[1] : 0;
     const s = Math.floor((m ? m.tick : 0) / 60);
     return {
-      score: m ? `${m.score[0]} – ${m.score[1]}` : '0 – 0', clock: m ? `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}${m.over ? ' · bitti' : ''}` : '', cv: this.cv,
+      score: m ? `${m.score[0]} – ${m.score[1]}` : '0 – 0', clock: m ? `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}${m.over ? ' · bitti' : ''}${m.err ? ' · MOTOR HATASI: ' + m.err.slice(0, 80) : ''}` : '', cv: this.cv,
       toggle: () => this.setState({ playing: !S.playing }), playLabel: S.playing ? 'Duraklat' : 'Oynat',
       speeds: [1, 2, 4].map(v => ({ label: v + '×', bg: S.speed === v ? '#F6F3EC' : 'transparent', fg: S.speed === v ? '#16150F' : '#F6F3EC', set: () => this.setState({ speed: v }) })),
       restart: () => this.start(),
+      rec: this.recToggle, recLabel: this.recOn ? `● Kaydı durdur (${Math.round((Date.now() - (S.recT0 || Date.now())) / 1000)} sn)` : 'Video kaydet', recBg: this.recOn ? '#E0531F' : 'transparent', recUrl: S.recUrl || null, recName: S.recName || 'ALAN-mac.mp4',
       stats: st ? [{ k: 'Topa sahip', a: pc(st.poss[0], tot), b: pc(st.poss[1], tot) }, { k: 'Pas (tutan)', a: `${st.pass[0]} (${pc(st.passOk[0], st.pass[0])})`, b: `${st.pass[1]} (${pc(st.passOk[1], st.pass[1])})` }, { k: 'Önüne', a: st.lead[0], b: st.lead[1] }, { k: 'Kenardan', a: st.bank[0], b: st.bank[1] }, { k: 'Gönderme', a: st.shot[0], b: st.shot[1] }, { k: 'Kazanma', a: st.steal[0], b: st.steal[1] }] : [],
       decName: m && m.lastDec ? m.lastDec.name : '–',
       dec: m && m.lastDec ? m.lastDec.opts.map((o, i) => ({ kind: o.kind, q: o.q ? '→ ' + o.q : '', P: o.P == null ? '–' : `%${Math.round(o.P * 100)}`, v: o.v.toFixed(3), bg: i ? 'transparent' : '#16150F', fg: i ? '#16150F' : '#F6F3EC' })) : [],
