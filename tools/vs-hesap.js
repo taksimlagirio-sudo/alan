@@ -1,7 +1,8 @@
 // Durum değeri tablosu (Bölüm 9) · hesap. vs-veri.js maçlarından TD(λ) ile V(hücre) = P(sıradaki sayıyı biz) − P(rakip) çıkarır.
-// Kullanım: node tools/vs-hesap.js <maç klasörü> <çıktı tablo.js> [λ=0.8] [önceki tablo.js (sönüm %50)]
+// Kullanım: node tools/vs-hesap.js <maç klasörü> <çıktı tablo.js> [λ=0.8] [önceki tablo.js (sönüm %50, 30'dan az örnekli hücrede orantılı daha az)]
 const fs = require('fs'), path = require('path'), crypto = require('crypto');
-const [dirIn, out, lS, prevPath] = process.argv.slice(2), LAM = lS != null ? +lS : .8, N = 540, MINN = 30;
+// SON=boot: maç sonunda yarım kalan anlar 0 sayılmaz; getiri son durumun değerinden sürer, kalibrasyon son sayıdan sonraki anları dışarıda bırakır
+const [dirIn, out, lS, prevPath] = process.argv.slice(2), LAM = lS != null ? +lS : .8, N = 540, MINN = 30, SON = process.env.SON === 'boot';
 const games = fs.readdirSync(dirIn).filter(f => f.endsWith('.json')).map(f => { try { return JSON.parse(fs.readFileSync(path.join(dirIn, f), 'utf8')); } catch (e) { return null; } }).filter(Boolean).sort((a, b) => a.i - b.i);
 const ST = { nP: 10, nW: 3, nS: 3, nB: 3, nT: 2 }, dec = c => { const iT = c % 2; c = (c - iT) / 2; const iB = c % 3; c = (c - iB) / 3; const iS = c % 3; c = (c - iS) / 3; const iW = c % 3; const iP = (c - iW) / 3; return { iP, iW, iS, iB, iT }; };
 const enc = o => (((o.iP * 3 + o.iW) * 3 + o.iS) * 3 + o.iB) * 2 + o.iT;
@@ -11,7 +12,7 @@ function returns(G, V, lam) { const s = G.s, g = G.g, out = new Float64Array(s.l
   const goalIn = new Array(s.length).fill(null); let j = 0; for (let k = 0; k < s.length; k++) { const t0 = s[k][0], t1 = k + 1 < s.length ? s[k + 1][0] : 1e9; while (j < g.length && g[j][0] <= t0) j++; if (j < g.length && g[j][0] <= t1) goalIn[k] = g[j][1]; }
   for (let k = s.length - 1; k >= 0; k--) { const tm = s[k][1];
     if (goalIn[k] != null) out[k] = goalIn[k] === tm ? 1 : -1;
-    else if (k === s.length - 1) out[k] = 0; // maç sonu: sıradaki sayı yok
+    else if (k === s.length - 1) out[k] = SON ? V[s[k][2]] : 0; // maç sonu: sıradaki sayı yok (SON=boot: maç sürüyormuş gibi, durumun kendi değeri)
     else { const sg = s[k + 1][1] === tm ? 1 : -1; out[k] = sg * ((1 - lam) * V[s[k + 1][2]] + lam * out[k + 1]); } }
   return out; }
 function smooth(sum, cnt) { const v = new Float64Array(N), raw = new Float64Array(N); for (let c = 0; c < N; c++) raw[c] = cnt[c] ? sum[c] / cnt[c] : 0;
@@ -27,13 +28,17 @@ function fit(G, lam, it = 60) { let V = new Float64Array(N); const cnt = new Flo
 // doğrulama: çift maçlarla kur, tek maçlarda gerçek sonuçla (λ=1: sıradaki sayı) karşılaştır
 const tr = games.filter(m => m.i % 2 === 0), te = games.filter(m => m.i % 2 === 1);
 const fT = fit(tr, LAM), Z = new Float64Array(N); const bins = Array.from({ length: 8 }, () => [0, 0, 0]);
-for (const m of te) { const R = returns(m, Z, 1); m.s.forEach((s, k) => { const v = fT.V[s[2]], b = Math.max(0, Math.min(7, Math.floor((v + .4) / .1))); bins[b][0] += v; bins[b][1] += R[k]; bins[b][2]++; }); }
+for (const m of te) { const R = returns(m, Z, 1), tEnd = SON ? (m.g.length ? m.g[m.g.length - 1][0] : -1) : 1e9; m.s.forEach((s, k) => { if (s[0] >= tEnd) return; const v = fT.V[s[2]], b = Math.max(0, Math.min(7, Math.floor((v + .4) / .1))); bins[b][0] += v; bins[b][1] += R[k]; bins[b][2]++; }); }
 // tam tablo
 let { V, cnt } = fit(games, LAM);
-if (prevPath) { const w = {}; (new Function('window', fs.readFileSync(prevPath, 'utf8')))(w); const P = w.ALAN_VS.v; for (let c = 0; c < N; c++) V[c] = .5 * V[c] + .5 * P[c]; }
+let fark = '';
+if (prevPath) { const w = {}; (new Function('window', fs.readFileSync(prevPath, 'utf8')))(w); const P = w.ALAN_VS.v; let sd = 0, sn = 0; const dd = [];
+  for (let c = 0; c < N; c++) { const d = Math.abs(V[c] - P[c]); if (cnt[c]) { sd += d * cnt[c]; sn += cnt[c]; } if (cnt[c] >= MINN) dd.push(d); const a = .5 * Math.min(1, cnt[c] / MINN); V[c] = a * V[c] + (1 - a) * P[c]; } /* sönüm %50; az örnekli hücrede yeni veri daha az söz sahibi (yeni oyunun gitmediği bölgeler eski bilgisini korur) */
+  dd.sort((a, b) => a - b); fark = `önceki tabloya göre ham fark (sönümden önce): örnek ağırlıklı ort. ${(sd / sn).toFixed(3)} · 30+ hücrelerde medyan ${dd[dd.length >> 1].toFixed(3)}, %90 ${dd[Math.floor(.9 * dd.length)].toFixed(3)}`; }
 // rapor
 const goals = games.reduce((s, m) => s + m.g.length, 0), samp = games.reduce((s, m) => s + m.s.length, 0);
 console.log(`maç ${games.length} · örnek ${samp} · sayı ${goals} (${(goals / games.length).toFixed(2)}/maç) · λ ${LAM}${prevPath ? ' · sönüm %50' : ''}`);
+if (fark) console.log(fark);
 console.log(`hücre: 30+ örnekli ${[...cnt].filter(n => n >= MINN).length}/${N} · hiç örneksiz ${[...cnt].filter(n => n === 0).length}`);
 const marg = (key, nb) => { const s = new Float64Array(nb), n = new Float64Array(nb); for (let c = 0; c < N; c++) { const k = dec(c)[key]; s[k] += V[c] * cnt[c]; n[k] += cnt[c]; } return [...s].map((x, k) => n[k] ? (x / n[k]).toFixed(3) : '–'); };
 console.log('ilerleme (0–10 … 90–100):', marg('iP', 10).join(' '));
