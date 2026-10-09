@@ -119,6 +119,8 @@
       const wx = L ? dx / L * want : 0, wy = L ? dy / L * want : 0; p.vx += (wx - p.vx) * .18; p.vy += (wy - p.vy) * .18; p.x = cl(p.x + p.vx, .8, W - .8); p.y = cl(p.y + p.vy, .8, H - .8);
       if (p.role !== 'Bekçi') outOfKuyu(p, true);
     }
+    // gövdeler üst üste binemez: iç içe geçen iki oyuncu yarı yarıya ayrılır (taşıyıcı ile ona dokunan presçi dahil)
+    const ps = m.ps, BD = C().Turn.TQ.minD; /* kafadaki dönüş hesabıyla aynı gövde sınırı */ for (let i = 0; i < ps.length; i++) for (let j = i + 1; j < ps.length; j++) { const a = ps[i], b = ps[j], dx = b.x - a.x, dy = b.y - a.y, dd = hyp(dx, dy); if (dd >= BD) continue; const ux = dd > 1e-3 ? dx / dd : 1, uy = dd > 1e-3 ? dy / dd : 0, push = (BD - dd) / 2; a.x = cl(a.x - ux * push, .8, W - .8); a.y = cl(a.y - uy * push, .8, H - .8); b.x = cl(b.x + ux * push, .8, W - .8); b.y = cl(b.y + uy * push, .8, H - .8); }
   }
   // Siyah alan (Kuyu dairesi): Bekçi dışında kimse giremez. Oyuncu dairenin kenarına itilir, içeri doğru hızı silinir (kenarı boyunca kayabilir).
   const KUYU_PAD = .6;
@@ -143,7 +145,9 @@
       // Tek dokunuş: alıcı Çekirdeği durdurmadan yönlendirebilir (pas ya da gönderme). Şarj hiç azalmaz, ama isabet gelen hıza ve Aktarım'a göre düşer.
       // Kontrol ederse şarjın bir kısmı gider (boşta karşılayan daha çok korur). Hangisinin iyi olduğuna oyuncu kendi karar verir.
       const D = Dd(), inSp = m._inSp || 0, chFull = m.ch, chCtrl = D.recvCh(m.ps, p.team, p.x, p.y, chFull), ot = D.otFactor(p, inSp);
-      let one = null; if (!m._lite && (p.a.okuma ?? 10) >= D.D.otOk) { const tE = tacEff(m, p.team), r = D.decideOT(p, m.ps, chFull, m.r, tE, ot), rc = D.decide(p, m.ps, chCtrl, m.r, tE); const ctrlBest = rc.opts.length ? rc.opts[0].v : 0; const b0 = rc.best; p._plan = b0 && b0.q && b0.to && b0.det && ['pas', 'önüne', 'aşırt', 'kenardan'].includes(b0.kind) ? { kind: b0.kind, q: b0.q, to: { x: b0.to.x, y: b0.to.y }, P: b0.det.P ?? 0, t: m.tick } : null; if (r && r.v > ctrlBest + D.D.otMargin) one = r; }
+      let one = null; if (!m._lite && (p.a.okuma ?? 10) >= D.D.otOk) { const tE = tacEff(m, p.team), r = D.decideOT(p, m.ps, chFull, m.r, tE, ot), rc = (() => { /* Kontrol etmenin bedeli zamandır: Çekirdeği durdurup gitmek istediği tarafa döndürene kadar (tepki + Çekirdeği gövdenin etrafından geçirme) savunma kapanır. Kontrol sonrası seçenekler o süre sonraki dünyada değerlendirilir; dönüş süresi, gelen pasın tarafı ile o an en umutlu hedefin yönü arasındaki açıdan çıkar. */
+          let tTurn = 0; const K2 = C(), aim = r && (r.T || r.to); if (aim && p.ca != null) { const ta = Math.atan2(aim.y - p.y, aim.x - p.x); tTurn = K2.Turn.arc(p.ca, ta, K2.Turn.shortDir(p.ca, ta)) / K2.Turn.omega(p); }
+          const w = D.predictWorld(m.ps, p.team, p, D.D.ctrlT + tTurn + 9), rc1 = D.decide(p, w, chCtrl, m.r, tE); for (const o of rc1.opts) if (o.q) o.q = m.ps.find(z => z.id === o.q.id) || o.q; return rc1; })(); const ctrlBest = rc.opts.length ? rc.opts[0].v : 0; const b0 = rc.best; p._plan = b0 && b0.q && b0.to && b0.det && ['pas', 'önüne', 'aşırt', 'kenardan'].includes(b0.kind) ? { kind: b0.kind, q: b0.q, to: { x: b0.to.x, y: b0.to.y }, P: b0.det.P ?? 0, t: m.tick } : null; if (r && r.v > ctrlBest + D.D.otMargin) one = r; }
       if (one) { m.ch = chFull; one.ot = ot; launch(m, p, one); return; }
       m.ch = chCtrl; } }
     else { m.st.steal[p.team]++; m.ch = .3; m.winT = m.tick; m.winTeam = p.team; ev(m, 'kesme', p.team, how || `${p.name} Çekirdeği aldı`); }

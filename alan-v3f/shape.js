@@ -6,6 +6,7 @@
   const ok = p => (p.a && p.a.okuma) ?? 10, spd = p => .17 + ((p.a && p.a.hiz) ?? 10) * .006, SPR = 1.25;
   const S = {
     errPos: .14,      // algı hatası: (20-Okuma) × bu birim
+    swR: 4, swOff: 2.5, swMove: .02, dzR: 4, dzLane: 1.5, dzLaneW: .8, dzCarrier: .9, dzMan: 1.6, dzLeash: .04, // bölge: kapatma menzili, pas hattı genişliği ve etkisi, taşıyıcının tehlikesi, bölgesindeki adamın ağırlığı, dizilişe bağ // arkadakinin kapatma menzili, rakibin Kuyu tarafındaki mesafe, yer değiştirme bedeli
     look: .6, lag0: 10, lagOk: .4,  // algı gecikmesi: 10 - Okuma×0.4 tik; öngörü: (Okuma-6) × 0.6 tik ileri
     react: .5,        // pası okuma gecikmesi: 14 - Okuma × bu tik
     reactLoose: 6, reactLooseOk: .25, // boşa çıkan Çekirdeği fark etme: 6 - Okuma × 0.25 tik
@@ -33,6 +34,32 @@
   const oppIn = (sn, x, y) => { let s = 0; for (const q of sn) s += C().infl(q, x, y); return s; };
   const laneIn = (sn, a, b, n) => { let s = 0; n = n || 4; for (let i = 1; i <= n; i++) { const t = i / (n + 1); s += oppIn(sn, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t); } return s / n; };
   const gside = (a, t, off) => { const gx = ownX(t), dx = gx - a.x, dy = H / 2 - a.y, L = hyp(dx, dy) || 1; return { x: a.x + dx / L * off, y: a.y + dy / L * off }; };
+  // Arkadaki oyuncunun yer seçimi (kural değil, ölçü): her rakip, Kuyu'ya yakınlığı × Çekirdeğin ona ulaşabilmesi kadar tehlikelidir.
+  // Bir rakibi kapatan, onun Kuyu tarafında, ona yakın duran savunmacıdır (takım arkadaşlarının o anki hedefleri de sayılır). Oyuncu, açıkta kalan toplam tehlikeyi en çok azaltacak noktayı seçer.
+  // Arkadaşıyla aynı yerde durmak hiçbir tehlikeyi azaltmaz; bu yüzden üst üste beklemek kendiliğinden kötü bir seçimdir. Rakipleri Okuma kadar doğru görür (sn).
+  function sweepSpot(m, p, dt, att, sn, h, E) {
+    const D = Dd(), A = sn.filter(o => o.role !== 'Bekçi' && (!h || o.ref !== h)), mates = m.ps.filter(q => q.team === dt && q !== p), R2 = 2 * S.swR * S.swR;
+    const T = A.map(a => { const reach = h ? .25 + .75 * D.laneOk(m.ps, att, h, a) : 1; return { g: gside(a, dt, S.swOff), w: D.threat(att, a.x, a.y) * reach }; });
+    const cov = (x, y, t) => Math.exp(-((x - t.g.x) ** 2 + (y - t.g.y) ** 2) / R2), base = T.map(t => { let c = 0; for (const q of mates) c = Math.max(c, cov(q.tx ?? q.x, q.ty ?? q.y, t)); return c; });
+    const gx = ownX(dt), dr = -dirOf(dt), cands = T.map(t => t.g).concat([{ x: p.x, y: p.y }]); for (const dx of [6, 12, 20]) for (const y of [10, 18, 25, 32, 40]) cands.push({ x: gx - dr * dx, y });
+    let best = null, bv = 1e9; for (const c of cands) { if (c.x < 1 || c.x > 99 || c.y < 1 || c.y > 49) continue; let r = 0; T.forEach((t, k) => { r += t.w * (1 - Math.max(base[k], cov(c.x, c.y, t))); }); r += S.swMove * hyp(c.x - p.x, c.y - p.y) / 20; if (r < bv) { bv = r; best = c; } }
+    return best || { x: p.x, y: p.y }; }
+  // Açıkta kalan tehlike (bölge savunmacısının ölçüsü). Tehlike kaynakları:
+  //  · her topsuz hücumcu: Kuyu'ya yakınlığı × Çekirdeğin ona ulaşabilmesi (taşıyıcıdan hat). Kapatmanın iki yolu var: onun Kuyu tarafında durmak ya da ona giden pas hattının üstünde durmak.
+  //  · taşıyıcının kendisi: Kuyu'ya yakınlığı. Kapatmak = onunla Kuyu arasında durmak.
+  // Takım arkadaşlarının (pres, arkadakiler, Bekçi dahil) o an gittiği yerler zaten bir kısmını kapatır; savunmacı geri kalanını en çok azaltan noktayı seçer.
+  // Talimat sadece çerçeve: dizilişteki yeri (blok yüksekliği, kompaktlık) bir bağ olarak durur; Okuma tehlikeyi ne kadar doğru gördüğünü belirler (sn).
+  function dangerSpot(m, p, dt, att, sn, h, E, bs, myMan) {
+    const D = Dd(), A = sn.filter(o => o.role !== 'Bekçi' && (!h || o.ref !== h)), mates = m.ps.filter(q => q.team === dt && q !== p), R2 = 2 * S.dzR * S.dzR, L2 = 2 * S.dzLane * S.dzLane;
+    const T = A.map(a => { const reach = h ? .25 + .75 * D.laneOk(m.ps, att, h, a) : 1, man = myMan && a.ref === myMan; return { g: gside(a, dt, S.swOff), a, w: D.threat(att, a.x, a.y) * reach * (man ? S.dzMan : 1) }; });
+    if (h) T.push({ g: gside(E, dt, 3), a: null, w: D.threat(att, E.x, E.y) * S.dzCarrier });
+    const segD = (x, y, a) => { if (!h || !a) return 99; const sx = a.x - h.x, sy = a.y - h.y, l2 = sx * sx + sy * sy || 1, t = cl(((x - h.x) * sx + (y - h.y) * sy) / l2, .15, .9); return hyp(h.x + sx * t - x, h.y + sy * t - y); };
+    const cov = (x, y, t) => Math.max(Math.exp(-((x - t.g.x) ** 2 + (y - t.g.y) ** 2) / R2), t.a ? S.dzLaneW * Math.exp(-(segD(x, y, t.a) ** 2) / L2) : 0);
+    const base = T.map(t => { let c = 0; for (const q of mates) c = Math.max(c, cov(q.tx ?? q.x, q.ty ?? q.y, t)); return c; });
+    const cands = [{ x: bs.x, y: bs.y }, { x: p.x, y: p.y }]; for (const t of T) { cands.push(t.g); if (h && t.a) { const mx = h.x + (t.a.x - h.x) * .55, my = h.y + (t.a.y - h.y) * .55; cands.push({ x: mx, y: my }); } }
+    let best = null, bv = 1e9, bi = -1; for (const c of cands) { if (c.x < 1 || c.x > 99 || c.y < 1 || c.y > 49) continue; let r = 0, top = -1, tv = 0; T.forEach((t, k) => { const own = cov(c.x, c.y, t), gain = t.w * Math.max(0, own - base[k]); r += t.w * (1 - Math.max(base[k], own)); if (gain > tv) { tv = gain; top = k; } });
+      r += S.dzLeash * ((c.x - bs.x) ** 2 + (c.y - bs.y) ** 2) / 100 + S.swMove * hyp(c.x - p.x, c.y - p.y) / 20; if (r < bv) { bv = r; best = c; bi = top; } }
+    const t = bi >= 0 ? T[bi] : null; return { x: (best || bs).x, y: (best || bs).y, job: !t ? 'bölge' : !t.a ? 'Kuyu tarafı' : segD((best || bs).x, (best || bs).y, t.a) < 2 ? 'pas hattı · ' + (t.a.ref?.name || '') : 'bölge · ' + (t.a.ref?.name || '') }; }
   // Çekirdek uçarken: herkes yörüngede nereye, ne zaman varabileceğini hesaplar
   // Alıcı da Çekirdeğin gerçekte gideceği yeri okur (pası atanın niyetini değil): hedefi yörüngede yetişebildiği ilk nokta.
   function flightRead(m) {
@@ -128,18 +155,12 @@
       if (press.includes(p)) continue; const bs = base.get(p), sn = seen(m, p); let tx = bs.x, ty = bs.y;
       if (!up.has(p) && p.rec && m.tick >= p.rec && since < S.recT && (p.x - E.x) * dirOf(p.team) > -1) { const g = { x: E.x + (ownX(dt) - E.x) * .35, y: E.y + (25 - E.y) * .5 + p.slot.l * 6 }; p.tx = g.x; p.ty = g.y; p.sprint = true; p.job = 'geri koşu'; continue; }
       if (up.has(p)) { const ra = atkAll.filter(q => q !== h), rl = ra.length ? ra.reduce((u, v) => Math.abs(v.x - oppX(dt)) < Math.abs(u.x - oppX(dt)) ? v : u).x : oppX(dt) - dirOf(dt) * 30; let wx = rl - dirOf(dt) * 3; if (Math.abs(wx - oppX(dt)) < 12) wx = oppX(dt) - dirOf(dt) * 12; p.tx = wx; p.ty = 25 + p.slot.l * 11; p.job = 'önde bekle'; continue; }
-      if (sweep.has(p)) {
-        const deep = sn.filter(o => o.role !== 'Bekçi').sort((a, b) => Math.abs(a.x - ownX(dt)) - Math.abs(b.x - ownX(dt)))[0], tgt = deep && Math.abs(deep.x - ownX(dt)) < Math.abs(E.x - ownX(dt)) ? deep : E, g = gside(tgt, dt, 3 + ok(p) * .2);
-        p.tx = g.x; p.ty = g.y; p.job = 'arkada'; continue;
-      }
+      if (sweep.has(p)) { if (!p._sw || p._swT !== m.winT || (m.tick + p.id) % 4 === 0) { p._sw = sweepSpot(m, p, dt, att, sn, h, E); p._swT = m.winT; } p.tx = p._sw.x; p.ty = p._sw.y; p.job = 'arkada'; continue; }
       const q = mark.get(p);
       if (q && p.rs === 'Markajcı') { const o = sn.find(o => o.ref === q), g = gside(o, dt, S.markOff); tx = g.x; ty = g.y; p.job = 'markaj · ' + (q.name || ''); p.tx = tx; p.ty = ty; continue; }
-      if (q) { const o = sn.find(o => o.ref === q), g = gside(o, dt, S.markOff), w = S.markW * (.6 + ok(p) * .02); tx += (g.x - tx) * w; ty += (g.y - ty) * w; p.job = 'bölge · ' + (q.name || ''); }
-      else { const dx = ownX(dt) - E.x, dy = 25 - E.y, L = hyp(dx, dy) || 1, u = ((tx - E.x) * dx + (ty - E.y) * dy) / L, px = E.x + dx / L * u, py = E.y + dy / L * u; tx += (px - tx) * .3; ty += (py - ty) * .3; p.job = 'bölge'; }
-      // Kuyu tarafı: Çekirdek yaklaştıkça Çekirdek ile Kuyu arasına
-      const dk = hyp(E.x - ownX(dt), E.y - 25), st = 26 + ok(p) * 1.4 - ((BLOK[dtac.blok] || 34) - 34) * .3, w = cl((st - dk) / Math.max(6, st - 10), 0, 1);
-      if (w > 0) { const hold = 6 + p.slot.d * 10, f = Math.min(1, hold / Math.max(dk, 1)), gx = ownX(dt) + (E.x - ownX(dt)) * f, gy = 25 + (E.y - 25) * f + p.slot.l * 8; tx += (gx - tx) * w; ty += (gy - ty) * w; }
-      p.tx = tx; p.ty = ty;
+      // Bölge savunması: sabit genişlik ya da "Kuyu tarafına geç" kuralı yok. Savunmacı, takımın açıkta bıraktığı tehlikeyi en çok azaltan noktayı seçer (dangerSpot).
+      if (!p._dz || p._dzT !== m.winT || (m.tick + p.id) % 4 === 0) { p._dz = dangerSpot(m, p, dt, att, sn, h, E, bs, q); p._dzT = m.winT; }
+      p.tx = p._dz.x; p.ty = p._dz.y; p.job = p._dz.job;
     }
     // 3 · Hücum: arkada güvence, sonra boşluk arama
     const hang = ps.filter(q => q.team === dt && q.role !== 'Bekçi' && (q.x - E.x) * dirOf(att) < -8), guard = new Map();
