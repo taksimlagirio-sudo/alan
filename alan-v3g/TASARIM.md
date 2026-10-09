@@ -35,7 +35,15 @@ Bağlantı: **Markov zinciri.** V(s) = Σ seçenekler · P(sonuç) · V(sonuç d
 
 Hücre sayısı bütçesi: her tablo ≤ ~5.000 hücre; hücre başına ≥ 30 örnek (proje kuralı). Az örnekli hücreler komşulardan pürüzsüzleştirilir, bu not tutulur.
 
-### b) Okuma tabloya uygulanır, tablonun yerine geçmez (karar verildi)
+### b) Karar modeli: değer kusursuz, oyuncu kestirir (kuruldu · sadece paslar)
+- **Değer** motorda kusursuz hesaplanır (bugün: oynatma kapalı v3g değerlendirmesi; ileride durum değeri tablosu). Pas için algı hatası yok.
+- **Kestirim yarışın üzerindedir, değerin üzerinde değil.** Oyuncu, en tehlikeli rakibin Çekirdeğin yoluna yetişme payını (tik) Okuma'ya bağlı hatayla kestirir: Okuma 6 ±16, 10 ±8, 14 ±3, 18 ±0,3 tik (`dmK × ((20 − Okuma)/10)^dmP`, dmK 8, dmP 2). Bu, ulaşma ihtimalini kaydırır; değer sadece o kaymanın kazanç/bedel karşılığı kadar değişir. Bariz yarışta ihtimal doymuştur, kayma kendiliğinden ~0; kıl payında en büyüktür. Sınırsız değer gürültüsü yok.
+- **Hata rakip başına:** oyuncu bir rakibi yanlış kestirirse o rakibin yarıştığı bütün seçenekler aynı yönde kayar. Hata top elindeyken kalıcıdır (titreme yok).
+- **Kayma (karakter):** Cesaret ve taktik riski kaybın tartısında (risk çarpanı).
+- **Hedef eğri bırakıldı:** "Okuma 6 %45 eşdeğer" bu motorun değer dünyasına uymuyor (en iyi–ikinci farkı medyan 0,001; ±48 tik hata bile %69 eşdeğer verir). Okuma'nın hatası fiziğe göre seçilir; etkisi maç sonucuyla ölçülür (Okuma 18 takımı – Okuma 6 takımı hücresi). Eşdeğerlik ölçüsü tablo gelince yeniden kullanılır.
+- Eski yol `dm: false` ile açılır.
+
+### b-eski) Okuma tabloya uygulanır, tablonun yerine geçmez (önceki karar; yerine yukarıdaki geçti)
 - Kusursuz bilgi tabloda. Oyuncu tabloyu **kendi gördüğü durumla** sorgular: rakiplerin yeri ve hızı Okuma'ya bağlı sapmayla görülür (v3f'teki algı hatasının aynısı).
 - **Ayrı bir değer gürültüsü yok.** Dağınıklık sadece algı hatasından gelir (düşük Okuma'lı oyuncu kapalı hattı açık sanır). Algı hatası yansız olduğu sürece oyuncu ortalamada doğru okur. Ek bir gürültü düğmesi "sayıyla gizleme" olurdu.
 - **Algı hatasının büyüklüğü bir hedef eğriyle seçilir**, sonra sahnede gözle onaylanır:
@@ -86,7 +94,7 @@ Ayrı iş parçacığı yarım saniyede bir takım için kısa bir plan önerir:
 2. **Aktarım tablosunu üret** (paralel iş parçacıklarıyla, imagine ile). Kalibrasyon testi.
 3. **decide.js'te pas/gönderiş değerini tablodan al**; imagine yedekte, karşılaştırma için açık.
 4. **Ellenme tablosu** (tut/sür/dön/fiske/ikili).
-5. **V(s) zinciri** — değer yinelemesi; value-table.js'in yerine.
+5. **V(s) zinciri** — öne alındı, 1'den önce yapılır (Bölüm 9).
 6. **Algı hatasını Okuma hedef eğrisine oturt** + sahne ve laboratuvar denetimi.
 7. (Onayla) Takım planı.
 
@@ -126,4 +134,50 @@ Her adım gözle ve ölçüyle onaylanmadan bir sonrakine geçilmez.
 - Özellikler tabloda boyut mu → hayır, sorgu anında fizik üzerinden.
 - Okuma gürültüsü → ayrı gürültü yok; algı hatası hedef eğriye oturtulur (Bölüm 2b).
 
-Açık soru yok. Sıradaki: Bölüm 5, adım 0.
+Açık soru yok.
+
+## 9. Durum değeri V(s) · nasıl öğrenilir (karar verildi)
+
+**Neden önce bu.** v3f'te kazanç ile kayıp farklı terazilerle tartılıyor: kazanç elle yazılmış `build = 0,06 + 0,28 × threat` eğrisinden, kayıp ise rakibin o noktadaki ölçülü değerinden (`lossAt = V(rakip, …)`) geliyor. Kuyu'dan uzakta eğri düz, kayıp ağır; oyuncu "kaybetmeme" oynuyor (tüm tempo/risk ayarlarında Çekirdekle zamanın %73–98'i kendi yarısında, ~1 maçlık ölçüm). Bu bir katsayı değil, mekanik hatası. V(s) aktarım tablosundan önce yapılır (Bölüm 5'te 5 → 1'in önüne).
+
+**Tek ölçü:** V(s) = P(sıradaki sayıyı biz atarız) − P(rakip atar). Sıfır toplamlı: kazanç da kayıp da bu farktır. Elle yazılmış eğri kalmaz.
+
+**Durum girdileri:** Çekirdeğin bölgesi · boşluk (savunma kaydıktan sonra) · Çekirdek–Kuyu arasındaki sayısal üstünlük · geçiş anı mı · **savunmanın yerleşikliği** (bloğun dizilişine ne kadar oturduğu). Yerleşiklik beklemenin bedelini kural yazmadan getirir: yerleşmiş bloğa karşı Çekirdeğe sahip olmak daha az değerli çıkar; sabır ancak bloğu oynatırsa değer kazandırır.
+
+**Öğrenme:**
+- **TD (zamansal fark):** her durumun değeri bir sonraki durumun değerinden güncellenir; sayı olduğu yerde gerçek sonuç girer. Maç başına 3–4 sayıyla doğrudan gollerden doldurmak binlerce maç isterdi.
+- **Turlar:** ölç → oyuncular yeni tabloyla oynar → yeniden ölç; değerler oturana kadar. Bugünkü pasif motorun maçlarından tek seferde ölçülen tablo o pasifliği öğrenirdi.
+- **Sönüm:** her tur eski ve yeni tablonun karışımı; iki uç arasında salınmayı önler.
+- **Kusursuz algı:** turlar kusursuz algılı oyuncularla oynanır; tablo "kusursuz değer"dir. Maçta her oyuncu onu kendi Okuma'sı kadar bozarak görür (Bölüm 2b). Okuma'nın etkisi tek yerden gelir.
+- **Özellik çeşitliliği:** turlarda oyuncu özellikleri rastgele 6–16 dağıtılır; hızlı savunmacının, Tutuş'u düşük alıcının yarattığı durumlar da tabloya girer.
+
+**Taktik karışımı:**
+- **%80 tutarlı çekirdek:** aşağıdaki altı tarz, her biri kendi içinde oynanmış hâlleriyle (pres ±1, blok ±1 kademe, örneklerin üçte birinde savunma sistemi komşu sisteme).
+- **%20 rastgele:** menüden tamamen rastgele kombinasyonlar. Bunların **büyük kısmı tutarlı çekirdeğe karşı** oynanır (iki tarafta da); ceza, mantıklı takımın saçma takımın açtığı boşluğu bulduğu anda oluşur. Saçma taktikler dışarıda bırakılmaz: tablo onların durumlarını görmezse cezaları da tabloda kaybolur.
+- **Kapsama denetimi:** taktiklerin değil durumların kapsanması önemli. Her turda: hangi hücreler sadece rastgele maçlardan doluyor, oralarda ≥ 30 örnek var mı. Yoksa o maçların sayısı artırılır.
+- **Her turda denge denetimi:** ilke 5 (hiçbir tarz hep kaybetmez) laboratuvarla kontrol edilir; turlar tek tarzı "tek doğru" yapmaya başlarsa durulur.
+
+**Altı tarz (tek kaynak):**
+
+| Tarz | sistem | pres | arkada | blok | genişlik | tempo | risk | kazanınca |
+|---|---|---|---|---|---|---|---|---|
+| Dengeli | Alan | 1 | 1 | Orta | Normal | 0,5 | 0,5 | Dengeli |
+| Sabırlı | Alan | 1 | 1 | Orta | Geniş | 0,2 | 0,2 | Yerleş |
+| Dikine | Alan | 1 | 1 | Orta | Normal | 0,8 | 0,8 | Kontra |
+| Kontra | Alan | 0 | 1 | Düşük | Dar | 0,8 | 0,8 | Kontra |
+| Ön alan | Adam adama | 3 | 1 | Yüksek | Geniş | 0,5 | 0,5 | Dengeli |
+| Kuyu önü | Alan | 0 | 2 | Düşük | Dar | 0,2 | 0,2 | Yerleş |
+
+Komşu sistem: Alan ↔ Kenara sıkıştır, Adam adama ↔ Kenara sıkıştır. Böylece Kenara sıkıştır çekirdekte de yer alır.
+
+**Önce teşhis (V'den önce, Claude Code):**
+1. Aynı 5 tempo/risk ayarı, ayar başına 6–10 maç; ölçü: Çekirdekle kendi yarısında kalma oranı, ileri/geri pas dengesi.
+   - (a) mevcut ölçülü tablo açık (`useValTab: true`);
+   - (b) kaybın bedeli kazançla aynı eğriden — **sadece teşhis**, kalıcı değil. Tek amacı "pasifliğin sebebi terazinin dengesizliği mi" sorusuna evet/hayır.
+2. **Tut değişikliği:** `tut = P × max(build, en iyi gönderiş)` f7'ye göre pasifliği artırıyor mu. Artırıyorsa V gelene kadar geri alınır (yeni sayı değil, ölçülmüş bir sebebin geri alınması).
+3. Sonuç evetse V(s) bu bölümdeki gibi kurulur; hayırsa sebep başka yerde (örn. kendi yarıda ileriye bakışın kapalı olması) aranır.
+
+Sıradaki: Bölüm 9, durum değeri tablosu · tur 0 (veri ve TD hesabı Claude Code'da, bulutta; bağlama, maç ve sahne kontrolleri Design'da).
+
+**Bağlantı noktası (kuruldu):** `window.AlanState.idx(src, takım, x, y, geçiş)` → hücre (0…539). Tabloyu üreten ve kullanan aynı fonksiyonu çağırır. Tablo `window.ALAN_VS = { v: [540 değer, −1…+1], fiz: '…' }` olarak yüklenir, `D.useVS = true` ile `build()` yerine geçer. Kaybın bedeli (`lossAt`) zaten `V(rakip, aynı nokta)`; tablo açıkken aynı ölçüden gelir. Geçiş: Çekirdek kazanılalı 180 tikten az (`m.winT`).
+**Okuma kanalları (ölçüm için):** `self.ALAN_OKX = { eq: [...], only: '...', mid: 12 }`; kanallar: karar, kararHizi, rakipModel, gonder, kontrol, kenar, algi, tepki, ikili, yerlesim, bekci.

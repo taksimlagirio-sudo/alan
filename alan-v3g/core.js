@@ -1,3 +1,5 @@
+// Okuma kanalları (sadece ölçüm için): ALAN_OKX = { eq: [kanallar], only: kanal, mid } verilirse, o kanallarda herkes mid Okuma'yla oynar. Verilmezse etkisiz.
+self.ALAN_OKC = function (p, ch) { const v = (p && p.a && p.a.okuma) ?? 10, E = self.ALAN_OKX; if (!E) return v; if (E.only) return E.only === ch ? v : E.mid; return E.eq && E.eq.includes(ch) ? E.mid : v; };
 (function () {
   // Math.hypot ile bit bit aynı sonucu veren iki argümanlı sürüm (V8'in kendi algoritması: en büyüğe bölüp karelerin toplamı); yerleşik çağrıdan ~5 kat hızlı.
   const hyp = (x, y) => { x = x < 0 ? -x : x; y = y < 0 ? -y : y; if (x === Infinity || y === Infinity) return Infinity; const m = x > y ? x : y; if (m !== m || x !== x || y !== y) return NaN; if (m === 0) return 0; const a = x / m, b = y / m; return Math.sqrt(a * a + b * b) * m; };
@@ -149,14 +151,14 @@
     thruV: .9, thruK: .6, thruMax: .55, thruKeep: .6 // hızlı Çekirdeğin gövdeyi delmesi: hız eşiği, eğim, tavan, kalan hız
   };
   // Bekçi'nin menzili: gövde + uzanma. Uzanmak için zaman gerekir: Çekirdek yola çıktıktan sonra tepki süresi (Okuma) geçince menzil büyür (Hız hızlandırır).
-  function bekR(b, p, q) { q = q || Q; const a = p.a || {}, re = q.bekReact - (a.okuma ?? 10) * q.bekReactOk; return q.bekBody + Math.min(q.bekDive, Math.max(0, (b.t || 0) - re) * (q.bekDiveV + ((a.hiz ?? 10) - 10) * .01)); }
+  function bekR(b, p, q) { q = q || Q; const a = p.a || {}, re = q.bekReact - self.ALAN_OKC(p, 'bekci') * q.bekReactOk; return q.bekBody + Math.min(q.bekDive, Math.max(0, (b.t || 0) - re) * (q.bekDiveV + ((a.hiz ?? 10) - 10) * .01)); }
   // Dokunuşun fiziği: Çekirdeğin oyuncuya göre hızı (oyuncu ona doğru koşuyorsa artar, onunla aynı yöne gidiyorsa azalır) ve oyuncunun o an söndürebileceği hız.
   function touchCap(b, p, src, q) { q = q || Q; const mate = p.team === b.team, a = p.a || {}, sk = p.role === 'Bekçi' || mate ? (a.tutus ?? 10) : ((a.kesme ?? 10) + (a.tutus ?? 10)) / 2;
     let pr = 0; for (const o of src) if (o.team !== p.team) pr += infl(o, p.x, p.y);
     const cap = q.cap0 + (sk - 10) * q.capSk - (b.alive ? b.ch * q.capCh : 0) - q.capPr * (1 - Math.exp(-Math.max(0, pr - .4) * q.pressK / q.pressMax)), vrx = b.vx - (p.vx || 0), vry = b.vy - (p.vy || 0);
     return { cap: Math.max(.08, cap), vr: hyp(vrx, vry), vrx, vry, s: q.capS0 + (20 - sk) * q.capSsk, sk }; }
   // Pası kesmek için tepki süresi: rakip, son vuruştan hemen sonra yalnızca gövdesine çarpan Çekirdeği keser; uzanabilmek için tepki vermesi gerekir (Okuma kısaltır). Hızlı ve tekte oynanan pas bu yüzden presçinin yanından geçebilir.
-  function oppReach(b, p, q, R) { if (p.role === 'Bekçi' || p.team === b.team) return R; q = q || Q; return Math.min(R, q.reachBody + Math.max(0, (b.t || 0) - (q.reachReact - ((p.a && p.a.okuma) ?? 10) * q.reachReactOk)) * q.reachGrow); }
+  function oppReach(b, p, q, R) { if (p.role === 'Bekçi' || p.team === b.team) return R; q = q || Q; return Math.min(R, q.reachBody + Math.max(0, (b.t || 0) - (q.reachReact - self.ALAN_OKC(p, 'tepki') * q.reachReactOk)) * q.reachGrow); }
   function ctrlP(b, p, src, q) { const t = touchCap(b, p, src, q); return Math.max(.02, Math.min(.99, 1 / (1 + Math.exp((t.vr - t.cap) / t.s)))); }
   // Bir tikte Çekirdeğin geçtiği parçayı kontrol menzilinde kesen oyuncu var mı? Varsa tutma/sekme. Dönüş: null | {p, took:true} | {p, took:false}
   function contact(b, src, q, rnd, ox, oy) {
@@ -200,7 +202,7 @@
         p.x += p.vx || 0; p.y += p.vy || 0; const w = plan.mode === 'fiske' ? TQ.flickW : Turn.omega(p); done += Math.min(w, A - done);
         const an = a0 + plan.dir * done, cx = p.x + Math.cos(an) * body, cy = p.y + Math.sin(an) * body, fly = plan.mode === 'fiske' && done < A;
         if (plan.mode === 'fiske' && done >= A && !landed) { landed = true; const m = Turn.flickMiss(p); if (rnd) { if (rnd() < m) res = 'fiske kaçtı'; } else keep *= 1 - m; }
-        for (const o of opps) { if (res) break; const ok = (o.a || {}).okuma ?? 10;
+        for (const o of opps) { if (res) break; const ok = self.ALAN_OKC(o, 'tepki');
           if (t > TQ.react - ok * TQ.reactOk) { const dx = cx - o.x, dy = cy - o.y, L = hyp(dx, dy); if (L > R * .8) { const v = Math.min(TQ.rivV, L - R * .8); o.x += dx / L * v; o.y += dy / L * v; } const pd = hyp(o.x - p.x, o.y - p.y) || 1; if (pd < TQ.minD) { o.x = p.x + (o.x - p.x) / pd * TQ.minD; o.y = p.y + (o.y - p.y) / pd * TQ.minD; } }
           const d = hyp(cx - o.x, cy - o.y); if (t >= TQ.grab && d < R && (fly || !Turn.shielded(p, o, cx, cy)) && t >= o.cd) { o.cd = t + (fly ? TQ.cdLoose : TQ.cdHold); const P = fly ? TQ.pLoose : Math.max(.05, Math.min(.8, TQ.pHold + (((o.a || {}).kesme ?? 10) - sur) * TQ.pHoldSk)); if (rnd) { if (rnd() < P) res = 'rakip aldı'; } else keep *= 1 - P; } }
         if (!res && done >= A && tEnd == null) tEnd = t;
@@ -208,7 +210,7 @@
         if (!res && tEnd != null && t - tEnd >= TQ.tail) res = 'döndü';
       }
       return { res: res || 'döndü', t: tEnd, keep, fr }; },
-    choose(p, a0, a1, opps, rnd) { const ok = (p.a || {}).okuma ?? 10, err = Math.max(0, 16 - ok) * .2, lam = Math.max(.3, Math.min(1.1, .3 + (ok - 5) * .08)), sd = Turn.shortDir(a0, a1), seen = opps.map(o => ({ ...o, x: o.x + (rnd() - .5) * err, y: o.y + (rnd() - .5) * err })), C = [{ mode: 'dolaş', dir: sd }, { mode: 'dolaş', dir: -sd }, { mode: 'fiske', dir: sd }, { mode: 'fiske', dir: -sd }];
+    choose(p, a0, a1, opps, rnd) { const ok = self.ALAN_OKC(p, 'kontrol'), err = Math.max(0, 16 - ok) * .2, lam = Math.max(.3, Math.min(1.1, .3 + (ok - 5) * .08)), sd = Turn.shortDir(a0, a1), seen = opps.map(o => ({ ...o, x: o.x + (rnd() - .5) * err, y: o.y + (rnd() - .5) * err })), C = [{ mode: 'dolaş', dir: sd }, { mode: 'dolaş', dir: -sd }, { mode: 'fiske', dir: sd }, { mode: 'fiske', dir: -sd }];
       for (const c of C) { const s = Turn.simulate(p, a0, a1, c, seen, null); c.keep = s.keep; c.cost = (s.t ?? 200) * TQ.timeK + lam * (1 - s.keep) + (rnd() - .5) * Math.max(0, 16 - ok) * .02; }
       return C.sort((x, y) => x.cost - y.cost)[0]; } };
   window.AlanCore = { hyp, pack, rollTo, oppReach, Turn, touchCap, W, H, KR, MOUTH, P, Q, bekR, infl, K, makeGrid, gridS, chgMul, makeBall, stepBall, predict, solveLaunch, ctrlP, contact, stepAll, thruP };

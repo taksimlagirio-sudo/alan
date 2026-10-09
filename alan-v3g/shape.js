@@ -3,7 +3,7 @@
   // Katman 4 · Yerleşim. Herkes kendi algısıyla (Okuma) okur: rakibi kusurlu görür, hareketini öngörür, arkadaşının hedefini bilir.
   const C = () => window.AlanCore, Dd = () => window.AlanDecide, W = 100, H = 50;
   const cl = (v, a, b) => v < a ? a : v > b ? b : v, dirOf = t => t === 0 ? 1 : -1, ownX = t => t === 0 ? 0 : W, oppX = t => t === 0 ? W : 0;
-  const ok = p => (p.a && p.a.okuma) ?? 10, spd = p => .17 + ((p.a && p.a.hiz) ?? 10) * .006, SPR = 1.25;
+  const ok = (p, ch) => self.ALAN_OKC(p, ch || 'yerlesim'), /* kanal belirtilmezse yerleşim */ spd = p => .17 + ((p.a && p.a.hiz) ?? 10) * .006, SPR = 1.25;
   const S = {
     errPos: .14,      // algı hatası: (20-Okuma) × bu birim
     atkLen: 40, manEvery: 45, manMin: .2, manKeep: .7, // hücum şeklinin boyu (Çekirdekten); adam adama: yeniden tartma aralığı, tehlike eşiği (en tehlikelinin kesri), mevcut eşleşmeye bağlılık
@@ -28,7 +28,7 @@
   function seen(m, p) {
     if (m._sn && m._snT === m.tick && m._sn.has(p)) return m._sn.get(p); if (m._snT !== m.tick) { m._sn = new Map(); m._snT = m.tick; }
     // gecikmeli algı: rakibi birkaç tik önceki hâliyle görür, o anki hızıyla ileri taşır. Ani yön değişimini geç fark eder (Okuma gecikmeyi kısaltır).
-    const e = (20 - ok(p)) * S.errPos, dl = Math.max(1, Math.round(S.lag0 - ok(p) * S.lagOk)), la = dl + (ok(p) - 6) * S.look, b = Math.floor(m.tick / 20), out = [];
+    const e = (20 - ok(p, 'algi')) * S.errPos, dl = Math.max(1, Math.round(S.lag0 - ok(p, 'algi') * S.lagOk)), la = dl + (ok(p, 'algi') - 6) * S.look, b = Math.floor(m.tick / 20), out = [];
     for (const q of m.ps) if (q.team !== p.team) { const hh = q.hist && q.hist.length ? q.hist[Math.max(0, q.hist.length - 1 - dl)] : { x: q.x, y: q.y, vx: q.vx || 0, vy: q.vy || 0 }; out.push({ a: q.a, x: hh.x + hh.vx * la + hsh(p.id, q.id, b) * 2 * e, y: hh.y + hh.vy * la + hsh(q.id, p.id, b + 7) * 2 * e, R: q.R, D: q.D, team: q.team, role: q.role, press: q.press, ref: q }); }
     m._sn.set(p, out); return out;
   }
@@ -76,7 +76,7 @@
     let pts; if (b.done) pts = [{ x: b.x, y: b.y }]; else if (m._lite && b._pc && b.t - b._pc.t < 6) pts = b._pc.pts.slice(b.t - b._pc.t); else { pts = K.predict(b, m.ps, null, 240).pts; if (m._lite) b._pc = { t: b.t, pts }; }
     for (const p of m.ps) {
       if (p.role === 'Bekçi' && hyp(p.x - ownX(p.team), p.y - 25) > 12) continue;
-      const rc = p.team === b.team && m.fl && m.fl.q === p ? 0 : Math.max(0, 14 - ok(p) * S.react - (m.tick - (m.fl ? m.fl.t0 || m.tick : m.tick))), v = spd(p) * SPR; let best = null;
+      const rc = p.team === b.team && m.fl && m.fl.q === p ? 0 : Math.max(0, 14 - ok(p, 'tepki') * S.react - (m.tick - (m.fl ? m.fl.t0 || m.tick : m.tick))), v = spd(p) * SPR; let best = null;
       const isRecv = p.team === b.team && m.fl && m.fl.q === p;
       if (isRecv) {
         // Alıcı en erken yetiştiği yere değil, yetişebildiği yerlerin en rahatına gider: rakipten uzak (boşluğu korur), rakipten önce varabildiği, fazla beklemeden. Geniş duran oyuncu kendiliğinden Çekirdeğe doğru içeri dalmaz.
@@ -86,7 +86,7 @@
       }
       if (!best) for (let i = 0; i < pts.length; i += 2) { const q = pts[i]; const tr = rc + Math.max(0, hyp(q.x - p.x, q.y - p.y) - 1.4) / v; if (tr <= i) { best = { t: i, x: q.x, y: q.y }; break; } }
       if (!best) { const q = pts[pts.length - 1]; best = { t: Math.max(pts.length, rc + hyp(q.x - p.x, q.y - p.y) / v), x: q.x, y: q.y }; }
-      best.est = best.t * (1 + hsh(p.id, m.fl ? m.fl.t0 || 0 : 0, 3) * (20 - ok(p)) * .04); out.set(p, best);
+      best.est = best.t * (1 + hsh(p.id, m.fl ? m.fl.t0 || 0 : 0, 3) * (20 - ok(p, 'tepki')) * .04); out.set(p, best);
     }
     let first = null; for (const [p, r] of out) if (!first || r.t < out.get(first).t) first = p;
     return { arr: out, first, pts };
@@ -229,7 +229,7 @@
     m.E = E; m.att = att;
   }
   // Hat açık mı (gövde ve zaman): Çekirdek A'dan B'ye v hızla giderken, bir rakip tepki süresinden sonra koşup hatta yetişebilir mi? Alanların kaba toplamı değil, gerçek yetişme.
-  function laneOpen(w, att, A, B, v) { v = v || 1; const L = hyp(B.x - A.x, B.y - A.y) || 1, ux = (B.x - A.x) / L, uy = (B.y - A.y) / L; let open = 1; for (const o of w) { if (o.team === att || o.role === 'Bekçi') continue; const al = (o.x - A.x) * ux + (o.y - A.y) * uy; if (al <= 0 || al >= L + 1) continue; const pe = Math.abs(-(o.x - A.x) * uy + (o.y - A.y) * ux), tb = al / v, R = 1.6 + Math.max(0, tb - (14 - (o.a.okuma ?? 10) * .5)) * (.17 + (o.a.hiz ?? 10) * .006) * 1.25; open *= 1 - 1 / (1 + Math.exp((pe - R) / .5)); } return open; }
+  function laneOpen(w, att, A, B, v) { v = v || 1; const L = hyp(B.x - A.x, B.y - A.y) || 1, ux = (B.x - A.x) / L, uy = (B.y - A.y) / L; let open = 1; for (const o of w) { if (o.team === att || o.role === 'Bekçi') continue; const al = (o.x - A.x) * ux + (o.y - A.y) * uy; if (al <= 0 || al >= L + 1) continue; const pe = Math.abs(-(o.x - A.x) * uy + (o.y - A.y) * ux), tb = al / v, R = 1.6 + Math.max(0, tb - (14 - self.ALAN_OKC(o, 'karar') * .5)) * (.17 + (o.a.hiz ?? 10) * .006) * 1.25; open *= 1 - 1 / (1 + Math.exp((pe - R) / .5)); } return open; }
   // Takım değeri: Çekirdek E'de. Seçenekler: taşıyıcı tutar ya da önü açıksa sürer; ya da bir arkadaşa verir.
   // Her seçeneğin değeri taşıyıcının kullandığı aynı değer (V: buradan topla oynamanın değeri, gönderme ihtimali dahil) × hattın açık olma ihtimali (gerçek yetişme).
   function teamBest(w2, att, E, mates, ch) {
