@@ -1,7 +1,7 @@
 // v3g · Önde koşan maç iş parçacığı. Maç izlemenin önünde, olabildiğince hızlı oynanır; her tik bir kare olarak sayfaya gönderilir, sayfa kareleri istediği hızda oynatır.
 // Her 60 tikte maçın tam kopyası (AlanMatch.cloneMatch) saklanır. Taktik T anında değişince: T'den önceki en yakın kopya geri yüklenir, aynı taktikle T'ye kadar yeniden oynanır (belirlenimci: aynı sonuç), yeni taktik uygulanır, T'den sonrası atılıp yeniden hesaplanır.
 self.window = self;
-const V = '?v=' + (self.location.search.match(/v=(\w+)/) || [, '1'])[1]; importScripts('core.js' + V, 'shot-table.js' + V, 'decide.js' + V, 'match.js' + V, 'shape.js' + V, 'vs-table.js' + V, 'vs-fiz.js' + V);
+const V = '?v=' + (self.location.search.match(/v=(\w+)/) || [, '1'])[1]; importScripts('core.js' + V, 'shot-table.js' + V, 'decide.js' + V, 'match.js' + V, 'shape.js' + V, 'pas-table.js' + V, 'vs-table.js' + V, 'vs-fiz.js' + V);
 const M = self.AlanMatch, CP = 60;
 let m = null, gen = 0, cps = new Map(), batch = [], lastEv = null, lastDec = null, busy = false;
 function frame() { const h = m.holder, b = m.ball, ev = m.events.length ? m.events[0] : null, f = { t: m.tick, hi: h ? m.ps.indexOf(h) : -1, ch: m.ch, sc: [m.score[0], m.score[1]], over: m.over,

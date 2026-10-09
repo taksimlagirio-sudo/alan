@@ -1,10 +1,10 @@
 // Tutma tablosu (Bölüm 10) · hesap. pas-veri.js maçlarından P(pas tutar | race, recvOpp, len, arrV) tablosu çıkarır.
 // Tutma = ilk sahip bizden biri (alıcı ya da arkadaş). Doğrulama: çift maçlarla kurulur, tek maçlarda sınanır.
-// Kullanım: node tools/pas-hesap.js <maç klasörü> [çıktı tablo.js]   (FIZ ortam değişkeni: damga)
+// Kullanım: node tools/pas-hesap.js <maç klasörü> [çıktı tablo.js] [önceki tablo.js (sönüm %50; az örnekli hücrede yeni veri orantılı daha az)]   (FIZ ortam değişkeni: damga)
 const fs = require('fs'), path = require('path');
-const [dirIn, out] = process.argv.slice(2), MINN = 40, RK = process.env.RACE || 'race'; // RACE=race2: alıcının topla buluştuğu noktaya kadar olan yarış payı
+const [dirIn, out, prevPath] = process.argv.slice(2), MINN = 40, RK = process.env.RACE || 'race'; // RACE=race2: alıcının topla buluştuğu noktaya kadar olan yarış payı
 const games = fs.readdirSync(dirIn).filter(f => f.endsWith('.json')).map(f => { try { return JSON.parse(fs.readFileSync(path.join(dirIn, f), 'utf8')); } catch (e) { return null; } }).filter(Boolean);
-const all = []; for (const g of games) for (const p of g.p) { if (p.err || p[RK] == null || p.first == null || p.first === 'yok' || p.first === 'sayı') continue; p.y = p.first === 'biz' ? 1 : 0; p.gi = g.i; all.push(p); }
+const all = []; for (const g of games) for (const p of g.p) { if (p.err || p[RK] == null || p.T <= 2 || p[RK] >= 1e8 || p.first == null || p.first === 'yok' || p.first === 'sayı') continue; p.y = p.first === 'biz' ? 1 : 0; p.gi = g.i; all.push(p); }
 // dilimler: ham ölçü → hücre; tablo okunurken aynı sınırlar kullanılır
 const E = { [RK]: [-8, -3, 0, 3, 8, 16], recvOpp: [2, 4, 7], len: [12, 22], arrV: [.6] };
 const DIMS = [RK, 'recvOpp', 'len', 'arrV'], NB = DIMS.map(k => E[k].length + 1), N = NB.reduce((a, b) => a * b, 1);
@@ -41,7 +41,9 @@ const brier = (P, f) => P.reduce((a, p) => a + (f(p) - p.y) ** 2, 0) / P.length;
 calib(te, p => fT.v[cellOf(p)], 'tablo (çift maçla kurulan, tek maçlarda):');
 console.log(`Brier (düşük iyi): tablo ${brier(te, p => fT.v[cellOf(p)]).toFixed(4)} · kafadaki P ${brier(te.filter(p => p.P != null), p => p.P).toFixed(4)} · sabit oran ${brier(te, () => tr.reduce((a, p) => a + p.y, 0) / tr.length).toFixed(4)}`);
 // 4) tam tablo
-const F = fit(all), filled = [...F.n].filter(x => x >= MINN).length;
+const F = fit(all);
+if (prevPath) { const w = {}; (new Function('window', fs.readFileSync(prevPath, 'utf8')))(w); const P = w.ALAN_PT.v; let d = 0, dn = 0; for (let c = 0; c < N; c++) { const a = .5 * Math.min(1, F.n[c] / MINN); d += Math.abs(F.v[c] - P[c]) * F.n[c]; dn += F.n[c]; F.v[c] = a * F.v[c] + (1 - a) * P[c]; } console.log(`önceki tabloya göre ham fark (örnek ağırlıklı ort.): ${(d / dn).toFixed(3)} · sönüm %50`); }
+const filled = [...F.n].filter(x => x >= MINN).length;
 console.log(`hücre ${N} · ${MINN}+ örnekli ${filled} · boş ${[...F.n].filter(x => !x).length}`);
-if (out) { const tab = { dims: DIMS, edges: E, v: [...F.v].map(x => +x.toFixed(4)), n: [...F.n], mac: games.length, pas: all.length, fiz: process.env.FIZ || '', not: 'P(pas tutar: ilk sahip bizden) · AlanPass.feat ölçüleriyle, kusursuz algı. Hücre = DIMS sırasıyla, her ölçü edges sınırlarıyla dilimlenir (x ≥ sınır → üst dilim). Bkz. tools/pas-veri.js, tools/pas-hesap.js' };
+if (out) { const tab = { dims: DIMS, edges: E, v: [...F.v].map(x => +x.toFixed(4)), n: [...F.n], mac: games.length, pas: all.length, tur: prevPath ? ((() => { const w = {}; (new Function('window', fs.readFileSync(prevPath, 'utf8')))(w); return (w.ALAN_PT.tur || 0) + 1; })()) : 0, fiz: process.env.FIZ || '', not: 'P(pas tutar: ilk sahip bizden) · AlanPass.feat ölçüleriyle, kusursuz algı. Hücre = DIMS sırasıyla, her ölçü edges sınırlarıyla dilimlenir (x ≥ sınır → üst dilim). Bkz. tools/pas-veri.js, tools/pas-hesap.js' };
   fs.writeFileSync(out, '// Tutma tablosu (Bölüm 10) · Claude Code tarafından üretildi. Elle düzenlemeyin; tools/pas-hesap.js ile yeniden üretilir.\nwindow.ALAN_PT = ' + JSON.stringify(tab) + ';\n'); console.log('yazıldı:', out); }

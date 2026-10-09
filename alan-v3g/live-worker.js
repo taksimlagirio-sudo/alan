@@ -1,7 +1,7 @@
 // Canlı maç iş parçacığı: maçı sayfadan bağımsız oynatır (karar anlarındaki ağır hesap ekranı dondurmaz), her karede bir anlık görüntü gönderir.
 // Teşhis: adım hata verirse ya da oyuncular 3 sn boyunca kıpırdamazken saat ilerlerse, o anın tam durumu sayfaya gönderilir (sayfa saklar; aynı an yeniden oynatılıp sebep bulunur).
 self.window = self;
-const V = '?v=' + (self.location.search.match(/v=(\w+)/) || [, '1'])[1]; importScripts('core.js' + V, 'shot-table.js' + V, 'decide.js' + V, 'match.js' + V, 'shape.js' + V, 'vs-table.js' + V, 'vs-fiz.js' + V);
+const V = '?v=' + (self.location.search.match(/v=(\w+)/) || [, '1'])[1]; importScripts('core.js' + V, 'shot-table.js' + V, 'decide.js' + V, 'match.js' + V, 'shape.js' + V, 'pas-table.js' + V, 'vs-table.js' + V, 'vs-fiz.js' + V);
 let m = null, playing = true, speed = 1, acc = 0, last = Date.now(), seed = 0, tac0 = null, err = null, still = 0, lastPos = null, diagSent = false;
 const PK = ['x', 'y', 'vx', 'vy', 'tx', 'ty', 'team', 'role', 'rh', 'rs', 'name', 'job', 'press', 'sprint', 'noTouch', 'ca', 'i', 'id', 'R', 'D', 'a', 'slot'];
 function snap() { const ps = m.ps.map(p => { const o = {}; for (const k of PK) o[k] = p[k]; return o; }); const b = m.ball ? { x: m.ball.x, y: m.ball.y, vx: m.ball.vx, vy: m.ball.vy, alive: m.ball.alive, team: m.ball.team, ch: m.ball.ch, done: m.ball.done } : null;

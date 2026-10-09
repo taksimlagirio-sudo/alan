@@ -1,6 +1,6 @@
 // Laboratuvar iş parçacığı: tam v3b beyniyle (kısıtlama yok) tek bir maçı oynatır, özetini döndürür.
 self.window = self;
-const V = '?v=' + (self.location.search.match(/v=(\w+)/) || [, '1'])[1]; importScripts('core.js' + V, 'shot-table.js' + V, 'decide.js' + V, 'match.js' + V, 'shape.js' + V, 'vs-table.js' + V, 'vs-fiz.js' + V);
+const V = '?v=' + (self.location.search.match(/v=(\w+)/) || [, '1'])[1]; importScripts('core.js' + V, 'shot-table.js' + V, 'decide.js' + V, 'match.js' + V, 'shape.js' + V, 'pas-table.js' + V, 'vs-table.js' + V, 'vs-fiz.js' + V);
 self.onmessage = async e => { await self.ALAN_VS_CHECK; /* tablo damgası kontrol edilmeden maç başlamaz */
   const q = e.data, M = self.AlanMatch;
   try {
