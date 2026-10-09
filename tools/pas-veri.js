@@ -17,10 +17,13 @@ const tacOf = a => ({ sistem: a[0], pres: a[1], arkada: a[2], blok: a[3], genisl
 function core() { const n = pick(Object.keys(STY)), t = tacOf(STY[n]); t.pres = Math.max(0, Math.min(3, t.pres + ri(-1, 1))); t.blok = BL[Math.max(0, Math.min(2, BL.indexOf(t.blok) + ri(-1, 1)))];
   if (R() < 1 / 3) t.sistem = KOM[t.sistem] || pick(['Alan', 'Adam adama']); return { ad: n, t }; }
 function rnd() { return { ad: 'rastgele', t: { sistem: pick(SIS), pres: ri(0, 3), arkada: ri(0, 2), blok: pick(BL), genislik: pick(['Dar', 'Normal', 'Geniş']), tempo: pick([.2, .5, .8]), risk: pick([.2, .5, .8]), kazaninca: pick(['Yerleş', 'Dengeli', 'Kontra']) } }; }
+// AYNA=1: Design'ın ölçüm kurulumu (iki takım tam Dengeli, herkesin bütün özellikleri 10)
+const AYNA = !!process.env.AYNA;
 let A, B; const u = R(); if (u < .8) { A = core(); B = core(); } else if (u < .97) { A = rnd(); B = core(); if (R() < .5) [A, B] = [B, A]; } else { A = rnd(); B = rnd(); }
 const KEYS = ['okuma', 'aktarim', 'tutus', 'kesme', 'yogunluk', 'hiz', 'cesaret', 'surme'];
+if (AYNA) { A = { ad: 'Dengeli', t: tacOf(STY.Dengeli) }; B = { ad: 'Dengeli', t: tacOf(STY.Dengeli) }; }
 const m = M.createMatch(seed, { tac: [A.t, B.t], len: 5400 });
-for (const p of m.ps) for (const k of KEYS) p.a[k] = ri(6, 16);
+for (const p of m.ps) for (const k of KEYS) p.a[k] = AYNA ? 10 : ri(6, 16);
 const PASSK = new Set(['pas', 'önüne', 'aşırt', 'kenardan']), r3 = x => x == null || !Number.isFinite(x) ? null : Math.round(x * 1000) / 1000;
 // ek ölçü (teşhis): race2 = alıcının topu karşılayacağı noktaya kadar olan yolda yarış payı (alıcı tepkisiz koşar, maçtaki recvPoint kuralı);
 // rF = race'i belirleyen noktanın yoldaki yeri (0–1), rq = alıcının topla buluştuğu tik
@@ -36,12 +39,13 @@ AD.decide = function (h, src, ...rest) { const r = dec0.call(this, h, src, ...re
   if (o && PASSK.has(o.kind) && o.launch) { let f = null; try { f = AP.feat(h, src, o); const c2 = race2(h, src, o, f.T); f.race2c = c2.race2; } catch (e) { f = { err: String(e).slice(0, 80) }; }
     last.set(h.id, { t: m.tick, kind: o.kind, ex: !!o._explored, P: r3(o.ex ? o.ex.P : o.det && o.det.P), Pr: r3(o.det && o.det.P), f, q: o.q ? o.q.id : null }); }
   else last.delete(h.id); return r; };
+const att = p => p ? KEYS.map(k => p.a[k]) : null; // özellikler KEYS sırasıyla
 const out = [], open = []; let ball = null, sc = [0, 0];
 while (!m.over && m.tick < 5400) { M.step(m);
   const goal = m.score[0] !== sc[0] || m.score[1] !== sc[1]; if (goal) sc = m.score.slice();
   // yeni pas: yeni Çekirdek nesnesi, atan oyuncunun kararı pas
   if (m.ball && m.ball !== ball && m.ball.from && !m.ball.defl) { const h = m.ball.from, d = last.get(h.id); if (d && m.tick - d.t < 40) { last.delete(h.id); const f = d.f || {};
-      open.push({ t: m.tick, dt: m.tick - d.t, team: h.team, kind: d.kind, ex: d.ex, P: d.P, Pr: d.Pr, q: d.q, race: r3(f.race), recvOpp: r3(f.recvOpp), arrV: r3(f.arrV), len: r3(f.len), T: f.T, laneD: r3(f.laneD), laneF: r3(f.laneF), race2: r3(f.race2), race2c: r3(f.race2c), rF: r3(f.rF), rq: f.rq, raceRole: f.raceId != null ? (m.ps.find(p => p.id === f.raceId) || {}).role : null, err: f.err, first: null, who: null, keep: null, sc: m.score[h.team] }); } }
+      open.push({ t: m.tick, dt: m.tick - d.t, team: h.team, kind: d.kind, ex: d.ex, P: d.P, Pr: d.Pr, q: d.q, race: r3(f.race), recvOpp: r3(f.recvOpp), arrV: r3(f.arrV), len: r3(f.len), T: f.T, laneD: r3(f.laneD), laneF: r3(f.laneF), race2: r3(f.race2), race2c: r3(f.race2c), rF: r3(f.rF), rq: f.rq, raceRole: f.raceId != null ? (m.ps.find(p => p.id === f.raceId) || {}).role : null, aA: att(h), aQ: att(m.ps.find(p => p.id === d.q)), aR: att(m.ps.find(p => p.id === f.raceId)), err: f.err, first: null, who: null, keep: null, sc: m.score[h.team] }); } }
   ball = m.ball;
   for (const p of open) { if (p.first == null) { if (goal) { p.first = 'sayı'; p.keep = 0; } else if (m.holder) { p.first = m.holder.team === p.team ? 'biz' : 'rakip'; p.who = m.holder.id === p.q ? 'alıcı' : m.holder.team === p.team ? 'arkadaş' : 'rakip'; p.tF = m.tick; } else if (m.tick - p.t > 400) { p.first = 'yok'; p.keep = 0; } }
     else if (p.keep == null) { if (p.first !== 'biz') p.keep = 0; else if (goal) p.keep = m.score[p.team] > (p.sc ?? 0) ? 1 : 0; else if (m.holder && m.holder.team !== p.team) p.keep = 0; else if (m.tick - p.tF >= 60) p.keep = 1; } }
