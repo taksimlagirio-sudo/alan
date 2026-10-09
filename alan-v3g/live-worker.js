@@ -1,14 +1,14 @@
 // Canlı maç iş parçacığı: maçı sayfadan bağımsız oynatır (karar anlarındaki ağır hesap ekranı dondurmaz), her karede bir anlık görüntü gönderir.
 // Teşhis: adım hata verirse ya da oyuncular 3 sn boyunca kıpırdamazken saat ilerlerse, o anın tam durumu sayfaya gönderilir (sayfa saklar; aynı an yeniden oynatılıp sebep bulunur).
 self.window = self;
-const V = '?v=' + (self.location.search.match(/v=(\w+)/) || [, '1'])[1]; importScripts('core.js' + V, 'shot-table.js' + V, 'decide.js' + V, 'match.js' + V, 'shape.js' + V);
+const V = '?v=' + (self.location.search.match(/v=(\w+)/) || [, '1'])[1]; importScripts('core.js' + V, 'shot-table.js' + V, 'decide.js' + V, 'match.js' + V, 'shape.js' + V, 'vs-table.js' + V, 'vs-fiz.js' + V);
 let m = null, playing = true, speed = 1, acc = 0, last = Date.now(), seed = 0, tac0 = null, err = null, still = 0, lastPos = null, diagSent = false;
 const PK = ['x', 'y', 'vx', 'vy', 'tx', 'ty', 'team', 'role', 'rh', 'rs', 'name', 'job', 'press', 'sprint', 'noTouch', 'ca', 'i', 'id', 'R', 'D', 'a', 'slot'];
 function snap() { const ps = m.ps.map(p => { const o = {}; for (const k of PK) o[k] = p[k]; return o; }); const b = m.ball ? { x: m.ball.x, y: m.ball.y, vx: m.ball.vx, vy: m.ball.vy, alive: m.ball.alive, team: m.ball.team, ch: m.ball.ch, done: m.ball.done } : null;
   return { ps, hi: m.holder ? m.ps.indexOf(m.holder) : -1, ball: b, ch: m.ch, tick: m.tick, len: m.len, over: m.over, score: m.score, events: m.events.slice(0, 40), lastDec: m.lastDec, st: m.st, tac: m.tac, err }; }
 function diag(why) { if (diagSent) return; diagSent = true; const D = m.ps.map(p => ({ id: p.id, name: p.name, team: p.team, role: p.role, x: p.x, y: p.y, vx: p.vx, vy: p.vy, tx: p.tx, ty: p.ty, job: p.job, stun: p.stun, slowT: p.slowT, ca: p.ca, press: p.press, manRef: p.manRef ? p.manRef.id : null }));
   self.postMessage({ diag: { why, seed, tac: tac0, tick: m.tick, holder: m.holder ? m.holder.id : null, ball: m.ball ? { x: m.ball.x, y: m.ball.y, vx: m.ball.vx, vy: m.ball.vy, done: m.ball.done, team: m.ball.team } : null, ch: m.ch, decT: m.decT, score: m.score, ps: D, events: m.events.slice(0, 15).map(e => e.t + ' ' + e.text) } }); }
-self.onmessage = e => { const q = e.data;
+self.onmessage = async e => { await self.ALAN_VS_CHECK; /* tablo damgası kontrol edilmeden maç başlamaz */ const q = e.data;
   if (q.type === 'new') { seed = q.seed; tac0 = JSON.parse(JSON.stringify(q.tac)); m = self.AlanMatch.createMatch(q.seed, { tac: q.tac, len: q.len }); acc = 0; last = Date.now(); err = null; still = 0; lastPos = null; diagSent = false; self.postMessage(snap()); }
   else if (q.type === 'tac' && m) { m.tac[q.t][q.k] = q.v; tac0 = JSON.parse(JSON.stringify(m.tac)); }
   else if (q.type === 'speed') speed = q.v;
