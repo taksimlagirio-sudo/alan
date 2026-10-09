@@ -1,0 +1,25 @@
+1 · KARAR (485 karar, 0 hata)
+  oyuncu = kâhin: %34  · kâhin = kâhin (gürültü tabanı): %48
+  kayıp (kâhin ölçüsüyle) oyuncu: medyan 0.033 · %90 0.275 · ort 0.094  | kâhin2: medyan 0.005 · %90 0.179 · ort 0.059
+  kararın tipik değeri (kâhinin en iyisi) medyan 0.108
+  büyük kayıp (>0,10): %25 · kâhin2 için %17
+  büyük kayıpta en sık:  sür yerine gönder 17, tut yerine sür 14, sür yerine önüne 13, sür yerine tut 11, önüne yerine önüne 9, tut yerine önüne 8
+  kendi üçte bir (222): oyuncu=kâhin %36 · kâhin=kâhin %50 · ort kayıp 0.044 vs 0.027
+  orta üçte bir (139): oyuncu=kâhin %25 · kâhin=kâhin %38 · ort kayıp 0.072 vs 0.059
+  rakip üçte bir (124): oyuncu=kâhin %40 · kâhin=kâhin %57 · ort kayıp 0.199 vs 0.115
+
+2 · TOPSUZ YERLEŞİM (2342 ölçüm)
+  yerinin değeri / 1 sn içindeki en iyi yerin değeri: medyan %77 · %25 %2 · pas alamayacak yerde (değer ≈0) %41
+   geride (1062): medyan %94 · %25 %51
+   ortada (712): medyan %28 · %25 %0
+   önde (258): medyan %2 · %25 %0
+   işe göre: boşluk %92, güvence %1, kontra koşusu %19
+
+3 · KOŞULAR (494 koşu, maç başı 82.3)
+  savunmanın arkasına geçen %20 · koşuya pas gelen %10 · arkaya geçen koşuya pas gelen %10 · koşucunun yanında (4 br) savunmacı olan zaman %47 · arkaya geçen koşularda %54
+
+4 · SAVUNMA
+  kayıptan sonra 4+ savunmacı topun gerisinde:  %100 durumda; süre medyan 0.00 sn · %90 0.00 sn
+  rakip yarının ileri 40'ında pası alan hücumcu: en yakın savunmacı medyan 7.2 br · 5 br içinde savunmacı OLMAYAN %69 (26)
+  gönderen oyuncuya en yakın savunmacı medyan 5.7 br · 3 br içinde savunmacı olan %30 (27)
+  tehlikeli bölgedeki hücumcuların Kuyu tarafında 6 br içinde savunmacısı olan %44
