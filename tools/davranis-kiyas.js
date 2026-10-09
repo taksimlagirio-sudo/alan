@@ -1,0 +1,13 @@
+// İki davranış ölçümünü (aynı tohumlar) hücre × taktik bazında yan yana koyar: node tools/davranis-kiyas.js eski.jsonl yeni.jsonl
+const fs = require('fs'), rd = f => fs.readFileSync(f, 'utf8').trim().split('\n').map(JSON.parse), [E, N] = process.argv.slice(2).map(rd);
+const avg = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : NaN, pc = v => isNaN(v) ? '–' : '%' + Math.round(v * 100), f = (v, d = 1) => isNaN(v) ? '–' : v.toFixed(d);
+function M(rows, cell, k) { const rs = rows.filter(r => r.cell === cell), n = rs.length, X = rs.map(r => r.R[k]), all = key => X.flatMap(x => x[key]);
+  const L = all('launch'), Sh = all('shots'), P = all('poss'), D = all('snapD'), A = all('snapA'), dec = {}; for (const x of X) for (const [a, b] of Object.entries(x.dec)) dec[a] = (dec[a] || 0) + b; const dt = Object.values(dec).reduce((a, b) => a + b, 0);
+  const kind = kd => { const a = L.filter(l => l.kind === kd); return `${f(a.length / n)} · ${pc(a.filter(l => l.res === 'tuttu').length / a.length)} (t ${pc(avg(a.filter(l => l.P != null).map(l => l.P)))})`; };
+  const near = Sh.filter(s => s.gd < 16);
+  return { 'sayı/maç': f(rs.reduce((s, r) => s + r.score[k], 0) / n, 2), 'karar: sür/tut': `${pc((dec['sür'] || 0) / dt)} / ${pc((dec['tut'] || 0) / dt)}`, 'önüne /maç · tutma (tahmin)': kind('önüne'), 'pas /maç · tutma (tahmin)': kind('pas'), 'kenardan /maç · tutma (tahmin)': kind('kenardan'),
+    'gönderme /maç · girme (tahmin)': `${f(Sh.length / n)} · ${pc(Sh.filter(s => s.res === 'sayı').length / Sh.length)} (t ${pc(avg(Sh.filter(s => s.P != null).map(s => s.P)))})`, 'yakın (<16) gönderme · girme (tahmin)': `${near.length} · ${pc(near.filter(s => s.res === 'sayı').length / near.length)} (t ${pc(avg(near.filter(s => s.P != null).map(s => s.P)))})`,
+    'gönderme uzaklığı': f(avg(Sh.map(s => s.gd))), 'dizi süresi sn · pas': `${f(avg(P.map(p => p.dur / 60)))} · ${f(avg(P.map(p => p.passes)))}`, 'göndermeyle biten dizi': pc(P.filter(p => p.shot).length / P.length),
+    'SAV son çizgi · boy · en': `${f(avg(D.map(d => d.deep)))} · ${f(avg(D.map(d => d.len)))} · ${f(avg(D.map(d => d.wid)))}`, 'SAV basan': f(avg(D.map(d => d.press)), 2), 'SAV Kuyu tarafı tutulan': pc(avg(D.filter(d => d.inDang).map(d => d.goalSide / d.inDang))), 'SAV açıktaki hücumcu (5 br)': f(avg(D.map(d => d.unmarked)), 2), 'SAV arkasındaki hücumcu': f(avg(D.map(d => d.behind)), 2),
+    'HÜC en · boy': `${f(avg(A.map(a => a.wid)))} · ${f(avg(A.map(a => a.len)))}` }; }
+for (const cell of ['canli', 'stiller']) for (const k of ['A', 'B']) { const a = M(E, cell, k), b = M(N, cell, k); console.log(`\n### ${cell} · ${k}`); console.log('| ölçü | önceki | yeni |\n|---|---|---|'); for (const key of Object.keys(a)) console.log(`| ${key} | ${a[key]} | ${b[key]} |`); }

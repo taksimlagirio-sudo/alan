@@ -20,9 +20,12 @@ while (!m.over && m.tick < len) {
   // kararlar
   if (m.lastDec && m.lastDec !== lastDec) { lastDec = m.lastDec; const t = lastDec.team, k = lastDec.opts[0] ? lastDec.opts[0].kind.split(' ')[0] : '?'; inc(R[lab(t)].dec, k); inc(R[lab(t)].decZone, zone(t, lastDec.x) + ':' + k); }
   // Çekirdeğin yola çıkışı (pas, önüne, aşırt, kenardan, gönder)
-  if (m.fl && m.fl !== lastFl && m.fl.t0 === m.tick) { lastFl = m.fl; const p = prevHolder, t = p ? p.team : m.ball.team, fl = m.fl, to = fl.to || fl.end;
+  if (m.fl && m.fl !== lastFl && m.fl.t0 === m.tick) { lastFl = m.fl; const p = (m.ball && m.ball.from) || prevHolder, isOT = !!(m.ball && m.ball.from && m.ball.from !== prevHolder);
+    for (const L of pending) if (L.res == null) L.res = p.team === L.t ? (L.kind === 'gönder' ? 'kurtarış sonrası bizde' : 'tuttu') : (L.kind === 'gönder' ? 'kurtarıldı/kesildi' : 'kesildi'); settle();
+    if (isOT && (!poss || poss.team !== p.team)) { endPoss('kayıp', p.x); poss = { team: p.team, t0: m.tick, passes: 0, how: 'kazanma', startZone: zone(p.team, p.x), shot: false }; }
+    const t = p ? p.team : m.ball.team, fl = m.fl, to = fl.to || fl.end;
     const d0 = lastDec && lastDec.name === (p && p.name) ? lastDec : null, o0 = d0 && d0.opts[0], o1 = d0 && d0.opts[1];
-    const L = { t, kind: fl.kind, x: p ? p.x : m.ball.x, y: p ? p.y : m.ball.y, dist: p ? hyp(to.x - p.x, to.y - p.y) : 0, fwd: p ? (to.x - p.x) * dirOf(t) : 0, P: o0 ? o0.P : null, margin: o0 && o1 ? o0.v - o1.v : null, alt: o1 ? o1.kind.split(' ')[0] : null, ot: !!(p && m.tick - (p._takeT || -9) < 2), res: null, t0: m.tick };
+    const L = { t, kind: fl.kind, x: p ? p.x : m.ball.x, y: p ? p.y : m.ball.y, dist: p ? hyp(to.x - p.x, to.y - p.y) : 0, fwd: p ? (to.x - p.x) * dirOf(t) : 0, P: o0 ? o0.P : null, margin: o0 && o1 ? o0.v - o1.v : null, alt: o1 ? o1.kind.split(' ')[0] : null, ot: isOT, res: null, t0: m.tick };
     if (fl.kind === 'gönder') { const gx = oppX(t); L.gd = hyp(L.x - gx, L.y - 25); L.ang = Math.abs(L.y - 25); }
     pending.push(L); if (poss && poss.team === t && fl.kind !== 'gönder') poss.passes++; if (poss && poss.team === t && fl.kind === 'gönder') poss.shot = true; }
   // sayı
