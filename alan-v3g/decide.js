@@ -46,9 +46,11 @@
   // Alıcısız Çekirdek (gönderme) maçta da boştaki Çekirdek gibi okunur: rakiplerin tepkisi kısa
   function simOne(K, h, b, seen, q, depth, to, cache) {
     // kovalama planı alanları yok sayan hızlı bir yörüngeyle yapılır; Çekirdeğin kendisi gerçek alanlarla, temasa kadar adım adım ilerler
-    let hit = null; const qq = q ? seen.find(p => p.id === q.id) : null, sp = p => (.17 + (p.a.hiz ?? 10) * .006) * 1.25, pts0 = K.predict(b, seen, null, D.simMax).pts, plan = chasePlan(pts0, seen.filter(p => p.team !== h.team), 0, { lag: (D.dm && !D._inLook ? 0 : (20 - self.ALAN_OKC(h, 'karar')) * D.laneLag) /* karar modelinde değer kusursuz: rakiplerin tepkisi gecikmeli sanılmaz. Eskiden düşük Okuma rakibi hep geç sanıyordu (yanlı, sıfır ortalamalı değil) */, loose: !q }), qg = qq ? recvPoint(pts0, qq) : null, drift = seen.filter(p => p.team !== h.team && !plan.has(p) && p.role !== 'Bekçi' && (p.vx || p.vy)), bks = seen.filter(p => p.team !== h.team && p.role === 'Bekçi' && !plan.has(p));
+    let hit = null; const qq = q ? seen.find(p => p.id === q.id) : null, sp = p => (.17 + (p.a.hiz ?? 10) * .006) * 1.25, pts0 = K.predict(b, seen, null, D.simMax).pts, chOpt = { lag: (D.dm && !D._inLook ? 0 : (20 - self.ALAN_OKC(h, 'karar')) * D.laneLag) /* karar modelinde değer kusursuz: rakiplerin tepkisi gecikmeli sanılmaz. Eskiden düşük Okuma rakibi hep geç sanıyordu (yanlı, sıfır ortalamalı değil) */, loose: !q }, rivals = seen.filter(p => p.team !== h.team); let plan = chasePlan(pts0, rivals, 0, chOpt); const qg = qq ? recvPoint(pts0, qq) : null, drift = seen.filter(p => p.team !== h.team && !plan.has(p) && p.role !== 'Bekçi' && (p.vx || p.vy)), bks = seen.filter(p => p.team !== h.team && p.role === 'Bekçi' && !plan.has(p));
     for (let t = 0; t < D.simMax && !b.done; t++) {
-      if (t <= 30) for (const p of drift) { p.x += p.vx; p.y += p.vy; }
+      // Kovalama gerçek maçtaki gibi sürekli: kovalamacılar Çekirdeğin o anki yörüngesine göre her 6 tikte yeniden hedef seçer. Eskiden hedef pas anında bir kez seçiliyor, kovalamacı oraya varıp duruyordu; top alanlarda yavaşlayıp yanından geçince kafada pasların hiçbiri kesilmiyordu (gerçekte %30'u kesiliyor).
+      if (t > 0 && t % 6 === 0) { const np = chasePlan(K.predict(b, seen, null, D.simMax - t).pts, rivals, t, chOpt); for (const [p, g] of np) { const o = plan.get(p); if (o) { o.x = g.x; o.y = g.y; } else plan.set(p, { ...g, rc: t + g.rc }); } }
+      if (t <= 30) for (const p of drift) { if (plan.has(p)) continue; p.x += p.vx; p.y += p.vy; }
       // Bekçi maçtaki kuralla Çekirdeği izler: her an Çekirdek–Kuyu hattındaki yerine doğru, ataletle (maçtaki hareket kuralının aynısı)
       for (const p of bks) { const gx = p.team === 0 ? 0 : 100, dx = b.x - gx, dy = b.y - 25, L = hyp(dx, dy) || 1, r = Math.max(2.5, Math.min(9, L * (.14 + self.ALAN_OKC(p, 'bekci') * .004))), tx = gx + dx / L * r, ty = 25 + dy / L * r, ex = tx - p.x, ey = ty - p.y, el = hyp(ex, ey), want = el < .3 ? 0 : Math.min(.17 + (p.a.hiz ?? 10) * .006, el * .25); p.vx = (p.vx || 0) + ((el ? ex / el * want : 0) - (p.vx || 0)) * .18; p.vy = (p.vy || 0) + ((el ? ey / el * want : 0) - (p.vy || 0)) * .18; p.x += p.vx; p.y += p.vy; }
       // tepki süresi dolana kadar her oyuncu o anki hızıyla gitmeye devam eder (Bekçi dahil); sonra hedefine koşar
@@ -133,8 +135,21 @@
   function stIdx(src, team, x, y, trans) { const dir = team === 0 ? 1 : -1, prog = team === 0 ? x : 100 - x, iP = Math.min(9, Math.max(0, Math.floor(prog / 10))), iW = y < 50 / 3 ? 0 : y > 100 / 3 ? 2 : 1;
     let gs = 0, nd = 1e9; for (const p of src) { if (p.team === team || p.role === 'Bekçi') continue; if ((p.x - x) * dir > 0) gs++; const d = hyp(p.x - x, p.y - y); if (d < nd) nd = d; }
     const iS = gs <= 2 ? 0 : gs <= 4 ? 1 : 2, iB = nd < 3 ? 0 : nd < 6 ? 1 : 2, iT = trans ? 1 : 0; return (((iP * ST.nW + iW) * ST.nS + iS) * ST.nB + iB) * ST.nT + iT; }
+  // ── Pas ölçüleri (tutma tablosu): veri üretimi ve karar AYNI fonksiyonu çağırır. Ham sayı döndürür; dilimleri tablo belirler. Kusursuz bilgiyle hesaplanır.
+  // pass = { kind, to, q, launch } (karardaki aday pas). Topun yolu motorun gerçek alanlarıyla (K.predict). Rakip: tepki (maçtaki kural: 14 − Okuma×0,5 tik) + düz koşu (sprint), uzanma payı Q.reach.
+  function passFeat(h, src, pass) { const K = C(), Q = K.Q, cs = coreSide(h), org = { x: h.x + cs.ux * Q.body, y: h.y + cs.uy * Q.body };
+    const b = K.makeBall({ x: org.x, y: org.y, vx: pass.launch.vx, vy: pass.launch.vy, team: h.team, ch: .5, from: h, recv: pass.q || null }), pts = K.predict(b, src, null, 200).pts;
+    const q = pass.q ? src.find(p => p.id === pass.q.id) || pass.q : null, rp = pass.kind !== 'önüne' && q ? recvPoint(pts, q) : null, aim = rp || pass.to;
+    let T = pts.length - 1, bd = 1e9; for (let i = 0; i < pts.length; i++) { const dd = hyp(pts[i].x - aim.x, pts[i].y - aim.y); if (dd < bd) { bd = dd; T = i; } if (dd < .8) break; } const at = pts[T];
+    let race = 1e9, raceId = null, recvOpp = 1e9, laneD = 1e9, laneF = null; const L = hyp(at.x - org.x, at.y - org.y) || 1, ux = (at.x - org.x) / L, uy = (at.y - org.y) / L;
+    for (const p of src) { if (p.team === h.team) continue; const rc = Math.max(0, 14 - self.ALAN_OKC(p, 'tepki') * .5), v = (.17 + ((p.a && p.a.hiz) ?? 10) * .006) * 1.25;
+      for (let i = 1; i <= T; i++) { const tr = rc + Math.max(0, hyp(pts[i].x - p.x, pts[i].y - p.y) - Q.reach) / v, df = tr - i; if (df < race) { race = df; raceId = p.id; } }
+      const d0 = hyp(at.x - p.x, at.y - p.y), dT = Math.max(0, d0 - v * Math.max(0, T - rc)); if (p.role !== 'Bekçi' && dT < recvOpp) recvOpp = dT;
+      if (p.role !== 'Bekçi') { const al = (p.x - org.x) * ux + (p.y - org.y) * uy; if (al > 0 && al < L) { const pe = Math.abs(-(p.x - org.x) * uy + (p.y - org.y) * ux); if (pe < laneD) { laneD = pe; laneF = al / L; } } } }
+    return { race, raceId, recvOpp, arrV: at.sp ?? 0, len: hyp(pass.to.x - org.x, pass.to.y - org.y), T, laneD, laneF, kind: pass.kind }; }
+  window.AlanPass = { feat: passFeat };
   window.AlanState = { ST, idx: stIdx, size: ST.nP * ST.nW * ST.nS * ST.nB * ST.nT };
-  const transOf = team => { const m = D._m; if (!m || m.winTeam !== team) return 0; const dt = m.tick - (m.winT ?? -1e9); return dt <= 120 ? 1 : dt >= 240 ? 0 : (240 - dt) / 120; }; /* geçiş 120–240 tik arasında 1'den 0'a iner */
+  const transOf = team => { if (D._lossQ) return 1; const m = D._m; if (!m || m.winTeam !== team) return 0; const dt = m.tick - (m.winT ?? -1e9); return dt <= 120 ? 1 : dt >= 240 ? 0 : (240 - dt) / 120; }; /* geçiş 120–240 tik arasında 1'den 0'a iner */
   // Tablo okuması yumuşak: ilerleme (dilim merkezleri 5, 15 … 95) ve baskı (merkezler 1,5 / 4,5 / 7,5) komşu dilimler arasında doğrusal karışır, geçiş ağırlıkla karışır.
   // Kanat ve yerleşiklik basamaklı kalır (bir savunmacıyı geçmek gerçek bir olaydır). Tablo değişmez, sadece okunuşu; dilim sınırında değer sıçramaz, karar titremez.
   function vsRead(T, src, team, x, y, tw) { const dir = team === 0 ? 1 : -1, prog = team === 0 ? x : 100 - x, iW = y < 50 / 3 ? 0 : y > 100 / 3 ? 2 : 1; let gs = 0, nd = 1e9;
@@ -310,7 +325,7 @@ m = M.createMatch(seeds[k], {}); map = new Map();
     const Vo = (w, x, y) => D.diagB ? build(w, 1 - team, x, y) : V(w, 1 - team, x, y, .3), /* diagB: sadece teşhis (kayıp da kazançla aynı eğriden) */ WD = predictWorld(src, team, h, T + 8), direct = new Map(), srcC = Object.assign(src.slice(), { _kc: new Map() });
     // Alıcının değeri: Çekirdeği o dünyada karşıladıktan sonra da elinde tutabilir mi (yanındaki markajcının ikili mücadelesi)? Tutarsa oradan V, kaybederse rakibe oradan V.
     const recvVal = (w, q, at, c) => { const r = { ...q, x: at.x, y: at.y }, kA = keepP(r, w, null, D.recvKeepT); return kA * V(w, team, at.x, at.y, c) - (1 - kA) * Vo(w, at.x, at.y) * risk; };
-    const lossAt = (x, y) => Vo(src, x, y) * risk;
+    const srcL = src.filter(p => p !== h), lossAt = (x, y) => { D._lossQ = true; try { return Vo(srcL, x, y) * risk; } finally { D._lossQ = false; } }; /* kaybın bedeli: rakip o noktada topu yeni kazanmıştır (geçiş = 1); topu kaybeden oyuncu baskı sayılmaz (onun dibinde mesafe ~0 çıkıyordu) */
     // Ön eleme da "açtığı" değeri görür (Vend: boşluk ve önündeki boşluk dahil): yoksa orta sahada değer düz olduğu için açık alana pas daha kafada denenmeden elenir.
   // Ön eleme (hız): her pas türü ve gönderme önce kaba bir ölçüyle (hat açık mı × varış noktasının değeri) sıralanır; sadece en umutlu birkaçı kafada gerçekten oynatılır.
     { const inL = D._inLook, nP = inL ? D.nFullLook : D.nFull, nS = inL ? 1 : 2; const mates = src.filter(p => p.team === team && p !== h && p.role !== 'Bekçi'), nextOf = (q, at) => { let b = 0; for (const r of mates) { if (r === q) continue; const v = laneOk(src, team, at, r) * V(src, team, r.x, r.y, ch); if (v > b) b = v; } return b; };
@@ -343,6 +358,8 @@ m = M.createMatch(seeds[k], {}); map = new Map();
     { const tu = opts.find(o => o.kind === 'tut' && o._w), gs = opts.filter(o => o.kind === 'gönder' && o.v != null); if (tu && gs.length && !D.diagTut) { /* diagTut: sadece teşhis (f7'deki tut) */ const bestS = Math.max(...gs.map(o => o.v)), P = tu.det.P; tu.v = P * Math.max(build(tu._w, team, h.x, h.y), bestS) - (1 - P) * lossAt(h.x, h.y); if (tu.ex) { tu.ex.gain = Math.max(build(tu._w, team, h.x, h.y), bestS); tu.ex.base = tu.v; } } }
     if (D.look && !D._inLook && h.slot && window.AlanMatch && hyp((team === 0 ? 100 : 0) - h.x, 25 - h.y) < D.lookR) { const fam = new Map(); for (const o of opts) { if (o.v == null) continue; const k = o.kind === 'gönder' ? 'gönder' : o.kind === 'aşırt' ? 'aşırt' : o.q ? ((o.to.x - h.x) * (team === 0 ? 1 : -1) < -2 ? 'geri' : 'pas') : o.kind; if (!fam.has(k) || fam.get(k) < o.v) fam.set(k, o.v); } const fv = [...fam.values()].sort((a, b) => b - a); if (fv.length > 1) { if (!reuseLook(h, src, opts)) { lookAhead(h, src, ch, tac, opts, rnd); saveLook(h, src, opts); } } }
     const ok = opts.filter(o => o.v != null).sort((a, b) => b.v - a.v);
+    // Veri üretimi için keşif (sadece veri maçlarında açılır): verilen olasılıkla en iyi seçenek yerine, kafadaki P'si 0,3'ün üstündeki aday paslardan rastgele biri. Tutma tablosu seçilmeyen riskli pasları da görsün diye.
+    if (D._explore > 0 && !D._inLook && rnd() < D._explore) { const c = ok.filter(o => PASSK.has(o.kind) && o.ex && o.ex.P > .3); if (c.length) { const x = c[Math.floor(rnd() * c.length)]; x._explored = true; return { best: x, opts: ok }; } }
     return { best: ok[0], opts: ok };
   }
   function realize(h, o, src, ch, rnd) {

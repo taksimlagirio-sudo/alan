@@ -181,3 +181,10 @@ Sıradaki: Bölüm 9, durum değeri tablosu · tur 0 (veri ve TD hesabı Claude 
 
 **Bağlantı noktası (kuruldu):** `window.AlanState.idx(src, takım, x, y, geçiş)` → hücre (0…539). Tabloyu üreten ve kullanan aynı fonksiyonu çağırır. Tablo `window.ALAN_VS = { v: [540 değer, −1…+1], fiz: '…' }` olarak yüklenir, `D.useVS = true` ile `build()` yerine geçer. Kaybın bedeli (`lossAt`) zaten `V(rakip, aynı nokta)`; tablo açıkken aynı ölçüden gelir. Geçiş: Çekirdek kazanılalı 180 tikten az (`m.winT`).
 **Okuma kanalları (ölçüm için):** `self.ALAN_OKX = { eq: [...], only: '...', mid: 12 }`; kanallar: karar, kararHizi, rakipModel, gonder, kontrol, kenar, algi, tepki, ikili, yerlesim, bekci.
+
+
+## 10. Pasın tutma şansı · öğrenilmiş tablo (karar verildi)
+**Neden:** Kafadaki pas oynatması tutma şansını sistematik olarak abartıyor (seçilen paslarda tahmin 0,83 – gerçek %64; P 0,85–0,95'te gerçek %68). Kesenlerin %82'si kafadaki kovalama planında olduğu hâlde kafa onları yetiştiremiyor. Kopyayı motora benzetmeye çalışmak her turda farkın küçük bir kısmını kapattı; durma noktası. "Tutar mı" sorusunun cevabı gerçek maçlardan öğrenilmiş tablodan gelecek; kafadaki oynatma alıcının varış noktası ve kovalama için kalır.
+**Bağlantı noktası (kuruldu):** `window.AlanPass.feat(h, src, pass)` → ham ölçüler: `race` (tik; topun yolunda en kötü rakip için rakip varış − top varış, pozitif = biz önce; tepki 14 − Okuma×0,5, sprint, uzanma Q.reach, Bekçi dahil; yol motorun gerçek alanlarıyla), `raceId`, `recvOpp` (top alıcıya varınca en yakın rakibin karşılama noktasına uzaklığı), `arrV`, `len`, `T`, `laneD`/`laneF`, `kind`. Dilimleri tablo belirler; okuma (yumuşak geçiş) tablo dosyasının içinde.
+**Keşif kancası:** `D._explore` (0…1). Açıkken bu olasılıkla en iyi seçenek yerine kafadaki P'si 0,3'ün üstündeki aday paslardan rastgele biri seçilir (`_explored` işaretli). Sadece veri maçlarında. Damgayı değiştirmez.
+**İş bölümü:** veri ve tablo Claude Code; karardaki okuma Design. Karar modeli aynen: tablo kusursuz P'yi verir, Okuma yarış kestirimiyle kaydırır.
