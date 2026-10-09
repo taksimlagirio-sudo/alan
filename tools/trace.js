@@ -2,7 +2,7 @@
 // Kullanım: node tools/trace.js <motor klasörü> <tohum> <tik> [çıktı.json]
 const { load } = require('./load');
 const [dir, seedS, lenS, out] = process.argv.slice(2), seed = +seedS || 1, len = +lenS || 600;
-const ctx = load(dir, seed), M = ctx.AlanMatch;
+const ctx = load(dir, seed), M = ctx.AlanMatch; if (process.env.DBG) ctx.AlanDecide.D._dbgOn = true; // DBG=1: kayıt açık (kafa kopyası)
 const tac = [{ sistem: 'Alan', pres: 1, arkada: 1, blok: 'Düşük', genislik: 'Dar', tempo: .8, risk: .8, kazaninca: 'Kontra' }, { sistem: 'Adam adama', pres: 2, arkada: 2, blok: 'Yüksek', genislik: 'Geniş', tempo: .2, risk: .2, kazaninca: 'Dengeli' }];
 const m = M.createMatch(seed, { tac: seed % 2 ? tac : undefined, len });
 const f64 = new Float64Array(1), u32 = new Uint32Array(f64.buffer);
