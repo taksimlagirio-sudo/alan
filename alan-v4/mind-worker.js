@@ -1,0 +1,9 @@
+// Oyuncunun kafası: bir maç oynar, her gerçek kararı (kafadaki oynatmalar hariç) bütün seçenekleriyle kaydeder. Sadece gösterim; maçı değiştirmez.
+self.window = self; const V = '?v=' + Date.now(); importScripts('core.js' + V, 'shot-table.js' + V, 'value-table.js' + V, 'decide.js' + V, 'match.js' + V, 'shape.js' + V, 'pas-table.js' + V, 'vs-table.js' + V, 'vs-fiz.js' + V);
+self.onmessage = async e => { await self.ALAN_VS_CHECK; /* tablo damgası kontrol edilmeden maç başlamaz */ const q = e.data, M = self.AlanMatch, D = self.AlanDecide, P = D.D; let m = null, out = [];
+  const od = D.decide; D.decide = (h, ps, ch, r, t) => { const res = od(h, ps, ch, r, t); if (P._inLook || !m || !m.ps.some(z => z.id === h.id)) return res; const id = p => p ? m.ps.indexOf(p) >= 0 ? m.ps.indexOf(p) : m.ps.findIndex(z => z.id === p.id) : -1;
+    out.push({ t: m.tick, h: id(h), ch, sc: [...m.score], ps: m.ps.map(p => [+p.x.toFixed(2), +p.y.toFixed(2)]), opts: res.opts.slice(0, 14).map(o => ({ k: o.kind, to: o.to ? [+o.to.x.toFixed(2), +o.to.y.toFixed(2)] : null, q: id(o.q), v: o.v, vt: o.vTrue ?? o.v, ex: o.ex || null, est: o.est ? { who: o.est.who, margin: +o.est.margin.toFixed(1), noise: o.est.noise, z: +o.est.z.toFixed(2) } : null, look: 0 })) });
+    if (out.length >= 10) { self.postMessage({ type: 'dec', list: out }); out = []; } return res; };
+  try { m = M.createMatch(q.seed, { len: q.len, tac: q.tac }); self.postMessage({ type: 'start', statics: m.ps.map(p => ({ name: p.name, team: p.team, role: p.role, rh: p.rh || '' })) }); const t0 = Date.now();
+    while (!m.over) { M.step(m); if (m.tick % 300 === 0) { if (out.length) { self.postMessage({ type: 'dec', list: out }); out = []; } self.postMessage({ type: 'tick', t: m.tick }); } }
+    if (out.length) self.postMessage({ type: 'dec', list: out }); self.postMessage({ type: 'done', t: m.tick }); } catch (x) { self.postMessage({ type: 'error', msg: x.message }); } };

@@ -1,0 +1,8 @@
+// Teşhis: pasifliğin sebebi. Her iş: bir ayar × bir değişken × bir tohum, iki takım aynı taktikle (ayna). Sadece ölçer.
+self.window = self; importScripts('core.js?v=' + Date.now(), 'shot-table.js', 'value-table.js', 'decide.js?v=' + Date.now(), 'match.js?v=' + Date.now(), 'shape.js?v=' + Date.now(), 'vs-table.js?v=' + Date.now(), 'vs-fiz.js?v=' + Date.now());
+self.onmessage = async e => { await self.ALAN_VS_CHECK; /* tablo damgası kontrol edilmeden maç başlamaz */ const q = e.data, M = self.AlanMatch, D = self.AlanDecide, P = D.D; P.useValTab = q.v === 'a'; P.diagB = q.v === 'b'; P.diagTut = q.v === 'c';
+  const R = { poss: 0, own: 0, deep: 0, fwd: 0, back: 0, side: 0, dec: 0, shot: 0, goal: 0, pass: 0, passOk: 0, steal: 0, err: null };
+  const od = D.decide; D.decide = (h, ps, ch, r, t) => { const res = od(h, ps, ch, r, t); if (!P._inLook && !h._diagSkip) { const b = res.best; R.dec++; if (b && b.to && (b.kind === 'pas' || b.kind === 'önüne' || b.kind === 'kenardan')) { const dx = (b.to.x - h.x) * (h.team === 0 ? 1 : -1); if (dx > 3) R.fwd++; else if (dx < -3) R.back++; else R.side++; } } return res; };
+  try { const m = M.createMatch(q.seed, { len: q.len, tac: [q.tac, q.tac] }); while (!m.over) { M.step(m); const h = m.holder; if (h && h.role !== 'Bekçi') { R.poss++; const ax = h.team === 0 ? h.x : 100 - h.x; if (ax < 50) R.own++; if (ax > 75) R.deep++; } }
+    R.shot = m.st.shot[0] + m.st.shot[1]; R.goal = m.score[0] + m.score[1]; R.pass = m.st.pass[0] + m.st.pass[1]; R.passOk = m.st.passOk[0] + m.st.passOk[1]; R.steal = m.st.steal[0] + m.st.steal[1]; } catch (x) { R.err = x.message; }
+  D.decide = od; self.postMessage({ id: q.id, R }); };
