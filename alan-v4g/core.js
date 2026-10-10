@@ -140,7 +140,7 @@ self.ALAN_OKC = function (p, ch) { const v = (p && p.a && p.a.okuma) ?? 10, E = 
     body: 1.15,     // oyuncunun gövdesi + Çekirdeğin yarıçapı: Çekirdek gövdenin içine giremez, tutulan Çekirdek gövdenin kenarında durur
     reachBek: .6,   // (eski) Bekçi ek menzili
     bekThru: .25, bekBody: .9, bekDive: 3.2, bekDiveV: .32, bekEl: 1.7, bekSteer: 2.5, // Bekçi elleriyle oynar: daha uzağa uzanır (dive), daha sert Çekirdeği söndürür (bekEl × kapasite), tutamadığını Kuyu'dan uzağa, yana çeler (bekSteer)
-     bekReact: 12, bekReactOk: .5, // Bekçi: gövde, en fazla uzanma, uzanma hızı (birim/tik), tepki süresi
+     bekReact: 8, bekReactOk: .5, // Bekçi: gövde, en fazla uzanma, uzanma hızı (birim/tik), tepki süresi
     // İlk dokunuş: oyuncu tek dokunuşta Çekirdeğin (kendisine göre) en fazla "cap" kadar hızını söndürebilir. Gelen hız bunun altındaysa tutar; üstündeyse kalan hız gövdeden seker.
     cap0: 1.3,      // ortalama Tutuş'la söndürülebilen göreli hız (birim/tik)
     capSk: .06,    // Tutuş/Kesme puanı başına
