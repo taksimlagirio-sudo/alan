@@ -41,6 +41,27 @@ Kullanıcı gözlemi: top saklama fazla işe yarıyor; savunmanın yerleşimi, b
 - **Yerleşim:** Savunmanın Çekirdekle Kuyu arasına girme oranı, en tehlikeli rakibin markajsız kaldığı süre, iki savunmacının aynı bölgede (≤3 birim) üst üste durma süresi, beyin yerleşim kararlarında "refleks yeri" dışı seçim oranı.
 Çıktı: en zayıf halka ve mekanik sebebi (kural ya da katsayı önerisi değil).
 
+## 7 · Yeni (Design, bu turda)
+- **Kritik hata düzeltildi:** Top sahipliğinde `drive` işareti kapanmıyor, maç süresi kontrol edilmiyordu (`match.js`, holder dalının sonu). Artık doğal sürüş %100 açık, maçlar 5400'de bitiyor.
+- **Savunma yerleşimi:** Kök sebep ufuk değildi: karar dışı tartmalarda (yerleşim, ikili, pres, kovalama) top sahibi 20 tik "tut" deyip oynatma bitiyordu; savunmacının yeri sonucu değiştirmiyordu. Artık top sahibi bu oynatmalarda beynin ilk bakışıyla (`decide`, derinleştirmesiz) oynamaya devam ediyor (`_pmSig`). Adaylar ortak zarla oynanıyor. Sonuç (kısa örnek): yerleşim adayları arası fark 0,27'ye çıktı (anlamlı), en tehlikeli rakip boş %71 → %50–62.
+- **İkili:** Üçüncü seçenek "Çekirdeğin tarafına dolan" (gövdenin arkasından değil). Ortak zar.
+- **Sorun: hız.** Bu oynatmalar artık 75 tik ve içinde top sahibi her kararında `decide` çağırıyor: tek iş parçacığı ~12 tik/sn (önce ~130). Görev: (a) maliyetin nerede olduğunu ölç (decide içindeki aday üretimi mi, tablo okuma mı); (b) davranışı değiştirmeden hızlandır (ör. bu oynatmalarda top sahibinin kararını önbelleğe almak, aday üretimini hafif kipte daraltmak değil ucuzlatmak); (c) önce/sonra en tehlikeli rakibin boş kalma ve üst üste durma oranlarını 10+ maçla ölç.
+
+## 8 · Değerlendirme: A mı, B mi? (kullanıcı kararı: ikisini de dene)
+Teşhis: beynin araması (ileri oynatma) 1–2 sn sonra durup "bu durum iyi mi"yi tablodan okuyor. Tablo bloğun şeklini bilmiyor, hafıza 0 maç. Bu yüzden getirisi 3–6 sn sonra gelen hamleler (rakibi genişletmek, beklemek, geri pas, kanat değiştirme) amaçsız hamlelerle aynı değeri alıyor: kendi yarıda rastgele sürme, uzaktan gönderme.
+Kullanıcı aramanın kendisinin mantığından da emin değil: bunu da ölç.
+
+**A · Öğrenilen değer:** Tabloya iki ölçü ekle: (1) rakip bloğun açıklığı (savunmacıların enine yayılımı + hatlar arası mesafe), (2) Çekirdeğin önünde pas hattı açık arkadaş sayısı. Değerlerini hafıza kendi maçlarından öğrensin (100+ maç, ogrenme.js / ogrenci.js; kusursuz okuma). Ağırlık elle yazılmaz.
+**B · Hücumun sonuna kadar oynatma:** Aday hamleler hücum bitene kadar (sayı, kayıp ya da 8 sn) oynatılır; oynatma içinde oyuncular beynin ilk bakışıyla (`decide`, derinleştirmesiz) oynar. Değer = gerçek sonuç (sayı ±1; kayıpta rakibin o noktadaki tablo değeri). Aday başına 4–8 deneme, ortak zar.
+**C · Kontrol (aramanın kendisi):** Arama kapalı, sadece ilk bakış (`decide` en iyisi) ve şimdiki arama.
+
+Sınama: aynı anlar (gerçek maçlardan cloneMatch ile alınmış 200+ karar anı; ayrıca pres kırma, kanat değiştirme, derin bloğa karşı sahneler), her yöntem seçimini yapsın; sonra her seçimi 30 bağımsız denemeyle hücum sonuna kadar oynatıp gerçek değerini ölç (kâhin). Rapor:
+- yöntem başına seçilen hamlenin kâhin değeri (ortalama) ve en iyi hamleden kayıp; gürültü tabanı (iki bağımsız kâhinin uyumu)
+- getirisi geç gelen hamlelerin (geri/yan pas, bekle, kanat değiştirme) seçilme oranı ve kâhin değeri
+- 10'ar maç: kendi yarıda topla geçen süre, 35+ birimden gönderme, pas tutma, sayı/maç
+- hesap süresi (90 sn maç, 4 çekirdek)
+C, A ve B'den kötü değilse "arama işe yaramıyor" demektir; açıkça yaz.
+
 ## Son değişiklikler (bilgi)
 - Bekçi: kendi elleri (uzanma 3,2, kapasite ×1,7, tutamadığını yana çeler)
 - Tek dokunuş beynin kararı (gönderme ya da kontrol, ileri oynatarak)

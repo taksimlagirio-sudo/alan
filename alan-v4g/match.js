@@ -205,6 +205,7 @@
           /* doğal sürüş: hedefe kilitlenmez. Planın yönünü korur, ama yakındaki rakiplerden (5 birim) yana sıyrılır; ne kadar sıyrılacağı Sürme'ye bağlı. Hedefe kalan yolun en fazla 3 birim önündeki noktaya bakar, yol eğrilir */
           for (const q of m.ps) { if (q.team === h.team || q.noTouch) continue; const rx = h.x - q.x, ry = h.y - q.y, d = hyp(rx, ry); if (d >= 5 || d < 1e-3) continue; const ahead = -(rx * dx + ry * dy) / d; if (ahead < -.3) continue; const w = (5 - d) / 5 * (.4 + .6 * Math.max(0, ahead)), sg = (-dy * rx + dx * ry) >= 0 ? 1 : -1; ax += -dy * sg * w; ay += dx * sg * w; }
           const k = .9 * (.5 + ((((h.a && h.a.surme) ?? 10) - 10) * .04)), fx = dx + ax * k, fy = dy + ay * k, fl = hyp(fx, fy) || 1, cr = Math.min(L, 3); h.tx = h.x + fx / fl * cr; h.ty = h.y + fy / fl * cr; } else { h.driveTo = null; h.tx = h.x; h.ty = h.y; } }
+      for (const p of m.ps) p.drive = false; if (m.tick >= m.len) m.over = true; /* top sahipliğinde de: sürme işareti kapanır (doğal sürüş çalışsın), maç süresi dolunca biter. Eskiden bu iki satır sadece Çekirdek boştayken çalışıyordu */
       return;
     }
     const b = m.ball;
