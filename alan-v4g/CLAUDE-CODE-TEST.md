@@ -41,6 +41,12 @@ Kullanıcı gözlemi: top saklama fazla işe yarıyor; savunmanın yerleşimi, b
 - **Yerleşim:** Savunmanın Çekirdekle Kuyu arasına girme oranı, en tehlikeli rakibin markajsız kaldığı süre, iki savunmacının aynı bölgede (≤3 birim) üst üste durma süresi, beyin yerleşim kararlarında "refleks yeri" dışı seçim oranı.
 Çıktı: en zayıf halka ve mekanik sebebi (kural ya da katsayı önerisi değil).
 
+## 7 · Yeni (Design, bu turda)
+- **Kritik hata düzeltildi:** Top sahipliğinde `drive` işareti kapanmıyor, maç süresi kontrol edilmiyordu (`match.js`, holder dalının sonu). Artık doğal sürüş %100 açık, maçlar 5400'de bitiyor.
+- **Savunma yerleşimi:** Kök sebep ufuk değildi: karar dışı tartmalarda (yerleşim, ikili, pres, kovalama) top sahibi 20 tik "tut" deyip oynatma bitiyordu; savunmacının yeri sonucu değiştirmiyordu. Artık top sahibi bu oynatmalarda beynin ilk bakışıyla (`decide`, derinleştirmesiz) oynamaya devam ediyor (`_pmSig`). Adaylar ortak zarla oynanıyor. Sonuç (kısa örnek): yerleşim adayları arası fark 0,27'ye çıktı (anlamlı), en tehlikeli rakip boş %71 → %50–62.
+- **İkili:** Üçüncü seçenek "Çekirdeğin tarafına dolan" (gövdenin arkasından değil). Ortak zar.
+- **Sorun: hız.** Bu oynatmalar artık 75 tik ve içinde top sahibi her kararında `decide` çağırıyor: tek iş parçacığı ~12 tik/sn (önce ~130). Görev: (a) maliyetin nerede olduğunu ölç (decide içindeki aday üretimi mi, tablo okuma mı); (b) davranışı değiştirmeden hızlandır (ör. bu oynatmalarda top sahibinin kararını önbelleğe almak, aday üretimini hafif kipte daraltmak değil ucuzlatmak); (c) önce/sonra en tehlikeli rakibin boş kalma ve üst üste durma oranlarını 10+ maçla ölç.
+
 ## Son değişiklikler (bilgi)
 - Bekçi: kendi elleri (uzanma 3,2, kapasite ×1,7, tutamadığını yana çeler)
 - Tek dokunuş beynin kararı (gönderme ya da kontrol, ileri oynatarak)
