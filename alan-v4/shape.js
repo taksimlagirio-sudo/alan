@@ -73,7 +73,7 @@
   function flightRead(m) {
     const b = m.ball, K = C(), out = new Map(); if (!b) return null;
     // kafadaki oyunda (lite) yörünge her tik değil, 6 tikte bir yeniden hesaplanır (aradaki tiklerde aynı yörünge, Çekirdeğin ilerlediği kadar kaydırılarak kullanılır)
-    let pts; if (b.done) pts = [{ x: b.x, y: b.y }]; else if (m._lite && b._pc && b.t - b._pc.t < 6) pts = b._pc.pts.slice(b.t - b._pc.t); else { pts = K.predict(b, m.ps, null, 240).pts; if (m._lite) b._pc = { t: b.t, pts }; }
+    let pts; if (b.done) pts = [{ x: b.x, y: b.y }]; else if (m._lite && b._pc && b.t - b._pc.t < 6 && b._pc.pts.length > b.t - b._pc.t) pts = b._pc.pts.slice(b.t - b._pc.t); else { pts = K.predict(b, m.ps, null, 240).pts; if (m._lite) b._pc = { t: b.t, pts }; }
     for (const p of m.ps) {
       if (p.role === 'Bekçi' && hyp(p.x - ownX(p.team), p.y - 25) > 12) continue;
       const rc = p.team === b.team && m.fl && m.fl.q === p ? 0 : Math.max(0, 14 - ok(p, 'tepki') * S.react - (m.tick - (m.fl ? m.fl.t0 || m.tick : m.tick))), v = spd(p) * SPR; let best = null;
@@ -116,7 +116,7 @@
       const mine = [...fr.arr].filter(([p]) => p.team === t && !p.noTouch); if (!mine.length) continue; const bestE = Math.min(...mine.map(([, r]) => r.est));
       const loose = !m.fl || !m.fl.q || m.ball.defl || m.ball.done, rq = m.fl && m.fl.q ? fr.arr.get(m.fl.q) : null, recvFirst = rq && rq.est <= bestE + 2;
       const toMate = !loose && m.ball.team === t && recvFirst;
-      for (const [p, r] of mine) { const recv = m.fl && m.fl.q === p && !loose; if (toMate && !recv) continue; const rt = loose ? S.reactLoose - ok(p) * S.reactLooseOk : 14 - ok(p) * S.react; if (!recv && p.chB !== m.ball && m.tick - sh.ballT < rt) continue; if (recv || r.est <= bestE + (20 - ok(p)) * S.marginT + 1) { chase.add(p); let rt0 = recv && m.fl.route && m.fl.route.length ? m.fl.route[0] : null; if (rt0 && hyp(rt0.x - p.x, rt0.y - p.y) < 1) { m.fl.route.shift(); rt0 = m.fl.route[0] || null; } p.tx = rt0 ? rt0.x : r.x; p.ty = rt0 ? rt0.y : r.y; p.sprint = true; p.job = recv ? 'alıcı' : 'kovala'; p.chB = m.ball; } }
+      for (const [p, r] of mine) { const recv = m.fl && m.fl.q === p && !loose; if (toMate && !recv) continue; const rt = loose ? S.reactLoose - ok(p) * S.reactLooseOk : 14 - ok(p) * S.react; if (!recv && p.chB !== m.ball && m.tick - sh.ballT < rt) continue; if (recv || r.est <= bestE + (20 - ok(p)) * (m.kovM && m.kovM[t] != null ? m.kovM[t] : S.marginT) + 1 /* v4: beyin, pas anında savunan takım için kaç kişinin kovalayacağını ayarlayabilir (m.kovM) */) { chase.add(p); let rt0 = recv && m.fl.route && m.fl.route.length ? m.fl.route[0] : null; if (rt0 && hyp(rt0.x - p.x, rt0.y - p.y) < 1) { m.fl.route.shift(); rt0 = m.fl.route[0] || null; } p.tx = rt0 ? rt0.x : r.x; p.ty = rt0 ? rt0.y : r.y; p.sprint = true; p.job = recv ? 'alıcı' : 'kovala'; p.chB = m.ball; } }
     }
     if (m.fl && m.fl.kind === 'gönder' && m.ball && !m.ball.done) { const gx = oppX(m.ball.team), dr = dirOf(m.ball.team); for (const p of ps) { if (p.team !== m.ball.team || p.role === 'Bekçi' || p === m.ball.from || chase.has(p)) continue; if (hyp(p.x - gx, p.y - 25) < 28 && m.tick - sh.ballT >= 14 - ok(p) * S.react) { chase.add(p); p.tx = gx - dr * (5 + (p.id % 3) * 2); p.ty = 25 + ((p.id % 4) - 1.5) * 4; p.sprint = true; p.job = 'sekme'; } } }
     const dt = 1 - att, dtac = m.tac[dt];

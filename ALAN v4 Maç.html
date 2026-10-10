@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ALAN v4 Maç</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root { --zemin: #E9E5DC; --murekkep: #16150F; --kagit: #F6F3EC; --mavi: #1F3FD1; --turuncu: #E0531F; --saha: #2F6B3F; --saha2: #2B6339; --cizgi: rgba(255,255,255,.55); --soluk: #6B675C; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--zemin); color: var(--murekkep); font-family: 'Bricolage Grotesque', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  button, select, input { font: inherit; color: inherit; }
+  .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .sayfa { max-width: 1400px; margin: 0 auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px; background: var(--murekkep); color: var(--kagit); padding: 12px 18px; }
+  header b { font-size: 26px; font-weight: 800; letter-spacing: -.02em; }
+  header span { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; opacity: .75; }
+  .kart { background: var(--kagit); padding: 14px 16px; border: 1px solid #D8D2C4; }
+  .kurulum { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; align-items: end; }
+  label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--soluk); }
+  select, input[type=number] { padding: 6px 8px; border: 1px solid #C9C2B2; background: #fff; color: var(--murekkep); font-size: 15px; }
+  .dugme { padding: 9px 16px; background: var(--murekkep); color: var(--kagit); border: 0; cursor: pointer; font-weight: 600; font-size: 15px; }
+  .dugme.ikincil { background: transparent; color: var(--murekkep); border: 1px solid var(--murekkep); }
+  .dugme:disabled { opacity: .4; cursor: default; }
+  .ana { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 14px; }
+  @media (max-width: 980px) { .ana { grid-template-columns: 1fr; } }
+  .saha-kap { position: relative; background: var(--saha); }
+  canvas { display: block; width: 100%; height: auto; }
+  .skor { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 12px; background: var(--murekkep); color: var(--kagit); }
+  .skor .t0 { color: #9DB0FF; } .skor .t1 { color: #FFB08F; }
+  .skor .say { font-size: 28px; font-weight: 800; }
+  .oynatma { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 12px; background: var(--kagit); border: 1px solid #D8D2C4; border-top: 0; }
+  .oynatma input[type=range] { flex: 1; min-width: 160px; accent-color: var(--murekkep); }
+  .olaylar { max-height: 420px; overflow: auto; font-size: 13px; display: flex; flex-direction: column; gap: 4px; }
+  .olay { display: grid; grid-template-columns: 46px 1fr; gap: 8px; padding: 3px 0; border-bottom: 1px solid #E6E0D3; }
+  .olay.sayi { font-weight: 700; }
+  .olay .z { color: var(--soluk); }
+  .yan { display: flex; flex-direction: column; gap: 14px; }
+  h3 { margin: 0 0 8px; font-size: 15px; }
+  .yukleme { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: rgba(22,21,15,.86); color: var(--kagit); text-align: center; padding: 16px; }
+  .yukleme.acik { display: flex; }
+  .cubuk { width: min(420px, 80%); height: 10px; background: rgba(255,255,255,.15); }
+  .cubuk > div { height: 100%; width: 0; background: var(--kagit); transition: width .2s; }
+  .not { font-size: 13px; color: var(--soluk); line-height: 1.45; }
+  .karar { font-size: 12px; line-height: 1.5; }
+</style>
+<script src="alan-v4/core.js"></script>
+<script src="alan-v4/shot-table.js"></script>
+<script src="alan-v4/value-table.js"></script>
+<script src="alan-v4/decide.js"></script>
+<script src="alan-v4/match.js"></script>
+<script src="alan-v4/shape.js"></script>
+<script src="alan-v4/beyin.js"></script>
+<script src="alan-v4/vs-table.js"></script>
+<script src="alan-v4/pas-table.js"></script>
+</head>
+<body>
+<div class="sayfa">
+  <header><b>ALAN v4</b><span>Tek beyin · maç önceden oynanır</span></header>
+
+  <div class="kart kurulum" id="kurulum">
+    <label>Mavi takım taktiği <select id="tac0"></select></label>
+    <label>Turuncu takım taktiği <select id="tac1"></select></label>
+    <label>Oyuncu özellikleri
+      <select id="ozellik"><option value="10">Herkes 10</option><option value="rastgele">Rastgele (6–16)</option></select></label>
+    <label>Süre
+      <select id="sure"><option value="5400">90 sn (deneme)</option><option value="10800">3 dk</option><option value="21600">6 dk</option></select></label>
+    <label>Beyin
+      <select id="beyin"><option value="acik">Açık · kaliteli (4 çekirdekte ~45–60 sn)</option><option value="hizli">Açık · hızlı (~25–35 sn, daha az isabetli)</option><option value="kapali">Kapalı (refleks kurallar, karşılaştırma için)</option></select></label>
+    <label>Tohum <input type="number" id="tohum" value="1" min="1"></label>
+    <div style="display:flex;gap:10px;align-items:end"><button class="dugme" id="basla">Maça başla</button></div>
+  </div>
+
+  <div class="ana">
+    <div>
+      <div class="skor"><span class="t0" id="ad0">Mavi</span><span class="say mono" id="skor">0 – 0</span><span class="t1" id="ad1">Turuncu</span></div>
+      <div class="saha-kap">
+        <canvas id="saha" width="1200" height="600"></canvas>
+        <div class="yukleme" id="yukleme">
+          <div style="font-size:22px;font-weight:800">Beyin maçı oynuyor</div>
+          <div class="cubuk"><div id="cubuk"></div></div>
+          <div class="mono" id="ilerleme" style="font-size:13px">0%</div>
+          <div class="not" style="color:#CFC9BB;max-width:460px">Her top kararında ve savunma anında beyin, aday hamleleri kendi dünyasında ileri oynatarak tartıyor. Denemeler <span id="isciSayi">?</span> paralel işçide çalışıyor.</div>
+        </div>
+      </div>
+      <div class="oynatma">
+        <button class="dugme" id="oynat" disabled>▶</button>
+        <select id="hiz"><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option><option value="0.5">0,5×</option></select>
+        <input type="range" id="zaman" min="0" max="0" value="0" disabled>
+        <span class="mono" id="saat">00:00</span>
+      </div>
+    </div>
+    <div class="yan">
+      <div class="kart">
+        <h3>Taktik değiştir</h3>
+        <div class="not" style="margin-bottom:8px">Maç bu andan itibaren yeniden oynanır.</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <label>Takım <select id="dTakim"><option value="0">Mavi</option><option value="1">Turuncu</option></select></label>
+          <label>Yeni taktik <select id="dTac"></select></label>
+          <button class="dugme ikincil" id="degistir" disabled>Bu andan yeniden oyna</button>
+        </div>
+      </div>
+      <div class="kart">
+        <h3>Olaylar</h3>
+        <div class="olaylar" id="olaylar"></div>
+      </div>
+      <div class="kart">
+        <h3>Son beyin kararı</h3>
+        <div class="karar mono" id="karar">–</div>
+      </div>
+    </div>
+  </div>
+  <div class="not">Sayfa bir web sunucusundan açılmalı (işçiler dosyadan açılınca çalışmaz). Beyin kapalıyken maç saniyeler içinde hazır olur.</div>
+</div>
+
+<script>
+(() => {
+  const M = AlanMatch, B = AlanBeyin, K = AlanCore, W = 100, H = 50;
+  // Taktikler (Tasarım Bölüm 9'daki altı tarz)
+  const STY = { Dengeli: ['Alan', 1, 1, 'Orta', 'Normal', .5, .5, 'Dengeli'], 'Sabırlı': ['Alan', 1, 1, 'Orta', 'Geniş', .2, .2, 'Yerleş'], Dikine: ['Alan', 1, 1, 'Orta', 'Normal', .8, .8, 'Kontra'], Kontra: ['Alan', 0, 1, 'Düşük', 'Dar', .8, .8, 'Kontra'], 'Ön alan': ['Adam adama', 3, 1, 'Yüksek', 'Geniş', .5, .5, 'Dengeli'], 'Kuyu önü': ['Alan', 0, 2, 'Düşük', 'Dar', .2, .2, 'Yerleş'] };
+  const tacOf = a => ({ sistem: a[0], pres: a[1], arkada: a[2], blok: a[3], genislik: a[4], tempo: a[5], risk: a[6], kazaninca: a[7] });
+  const $ = id => document.getElementById(id);
+  for (const id of ['tac0', 'tac1', 'dTac']) $(id).innerHTML = Object.keys(STY).map(k => `<option>${k}</option>`).join('');
+  $('tac1').value = 'Sabırlı';
+  // ── işçi havuzu (tarayıcı) ─────────────────────────────────────────────
+  const NW = Math.max(1, Math.min(8, (navigator.hardwareConcurrency || 4) - 1)); $('isciSayi').textContent = NW;
+  let havuz = null;
+  function havuzKur() { if (havuz) return havuz; const ws = [], wait = new Map(); let id = 0, ok = true;
+    for (let k = 0; k < NW; k++) { try { const w = new Worker('alan-v4/beyin-isci.js'); w.onmessage = e => { const f = wait.get(e.data.id); wait.delete(e.data.id); if (e.data.hata) { console.error('beyin işçisi:', e.data.hata); ok = false; } f && f(e.data.sonuc || null); }; w.onerror = e => { ok = false; console.error('beyin işçisi yüklenemedi', e.message); for (const [i, f] of wait) { wait.delete(i); f(null); } }; ws.push(w); } catch (e) { ok = false; } }
+    havuz = { get ok() { return ok && ws.length > 0; }, isler(m, jobs) { const durum = B.paketle(m), parts = ws.map(() => []); jobs.forEach((j, k) => { if (k) parts[(k - 1) % ws.length].push(k); }); const res = new Array(jobs.length); // ilk iş sayfada, diğerleri işçilerde
+        if (!ok) return Promise.resolve(jobs.map(j => B.rollout(m, j))); const ps = parts.map((ix, w) => ix.length ? new Promise(r => { const i = ++id; wait.set(i, v => { if (v) v.forEach((x, q) => res[ix[q]] = x); else ix.forEach(q => res[q] = B.rollout(m, jobs[q])); r(); }); ws[w].postMessage({ id: i, durum, isler: ix.map(q => jobs[q]), ayar: { ...B.A } }); }) : null); if (jobs.length) res[0] = B.rollout(m, jobs[0]); return Promise.all(ps).then(() => res); } };
+    return havuz; }
+  // ── kayıt: her tik bir kare ───────────────────────────────────────────
+  const NF = 14 * 2 + 6; // oyuncular (x,y) · Çekirdek x,y · taşıyıcı · şarj · skor 0,1
+  let kareler = [], olaylar = [], anlik = new Map(), kararlar = [], m = null, len = 5400, ayarlar = null;
+  function kaydet(m) { const f = new Float32Array(NF); m.ps.forEach((p, k) => { f[2 * k] = p.x; f[2 * k + 1] = p.y; }); const c = M.corePos(m); f[28] = c ? c.x : NaN; f[29] = c ? c.y : NaN; f[30] = m.holder ? m.ps.indexOf(m.holder) : -1; f[31] = m.holder ? m.ch : (m.ball ? m.ball.ch || 0 : 0); f[32] = m.score[0]; f[33] = m.score[1]; kareler[m.tick] = f;
+    if (m.events.length && m.events[0] !== m._sonOlay) { let k = 0; while (k < m.events.length && m.events[k] !== m._sonOlay) k++; for (let j = k - 1; j >= 0; j--) olaylar.push({ tick: m.tick, ...m.events[j] }); m._sonOlay = m.events[0]; }
+    if (m._beyinSon && m._beyinSon.tick === m.tick - 1) kararlar.push(m._beyinSon);
+    if (m.tick % 60 === 0) anlik.set(m.tick, B.paketle(m)); }
+  async function hesapla(bas) { // bas: bu tikten itibaren (anlık görüntüden) yeniden
+    $('yukleme').classList.add('acik'); $('oynat').disabled = true; $('degistir').disabled = true; const t0 = performance.now(); const acik = ayarlar.beyin !== 'kapali'; B.A.bak = acik; B.A.icHafif = ayarlar.beyin === 'hizli';
+    const ilerle = async mm => { const p = mm.tick / len; $('cubuk').style.width = (p * 100).toFixed(1) + '%'; $('ilerleme').textContent = `${Math.round(p * 100)}% · ${((performance.now() - t0) / 1000).toFixed(0)} sn`; await new Promise(r => setTimeout(r, 0)); };
+    const h = acik ? havuzKur() : null, isler = h && h.ok ? (mm, jobs) => h.isler(mm, jobs) : undefined;
+    if (!acik) { while (!m.over && m.tick < len) { M.step(m); kaydet(m); if (m.tick % 600 === 0) await ilerle(m); } }
+    else await B.oynaAsync(m, { isler, kare: kaydet, ilerle });
+    $('ilerleme').textContent = `hazır · ${((performance.now() - t0) / 1000).toFixed(1)} sn`; $('yukleme').classList.remove('acik'); $('oynat').disabled = false; $('degistir').disabled = false; $('zaman').disabled = false; $('zaman').max = kareler.length - 1; }
+  function yeniMac() { ayarlar = { tac: [$('tac0').value, $('tac1').value], oz: $('ozellik').value, len: +$('sure').value, beyin: $('beyin').value, tohum: +$('tohum').value || 1 }; len = ayarlar.len;
+    m = M.createMatch(ayarlar.tohum, { tac: [tacOf(STY[ayarlar.tac[0]]), tacOf(STY[ayarlar.tac[1]])], len });
+    if (ayarlar.oz === 'rastgele') { let r0 = ayarlar.tohum * 2654435761 >>> 0; const R = () => (r0 = (Math.imul(r0, 1664525) + 1013904223) >>> 0) / 4294967296; for (const p of m.ps) for (const k of Object.keys(p.a)) p.a[k] = 6 + Math.floor(R() * 11); }
+    kareler = []; olaylar = []; anlik = new Map(); kararlar = []; oynatT = 0; kaydet(m); $('ad0').textContent = 'Mavi · ' + ayarlar.tac[0]; $('ad1').textContent = 'Turuncu · ' + ayarlar.tac[1]; hesapla(0); }
+  async function degistir() { if (!m) return; const t = +$('dTakim').value, now = Math.floor(oynatT), snapT = Math.floor(now / 60) * 60, s = anlik.get(snapT); if (!s) return;
+    m = B.ac(structuredClone(s)); m.r = m.r; const tac = tacOf(STY[$('dTac').value]); m.tac[t] = tac; if (m.tacB) m.tacB[t] = { ...tac }; m._sonOlay = m.events[0];
+    kareler.length = snapT + 1; olaylar = olaylar.filter(o => o.tick <= snapT); kararlar = kararlar.filter(k => k.tick <= snapT); for (const k of [...anlik.keys()]) if (k > snapT) anlik.delete(k);
+    olaylar.push({ tick: snapT, type: 'taktik', team: t, text: `${t ? 'Turuncu' : 'Mavi'} taktiğini değiştirdi: ${$('dTac').value}` }); ayarlar.tac[t] = $('dTac').value; $(t ? 'ad1' : 'ad0').textContent = (t ? 'Turuncu · ' : 'Mavi · ') + ayarlar.tac[t];
+    oynatT = snapT; await hesapla(snapT); }
+  // ── çizim ─────────────────────────────────────────────────────────────
+  const cv = $('saha'), cx = cv.getContext('2d'), S = cv.width / W;
+  function ciz(f) { cx.fillStyle = '#2F6B3F'; cx.fillRect(0, 0, cv.width, cv.height); for (let k = 0; k < 10; k++) if (k % 2) { cx.fillStyle = '#2B6339'; cx.fillRect(k * 10 * S, 0, 10 * S, cv.height); }
+    cx.strokeStyle = 'rgba(255,255,255,.55)'; cx.lineWidth = 2; cx.strokeRect(1, 1, cv.width - 2, cv.height - 2); cx.beginPath(); cx.moveTo(50 * S, 0); cx.lineTo(50 * S, H * S); cx.stroke(); cx.beginPath(); cx.arc(50 * S, 25 * S, 6 * S, 0, 7); cx.stroke();
+    for (const kx of [0, W]) { cx.fillStyle = '#0E0D09'; cx.beginPath(); cx.arc(kx * S, 25 * S, K.KR * S, 0, 7); cx.fill(); }
+    if (!f) return; const hi = f[30];
+    for (let k = 0; k < 14; k++) { const x = f[2 * k] * S, y = f[2 * k + 1] * S, t = k < 7 ? 0 : 1, bek = m && m.ps[k] && m.ps[k].role === 'Bekçi';
+      cx.fillStyle = t ? (bek ? '#9C3510' : '#E0531F') : (bek ? '#122A99' : '#1F3FD1'); cx.beginPath(); cx.arc(x, y, 1.15 * S, 0, 7); cx.fill(); if (k === hi) { cx.strokeStyle = '#F6F3EC'; cx.lineWidth = 3; cx.stroke(); }
+      if (m && m.ps[k]) { cx.fillStyle = 'rgba(246,243,236,.9)'; cx.font = `${Math.round(.95 * S)}px JetBrains Mono, monospace`; cx.textAlign = 'center'; cx.fillText(m.ps[k].name.slice(0, 2), x, y - 1.6 * S); } }
+    if (!isNaN(f[28])) { const x = f[28] * S, y = f[29] * S; cx.fillStyle = '#F6F3EC'; cx.beginPath(); cx.arc(x, y, .55 * S, 0, 7); cx.fill(); cx.strokeStyle = `rgba(255,210,80,${.25 + .75 * f[31]})`; cx.lineWidth = 3; cx.beginPath(); cx.arc(x, y, (.55 + .7 * f[31]) * S, 0, 7); cx.stroke(); }
+    $('skor').textContent = `${f[32]} – ${f[33]}`; }
+  const mmss = t => { const s = Math.floor(t / 60); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+  let oynatT = 0, calis = false, son = performance.now(), sonOlayN = -1;
+  function olaylariGoster() { const t = Math.floor(oynatT), gor = olaylar.filter(o => o.tick <= t); if (gor.length === sonOlayN) return; sonOlayN = gor.length;
+    $('olaylar').innerHTML = gor.slice(-60).reverse().map(o => `<div class="olay ${o.type === 'sayi' ? 'sayi' : ''}"><span class="z mono">${mmss(o.tick)}</span><span style="color:${o.team === 1 ? '#B23E12' : o.team === 0 ? '#1F3FD1' : 'inherit'}">${o.text}</span></div>`).join('');
+    const k = [...kararlar].reverse().find(k => k.tick <= t); $('karar').textContent = k ? `${mmss(k.tick)} ${k.ad}: ` + k.aday.map((a, i) => `${i === k.secilen ? '▸' : ' '}${a.kind} ${a.v >= 0 ? '+' : ''}${a.v.toFixed(2)}`).join('  ') : '–'; }
+  function dongu(now) { const dt = (now - son) / 1000; son = now; if (calis && kareler.length) { oynatT = Math.min(kareler.length - 1, oynatT + dt * 60 * +$('hiz').value); if (oynatT >= kareler.length - 1) { calis = false; $('oynat').textContent = '▶'; } $('zaman').value = Math.floor(oynatT); }
+    const f = kareler[Math.floor(oynatT)]; ciz(f); $('saat').textContent = mmss(oynatT); olaylariGoster(); requestAnimationFrame(dongu); }
+  $('basla').onclick = () => { calis = false; $('oynat').textContent = '▶'; yeniMac(); };
+  $('oynat').onclick = () => { calis = !calis; $('oynat').textContent = calis ? '❚❚' : '▶'; };
+  $('zaman').oninput = e => { oynatT = +e.target.value; sonOlayN = -1; };
+  $('degistir').onclick = () => { calis = false; $('oynat').textContent = '▶'; degistir(); };
+  ciz(null); requestAnimationFrame(dongu);
+})();
+</script>
+</body>
+</html>
