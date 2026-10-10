@@ -5,8 +5,10 @@ const [dir, iS, kip, ayar] = process.argv.slice(2), i = +iS, seed = 130000 + i *
 const g = load(dir, seed), M = g.AlanMatch, D = g.AlanDecide.D, B = g.AlanBeyin;
 (0, eval)(fs.readFileSync(dir + '/vs-table.js', 'utf8')); (0, eval)(fs.readFileSync(dir + '/pas-table.js', 'utf8')); D.useVS = true; D._usePT = true;
 B.A.bak = kip === 'beyin';
+// FIZ_ESKI=1: v4e fizik eklemeleri kapalı (hazırlık yok: capHaz = 1; kontrol edilemeyen top gövdeden seker)
+if (process.env.FIZ_ESKI) { g.ALAN_KACIR = false; if (g.AlanCore.Q) g.AlanCore.Q.capHaz = 1; }
 // hazır ayarlar: kosaz = sadece top sahibi, gürültüsüz · hepsiz = hepsi, gürültüsüz · tam = hepsi + Okuma (varsayılan) · ya da JSON
-const HAZIR = { kosaz: { savunma: false, kovala: false, algi: 0, t0: .001, tOk: 0 }, hepsiz: { algi: 0, t0: .001, tOk: 0 }, tam: {}, orta: {}, hafif: { hafif: true }, hafifS: { hafif: true, SP: 60 }, hizli: { H: 20, HMAX: 60, SP: 45 }, ichafif: { icHafif: true }, eski: { algi: .12, t0: .02, tOk: .006 }, kosuyok: { kosu: false }, kaba: { uc: 'kaba' }, konum1: { icKonum: 1 } };
+const HAZIR = { kosaz: { savunma: false, kovala: false, algi: 0, t0: .001, tOk: 0 }, hepsiz: { algi: 0, t0: .001, tOk: 0 }, tam: {}, orta: {}, hafif: { hafif: true }, hafifS: { hafif: true, SP: 60 }, hizli: { H: 20, HMAX: 60, SP: 45 }, ichafif: { icHafif: true }, eski: { algi: .12, t0: .02, tOk: .006 }, kosuyok: { kosu: false }, kaba: { uc: 'kaba' }, konum1: { icKonum: 1 }, k3: { K: 3 }, r2: { R: 2 }, k6r2: { K: 6, R: 2 }, dn0: { DN: 0 } };
 if (ayar) Object.assign(B.A, HAZIR[ayar] || JSON.parse(ayar));
 let r0 = seed ^ 0x9e3779b9; const R = () => (r0 = (Math.imul(r0, 1664525) + 1013904223) >>> 0) / 4294967296, pick = a => a[Math.floor(R() * a.length)], ri = (a, b) => a + Math.floor(R() * (b - a + 1));
 const STY = { Dengeli: ['Alan', 1, 1, 'Orta', 'Normal', .5, .5, 'Dengeli'], Sabırlı: ['Alan', 1, 1, 'Orta', 'Geniş', .2, .2, 'Yerleş'], Dikine: ['Alan', 1, 1, 'Orta', 'Normal', .8, .8, 'Kontra'], Kontra: ['Alan', 0, 1, 'Düşük', 'Dar', .8, .8, 'Kontra'], 'Ön alan': ['Adam adama', 3, 1, 'Yüksek', 'Geniş', .5, .5, 'Dengeli'], 'Kuyu önü': ['Alan', 0, 2, 'Düşük', 'Dar', .2, .2, 'Yerleş'] };
@@ -20,7 +22,7 @@ if (process.env.OZ) { const [k, a, b] = process.env.OZ.split(','), j = KEYS.inde
 const TERS = !!process.env.TERS; if (TERS) { [A, Bn] = [Bn, A]; at.reverse(); }
 const m = M.createMatch(seed, { tac: [tacOf(STY[A]), tacOf(STY[Bn])], len: 5400 }); m.ps.forEach(p => KEYS.forEach((k, j) => p.a[k] = at[p.team][p.i ?? (p.id % 7)][j]));
 const t00 = Date.now(), pas = []; let ball = null, own = 0, pos = 0, plans = { karar: 0, kovala: 0, savunma: 0 }, rolls = 0;
-while (!m.over && m.tick < 5400) { const p = B.planla(m); if (p) { plans[p.tip]++; rolls += p.jobs.length; p.bitir(p.jobs.map(j => B.rollout(m, j))); } M.step(m);
+while (!m.over && m.tick < 5400) { let p = B.planla(m); while (p) { plans[p.tip] = (plans[p.tip] || 0) + 1; rolls += p.jobs.length; p = p.bitir(p.jobs.map(j => B.rollout(m, j))) || null; } M.step(m);
   if (m.ball && m.ball !== ball && m.ball.from && !m.ball.defl && m.ball.recv) { const k = m.kosu && m.kosu[m.ball.team]; pas.push({ team: m.ball.team, vx: m.ball.vx, first: null, kosucu: !!(k && k.id === m.ball.recv.id) }); } ball = m.ball;
   if (m.holder) { for (const q of pas) if (q.first == null) q.first = m.holder.team === q.team ? 1 : 0; pos++; if ((m.holder.team === 0 ? m.holder.x : 100 - m.holder.x) < 50) own++; } }
 const done = pas.filter(p => p.first != null), mean = f => done.length ? done.reduce((a, p) => a + f(p), 0) / done.length : 0;
