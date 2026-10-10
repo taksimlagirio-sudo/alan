@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0D09;color:#F6F3EC;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#8EA2FF}a:hover{color:#FFD25A}
+button,select,input{font:inherit;color:inherit}
+</style>
+<script src="alan-v5/kadro.js"></script>
+</helmet>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#17202A"></rect><circle cx="0" cy="50" r="14" fill="#050505"></circle><circle cx="100" cy="50" r="14" fill="#050505"></circle><circle cx="38" cy="38" r="6" fill="#3D5BF0"></circle><circle cx="38" cy="62" r="6" fill="#3D5BF0"></circle><circle cx="62" cy="50" r="6" fill="#E0531F"></circle><circle cx="50" cy="50" r="3" fill="#FFD25A"></circle></svg></template>
+<div style="min-height:100vh;display:flex;flex-direction:column;background:#0E0D09">
+  <header style="display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;padding:14px 22px;border-bottom:1px solid rgba(246,243,236,.1);background:#14130E">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;padding:5px 8px;border:1px solid rgba(246,243,236,.3)">ALAN</span>
+      <span style="font-size:15px;opacity:.7">Taktik</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;flex:1 1 380px;justify-content:center">
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:30px;height:30px;background:#3D5BF0;display:flex;align-items:center;justify-content:center;font-weight:800">L</span><span style="font-size:22px;font-weight:800">{{ bizAd }}</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:110px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:600;letter-spacing:.04em">{{ skor }}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:{{ durumRenk }}">{{ durum }}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="font-size:22px;font-weight:800">{{ rakipAd }}</span><span style="width:30px;height:30px;background:#E0531F;display:flex;align-items:center;justify-content:center;font-weight:800">{{ rakipHarf }}</span></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.75">{{ degisimTxt }}</span>
+      <button onClick="{{ ana }}" style="background:#FFD25A;color:#0E0D09;border:0;padding:11px 18px;font-weight:800;font-size:15px;cursor:pointer">{{ anaTxt }}</button>
+    </div>
+  </header>
+
+  <sc-if value="{{ oncesi }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-wrap:wrap;gap:8px;padding:12px 22px 0;align-items:center">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;opacity:.6">RAKİP</span>
+      <sc-for list="{{ rakipler }}" as="r" hint-placeholder-count="3">
+        <button onClick="{{ r.sec }}" style="display:flex;gap:8px;align-items:baseline;background:{{ r.bg }};border:1px solid {{ r.kenar }};padding:7px 12px;cursor:pointer"><span style="font-weight:700">{{ r.ad }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;opacity:.7">{{ r.ozet }}</span></button>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <main style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:18px;padding:16px 22px 28px;align-items:start">
+    <section style="display:flex;flex-direction:column;gap:12px;min-width:0">
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+        <sc-for list="{{ gorunum }}" as="g" hint-placeholder-count="2">
+          <button onClick="{{ g.sec }}" style="background:{{ g.bg }};color:{{ g.fg }};border:1px solid rgba(246,243,236,.25);padding:8px 14px;cursor:pointer;font-weight:600">{{ g.ad }}</button>
+        </sc-for>
+        <span style="flex:1"></span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;opacity:.6">başlangıç</span>
+        <sc-for list="{{ hazir }}" as="h" hint-placeholder-count="5">
+          <button onClick="{{ h.sec }}" style="background:transparent;border:1px solid rgba(246,243,236,.2);padding:5px 8px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px">{{ h.ad }}</button>
+        </sc-for>
+      </div>
+
+      <div ref="{{ sahaRef }}" onPointerMove="{{ pmove }}" onPointerUp="{{ pup }}" onPointerCancel="{{ pup }}" style="position:relative;aspect-ratio:2/1;background:#17202A;border:1px solid rgba(246,243,236,.18);overflow:hidden;touch-action:none;user-select:none">
+        <div style="position:absolute;left:50%;top:0;bottom:0;width:1.5px;background:rgba(246,243,236,.22)"></div>
+        <div style="position:absolute;left:-5.5%;top:39%;width:11%;height:22%;border-radius:50%;background:#050505"></div>
+        <div style="position:absolute;right:-5.5%;top:39%;width:11%;height:22%;border-radius:50%;background:#050505"></div>
+        <div style="position:absolute;left:0;top:44.5%;height:11%;width:3px;background:#F6F3EC"></div>
+        <div style="position:absolute;right:0;top:44.5%;height:11%;width:3px;background:#F6F3EC"></div>
+        <div style="position:absolute;left:{{ kutu.x }};width:{{ kutu.w }};top:7%;bottom:7%;border:1.5px dashed rgba(255,210,90,.6);background:rgba(255,210,90,.05)"></div>
+        <span style="position:absolute;left:{{ kutu.x }};top:8%;padding:3px 7px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#FFD25A">{{ kutu.ad }}</span>
+        <span style="position:absolute;right:2.5%;top:8%;font-family:'JetBrains Mono',monospace;font-size:11px;opacity:.75">hücum yönü →</span>
+        <sc-for list="{{ golgeler }}" as="o" hint-placeholder-count="6">
+          <span style="position:absolute;left:{{ o.x }};top:{{ o.y }};width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;border:2px solid #E0531F;background:rgba(224,83,31,.25)"></span>
+        </sc-for>
+        <sc-for list="{{ yerler }}" as="y" hint-placeholder-count="7">
+          <div onPointerDown="{{ y.down }}" style="position:absolute;left:{{ y.x }};top:{{ y.y }};transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:3px;cursor:{{ y.imlec }}">
+            <span style="width:40px;height:40px;border-radius:50%;background:{{ y.renk }};border:3px solid {{ y.kenar }};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;box-shadow:0 4px 14px rgba(0,0,0,.45)">{{ y.no }}</span>
+            <span style="background:rgba(11,10,7,.85);padding:2px 6px;font-size:13px;font-weight:600;white-space:nowrap">{{ y.ad }}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.04em;background:rgba(246,243,236,.92);color:#0E0D09;padding:1px 5px;white-space:nowrap">{{ y.rol }}</span>
+          </div>
+        </sc-for>
+        <span style="position:absolute;left:2.5%;bottom:8%;font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(11,10,7,.7);padding:4px 7px">{{ olcu }}</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;background:#17160F;border:1px solid rgba(246,243,236,.1);padding:12px 14px">
+        <sc-for list="{{ sekil }}" as="c" hint-placeholder-count="3">
+          <label style="display:flex;flex-direction:column;gap:6px">
+            <span style="display:flex;justify-content:space-between;gap:8px;font-size:14px"><span>{{ c.ad }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#FFD25A">{{ c.deger }}</span></span>
+            <input type="range" min="{{ c.min }}" max="{{ c.max }}" step="{{ c.step }}" value="{{ c.val }}" onChange="{{ c.set }}" style="width:100%;accent-color:#FFD25A">
+            <span style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10.5px;opacity:.6"><span>{{ c.sol }}</span><span>{{ c.sag }}</span></span>
+          </label>
+        </sc-for>
+      </div>
+      <span style="font-size:13px;opacity:.65;line-height:1.45">Oyuncuları sürükle: sahanın istediğin yerine koy. Kaydırıcılar bütün şekli birden açar ya da sıkıştırır. Turuncu halkalar rakibin aynı andaki şekli.</span>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:14px;min-width:0">
+      <div style="background:linear-gradient(180deg,#1A1912,#14130E);border:1px solid rgba(246,243,236,.12);padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;opacity:.6">TERCİHLERİNDEN ÇIKAN TARZ</span>
+        <span style="font-size:26px;font-weight:800;line-height:1.1;letter-spacing:-.01em;text-wrap:pretty">{{ tarzBaslik }}</span>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px 16px">
+          <sc-for list="{{ eksen }}" as="e" hint-placeholder-count="6">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <span style="display:flex;justify-content:space-between;font-size:13px"><span>{{ e.ad }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.75">{{ e.v }}</span></span>
+              <span style="height:6px;background:rgba(246,243,236,.1);position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ e.w }};background:#8EA2FF"></span></span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(246,243,236,.1);padding-top:10px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;opacity:.6">BU KURGUNUN BEDELİ</span>
+          <sc-for list="{{ bedel }}" as="b" hint-placeholder-count="2">
+            <span style="font-size:14px;line-height:1.4;display:flex;gap:8px"><span style="color:#E0531F">▲</span><span>{{ b }}</span></span>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:0;border-bottom:1px solid rgba(246,243,236,.15);overflow-x:auto">
+        <sc-for list="{{ sekmeler }}" as="s" hint-placeholder-count="4">
+          <button onClick="{{ s.sec }}" style="background:transparent;border:0;border-bottom:3px solid {{ s.alt }};padding:10px 14px;cursor:pointer;font-weight:700;font-size:15px;opacity:{{ s.op }};white-space:nowrap">{{ s.ad }}</button>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ oyuncuSekme }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <sc-for list="{{ oyuncular }}" as="p" hint-placeholder-count="7">
+              <button onClick="{{ p.sec }}" style="display:flex;align-items:center;gap:6px;background:{{ p.bg }};border:1px solid rgba(246,243,236,.2);padding:5px 9px 5px 5px;cursor:pointer"><span style="width:22px;height:22px;border-radius:50%;background:#3D5BF0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800">{{ p.no }}</span><span style="font-weight:600;font-size:14px">{{ p.ad }}</span></button>
+            </sc-for>
+          </div>
+          <div style="background:#17160F;border:1px solid rgba(246,243,236,.1);padding:14px 16px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap"><span style="font-size:22px;font-weight:800">{{ sp.ad }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.7">{{ sp.alt }}</span></div>
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px 12px">
+              <sc-for list="{{ sp.oz }}" as="z" hint-placeholder-count="8">
+                <div style="display:flex;flex-direction:column;gap:3px"><span style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px"><span style="opacity:.7">{{ z.l }}</span><span>{{ z.v }}</span></span><span style="height:4px;background:rgba(246,243,236,.1);position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ z.w }};background:{{ z.c }}"></span></span></div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-for list="{{ gruplar }}" as="g" hint-placeholder-count="2">
+        <div style="background:#17160F;border:1px solid rgba(246,243,236,.1);padding:14px 16px;display:flex;flex-direction:column;gap:14px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;opacity:.6">{{ g.baslik }}</span>
+          <sc-for list="{{ g.items }}" as="c" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <span style="display:flex;justify-content:space-between;gap:8px;align-items:baseline;font-size:15px"><span style="display:flex;gap:7px;align-items:baseline"><span title="{{ c.motorAcik }}" style="font-size:10px;color:{{ c.motorRenk }}">{{ c.motor }}</span>{{ c.ad }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#FFD25A;text-align:right">{{ c.deger }}</span></span>
+              <sc-if value="{{ c.kaydir }}" hint-placeholder-val="{{ true }}">
+                <input type="range" min="{{ c.min }}" max="{{ c.max }}" step="{{ c.step }}" value="{{ c.val }}" onChange="{{ c.set }}" style="width:100%;accent-color:#8EA2FF">
+                <span style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10.5px;opacity:.6;gap:10px"><span>{{ c.sol }}</span><span style="text-align:right">{{ c.sag }}</span></span>
+              </sc-if>
+              <sc-if value="{{ c.secmeli }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;gap:4px;flex-wrap:wrap">
+                  <sc-for list="{{ c.ops }}" as="o" hint-placeholder-count="3">
+                    <button onClick="{{ o.sec }}" style="flex:1 1 auto;min-width:56px;background:{{ o.bg }};color:{{ o.fg }};border:1px solid rgba(246,243,236,.22);padding:7px 8px;cursor:pointer;font-size:14px">{{ o.ad }}</button>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ c.aciklama }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:12.5px;opacity:.6;line-height:1.4">{{ c.aciklama }}</span>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+
+      <div style="display:flex;flex-direction:column;gap:6px;border:1px solid rgba(246,243,236,.1);padding:12px 14px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;opacity:.6">MOTORA GİDEN (ALAN v5)</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.6;opacity:.85">{{ motorOzet }}</span>
+        <span style="font-size:12px;opacity:.55;line-height:1.4">● motor bu ayarı kullanıyor · ○ tasarımda var, motora henüz bağlı değil</span>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;mod&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Maç öncesi&quot;,&quot;Maç içi&quot;],&quot;default&quot;:&quot;Maç öncesi&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;golge&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const SL = str => { const rows = String(str).split('-').map(Number).filter(n => n > 0), R = rows.length, LS = { 1: [0], 2: [-.5, .5], 3: [-.8, 0, .8], 4: [-.9, -.3, .3, .9], 5: [-.9, -.45, 0, .45, .9] }, out = []; rows.forEach((n, k) => { const d = R > 1 ? .2 + .6 * k / (R - 1) : .45; for (const l of (LS[n] || LS[3])) out.push({ d, l }); }); return out.slice(0, 6); };
+const cl = (v, a, b) => Math.max(a, Math.min(b, v)), r2 = v => Math.round(v * 100) / 100;
+const HG = ['Oto', 'Kurucu', 'Serbest', 'Kanat', 'Koşucu', 'Pivot'], SG = ['Oto', 'Bölge', 'Süpürücü', 'Presçi', 'Markajcı', 'Önde'];
+const TET = ['Geri pas', 'Kanatta', 'Zayıf kontrol', 'Arkası dönük', 'Uzun pas havada'];
+const KEY = 'alan-v5-taktik';
+const VARS = () => ({ tab: 'huc', gor: 'sav', sel: 1, rakip: 1, dizilim: ['aras', 'deniz', 'mert', 'ece', 'cansu', 'kaan', 'tuna'],
+  shape: { sav: SL('2-2-2'), huc: SL('2-1-3') },
+  H: { pasSurme: .35, tempo: .55, risk: .5, sut: .4, sabir: .5 }, S: { sistem: 'Alan', blok: .5, pres: 1, arkada: 1, tetik: ['Geri pas', 'Kanatta'] },
+  G: { kazan: .55, kontra: 2, kayip: .6, kpSure: 3 }, P: {} });
+class Component extends DCLogic {
+  state = (() => { const v = VARS(); try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.shape && s.shape.sav && s.shape.sav.length === 6) return { ...v, ...s, sel: 1 }; } catch (e) {} return v; })();
+  sahaRef = React.createRef();
+  componentDidMount() { this.base = JSON.stringify(this.pick(this.state)); if (!window.ALAN_KADRO) { const t = setInterval(() => { if (window.ALAN_KADRO) { clearInterval(t); this.forceUpdate(); } }, 50); } }
+  pick(s) { return { shape: s.shape, H: s.H, S: s.S, G: s.G, P: s.P, dizilim: s.dizilim }; }
+  set(p) { this.setState(p, () => { const { sel, ...k } = this.state; try { localStorage.setItem(KEY, JSON.stringify(k)); } catch (e) {} }); }
+  up(k, kk, v) { this.set({ [k]: { ...this.state[k], [kk]: v } }); }
+  box(g) { if (g === 'huc') return [22, 92]; const b = this.state.S.blok, x0 = 7 + b * 22; return [x0, x0 + 46 + b * 8]; }
+  span(g, ax, target) { const sh = this.state.shape[g].map(s => ({ ...s })), vs = sh.map(s => s[ax]), lo = Math.min(...vs), hi = Math.max(...vs), mid = (lo + hi) / 2, sp = hi - lo; if (sp < .01) return; const k = target / sp; for (const s of sh) s[ax] = ax === 'd' ? cl(mid + (s.d - mid) * k, 0, 1) : cl(mid + (s.l - mid) * k, -1, 1); this.set({ shape: { ...this.state.shape, [g]: sh } }); }
+  pmove = e => { const dr = this.drag; if (!dr || !this.sahaRef.current) return; const R = this.sahaRef.current.getBoundingClientRect(), x = (e.clientX - R.left) / R.width * 100, y = (e.clientY - R.top) / R.height * 100; if (Math.hypot(e.clientX - dr.x0, e.clientY - dr.y0) > 4) dr.moved = true; if (!dr.moved) return; const g = this.state.gor, [a, b] = this.box(g), sh = this.state.shape[g].slice(); sh[dr.i - 1] = { d: r2(cl((x - a) / (b - a), 0, 1)), l: r2(cl((y - 50) / 40, -1, 1)) }; this.setState({ shape: { ...this.state.shape, [g]: sh } }); };
+  pup = () => { const dr = this.drag; if (!dr) return; this.drag = null; if (!dr.moved) this.setState({ sel: dr.i, tab: 'oyu' }); else this.set({}); };
+  pl(id) { return { hg: 'Oto', sg: 'Oto', ps: .5, rk: .5, kosu: 'Kalır', sut: .5, ...(this.state.P[id] || {}) }; }
+  roles() { const S = this.state, sv = S.shape.sav, hu = S.shape.huc, dMin = Math.min(...hu.map(s => s.d)), sMin = Math.min(...sv.map(s => s.d));
+    return [1, 2, 3, 4, 5, 6].map(i => { const P = this.pl(S.dizilim[i]), h = hu[i - 1], s = sv[i - 1];
+      const ho = P.hg !== 'Oto' ? P.hg : P.kosu === 'Derine' ? 'Koşucu' : h.d <= dMin + .02 && h.d < .4 ? 'Kurucu' : Math.abs(h.l) > .68 && h.d > .4 ? 'Kanat' : h.d > .72 && Math.abs(h.l) < .35 ? 'Pivot' : 'Serbest';
+      const so = P.sg !== 'Oto' ? P.sg : s.d <= sMin + .02 && s.d < .3 ? 'Süpürücü' : s.d > .82 ? 'Önde' : 'Bölge';
+      return { h: ho, s: so, hOto: P.hg === 'Oto', sOto: P.sg === 'Oto' }; }); }
+  tac() { const S = this.state, k3 = (v, a) => v < .34 ? a[0] : v < .67 ? a[1] : a[2], w = Math.max(...S.shape.huc.map(s => s.l)) - Math.min(...S.shape.huc.map(s => s.l));
+    return { sistem: S.S.sistem, pres: S.S.pres, arkada: S.S.arkada, blok: k3(S.S.blok, ['Düşük', 'Orta', 'Yüksek']), genislik: w < 1.1 ? 'Dar' : w < 1.55 ? 'Normal' : 'Geniş', tempo: r2(S.H.tempo), risk: r2(S.H.risk), kazaninca: k3(S.G.kazan, ['Yerleş', 'Dengeli', 'Kontra']) }; }
+  renderVals() {
+    const K = window.ALAN_KADRO, S = this.state, mac = /[?&]mac=1/.test(location.search) || this.props.mod === 'Maç içi';
+    const qs = new URLSearchParams(location.search), on = c => c ? ['#F6F3EC', '#0E0D09'] : ['transparent', '#F6F3EC'];
+    if (!K) return { bizAd: 'Liman', rakipAd: '…', rakipHarf: '', skor: '', durum: '', durumRenk: '#F6F3EC', degisimTxt: '', anaTxt: '…', oncesi: false, rakipler: [], gorunum: [], hazir: [], kutu: { x: '0%', w: '0%', ad: '' }, golgeler: [], yerler: [], olcu: '', sekil: [], tarzBaslik: '', eksen: [], bedel: [], sekmeler: [], oyuncuSekme: false, oyuncular: [], sp: { ad: '', alt: '', oz: [] }, gruplar: [], motorOzet: '', sahaRef: this.sahaRef, pmove: this.pmove, pup: this.pup, ana: () => {} };
+    const R = K.RAKIP[S.rakip], P = id => K.KADRO.find(k => k.id === id), g = S.gor, [bx0, bx1] = this.box(g), sh = S.shape[g], rol = this.roles(), T = this.tac();
+    const pct = v => v.toFixed(1) + '%', XY = (s, a, b) => ({ x: pct(a + s.d * (b - a)), y: pct(50 + s.l * 40) });
+    // rakibin aynı andaki şekli (aynalanmış): biz savunurken onların hücum şekli, biz hücumdayken onların savunma bloğu
+    const rb = { 'Düşük': .2, 'Orta': .5, 'Yüksek': .8 }[R.tac.blok] ?? .5, ra = g === 'sav' ? [22, 92] : [7 + rb * 22, 7 + rb * 22 + 46 + rb * 8], rs = SL(g === 'sav' ? R.diz.huc : R.diz.sav);
+    const golgeler = this.props.golge === false ? [] : rs.map(s => ({ x: pct(100 - (ra[0] + s.d * (ra[1] - ra[0]))), y: pct(50 - s.l * 40) }));
+    const yerler = [{ x: '4.5%', y: '50%', i: 0 }].concat(sh.map((s, k) => ({ ...XY(s, bx0, bx1), i: k + 1 }))).map(q => { const p = P(S.dizilim[q.i]), r = q.i ? rol[q.i - 1] : null;
+      return { x: q.x, y: q.y, no: q.i ? String(q.i) : 'B', ad: p ? p.ad : '–', rol: q.i ? (g === 'sav' ? r.s : r.h) : 'Bekçi', renk: q.i ? '#3D5BF0' : '#22339C', kenar: q.i === S.sel ? '#FFD25A' : 'rgba(246,243,236,.85)', imlec: q.i ? 'grab' : 'pointer',
+        down: e => { if (!q.i) { this.setState({ sel: 0, tab: 'oyu' }); return; } this.drag = { i: q.i, x0: e.clientX, y0: e.clientY, moved: false }; if (this.sahaRef.current && this.sahaRef.current.setPointerCapture) try { this.sahaRef.current.setPointerCapture(e.pointerId); } catch (x) {} e.preventDefault(); } }; });
+    const dv = sh.map(s => s.d), lv = sh.map(s => s.l), dSp = Math.max(...dv) - Math.min(...dv), lSp = Math.max(...lv) - Math.min(...lv), br = v => `${Math.round(v)} br`;
+    const sekil = [
+      { ad: g === 'sav' ? 'Hatlar arası mesafe (savunma)' : 'Hatlar arası mesafe (hücum)', sol: 'sıkı', sag: 'açık', min: .15, max: 1, step: .01, val: r2(dSp), deger: br(dSp * (bx1 - bx0)), set: e => this.span(g, 'd', +e.target.value) },
+      { ad: g === 'sav' ? 'Savunma genişliği' : 'Hücum genişliği', sol: 'dar', sag: 'geniş', min: .3, max: 2, step: .01, val: r2(lSp), deger: br(lSp * 20), set: e => this.span(g, 'l', +e.target.value) }
+    ].concat(g === 'sav' ? [{ ad: 'Blok yüksekliği', sol: 'derin', sag: 'önde', min: 0, max: 1, step: .01, val: S.S.blok, deger: T.blok, set: e => this.up('S', 'blok', +e.target.value) }] : [{ ad: 'Oyuncular arası destek', sol: 'yakın', sag: 'uzak', min: .5, max: 1.5, step: .01, val: S.yk || 1, deger: `ort. ${br(this.ort(sh, bx1 - bx0))}`, set: e => { const v = +e.target.value; this.yay(g, v / (S.yk || 1), v); } }]);
+    // tarz: etiketten değil, tercihlerden
+    const H = S.H, D = S.S, G = S.G, ax = {
+      Baskı: D.pres / 3 * .45 + D.blok * .35 + G.kayip * .2,
+      Dikine: H.risk * .5 + G.kazan * .3 + H.tempo * .2,
+      Sabır: (1 - H.tempo) * .45 + (1 - H.risk) * .3 + H.sabir * .25,
+      Genişlik: cl((Math.max(...S.shape.huc.map(s => s.l)) - Math.min(...S.shape.huc.map(s => s.l))) / 1.9, 0, 1),
+      Sıkılık: cl(1 - ((Math.max(...S.shape.sav.map(s => s.d)) - Math.min(...S.shape.sav.map(s => s.d))) * .55 + (Math.max(...S.shape.sav.map(s => s.l)) - Math.min(...S.shape.sav.map(s => s.l))) / 2 * .45), 0, 1),
+      Bireysellik: H.pasSurme * .6 + H.sut * .4 };
+    const ph = { Baskı: ['önde basan', 'geride bekleyen'], Dikine: ['dikine giden', null], Sabır: ['topu döndüren, sabırlı', null], Genişlik: ['sahayı genişleten', 'içeriden oynayan'], Sıkılık: ['sıkı bloklu', 'aralıkları açık'], Bireysellik: ['sürmeye ve bireye dayanan', 'pasla ilerleyen'] };
+    const ent = Object.entries(ax).sort((a, b) => b[1] - a[1]), hi = ent.filter(([, v]) => v >= .58).slice(0, 2).map(([k]) => ph[k][0]).filter(Boolean), lo = ent.slice().reverse().find(([k, v]) => v <= .38 && ph[k][1]);
+    const parts = hi.concat(lo ? [ph[lo[0]][1]] : []), tarzBaslik = parts.length ? parts.join(', ').replace(/^./, c => c.toUpperCase()) + ' bir takım' : 'Dengeli, her şeyden biraz';
+    const bedel = []; if (D.blok > .6 && D.arkada <= 1) bedel.push(`Blok önde, arkada ${D.arkada} kişi: savunmanın arkası uzun topa açık.`); if (D.pres >= 2 && dSp > .55 && g) bedel.push('İki kişi basıyor, hatlar açık: presçilerin arkasında boşluk kalır.'); if (ax.Sıkılık > .62) bedel.push('Savunma sıkı: kanatlar ve uzak direk tarafı boş kalır.');
+    if (G.kazan > .66 && D.arkada === 0) bedel.push('Kazanınca herkes çıkıyor: top kaybında geri dönüş uzun.'); if (H.tempo > .65 && H.risk > .6) bedel.push('Hızlı ve riskli: daha çok pozisyon, daha çok top kaybı.'); if (H.tempo < .35 && H.risk < .4) bedel.push('Yavaş ve güvenli: top kaybı az, ama rakip bloğu yerleşir.'); if (G.kayip > .7 && D.arkada <= 1) bedel.push('Kaybedince hemen basıyor: ilk pası kıran rakip boş alana çıkar.'); if (!bedel.length) bedel.push('Belirgin bir zaaf yok; belirgin bir silah da yok.');
+    // ayar kontrolleri
+    const M = (b, x) => ({ motor: b ? '●' : '○', motorRenk: b ? '#8EA2FF' : 'rgba(246,243,236,.45)', motorAcik: b ? 'Motor bu ayarı kullanıyor' : 'Tasarımda var, motora henüz bağlı değil', ...x });
+    const kay = (b, ad, val, set, sol, sag, deger, ek) => M(b, { kaydir: true, secmeli: false, aciklama: (ek && ek.aciklama) || '', ad, val, set, sol, sag, deger, min: (ek && ek.min) ?? 0, max: (ek && ek.max) ?? 1, step: (ek && ek.step) ?? .01, ops: [] });
+    const sec = (b, ad, vals, cur, set, deger, labs, aciklama, multi) => M(b, { kaydir: false, secmeli: true, aciklama: aciklama || '', ad, deger: deger || '', ops: vals.map((v, i) => { const act = multi ? cur.includes(v) : cur === v, [bg, fg] = on(act); return { ad: labs ? labs[i] : String(v), bg, fg, sec: () => set(v) }; }) });
+    const yz = v => `%${Math.round(v * 100)}`;
+    let gruplar = [];
+    if (S.tab === 'huc') gruplar = [
+      { baslik: 'TOPLA NE YAPILIR', items: [kay(false, 'Pas ↔ Top sürme', H.pasSurme, e => this.up('H', 'pasSurme', +e.target.value), 'önce pas', 'önce sür', H.pasSurme < .4 ? 'pas' : H.pasSurme > .6 ? 'sürme' : 'dengeli'),
+        kay(true, 'Top döndürme hızı', H.tempo, e => this.up('H', 'tempo', +e.target.value), 'topu tut, bekle', 'tek-iki dokunuş', yz(H.tempo), { aciklama: 'Taşıyıcının kararı ne kadar çabuk verdiği ve topu ne kadar kısa tuttuğu.' }),
+        kay(true, 'İleriyi düşünme', H.risk, e => this.up('H', 'risk', +e.target.value), 'güvenli pas', 'arkaya, çizgiyi kıran', yz(H.risk)),
+        kay(false, 'Sabır', H.sabir, e => this.up('H', 'sabir', +e.target.value), 'ilk açığı dene', 'rakibi üstüne çek', yz(H.sabir), { aciklama: 'Açık bir yol bulunana kadar topu dolaştırma isteği.' }),
+        kay(false, 'Gönderme eşiği', H.sut, e => this.up('H', 'sut', +e.target.value), 'yalnız net pozisyon', 'fırsat buldukça', yz(H.sut))] },
+      { baslik: 'ŞEKİL', items: [M(true, { kaydir: false, secmeli: false, ad: 'Hücum şekli sahada', deger: `${T.genislik} · ${br(dSp * 70)} derinlik`, aciklama: 'Hücum şeklini soldaki sahada "Topa sahipken" görünümünde sürükleyerek kur. Genişlik ve hat aralığı oradaki kaydırıcılarda.', ops: [] })] }];
+    if (S.tab === 'sav') gruplar = [
+      { baslik: 'NASIL SAVUNULUR', items: [sec(true, 'Savunma tarzı', ['Alan', 'Adam adama', 'Kenara sıkıştır'], D.sistem, v => this.up('S', 'sistem', v), '', ['Bölge', 'Adam adama', 'Kenara sıkıştır'], D.sistem === 'Alan' ? 'Herkes bölgesini tutar, topa göre kayar.' : D.sistem === 'Adam adama' ? 'Her oyuncu bir rakibi izler; rakip yer değiştirdikçe şekil dağılır.' : 'Taşıyıcıyı çizgiye iter, orada kapatır.'),
+        sec(true, 'Basan oyuncu sayısı', [0, 1, 2, 3], D.pres, v => this.up('S', 'pres', v), '', ['Kimse', '1', '2', '3']),
+        sec(false, 'Pres ne zaman tetiklenir', TET, D.tetik, v => this.up('S', 'tetik', D.tetik.includes(v) ? D.tetik.filter(x => x !== v) : D.tetik.concat([v])), `${D.tetik.length} tetik`, null, '', true),
+        sec(true, 'Arkada kalan', [0, 1, 2], D.arkada, v => this.up('S', 'arkada', v), '', ['Kimse', '1', '2'], 'Top bizde değilken bile ileri çıkmayan, son hattı tutan oyuncu sayısı.')] },
+      { baslik: 'ŞEKİL', items: [M(true, { kaydir: false, secmeli: false, ad: 'Savunma bloğu', deger: `${T.blok} · ${br(lSp * 20)} genişlik`, aciklama: 'Blok yüksekliği, darlık ve hat aralığı soldaki sahada "Top rakipteyken" görünümünde.', ops: [] })] }];
+    if (S.tab === 'gec') gruplar = [
+      { baslik: 'TOPU KAZANINCA', items: [kay(true, 'Geçiş hücumu', G.kazan, e => this.up('G', 'kazan', +e.target.value), 'topu sakla, yerleş', 'hemen ileri, kontra', T.kazaninca),
+        sec(false, 'Kontraya katılan', [1, 2, 3, 4], G.kontra, v => this.up('G', 'kontra', v), '', ['1', '2', '3', '4'], 'Kazanıldığı an çizginin arkasına koşu atan oyuncu sayısı.')] },
+      { baslik: 'TOPU KAYBEDİNCE', items: [kay(false, 'Geçiş savunması', G.kayip, e => this.up('G', 'kayip', +e.target.value), 'geri çekil, yerleş', 'hemen karşı pres', G.kayip < .34 ? 'geri çekil' : G.kayip < .67 ? 'en yakın basar' : 'karşı pres'),
+        kay(false, 'Karşı pres süresi', G.kpSure, e => this.up('G', 'kpSure', +e.target.value), '1 sn', '6 sn', `${G.kpSure} sn`, { min: 1, max: 6, step: 1, aciklama: 'Bu süre içinde top geri alınamazsa takım bloğuna döner.' })] }];
+    let sp = { ad: '', alt: '', oz: [] }, oyuncular = [];
+    if (S.tab === 'oyu') { const id = S.dizilim[S.sel], p = P(id), pp = this.pl(id), r = S.sel ? rol[S.sel - 1] : null;
+      oyuncular = S.dizilim.map((pid, i) => ({ no: i ? String(i) : 'B', ad: P(pid).ad, bg: i === S.sel ? 'rgba(61,91,240,.45)' : 'transparent', sec: () => this.setState({ sel: i }) }));
+      sp = { ad: p.ad, alt: `${S.sel ? S.sel + ' numara' : 'Bekçi'} · ${p.tip}`, oz: K.OZ.map(([k, l]) => ({ l, v: p.a[k], w: (p.a[k] / 20 * 100).toFixed(0) + '%', c: p.a[k] >= 14 ? '#FFD25A' : '#8EA2FF' })) };
+      const upP = (k, v) => this.set({ P: { ...S.P, [id]: { ...pp, [k]: v } } });
+      const yedek = K.KADRO.filter(k => (S.sel === 0) === (k.tip === 'Bekçi') && k.id !== id);
+      gruplar = [{ baslik: 'BU YERE OYUNCU', items: [sec(true, 'Kadro', yedek.map(k => k.id), null, v => { const d = S.dizilim.slice(), j = d.indexOf(v); if (j >= 0) d[j] = d[S.sel]; d[S.sel] = v; this.set({ dizilim: d }); }, '', yedek.map(k => k.ad + (S.dizilim.includes(k.id) ? ' ↔' : '')), '↔ sahada: yer değiştirir')] }];
+      if (S.sel) gruplar.push({ baslik: 'GÖREV', items: [sec(true, 'Topa sahipken', HG, pp.hg, v => upP('hg', v), r.hOto ? `konumdan: ${r.h}` : r.h, ['Otomatik', ...HG.slice(1)]), sec(true, 'Top rakipteyken', SG, pp.sg, v => upP('sg', v), r.sOto ? `konumdan: ${r.s}` : r.s, ['Otomatik', ...SG.slice(1)])] },
+        { baslik: 'EĞİLİMLER', items: [kay(false, 'Pas ↔ Top sürme', pp.ps, e => upP('ps', +e.target.value), 'önce pas', 'önce sür', yz(pp.ps)), kay(false, 'Risk', pp.rk, e => upP('rk', +e.target.value), 'güvenli', 'cesur', yz(pp.rk)),
+          sec(true, 'Topsuz koşu', ['Gelir', 'Kalır', 'Derine'], pp.kosu, v => upP('kosu', v), '', ['Topa gelir', 'Yerini tutar', 'Derine koşar'], 'Derine koşan oyuncu, görev otomatikse Koşucu olur.'), kay(false, 'Gönderme', pp.sut, e => upP('sut', +e.target.value), 'seçici', 'hevesli', yz(pp.sut))] }); }
+    const changed = mac && this.base && this.base !== JSON.stringify(this.pick(S));
+    const sekmeler = [['huc', 'Topa sahipken'], ['sav', 'Top rakipteyken'], ['gec', 'Geçişler'], ['oyu', 'Oyuncular']].map(([k, ad]) => ({ ad, alt: S.tab === k ? '#FFD25A' : 'transparent', op: S.tab === k ? 1 : .6, sec: () => this.setState({ tab: k, gor: k === 'huc' ? 'huc' : k === 'sav' ? 'sav' : S.gor }) }));
+    const out = () => ({ tac: T, diz: { sav: S.shape.sav, huc: S.shape.huc }, roller: rol.map(r => ({ h: r.h, s: r.s })) });
+    return {
+      bizAd: 'Liman', rakipAd: R.ad, rakipHarf: R.ad[0], skor: mac ? (qs.get('skor') || '0 – 0') : 'vs', durum: mac ? `CANLI · ${qs.get('dk') || '00:00'}` : 'MAÇ ÖNCESİ', durumRenk: mac ? '#FF6B5B' : 'rgba(246,243,236,.6)',
+      degisimTxt: mac ? (changed ? 'değişiklik var' : 'değişiklik yok') : '', anaTxt: mac ? 'Uygula, maça dön' : 'Maça çık →', oncesi: !mac,
+      ana: () => { const o = out(); if (mac) { window.parent.postMessage({ tip: 'alan-taktik', t: 0, ...o }, '*'); this.base = JSON.stringify(this.pick(S)); this.forceUpdate(); return; }
+        const biz = S.dizilim.map(id => { const p = P(id); return { ad: p.ad, a: p.a }; }), rk = R.oyuncular.map(([ad, a]) => ({ ad, a }));
+        localStorage.setItem('alan-v5-menajer', JSON.stringify({ ad: ['Liman', R.ad], tac: [T, R.tac], diz: [{ sav: '2-2-2', huc: '2-2-2' }, R.diz], dizArr: [o.diz, null], oyuncular: [biz, rk], roller: [o.roller, R.roller] })); window.location.href = 'canli.html?basla=1'; },
+      rakipler: K.RAKIP.map((r, i) => ({ ad: r.ad, ozet: `${r.diz.sav} / ${r.diz.huc} · ${r.tac.blok.toLowerCase()} blok · pres ${r.tac.pres}`, bg: i === S.rakip ? 'rgba(224,83,31,.22)' : 'transparent', kenar: i === S.rakip ? '#E0531F' : 'rgba(246,243,236,.2)', sec: () => this.set({ rakip: i }) })),
+      gorunum: [['huc', 'Topa sahipken'], ['sav', 'Top rakipteyken']].map(([k, ad]) => { const [bg, fg] = on(g === k); return { ad, bg, fg, sec: () => this.setState({ gor: k }) }; }),
+      hazir: (g === 'sav' ? ['2-2-2', '3-2-1', '2-3-1', '4-1-1', '3-1-2'] : ['2-1-3', '2-2-2', '1-3-2', '1-2-3', '3-1-2']).map(d => ({ ad: d, sec: () => this.set({ shape: { ...S.shape, [g]: SL(d) }, yk: 1 }) })),
+      kutu: { x: pct(bx0), w: pct(bx1 - bx0), ad: g === 'sav' ? `blok · ${T.blok.toLowerCase()}` : 'hücum şekli · topa göre ilerler' },
+      golgeler, yerler, sahaRef: this.sahaRef, pmove: this.pmove, pup: this.pup,
+      olcu: `hat aralığı ${br(dSp * (bx1 - bx0))} · genişlik ${br(lSp * 20)}`, sekil,
+      tarzBaslik, eksen: ent.map(([ad, v]) => ({ ad, v: String(Math.round(v * 100)), w: Math.round(v * 100) + '%' })), bedel: bedel.slice(0, 3),
+      sekmeler, oyuncuSekme: S.tab === 'oyu', oyuncular, sp, gruplar,
+      motorOzet: `sistem ${T.sistem} · pres ${T.pres} · arkada ${T.arkada} · blok ${T.blok} · genişlik ${T.genislik} · tempo ${T.tempo} · risk ${T.risk} · kazanınca ${T.kazaninca} · yerler: 6+6 serbest · görevler: ${rol.map(r => r.h[0] + '/' + r.s[0]).join(' ')}`
+    };
+  }
+  ort(sh, L) { let s = 0, n = 0; for (let i = 0; i < sh.length; i++) { let b = 1e9; for (let j = 0; j < sh.length; j++) if (i !== j) b = Math.min(b, Math.hypot((sh[i].d - sh[j].d) * L, (sh[i].l - sh[j].l) * 20)); s += b; n++; } return s / n; }
+  yay(g, k, yk) { const sh = this.state.shape[g].map(s => ({ ...s })), md = sh.reduce((a, s) => a + s.d, 0) / 6, ml = sh.reduce((a, s) => a + s.l, 0) / 6; for (const s of sh) { s.d = cl(md + (s.d - md) * k, 0, 1); s.l = cl(ml + (s.l - ml) * k, -1, 1); } this.set({ shape: { ...this.state.shape, [g]: sh }, yk }); }
+}
+</script>
+</body>
+</html>
