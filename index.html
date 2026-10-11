@@ -19,12 +19,12 @@ button,select,input{font:inherit;color:inherit}
 </helmet>
 <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#17202A"></rect><circle cx="0" cy="50" r="14" fill="#050505"></circle><circle cx="100" cy="50" r="14" fill="#050505"></circle><circle cx="38" cy="38" r="6" fill="#3D5BF0"></circle><circle cx="38" cy="62" r="6" fill="#3D5BF0"></circle><circle cx="62" cy="50" r="6" fill="#E0531F"></circle><circle cx="50" cy="50" r="3" fill="#FFD25A"></circle></svg></template>
 <div style="min-height:100vh;display:flex;flex-direction:column;background:#0E0D09">
-  <header style="display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;padding:14px 22px;border-bottom:1px solid rgba(246,243,236,.1);background:#14130E">
+  <header style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;padding:12px clamp(10px,3vw,22px);border-bottom:1px solid rgba(246,243,236,.1);background:#14130E">
     <div style="display:flex;align-items:center;gap:10px">
       <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;padding:5px 8px;border:1px solid rgba(246,243,236,.3)">ALAN</span>
       <span style="font-size:15px;opacity:.7">Taktik</span>
     </div>
-    <div style="display:flex;align-items:center;gap:14px;flex:1 1 380px;justify-content:center">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;flex:1 1 min(380px,100%);justify-content:center">
       <div style="display:flex;align-items:center;gap:10px"><span style="width:30px;height:30px;background:#3D5BF0;display:flex;align-items:center;justify-content:center;font-weight:800">L</span><span style="font-size:22px;font-weight:800">{{ bizAd }}</span></div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:110px">
         <span style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:600;letter-spacing:.04em">{{ skor }}</span>
@@ -47,7 +47,7 @@ button,select,input{font:inherit;color:inherit}
     </div>
   </sc-if>
 
-  <main style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:18px;padding:16px 22px 28px;align-items:start">
+  <main style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:clamp(10px,2vw,18px);padding:clamp(8px,2vw,16px) clamp(8px,3vw,22px) 28px;align-items:start">
     <section style="display:flex;flex-direction:column;gap:12px;min-width:0">
       <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
         <sc-for list="{{ gorunum }}" as="g" hint-placeholder-count="2">
@@ -60,7 +60,7 @@ button,select,input{font:inherit;color:inherit}
         </sc-for>
       </div>
 
-      <div ref="{{ sahaRef }}" onPointerMove="{{ pmove }}" onPointerUp="{{ pup }}" onPointerCancel="{{ pup }}" style="position:relative;aspect-ratio:2/1;background:#17202A;border:1px solid rgba(246,243,236,.18);overflow:hidden;touch-action:none;user-select:none">
+      <div ref="{{ sahaRef }}" onPointerMove="{{ pmove }}" onPointerUp="{{ pup }}" onPointerCancel="{{ pup }}" style="position:relative;aspect-ratio:2/1;touch-action:none;background:#17202A;border:1px solid rgba(246,243,236,.18);overflow:hidden;touch-action:none;user-select:none">
         <div style="position:absolute;left:50%;top:0;bottom:0;width:1.5px;background:rgba(246,243,236,.22)"></div>
         <div style="position:absolute;left:-5.5%;top:39%;width:11%;height:22%;border-radius:50%;background:#050505"></div>
         <div style="position:absolute;right:-5.5%;top:39%;width:11%;height:22%;border-radius:50%;background:#050505"></div>
@@ -82,7 +82,7 @@ button,select,input{font:inherit;color:inherit}
         <span style="position:absolute;left:2.5%;bottom:8%;font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(11,10,7,.7);padding:4px 7px">{{ olcu }}</span>
       </div>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;background:#17160F;border:1px solid rgba(246,243,236,.1);padding:12px 14px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:12px;background:#17160F;border:1px solid rgba(246,243,236,.1);padding:12px 14px">
         <sc-for list="{{ sekil }}" as="c" hint-placeholder-count="3">
           <label style="display:flex;flex-direction:column;gap:6px">
             <span style="display:flex;justify-content:space-between;gap:8px;font-size:14px"><span>{{ c.ad }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#FFD25A">{{ c.deger }}</span></span>
@@ -180,8 +180,8 @@ const TET = ['Geri pas', 'Kanatta', 'Zayıf kontrol', 'Arkası dönük', 'Uzun p
 const KEY = 'alan-v5-taktik';
 const VARS = () => ({ tab: 'huc', gor: 'sav', sel: 1, rakip: 1, dizilim: ['aras', 'deniz', 'mert', 'ece', 'cansu', 'kaan', 'tuna'],
   shape: { sav: SL('2-2-2'), huc: SL('2-1-3') },
-  H: { pasSurme: .35, tempo: .55, risk: .5, sut: .4, sabir: .5 }, S: { sistem: 'Alan', blok: .5, pres: 1, arkada: 1, tetik: ['Geri pas', 'Kanatta'] },
-  G: { kazan: .55, kontra: 2, kayip: .6, kpSure: 3 }, P: {} });
+  H: { pasSurme: .5, tempo: .55, risk: .5, sut: .5, sabir: .5 }, S: { sistem: 'Alan', blok: .5, pres: 1, arkada: 1, tetik: ['Geri pas', 'Kanatta'] },
+  G: { kazan: .55, kontra: 3, kayip: .6, kpSure: 3 }, P: {} });
 class Component extends DCLogic {
   state = (() => { const v = VARS(); try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.shape && s.shape.sav && s.shape.sav.length === 6) return { ...v, ...s, sel: 1 }; } catch (e) {} return v; })();
   sahaRef = React.createRef();
@@ -200,7 +200,7 @@ class Component extends DCLogic {
       const so = P.sg !== 'Oto' ? P.sg : s.d <= sMin + .02 && s.d < .3 ? 'Süpürücü' : s.d > .82 ? 'Önde' : 'Bölge';
       return { h: ho, s: so, hOto: P.hg === 'Oto', sOto: P.sg === 'Oto' }; }); }
   tac() { const S = this.state, k3 = (v, a) => v < .34 ? a[0] : v < .67 ? a[1] : a[2], w = Math.max(...S.shape.huc.map(s => s.l)) - Math.min(...S.shape.huc.map(s => s.l));
-    return { sistem: S.S.sistem, pres: S.S.pres, arkada: S.S.arkada, blok: k3(S.S.blok, ['Düşük', 'Orta', 'Yüksek']), genislik: w < 1.1 ? 'Dar' : w < 1.55 ? 'Normal' : 'Geniş', tempo: r2(S.H.tempo), risk: r2(S.H.risk), kazaninca: k3(S.G.kazan, ['Yerleş', 'Dengeli', 'Kontra']) }; }
+    return { sistem: S.S.sistem, pres: S.S.pres, arkada: S.S.arkada, blok: k3(S.S.blok, ['Düşük', 'Orta', 'Yüksek']), genislik: w < 1.1 ? 'Dar' : w < 1.55 ? 'Normal' : 'Geniş', tempo: r2(S.H.tempo), risk: r2(S.H.risk), kazaninca: k3(S.G.kazan, ['Yerleş', 'Dengeli', 'Kontra']), pasSurme: r2(S.H.pasSurme), sabir: r2(S.H.sabir), sut: r2(S.H.sut), tetik: S.S.tetik.slice(), kontraN: S.G.kontra, kayip: r2(S.G.kayip), kpSure: S.G.kpSure }; }
   renderVals() {
     const K = window.ALAN_KADRO, S = this.state, mac = /[?&]mac=1/.test(location.search) || this.props.mod === 'Maç içi';
     const qs = new URLSearchParams(location.search), on = c => c ? ['#F6F3EC', '#0E0D09'] : ['transparent', '#F6F3EC'];
@@ -238,23 +238,23 @@ class Component extends DCLogic {
     const yz = v => `%${Math.round(v * 100)}`;
     let gruplar = [];
     if (S.tab === 'huc') gruplar = [
-      { baslik: 'TOPLA NE YAPILIR', items: [kay(false, 'Pas ↔ Top sürme', H.pasSurme, e => this.up('H', 'pasSurme', +e.target.value), 'önce pas', 'önce sür', H.pasSurme < .4 ? 'pas' : H.pasSurme > .6 ? 'sürme' : 'dengeli'),
+      { baslik: 'TOPLA NE YAPILIR', items: [kay(true, 'Pas ↔ Top sürme', H.pasSurme, e => this.up('H', 'pasSurme', +e.target.value), 'önce pas', 'önce sür', H.pasSurme < .4 ? 'pas' : H.pasSurme > .6 ? 'sürme' : 'dengeli'),
         kay(true, 'Top döndürme hızı', H.tempo, e => this.up('H', 'tempo', +e.target.value), 'topu tut, bekle', 'tek-iki dokunuş', yz(H.tempo), { aciklama: 'Taşıyıcının kararı ne kadar çabuk verdiği ve topu ne kadar kısa tuttuğu.' }),
         kay(true, 'İleriyi düşünme', H.risk, e => this.up('H', 'risk', +e.target.value), 'güvenli pas', 'arkaya, çizgiyi kıran', yz(H.risk)),
-        kay(false, 'Sabır', H.sabir, e => this.up('H', 'sabir', +e.target.value), 'ilk açığı dene', 'rakibi üstüne çek', yz(H.sabir), { aciklama: 'Açık bir yol bulunana kadar topu dolaştırma isteği.' }),
-        kay(false, 'Gönderme eşiği', H.sut, e => this.up('H', 'sut', +e.target.value), 'yalnız net pozisyon', 'fırsat buldukça', yz(H.sut))] },
+        kay(true, 'Sabır', H.sabir, e => this.up('H', 'sabir', +e.target.value), 'ilk açığı dene', 'rakibi üstüne çek', yz(H.sabir), { aciklama: 'Açık bir yol bulunana kadar topu dolaştırma isteği.' }),
+        kay(true, 'Gönderme eşiği', H.sut, e => this.up('H', 'sut', +e.target.value), 'yalnız net pozisyon', 'fırsat buldukça', yz(H.sut))] },
       { baslik: 'ŞEKİL', items: [M(true, { kaydir: false, secmeli: false, ad: 'Hücum şekli sahada', deger: `${T.genislik} · ${br(dSp * 70)} derinlik`, aciklama: 'Hücum şeklini soldaki sahada "Topa sahipken" görünümünde sürükleyerek kur. Genişlik ve hat aralığı oradaki kaydırıcılarda.', ops: [] })] }];
     if (S.tab === 'sav') gruplar = [
       { baslik: 'NASIL SAVUNULUR', items: [sec(true, 'Savunma tarzı', ['Alan', 'Adam adama', 'Kenara sıkıştır'], D.sistem, v => this.up('S', 'sistem', v), '', ['Bölge', 'Adam adama', 'Kenara sıkıştır'], D.sistem === 'Alan' ? 'Herkes bölgesini tutar, topa göre kayar.' : D.sistem === 'Adam adama' ? 'Her oyuncu bir rakibi izler; rakip yer değiştirdikçe şekil dağılır.' : 'Taşıyıcıyı çizgiye iter, orada kapatır.'),
         sec(true, 'Basan oyuncu sayısı', [0, 1, 2, 3], D.pres, v => this.up('S', 'pres', v), '', ['Kimse', '1', '2', '3']),
-        sec(false, 'Pres ne zaman tetiklenir', TET, D.tetik, v => this.up('S', 'tetik', D.tetik.includes(v) ? D.tetik.filter(x => x !== v) : D.tetik.concat([v])), `${D.tetik.length} tetik`, null, '', true),
+        sec(true, 'Pres ne zaman tetiklenir', TET, D.tetik, v => this.up('S', 'tetik', D.tetik.includes(v) ? D.tetik.filter(x => x !== v) : D.tetik.concat([v])), `${D.tetik.length} tetik`, null, '', true),
         sec(true, 'Arkada kalan', [0, 1, 2], D.arkada, v => this.up('S', 'arkada', v), '', ['Kimse', '1', '2'], 'Top bizde değilken bile ileri çıkmayan, son hattı tutan oyuncu sayısı.')] },
       { baslik: 'ŞEKİL', items: [M(true, { kaydir: false, secmeli: false, ad: 'Savunma bloğu', deger: `${T.blok} · ${br(lSp * 20)} genişlik`, aciklama: 'Blok yüksekliği, darlık ve hat aralığı soldaki sahada "Top rakipteyken" görünümünde.', ops: [] })] }];
     if (S.tab === 'gec') gruplar = [
       { baslik: 'TOPU KAZANINCA', items: [kay(true, 'Geçiş hücumu', G.kazan, e => this.up('G', 'kazan', +e.target.value), 'topu sakla, yerleş', 'hemen ileri, kontra', T.kazaninca),
-        sec(false, 'Kontraya katılan', [1, 2, 3, 4], G.kontra, v => this.up('G', 'kontra', v), '', ['1', '2', '3', '4'], 'Kazanıldığı an çizginin arkasına koşu atan oyuncu sayısı.')] },
-      { baslik: 'TOPU KAYBEDİNCE', items: [kay(false, 'Geçiş savunması', G.kayip, e => this.up('G', 'kayip', +e.target.value), 'geri çekil, yerleş', 'hemen karşı pres', G.kayip < .34 ? 'geri çekil' : G.kayip < .67 ? 'en yakın basar' : 'karşı pres'),
-        kay(false, 'Karşı pres süresi', G.kpSure, e => this.up('G', 'kpSure', +e.target.value), '1 sn', '6 sn', `${G.kpSure} sn`, { min: 1, max: 6, step: 1, aciklama: 'Bu süre içinde top geri alınamazsa takım bloğuna döner.' })] }];
+        sec(true, 'Kontraya katılan', [1, 2, 3, 4], G.kontra, v => this.up('G', 'kontra', v), '', ['1', '2', '3', '4'], 'Kazanıldığı an çizginin arkasına koşu atan oyuncu sayısı.')] },
+      { baslik: 'TOPU KAYBEDİNCE', items: [kay(true, 'Geçiş savunması', G.kayip, e => this.up('G', 'kayip', +e.target.value), 'geri çekil, yerleş', 'hemen karşı pres', G.kayip < .34 ? 'geri çekil' : G.kayip < .67 ? 'en yakın basar' : 'karşı pres'),
+        kay(true, 'Karşı pres süresi', G.kpSure, e => this.up('G', 'kpSure', +e.target.value), '1 sn', '6 sn', `${G.kpSure} sn`, { min: 1, max: 6, step: 1, aciklama: 'Bu süre içinde top geri alınamazsa takım bloğuna döner.' })] }];
     let sp = { ad: '', alt: '', oz: [] }, oyuncular = [];
     if (S.tab === 'oyu') { const id = S.dizilim[S.sel], p = P(id), pp = this.pl(id), r = S.sel ? rol[S.sel - 1] : null;
       oyuncular = S.dizilim.map((pid, i) => ({ no: i ? String(i) : 'B', ad: P(pid).ad, bg: i === S.sel ? 'rgba(61,91,240,.45)' : 'transparent', sec: () => this.setState({ sel: i }) }));
@@ -263,11 +263,11 @@ class Component extends DCLogic {
       const yedek = K.KADRO.filter(k => (S.sel === 0) === (k.tip === 'Bekçi') && k.id !== id);
       gruplar = [{ baslik: 'BU YERE OYUNCU', items: [sec(true, 'Kadro', yedek.map(k => k.id), null, v => { const d = S.dizilim.slice(), j = d.indexOf(v); if (j >= 0) d[j] = d[S.sel]; d[S.sel] = v; this.set({ dizilim: d }); }, '', yedek.map(k => k.ad + (S.dizilim.includes(k.id) ? ' ↔' : '')), '↔ sahada: yer değiştirir')] }];
       if (S.sel) gruplar.push({ baslik: 'GÖREV', items: [sec(true, 'Topa sahipken', HG, pp.hg, v => upP('hg', v), r.hOto ? `konumdan: ${r.h}` : r.h, ['Otomatik', ...HG.slice(1)]), sec(true, 'Top rakipteyken', SG, pp.sg, v => upP('sg', v), r.sOto ? `konumdan: ${r.s}` : r.s, ['Otomatik', ...SG.slice(1)])] },
-        { baslik: 'EĞİLİMLER', items: [kay(false, 'Pas ↔ Top sürme', pp.ps, e => upP('ps', +e.target.value), 'önce pas', 'önce sür', yz(pp.ps)), kay(false, 'Risk', pp.rk, e => upP('rk', +e.target.value), 'güvenli', 'cesur', yz(pp.rk)),
-          sec(true, 'Topsuz koşu', ['Gelir', 'Kalır', 'Derine'], pp.kosu, v => upP('kosu', v), '', ['Topa gelir', 'Yerini tutar', 'Derine koşar'], 'Derine koşan oyuncu, görev otomatikse Koşucu olur.'), kay(false, 'Gönderme', pp.sut, e => upP('sut', +e.target.value), 'seçici', 'hevesli', yz(pp.sut))] }); }
+        { baslik: 'EĞİLİMLER', items: [kay(true, 'Pas ↔ Top sürme', pp.ps, e => upP('ps', +e.target.value), 'önce pas', 'önce sür', yz(pp.ps)), kay(true, 'Risk', pp.rk, e => upP('rk', +e.target.value), 'güvenli', 'cesur', yz(pp.rk)),
+          sec(true, 'Topsuz koşu', ['Gelir', 'Kalır', 'Derine'], pp.kosu, v => upP('kosu', v), '', ['Topa gelir', 'Yerini tutar', 'Derine koşar'], 'Derine koşan oyuncu, görev otomatikse Koşucu olur.'), kay(true, 'Gönderme', pp.sut, e => upP('sut', +e.target.value), 'seçici', 'hevesli', yz(pp.sut))] }); }
     const changed = mac && this.base && this.base !== JSON.stringify(this.pick(S));
     const sekmeler = [['huc', 'Topa sahipken'], ['sav', 'Top rakipteyken'], ['gec', 'Geçişler'], ['oyu', 'Oyuncular']].map(([k, ad]) => ({ ad, alt: S.tab === k ? '#FFD25A' : 'transparent', op: S.tab === k ? 1 : .6, sec: () => this.setState({ tab: k, gor: k === 'huc' ? 'huc' : k === 'sav' ? 'sav' : S.gor }) }));
-    const out = () => ({ tac: T, diz: { sav: S.shape.sav, huc: S.shape.huc }, roller: rol.map(r => ({ h: r.h, s: r.s })) });
+    const out = () => ({ tac: T, diz: { sav: S.shape.sav, huc: S.shape.huc }, roller: rol.map((r, i) => { const pp = this.pl(S.dizilim[i + 1]); return { h: r.h, s: r.s, eg: { ps: pp.ps, rk: pp.rk } }; }) });
     return {
       bizAd: 'Liman', rakipAd: R.ad, rakipHarf: R.ad[0], skor: mac ? (qs.get('skor') || '0 – 0') : 'vs', durum: mac ? `CANLI · ${qs.get('dk') || '00:00'}` : 'MAÇ ÖNCESİ', durumRenk: mac ? '#FF6B5B' : 'rgba(246,243,236,.6)',
       degisimTxt: mac ? (changed ? 'değişiklik var' : 'değişiklik yok') : '', anaTxt: mac ? 'Uygula, maça dön' : 'Maça çık →', oncesi: !mac,

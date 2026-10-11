@@ -7,17 +7,17 @@ self.ALAN_OKC = function (p, ch) { const v = (p && p.a && p.a.okuma) ?? 10, E = 
 (function () {
   // Math.hypot ile bit bit aynı sonucu veren iki argümanlı sürüm (V8'in kendi algoritması: en büyüğe bölüp karelerin toplamı); yerleşik çağrıdan ~5 kat hızlı.
   const hyp = (x, y) => { x = x < 0 ? -x : x; y = y < 0 ? -y : y; if (x === Infinity || y === Infinity) return Infinity; const m = x > y ? x : y; if (m !== m || x !== x || y !== y) return NaN; if (m === 0) return 0; const a = x / m, b = y / m; return Math.sqrt(a * a + b * b) * m; };
-  const W = 100, H = 50, KR = 5.5, MOUTH = 2.75; // Kuyu: gövde yarıçapı ve ağzın yarı genişliği (ağız 5,5 birim)
+  const W = 100, H = 50, KR = 8, MOUTH = 4.25; /* Kuyu alanı yarıçapı 8 (Bekçi dışında kimse giremez), ağız 8,5 birim */
   // Çekirdek fiziği parametreleri. Hepsi deneme sahasından ayarlanabilir.
   const P = {
     fric: .010,     // temel sürtünme (tik başına hız oranı)
     roll: .003,     // sabit yuvarlanma yavaşlaması (birim/tik); Çekirdeğin gerçekten durmasını sağlar
-    oppDrag: .045,  // rakip alanında ek sürtünme (alan gücüyle çarpılır)
+    oppDrag: .07,  // rakip alanında ek sürtünme (alan gücüyle çarpılır)
     pierce: 1,      // şarjın rakip direncini ne kadar azalttığı (1 = tam şarj direnci sıfırlar)
     chgV: .9,       // şarjın başlangıç hızına katkısı: v0 × (1 - chgV/2 + chgV × şarj)
-    ownFlow: .4,    // kendi alanının sürtünmeyi ne kadar azalttığı
+    ownFlow: .55,    // kendi alanının sürtünmeyi ne kadar azalttığı
     attn: .003,     // yolda enerji kaybı (birim başına)
-    drain: .06,     // rakip alanında enerji kaybı (birim × alan gücü)
+    drain: .09,     // rakip alanında enerji kaybı (birim × alan gücü)
     deadRamp: .004, // sönünce her tik eklenen sürtünme (yumuşak fren)
     deadMax: .06,   // sönme freninin tavanı
     rest: .72,      // kenar sekmesinde kalan hız oranı
@@ -171,8 +171,8 @@ self.ALAN_OKC = function (p, ch) { const v = (p && p.a && p.a.okuma) ?? 10, E = 
     q = q || Q; rnd = rnd || Math.random; const sx = b.x - ox, sy = b.y - oy, sl = sx * sx + sy * sy; let best = null, bd = 1e9;
     for (const p of src) {
       if (p.noTouch || (b.cds && (b.cds.get(p) || 0) > b.t)) continue; if (p === b.from && b.t < 8) continue; if (b.recv && p.team === b.team && p !== b.recv && !b.defl) continue; // arkadaş başkasına giden pası bırakır
-      const t0 = sl > 0 ? ((p.x - ox) * sx + (p.y - oy) * sy) / sl : 1, tt = Math.max(0, Math.min(1, t0)), dd = hyp(ox + sx * tt - p.x, oy + sy * tt - p.y), R = oppReach(b, p, q, (p.role === 'Bekçi' && (!self.ALAN_BEK_ALAN || hyp(p.x - (p.team === 0 ? 0 : 100), p.y - 25) < self.ALAN_BEK_ALAN) ? bekR(b, p, q) : q.reach + (((p.a && p.a.yogunluk) ?? 10) - 10) * .04) * (t0 < 0 ? q.awayK : 1)); // kendisinden uzaklaşan Çekirdeğe ancak dibindeyse yetişir
-      if (dd < R && dd < bd) { bd = dd; best = p; }
+      const t0 = sl > 0 ? ((p.x - ox) * sx + (p.y - oy) * sy) / sl : 1, tt = Math.max(0, Math.min(1, t0)), dd = hyp(ox + sx * tt - p.x, oy + sy * tt - p.y), R = oppReach(b, p, q, (p.role === 'Bekçi' && (!self.ALAN_BEK_ALAN || hyp(p.x - (p.team === 0 ? 0 : 100), p.y - 25) < self.ALAN_BEK_ALAN) ? bekR(b, p, q) : q.reach + (((p.a && p.a.yogunluk) ?? 10) - 10) * .04) * (t0 < 0 ? q.awayK : 1)); const R2 = Math.max(R, 1.15); // kendisinden uzaklaşan Çekirdeğe ancak dibindeyse yetişir · v5: ama gövde yarıçapının (1,0) altına inmez; yoksa yanında koşan oyuncu, gövdesinden seken Çekirdeğe hiç dokunamıyordu (ikisi de topla süzülüyordu)
+      if (dd < R2 && dd < bd) { bd = dd; best = p; }
     }
     if (!best) return null;
     const T = touchCap(b, best, src, q), P = Math.max(.02, Math.min(.99, 1 / (1 + Math.exp((T.vr - T.cap) / T.s)))), u = rnd(), capE = T.cap + T.s * Math.log(u / (1 - u)); // bu dokunuşun gerçek kapasitesi (lojistik gürültü: ortalaması cap)
@@ -221,3 +221,15 @@ self.ALAN_OKC = function (p, ch) { const v = (p && p.a && p.a.okuma) ?? 10, E = 
       return C.sort((x, y) => x.cost - y.cost)[0]; } };
   window.AlanCore = { hyp, pack, rollTo, oppReach, Turn, touchCap, W, H, KR, MOUTH, P, Q, bekR, infl, K, makeGrid, gridS, chgMul, makeBall, stepBall, predict, solveLaunch, ctrlP, contact, stepAll, thruP };
 })();
+
+// v5 · Çekirdek gövdelerin içinden geçemez (süpürmeli çarpışma): bu tikteki yol (x0,y0)→(b.x,b.y) boyunca ilk değdiği gövdede durur.
+// Kontrol edemediği gövde (az önce dokunan, cds'de) Çekirdeği yanından kaçırır (sekmez, yüzeyden kayar); diğerlerinden seker.
+window.AlanCore.govde = function (b, x0, y0, list, skip, R, E) { const sx = b.x - x0, sy = b.y - y0, L2 = sx * sx + sy * sy; let hit = null, ht = 2;
+  for (const p of list) { if (skip && skip(p)) continue; const fx = x0 - p.x, fy = y0 - p.y, c0 = fx * fx + fy * fy - R * R; let t;
+    if (c0 <= 0) t = 0; else { if (L2 < 1e-9) continue; const bb = fx * sx + fy * sy, disc = bb * bb - L2 * c0; if (disc < 0) continue; t = (-bb - Math.sqrt(disc)) / L2; if (t < 0 || t > 1) continue; }
+    if (t < ht) { ht = t; hit = p; } }
+  if (!hit) return null; let px = x0 + sx * ht, py = y0 + sy * ht, nx = px - hit.x, ny = py - hit.y, nl = Math.hypot(nx, ny); if (nl < 1e-4) { const vl = Math.hypot(b.vx, b.vy) || 1; nx = -b.vx / vl; ny = -b.vy / vl; nl = 1; } nx /= nl; ny /= nl;
+  b.x = hit.x + nx * R; b.y = hit.y + ny * R; const pvx = hit.vx || 0, pvy = hit.vy || 0, vn = (b.vx - pvx) * nx + (b.vy - pvy) * ny, kac = b.cds && b.cds.has(hit); /* göreli hız: oyuncu Çekirdeğe yürürse onu iter */
+  if (vn < 0) { if (kac) { b.vx -= vn * nx; b.vy -= vn * ny; } else { b.vx -= (1 + E) * vn * nx; b.vy -= (1 + E) * vn * ny; b.defl = true; } } return hit; };
+// oyuncular hareket ettikten sonra: boştaki Çekirdeğin içine giren gövde onu önüne iter (oyuncu topun içinden yürüyemez)
+window.AlanCore.govdeIt = function (b, list, skip, R) { for (const p of list) { if (skip && skip(p)) continue; const dx = b.x - p.x, dy = b.y - p.y, d = Math.hypot(dx, dy); if (d >= R) continue; const vl = Math.hypot(p.vx || 0, p.vy || 0), nx = d > 1e-3 ? dx / d : (vl > 1e-3 ? p.vx / vl : 1), ny = d > 1e-3 ? dy / d : (vl > 1e-3 ? p.vy / vl : 0); b.x = p.x + nx * R; b.y = p.y + ny * R; const vn = (b.vx - (p.vx || 0)) * nx + (b.vy - (p.vy || 0)) * ny; if (vn < 0) { b.vx -= vn * nx; b.vy -= vn * ny; } } };

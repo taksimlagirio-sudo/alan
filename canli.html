@@ -19,36 +19,69 @@ button,select,input{font:inherit;color:inherit}
 <script src="alan-v5/core.js"></script>
 </helmet>
 <div style="min-height:100vh;display:flex;flex-direction:column;background:#0E0D09">
-  <header style="display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:14px;padding:12px 22px;border-bottom:1px solid rgba(246,243,236,.1);background:#14130E">
+  <header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 14px;padding:10px clamp(10px,3vw,22px);border-bottom:1px solid rgba(246,243,236,.1);background:#14130E">
     <div style="display:flex;align-items:center;gap:10px;min-width:0">
       <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;padding:5px 8px;border:1px solid rgba(246,243,236,.3)">ALAN</span>
       <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:{{ durumRenk }}">{{ durum }}</span>
     </div>
     <div style="display:flex;align-items:center;gap:16px">
-      <div style="display:flex;align-items:center;gap:10px"><span style="font-size:24px;font-weight:800">{{ ad0 }}</span><span style="width:30px;height:30px;background:#3D5BF0;display:flex;align-items:center;justify-content:center;font-weight:800">{{ harf0 }}</span></div>
-      <div style="display:flex;flex-direction:column;align-items:center;min-width:120px;background:#0B0A07;border:1px solid rgba(246,243,236,.14);padding:6px 14px">
-        <span style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:600;line-height:1">{{ skor }}</span>
+      <div style="display:flex;align-items:center;gap:10px"><span style="font-size:clamp(15px,4vw,24px);font-weight:800">{{ ad0 }}</span><span style="width:30px;height:30px;background:#3D5BF0;display:flex;align-items:center;justify-content:center;font-weight:800">{{ harf0 }}</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;min-width:92px;background:#0B0A07;border:1px solid rgba(246,243,236,.14);padding:6px 12px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:clamp(24px,7vw,34px);font-weight:600;line-height:1">{{ skor }}</span>
         <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#FFD25A;margin-top:3px">{{ saat }}</span>
       </div>
-      <div style="display:flex;align-items:center;gap:10px"><span style="width:30px;height:30px;background:#E0531F;display:flex;align-items:center;justify-content:center;font-weight:800">{{ harf1 }}</span><span style="font-size:24px;font-weight:800">{{ ad1 }}</span></div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:30px;height:30px;background:#E0531F;display:flex;align-items:center;justify-content:center;font-weight:800">{{ harf1 }}</span><span style="font-size:clamp(15px,4vw,24px);font-weight:800">{{ ad1 }}</span></div>
     </div>
     <div style="display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap">
+      <button onClick="{{ kayit }}" style="background:{{ kayitBg }};border:1px solid rgba(246,243,236,.25);padding:9px 12px;cursor:pointer;font-size:14px">{{ kayitTxt }}</button>
+      <sc-if value="{{ kayitUrl }}" hint-placeholder-val="{{ false }}">
+        <a href="{{ kayitUrl }}" download="{{ kayitAd }}" style="display:flex;align-items:center;color:#FFD25A;border:1px solid #FFD25A;padding:9px 12px;text-decoration:none;font-size:14px">Kaydı indir</a>
+      </sc-if>
       <button onClick="{{ sesDegis }}" style="background:transparent;border:1px solid rgba(246,243,236,.25);padding:9px 12px;cursor:pointer;font-size:14px">{{ sesTxt }}</button>
+      <button onClick="{{ taktikeGit }}" style="background:transparent;border:1px solid rgba(246,243,236,.25);padding:9px 12px;cursor:pointer;font-size:14px">Rakip seç</button>
+      <button onClick="{{ yeniMac }}" style="background:transparent;border:1px solid rgba(246,243,236,.25);padding:9px 12px;cursor:pointer;font-size:14px">Yeni maç</button>
       <button onClick="{{ taktikAc }}" style="background:#FFD25A;color:#0E0D09;border:0;padding:10px 16px;font-weight:800;font-size:15px;cursor:pointer">Taktik</button>
     </div>
   </header>
 
-  <main style="display:flex;flex-wrap:wrap;gap:18px;padding:16px 22px 26px;align-items:flex-start">
-    <section style="display:flex;flex-direction:column;gap:10px;min-width:0;flex:2.1 1 560px">
-      <div ref="{{ kapRef }}" style="position:relative;border:1px solid rgba(246,243,236,.14);background:#0C0C0A;overflow:hidden;aspect-ratio:2/1.12">
+  <main style="display:flex;flex-wrap:wrap;gap:clamp(10px,2vw,18px);padding:clamp(8px,2vw,16px) clamp(8px,3vw,22px) 26px;align-items:flex-start">
+    <section style="display:flex;flex-direction:column;gap:10px;min-width:0;flex:2.1 1 min(560px,100%)">
+      <div ref="{{ kapRef }}" style="position:{{ kapPos }};inset:{{ kapInset }};z-index:{{ kapZ }};border:1px solid rgba(246,243,236,.14);background:#0C0C0A;overflow:hidden;aspect-ratio:{{ kapOran }}">
+        <sc-if value="{{ tamEkran }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:8;display:flex;align-items:center;gap:12px;background:rgba(11,10,7,.85);border:1px solid rgba(246,243,236,.18);padding:6px 14px">
+            <span style="font-weight:800;font-size:clamp(13px,3vw,18px)">{{ ad0 }}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:clamp(20px,5vw,28px);font-weight:600">{{ skor }}</span>
+            <span style="font-weight:800;font-size:clamp(13px,3vw,18px)">{{ ad1 }}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#FFD25A">{{ saat }}</span>
+          </div>
+          <div style="position:absolute;right:12px;bottom:12px;z-index:8;display:flex;gap:8px">
+            <button onClick="{{ oynat }}" style="min-width:48px;height:48px;background:#F6F3EC;color:#0E0D09;border:0;cursor:pointer;font-size:18px;font-weight:800">{{ oynatTxt }}</button>
+            <button onClick="{{ tamEkranDegis }}" style="height:48px;padding:0 16px;background:rgba(11,10,7,.85);border:1px solid rgba(246,243,236,.3);cursor:pointer;font-size:14px">Çık</button>
+          </div>
+        </sc-if>
         <div style="position:absolute;inset:0;perspective:1500px;perspective-origin:50% 0%">
-          <canvas ref="{{ cvRef }}" width="1960" height="980" style="position:absolute;left:4%;top:9%;width:92%;height:auto;aspect-ratio:2/1;transform:rotateX(34deg);transform-origin:50% 0%;display:block"></canvas>
+          <canvas ref="{{ cvRef }}" width="1960" height="980" style="position:absolute;left:7%;top:4%;width:86%;height:auto;aspect-ratio:2/1;transform:rotateX(28deg);transform-origin:50% 0%;display:block"></canvas>
         </div>
         <sc-if value="{{ topSahibi }}" hint-placeholder-val="{{ false }}">
           <div style="position:absolute;left:14px;bottom:14px;display:flex;align-items:center;gap:8px;background:rgba(11,10,7,.82);padding:6px 10px 6px 6px">
             <span style="width:6px;align-self:stretch;background:{{ tsRenk }}"></span>
             <span style="font-weight:700;font-size:15px">{{ tsAd }}</span>
             <span style="font-family:'JetBrains Mono',monospace;font-size:11px;opacity:.75">{{ tsAlt }}</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ bitti }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(14,13,9,.86);padding:20px;text-align:center">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;opacity:.6">MAÇ SONU</span>
+            <div style="display:flex;align-items:center;gap:22px">
+              <span style="font-size:22px;font-weight:800;color:#8EA2FF">{{ bizAdB }}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:54px;font-weight:600">{{ sonSkor }}</span>
+              <span style="font-size:22px;font-weight:800;color:#FF8A5C">{{ rakipAdB }}</span>
+            </div>
+            <span style="font-size:17px;font-weight:600;color:#FFD25A">{{ sonuc }}</span>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+              <button onClick="{{ yeniMac }}" style="background:#FFD25A;color:#0E0D09;border:0;padding:12px 20px;font-weight:800;font-size:16px;cursor:pointer">Yeni maç · aynı kurulum</button>
+              <button onClick="{{ taktikeGit }}" style="background:transparent;border:1px solid rgba(246,243,236,.3);padding:12px 18px;cursor:pointer;font-size:15px">Rakibi ya da taktiği değiştir →</button>
+            </div>
           </div>
         </sc-if>
         <sc-if value="{{ kapi }}" hint-placeholder-val="{{ false }}">
@@ -64,16 +97,16 @@ button,select,input{font:inherit;color:inherit}
         </sc-if>
         <sc-if value="{{ yukleniyor }}" hint-placeholder-val="{{ true }}">
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(14,13,9,.82)">
-            <span style="font-size:24px;font-weight:800">{{ yukBaslik }}</span>
+            <span style="font-size:clamp(15px,4vw,24px);font-weight:800">{{ yukBaslik }}</span>
             <div style="width:min(70%,360px);height:4px;background:rgba(246,243,236,.15);position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:{{ yukPct }};background:#FFD25A"></div></div>
             <span style="font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.7">maç izlemenin önünde oynanıyor · sonucu göstermez</span>
           </div>
         </sc-if>
       </div>
 
-      <div style="display:flex;align-items:center;gap:12px;background:#17160F;border:1px solid rgba(246,243,236,.1);padding:10px 12px">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;background:#17160F;border:1px solid rgba(246,243,236,.1);padding:10px 12px">
         <button onClick="{{ oynat }}" style="width:42px;height:42px;background:#F6F3EC;color:#0E0D09;border:0;cursor:pointer;font-size:16px;font-weight:800;flex:none">{{ oynatTxt }}</button>
-        <div onClick="{{ ara }}" ref="{{ zamanRef }}" style="position:relative;flex:1;height:28px;cursor:pointer">
+        <div onClick="{{ ara }}" ref="{{ zamanRef }}" style="position:relative;flex:1 1 180px;min-width:140px;height:28px;cursor:pointer">
           <div style="position:absolute;left:0;right:0;top:12px;height:4px;background:rgba(246,243,236,.1)"></div>
           <div style="position:absolute;left:0;top:12px;height:4px;width:{{ hazirPct }};background:rgba(246,243,236,.28)"></div>
           <div style="position:absolute;left:0;top:12px;height:4px;width:{{ izlePct }};background:#FFD25A"></div>
@@ -83,13 +116,14 @@ button,select,input{font:inherit;color:inherit}
         </div>
         <div style="display:flex;gap:2px;flex:none">
           <sc-for list="{{ hizlar }}" as="h" hint-placeholder-count="4">
-            <button onClick="{{ h.sec }}" style="background:{{ h.bg }};color:{{ h.fg }};border:1px solid rgba(246,243,236,.2);padding:6px 9px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px">{{ h.ad }}</button>
+            <button onClick="{{ h.sec }}" style="background:{{ h.bg }};color:{{ h.fg }};border:1px solid rgba(246,243,236,.2);padding:6px 9px;min-height:36px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px">{{ h.ad }}</button>
           </sc-for>
         </div>
+        <button onClick="{{ tamEkranDegis }}" title="Tam ekran" style="flex:none;height:36px;padding:0 12px;background:transparent;border:1px solid rgba(246,243,236,.25);cursor:pointer;font-size:13px">⛶ Tam ekran</button>
       </div>
     </section>
 
-    <aside style="display:flex;flex-direction:column;gap:14px;min-width:0;flex:1 1 300px">
+    <aside style="display:flex;flex-direction:column;gap:14px;min-width:0;flex:1 1 min(300px,100%)">
       <div style="background:#17160F;border:1px solid rgba(246,243,236,.1);padding:14px 16px;display:flex;flex-direction:column;gap:12px">
         <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;opacity:.6">MAÇ</span>
         <sc-for list="{{ istat }}" as="s" hint-placeholder-count="5">
@@ -113,7 +147,7 @@ button,select,input{font:inherit;color:inherit}
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
         <sc-for list="{{ kadrolar }}" as="k" hint-placeholder-count="2">
           <div style="background:#17160F;border:1px solid rgba(246,243,236,.1);padding:12px 14px;display:flex;flex-direction:column;gap:4px">
             <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:{{ k.c }}">{{ k.ad }}</span>
@@ -142,31 +176,94 @@ class Component extends DCLogic {
   kareler = []; olaylar = []; ps = null; t = 0; len = 5400; gen = 0; hesapta = true; acildi = false; st = { k: -1, hold: [0, 0], pass: [0, 0], ok: [0, 0], kaz: [0, 0], gon: [0, 0], son: null }; golSon = 0;
   componentDidMount() { const go = () => { if (!window.ALAN_KADRO || !window.AlanCore) return setTimeout(go, 50); this.c = this.cfg(); if (/[?&]basla=1/.test(location.search)) this.basla(); else this.setState({ kapi: true }); this.loop(); }; go(); /* taktik ekranından "Maça çık" ile gelinmediyse maç başlamaz: önce kapı */
     this.onMsg = e => { const d = e.data; if (d && d.tip === 'alan-taktik') { this.setState({ taktik: false }); this.degistir(d); } }; addEventListener('message', this.onMsg); }
-  componentWillUnmount() { cancelAnimationFrame(this.raf); if (this.wk) this.wk.terminate(); removeEventListener('message', this.onMsg); }
+  // Tam ekran: tarayıcının gerçek tam ekranı (saha kutusu); desteklenmezse (iPhone Safari) saha kutusu ekranı kaplar. Skor ve oynat/çık düğmeleri sahanın üstünde
+  tamEkranDegis() { const kap = this.kapRef.current; if (this.state.tam) { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); this.setState({ tam: false, tamGercek: false }); return; }
+    if (!this._fsDin) { this._fsDin = () => { if (!document.fullscreenElement && this.state.tamGercek) this.setState({ tam: false, tamGercek: false }); }; document.addEventListener('fullscreenchange', this._fsDin); }
+    const req = kap && (kap.requestFullscreen || kap.webkitRequestFullscreen); if (req) { try { const r = req.call(kap); if (r && r.then) { r.then(() => this.setState({ tam: true, tamGercek: true })).catch(() => this.setState({ tam: true, tamGercek: false })); return; } this.setState({ tam: true, tamGercek: true }); return; } catch (e) {} } this.setState({ tam: true, tamGercek: false }); }
+  componentWillUnmount() { if (this._fsDin) document.removeEventListener('fullscreenchange', this._fsDin); cancelAnimationFrame(this.raf); if (this.wk) this.wk.terminate(); removeEventListener('message', this.onMsg); if (this.mr && this.mr.state !== 'inactive') this.mr.stop(); }
+  // Maç kaydı: sekmenin görüntüsünü (yayın kamerası, skor, efektler ve ses dahil) kaydeder. Tarayıcı izin ister; "bu sekme"yi seçmek yeterli. Desteklenmezse saha tuvalini (üstten görünüm) kaydeder.
+  async kayitDegis() { if (this.mr && this.mr.state === 'recording') { this.mr.stop(); return; }
+    let st = null; try { if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) st = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 30 }, audio: true, preferCurrentTab: true, selfBrowserSurface: 'include' }); } catch (e) { st = null; }
+    if (!st) { const cv = this.cvRef.current; if (!cv || !cv.captureStream) { alert('Bu tarayıcı kaydı desteklemiyor.'); return; } st = cv.captureStream(30); }
+    const types = ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp9', 'video/webm'], type = types.find(t => window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || '';
+    const chunks = [], mr = new MediaRecorder(st, type ? { mimeType: type, videoBitsPerSecond: 8e6 } : undefined); this.mr = mr;
+    mr.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+    mr.onstop = () => { st.getTracks().forEach(t => t.stop()); clearInterval(this.kayitTik); const t = mr.mimeType || type || 'video/webm', ext = t.includes('mp4') ? 'mp4' : 'webm'; if (this.state.kayitUrl) URL.revokeObjectURL(this.state.kayitUrl); this.setState({ kayitOn: false, kayitUrl: URL.createObjectURL(new Blob(chunks, { type: t })), kayitAd: `ALAN-${(this.c && this.c.ad ? this.c.ad.join('-') : 'mac').replace(/\s+/g, '')}-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')}.${ext}` }); };
+    st.getVideoTracks()[0] && st.getVideoTracks()[0].addEventListener('ended', () => { if (mr.state === 'recording') mr.stop(); });
+    mr.start(1000); this.kayitTik = setInterval(() => this.forceUpdate(), 1000); this.setState({ kayitOn: true, kayitT0: Date.now(), kayitUrl: null }); }
   cfg() { let c = null; try { c = JSON.parse(localStorage.getItem('alan-v5-menajer')); } catch (e) {} if (c && c.oyuncular) return c; const K = window.ALAN_KADRO, R = K.RAKIP[1], ids = ['aras', 'deniz', 'mert', 'ece', 'cansu', 'kaan', 'tuna'];
     return { ad: ['Liman', R.ad], tac: [{ sistem: 'Alan', pres: 1, arkada: 1, blok: 'Orta', genislik: 'Normal', tempo: .5, risk: .5, kazaninca: 'Dengeli' }, R.tac], diz: [{ sav: '2-2-2', huc: '2-1-3' }, R.diz], oyuncular: [ids.map(id => { const p = K.KADRO.find(k => k.id === id); return { ad: p.ad, a: p.a }; }), R.oyuncular.map(([ad, a]) => ({ ad, a }))], roller: [null, R.roller] }; }
-  basla() { const c = this.c = this.c || this.cfg(); this.wk = new Worker('alan-v5/mac-isci.js'); this.wk.postMessage({ tip: 'kur', NW: 1 }); this.wk.onmessage = e => this.al(e.data);
-    this.gen = 1; this.hesapta = true; this.wk.postMessage({ tip: 'yeni', gen: 1, tohum: 1 + Math.floor(Math.random() * 1e6), tac: c.tac, diz: [0, 1].map(t => (c.dizArr && c.dizArr[t]) || c.diz[t]), len: this.len, oz: '10', kadro: 1, oyuncular: c.oyuncular, roller: c.roller, ay: {} }); }
+  yeniMac() { if (this.wk) this.wk.terminate(); this.wk = null; this.kareler = []; this.olaylar = []; this.ps = null; this.t = 0; this.acildi = false; this.hesapta = true; this.golSon = 0; this.st = { k: -1, hold: [0, 0], pass: [0, 0], ok: [0, 0], kaz: [0, 0], gon: [0, 0], son: null }; this.c = this.cfg(); this.setState({ calis: false, kapi: false, taktik: false }); this.basla(); }
+  basla() { const c = this.c = this.c || this.cfg(); if (this.wk) this.wk.terminate(); this.wk = new Worker('alan-v5/mac-isci.js'); this.wk.postMessage({ tip: 'kur', NW: 1 }); this.wk.onmessage = e => this.al(e.data);
+    this.gen = 1; this.hesapta = true; const yeni = { tip: 'yeni', gen: 1, tohum: 1 + Math.floor(Math.random() * 1e6), tac: c.tac, diz: [0, 1].map(t => (c.dizArr && c.dizArr[t]) || c.diz[t]), len: this.len, oz: '10', kadro: 1, oyuncular: c.oyuncular, roller: c.roller, ay: {} };
+    /* maç kaydı (inceleme için): aynı tohum + aynı kurulum + aynı taktik değişiklikleri = aynı maç */ this.kayitMac = { tarih: new Date().toISOString(), ad: c.ad, yeni, degisiklik: [] }; try { localStorage.setItem('alan-v5-son-mac', JSON.stringify(this.kayitMac)); } catch (e) {} window.__alanMac = this;
+    this.wk.postMessage(yeni); }
   al(d) { if (d.tip === 'hata') { console.error(d.msg); return; } if (d.gen !== this.gen) return; if (d.tip === 'basla') { this.ps = d.ps; return; } if (d.tip !== 'kare') return;
     for (const [t, f] of d.kare) this.kareler[t] = f; if (d.olay.length) this.olaylar.push(...d.olay); if (d.son) this.hesapta = false;
     if (!this.acildi && (this.kareler.length - this.t >= .19 * (this.len - this.t) || !this.hesapta)) /* kalan maçın %19'u hesaplanınca başlar, gerisi arka planda */ { this.acildi = true; this.setState({ calis: true }); } }
   degistir(d) { const snapT = Math.floor(Math.floor(this.t) / 60) * 60; if (!this.kareler[snapT]) return; this.kareler.length = snapT + 1; this.olaylar = this.olaylar.filter(o => o.tick <= snapT); this.olaylar.push({ tick: snapT, type: 'taktik', team: 0, text: `${this.c.ad[0]} taktiğini değiştirdi` });
     this.t = snapT; this.st = { k: -1, hold: [0, 0], pass: [0, 0], ok: [0, 0], kaz: [0, 0], gon: [0, 0], son: null }; this.gen++; this.hesapta = true; this.acildi = false; this.golSon = snapT; this.setState({ calis: false });
-    this.wk.postMessage({ tip: 'degistir', gen: this.gen, snapT, t: d.t || 0, tac: d.tac, diz: d.diz, roller: d.roller, ay: {} }); }
+    const dm = { tip: 'degistir', gen: this.gen, snapT, t: d.t || 0, tac: d.tac, diz: d.diz, roller: d.roller, ay: {} }; if (this.kayitMac) { this.kayitMac.degisiklik = this.kayitMac.degisiklik.filter(x => x.snapT < snapT); this.kayitMac.degisiklik.push(dm); try { localStorage.setItem('alan-v5-son-mac', JSON.stringify(this.kayitMac)); } catch (e) {} }
+    this.wk.postMessage(dm); }
   istat(upto) { const S = this.st; for (let k = S.k + 1; k <= upto; k++) { const f = this.kareler[k]; if (!f) break; const hi = f[30]; if (hi >= 0) { const tm = hi < 7 ? 0 : 1; S.hold[tm]++; if (S.son && S.son.i !== hi) { if (S.son.tm === tm) { S.pass[tm]++; S.ok[tm]++; } else { S.pass[S.son.tm]++; S.kaz[tm]++; } } S.son = { i: hi, tm }; } S.k = k; }
     for (const o of this.olaylar) if (!o._g && o.tick <= upto && /gönderdi/.test(o.text || '')) { o._g = 1; const tm = this.ps && this.ps.find(p => (o.text || '').startsWith(p.name)); if (tm) S.gon[tm.team]++; } }
   loop() { let son = performance.now(); const f = now => { const dt = Math.min(.05, (now - son) / 1000); son = now; const S = this.state;
       if (S.calis && this.acildi) { const nx = this.t + S.hiz * dt * 60 * (this.yavas && now < this.yavas ? .3 : 1); /* 1× = saniyede 30 tik (test ekranının 1×'i ile aynı) */ if (this.kareler[Math.floor(nx)]) this.t = nx; else if (!this.hesapta) this.setState({ calis: false }); }
-      this.ciz(); this.gol(Math.floor(this.t)); this.k = (this.k || 0) + 1; if (this.k % 6 === 0) this.setState({ n: this.k }); this.raf = requestAnimationFrame(f); }; this.raf = requestAnimationFrame(f); }
+      this.ciz(); this.fakeCiz(); this.dokunSes(Math.floor(this.t)); this.gol(Math.floor(this.t)); this.k = (this.k || 0) + 1; if (this.k % 6 === 0) this.setState({ n: this.k }); this.raf = requestAnimationFrame(f); }; this.raf = requestAnimationFrame(f); }
+  // Fake: gösterilen niyetin soluk hayalet izi (gönderme/pas: hat ve hayalet Çekirdek, gövde: kısa ok) ve aldananların kesikli halkası
+  // Fake (yayın dili): çizgi ve yazı yok. Gösterilen niyet, Çekirdeğin o yöne kısa bir altın "hayaleti" olarak (gövde fake'inde taşıyıcının takım renginde kısa bir gölgesi) belirip söner;
+  // aldananların altında takım renginde yumuşak bir ışıma kısa bir an parlar. Hepsi sahadaki iz ve ışıma diliyle aynı (lighter, glow), fake bitince söner.
+  fakeCiz() { const cv = this.cvRef.current, f = this.kareler[Math.floor(this.t)]; if (!cv || !f || !this.ps || f.length < 40 || !(f[34] >= 0)) return; const x = cv.getContext('2d'), s = cv.width / W, k = f[34], p0 = f[39], sx = f[2 * k] * s, sy = f[2 * k + 1] * s, dx = f[36] * s - sx, dy = f[37] * s - sy, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, GOLD = '#FFD25A', TC = t => t ? '#FF7A45' : '#6F8CFF';
+    const on = p0 <= 1 ? Math.sin(Math.PI * Math.min(1, p0 * 1.15)) : Math.max(0, 1 - (p0 - 1) * 2.5); if (on <= .02) return; x.save(); x.globalCompositeOperation = 'lighter';
+    if (f[35] === 3) { const g = s * (.6 + 1.4 * Math.min(1, p0)), gx = sx + ux * g, gy = sy + uy * g, R = 1.15 * s, gr = x.createRadialGradient(gx, gy, 0, gx, gy, R * 1.3); gr.addColorStop(0, TC(this.ps[k].team)); gr.addColorStop(1, 'rgba(0,0,0,0)'); x.globalAlpha = .45 * on; x.fillStyle = gr; x.beginPath(); x.arc(gx, gy, R * 1.3, 0, 7); x.fill(); }
+    else { const n = 7, reach = s * (1.2 + 3.2 * Math.min(1, p0)); for (let i = n; i >= 1; i--) { const q = i / n, cx = sx + ux * reach * q, cy = sy + uy * reach * q, R = s * (.25 + .35 * q); x.globalAlpha = on * (.08 + .32 * q); x.shadowColor = GOLD; x.shadowBlur = 14; x.fillStyle = GOLD; x.beginPath(); x.arc(cx, cy, R, 0, 7); x.fill(); } }
+    x.shadowBlur = 0; const b = f[38] | 0; for (let i = 0; i < this.ps.length; i++) if (b & (1 << i)) { const px = f[2 * i] * s, py = f[2 * i + 1] * s, R = s * 2.4, gr = x.createRadialGradient(px, py, s * .9, px, py, R); gr.addColorStop(0, TC(this.ps[i].team)); gr.addColorStop(1, 'rgba(0,0,0,0)'); x.globalAlpha = .5 * on; x.fillStyle = gr; x.beginPath(); x.arc(px, py, R, 0, 7); x.fill(); }
+    x.restore(); }
+  // Çekirdek sesleri (karelerden): vuruş (pas/gönderme, hıza göre), karşılama, kenara çarpma, gövdeden sekme, sürerken hafif dokunuşlar. Sadece ileri oynarken; ileri sarma ya da atlamada susar
+  dokunSes(t) { const S = this.state, p = this._sT; this._sT = t; if (!S.ses || !S.calis || p == null || t <= p || t - p > 8 || !this.acildi) return; const K = this.kareler;
+    for (let i = p + 1; i <= t; i++) { const a = K[i - 2], b = K[i - 1], c = K[i]; if (!a || !b || !c || isNaN(c[28]) || isNaN(b[28]) || isNaN(a[28])) continue; const v0x = b[28] - a[28], v0y = b[29] - a[29], v1x = c[28] - b[28], v1y = c[29] - b[29], s0 = Math.hypot(v0x, v0y), s1 = Math.hypot(v1x, v1y);
+      if (b[30] >= 0 && c[30] < 0) { this.tik('vurus', Math.min(1, s1 / 1.6)); continue; }
+      if (b[30] < 0 && c[30] >= 0) { this.tik('karsila', Math.min(1, s0 / 1.2)); this._dr = i; continue; }
+      if (c[30] < 0 && s0 > .08 && s1 > .02) { const kenar = c[28] < 1.6 || c[28] > 98.4 || c[29] < 1.6 || c[29] > 48.4, don = (v0x * v1x + v0y * v1y) / (s0 * s1); if (kenar && ((v0x * v1x < 0 && (c[28] < 1.6 || c[28] > 98.4)) || (v0y * v1y < 0 && (c[29] < 1.6 || c[29] > 48.4)))) { this.tik('kenar', Math.min(1, s0 / 1.2)); continue; } if (!kenar && don < .65) { this.tik('sekme', Math.min(1, s0 / 1.2)); continue; } }
+      if (c[30] >= 0 && S.hiz <= 1) { const k = c[30], vx = c[2 * k] - b[2 * k], vy = c[2 * k + 1] - b[2 * k + 1], ps = Math.hypot(vx, vy); if (ps > .1 && i - (this._dr || 0) >= Math.round(26 - ps * 40)) { this._dr = i; this.tik('surus', Math.min(1, ps / .35)); } } } }
+  tik(tur, g) { if (tur !== 'vurus' && tur !== 'kenar') return; /* sadece vuruş ve kenar: diğerleri patlamış mısır gibi duruyordu */ if (tur === 'vurus' && g < .35) return; /* kısa pas sessiz; ses güçlü pas ve göndermede */ return this.tik2(tur, g); }
+  // yumuşak, boğuk bir "tok": tık sesi (gürültü) yok, yavaş başlayan alçak bir ton; yankıya gerek yok
+  tik2(tur, g) { try { const a = this.AC || (this.AC = new (window.AudioContext || window.webkitAudioContext)()); if (a.state === 'suspended') a.resume(); const now = a.currentTime; if ((this._tikSon || 0) > now - .12) return; this._tikSon = now;
+      const o = a.createOscillator(), lp = a.createBiquadFilter(), og = a.createGain(), f = tur === 'kenar' ? 140 : 85, d = tur === 'kenar' ? .12 : .2, k = (tur === 'kenar' ? .12 : .18) * (.5 + g * .5); o.type = 'triangle'; o.frequency.setValueAtTime(f, now); o.frequency.exponentialRampToValueAtTime(f * .55, now + d); lp.type = 'lowpass'; lp.frequency.value = 420; og.gain.setValueAtTime(.0001, now); og.gain.exponentialRampToValueAtTime(k, now + .008); og.gain.exponentialRampToValueAtTime(.0004, now + d); o.connect(lp).connect(og).connect(a.destination); o.start(now); o.stop(now + d + .02);
+    } catch (e) {} }
+  tikEski(tur, g) { try { const a = this.AC || (this.AC = new (window.AudioContext || window.webkitAudioContext)()); if (a.state === 'suspended') a.resume(); const now = a.currentTime; if ((this._tikSon || 0) > now - .02 && tur === 'surus') return; this._tikSon = now; const SR = a.sampleRate, out = a.createGain(); out.connect(a.destination);
+      const P = { vurus: { f: 95, fe: 42, n: 2600, q: .9, nd: .045, d: .16, k: .55 + g * .55, nk: .35 + g * .5 }, karsila: { f: 120, fe: 70, n: 1400, q: .8, nd: .03, d: .1, k: .35 + g * .35, nk: .25 + g * .25 }, kenar: { f: 180, fe: 120, n: 3600, q: 1.6, nd: .05, d: .09, k: .25 + g * .3, nk: .5 + g * .4 }, sekme: { f: 140, fe: 90, n: 1900, q: 1.1, nd: .035, d: .08, k: .3 + g * .3, nk: .3 + g * .3 }, surus: { f: 110, fe: 80, n: 1200, q: .7, nd: .02, d: .06, k: .08 + g * .07, nk: .05 + g * .05 } }[tur];
+      const o = a.createOscillator(), og = a.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(P.f, now); o.frequency.exponentialRampToValueAtTime(P.fe, now + P.d); og.gain.setValueAtTime(P.k * .5, now); og.gain.exponentialRampToValueAtTime(.0005, now + P.d); o.connect(og).connect(out); o.start(now); o.stop(now + P.d + .02);
+      const nb = a.createBuffer(1, Math.max(1, Math.floor(SR * P.nd)), SR), d = nb.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (SR * P.nd * .25)); const s = a.createBufferSource(), bp = a.createBiquadFilter(), sg = a.createGain(); s.buffer = nb; bp.type = 'bandpass'; bp.frequency.value = P.n * (.9 + Math.random() * .2); bp.Q.value = P.q; sg.gain.value = P.nk * .5; s.connect(bp).connect(sg).connect(out); s.start(now);
+    } catch (e) {} }
   gol(t) { if (this.state.calis && t > this.golSon && t - this.golSon < 150) for (const o of this.olaylar) if (o.type === 'sayi' && o.tick > this.golSon && o.tick <= t) this.golEfekt(o); this.golSon = t; }
-  golEfekt(o) { return this.golEfekt2(o); }
+  golEfekt(o) { return this.golEfekt3(o); }
+  // Gol (yayın dili): konfeti ve renkli şeritler yok. Kuyu halkası altın ışıkla bir kez nabız atar, sahne hafifçe yaklaşır, "GOOOOOL!" harfleri aralığı açılarak belirir ve söner, altta sade bir yayın bandı (takım rengi şerit, golcü, dakika, skor)
+  golEfekt3(o) { const kap = this.kapRef.current; if (!kap) return; const sol = o.team === 1, RGB = sol ? [224, 83, 31] : [61, 91, 240], rgb = a => `rgba(${RGB[0]},${RGB[1]},${RGB[2]},${a})`, fr = this.kareler[Math.floor(this.t)], ad = (o.text || '').split(' ')[0], skor = fr ? `${fr[32]} – ${fr[33]}` : '', takim = this.c ? this.c.ad[o.team] : '';
+    this.yavas = performance.now() + 1400; const L = document.createElement('div'); L.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:7;overflow:hidden'; kap.append(L); const el = (css, html) => { const d = document.createElement('div'); d.style.cssText = css; if (html) d.innerHTML = html; L.append(d); return d; };
+    el('position:absolute;inset:0;background:radial-gradient(ellipse at 50% 55%, rgba(0,0,0,0) 30%, rgba(0,0,0,.55) 100%)').animate([{ opacity: 0 }, { opacity: 1, offset: .15 }, { opacity: 1, offset: .8 }, { opacity: 0 }], { duration: 3600, fill: 'both' });
+    const kx = sol ? '4%' : '96%'; el(`position:absolute;left:${kx};top:52%;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;box-shadow:0 0 0 3px rgba(255,210,90,.9),0 0 60px 20px rgba(255,210,90,.45)`).animate([{ transform: 'scale(.4)', opacity: 0 }, { transform: 'scale(1)', opacity: 1, offset: .25 }, { transform: 'scale(2.6)', opacity: 0 }], { duration: 1600, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'both' });
+    const yazi = el('position:absolute;left:0;right:0;top:44%;transform:translateY(-50%);text-align:center;font:800 clamp(44px,9vw,140px)/1 "Bricolage Grotesque",sans-serif;color:#FFF6DA;text-shadow:0 0 28px rgba(255,210,90,.55),0 4px 0 rgba(0,0,0,.35);white-space:nowrap', 'GOOOOOL!');
+    yazi.animate([{ letterSpacing: '-.12em', opacity: 0, transform: 'translateY(-50%) scale(.92)' }, { letterSpacing: '.02em', opacity: 1, transform: 'translateY(-50%) scale(1)', offset: .22 }, { letterSpacing: '.06em', opacity: 1, transform: 'translateY(-50%) scale(1.02)', offset: .78 }, { letterSpacing: '.1em', opacity: 0, transform: 'translateY(-50%) scale(1.04)' }], { duration: 3000, delay: 120, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'both' });
+    const kart = el('position:absolute;left:50%;bottom:8%;display:flex;align-items:stretch;transform:translateX(-50%);box-shadow:0 12px 34px rgba(0,0,0,.55)', `<span style="width:6px;background:${rgb(1)}"></span><div style="background:rgba(11,10,7,.92);padding:9px 18px;display:flex;flex-direction:column;gap:2px;border-top:1px solid rgba(246,243,236,.12)"><span style="font:600 11px 'JetBrains Mono',monospace;letter-spacing:.16em;color:#FFD25A">GOL · ${mmss(this.t)}</span><span style="font:800 22px 'Bricolage Grotesque',sans-serif;color:#F6F3EC">${ad}</span><span style="font:500 12px 'JetBrains Mono',monospace;opacity:.7;color:#F6F3EC">${takim}</span></div><div style="background:#F6F3EC;color:#0E0D09;padding:8px 18px;display:flex;align-items:center;font:600 30px 'JetBrains Mono',monospace">${skor}</div>`);
+    kart.animate([{ transform: 'translateX(-50%) translateY(30px)', opacity: 0 }, { transform: 'translateX(-50%) translateY(0)', opacity: 1, offset: .15 }, { opacity: 1, offset: .85 }, { transform: 'translateX(-50%) translateY(10px)', opacity: 0 }], { duration: 3800, delay: 600, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'both' });
+    kap.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.025)', offset: .3 }, { transform: 'scale(1)' }], { duration: 2400, easing: 'ease-in-out' });
+    setTimeout(() => L.remove(), 4600); this.golSes3(); }
+  // Gol sesi: sadece kalabalık uğultusu. Gürültü, "o" sesli formantlarından ve stadyum yankısından geçer; yavaşça kabarır, dalgalanır, uzun söner. Yapay ses (testere, alkış) yok
+  golSes3() { if (!this.state.ses) return; try { const a = this.AC || (this.AC = new (window.AudioContext || window.webkitAudioContext)()); if (a.state === 'suspended') a.resume(); const t0 = a.currentTime + .02, SR = a.sampleRate;
+      const out = a.createGain(); out.gain.value = .55; out.connect(a.destination); const yank = a.createConvolver(), ib = a.createBuffer(2, SR * 3, SR); for (let c = 0; c < 2; c++) { const d = ib.getChannelData(c); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2.5); } yank.buffer = ib; const yg = a.createGain(); yg.gain.value = .8; yank.connect(yg).connect(out); const kuru = a.createGain(); kuru.gain.value = .35; kuru.connect(out);
+      const nb = a.createBuffer(2, SR * 6, SR); for (let c = 0; c < 2; c++) { const d = nb.getChannelData(c); let p = 0, q = 0; for (let i = 0; i < d.length; i++) { const w = Math.random() * 2 - 1; p = .985 * p + .015 * w; q = .9 * q + .1 * w; d[i] = p * 3 + q * .8 + w * .12; } }
+      const env = a.createGain(); env.gain.setValueAtTime(.0001, t0); env.gain.exponentialRampToValueAtTime(1, t0 + .7); env.gain.setValueAtTime(1, t0 + 2.6); env.gain.exponentialRampToValueAtTime(.0008, t0 + 6); env.connect(kuru); env.connect(yank);
+      const lfo = a.createOscillator(), lg = a.createGain(); lfo.frequency.value = .9; lg.gain.value = .12; lfo.connect(lg).connect(env.gain); lfo.start(t0 + .8); lfo.stop(t0 + 6);
+      for (const [f, q, k] of [[180, .7, .9], [470, 3, .7], [850, 4, .45], [2400, 5, .12]]) { const s = a.createBufferSource(), bp = a.createBiquadFilter(), g = a.createGain(); s.buffer = nb; bp.type = 'bandpass'; bp.frequency.setValueAtTime(f * .9, t0); bp.frequency.linearRampToValueAtTime(f, t0 + .8); bp.Q.value = q; g.gain.value = k; s.connect(bp).connect(g).connect(env); s.start(t0); s.stop(t0 + 6); }
+    } catch (e) {} }
   golEfekt2(o) { const kap = this.kapRef.current; if (!kap) return; const sol = o.team === 1, RGB = sol ? [224, 83, 31] : [61, 91, 240], rgb = a => `rgba(${RGB[0]},${RGB[1]},${RGB[2]},${a})`, fr = this.kareler[Math.floor(this.t)], ad = (o.text || '').split(' ')[0], skor = fr ? `${fr[32]} – ${fr[33]}` : '', takim = this.c ? this.c.ad[o.team] : '';
     this.yavas = performance.now() + 1400; /* ağır çekim: sayıdan sonra 1,4 sn */
     const L = document.createElement('div'); L.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:7;overflow:hidden'; kap.append(L); const el = (css, html) => { const d = document.createElement('div'); d.style.cssText = css; if (html) d.innerHTML = html; L.append(d); return d; };
     const flas = el('position:absolute;inset:0;background:#FFFFFF'); flas.animate([{ opacity: .9 }, { opacity: 0 }], { duration: 420, easing: 'ease-out', fill: 'forwards' });
     const kx = sol ? '4%' : '96%'; for (let i = 0; i < 3; i++) { const r = el(`position:absolute;left:${kx};top:50%;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;border:${6 - i * 1.5}px solid ${i ? rgb(.9) : '#FFD25A'};box-shadow:0 0 40px ${rgb(.8)}`); r.animate([{ transform: 'scale(.2)', opacity: 1 }, { transform: 'scale(26)', opacity: 0 }], { duration: 1500, delay: i * 160, easing: 'cubic-bezier(.15,.7,.3,1)', fill: 'both' }); }
     for (let i = 0; i < 3; i++) { const b = el(`position:absolute;left:-10%;right:-10%;top:${36 + i * 10}%;height:${i === 1 ? 14 : 6}%;background:${i === 1 ? rgb(.92) : rgb(.55)};transform:skewY(-6deg)`); b.animate([{ transform: `skewY(-6deg) translateX(${sol ? '-' : ''}120%)` }, { transform: 'skewY(-6deg) translateX(0)', offset: .18 }, { transform: 'skewY(-6deg) translateX(0)', offset: .78 }, { transform: `skewY(-6deg) translateX(${sol ? '' : '-'}120%)` }], { duration: 2900, delay: 120 + i * 60, easing: 'cubic-bezier(.7,0,.2,1)', fill: 'both' }); }
-    const yazi = el('position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);display:flex;justify-content:center;gap:.02em;font:800 clamp(64px,11vw,170px)/1 "Bricolage Grotesque",sans-serif;letter-spacing:-.04em;color:#F6F3EC;text-shadow:0 8px 0 rgba(0,0,0,.35),0 0 50px rgba(255,210,90,.6)', 'SAYI!'.split('').map(c => `<span style="display:inline-block">${c}</span>`).join(''));
+    const yazi = el('position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);display:flex;justify-content:center;gap:.02em;font:800 clamp(46px,9.5vw,150px)/1 "Bricolage Grotesque",sans-serif;letter-spacing:-.04em;color:#F6F3EC;text-shadow:0 8px 0 rgba(0,0,0,.35),0 0 50px rgba(255,210,90,.6)', 'GOOOOOL!'.split('').map(c => `<span style="display:inline-block">${c}</span>`).join(''));
     [...yazi.children].forEach((sp, i) => sp.animate([{ transform: 'translateY(60%) scale(2.4) rotate(-8deg)', opacity: 0 }, { transform: 'translateY(0) scale(.92) rotate(0)', opacity: 1, offset: .14 }, { transform: 'scale(1.06)', offset: .22 }, { transform: 'scale(1)', offset: .3 }, { transform: 'scale(1)', opacity: 1, offset: .8 }, { transform: 'translateY(-30%) scale(1.3)', opacity: 0 }], { duration: 2900, delay: 180 + i * 55, easing: 'cubic-bezier(.2,.9,.3,1.2)', fill: 'both' }));
     const kart = el('position:absolute;left:50%;bottom:9%;display:flex;align-items:stretch;transform:translateX(-50%);box-shadow:0 10px 30px rgba(0,0,0,.5)', `<span style="width:10px;background:${rgb(1)}"></span><div style="background:#F6F3EC;color:#0E0D09;padding:8px 18px;display:flex;flex-direction:column"><span style="font:800 24px 'Bricolage Grotesque',sans-serif;letter-spacing:-.01em">${ad.toUpperCase()}</span><span style="font:600 13px 'JetBrains Mono',monospace;opacity:.75">${takim} · ${mmss(this.t)}</span></div><div style="background:#0E0D09;color:#FFD25A;padding:8px 16px;display:flex;align-items:center;font:600 30px 'JetBrains Mono',monospace">${skor}</div>`);
     kart.animate([{ transform: 'translateX(-50%) translateY(140%)', opacity: 0 }, { transform: 'translateX(-50%) translateY(0)', opacity: 1, offset: .2 }, { opacity: 1, offset: .82 }, { transform: 'translateX(-50%) translateY(40%)', opacity: 0 }], { duration: 3300, delay: 500, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'both' });
@@ -175,7 +272,18 @@ class Component extends DCLogic {
     const t0 = performance.now(), adim = () => { const e = performance.now() - t0; px.clearRect(0, 0, W0, H0); for (const p of P) { p.vx *= .985; p.vy = p.vy * .985 + .32; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.l = Math.max(0, 1 - e / 3000); px.save(); px.globalAlpha = p.l; px.translate(p.x, p.y); px.rotate(p.rot); px.fillStyle = p.c; px.fillRect(-p.r, -p.r * .45, p.r * 2, p.r * .9); px.restore(); } if (e < 3000) requestAnimationFrame(adim); }; requestAnimationFrame(adim);
     kap.animate([{ transform: 'translate(0,0) scale(1)' }, { transform: 'translate(-10px,6px) scale(1.015)' }, { transform: 'translate(9px,-7px) scale(1.02)' }, { transform: 'translate(-6px,4px) scale(1.01)' }, { transform: 'translate(3px,-2px)' }, { transform: 'translate(0,0) scale(1)' }], { duration: 520, easing: 'ease-out' });
     setTimeout(() => L.remove(), 4000); this.golSes2(o.team); }
-  golSes2(team) { if (!this.state.ses) return; try { const a = this.AC || (this.AC = new (window.AudioContext || window.webkitAudioContext)()); if (a.state === 'suspended') a.resume(); const t0 = a.currentTime + .02, out = a.createDynamicsCompressor(), mg = a.createGain(); mg.gain.value = .9; out.connect(mg).connect(a.destination);
+  // Gol sesi: sadece taraftar. Stadyum yankısında kabaran uğultu, yüzlerce sesin "ooooo" bağırışı (çok sayıda kaymış ses + "o" sesli formant süzgeci), ardından ritmik alkış
+  golSes2(team) { if (!this.state.ses) return; try { const a = this.AC || (this.AC = new (window.AudioContext || window.webkitAudioContext)()); if (a.state === 'suspended') a.resume(); const t0 = a.currentTime + .02, SR = a.sampleRate;
+      const comp = a.createDynamicsCompressor(), mg = a.createGain(); mg.gain.value = .85; comp.connect(mg).connect(a.destination);
+      const yank = a.createConvolver(), ib = a.createBuffer(2, SR * 2.6, SR); for (let c = 0; c < 2; c++) { const d = ib.getChannelData(c); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3.2); } yank.buffer = ib; const yg = a.createGain(); yg.gain.value = .55; yank.connect(yg).connect(comp); const kuru = a.createGain(); kuru.gain.value = .7; kuru.connect(comp); const bus = a.createGain(); bus.connect(kuru); bus.connect(yank);
+      const nz = sec => { const b = a.createBuffer(2, SR * sec, SR); for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); let p = 0; for (let i = 0; i < d.length; i++) { const w = Math.random() * 2 - 1; p = .97 * p + .03 * w; d[i] = w * .35 + p * 2.2; } } return b; };
+      const zarf = (g, pk, at, sus, end) => { g.gain.setValueAtTime(.0001, t0); g.gain.exponentialRampToValueAtTime(pk, t0 + at); g.gain.setValueAtTime(pk, t0 + sus); g.gain.exponentialRampToValueAtTime(.0008, t0 + end); };
+      /* 1 · patlayan uğultu */ { const s = a.createBufferSource(), hp = a.createBiquadFilter(), lp = a.createBiquadFilter(), g = a.createGain(); s.buffer = nz(5.5); hp.type = 'highpass'; hp.frequency.value = 220; lp.type = 'lowpass'; lp.frequency.setValueAtTime(1800, t0); lp.frequency.linearRampToValueAtTime(4200, t0 + .35); lp.frequency.linearRampToValueAtTime(2600, t0 + 4); zarf(g, .5, .22, 2.4, 5.2); s.connect(hp).connect(lp).connect(g).connect(bus); s.start(t0); }
+      /* 2 · "ooooo" : gürültü, "o" sesli harfinin formantlarından geçer */ for (const [f, q, k] of [[430, 5, .9], [820, 6, .6], [2450, 8, .18]]) { const s = a.createBufferSource(), bp = a.createBiquadFilter(), g = a.createGain(); s.buffer = nz(5); bp.type = 'bandpass'; bp.frequency.setValueAtTime(f * .85, t0); bp.frequency.linearRampToValueAtTime(f, t0 + .5); bp.Q.value = q; zarf(g, k, .3, 2.6, 4.8); s.connect(bp).connect(g).connect(bus); s.start(t0); }
+      /* 3 · kalabalığın sesleri: çok sayıda kaymış, titreyen bağırış */ for (let i = 0; i < 36; i++) { const o = a.createOscillator(), vb = a.createOscillator(), vg = a.createGain(), lp = a.createBiquadFilter(), g = a.createGain(), st = t0 + Math.random() * .35, f0 = 170 + Math.random() * 260; o.type = 'sawtooth'; o.frequency.setValueAtTime(f0 * .9, st); o.frequency.linearRampToValueAtTime(f0 * (1.04 + Math.random() * .06), st + .6); o.frequency.linearRampToValueAtTime(f0 * (.92 + Math.random() * .05), st + 3.6); vb.frequency.value = 4 + Math.random() * 3; vg.gain.value = f0 * .018; vb.connect(vg).connect(o.frequency); lp.type = 'lowpass'; lp.frequency.value = 900 + Math.random() * 500; lp.Q.value = 1.5; g.gain.setValueAtTime(.0001, st); g.gain.exponentialRampToValueAtTime(.012, st + .25); g.gain.setValueAtTime(.012, st + 1.8 + Math.random()); g.gain.exponentialRampToValueAtTime(.0005, st + 3.6 + Math.random() * .8); o.connect(lp).connect(g).connect(bus); o.start(st); vb.start(st); o.stop(st + 4.6); vb.stop(st + 4.6); }
+      /* 4 · ritmik alkış: her vuruş birçok elin hafif kaymış şaklaması */ const kb = a.createBuffer(1, Math.floor(SR * .03), SR), kd = kb.getChannelData(0); for (let i = 0; i < kd.length; i++) kd[i] = (Math.random() * 2 - 1) * Math.exp(-i / (SR * .004)); for (let n = 0; n < 7; n++) { const bt = t0 + 1.7 + n * .42; for (let j = 0; j < 14; j++) { const s = a.createBufferSource(), bp = a.createBiquadFilter(), g = a.createGain(); s.buffer = kb; bp.type = 'bandpass'; bp.frequency.value = 1100 + Math.random() * 1400; bp.Q.value = 1.2; g.gain.value = .05 * (1 - n * .08); s.connect(bp).connect(g).connect(bus); s.start(bt + Math.random() * .045); } }
+    } catch (e) {} }
+  golSesEski(team) { if (!this.state.ses) return; try { const a = this.AC || (this.AC = new (window.AudioContext || window.webkitAudioContext)()); if (a.state === 'suspended') a.resume(); const t0 = a.currentTime + .02, out = a.createDynamicsCompressor(), mg = a.createGain(); mg.gain.value = .9; out.connect(mg).connect(a.destination);
       const nz = (sec) => { const b = a.createBuffer(2, a.sampleRate * sec, a.sampleRate); for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); let last = 0; for (let i = 0; i < d.length; i++) { const w = Math.random() * 2 - 1; last = (last + .02 * w) / 1.02; d[i] = w * .6 + last * 3; } } return b; };
       /* 1 · darbe: Kuyu'nun yutuşu (alt bas + tık) */ const o = a.createOscillator(), g = a.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(150, t0); o.frequency.exponentialRampToValueAtTime(38, t0 + .5); g.gain.setValueAtTime(1.2, t0); g.gain.exponentialRampToValueAtTime(.001, t0 + .7); o.connect(g).connect(out); o.start(t0); o.stop(t0 + .8);
       /* 2 · zil: yüksek frekanslı gürültü, uzun sönüm */ const cy = a.createBufferSource(), hp = a.createBiquadFilter(), cg = a.createGain(); cy.buffer = nz(2.5); hp.type = 'highpass'; hp.frequency.value = 5500; cg.gain.setValueAtTime(.5, t0); cg.gain.exponentialRampToValueAtTime(.001, t0 + 2.2); cy.connect(hp).connect(cg).connect(out); cy.start(t0);
@@ -212,7 +320,7 @@ class Component extends DCLogic {
     if (!isNaN(f[28])) { const bx = f[28] * s, by = f[29] * s, ch = f[31]; x.fillStyle = '#F6F3EC'; x.beginPath(); x.arc(bx, by, .5 * s, 0, 7); x.fill(); x.strokeStyle = '#FFD25A'; x.lineWidth = 3; x.beginPath(); x.arc(bx, by, .9 * s, -Math.PI / 2, -Math.PI / 2 + ch * Math.PI * 2); x.stroke(); } }
   arena(x, cv, s, f, t, GOLD) { const C = window.AlanCore, pv = this.kareler[Math.max(0, t - 4)] || f, ps = this.ps.map((p, k) => ({ ...p, x: f[2 * k], y: f[2 * k + 1], vx: (f[2 * k] - pv[2 * k]) / 4, vy: (f[2 * k + 1] - pv[2 * k + 1]) / 4 }));
     const oc = this.oc || (this.oc = document.createElement('canvas')); oc.width = 100; oc.height = 50; const ox = oc.getContext('2d'), im = ox.createImageData(100, 50), z = ps.map(p => ({ ...p, vx: 0, vy: 0 }));
-    for (let yy = 0; yy < 50; yy++) for (let xx = 0; xx < 100; xx++) { const v = C.K(z, xx + .5, yy + .5, 0), a = Math.pow(Math.min(1, Math.abs(v) / .9), 1.2), i = (yy * 100 + xx) * 4; if (a < .02) continue; const c = v > 0 ? [50, 80, 230] : [240, 100, 40]; im.data[i] = c[0]; im.data[i + 1] = c[1]; im.data[i + 2] = c[2]; im.data[i + 3] = Math.round(a * 80); }
+    for (let yy = 0; yy < 50; yy++) for (let xx = 0; xx < 100; xx++) { const v = C.K(z, xx + .5, yy + .5, 0), a = Math.pow(Math.min(1, Math.abs(v) / .85), 1.15), i = (yy * 100 + xx) * 4; if (a < .03) continue; const c = v > 0 ? [60, 92, 240] : [245, 108, 42]; im.data[i] = c[0]; im.data[i + 1] = c[1]; im.data[i + 2] = c[2]; im.data[i + 3] = Math.round(a * 100); } /* alanlar belirgin ama ölçülü (eski 80, parlak deneme 135) */
     ox.putImageData(im, 0, 0); x.globalCompositeOperation = 'lighter'; x.imageSmoothingEnabled = true; x.imageSmoothingQuality = 'high'; x.drawImage(oc, 0, 0, cv.width, cv.height); x.globalCompositeOperation = 'source-over';
     x.strokeStyle = 'rgba(246,243,236,.7)'; x.lineWidth = Math.max(3, s * .25); x.strokeRect(3, 3, cv.width - 6, cv.height - 6); x.strokeStyle = 'rgba(246,243,236,.35)'; x.lineWidth = Math.max(2, s * .15); x.beginPath(); x.moveTo(50 * s, 0); x.lineTo(50 * s, cv.height); x.stroke(); x.beginPath(); x.arc(50 * s, 25 * s, 1.2 * s, 0, 7); x.stroke();
     for (const gx of [0, 100]) { const cx = gx * s, cy = 25 * s, R = C.KR * s, gr = x.createRadialGradient(cx, cy, R * .2, cx, cy, R * 1.8); gr.addColorStop(0, 'rgba(0,0,0,1)'); gr.addColorStop(.5, 'rgba(0,0,0,.95)'); gr.addColorStop(.56, 'rgba(255,210,90,.55)'); gr.addColorStop(1, 'rgba(255,210,90,0)'); x.fillStyle = gr; x.beginPath(); x.arc(cx, cy, R * 1.8, 0, 7); x.fill();
@@ -237,7 +345,9 @@ class Component extends DCLogic {
     return {
       ad0: ad[0], ad1: ad[1], harf0: ad[0][0], harf1: ad[1][0], skor: f ? `${f[32]} – ${f[33]}` : '0 – 0', saat: mmss(t), durum: yuk ? 'HAZIRLANIYOR' : Sx.calis ? 'CANLI' : 'DURAKLATILDI', durumRenk: yuk ? '#FFD25A' : Sx.calis ? '#FF6B5B' : 'rgba(246,243,236,.6)',
       cvRef: this.cvRef, kapRef: this.kapRef, zamanRef: this.zamanRef,
+      tamEkran: !!Sx.tam, tamEkranDegis: () => this.tamEkranDegis(), kapPos: Sx.tam && !Sx.tamGercek ? 'fixed' : 'relative', kapInset: Sx.tam && !Sx.tamGercek ? '0' : 'auto', kapZ: Sx.tam ? 60 : 'auto', kapOran: Sx.tam ? 'auto' : '2/1.12',
       topSahibi: !!h, tsAd: h ? h.name : '', tsAlt: h ? (h.role === 'Bekçi' ? 'Bekçi' : `şarj %${Math.round(f[31] * 100)}`) : '', tsRenk: h ? RN[h.team] : '#F6F3EC',
+      bitti: !Sx.kapi && this.acildi && !this.hesapta && this.kareler.length > 60 && t >= this.kareler.length - 1, sonSkor: f ? `${f[32]} – ${f[33]}` : '0 – 0', bizAdB: (c ? c.ad[0] : 'Liman').toUpperCase(), rakipAdB: (c ? c.ad[1] : '').toUpperCase(), sonuc: f ? (f[32] > f[33] ? 'Kazandın' : f[32] < f[33] ? 'Kaybettin' : 'Berabere') : '', yeniMac: () => this.yeniMac(),
       kapi: !!Sx.kapi, kapiOzet: c ? `${c.ad[0]} – ${c.ad[1]} · savunma ${typeof c.diz[0].sav === 'string' && !(c.dizArr && c.dizArr[0]) ? c.diz[0].sav : 'serbest'} · ${c.tac[0].blok.toLowerCase()} blok · pres ${c.tac[0].pres}` : '', taktikeGit: () => { window.location.href = 'index.html'; }, kapiBasla: () => { this.setState({ kapi: false }); this.basla(); },
       yukleniyor: yuk && !Sx.kapi, yukBaslik: this.gen > 1 ? 'Yeni taktikle yeniden oynanıyor' : 'Maç hazırlanıyor', yukPct: Math.round(Math.max(0, hz) * 100) + '%',
       oynat: () => { if (this.acildi) this.setState({ calis: !Sx.calis }); }, oynatTxt: Sx.calis ? '❚❚' : '▶\uFE0E',
@@ -248,6 +358,7 @@ class Component extends DCLogic {
       istat: ist,
       akis: gor.slice(-40).reverse().map(o => ({ t: mmss(o.tick), text: o.text, c: o.type === 'sayi' ? '#FFD25A' : RN[o.team] || 'rgba(246,243,236,.4)', w: o.type === 'sayi' ? 700 : 400 })),
       kadrolar: [0, 1].map(tm => ({ ad: ad[tm].toUpperCase(), c: RN[tm], ps: ps ? ps.filter(p => p.team === tm).map(p => ({ ad: p.name, r: rl(tm, p.i), w: h === p ? 700 : 400 })) : [] })),
+      kayit: () => this.kayitDegis(), kayitTxt: Sx.kayitOn ? `● Kaydı durdur · ${Math.floor((Date.now() - (Sx.kayitT0 || Date.now())) / 1000)} sn` : 'Maçı kaydet', kayitBg: Sx.kayitOn ? '#C8321E' : 'transparent', kayitUrl: Sx.kayitUrl || null, kayitAd: Sx.kayitAd || 'ALAN-mac.webm',
       sesTxt: Sx.ses ? 'Ses açık' : 'Ses kapalı', sesDegis: () => { const v = !Sx.ses; localStorage.setItem('alan-ses', v ? '1' : '0'); this.setState({ ses: v }); },
       taktikAcik: Sx.taktik, taktikSrc: `index.html?mac=1&skor=${encodeURIComponent(f ? f[32] + ' – ' + f[33] : '0 – 0')}&dk=${mmss(t)}`, taktikAc: () => this.setState({ taktik: true, calis: false }), taktikKapat: () => this.setState({ taktik: false })
     }; }

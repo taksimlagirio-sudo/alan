@@ -1,6 +1,6 @@
 // ALAN v5 · ortak kadro verisi (Liman ve rakipler). Menajer ve Taktik ekranları kullanır.
 (function () {
-const OZ = [['okuma', 'Oku'], ['aktarim', 'Akt'], ['tutus', 'Tut'], ['kesme', 'Kes'], ['yogunluk', 'Yoğ'], ['hiz', 'Hız'], ['cesaret', 'Ces'], ['surme', 'Sür']];
+const OZ = [['okuma', 'Oku'], ['aktarim', 'Akt'], ['tutus', 'Tut'], ['kesme', 'Kes'], ['yogunluk', 'Yoğ'], ['hiz', 'Hız'], ['ceviklik', 'Çev'], ['cesaret', 'Ces'], ['surme', 'Sür']];
 const a = (okuma, aktarim, tutus, kesme, yogunluk, hiz, cesaret, surme) => ({ okuma, aktarim, tutus, kesme, yogunluk, hiz, cesaret, surme });
 const KADRO = [
   { id: 'aras', ad: 'Aras', tip: 'Bekçi', a: a(13, 11, 15, 10, 10, 10, 11, 8) },
@@ -31,5 +31,11 @@ const RAKIP = [
     oyuncular: [['Zaman', a(14, 12, 13, 10, 10, 9, 10, 8)], ['Akrep', a(14, 14, 11, 12, 10, 9, 9, 10)], ['Yelkovan', a(15, 15, 11, 11, 10, 9, 9, 11)], ['Sarkaç', a(14, 15, 12, 10, 10, 10, 10, 12)], ['Çark', a(13, 13, 12, 12, 11, 10, 9, 10)], ['Kadran', a(13, 14, 11, 9, 9, 11, 10, 13)], ['Zemberek', a(13, 13, 14, 9, 12, 9, 10, 11)]] }
 ];
 
+// Çeviklik (fren ve dönüş): verilmemişse Sürme'den ve gövdeden türetilir (iyi süren çevik, yoğun gövde hantal)
+const cev = o => { if (o.ceviklik == null) o.ceviklik = Math.max(6, Math.min(16, Math.round(((o.surme ?? 10) + 20 - (o.yogunluk ?? 10)) / 2 + ((o.hiz ?? 10) > 12 ? -1 : 0)))); };
+for (const p of KADRO) cev(p.a || p); for (const r of RAKIP) for (const o of r.oyuncular) cev(o[1]);
+// GEÇİCİ DENEME: bütün oyuncuların bütün özellikleri 20 (iki takım). Eski hâle dönmek için HEPSI_20 = false yapın; asıl değerler silinmedi.
+const HEPSI_20 = true;
+if (HEPSI_20) { const yirmi = o => { for (const [key] of OZ) o[key] = 20; }; for (const p of KADRO) yirmi(p.a || p); for (const r of RAKIP) for (const o of r.oyuncular) yirmi(o[1]); }
 window.ALAN_KADRO = { OZ, KADRO, RAKIP };
 })();
