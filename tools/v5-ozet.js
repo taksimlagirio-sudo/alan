@@ -1,0 +1,6 @@
+// v5-olc.js çıktılarının özeti (klasör başına). Kullanım: node tools/v5-ozet.js <klasör>...
+const fs = require('fs'), path = require('path');
+for (const d of process.argv.slice(2)) { const R = fs.readdirSync(d).filter(f => /^m\d+\.json$/.test(f)).map(f => JSON.parse(fs.readFileSync(path.join(d, f))));
+  const sh = R.flatMap(r => r.gonder || r.sh); let pn = 0, pt = 0; for (const r of R) { if (Array.isArray(r.pas)) { pn += r.pas.length; pt += r.pas.filter(p => p[0]).length; } else { pn += r.pas; pt += r.pas * r.tutma; } }
+  const g = R.reduce((s, r) => s + r.skor[0] + r.skor[1], 0); console.log(`== ${d}: ${R.length} maç · sayı/maç ${(g / R.length).toFixed(2)} · 0–0 ${R.filter(r => r.skor[0] + r.skor[1] === 0).length} · gönderme/maç ${(sh.length / R.length).toFixed(1)} · pas/maç ${(pn / R.length).toFixed(0)} · pas tutma %${(100 * pt / pn).toFixed(0)} · el değişimi/maç ${(R.reduce((s, r) => s + (r.elDegisti ?? r.swaps), 0) / R.length).toFixed(0)} · skorlar ${R.map(r => r.skor.join('-')).join(' ')}`);
+  for (const [a, b, n] of [[0, 15, '<15'], [15, 20, '15–20'], [20, 25, '20–25'], [25, 99, '25+']]) { const s = sh.filter(x => x.uz >= a && x.uz < b); console.log(`  ${n.padEnd(6)} ${String(s.length).padStart(3)} gönderme · sayı %${s.length ? (100 * s.filter(x => x.s).length / s.length).toFixed(0) : '–'}`); } }
