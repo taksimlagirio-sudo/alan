@@ -1,0 +1,72 @@
+(* : fark standart hatanın 2 katından büyük; rastlantı olma ihtimali düşük)
+
+== temel
+temel                              n=24 · sayı farkı +0.08 ±0.37   · G-B-M 11-5-8 · gönderme +0.2 · topa sahip %51 · pas tutma %74/%76 · top kazanma +0.1 · maç başı sayı 3.5
+
+== oz:
+oz:okuma                           n=16 · sayı farkı +0.88 ±0.30 * · G-B-M 11-3-2 · gönderme +1.0 · topa sahip %47 · pas tutma %75/%75 · top kazanma +0.8 · maç başı sayı 2.9
+oz:aktarim                         n=16 · sayı farkı -0.38 ±0.34   · G-B-M 2-6-8 · gönderme -0.3 · topa sahip %49 · pas tutma %75/%73 · top kazanma -0.7 · maç başı sayı 2.5
+oz:tutus                           n=16 · sayı farkı -0.88 ±0.46   · G-B-M 3-2-11 · gönderme -0.9 · topa sahip %47 · pas tutma %75/%76 · top kazanma -0.9 · maç başı sayı 2.8
+oz:kesme                           n=16 · sayı farkı -0.19 ±0.40   · G-B-M 6-6-4 · gönderme -0.3 · topa sahip %49 · pas tutma %71/%78 · top kazanma -0.1 · maç başı sayı 3.2
+oz:yogunluk                        n=16 · sayı farkı +0.13 ±0.54   · G-B-M 9-1-6 · gönderme +0.8 · topa sahip %49 · pas tutma %77/%76 · top kazanma +0.4 · maç başı sayı 3.3
+oz:hiz                             n=16 · sayı farkı +1.00 ±0.53   · G-B-M 10-1-5 · gönderme +2.1 · topa sahip %49 · pas tutma %75/%73 · top kazanma +1.1 · maç başı sayı 3.5
+oz:cesaret                         n=16 · sayı farkı -0.19 ±0.54   · G-B-M 7-1-8 · gönderme -0.5 · topa sahip %50 · pas tutma %75/%76 · top kazanma +0.0 · maç başı sayı 3.3
+oz:surme                           n=16 · sayı farkı +0.63 ±0.33   · G-B-M 10-4-2 · gönderme +1.4 · topa sahip %53 · pas tutma %74/%78 · top kazanma +1.0 · maç başı sayı 2.5
+
+== ayar:
+ayar:sistem=Adam adama             n=16 · sayı farkı +0.19 ±0.40   · G-B-M 8-3-5 · gönderme +0.3 · topa sahip %51 · pas tutma %74/%76 · top kazanma +0.3 · maç başı sayı 3.6
+ayar:sistem=Kenara sıkıştır        n=16 · sayı farkı +0.06 ±0.49   · G-B-M 7-3-6 · gönderme -0.6 · topa sahip %51 · pas tutma %76/%77 · top kazanma +0.1 · maç başı sayı 3.9
+ayar:pres=0                        n=16 · sayı farkı -0.75 ±0.38   · G-B-M 3-3-10 · gönderme -0.7 · topa sahip %48 · pas tutma %74/%75 · top kazanma -0.9 · maç başı sayı 2.9
+ayar:pres=3                        n=16 · sayı farkı +0.00 ±0.40   · G-B-M 7-3-6 · gönderme -0.8 · topa sahip %51 · pas tutma %77/%79 · top kazanma +0.1 · maç başı sayı 3.4
+ayar:arkada=0                      n=16 · sayı farkı +0.56 ±0.43   · G-B-M 7-5-4 · gönderme +2.1 · topa sahip %50 · pas tutma %74/%71 · top kazanma +0.5 · maç başı sayı 2.7
+ayar:arkada=2                      n=16 · sayı farkı +0.19 ±0.39   · G-B-M 7-4-5 · gönderme +0.6 · topa sahip %49 · pas tutma %75/%77 · top kazanma +0.2 · maç başı sayı 2.7
+ayar:blok=Düşük                    n=16 · sayı farkı -0.13 ±0.33   · G-B-M 5-5-6 · gönderme -0.5 · topa sahip %50 · pas tutma %77/%76 · top kazanma +0.0 · maç başı sayı 2.8
+ayar:blok=Yüksek                   n=16 · sayı farkı +0.38 ±0.46   · G-B-M 8-4-4 · gönderme +0.1 · topa sahip %48 · pas tutma %75/%77 · top kazanma +0.5 · maç başı sayı 3.5
+ayar:genislik=Dar                  n=16 · sayı farkı -0.25 ±0.27   · G-B-M 4-4-8 · gönderme +0.3 · topa sahip %50 · pas tutma %77/%75 · top kazanma -0.2 · maç başı sayı 2.6
+ayar:genislik=Geniş                n=16 · sayı farkı +0.44 ±0.38   · G-B-M 9-4-3 · gönderme +0.3 · topa sahip %52 · pas tutma %77/%76 · top kazanma +0.3 · maç başı sayı 3.1
+ayar:tempo=0.2                     n=16 · sayı farkı +0.38 ±0.31   · G-B-M 7-5-4 · gönderme +0.4 · topa sahip %50 · pas tutma %78/%74 · top kazanma +0.1 · maç başı sayı 3.4
+ayar:tempo=0.8                     n=16 · sayı farkı +0.13 ±0.38   · G-B-M 7-2-7 · gönderme -0.5 · topa sahip %50 · pas tutma %77/%77 · top kazanma +0.0 · maç başı sayı 3.0
+ayar:risk=0.2                      n=16 · sayı farkı -0.25 ±0.43   · G-B-M 6-1-9 · gönderme -0.5 · topa sahip %47 · pas tutma %74/%78 · top kazanma -0.4 · maç başı sayı 3.1
+ayar:risk=0.8                      n=16 · sayı farkı +0.44 ±0.57   · G-B-M 9-2-5 · gönderme +1.1 · topa sahip %50 · pas tutma %76/%75 · top kazanma +0.4 · maç başı sayı 3.3
+ayar:kazaninca=Yerleş              n=16 · sayı farkı +0.19 ±0.33   · G-B-M 7-3-6 · gönderme +0.6 · topa sahip %49 · pas tutma %75/%74 · top kazanma +0.0 · maç başı sayı 2.8
+ayar:kazaninca=Kontra              n=16 · sayı farkı +0.25 ±0.27   · G-B-M 6-6-4 · gönderme +0.2 · topa sahip %51 · pas tutma %74/%74 · top kazanma +0.3 · maç başı sayı 3.0
+ayar:pasSurme=0.1                  n=16 · sayı farkı -0.63 ±0.46   · G-B-M 4-4-8 · gönderme -0.9 · topa sahip %44 · pas tutma %78/%76 · top kazanma -0.7 · maç başı sayı 3.3
+ayar:pasSurme=0.9                  n=16 · sayı farkı -0.13 ±0.43   · G-B-M 4-6-6 · gönderme -1.0 · topa sahip %58 · pas tutma %69/%77 · top kazanma -0.1 · maç başı sayı 3.1
+ayar:sabir=0.1                     n=16 · sayı farkı +0.06 ±0.36   · G-B-M 6-5-5 · gönderme -0.3 · topa sahip %45 · pas tutma %73/%76 · top kazanma -0.1 · maç başı sayı 3.2
+ayar:sabir=0.9                     n=16 · sayı farkı -0.56 ±0.56   · G-B-M 5-3-8 · gönderme -0.1 · topa sahip %60 · pas tutma %79/%76 · top kazanma -0.3 · maç başı sayı 2.8
+ayar:sut=0.1                       n=16 · sayı farkı -0.63 ±0.43   · G-B-M 5-3-8 · gönderme -1.2 · topa sahip %51 · pas tutma %75/%75 · top kazanma -0.4 · maç başı sayı 2.6
+ayar:sut=0.9                       n=16 · sayı farkı -0.81 ±0.46   · G-B-M 5-3-8 · gönderme +0.5 · topa sahip %49 · pas tutma %75/%77 · top kazanma -0.7 · maç başı sayı 2.8
+ayar:tetik=yok                     n=16 · sayı farkı +0.19 ±0.40   · G-B-M 8-3-5 · gönderme +0.3 · topa sahip %51 · pas tutma %74/%76 · top kazanma +0.3 · maç başı sayı 3.6
+ayar:tetik=hepsi                   n=16 · sayı farkı +0.19 ±0.40   · G-B-M 8-3-5 · gönderme +0.3 · topa sahip %51 · pas tutma %74/%76 · top kazanma +0.3 · maç başı sayı 3.6
+ayar:kayip=0.1                     n=16 · sayı farkı -0.94 ±0.39 * · G-B-M 3-3-10 · gönderme -0.9 · topa sahip %47 · pas tutma %76/%76 · top kazanma -1.1 · maç başı sayı 3.4
+ayar:kayip=0.9                     n=16 · sayı farkı +0.19 ±0.40   · G-B-M 8-2-6 · gönderme -0.1 · topa sahip %51 · pas tutma %77/%77 · top kazanma +0.4 · maç başı sayı 3.4
+
+== tetik2:
+tetik2:pres=2 · varsayılan tetik (Geri pas, Kanatta) n=16 · sayı farkı +0.13 ±0.47   · G-B-M 8-3-5 · gönderme +0.8 · topa sahip %52 · pas tutma %73/%77 · top kazanma +0.1 · maç başı sayı 3.1
+tetik2:pres=2 · tetik yok (sürekli basar) n=16 · sayı farkı +0.00 ±0.39   · G-B-M 6-6-4 · gönderme +0.0 · topa sahip %52 · pas tutma %74/%74 · top kazanma -0.1 · maç başı sayı 2.8
+tetik2:pres=2 · bütün tetikler     n=16 · sayı farkı -0.25 ±0.36   · G-B-M 5-5-6 · gönderme +0.1 · topa sahip %51 · pas tutma %75/%77 · top kazanma -0.6 · maç başı sayı 3.4
+
+== taktik (satırdaki tarzın sütundakine karşı ortalama sayı farkı)
+              Dengeli    Sabırlı     Dikine     Kontra    Ön alan   Kuyu önü   ortalama
+Dengeli             —     +0.77*     +0.17      +1.07*     +0.07      +0.30    +0.47
+Sabırlı        -0.77*          —     +0.47      +0.33      -1.07*     +0.43    -0.12
+Dikine         -0.17      -0.47           —     +0.17      -1.03*     +0.70*   -0.16
+Kontra         -1.07*     -0.33      -0.17           —     -1.20*     -0.27    -0.61
+Ön alan        -0.07      +1.07*     +1.03*     +1.20*          —     +0.73*   +0.79
+Kuyu önü       -0.30      -0.43      -0.70*     +0.27      -0.73*          —   -0.38
+
+taktik:Dengeli|Sabırlı             n=30 · sayı farkı +0.77 ±0.32 * · G-B-M 18-4-8 · gönderme +0.5 · topa sahip %51 · pas tutma %77/%77 · top kazanma +0.7 · maç başı sayı 3.4
+taktik:Dengeli|Dikine              n=30 · sayı farkı +0.17 ±0.25   · G-B-M 13-5-12 · gönderme +0.1 · topa sahip %48 · pas tutma %75/%74 · top kazanma +0.1 · maç başı sayı 2.8
+taktik:Dengeli|Kontra              n=30 · sayı farkı +1.07 ±0.33 * · G-B-M 18-4-8 · gönderme +1.7 · topa sahip %50 · pas tutma %77/%77 · top kazanma +1.1 · maç başı sayı 2.7
+taktik:Dengeli|Ön alan             n=30 · sayı farkı +0.07 ±0.32   · G-B-M 11-9-10 · gönderme +0.3 · topa sahip %51 · pas tutma %76/%72 · top kazanma +0.0 · maç başı sayı 3.3
+taktik:Dengeli|Kuyu önü            n=30 · sayı farkı +0.30 ±0.21   · G-B-M 12-12-6 · gönderme +1.1 · topa sahip %50 · pas tutma %79/%78 · top kazanma +0.2 · maç başı sayı 2.2
+taktik:Sabırlı|Dikine              n=30 · sayı farkı +0.47 ±0.28   · G-B-M 16-5-9 · gönderme +0.7 · topa sahip %50 · pas tutma %77/%73 · top kazanma +0.7 · maç başı sayı 3.5
+taktik:Sabırlı|Kontra              n=30 · sayı farkı +0.33 ±0.21   · G-B-M 11-11-8 · gönderme +0.8 · topa sahip %48 · pas tutma %76/%77 · top kazanma +0.3 · maç başı sayı 2.1
+taktik:Sabırlı|Ön alan             n=30 · sayı farkı -1.07 ±0.34 * · G-B-M 6-6-18 · gönderme -0.5 · topa sahip %51 · pas tutma %75/%75 · top kazanma -1.0 · maç başı sayı 3.9
+taktik:Sabırlı|Kuyu önü            n=30 · sayı farkı +0.43 ±0.30   · G-B-M 16-5-9 · gönderme +0.9 · topa sahip %51 · pas tutma %78/%78 · top kazanma +0.6 · maç başı sayı 2.5
+taktik:Dikine|Kontra               n=30 · sayı farkı +0.17 ±0.25   · G-B-M 12-7-11 · gönderme +0.8 · topa sahip %50 · pas tutma %75/%78 · top kazanma +0.2 · maç başı sayı 2.4
+taktik:Dikine|Ön alan              n=30 · sayı farkı -1.03 ±0.35 * · G-B-M 5-8-17 · gönderme -1.8 · topa sahip %49 · pas tutma %74/%78 · top kazanma -1.0 · maç başı sayı 4.0
+taktik:Dikine|Kuyu önü             n=30 · sayı farkı +0.70 ±0.32 * · G-B-M 17-5-8 · gönderme +0.9 · topa sahip %51 · pas tutma %77/%78 · top kazanma +0.5 · maç başı sayı 2.8
+taktik:Kontra|Ön alan              n=30 · sayı farkı -1.20 ±0.28 * · G-B-M 3-9-18 · gönderme -2.3 · topa sahip %51 · pas tutma %75/%76 · top kazanma -1.2 · maç başı sayı 3.3
+taktik:Kontra|Kuyu önü             n=30 · sayı farkı -0.27 ±0.30   · G-B-M 9-9-12 · gönderme -0.8 · topa sahip %52 · pas tutma %78/%78 · top kazanma -0.3 · maç başı sayı 2.0
+taktik:Ön alan|Kuyu önü            n=30 · sayı farkı +0.73 ±0.31 * · G-B-M 16-6-8 · gönderme +1.4 · topa sahip %48 · pas tutma %75/%79 · top kazanma +0.6 · maç başı sayı 2.9

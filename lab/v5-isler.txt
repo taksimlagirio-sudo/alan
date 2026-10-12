@@ -1,0 +1,1018 @@
+temel	1	{}
+temel	2	{}
+temel	3	{}
+temel	4	{}
+temel	5	{}
+temel	6	{}
+temel	7	{}
+temel	8	{}
+temel	9	{}
+temel	10	{}
+temel	11	{}
+temel	12	{}
+temel	13	{}
+temel	14	{}
+temel	15	{}
+temel	16	{}
+temel	17	{}
+temel	18	{}
+temel	19	{}
+temel	20	{}
+temel	21	{}
+temel	22	{}
+temel	23	{}
+temel	24	{}
+oz:okuma	1	{"atA":{"okuma":16}}
+oz:okuma	2	{"atA":{"okuma":16}}
+oz:okuma	3	{"atA":{"okuma":16}}
+oz:okuma	4	{"atA":{"okuma":16}}
+oz:okuma	5	{"atA":{"okuma":16}}
+oz:okuma	6	{"atA":{"okuma":16}}
+oz:okuma	7	{"atA":{"okuma":16}}
+oz:okuma	8	{"atA":{"okuma":16}}
+oz:okuma	9	{"atA":{"okuma":16}}
+oz:okuma	10	{"atA":{"okuma":16}}
+oz:okuma	11	{"atA":{"okuma":16}}
+oz:okuma	12	{"atA":{"okuma":16}}
+oz:okuma	13	{"atA":{"okuma":16}}
+oz:okuma	14	{"atA":{"okuma":16}}
+oz:okuma	15	{"atA":{"okuma":16}}
+oz:okuma	16	{"atA":{"okuma":16}}
+oz:aktarim	1	{"atA":{"aktarim":16}}
+oz:aktarim	2	{"atA":{"aktarim":16}}
+oz:aktarim	3	{"atA":{"aktarim":16}}
+oz:aktarim	4	{"atA":{"aktarim":16}}
+oz:aktarim	5	{"atA":{"aktarim":16}}
+oz:aktarim	6	{"atA":{"aktarim":16}}
+oz:aktarim	7	{"atA":{"aktarim":16}}
+oz:aktarim	8	{"atA":{"aktarim":16}}
+oz:aktarim	9	{"atA":{"aktarim":16}}
+oz:aktarim	10	{"atA":{"aktarim":16}}
+oz:aktarim	11	{"atA":{"aktarim":16}}
+oz:aktarim	12	{"atA":{"aktarim":16}}
+oz:aktarim	13	{"atA":{"aktarim":16}}
+oz:aktarim	14	{"atA":{"aktarim":16}}
+oz:aktarim	15	{"atA":{"aktarim":16}}
+oz:aktarim	16	{"atA":{"aktarim":16}}
+oz:tutus	1	{"atA":{"tutus":16}}
+oz:tutus	2	{"atA":{"tutus":16}}
+oz:tutus	3	{"atA":{"tutus":16}}
+oz:tutus	4	{"atA":{"tutus":16}}
+oz:tutus	5	{"atA":{"tutus":16}}
+oz:tutus	6	{"atA":{"tutus":16}}
+oz:tutus	7	{"atA":{"tutus":16}}
+oz:tutus	8	{"atA":{"tutus":16}}
+oz:tutus	9	{"atA":{"tutus":16}}
+oz:tutus	10	{"atA":{"tutus":16}}
+oz:tutus	11	{"atA":{"tutus":16}}
+oz:tutus	12	{"atA":{"tutus":16}}
+oz:tutus	13	{"atA":{"tutus":16}}
+oz:tutus	14	{"atA":{"tutus":16}}
+oz:tutus	15	{"atA":{"tutus":16}}
+oz:tutus	16	{"atA":{"tutus":16}}
+oz:kesme	1	{"atA":{"kesme":16}}
+oz:kesme	2	{"atA":{"kesme":16}}
+oz:kesme	3	{"atA":{"kesme":16}}
+oz:kesme	4	{"atA":{"kesme":16}}
+oz:kesme	5	{"atA":{"kesme":16}}
+oz:kesme	6	{"atA":{"kesme":16}}
+oz:kesme	7	{"atA":{"kesme":16}}
+oz:kesme	8	{"atA":{"kesme":16}}
+oz:kesme	9	{"atA":{"kesme":16}}
+oz:kesme	10	{"atA":{"kesme":16}}
+oz:kesme	11	{"atA":{"kesme":16}}
+oz:kesme	12	{"atA":{"kesme":16}}
+oz:kesme	13	{"atA":{"kesme":16}}
+oz:kesme	14	{"atA":{"kesme":16}}
+oz:kesme	15	{"atA":{"kesme":16}}
+oz:kesme	16	{"atA":{"kesme":16}}
+oz:yogunluk	1	{"atA":{"yogunluk":16}}
+oz:yogunluk	2	{"atA":{"yogunluk":16}}
+oz:yogunluk	3	{"atA":{"yogunluk":16}}
+oz:yogunluk	4	{"atA":{"yogunluk":16}}
+oz:yogunluk	5	{"atA":{"yogunluk":16}}
+oz:yogunluk	6	{"atA":{"yogunluk":16}}
+oz:yogunluk	7	{"atA":{"yogunluk":16}}
+oz:yogunluk	8	{"atA":{"yogunluk":16}}
+oz:yogunluk	9	{"atA":{"yogunluk":16}}
+oz:yogunluk	10	{"atA":{"yogunluk":16}}
+oz:yogunluk	11	{"atA":{"yogunluk":16}}
+oz:yogunluk	12	{"atA":{"yogunluk":16}}
+oz:yogunluk	13	{"atA":{"yogunluk":16}}
+oz:yogunluk	14	{"atA":{"yogunluk":16}}
+oz:yogunluk	15	{"atA":{"yogunluk":16}}
+oz:yogunluk	16	{"atA":{"yogunluk":16}}
+oz:hiz	1	{"atA":{"hiz":16}}
+oz:hiz	2	{"atA":{"hiz":16}}
+oz:hiz	3	{"atA":{"hiz":16}}
+oz:hiz	4	{"atA":{"hiz":16}}
+oz:hiz	5	{"atA":{"hiz":16}}
+oz:hiz	6	{"atA":{"hiz":16}}
+oz:hiz	7	{"atA":{"hiz":16}}
+oz:hiz	8	{"atA":{"hiz":16}}
+oz:hiz	9	{"atA":{"hiz":16}}
+oz:hiz	10	{"atA":{"hiz":16}}
+oz:hiz	11	{"atA":{"hiz":16}}
+oz:hiz	12	{"atA":{"hiz":16}}
+oz:hiz	13	{"atA":{"hiz":16}}
+oz:hiz	14	{"atA":{"hiz":16}}
+oz:hiz	15	{"atA":{"hiz":16}}
+oz:hiz	16	{"atA":{"hiz":16}}
+oz:cesaret	1	{"atA":{"cesaret":16}}
+oz:cesaret	2	{"atA":{"cesaret":16}}
+oz:cesaret	3	{"atA":{"cesaret":16}}
+oz:cesaret	4	{"atA":{"cesaret":16}}
+oz:cesaret	5	{"atA":{"cesaret":16}}
+oz:cesaret	6	{"atA":{"cesaret":16}}
+oz:cesaret	7	{"atA":{"cesaret":16}}
+oz:cesaret	8	{"atA":{"cesaret":16}}
+oz:cesaret	9	{"atA":{"cesaret":16}}
+oz:cesaret	10	{"atA":{"cesaret":16}}
+oz:cesaret	11	{"atA":{"cesaret":16}}
+oz:cesaret	12	{"atA":{"cesaret":16}}
+oz:cesaret	13	{"atA":{"cesaret":16}}
+oz:cesaret	14	{"atA":{"cesaret":16}}
+oz:cesaret	15	{"atA":{"cesaret":16}}
+oz:cesaret	16	{"atA":{"cesaret":16}}
+oz:surme	1	{"atA":{"surme":16}}
+oz:surme	2	{"atA":{"surme":16}}
+oz:surme	3	{"atA":{"surme":16}}
+oz:surme	4	{"atA":{"surme":16}}
+oz:surme	5	{"atA":{"surme":16}}
+oz:surme	6	{"atA":{"surme":16}}
+oz:surme	7	{"atA":{"surme":16}}
+oz:surme	8	{"atA":{"surme":16}}
+oz:surme	9	{"atA":{"surme":16}}
+oz:surme	10	{"atA":{"surme":16}}
+oz:surme	11	{"atA":{"surme":16}}
+oz:surme	12	{"atA":{"surme":16}}
+oz:surme	13	{"atA":{"surme":16}}
+oz:surme	14	{"atA":{"surme":16}}
+oz:surme	15	{"atA":{"surme":16}}
+oz:surme	16	{"atA":{"surme":16}}
+ayar:sistem=Adam adama	1	{"tacA":{"sistem":"Adam adama"}}
+ayar:sistem=Adam adama	2	{"tacA":{"sistem":"Adam adama"}}
+ayar:sistem=Adam adama	3	{"tacA":{"sistem":"Adam adama"}}
+ayar:sistem=Adam adama	4	{"tacA":{"sistem":"Adam adama"}}
+ayar:sistem=Adam adama	5	{"tacA":{"sistem":"Adam adama"}}
+ayar:sistem=Adam adama	6	{"tacA":{"sistem":"Adam adama"}}
+ayar:sistem=Adam adama	7	{"tacA":{"sistem":"Adam adama"}}
+ayar:sistem=Adam adama	8	{"tacA":{"sistem":"Adam adama"}}
+ayar:sistem=Adam adama	9	{"tacA":{"sistem":"Adam adama"}}
+ayar:sistem=Adam adama	10	{"tacA":{"sistem":"Adam adama"}}
+ayar:sistem=Adam adama	11	{"tacA":{"sistem":"Adam adama"}}
+ayar:sistem=Adam adama	12	{"tacA":{"sistem":"Adam adama"}}
+ayar:sistem=Adam adama	13	{"tacA":{"sistem":"Adam adama"}}
+ayar:sistem=Adam adama	14	{"tacA":{"sistem":"Adam adama"}}
+ayar:sistem=Adam adama	15	{"tacA":{"sistem":"Adam adama"}}
+ayar:sistem=Adam adama	16	{"tacA":{"sistem":"Adam adama"}}
+ayar:sistem=Kenara sıkıştır	1	{"tacA":{"sistem":"Kenara sıkıştır"}}
+ayar:sistem=Kenara sıkıştır	2	{"tacA":{"sistem":"Kenara sıkıştır"}}
+ayar:sistem=Kenara sıkıştır	3	{"tacA":{"sistem":"Kenara sıkıştır"}}
+ayar:sistem=Kenara sıkıştır	4	{"tacA":{"sistem":"Kenara sıkıştır"}}
+ayar:sistem=Kenara sıkıştır	5	{"tacA":{"sistem":"Kenara sıkıştır"}}
+ayar:sistem=Kenara sıkıştır	6	{"tacA":{"sistem":"Kenara sıkıştır"}}
+ayar:sistem=Kenara sıkıştır	7	{"tacA":{"sistem":"Kenara sıkıştır"}}
+ayar:sistem=Kenara sıkıştır	8	{"tacA":{"sistem":"Kenara sıkıştır"}}
+ayar:sistem=Kenara sıkıştır	9	{"tacA":{"sistem":"Kenara sıkıştır"}}
+ayar:sistem=Kenara sıkıştır	10	{"tacA":{"sistem":"Kenara sıkıştır"}}
+ayar:sistem=Kenara sıkıştır	11	{"tacA":{"sistem":"Kenara sıkıştır"}}
+ayar:sistem=Kenara sıkıştır	12	{"tacA":{"sistem":"Kenara sıkıştır"}}
+ayar:sistem=Kenara sıkıştır	13	{"tacA":{"sistem":"Kenara sıkıştır"}}
+ayar:sistem=Kenara sıkıştır	14	{"tacA":{"sistem":"Kenara sıkıştır"}}
+ayar:sistem=Kenara sıkıştır	15	{"tacA":{"sistem":"Kenara sıkıştır"}}
+ayar:sistem=Kenara sıkıştır	16	{"tacA":{"sistem":"Kenara sıkıştır"}}
+ayar:pres=0	1	{"tacA":{"pres":0}}
+ayar:pres=0	2	{"tacA":{"pres":0}}
+ayar:pres=0	3	{"tacA":{"pres":0}}
+ayar:pres=0	4	{"tacA":{"pres":0}}
+ayar:pres=0	5	{"tacA":{"pres":0}}
+ayar:pres=0	6	{"tacA":{"pres":0}}
+ayar:pres=0	7	{"tacA":{"pres":0}}
+ayar:pres=0	8	{"tacA":{"pres":0}}
+ayar:pres=0	9	{"tacA":{"pres":0}}
+ayar:pres=0	10	{"tacA":{"pres":0}}
+ayar:pres=0	11	{"tacA":{"pres":0}}
+ayar:pres=0	12	{"tacA":{"pres":0}}
+ayar:pres=0	13	{"tacA":{"pres":0}}
+ayar:pres=0	14	{"tacA":{"pres":0}}
+ayar:pres=0	15	{"tacA":{"pres":0}}
+ayar:pres=0	16	{"tacA":{"pres":0}}
+ayar:pres=3	1	{"tacA":{"pres":3}}
+ayar:pres=3	2	{"tacA":{"pres":3}}
+ayar:pres=3	3	{"tacA":{"pres":3}}
+ayar:pres=3	4	{"tacA":{"pres":3}}
+ayar:pres=3	5	{"tacA":{"pres":3}}
+ayar:pres=3	6	{"tacA":{"pres":3}}
+ayar:pres=3	7	{"tacA":{"pres":3}}
+ayar:pres=3	8	{"tacA":{"pres":3}}
+ayar:pres=3	9	{"tacA":{"pres":3}}
+ayar:pres=3	10	{"tacA":{"pres":3}}
+ayar:pres=3	11	{"tacA":{"pres":3}}
+ayar:pres=3	12	{"tacA":{"pres":3}}
+ayar:pres=3	13	{"tacA":{"pres":3}}
+ayar:pres=3	14	{"tacA":{"pres":3}}
+ayar:pres=3	15	{"tacA":{"pres":3}}
+ayar:pres=3	16	{"tacA":{"pres":3}}
+ayar:arkada=0	1	{"tacA":{"arkada":0}}
+ayar:arkada=0	2	{"tacA":{"arkada":0}}
+ayar:arkada=0	3	{"tacA":{"arkada":0}}
+ayar:arkada=0	4	{"tacA":{"arkada":0}}
+ayar:arkada=0	5	{"tacA":{"arkada":0}}
+ayar:arkada=0	6	{"tacA":{"arkada":0}}
+ayar:arkada=0	7	{"tacA":{"arkada":0}}
+ayar:arkada=0	8	{"tacA":{"arkada":0}}
+ayar:arkada=0	9	{"tacA":{"arkada":0}}
+ayar:arkada=0	10	{"tacA":{"arkada":0}}
+ayar:arkada=0	11	{"tacA":{"arkada":0}}
+ayar:arkada=0	12	{"tacA":{"arkada":0}}
+ayar:arkada=0	13	{"tacA":{"arkada":0}}
+ayar:arkada=0	14	{"tacA":{"arkada":0}}
+ayar:arkada=0	15	{"tacA":{"arkada":0}}
+ayar:arkada=0	16	{"tacA":{"arkada":0}}
+ayar:arkada=2	1	{"tacA":{"arkada":2}}
+ayar:arkada=2	2	{"tacA":{"arkada":2}}
+ayar:arkada=2	3	{"tacA":{"arkada":2}}
+ayar:arkada=2	4	{"tacA":{"arkada":2}}
+ayar:arkada=2	5	{"tacA":{"arkada":2}}
+ayar:arkada=2	6	{"tacA":{"arkada":2}}
+ayar:arkada=2	7	{"tacA":{"arkada":2}}
+ayar:arkada=2	8	{"tacA":{"arkada":2}}
+ayar:arkada=2	9	{"tacA":{"arkada":2}}
+ayar:arkada=2	10	{"tacA":{"arkada":2}}
+ayar:arkada=2	11	{"tacA":{"arkada":2}}
+ayar:arkada=2	12	{"tacA":{"arkada":2}}
+ayar:arkada=2	13	{"tacA":{"arkada":2}}
+ayar:arkada=2	14	{"tacA":{"arkada":2}}
+ayar:arkada=2	15	{"tacA":{"arkada":2}}
+ayar:arkada=2	16	{"tacA":{"arkada":2}}
+ayar:blok=Düşük	1	{"tacA":{"blok":"Düşük"}}
+ayar:blok=Düşük	2	{"tacA":{"blok":"Düşük"}}
+ayar:blok=Düşük	3	{"tacA":{"blok":"Düşük"}}
+ayar:blok=Düşük	4	{"tacA":{"blok":"Düşük"}}
+ayar:blok=Düşük	5	{"tacA":{"blok":"Düşük"}}
+ayar:blok=Düşük	6	{"tacA":{"blok":"Düşük"}}
+ayar:blok=Düşük	7	{"tacA":{"blok":"Düşük"}}
+ayar:blok=Düşük	8	{"tacA":{"blok":"Düşük"}}
+ayar:blok=Düşük	9	{"tacA":{"blok":"Düşük"}}
+ayar:blok=Düşük	10	{"tacA":{"blok":"Düşük"}}
+ayar:blok=Düşük	11	{"tacA":{"blok":"Düşük"}}
+ayar:blok=Düşük	12	{"tacA":{"blok":"Düşük"}}
+ayar:blok=Düşük	13	{"tacA":{"blok":"Düşük"}}
+ayar:blok=Düşük	14	{"tacA":{"blok":"Düşük"}}
+ayar:blok=Düşük	15	{"tacA":{"blok":"Düşük"}}
+ayar:blok=Düşük	16	{"tacA":{"blok":"Düşük"}}
+ayar:blok=Yüksek	1	{"tacA":{"blok":"Yüksek"}}
+ayar:blok=Yüksek	2	{"tacA":{"blok":"Yüksek"}}
+ayar:blok=Yüksek	3	{"tacA":{"blok":"Yüksek"}}
+ayar:blok=Yüksek	4	{"tacA":{"blok":"Yüksek"}}
+ayar:blok=Yüksek	5	{"tacA":{"blok":"Yüksek"}}
+ayar:blok=Yüksek	6	{"tacA":{"blok":"Yüksek"}}
+ayar:blok=Yüksek	7	{"tacA":{"blok":"Yüksek"}}
+ayar:blok=Yüksek	8	{"tacA":{"blok":"Yüksek"}}
+ayar:blok=Yüksek	9	{"tacA":{"blok":"Yüksek"}}
+ayar:blok=Yüksek	10	{"tacA":{"blok":"Yüksek"}}
+ayar:blok=Yüksek	11	{"tacA":{"blok":"Yüksek"}}
+ayar:blok=Yüksek	12	{"tacA":{"blok":"Yüksek"}}
+ayar:blok=Yüksek	13	{"tacA":{"blok":"Yüksek"}}
+ayar:blok=Yüksek	14	{"tacA":{"blok":"Yüksek"}}
+ayar:blok=Yüksek	15	{"tacA":{"blok":"Yüksek"}}
+ayar:blok=Yüksek	16	{"tacA":{"blok":"Yüksek"}}
+ayar:genislik=Dar	1	{"tacA":{"genislik":"Dar"}}
+ayar:genislik=Dar	2	{"tacA":{"genislik":"Dar"}}
+ayar:genislik=Dar	3	{"tacA":{"genislik":"Dar"}}
+ayar:genislik=Dar	4	{"tacA":{"genislik":"Dar"}}
+ayar:genislik=Dar	5	{"tacA":{"genislik":"Dar"}}
+ayar:genislik=Dar	6	{"tacA":{"genislik":"Dar"}}
+ayar:genislik=Dar	7	{"tacA":{"genislik":"Dar"}}
+ayar:genislik=Dar	8	{"tacA":{"genislik":"Dar"}}
+ayar:genislik=Dar	9	{"tacA":{"genislik":"Dar"}}
+ayar:genislik=Dar	10	{"tacA":{"genislik":"Dar"}}
+ayar:genislik=Dar	11	{"tacA":{"genislik":"Dar"}}
+ayar:genislik=Dar	12	{"tacA":{"genislik":"Dar"}}
+ayar:genislik=Dar	13	{"tacA":{"genislik":"Dar"}}
+ayar:genislik=Dar	14	{"tacA":{"genislik":"Dar"}}
+ayar:genislik=Dar	15	{"tacA":{"genislik":"Dar"}}
+ayar:genislik=Dar	16	{"tacA":{"genislik":"Dar"}}
+ayar:genislik=Geniş	1	{"tacA":{"genislik":"Geniş"}}
+ayar:genislik=Geniş	2	{"tacA":{"genislik":"Geniş"}}
+ayar:genislik=Geniş	3	{"tacA":{"genislik":"Geniş"}}
+ayar:genislik=Geniş	4	{"tacA":{"genislik":"Geniş"}}
+ayar:genislik=Geniş	5	{"tacA":{"genislik":"Geniş"}}
+ayar:genislik=Geniş	6	{"tacA":{"genislik":"Geniş"}}
+ayar:genislik=Geniş	7	{"tacA":{"genislik":"Geniş"}}
+ayar:genislik=Geniş	8	{"tacA":{"genislik":"Geniş"}}
+ayar:genislik=Geniş	9	{"tacA":{"genislik":"Geniş"}}
+ayar:genislik=Geniş	10	{"tacA":{"genislik":"Geniş"}}
+ayar:genislik=Geniş	11	{"tacA":{"genislik":"Geniş"}}
+ayar:genislik=Geniş	12	{"tacA":{"genislik":"Geniş"}}
+ayar:genislik=Geniş	13	{"tacA":{"genislik":"Geniş"}}
+ayar:genislik=Geniş	14	{"tacA":{"genislik":"Geniş"}}
+ayar:genislik=Geniş	15	{"tacA":{"genislik":"Geniş"}}
+ayar:genislik=Geniş	16	{"tacA":{"genislik":"Geniş"}}
+ayar:tempo=0.2	1	{"tacA":{"tempo":0.2}}
+ayar:tempo=0.2	2	{"tacA":{"tempo":0.2}}
+ayar:tempo=0.2	3	{"tacA":{"tempo":0.2}}
+ayar:tempo=0.2	4	{"tacA":{"tempo":0.2}}
+ayar:tempo=0.2	5	{"tacA":{"tempo":0.2}}
+ayar:tempo=0.2	6	{"tacA":{"tempo":0.2}}
+ayar:tempo=0.2	7	{"tacA":{"tempo":0.2}}
+ayar:tempo=0.2	8	{"tacA":{"tempo":0.2}}
+ayar:tempo=0.2	9	{"tacA":{"tempo":0.2}}
+ayar:tempo=0.2	10	{"tacA":{"tempo":0.2}}
+ayar:tempo=0.2	11	{"tacA":{"tempo":0.2}}
+ayar:tempo=0.2	12	{"tacA":{"tempo":0.2}}
+ayar:tempo=0.2	13	{"tacA":{"tempo":0.2}}
+ayar:tempo=0.2	14	{"tacA":{"tempo":0.2}}
+ayar:tempo=0.2	15	{"tacA":{"tempo":0.2}}
+ayar:tempo=0.2	16	{"tacA":{"tempo":0.2}}
+ayar:tempo=0.8	1	{"tacA":{"tempo":0.8}}
+ayar:tempo=0.8	2	{"tacA":{"tempo":0.8}}
+ayar:tempo=0.8	3	{"tacA":{"tempo":0.8}}
+ayar:tempo=0.8	4	{"tacA":{"tempo":0.8}}
+ayar:tempo=0.8	5	{"tacA":{"tempo":0.8}}
+ayar:tempo=0.8	6	{"tacA":{"tempo":0.8}}
+ayar:tempo=0.8	7	{"tacA":{"tempo":0.8}}
+ayar:tempo=0.8	8	{"tacA":{"tempo":0.8}}
+ayar:tempo=0.8	9	{"tacA":{"tempo":0.8}}
+ayar:tempo=0.8	10	{"tacA":{"tempo":0.8}}
+ayar:tempo=0.8	11	{"tacA":{"tempo":0.8}}
+ayar:tempo=0.8	12	{"tacA":{"tempo":0.8}}
+ayar:tempo=0.8	13	{"tacA":{"tempo":0.8}}
+ayar:tempo=0.8	14	{"tacA":{"tempo":0.8}}
+ayar:tempo=0.8	15	{"tacA":{"tempo":0.8}}
+ayar:tempo=0.8	16	{"tacA":{"tempo":0.8}}
+ayar:risk=0.2	1	{"tacA":{"risk":0.2}}
+ayar:risk=0.2	2	{"tacA":{"risk":0.2}}
+ayar:risk=0.2	3	{"tacA":{"risk":0.2}}
+ayar:risk=0.2	4	{"tacA":{"risk":0.2}}
+ayar:risk=0.2	5	{"tacA":{"risk":0.2}}
+ayar:risk=0.2	6	{"tacA":{"risk":0.2}}
+ayar:risk=0.2	7	{"tacA":{"risk":0.2}}
+ayar:risk=0.2	8	{"tacA":{"risk":0.2}}
+ayar:risk=0.2	9	{"tacA":{"risk":0.2}}
+ayar:risk=0.2	10	{"tacA":{"risk":0.2}}
+ayar:risk=0.2	11	{"tacA":{"risk":0.2}}
+ayar:risk=0.2	12	{"tacA":{"risk":0.2}}
+ayar:risk=0.2	13	{"tacA":{"risk":0.2}}
+ayar:risk=0.2	14	{"tacA":{"risk":0.2}}
+ayar:risk=0.2	15	{"tacA":{"risk":0.2}}
+ayar:risk=0.2	16	{"tacA":{"risk":0.2}}
+ayar:risk=0.8	1	{"tacA":{"risk":0.8}}
+ayar:risk=0.8	2	{"tacA":{"risk":0.8}}
+ayar:risk=0.8	3	{"tacA":{"risk":0.8}}
+ayar:risk=0.8	4	{"tacA":{"risk":0.8}}
+ayar:risk=0.8	5	{"tacA":{"risk":0.8}}
+ayar:risk=0.8	6	{"tacA":{"risk":0.8}}
+ayar:risk=0.8	7	{"tacA":{"risk":0.8}}
+ayar:risk=0.8	8	{"tacA":{"risk":0.8}}
+ayar:risk=0.8	9	{"tacA":{"risk":0.8}}
+ayar:risk=0.8	10	{"tacA":{"risk":0.8}}
+ayar:risk=0.8	11	{"tacA":{"risk":0.8}}
+ayar:risk=0.8	12	{"tacA":{"risk":0.8}}
+ayar:risk=0.8	13	{"tacA":{"risk":0.8}}
+ayar:risk=0.8	14	{"tacA":{"risk":0.8}}
+ayar:risk=0.8	15	{"tacA":{"risk":0.8}}
+ayar:risk=0.8	16	{"tacA":{"risk":0.8}}
+ayar:kazaninca=Yerleş	1	{"tacA":{"kazaninca":"Yerleş"}}
+ayar:kazaninca=Yerleş	2	{"tacA":{"kazaninca":"Yerleş"}}
+ayar:kazaninca=Yerleş	3	{"tacA":{"kazaninca":"Yerleş"}}
+ayar:kazaninca=Yerleş	4	{"tacA":{"kazaninca":"Yerleş"}}
+ayar:kazaninca=Yerleş	5	{"tacA":{"kazaninca":"Yerleş"}}
+ayar:kazaninca=Yerleş	6	{"tacA":{"kazaninca":"Yerleş"}}
+ayar:kazaninca=Yerleş	7	{"tacA":{"kazaninca":"Yerleş"}}
+ayar:kazaninca=Yerleş	8	{"tacA":{"kazaninca":"Yerleş"}}
+ayar:kazaninca=Yerleş	9	{"tacA":{"kazaninca":"Yerleş"}}
+ayar:kazaninca=Yerleş	10	{"tacA":{"kazaninca":"Yerleş"}}
+ayar:kazaninca=Yerleş	11	{"tacA":{"kazaninca":"Yerleş"}}
+ayar:kazaninca=Yerleş	12	{"tacA":{"kazaninca":"Yerleş"}}
+ayar:kazaninca=Yerleş	13	{"tacA":{"kazaninca":"Yerleş"}}
+ayar:kazaninca=Yerleş	14	{"tacA":{"kazaninca":"Yerleş"}}
+ayar:kazaninca=Yerleş	15	{"tacA":{"kazaninca":"Yerleş"}}
+ayar:kazaninca=Yerleş	16	{"tacA":{"kazaninca":"Yerleş"}}
+ayar:kazaninca=Kontra	1	{"tacA":{"kazaninca":"Kontra"}}
+ayar:kazaninca=Kontra	2	{"tacA":{"kazaninca":"Kontra"}}
+ayar:kazaninca=Kontra	3	{"tacA":{"kazaninca":"Kontra"}}
+ayar:kazaninca=Kontra	4	{"tacA":{"kazaninca":"Kontra"}}
+ayar:kazaninca=Kontra	5	{"tacA":{"kazaninca":"Kontra"}}
+ayar:kazaninca=Kontra	6	{"tacA":{"kazaninca":"Kontra"}}
+ayar:kazaninca=Kontra	7	{"tacA":{"kazaninca":"Kontra"}}
+ayar:kazaninca=Kontra	8	{"tacA":{"kazaninca":"Kontra"}}
+ayar:kazaninca=Kontra	9	{"tacA":{"kazaninca":"Kontra"}}
+ayar:kazaninca=Kontra	10	{"tacA":{"kazaninca":"Kontra"}}
+ayar:kazaninca=Kontra	11	{"tacA":{"kazaninca":"Kontra"}}
+ayar:kazaninca=Kontra	12	{"tacA":{"kazaninca":"Kontra"}}
+ayar:kazaninca=Kontra	13	{"tacA":{"kazaninca":"Kontra"}}
+ayar:kazaninca=Kontra	14	{"tacA":{"kazaninca":"Kontra"}}
+ayar:kazaninca=Kontra	15	{"tacA":{"kazaninca":"Kontra"}}
+ayar:kazaninca=Kontra	16	{"tacA":{"kazaninca":"Kontra"}}
+ayar:pasSurme=0.1	1	{"tacA":{"pasSurme":0.1}}
+ayar:pasSurme=0.1	2	{"tacA":{"pasSurme":0.1}}
+ayar:pasSurme=0.1	3	{"tacA":{"pasSurme":0.1}}
+ayar:pasSurme=0.1	4	{"tacA":{"pasSurme":0.1}}
+ayar:pasSurme=0.1	5	{"tacA":{"pasSurme":0.1}}
+ayar:pasSurme=0.1	6	{"tacA":{"pasSurme":0.1}}
+ayar:pasSurme=0.1	7	{"tacA":{"pasSurme":0.1}}
+ayar:pasSurme=0.1	8	{"tacA":{"pasSurme":0.1}}
+ayar:pasSurme=0.1	9	{"tacA":{"pasSurme":0.1}}
+ayar:pasSurme=0.1	10	{"tacA":{"pasSurme":0.1}}
+ayar:pasSurme=0.1	11	{"tacA":{"pasSurme":0.1}}
+ayar:pasSurme=0.1	12	{"tacA":{"pasSurme":0.1}}
+ayar:pasSurme=0.1	13	{"tacA":{"pasSurme":0.1}}
+ayar:pasSurme=0.1	14	{"tacA":{"pasSurme":0.1}}
+ayar:pasSurme=0.1	15	{"tacA":{"pasSurme":0.1}}
+ayar:pasSurme=0.1	16	{"tacA":{"pasSurme":0.1}}
+ayar:pasSurme=0.9	1	{"tacA":{"pasSurme":0.9}}
+ayar:pasSurme=0.9	2	{"tacA":{"pasSurme":0.9}}
+ayar:pasSurme=0.9	3	{"tacA":{"pasSurme":0.9}}
+ayar:pasSurme=0.9	4	{"tacA":{"pasSurme":0.9}}
+ayar:pasSurme=0.9	5	{"tacA":{"pasSurme":0.9}}
+ayar:pasSurme=0.9	6	{"tacA":{"pasSurme":0.9}}
+ayar:pasSurme=0.9	7	{"tacA":{"pasSurme":0.9}}
+ayar:pasSurme=0.9	8	{"tacA":{"pasSurme":0.9}}
+ayar:pasSurme=0.9	9	{"tacA":{"pasSurme":0.9}}
+ayar:pasSurme=0.9	10	{"tacA":{"pasSurme":0.9}}
+ayar:pasSurme=0.9	11	{"tacA":{"pasSurme":0.9}}
+ayar:pasSurme=0.9	12	{"tacA":{"pasSurme":0.9}}
+ayar:pasSurme=0.9	13	{"tacA":{"pasSurme":0.9}}
+ayar:pasSurme=0.9	14	{"tacA":{"pasSurme":0.9}}
+ayar:pasSurme=0.9	15	{"tacA":{"pasSurme":0.9}}
+ayar:pasSurme=0.9	16	{"tacA":{"pasSurme":0.9}}
+ayar:sabir=0.1	1	{"tacA":{"sabir":0.1}}
+ayar:sabir=0.1	2	{"tacA":{"sabir":0.1}}
+ayar:sabir=0.1	3	{"tacA":{"sabir":0.1}}
+ayar:sabir=0.1	4	{"tacA":{"sabir":0.1}}
+ayar:sabir=0.1	5	{"tacA":{"sabir":0.1}}
+ayar:sabir=0.1	6	{"tacA":{"sabir":0.1}}
+ayar:sabir=0.1	7	{"tacA":{"sabir":0.1}}
+ayar:sabir=0.1	8	{"tacA":{"sabir":0.1}}
+ayar:sabir=0.1	9	{"tacA":{"sabir":0.1}}
+ayar:sabir=0.1	10	{"tacA":{"sabir":0.1}}
+ayar:sabir=0.1	11	{"tacA":{"sabir":0.1}}
+ayar:sabir=0.1	12	{"tacA":{"sabir":0.1}}
+ayar:sabir=0.1	13	{"tacA":{"sabir":0.1}}
+ayar:sabir=0.1	14	{"tacA":{"sabir":0.1}}
+ayar:sabir=0.1	15	{"tacA":{"sabir":0.1}}
+ayar:sabir=0.1	16	{"tacA":{"sabir":0.1}}
+ayar:sabir=0.9	1	{"tacA":{"sabir":0.9}}
+ayar:sabir=0.9	2	{"tacA":{"sabir":0.9}}
+ayar:sabir=0.9	3	{"tacA":{"sabir":0.9}}
+ayar:sabir=0.9	4	{"tacA":{"sabir":0.9}}
+ayar:sabir=0.9	5	{"tacA":{"sabir":0.9}}
+ayar:sabir=0.9	6	{"tacA":{"sabir":0.9}}
+ayar:sabir=0.9	7	{"tacA":{"sabir":0.9}}
+ayar:sabir=0.9	8	{"tacA":{"sabir":0.9}}
+ayar:sabir=0.9	9	{"tacA":{"sabir":0.9}}
+ayar:sabir=0.9	10	{"tacA":{"sabir":0.9}}
+ayar:sabir=0.9	11	{"tacA":{"sabir":0.9}}
+ayar:sabir=0.9	12	{"tacA":{"sabir":0.9}}
+ayar:sabir=0.9	13	{"tacA":{"sabir":0.9}}
+ayar:sabir=0.9	14	{"tacA":{"sabir":0.9}}
+ayar:sabir=0.9	15	{"tacA":{"sabir":0.9}}
+ayar:sabir=0.9	16	{"tacA":{"sabir":0.9}}
+ayar:sut=0.1	1	{"tacA":{"sut":0.1}}
+ayar:sut=0.1	2	{"tacA":{"sut":0.1}}
+ayar:sut=0.1	3	{"tacA":{"sut":0.1}}
+ayar:sut=0.1	4	{"tacA":{"sut":0.1}}
+ayar:sut=0.1	5	{"tacA":{"sut":0.1}}
+ayar:sut=0.1	6	{"tacA":{"sut":0.1}}
+ayar:sut=0.1	7	{"tacA":{"sut":0.1}}
+ayar:sut=0.1	8	{"tacA":{"sut":0.1}}
+ayar:sut=0.1	9	{"tacA":{"sut":0.1}}
+ayar:sut=0.1	10	{"tacA":{"sut":0.1}}
+ayar:sut=0.1	11	{"tacA":{"sut":0.1}}
+ayar:sut=0.1	12	{"tacA":{"sut":0.1}}
+ayar:sut=0.1	13	{"tacA":{"sut":0.1}}
+ayar:sut=0.1	14	{"tacA":{"sut":0.1}}
+ayar:sut=0.1	15	{"tacA":{"sut":0.1}}
+ayar:sut=0.1	16	{"tacA":{"sut":0.1}}
+ayar:sut=0.9	1	{"tacA":{"sut":0.9}}
+ayar:sut=0.9	2	{"tacA":{"sut":0.9}}
+ayar:sut=0.9	3	{"tacA":{"sut":0.9}}
+ayar:sut=0.9	4	{"tacA":{"sut":0.9}}
+ayar:sut=0.9	5	{"tacA":{"sut":0.9}}
+ayar:sut=0.9	6	{"tacA":{"sut":0.9}}
+ayar:sut=0.9	7	{"tacA":{"sut":0.9}}
+ayar:sut=0.9	8	{"tacA":{"sut":0.9}}
+ayar:sut=0.9	9	{"tacA":{"sut":0.9}}
+ayar:sut=0.9	10	{"tacA":{"sut":0.9}}
+ayar:sut=0.9	11	{"tacA":{"sut":0.9}}
+ayar:sut=0.9	12	{"tacA":{"sut":0.9}}
+ayar:sut=0.9	13	{"tacA":{"sut":0.9}}
+ayar:sut=0.9	14	{"tacA":{"sut":0.9}}
+ayar:sut=0.9	15	{"tacA":{"sut":0.9}}
+ayar:sut=0.9	16	{"tacA":{"sut":0.9}}
+ayar:tetik=yok	1	{"tacA":{"tetik":[]}}
+ayar:tetik=yok	2	{"tacA":{"tetik":[]}}
+ayar:tetik=yok	3	{"tacA":{"tetik":[]}}
+ayar:tetik=yok	4	{"tacA":{"tetik":[]}}
+ayar:tetik=yok	5	{"tacA":{"tetik":[]}}
+ayar:tetik=yok	6	{"tacA":{"tetik":[]}}
+ayar:tetik=yok	7	{"tacA":{"tetik":[]}}
+ayar:tetik=yok	8	{"tacA":{"tetik":[]}}
+ayar:tetik=yok	9	{"tacA":{"tetik":[]}}
+ayar:tetik=yok	10	{"tacA":{"tetik":[]}}
+ayar:tetik=yok	11	{"tacA":{"tetik":[]}}
+ayar:tetik=yok	12	{"tacA":{"tetik":[]}}
+ayar:tetik=yok	13	{"tacA":{"tetik":[]}}
+ayar:tetik=yok	14	{"tacA":{"tetik":[]}}
+ayar:tetik=yok	15	{"tacA":{"tetik":[]}}
+ayar:tetik=yok	16	{"tacA":{"tetik":[]}}
+ayar:tetik=hepsi	1	{"tacA":{"tetik":["Geri pas","Kanatta","Zayıf kontrol","Arkası dönük","Uzun pas havada"]}}
+ayar:tetik=hepsi	2	{"tacA":{"tetik":["Geri pas","Kanatta","Zayıf kontrol","Arkası dönük","Uzun pas havada"]}}
+ayar:tetik=hepsi	3	{"tacA":{"tetik":["Geri pas","Kanatta","Zayıf kontrol","Arkası dönük","Uzun pas havada"]}}
+ayar:tetik=hepsi	4	{"tacA":{"tetik":["Geri pas","Kanatta","Zayıf kontrol","Arkası dönük","Uzun pas havada"]}}
+ayar:tetik=hepsi	5	{"tacA":{"tetik":["Geri pas","Kanatta","Zayıf kontrol","Arkası dönük","Uzun pas havada"]}}
+ayar:tetik=hepsi	6	{"tacA":{"tetik":["Geri pas","Kanatta","Zayıf kontrol","Arkası dönük","Uzun pas havada"]}}
+ayar:tetik=hepsi	7	{"tacA":{"tetik":["Geri pas","Kanatta","Zayıf kontrol","Arkası dönük","Uzun pas havada"]}}
+ayar:tetik=hepsi	8	{"tacA":{"tetik":["Geri pas","Kanatta","Zayıf kontrol","Arkası dönük","Uzun pas havada"]}}
+ayar:tetik=hepsi	9	{"tacA":{"tetik":["Geri pas","Kanatta","Zayıf kontrol","Arkası dönük","Uzun pas havada"]}}
+ayar:tetik=hepsi	10	{"tacA":{"tetik":["Geri pas","Kanatta","Zayıf kontrol","Arkası dönük","Uzun pas havada"]}}
+ayar:tetik=hepsi	11	{"tacA":{"tetik":["Geri pas","Kanatta","Zayıf kontrol","Arkası dönük","Uzun pas havada"]}}
+ayar:tetik=hepsi	12	{"tacA":{"tetik":["Geri pas","Kanatta","Zayıf kontrol","Arkası dönük","Uzun pas havada"]}}
+ayar:tetik=hepsi	13	{"tacA":{"tetik":["Geri pas","Kanatta","Zayıf kontrol","Arkası dönük","Uzun pas havada"]}}
+ayar:tetik=hepsi	14	{"tacA":{"tetik":["Geri pas","Kanatta","Zayıf kontrol","Arkası dönük","Uzun pas havada"]}}
+ayar:tetik=hepsi	15	{"tacA":{"tetik":["Geri pas","Kanatta","Zayıf kontrol","Arkası dönük","Uzun pas havada"]}}
+ayar:tetik=hepsi	16	{"tacA":{"tetik":["Geri pas","Kanatta","Zayıf kontrol","Arkası dönük","Uzun pas havada"]}}
+ayar:kayip=0.1	1	{"tacA":{"kayip":0.1}}
+ayar:kayip=0.1	2	{"tacA":{"kayip":0.1}}
+ayar:kayip=0.1	3	{"tacA":{"kayip":0.1}}
+ayar:kayip=0.1	4	{"tacA":{"kayip":0.1}}
+ayar:kayip=0.1	5	{"tacA":{"kayip":0.1}}
+ayar:kayip=0.1	6	{"tacA":{"kayip":0.1}}
+ayar:kayip=0.1	7	{"tacA":{"kayip":0.1}}
+ayar:kayip=0.1	8	{"tacA":{"kayip":0.1}}
+ayar:kayip=0.1	9	{"tacA":{"kayip":0.1}}
+ayar:kayip=0.1	10	{"tacA":{"kayip":0.1}}
+ayar:kayip=0.1	11	{"tacA":{"kayip":0.1}}
+ayar:kayip=0.1	12	{"tacA":{"kayip":0.1}}
+ayar:kayip=0.1	13	{"tacA":{"kayip":0.1}}
+ayar:kayip=0.1	14	{"tacA":{"kayip":0.1}}
+ayar:kayip=0.1	15	{"tacA":{"kayip":0.1}}
+ayar:kayip=0.1	16	{"tacA":{"kayip":0.1}}
+ayar:kayip=0.9	1	{"tacA":{"kayip":0.9}}
+ayar:kayip=0.9	2	{"tacA":{"kayip":0.9}}
+ayar:kayip=0.9	3	{"tacA":{"kayip":0.9}}
+ayar:kayip=0.9	4	{"tacA":{"kayip":0.9}}
+ayar:kayip=0.9	5	{"tacA":{"kayip":0.9}}
+ayar:kayip=0.9	6	{"tacA":{"kayip":0.9}}
+ayar:kayip=0.9	7	{"tacA":{"kayip":0.9}}
+ayar:kayip=0.9	8	{"tacA":{"kayip":0.9}}
+ayar:kayip=0.9	9	{"tacA":{"kayip":0.9}}
+ayar:kayip=0.9	10	{"tacA":{"kayip":0.9}}
+ayar:kayip=0.9	11	{"tacA":{"kayip":0.9}}
+ayar:kayip=0.9	12	{"tacA":{"kayip":0.9}}
+ayar:kayip=0.9	13	{"tacA":{"kayip":0.9}}
+ayar:kayip=0.9	14	{"tacA":{"kayip":0.9}}
+ayar:kayip=0.9	15	{"tacA":{"kayip":0.9}}
+ayar:kayip=0.9	16	{"tacA":{"kayip":0.9}}
+taktik:Dengeli|Sabırlı	1	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	2	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	3	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	4	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	5	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	6	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	7	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	8	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	9	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	10	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	11	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	12	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	13	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	14	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	15	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	16	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	17	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	18	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	19	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	20	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	21	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	22	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	23	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	24	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	25	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	26	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	27	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	28	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	29	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Sabırlı	30	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Dikine	1	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	2	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	3	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	4	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	5	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	6	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	7	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	8	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	9	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	10	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	11	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	12	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	13	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	14	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	15	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	16	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	17	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	18	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	19	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	20	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	21	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	22	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	23	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	24	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	25	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	26	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	27	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	28	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	29	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Dikine	30	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	1	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	2	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	3	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	4	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	5	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	6	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	7	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	8	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	9	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	10	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	11	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	12	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	13	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	14	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	15	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	16	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	17	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	18	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	19	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	20	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	21	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	22	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	23	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	24	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	25	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	26	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	27	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	28	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	29	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Kontra	30	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dengeli|Ön alan	1	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	2	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	3	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	4	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	5	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	6	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	7	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	8	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	9	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	10	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	11	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	12	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	13	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	14	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	15	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	16	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	17	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	18	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	19	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	20	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	21	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	22	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	23	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	24	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	25	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	26	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	27	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	28	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	29	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Ön alan	30	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dengeli|Kuyu önü	1	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	2	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	3	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	4	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	5	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	6	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	7	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	8	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	9	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	10	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	11	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	12	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	13	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	14	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	15	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	16	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	17	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	18	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	19	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	20	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	21	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	22	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	23	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	24	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	25	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	26	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	27	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	28	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	29	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dengeli|Kuyu önü	30	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Dikine	1	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	2	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	3	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	4	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	5	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	6	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	7	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	8	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	9	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	10	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	11	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	12	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	13	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	14	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	15	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	16	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	17	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	18	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	19	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	20	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	21	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	22	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	23	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	24	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	25	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	26	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	27	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	28	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	29	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Dikine	30	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	1	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	2	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	3	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	4	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	5	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	6	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	7	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	8	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	9	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	10	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	11	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	12	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	13	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	14	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	15	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	16	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	17	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	18	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	19	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	20	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	21	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	22	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	23	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	24	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	25	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	26	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	27	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	28	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	29	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Kontra	30	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Sabırlı|Ön alan	1	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	2	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	3	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	4	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	5	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	6	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	7	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	8	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	9	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	10	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	11	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	12	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	13	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	14	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	15	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	16	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	17	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	18	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	19	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	20	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	21	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	22	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	23	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	24	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	25	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	26	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	27	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	28	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	29	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Ön alan	30	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Sabırlı|Kuyu önü	1	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	2	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	3	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	4	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	5	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	6	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	7	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	8	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	9	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	10	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	11	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	12	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	13	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	14	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	15	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	16	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	17	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	18	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	19	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	20	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	21	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	22	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	23	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	24	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	25	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	26	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	27	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	28	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	29	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Sabırlı|Kuyu önü	30	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Geniş","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kontra	1	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	2	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	3	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	4	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	5	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	6	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	7	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	8	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	9	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	10	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	11	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	12	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	13	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	14	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	15	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	16	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	17	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	18	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	19	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	20	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	21	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	22	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	23	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	24	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	25	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	26	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	27	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	28	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	29	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Kontra	30	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"}}
+taktik:Dikine|Ön alan	1	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	2	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	3	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	4	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	5	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	6	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	7	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	8	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	9	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	10	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	11	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	12	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	13	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	14	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	15	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	16	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	17	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	18	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	19	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	20	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	21	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	22	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	23	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	24	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	25	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	26	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	27	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	28	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	29	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Ön alan	30	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Dikine|Kuyu önü	1	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	2	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	3	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	4	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	5	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	6	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	7	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	8	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	9	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	10	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	11	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	12	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	13	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	14	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	15	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	16	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	17	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	18	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	19	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	20	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	21	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	22	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	23	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	24	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	25	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	26	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	27	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	28	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	29	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Dikine|Kuyu önü	30	{"tacA":{"sistem":"Alan","pres":1,"arkada":1,"blok":"Orta","genislik":"Normal","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Ön alan	1	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	2	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	3	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	4	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	5	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	6	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	7	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	8	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	9	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	10	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	11	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	12	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	13	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	14	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	15	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	16	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	17	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	18	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	19	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	20	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	21	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	22	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	23	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	24	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	25	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	26	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	27	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	28	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	29	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Ön alan	30	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"}}
+taktik:Kontra|Kuyu önü	1	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	2	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	3	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	4	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	5	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	6	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	7	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	8	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	9	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	10	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	11	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	12	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	13	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	14	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	15	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	16	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	17	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	18	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	19	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	20	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	21	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	22	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	23	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	24	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	25	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	26	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	27	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	28	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	29	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Kontra|Kuyu önü	30	{"tacA":{"sistem":"Alan","pres":0,"arkada":1,"blok":"Düşük","genislik":"Dar","tempo":0.8,"risk":0.8,"kazaninca":"Kontra"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	1	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	2	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	3	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	4	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	5	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	6	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	7	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	8	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	9	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	10	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	11	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	12	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	13	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	14	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	15	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	16	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	17	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	18	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	19	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	20	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	21	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	22	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	23	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	24	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	25	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	26	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	27	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	28	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	29	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}
+taktik:Ön alan|Kuyu önü	30	{"tacA":{"sistem":"Adam adama","pres":3,"arkada":1,"blok":"Yüksek","genislik":"Geniş","tempo":0.5,"risk":0.5,"kazaninca":"Dengeli"},"tacB":{"sistem":"Alan","pres":0,"arkada":2,"blok":"Düşük","genislik":"Dar","tempo":0.2,"risk":0.2,"kazaninca":"Yerleş"}}

@@ -1,0 +1,1066 @@
+{"ad":"temel","i":2,"sA":0,"sB":2,"gA":2,"gB":2,"posA":0.508,"pasA":42,"pasB":45,"tutA":0.81,"tutB":0.756,"kazA":24,"kazB":27}
+{"ad":"temel","i":3,"sA":4,"sB":2,"gA":5,"gB":5,"posA":0.518,"pasA":41,"pasB":37,"tutA":0.732,"tutB":0.784,"kazA":19,"kazB":16}
+{"ad":"temel","i":1,"sA":2,"sB":0,"gA":3,"gB":3,"posA":0.462,"pasA":48,"pasB":39,"tutA":0.75,"tutB":0.718,"kazA":25,"kazB":23}
+{"ad":"temel","i":4,"sA":2,"sB":1,"gA":5,"gB":4,"posA":0.465,"pasA":44,"pasB":32,"tutA":0.75,"tutB":0.781,"kazA":22,"kazB":21}
+{"ad":"temel","i":7,"sA":3,"sB":3,"gA":5,"gB":3,"posA":0.453,"pasA":41,"pasB":46,"tutA":0.78,"tutB":0.717,"kazA":18,"kazB":17}
+{"ad":"temel","i":5,"sA":0,"sB":1,"gA":0,"gB":2,"posA":0.562,"pasA":43,"pasB":43,"tutA":0.698,"tutB":0.744,"kazA":29,"kazB":29}
+{"ad":"temel","i":6,"sA":1,"sB":1,"gA":3,"gB":2,"posA":0.556,"pasA":51,"pasB":37,"tutA":0.745,"tutB":0.73,"kazA":18,"kazB":19}
+{"ad":"temel","i":8,"sA":2,"sB":1,"gA":4,"gB":5,"posA":0.521,"pasA":45,"pasB":39,"tutA":0.756,"tutB":0.846,"kazA":21,"kazB":20}
+{"ad":"temel","i":10,"sA":4,"sB":1,"gA":7,"gB":1,"posA":0.526,"pasA":43,"pasB":36,"tutA":0.837,"tutB":0.667,"kazA":20,"kazB":18}
+{"ad":"temel","i":9,"sA":2,"sB":4,"gA":1,"gB":4,"posA":0.455,"pasA":38,"pasB":45,"tutA":0.789,"tutB":0.911,"kazA":18,"kazB":20}
+{"ad":"temel","i":11,"sA":1,"sB":3,"gA":5,"gB":4,"posA":0.365,"pasA":37,"pasB":45,"tutA":0.784,"tutB":0.667,"kazA":20,"kazB":22}
+{"ad":"temel","i":12,"sA":3,"sB":2,"gA":5,"gB":8,"posA":0.573,"pasA":38,"pasB":33,"tutA":0.737,"tutB":0.848,"kazA":23,"kazB":22}
+{"ad":"temel","i":16,"sA":1,"sB":0,"gA":1,"gB":1,"posA":0.574,"pasA":42,"pasB":41,"tutA":0.643,"tutB":0.659,"kazA":23,"kazB":22}
+{"ad":"temel","i":13,"sA":0,"sB":2,"gA":1,"gB":5,"posA":0.444,"pasA":38,"pasB":40,"tutA":0.605,"tutB":0.775,"kazA":27,"kazB":29}
+{"ad":"temel","i":14,"sA":2,"sB":2,"gA":7,"gB":3,"posA":0.592,"pasA":48,"pasB":37,"tutA":0.813,"tutB":0.757,"kazA":25,"kazB":26}
+{"ad":"temel","i":15,"sA":3,"sB":2,"gA":3,"gB":1,"posA":0.58,"pasA":38,"pasB":43,"tutA":0.605,"tutB":0.721,"kazA":27,"kazB":24}
+{"ad":"temel","i":18,"sA":0,"sB":1,"gA":2,"gB":4,"posA":0.522,"pasA":40,"pasB":36,"tutA":0.7,"tutB":0.861,"kazA":20,"kazB":21}
+{"ad":"temel","i":17,"sA":3,"sB":0,"gA":5,"gB":2,"posA":0.498,"pasA":39,"pasB":43,"tutA":0.692,"tutB":0.628,"kazA":34,"kazB":30}
+{"ad":"temel","i":19,"sA":1,"sB":3,"gA":4,"gB":4,"posA":0.451,"pasA":34,"pasB":40,"tutA":0.735,"tutB":0.8,"kazA":22,"kazB":23}
+{"ad":"temel","i":20,"sA":0,"sB":4,"gA":1,"gB":6,"posA":0.537,"pasA":39,"pasB":41,"tutA":0.718,"tutB":0.829,"kazA":24,"kazB":28}
+{"ad":"temel","i":22,"sA":2,"sB":1,"gA":4,"gB":3,"posA":0.583,"pasA":40,"pasB":28,"tutA":0.725,"tutB":0.857,"kazA":23,"kazB":22}
+{"ad":"temel","i":21,"sA":4,"sB":2,"gA":5,"gB":2,"posA":0.51,"pasA":38,"pasB":39,"tutA":0.895,"tutB":0.821,"kazA":22,"kazB":20}
+{"ad":"temel","i":23,"sA":2,"sB":2,"gA":1,"gB":2,"posA":0.465,"pasA":42,"pasB":38,"tutA":0.69,"tutB":0.684,"kazA":28,"kazB":29}
+{"ad":"temel","i":24,"sA":1,"sB":1,"gA":2,"gB":1,"posA":0.442,"pasA":40,"pasB":42,"tutA":0.775,"tutB":0.714,"kazA":21,"kazB":22}
+{"ad":"oz:okuma","i":1,"sA":1,"sB":3,"gA":4,"gB":4,"posA":0.446,"pasA":34,"pasB":46,"tutA":0.735,"tutB":0.804,"kazA":19,"kazB":21}
+{"ad":"oz:okuma","i":2,"sA":1,"sB":1,"gA":1,"gB":4,"posA":0.45,"pasA":42,"pasB":38,"tutA":0.738,"tutB":0.789,"kazA":24,"kazB":24}
+{"ad":"oz:okuma","i":3,"sA":2,"sB":1,"gA":2,"gB":3,"posA":0.501,"pasA":40,"pasB":37,"tutA":0.7,"tutB":0.838,"kazA":25,"kazB":25}
+{"ad":"oz:okuma","i":4,"sA":3,"sB":1,"gA":4,"gB":4,"posA":0.482,"pasA":38,"pasB":40,"tutA":0.816,"tutB":0.75,"kazA":21,"kazB":20}
+{"ad":"oz:okuma","i":5,"sA":0,"sB":1,"gA":3,"gB":1,"posA":0.455,"pasA":44,"pasB":39,"tutA":0.727,"tutB":0.718,"kazA":27,"kazB":27}
+{"ad":"oz:okuma","i":7,"sA":1,"sB":0,"gA":4,"gB":0,"posA":0.567,"pasA":47,"pasB":31,"tutA":0.787,"tutB":0.742,"kazA":23,"kazB":21}
+{"ad":"oz:okuma","i":6,"sA":2,"sB":0,"gA":2,"gB":2,"posA":0.515,"pasA":40,"pasB":33,"tutA":0.7,"tutB":0.758,"kazA":21,"kazB":20}
+{"ad":"oz:okuma","i":8,"sA":2,"sB":1,"gA":3,"gB":1,"posA":0.437,"pasA":42,"pasB":37,"tutA":0.69,"tutB":0.703,"kazA":27,"kazB":26}
+{"ad":"oz:okuma","i":9,"sA":3,"sB":2,"gA":4,"gB":3,"posA":0.423,"pasA":33,"pasB":47,"tutA":0.697,"tutB":0.723,"kazA":23,"kazB":21}
+{"ad":"oz:okuma","i":11,"sA":1,"sB":1,"gA":2,"gB":2,"posA":0.436,"pasA":46,"pasB":36,"tutA":0.761,"tutB":0.694,"kazA":26,"kazB":26}
+{"ad":"oz:okuma","i":12,"sA":1,"sB":1,"gA":4,"gB":2,"posA":0.504,"pasA":42,"pasB":44,"tutA":0.667,"tutB":0.705,"kazA":21,"kazB":21}
+{"ad":"oz:okuma","i":10,"sA":3,"sB":1,"gA":4,"gB":2,"posA":0.489,"pasA":41,"pasB":41,"tutA":0.756,"tutB":0.805,"kazA":21,"kazB":19}
+{"ad":"oz:okuma","i":13,"sA":2,"sB":1,"gA":3,"gB":3,"posA":0.463,"pasA":50,"pasB":39,"tutA":0.84,"tutB":0.795,"kazA":24,"kazB":23}
+{"ad":"oz:okuma","i":15,"sA":3,"sB":1,"gA":5,"gB":2,"posA":0.4,"pasA":34,"pasB":41,"tutA":0.735,"tutB":0.707,"kazA":24,"kazB":22}
+{"ad":"oz:okuma","i":16,"sA":2,"sB":0,"gA":4,"gB":3,"posA":0.507,"pasA":43,"pasB":30,"tutA":0.767,"tutB":0.733,"kazA":24,"kazB":22}
+{"ad":"oz:okuma","i":14,"sA":3,"sB":1,"gA":5,"gB":2,"posA":0.515,"pasA":52,"pasB":39,"tutA":0.846,"tutB":0.795,"kazA":17,"kazB":16}
+{"ad":"oz:aktarim","i":1,"sA":2,"sB":2,"gA":4,"gB":4,"posA":0.405,"pasA":38,"pasB":38,"tutA":0.789,"tutB":0.763,"kazA":18,"kazB":18}
+{"ad":"oz:aktarim","i":2,"sA":1,"sB":3,"gA":2,"gB":4,"posA":0.497,"pasA":44,"pasB":41,"tutA":0.75,"tutB":0.805,"kazA":18,"kazB":21}
+{"ad":"oz:aktarim","i":4,"sA":0,"sB":1,"gA":1,"gB":1,"posA":0.493,"pasA":51,"pasB":47,"tutA":0.647,"tutB":0.681,"kazA":21,"kazB":23}
+{"ad":"oz:aktarim","i":3,"sA":3,"sB":0,"gA":4,"gB":0,"posA":0.523,"pasA":37,"pasB":47,"tutA":0.892,"tutB":0.702,"kazA":20,"kazB":16}
+{"ad":"oz:aktarim","i":5,"sA":1,"sB":1,"gA":3,"gB":4,"posA":0.538,"pasA":38,"pasB":36,"tutA":0.737,"tutB":0.778,"kazA":23,"kazB":23}
+{"ad":"oz:aktarim","i":6,"sA":1,"sB":1,"gA":3,"gB":2,"posA":0.478,"pasA":42,"pasB":50,"tutA":0.714,"tutB":0.76,"kazA":20,"kazB":21}
+{"ad":"oz:aktarim","i":7,"sA":1,"sB":1,"gA":4,"gB":5,"posA":0.497,"pasA":40,"pasB":37,"tutA":0.8,"tutB":0.784,"kazA":22,"kazB":22}
+{"ad":"oz:aktarim","i":8,"sA":0,"sB":1,"gA":0,"gB":5,"posA":0.543,"pasA":44,"pasB":39,"tutA":0.659,"tutB":0.744,"kazA":28,"kazB":29}
+{"ad":"oz:aktarim","i":9,"sA":1,"sB":1,"gA":1,"gB":4,"posA":0.508,"pasA":49,"pasB":34,"tutA":0.755,"tutB":0.676,"kazA":23,"kazB":23}
+{"ad":"oz:aktarim","i":10,"sA":1,"sB":2,"gA":5,"gB":3,"posA":0.439,"pasA":33,"pasB":44,"tutA":0.758,"tutB":0.727,"kazA":19,"kazB":21}
+{"ad":"oz:aktarim","i":12,"sA":1,"sB":2,"gA":3,"gB":2,"posA":0.51,"pasA":48,"pasB":33,"tutA":0.875,"tutB":0.727,"kazA":17,"kazB":18}
+{"ad":"oz:aktarim","i":11,"sA":1,"sB":2,"gA":3,"gB":2,"posA":0.487,"pasA":53,"pasB":35,"tutA":0.774,"tutB":0.714,"kazA":28,"kazB":29}
+{"ad":"oz:aktarim","i":13,"sA":0,"sB":2,"gA":2,"gB":4,"posA":0.48,"pasA":32,"pasB":39,"tutA":0.656,"tutB":0.795,"kazA":26,"kazB":28}
+{"ad":"oz:aktarim","i":14,"sA":1,"sB":3,"gA":4,"gB":6,"posA":0.465,"pasA":44,"pasB":40,"tutA":0.795,"tutB":0.675,"kazA":25,"kazB":28}
+{"ad":"oz:aktarim","i":15,"sA":1,"sB":1,"gA":1,"gB":1,"posA":0.393,"pasA":43,"pasB":37,"tutA":0.721,"tutB":0.676,"kazA":21,"kazB":21}
+{"ad":"oz:aktarim","i":16,"sA":2,"sB":0,"gA":3,"gB":0,"posA":0.507,"pasA":38,"pasB":41,"tutA":0.711,"tutB":0.659,"kazA":29,"kazB":28}
+{"ad":"oz:tutus","i":1,"sA":0,"sB":3,"gA":2,"gB":3,"posA":0.392,"pasA":39,"pasB":44,"tutA":0.692,"tutB":0.841,"kazA":20,"kazB":22}
+{"ad":"oz:tutus","i":2,"sA":2,"sB":3,"gA":5,"gB":5,"posA":0.436,"pasA":41,"pasB":44,"tutA":0.756,"tutB":0.773,"kazA":20,"kazB":21}
+{"ad":"oz:tutus","i":3,"sA":1,"sB":2,"gA":2,"gB":2,"posA":0.507,"pasA":53,"pasB":45,"tutA":0.736,"tutB":0.733,"kazA":27,"kazB":28}
+{"ad":"oz:tutus","i":4,"sA":0,"sB":2,"gA":1,"gB":3,"posA":0.519,"pasA":47,"pasB":38,"tutA":0.766,"tutB":0.711,"kazA":23,"kazB":26}
+{"ad":"oz:tutus","i":5,"sA":0,"sB":1,"gA":3,"gB":3,"posA":0.439,"pasA":43,"pasB":41,"tutA":0.698,"tutB":0.732,"kazA":26,"kazB":26}
+{"ad":"oz:tutus","i":7,"sA":0,"sB":2,"gA":5,"gB":5,"posA":0.397,"pasA":38,"pasB":38,"tutA":0.868,"tutB":0.763,"kazA":18,"kazB":20}
+{"ad":"oz:tutus","i":6,"sA":4,"sB":0,"gA":5,"gB":3,"posA":0.55,"pasA":45,"pasB":44,"tutA":0.756,"tutB":0.727,"kazA":26,"kazB":22}
+{"ad":"oz:tutus","i":8,"sA":1,"sB":4,"gA":5,"gB":8,"posA":0.527,"pasA":45,"pasB":38,"tutA":0.778,"tutB":0.842,"kazA":20,"kazB":24}
+{"ad":"oz:tutus","i":9,"sA":1,"sB":2,"gA":2,"gB":4,"posA":0.379,"pasA":46,"pasB":49,"tutA":0.674,"tutB":0.755,"kazA":24,"kazB":24}
+{"ad":"oz:tutus","i":11,"sA":1,"sB":0,"gA":3,"gB":2,"posA":0.53,"pasA":37,"pasB":46,"tutA":0.757,"tutB":0.761,"kazA":23,"kazB":21}
+{"ad":"oz:tutus","i":10,"sA":0,"sB":2,"gA":3,"gB":3,"posA":0.404,"pasA":38,"pasB":43,"tutA":0.789,"tutB":0.767,"kazA":19,"kazB":22}
+{"ad":"oz:tutus","i":12,"sA":0,"sB":3,"gA":1,"gB":4,"posA":0.493,"pasA":41,"pasB":36,"tutA":0.683,"tutB":0.722,"kazA":27,"kazB":31}
+{"ad":"oz:tutus","i":13,"sA":2,"sB":3,"gA":2,"gB":5,"posA":0.426,"pasA":41,"pasB":38,"tutA":0.756,"tutB":0.789,"kazA":20,"kazB":21}
+{"ad":"oz:tutus","i":14,"sA":0,"sB":0,"gA":0,"gB":3,"posA":0.476,"pasA":52,"pasB":49,"tutA":0.673,"tutB":0.735,"kazA":25,"kazB":25}
+{"ad":"oz:tutus","i":15,"sA":1,"sB":0,"gA":3,"gB":5,"posA":0.478,"pasA":47,"pasB":45,"tutA":0.787,"tutB":0.8,"kazA":26,"kazB":24}
+{"ad":"oz:tutus","i":16,"sA":2,"sB":2,"gA":3,"gB":2,"posA":0.503,"pasA":46,"pasB":39,"tutA":0.783,"tutB":0.744,"kazA":22,"kazB":24}
+{"ad":"oz:kesme","i":1,"sA":2,"sB":1,"gA":4,"gB":3,"posA":0.469,"pasA":33,"pasB":48,"tutA":0.667,"tutB":0.729,"kazA":27,"kazB":25}
+{"ad":"oz:kesme","i":2,"sA":3,"sB":3,"gA":2,"gB":4,"posA":0.504,"pasA":40,"pasB":43,"tutA":0.7,"tutB":0.837,"kazA":20,"kazB":21}
+{"ad":"oz:kesme","i":3,"sA":1,"sB":1,"gA":2,"gB":3,"posA":0.461,"pasA":32,"pasB":44,"tutA":0.688,"tutB":0.864,"kazA":26,"kazB":25}
+{"ad":"oz:kesme","i":4,"sA":1,"sB":1,"gA":2,"gB":2,"posA":0.547,"pasA":43,"pasB":44,"tutA":0.674,"tutB":0.705,"kazA":29,"kazB":29}
+{"ad":"oz:kesme","i":5,"sA":3,"sB":3,"gA":4,"gB":3,"posA":0.45,"pasA":36,"pasB":44,"tutA":0.778,"tutB":0.75,"kazA":22,"kazB":23}
+{"ad":"oz:kesme","i":6,"sA":0,"sB":2,"gA":3,"gB":4,"posA":0.511,"pasA":32,"pasB":40,"tutA":0.688,"tutB":0.725,"kazA":28,"kazB":30}
+{"ad":"oz:kesme","i":7,"sA":1,"sB":5,"gA":4,"gB":5,"posA":0.511,"pasA":33,"pasB":49,"tutA":0.697,"tutB":0.796,"kazA":22,"kazB":26}
+{"ad":"oz:kesme","i":8,"sA":2,"sB":1,"gA":3,"gB":1,"posA":0.446,"pasA":40,"pasB":40,"tutA":0.825,"tutB":0.825,"kazA":16,"kazB":16}
+{"ad":"oz:kesme","i":9,"sA":1,"sB":4,"gA":2,"gB":3,"posA":0.377,"pasA":32,"pasB":46,"tutA":0.75,"tutB":0.826,"kazA":18,"kazB":19}
+{"ad":"oz:kesme","i":10,"sA":1,"sB":1,"gA":2,"gB":2,"posA":0.56,"pasA":35,"pasB":46,"tutA":0.686,"tutB":0.783,"kazA":20,"kazB":20}
+{"ad":"oz:kesme","i":12,"sA":1,"sB":0,"gA":2,"gB":1,"posA":0.496,"pasA":39,"pasB":40,"tutA":0.744,"tutB":0.85,"kazA":19,"kazB":19}
+{"ad":"oz:kesme","i":11,"sA":1,"sB":2,"gA":2,"gB":3,"posA":0.464,"pasA":42,"pasB":42,"tutA":0.619,"tutB":0.69,"kazA":34,"kazB":34}
+{"ad":"oz:kesme","i":13,"sA":2,"sB":0,"gA":3,"gB":3,"posA":0.514,"pasA":37,"pasB":41,"tutA":0.73,"tutB":0.805,"kazA":28,"kazB":25}
+{"ad":"oz:kesme","i":14,"sA":2,"sB":1,"gA":4,"gB":5,"posA":0.506,"pasA":48,"pasB":34,"tutA":0.688,"tutB":0.676,"kazA":34,"kazB":34}
+{"ad":"oz:kesme","i":15,"sA":2,"sB":1,"gA":3,"gB":3,"posA":0.498,"pasA":48,"pasB":42,"tutA":0.688,"tutB":0.762,"kazA":30,"kazB":28}
+{"ad":"oz:kesme","i":16,"sA":1,"sB":1,"gA":3,"gB":4,"posA":0.548,"pasA":46,"pasB":38,"tutA":0.804,"tutB":0.789,"kazA":28,"kazB":28}
+{"ad":"oz:yogunluk","i":1,"sA":2,"sB":0,"gA":5,"gB":2,"posA":0.45,"pasA":39,"pasB":39,"tutA":0.795,"tutB":0.821,"kazA":21,"kazB":18}
+{"ad":"oz:yogunluk","i":2,"sA":1,"sB":1,"gA":3,"gB":3,"posA":0.482,"pasA":52,"pasB":31,"tutA":0.769,"tutB":0.71,"kazA":19,"kazB":19}
+{"ad":"oz:yogunluk","i":3,"sA":0,"sB":3,"gA":4,"gB":5,"posA":0.453,"pasA":36,"pasB":45,"tutA":0.778,"tutB":0.822,"kazA":16,"kazB":18}
+{"ad":"oz:yogunluk","i":4,"sA":3,"sB":2,"gA":4,"gB":2,"posA":0.526,"pasA":39,"pasB":36,"tutA":0.821,"tutB":0.722,"kazA":21,"kazB":19}
+{"ad":"oz:yogunluk","i":5,"sA":2,"sB":3,"gA":6,"gB":3,"posA":0.458,"pasA":33,"pasB":48,"tutA":0.727,"tutB":0.792,"kazA":26,"kazB":26}
+{"ad":"oz:yogunluk","i":8,"sA":0,"sB":2,"gA":4,"gB":3,"posA":0.505,"pasA":36,"pasB":37,"tutA":0.75,"tutB":0.784,"kazA":24,"kazB":27}
+{"ad":"oz:yogunluk","i":7,"sA":3,"sB":2,"gA":5,"gB":4,"posA":0.486,"pasA":43,"pasB":34,"tutA":0.814,"tutB":0.735,"kazA":19,"kazB":18}
+{"ad":"oz:yogunluk","i":6,"sA":3,"sB":0,"gA":5,"gB":1,"posA":0.513,"pasA":33,"pasB":46,"tutA":0.788,"tutB":0.696,"kazA":25,"kazB":22}
+{"ad":"oz:yogunluk","i":9,"sA":2,"sB":0,"gA":4,"gB":2,"posA":0.547,"pasA":47,"pasB":39,"tutA":0.766,"tutB":0.769,"kazA":23,"kazB":20}
+{"ad":"oz:yogunluk","i":10,"sA":3,"sB":1,"gA":4,"gB":4,"posA":0.471,"pasA":35,"pasB":38,"tutA":0.714,"tutB":0.711,"kazA":25,"kazB":23}
+{"ad":"oz:yogunluk","i":11,"sA":0,"sB":5,"gA":0,"gB":5,"posA":0.363,"pasA":34,"pasB":51,"tutA":0.765,"tutB":0.882,"kazA":13,"kazB":18}
+{"ad":"oz:yogunluk","i":12,"sA":1,"sB":2,"gA":2,"gB":4,"posA":0.528,"pasA":40,"pasB":43,"tutA":0.7,"tutB":0.744,"kazA":19,"kazB":21}
+{"ad":"oz:yogunluk","i":13,"sA":2,"sB":1,"gA":5,"gB":2,"posA":0.519,"pasA":42,"pasB":41,"tutA":0.833,"tutB":0.829,"kazA":20,"kazB":18}
+{"ad":"oz:yogunluk","i":15,"sA":2,"sB":1,"gA":4,"gB":2,"posA":0.504,"pasA":49,"pasB":38,"tutA":0.755,"tutB":0.737,"kazA":18,"kazB":16}
+{"ad":"oz:yogunluk","i":14,"sA":2,"sB":0,"gA":4,"gB":3,"posA":0.539,"pasA":46,"pasB":33,"tutA":0.761,"tutB":0.667,"kazA":32,"kazB":30}
+{"ad":"oz:yogunluk","i":16,"sA":1,"sB":2,"gA":2,"gB":3,"posA":0.439,"pasA":45,"pasB":38,"tutA":0.711,"tutB":0.763,"kazA":20,"kazB":21}
+{"ad":"oz:hiz","i":2,"sA":3,"sB":2,"gA":6,"gB":2,"posA":0.607,"pasA":44,"pasB":35,"tutA":0.795,"tutB":0.657,"kazA":23,"kazB":22}
+{"ad":"oz:hiz","i":1,"sA":2,"sB":0,"gA":3,"gB":0,"posA":0.494,"pasA":35,"pasB":51,"tutA":0.686,"tutB":0.686,"kazA":30,"kazB":28}
+{"ad":"oz:hiz","i":3,"sA":3,"sB":2,"gA":8,"gB":3,"posA":0.508,"pasA":47,"pasB":35,"tutA":0.745,"tutB":0.629,"kazA":22,"kazB":20}
+{"ad":"oz:hiz","i":4,"sA":1,"sB":2,"gA":3,"gB":2,"posA":0.419,"pasA":41,"pasB":36,"tutA":0.805,"tutB":0.833,"kazA":17,"kazB":18}
+{"ad":"oz:hiz","i":6,"sA":5,"sB":0,"gA":6,"gB":2,"posA":0.537,"pasA":41,"pasB":34,"tutA":0.78,"tutB":0.647,"kazA":22,"kazB":17}
+{"ad":"oz:hiz","i":5,"sA":1,"sB":2,"gA":1,"gB":4,"posA":0.489,"pasA":45,"pasB":36,"tutA":0.733,"tutB":0.75,"kazA":22,"kazB":22}
+{"ad":"oz:hiz","i":7,"sA":3,"sB":0,"gA":6,"gB":2,"posA":0.511,"pasA":46,"pasB":36,"tutA":0.804,"tutB":0.722,"kazA":26,"kazB":22}
+{"ad":"oz:hiz","i":8,"sA":4,"sB":0,"gA":5,"gB":5,"posA":0.486,"pasA":44,"pasB":43,"tutA":0.75,"tutB":0.744,"kazA":24,"kazB":21}
+{"ad":"oz:hiz","i":9,"sA":1,"sB":0,"gA":2,"gB":1,"posA":0.479,"pasA":34,"pasB":45,"tutA":0.706,"tutB":0.711,"kazA":24,"kazB":22}
+{"ad":"oz:hiz","i":10,"sA":2,"sB":2,"gA":3,"gB":3,"posA":0.484,"pasA":38,"pasB":39,"tutA":0.789,"tutB":0.718,"kazA":20,"kazB":21}
+{"ad":"oz:hiz","i":11,"sA":1,"sB":2,"gA":3,"gB":3,"posA":0.429,"pasA":33,"pasB":47,"tutA":0.636,"tutB":0.83,"kazA":22,"kazB":23}
+{"ad":"oz:hiz","i":12,"sA":2,"sB":1,"gA":6,"gB":2,"posA":0.445,"pasA":39,"pasB":40,"tutA":0.821,"tutB":0.775,"kazA":19,"kazB":19}
+{"ad":"oz:hiz","i":13,"sA":1,"sB":2,"gA":4,"gB":2,"posA":0.387,"pasA":37,"pasB":45,"tutA":0.595,"tutB":0.778,"kazA":26,"kazB":27}
+{"ad":"oz:hiz","i":14,"sA":2,"sB":0,"gA":4,"gB":1,"posA":0.599,"pasA":49,"pasB":36,"tutA":0.796,"tutB":0.75,"kazA":26,"kazB":25}
+{"ad":"oz:hiz","i":16,"sA":4,"sB":1,"gA":5,"gB":2,"posA":0.481,"pasA":40,"pasB":37,"tutA":0.775,"tutB":0.703,"kazA":22,"kazB":19}
+{"ad":"oz:hiz","i":15,"sA":1,"sB":4,"gA":6,"gB":4,"posA":0.44,"pasA":37,"pasB":45,"tutA":0.838,"tutB":0.822,"kazA":17,"kazB":19}
+{"ad":"oz:cesaret","i":1,"sA":0,"sB":2,"gA":1,"gB":2,"posA":0.484,"pasA":47,"pasB":40,"tutA":0.638,"tutB":0.725,"kazA":30,"kazB":31}
+{"ad":"oz:cesaret","i":2,"sA":2,"sB":0,"gA":3,"gB":0,"posA":0.565,"pasA":42,"pasB":38,"tutA":0.738,"tutB":0.763,"kazA":23,"kazB":21}
+{"ad":"oz:cesaret","i":3,"sA":0,"sB":3,"gA":1,"gB":4,"posA":0.452,"pasA":37,"pasB":42,"tutA":0.703,"tutB":0.81,"kazA":18,"kazB":20}
+{"ad":"oz:cesaret","i":4,"sA":4,"sB":0,"gA":6,"gB":2,"posA":0.547,"pasA":47,"pasB":35,"tutA":0.872,"tutB":0.657,"kazA":21,"kazB":17}
+{"ad":"oz:cesaret","i":5,"sA":0,"sB":1,"gA":4,"gB":2,"posA":0.473,"pasA":51,"pasB":32,"tutA":0.784,"tutB":0.688,"kazA":21,"kazB":22}
+{"ad":"oz:cesaret","i":6,"sA":2,"sB":0,"gA":2,"gB":0,"posA":0.532,"pasA":40,"pasB":46,"tutA":0.8,"tutB":0.717,"kazA":23,"kazB":21}
+{"ad":"oz:cesaret","i":7,"sA":2,"sB":1,"gA":4,"gB":4,"posA":0.468,"pasA":37,"pasB":42,"tutA":0.838,"tutB":0.786,"kazA":25,"kazB":23}
+{"ad":"oz:cesaret","i":8,"sA":3,"sB":2,"gA":5,"gB":7,"posA":0.435,"pasA":36,"pasB":45,"tutA":0.778,"tutB":0.867,"kazA":16,"kazB":15}
+{"ad":"oz:cesaret","i":9,"sA":1,"sB":3,"gA":2,"gB":5,"posA":0.443,"pasA":33,"pasB":44,"tutA":0.545,"tutB":0.795,"kazA":26,"kazB":27}
+{"ad":"oz:cesaret","i":10,"sA":4,"sB":2,"gA":4,"gB":3,"posA":0.567,"pasA":42,"pasB":39,"tutA":0.762,"tutB":0.872,"kazA":20,"kazB":19}
+{"ad":"oz:cesaret","i":11,"sA":1,"sB":3,"gA":5,"gB":4,"posA":0.428,"pasA":34,"pasB":41,"tutA":0.853,"tutB":0.732,"kazA":17,"kazB":19}
+{"ad":"oz:cesaret","i":12,"sA":2,"sB":3,"gA":3,"gB":6,"posA":0.566,"pasA":38,"pasB":41,"tutA":0.684,"tutB":0.805,"kazA":18,"kazB":19}
+{"ad":"oz:cesaret","i":13,"sA":0,"sB":4,"gA":0,"gB":7,"posA":0.434,"pasA":37,"pasB":45,"tutA":0.622,"tutB":0.8,"kazA":22,"kazB":26}
+{"ad":"oz:cesaret","i":14,"sA":1,"sB":1,"gA":3,"gB":5,"posA":0.577,"pasA":46,"pasB":37,"tutA":0.739,"tutB":0.73,"kazA":21,"kazB":21}
+{"ad":"oz:cesaret","i":16,"sA":2,"sB":1,"gA":2,"gB":4,"posA":0.522,"pasA":42,"pasB":38,"tutA":0.833,"tutB":0.737,"kazA":17,"kazB":17}
+{"ad":"oz:cesaret","i":15,"sA":1,"sB":2,"gA":5,"gB":3,"posA":0.516,"pasA":42,"pasB":41,"tutA":0.786,"tutB":0.732,"kazA":17,"kazB":17}
+{"ad":"oz:surme","i":1,"sA":1,"sB":0,"gA":1,"gB":0,"posA":0.523,"pasA":42,"pasB":46,"tutA":0.643,"tutB":0.739,"kazA":26,"kazB":24}
+{"ad":"oz:surme","i":2,"sA":1,"sB":1,"gA":6,"gB":1,"posA":0.612,"pasA":45,"pasB":40,"tutA":0.733,"tutB":0.625,"kazA":23,"kazB":24}
+{"ad":"oz:surme","i":3,"sA":1,"sB":0,"gA":1,"gB":1,"posA":0.489,"pasA":39,"pasB":42,"tutA":0.769,"tutB":0.643,"kazA":23,"kazB":21}
+{"ad":"oz:surme","i":4,"sA":0,"sB":2,"gA":1,"gB":4,"posA":0.483,"pasA":39,"pasB":43,"tutA":0.667,"tutB":0.86,"kazA":14,"kazB":16}
+{"ad":"oz:surme","i":5,"sA":2,"sB":2,"gA":3,"gB":2,"posA":0.464,"pasA":43,"pasB":50,"tutA":0.721,"tutB":0.74,"kazA":19,"kazB":18}
+{"ad":"oz:surme","i":8,"sA":1,"sB":0,"gA":2,"gB":3,"posA":0.541,"pasA":35,"pasB":42,"tutA":0.657,"tutB":0.81,"kazA":18,"kazB":17}
+{"ad":"oz:surme","i":7,"sA":1,"sB":0,"gA":3,"gB":1,"posA":0.577,"pasA":48,"pasB":32,"tutA":0.75,"tutB":0.813,"kazA":24,"kazB":22}
+{"ad":"oz:surme","i":6,"sA":1,"sB":0,"gA":6,"gB":2,"posA":0.504,"pasA":36,"pasB":42,"tutA":0.833,"tutB":0.881,"kazA":17,"kazB":16}
+{"ad":"oz:surme","i":9,"sA":3,"sB":0,"gA":6,"gB":0,"posA":0.507,"pasA":37,"pasB":48,"tutA":0.757,"tutB":0.813,"kazA":18,"kazB":15}
+{"ad":"oz:surme","i":10,"sA":1,"sB":3,"gA":3,"gB":5,"posA":0.525,"pasA":37,"pasB":40,"tutA":0.865,"tutB":0.875,"kazA":9,"kazB":11}
+{"ad":"oz:surme","i":11,"sA":3,"sB":1,"gA":3,"gB":2,"posA":0.461,"pasA":36,"pasB":40,"tutA":0.722,"tutB":0.825,"kazA":17,"kazB":14}
+{"ad":"oz:surme","i":12,"sA":1,"sB":1,"gA":3,"gB":2,"posA":0.513,"pasA":43,"pasB":46,"tutA":0.674,"tutB":0.783,"kazA":19,"kazB":19}
+{"ad":"oz:surme","i":13,"sA":2,"sB":0,"gA":4,"gB":1,"posA":0.517,"pasA":33,"pasB":40,"tutA":0.758,"tutB":0.75,"kazA":20,"kazB":17}
+{"ad":"oz:surme","i":14,"sA":1,"sB":0,"gA":3,"gB":2,"posA":0.616,"pasA":44,"pasB":36,"tutA":0.727,"tutB":0.75,"kazA":23,"kazB":22}
+{"ad":"oz:surme","i":15,"sA":1,"sB":1,"gA":2,"gB":2,"posA":0.532,"pasA":42,"pasB":44,"tutA":0.69,"tutB":0.75,"kazA":19,"kazB":18}
+{"ad":"oz:surme","i":16,"sA":5,"sB":4,"gA":7,"gB":3,"posA":0.616,"pasA":46,"pasB":40,"tutA":0.848,"tutB":0.75,"kazA":17,"kazB":16}
+{"ad":"ayar:sistem=Adam adama","i":1,"sA":2,"sB":0,"gA":3,"gB":3,"posA":0.462,"pasA":48,"pasB":39,"tutA":0.75,"tutB":0.718,"kazA":25,"kazB":23}
+{"ad":"ayar:sistem=Adam adama","i":2,"sA":0,"sB":2,"gA":2,"gB":2,"posA":0.508,"pasA":42,"pasB":45,"tutA":0.81,"tutB":0.756,"kazA":24,"kazB":27}
+{"ad":"ayar:sistem=Adam adama","i":3,"sA":4,"sB":2,"gA":5,"gB":5,"posA":0.518,"pasA":41,"pasB":37,"tutA":0.732,"tutB":0.784,"kazA":19,"kazB":16}
+{"ad":"ayar:sistem=Adam adama","i":4,"sA":2,"sB":1,"gA":5,"gB":4,"posA":0.465,"pasA":44,"pasB":32,"tutA":0.75,"tutB":0.781,"kazA":22,"kazB":21}
+{"ad":"ayar:sistem=Adam adama","i":5,"sA":0,"sB":1,"gA":0,"gB":2,"posA":0.562,"pasA":43,"pasB":43,"tutA":0.698,"tutB":0.744,"kazA":29,"kazB":29}
+{"ad":"ayar:sistem=Adam adama","i":7,"sA":3,"sB":3,"gA":5,"gB":3,"posA":0.453,"pasA":41,"pasB":46,"tutA":0.78,"tutB":0.717,"kazA":18,"kazB":17}
+{"ad":"ayar:sistem=Adam adama","i":6,"sA":1,"sB":1,"gA":3,"gB":2,"posA":0.556,"pasA":51,"pasB":37,"tutA":0.745,"tutB":0.73,"kazA":18,"kazB":19}
+{"ad":"ayar:sistem=Adam adama","i":8,"sA":2,"sB":1,"gA":4,"gB":5,"posA":0.521,"pasA":45,"pasB":39,"tutA":0.756,"tutB":0.846,"kazA":21,"kazB":20}
+{"ad":"ayar:sistem=Adam adama","i":9,"sA":2,"sB":4,"gA":1,"gB":4,"posA":0.455,"pasA":38,"pasB":45,"tutA":0.789,"tutB":0.911,"kazA":18,"kazB":20}
+{"ad":"ayar:sistem=Adam adama","i":10,"sA":4,"sB":1,"gA":7,"gB":1,"posA":0.526,"pasA":43,"pasB":36,"tutA":0.837,"tutB":0.667,"kazA":20,"kazB":18}
+{"ad":"ayar:sistem=Adam adama","i":11,"sA":1,"sB":3,"gA":5,"gB":4,"posA":0.365,"pasA":37,"pasB":45,"tutA":0.784,"tutB":0.667,"kazA":20,"kazB":22}
+{"ad":"ayar:sistem=Adam adama","i":12,"sA":3,"sB":2,"gA":5,"gB":8,"posA":0.573,"pasA":38,"pasB":33,"tutA":0.737,"tutB":0.848,"kazA":23,"kazB":22}
+{"ad":"ayar:sistem=Adam adama","i":13,"sA":0,"sB":2,"gA":1,"gB":5,"posA":0.444,"pasA":38,"pasB":40,"tutA":0.605,"tutB":0.775,"kazA":27,"kazB":29}
+{"ad":"ayar:sistem=Adam adama","i":14,"sA":2,"sB":2,"gA":7,"gB":3,"posA":0.592,"pasA":48,"pasB":37,"tutA":0.813,"tutB":0.757,"kazA":25,"kazB":26}
+{"ad":"ayar:sistem=Adam adama","i":15,"sA":3,"sB":2,"gA":3,"gB":1,"posA":0.58,"pasA":38,"pasB":43,"tutA":0.605,"tutB":0.721,"kazA":27,"kazB":24}
+{"ad":"ayar:sistem=Adam adama","i":16,"sA":1,"sB":0,"gA":1,"gB":1,"posA":0.574,"pasA":42,"pasB":41,"tutA":0.643,"tutB":0.659,"kazA":23,"kazB":22}
+{"ad":"ayar:sistem=Kenara sıkıştır","i":1,"sA":4,"sB":1,"gA":5,"gB":6,"posA":0.608,"pasA":41,"pasB":37,"tutA":0.78,"tutB":0.784,"kazA":25,"kazB":23}
+{"ad":"ayar:sistem=Kenara sıkıştır","i":3,"sA":2,"sB":3,"gA":3,"gB":4,"posA":0.499,"pasA":45,"pasB":42,"tutA":0.822,"tutB":0.762,"kazA":18,"kazB":19}
+{"ad":"ayar:sistem=Kenara sıkıştır","i":2,"sA":0,"sB":0,"gA":0,"gB":2,"posA":0.456,"pasA":40,"pasB":43,"tutA":0.7,"tutB":0.767,"kazA":22,"kazB":23}
+{"ad":"ayar:sistem=Kenara sıkıştır","i":4,"sA":1,"sB":3,"gA":2,"gB":5,"posA":0.439,"pasA":39,"pasB":44,"tutA":0.615,"tutB":0.818,"kazA":25,"kazB":27}
+{"ad":"ayar:sistem=Kenara sıkıştır","i":5,"sA":2,"sB":1,"gA":4,"gB":2,"posA":0.507,"pasA":40,"pasB":42,"tutA":0.675,"tutB":0.762,"kazA":21,"kazB":19}
+{"ad":"ayar:sistem=Kenara sıkıştır","i":6,"sA":3,"sB":4,"gA":5,"gB":4,"posA":0.555,"pasA":46,"pasB":36,"tutA":0.783,"tutB":0.722,"kazA":13,"kazB":14}
+{"ad":"ayar:sistem=Kenara sıkıştır","i":7,"sA":3,"sB":1,"gA":3,"gB":1,"posA":0.419,"pasA":41,"pasB":49,"tutA":0.707,"tutB":0.776,"kazA":27,"kazB":24}
+{"ad":"ayar:sistem=Kenara sıkıştır","i":8,"sA":0,"sB":2,"gA":5,"gB":3,"posA":0.589,"pasA":48,"pasB":31,"tutA":0.792,"tutB":0.774,"kazA":25,"kazB":27}
+{"ad":"ayar:sistem=Kenara sıkıştır","i":9,"sA":2,"sB":2,"gA":6,"gB":3,"posA":0.548,"pasA":47,"pasB":33,"tutA":0.766,"tutB":0.667,"kazA":25,"kazB":24}
+{"ad":"ayar:sistem=Kenara sıkıştır","i":10,"sA":3,"sB":0,"gA":4,"gB":3,"posA":0.574,"pasA":38,"pasB":32,"tutA":0.711,"tutB":0.688,"kazA":25,"kazB":22}
+{"ad":"ayar:sistem=Kenara sıkıştır","i":11,"sA":0,"sB":3,"gA":1,"gB":4,"posA":0.408,"pasA":37,"pasB":44,"tutA":0.73,"tutB":0.818,"kazA":13,"kazB":16}
+{"ad":"ayar:sistem=Kenara sıkıştır","i":12,"sA":3,"sB":2,"gA":3,"gB":4,"posA":0.49,"pasA":38,"pasB":38,"tutA":0.868,"tutB":0.763,"kazA":18,"kazB":17}
+{"ad":"ayar:sistem=Kenara sıkıştır","i":13,"sA":3,"sB":1,"gA":3,"gB":4,"posA":0.56,"pasA":37,"pasB":47,"tutA":0.892,"tutB":0.872,"kazA":15,"kazB":13}
+{"ad":"ayar:sistem=Kenara sıkıştır","i":14,"sA":0,"sB":3,"gA":0,"gB":3,"posA":0.498,"pasA":44,"pasB":39,"tutA":0.795,"tutB":0.795,"kazA":25,"kazB":28}
+{"ad":"ayar:sistem=Kenara sıkıştır","i":15,"sA":3,"sB":2,"gA":3,"gB":7,"posA":0.501,"pasA":34,"pasB":40,"tutA":0.765,"tutB":0.8,"kazA":27,"kazB":26}
+{"ad":"ayar:sistem=Kenara sıkıştır","i":16,"sA":3,"sB":3,"gA":4,"gB":5,"posA":0.537,"pasA":43,"pasB":39,"tutA":0.767,"tutB":0.718,"kazA":22,"kazB":23}
+{"ad":"ayar:pres=0","i":1,"sA":2,"sB":2,"gA":3,"gB":3,"posA":0.434,"pasA":37,"pasB":46,"tutA":0.73,"tutB":0.804,"kazA":23,"kazB":23}
+{"ad":"ayar:pres=0","i":2,"sA":0,"sB":3,"gA":1,"gB":6,"posA":0.424,"pasA":36,"pasB":48,"tutA":0.75,"tutB":0.833,"kazA":20,"kazB":23}
+{"ad":"ayar:pres=0","i":3,"sA":3,"sB":0,"gA":4,"gB":1,"posA":0.508,"pasA":33,"pasB":45,"tutA":0.788,"tutB":0.711,"kazA":18,"kazB":15}
+{"ad":"ayar:pres=0","i":4,"sA":2,"sB":4,"gA":5,"gB":4,"posA":0.483,"pasA":44,"pasB":39,"tutA":0.795,"tutB":0.667,"kazA":18,"kazB":21}
+{"ad":"ayar:pres=0","i":5,"sA":0,"sB":2,"gA":2,"gB":3,"posA":0.532,"pasA":47,"pasB":37,"tutA":0.681,"tutB":0.811,"kazA":23,"kazB":24}
+{"ad":"ayar:pres=0","i":6,"sA":0,"sB":1,"gA":1,"gB":2,"posA":0.575,"pasA":51,"pasB":36,"tutA":0.784,"tutB":0.639,"kazA":23,"kazB":24}
+{"ad":"ayar:pres=0","i":7,"sA":0,"sB":2,"gA":2,"gB":5,"posA":0.352,"pasA":36,"pasB":48,"tutA":0.722,"tutB":0.833,"kazA":18,"kazB":20}
+{"ad":"ayar:pres=0","i":8,"sA":1,"sB":2,"gA":4,"gB":3,"posA":0.438,"pasA":31,"pasB":47,"tutA":0.839,"tutB":0.787,"kazA":16,"kazB":18}
+{"ad":"ayar:pres=0","i":9,"sA":0,"sB":1,"gA":2,"gB":2,"posA":0.488,"pasA":40,"pasB":43,"tutA":0.6,"tutB":0.674,"kazA":23,"kazB":23}
+{"ad":"ayar:pres=0","i":10,"sA":1,"sB":2,"gA":2,"gB":2,"posA":0.544,"pasA":46,"pasB":37,"tutA":0.739,"tutB":0.676,"kazA":20,"kazB":21}
+{"ad":"ayar:pres=0","i":11,"sA":2,"sB":2,"gA":2,"gB":3,"posA":0.398,"pasA":37,"pasB":41,"tutA":0.703,"tutB":0.707,"kazA":25,"kazB":25}
+{"ad":"ayar:pres=0","i":12,"sA":2,"sB":1,"gA":2,"gB":3,"posA":0.529,"pasA":39,"pasB":47,"tutA":0.718,"tutB":0.745,"kazA":21,"kazB":21}
+{"ad":"ayar:pres=0","i":13,"sA":0,"sB":2,"gA":2,"gB":3,"posA":0.46,"pasA":35,"pasB":46,"tutA":0.686,"tutB":0.783,"kazA":19,"kazB":20}
+{"ad":"ayar:pres=0","i":15,"sA":3,"sB":2,"gA":5,"gB":4,"posA":0.461,"pasA":40,"pasB":43,"tutA":0.825,"tutB":0.744,"kazA":13,"kazB":12}
+{"ad":"ayar:pres=0","i":14,"sA":1,"sB":3,"gA":2,"gB":4,"posA":0.519,"pasA":49,"pasB":39,"tutA":0.776,"tutB":0.846,"kazA":17,"kazB":20}
+{"ad":"ayar:pres=0","i":16,"sA":0,"sB":0,"gA":0,"gB":2,"posA":0.493,"pasA":40,"pasB":42,"tutA":0.7,"tutB":0.786,"kazA":20,"kazB":21}
+{"ad":"ayar:pres=3","i":1,"sA":0,"sB":3,"gA":1,"gB":3,"posA":0.469,"pasA":42,"pasB":43,"tutA":0.714,"tutB":0.744,"kazA":22,"kazB":25}
+{"ad":"ayar:pres=3","i":2,"sA":1,"sB":0,"gA":1,"gB":1,"posA":0.543,"pasA":32,"pasB":43,"tutA":0.813,"tutB":0.767,"kazA":23,"kazB":22}
+{"ad":"ayar:pres=3","i":3,"sA":2,"sB":3,"gA":3,"gB":4,"posA":0.424,"pasA":31,"pasB":46,"tutA":0.613,"tutB":0.848,"kazA":29,"kazB":29}
+{"ad":"ayar:pres=3","i":4,"sA":1,"sB":2,"gA":1,"gB":5,"posA":0.567,"pasA":47,"pasB":30,"tutA":0.809,"tutB":0.767,"kazA":21,"kazB":23}
+{"ad":"ayar:pres=3","i":5,"sA":1,"sB":1,"gA":3,"gB":1,"posA":0.554,"pasA":37,"pasB":47,"tutA":0.811,"tutB":0.83,"kazA":22,"kazB":21}
+{"ad":"ayar:pres=3","i":6,"sA":3,"sB":1,"gA":6,"gB":2,"posA":0.636,"pasA":39,"pasB":39,"tutA":0.744,"tutB":0.718,"kazA":28,"kazB":26}
+{"ad":"ayar:pres=3","i":7,"sA":1,"sB":1,"gA":4,"gB":3,"posA":0.498,"pasA":45,"pasB":38,"tutA":0.822,"tutB":0.763,"kazA":19,"kazB":18}
+{"ad":"ayar:pres=3","i":8,"sA":2,"sB":3,"gA":3,"gB":5,"posA":0.488,"pasA":36,"pasB":48,"tutA":0.75,"tutB":0.771,"kazA":19,"kazB":20}
+{"ad":"ayar:pres=3","i":9,"sA":1,"sB":1,"gA":2,"gB":5,"posA":0.465,"pasA":38,"pasB":35,"tutA":0.737,"tutB":0.8,"kazA":27,"kazB":27}
+{"ad":"ayar:pres=3","i":10,"sA":1,"sB":0,"gA":2,"gB":4,"posA":0.585,"pasA":45,"pasB":34,"tutA":0.867,"tutB":0.794,"kazA":19,"kazB":18}
+{"ad":"ayar:pres=3","i":11,"sA":0,"sB":3,"gA":4,"gB":4,"posA":0.503,"pasA":37,"pasB":46,"tutA":0.649,"tutB":0.804,"kazA":16,"kazB":18}
+{"ad":"ayar:pres=3","i":12,"sA":4,"sB":3,"gA":4,"gB":6,"posA":0.527,"pasA":37,"pasB":36,"tutA":0.838,"tutB":0.833,"kazA":14,"kazB":14}
+{"ad":"ayar:pres=3","i":13,"sA":3,"sB":1,"gA":6,"gB":2,"posA":0.501,"pasA":39,"pasB":49,"tutA":0.923,"tutB":0.816,"kazA":18,"kazB":16}
+{"ad":"ayar:pres=3","i":14,"sA":4,"sB":2,"gA":4,"gB":4,"posA":0.544,"pasA":43,"pasB":38,"tutA":0.837,"tutB":0.842,"kazA":15,"kazB":14}
+{"ad":"ayar:pres=3","i":15,"sA":2,"sB":1,"gA":3,"gB":10,"posA":0.417,"pasA":36,"pasB":41,"tutA":0.778,"tutB":0.805,"kazA":21,"kazB":20}
+{"ad":"ayar:pres=3","i":16,"sA":1,"sB":2,"gA":1,"gB":2,"posA":0.431,"pasA":38,"pasB":42,"tutA":0.684,"tutB":0.762,"kazA":28,"kazB":29}
+{"ad":"ayar:arkada=0","i":1,"sA":1,"sB":1,"gA":8,"gB":1,"posA":0.524,"pasA":36,"pasB":33,"tutA":0.722,"tutB":0.697,"kazA":30,"kazB":30}
+{"ad":"ayar:arkada=0","i":2,"sA":1,"sB":2,"gA":3,"gB":4,"posA":0.519,"pasA":42,"pasB":44,"tutA":0.714,"tutB":0.773,"kazA":24,"kazB":25}
+{"ad":"ayar:arkada=0","i":3,"sA":1,"sB":1,"gA":1,"gB":1,"posA":0.442,"pasA":38,"pasB":41,"tutA":0.763,"tutB":0.659,"kazA":20,"kazB":20}
+{"ad":"ayar:arkada=0","i":4,"sA":2,"sB":0,"gA":5,"gB":0,"posA":0.489,"pasA":46,"pasB":39,"tutA":0.783,"tutB":0.718,"kazA":23,"kazB":21}
+{"ad":"ayar:arkada=0","i":6,"sA":2,"sB":0,"gA":2,"gB":3,"posA":0.576,"pasA":38,"pasB":41,"tutA":0.579,"tutB":0.707,"kazA":30,"kazB":29}
+{"ad":"ayar:arkada=0","i":5,"sA":0,"sB":1,"gA":3,"gB":2,"posA":0.398,"pasA":39,"pasB":47,"tutA":0.744,"tutB":0.638,"kazA":32,"kazB":33}
+{"ad":"ayar:arkada=0","i":7,"sA":4,"sB":2,"gA":4,"gB":2,"posA":0.524,"pasA":30,"pasB":40,"tutA":0.767,"tutB":0.7,"kazA":26,"kazB":24}
+{"ad":"ayar:arkada=0","i":8,"sA":2,"sB":3,"gA":5,"gB":3,"posA":0.576,"pasA":45,"pasB":38,"tutA":0.689,"tutB":0.737,"kazA":28,"kazB":29}
+{"ad":"ayar:arkada=0","i":9,"sA":2,"sB":0,"gA":2,"gB":1,"posA":0.522,"pasA":49,"pasB":34,"tutA":0.755,"tutB":0.618,"kazA":29,"kazB":27}
+{"ad":"ayar:arkada=0","i":10,"sA":4,"sB":0,"gA":4,"gB":3,"posA":0.594,"pasA":48,"pasB":33,"tutA":0.729,"tutB":0.697,"kazA":23,"kazB":20}
+{"ad":"ayar:arkada=0","i":11,"sA":2,"sB":2,"gA":5,"gB":4,"posA":0.425,"pasA":33,"pasB":44,"tutA":0.758,"tutB":0.773,"kazA":20,"kazB":19}
+{"ad":"ayar:arkada=0","i":12,"sA":2,"sB":0,"gA":4,"gB":0,"posA":0.528,"pasA":31,"pasB":42,"tutA":0.71,"tutB":0.69,"kazA":20,"kazB":19}
+{"ad":"ayar:arkada=0","i":13,"sA":0,"sB":0,"gA":1,"gB":1,"posA":0.416,"pasA":37,"pasB":52,"tutA":0.757,"tutB":0.808,"kazA":17,"kazB":17}
+{"ad":"ayar:arkada=0","i":14,"sA":2,"sB":1,"gA":7,"gB":1,"posA":0.495,"pasA":41,"pasB":43,"tutA":0.78,"tutB":0.674,"kazA":22,"kazB":21}
+{"ad":"ayar:arkada=0","i":15,"sA":1,"sB":1,"gA":2,"gB":1,"posA":0.542,"pasA":46,"pasB":32,"tutA":0.761,"tutB":0.656,"kazA":24,"kazB":23}
+{"ad":"ayar:arkada=0","i":16,"sA":0,"sB":3,"gA":7,"gB":3,"posA":0.467,"pasA":41,"pasB":34,"tutA":0.756,"tutB":0.794,"kazA":22,"kazB":25}
+{"ad":"ayar:arkada=2","i":1,"sA":2,"sB":0,"gA":4,"gB":0,"posA":0.531,"pasA":38,"pasB":46,"tutA":0.711,"tutB":0.761,"kazA":29,"kazB":27}
+{"ad":"ayar:arkada=2","i":2,"sA":1,"sB":1,"gA":2,"gB":3,"posA":0.481,"pasA":36,"pasB":42,"tutA":0.806,"tutB":0.81,"kazA":22,"kazB":22}
+{"ad":"ayar:arkada=2","i":3,"sA":2,"sB":1,"gA":3,"gB":2,"posA":0.487,"pasA":42,"pasB":39,"tutA":0.714,"tutB":0.692,"kazA":26,"kazB":24}
+{"ad":"ayar:arkada=2","i":4,"sA":1,"sB":2,"gA":4,"gB":4,"posA":0.418,"pasA":35,"pasB":43,"tutA":0.714,"tutB":0.791,"kazA":21,"kazB":23}
+{"ad":"ayar:arkada=2","i":5,"sA":0,"sB":3,"gA":3,"gB":4,"posA":0.482,"pasA":33,"pasB":45,"tutA":0.758,"tutB":0.844,"kazA":20,"kazB":22}
+{"ad":"ayar:arkada=2","i":6,"sA":0,"sB":1,"gA":2,"gB":2,"posA":0.456,"pasA":33,"pasB":52,"tutA":0.697,"tutB":0.846,"kazA":20,"kazB":21}
+{"ad":"ayar:arkada=2","i":7,"sA":0,"sB":2,"gA":0,"gB":3,"posA":0.411,"pasA":42,"pasB":43,"tutA":0.738,"tutB":0.791,"kazA":12,"kazB":14}
+{"ad":"ayar:arkada=2","i":8,"sA":1,"sB":0,"gA":4,"gB":1,"posA":0.565,"pasA":47,"pasB":43,"tutA":0.766,"tutB":0.791,"kazA":15,"kazB":14}
+{"ad":"ayar:arkada=2","i":9,"sA":2,"sB":2,"gA":3,"gB":3,"posA":0.501,"pasA":33,"pasB":40,"tutA":0.818,"tutB":0.9,"kazA":15,"kazB":14}
+{"ad":"ayar:arkada=2","i":10,"sA":2,"sB":1,"gA":3,"gB":1,"posA":0.583,"pasA":46,"pasB":43,"tutA":0.717,"tutB":0.698,"kazA":29,"kazB":29}
+{"ad":"ayar:arkada=2","i":11,"sA":3,"sB":2,"gA":3,"gB":5,"posA":0.425,"pasA":36,"pasB":44,"tutA":0.778,"tutB":0.795,"kazA":18,"kazB":17}
+{"ad":"ayar:arkada=2","i":12,"sA":4,"sB":2,"gA":5,"gB":3,"posA":0.524,"pasA":50,"pasB":35,"tutA":0.82,"tutB":0.686,"kazA":19,"kazB":18}
+{"ad":"ayar:arkada=2","i":13,"sA":3,"sB":0,"gA":4,"gB":1,"posA":0.53,"pasA":38,"pasB":34,"tutA":0.763,"tutB":0.676,"kazA":29,"kazB":25}
+{"ad":"ayar:arkada=2","i":14,"sA":1,"sB":1,"gA":2,"gB":2,"posA":0.496,"pasA":41,"pasB":39,"tutA":0.756,"tutB":0.769,"kazA":23,"kazB":24}
+{"ad":"ayar:arkada=2","i":15,"sA":1,"sB":2,"gA":4,"gB":4,"posA":0.512,"pasA":42,"pasB":32,"tutA":0.786,"tutB":0.844,"kazA":16,"kazB":16}
+{"ad":"ayar:arkada=2","i":16,"sA":0,"sB":0,"gA":2,"gB":1,"posA":0.496,"pasA":38,"pasB":50,"tutA":0.684,"tutB":0.66,"kazA":24,"kazB":25}
+{"ad":"ayar:blok=Düşük","i":1,"sA":1,"sB":2,"gA":1,"gB":4,"posA":0.507,"pasA":44,"pasB":37,"tutA":0.818,"tutB":0.703,"kazA":21,"kazB":21}
+{"ad":"ayar:blok=Düşük","i":3,"sA":3,"sB":1,"gA":3,"gB":5,"posA":0.494,"pasA":41,"pasB":34,"tutA":0.732,"tutB":0.706,"kazA":20,"kazB":18}
+{"ad":"ayar:blok=Düşük","i":2,"sA":1,"sB":1,"gA":2,"gB":2,"posA":0.53,"pasA":41,"pasB":41,"tutA":0.707,"tutB":0.732,"kazA":22,"kazB":22}
+{"ad":"ayar:blok=Düşük","i":4,"sA":2,"sB":1,"gA":3,"gB":7,"posA":0.568,"pasA":40,"pasB":31,"tutA":0.725,"tutB":0.677,"kazA":21,"kazB":21}
+{"ad":"ayar:blok=Düşük","i":5,"sA":1,"sB":2,"gA":3,"gB":4,"posA":0.467,"pasA":35,"pasB":40,"tutA":0.686,"tutB":0.775,"kazA":22,"kazB":22}
+{"ad":"ayar:blok=Düşük","i":6,"sA":1,"sB":2,"gA":3,"gB":5,"posA":0.551,"pasA":42,"pasB":33,"tutA":0.857,"tutB":0.879,"kazA":20,"kazB":22}
+{"ad":"ayar:blok=Düşük","i":7,"sA":0,"sB":0,"gA":2,"gB":2,"posA":0.469,"pasA":34,"pasB":42,"tutA":0.824,"tutB":0.738,"kazA":20,"kazB":20}
+{"ad":"ayar:blok=Düşük","i":8,"sA":2,"sB":1,"gA":5,"gB":3,"posA":0.483,"pasA":41,"pasB":41,"tutA":0.829,"tutB":0.78,"kazA":17,"kazB":16}
+{"ad":"ayar:blok=Düşük","i":9,"sA":0,"sB":2,"gA":1,"gB":2,"posA":0.476,"pasA":41,"pasB":43,"tutA":0.78,"tutB":0.744,"kazA":18,"kazB":19}
+{"ad":"ayar:blok=Düşük","i":11,"sA":1,"sB":1,"gA":4,"gB":2,"posA":0.42,"pasA":35,"pasB":41,"tutA":0.743,"tutB":0.683,"kazA":22,"kazB":21}
+{"ad":"ayar:blok=Düşük","i":10,"sA":1,"sB":1,"gA":1,"gB":4,"posA":0.542,"pasA":45,"pasB":45,"tutA":0.756,"tutB":0.911,"kazA":15,"kazB":15}
+{"ad":"ayar:blok=Düşük","i":12,"sA":4,"sB":3,"gA":4,"gB":4,"posA":0.56,"pasA":42,"pasB":37,"tutA":0.762,"tutB":0.757,"kazA":16,"kazB":16}
+{"ad":"ayar:blok=Düşük","i":13,"sA":3,"sB":1,"gA":4,"gB":3,"posA":0.539,"pasA":46,"pasB":35,"tutA":0.804,"tutB":0.771,"kazA":15,"kazB":12}
+{"ad":"ayar:blok=Düşük","i":14,"sA":0,"sB":2,"gA":3,"gB":3,"posA":0.513,"pasA":39,"pasB":39,"tutA":0.846,"tutB":0.744,"kazA":19,"kazB":21}
+{"ad":"ayar:blok=Düşük","i":15,"sA":1,"sB":1,"gA":3,"gB":1,"posA":0.455,"pasA":44,"pasB":38,"tutA":0.795,"tutB":0.737,"kazA":15,"kazB":15}
+{"ad":"ayar:blok=Düşük","i":16,"sA":0,"sB":2,"gA":3,"gB":2,"posA":0.505,"pasA":37,"pasB":40,"tutA":0.73,"tutB":0.75,"kazA":23,"kazB":25}
+{"ad":"ayar:blok=Yüksek","i":1,"sA":2,"sB":2,"gA":3,"gB":5,"posA":0.441,"pasA":44,"pasB":44,"tutA":0.614,"tutB":0.75,"kazA":26,"kazB":26}
+{"ad":"ayar:blok=Yüksek","i":2,"sA":3,"sB":2,"gA":4,"gB":6,"posA":0.537,"pasA":38,"pasB":40,"tutA":0.842,"tutB":0.775,"kazA":28,"kazB":27}
+{"ad":"ayar:blok=Yüksek","i":3,"sA":0,"sB":1,"gA":2,"gB":1,"posA":0.494,"pasA":44,"pasB":36,"tutA":0.659,"tutB":0.722,"kazA":29,"kazB":29}
+{"ad":"ayar:blok=Yüksek","i":4,"sA":2,"sB":1,"gA":5,"gB":1,"posA":0.487,"pasA":36,"pasB":40,"tutA":0.722,"tutB":0.725,"kazA":27,"kazB":26}
+{"ad":"ayar:blok=Yüksek","i":5,"sA":1,"sB":1,"gA":3,"gB":3,"posA":0.395,"pasA":39,"pasB":43,"tutA":0.769,"tutB":0.721,"kazA":24,"kazB":23}
+{"ad":"ayar:blok=Yüksek","i":7,"sA":1,"sB":2,"gA":2,"gB":5,"posA":0.541,"pasA":39,"pasB":36,"tutA":0.795,"tutB":0.806,"kazA":18,"kazB":19}
+{"ad":"ayar:blok=Yüksek","i":6,"sA":3,"sB":7,"gA":4,"gB":7,"posA":0.466,"pasA":30,"pasB":46,"tutA":0.767,"tutB":0.783,"kazA":20,"kazB":24}
+{"ad":"ayar:blok=Yüksek","i":8,"sA":4,"sB":1,"gA":6,"gB":4,"posA":0.479,"pasA":37,"pasB":37,"tutA":0.784,"tutB":0.919,"kazA":25,"kazB":22}
+{"ad":"ayar:blok=Yüksek","i":11,"sA":1,"sB":0,"gA":3,"gB":7,"posA":0.522,"pasA":45,"pasB":35,"tutA":0.711,"tutB":0.771,"kazA":25,"kazB":24}
+{"ad":"ayar:blok=Yüksek","i":9,"sA":2,"sB":1,"gA":5,"gB":1,"posA":0.444,"pasA":35,"pasB":50,"tutA":0.771,"tutB":0.76,"kazA":29,"kazB":27}
+{"ad":"ayar:blok=Yüksek","i":10,"sA":1,"sB":1,"gA":2,"gB":2,"posA":0.476,"pasA":39,"pasB":44,"tutA":0.744,"tutB":0.75,"kazA":25,"kazB":25}
+{"ad":"ayar:blok=Yüksek","i":12,"sA":4,"sB":2,"gA":4,"gB":2,"posA":0.478,"pasA":38,"pasB":45,"tutA":0.789,"tutB":0.778,"kazA":21,"kazB":20}
+{"ad":"ayar:blok=Yüksek","i":14,"sA":0,"sB":2,"gA":2,"gB":6,"posA":0.436,"pasA":40,"pasB":41,"tutA":0.65,"tutB":0.78,"kazA":24,"kazB":27}
+{"ad":"ayar:blok=Yüksek","i":13,"sA":2,"sB":2,"gA":4,"gB":3,"posA":0.467,"pasA":44,"pasB":37,"tutA":0.818,"tutB":0.757,"kazA":20,"kazB":19}
+{"ad":"ayar:blok=Yüksek","i":15,"sA":2,"sB":0,"gA":4,"gB":2,"posA":0.475,"pasA":36,"pasB":43,"tutA":0.778,"tutB":0.767,"kazA":31,"kazB":29}
+{"ad":"ayar:blok=Yüksek","i":16,"sA":3,"sB":0,"gA":4,"gB":0,"posA":0.49,"pasA":44,"pasB":37,"tutA":0.75,"tutB":0.757,"kazA":30,"kazB":27}
+{"ad":"ayar:genislik=Dar","i":1,"sA":2,"sB":3,"gA":6,"gB":3,"posA":0.54,"pasA":40,"pasB":36,"tutA":0.9,"tutB":0.861,"kazA":17,"kazB":17}
+{"ad":"ayar:genislik=Dar","i":2,"sA":1,"sB":0,"gA":2,"gB":1,"posA":0.553,"pasA":41,"pasB":44,"tutA":0.805,"tutB":0.705,"kazA":24,"kazB":23}
+{"ad":"ayar:genislik=Dar","i":3,"sA":1,"sB":2,"gA":1,"gB":2,"posA":0.383,"pasA":40,"pasB":48,"tutA":0.6,"tutB":0.667,"kazA":31,"kazB":32}
+{"ad":"ayar:genislik=Dar","i":4,"sA":0,"sB":2,"gA":2,"gB":3,"posA":0.523,"pasA":44,"pasB":35,"tutA":0.75,"tutB":0.629,"kazA":22,"kazB":24}
+{"ad":"ayar:genislik=Dar","i":7,"sA":0,"sB":1,"gA":3,"gB":3,"posA":0.512,"pasA":42,"pasB":37,"tutA":0.762,"tutB":0.703,"kazA":21,"kazB":21}
+{"ad":"ayar:genislik=Dar","i":5,"sA":2,"sB":2,"gA":3,"gB":3,"posA":0.455,"pasA":45,"pasB":38,"tutA":0.756,"tutB":0.684,"kazA":31,"kazB":30}
+{"ad":"ayar:genislik=Dar","i":6,"sA":1,"sB":1,"gA":2,"gB":4,"posA":0.542,"pasA":49,"pasB":37,"tutA":0.857,"tutB":0.703,"kazA":18,"kazB":19}
+{"ad":"ayar:genislik=Dar","i":8,"sA":2,"sB":1,"gA":3,"gB":2,"posA":0.538,"pasA":46,"pasB":38,"tutA":0.761,"tutB":0.763,"kazA":19,"kazB":18}
+{"ad":"ayar:genislik=Dar","i":9,"sA":0,"sB":1,"gA":5,"gB":3,"posA":0.475,"pasA":34,"pasB":34,"tutA":0.794,"tutB":0.794,"kazA":28,"kazB":29}
+{"ad":"ayar:genislik=Dar","i":10,"sA":2,"sB":1,"gA":6,"gB":3,"posA":0.496,"pasA":41,"pasB":42,"tutA":0.829,"tutB":0.81,"kazA":23,"kazB":23}
+{"ad":"ayar:genislik=Dar","i":11,"sA":1,"sB":1,"gA":1,"gB":3,"posA":0.48,"pasA":41,"pasB":45,"tutA":0.756,"tutB":0.778,"kazA":19,"kazB":18}
+{"ad":"ayar:genislik=Dar","i":12,"sA":0,"sB":0,"gA":2,"gB":3,"posA":0.49,"pasA":46,"pasB":40,"tutA":0.739,"tutB":0.725,"kazA":27,"kazB":27}
+{"ad":"ayar:genislik=Dar","i":13,"sA":3,"sB":1,"gA":3,"gB":1,"posA":0.568,"pasA":43,"pasB":42,"tutA":0.744,"tutB":0.762,"kazA":25,"kazB":23}
+{"ad":"ayar:genislik=Dar","i":14,"sA":1,"sB":2,"gA":1,"gB":3,"posA":0.453,"pasA":39,"pasB":41,"tutA":0.718,"tutB":0.829,"kazA":21,"kazB":22}
+{"ad":"ayar:genislik=Dar","i":15,"sA":2,"sB":3,"gA":5,"gB":4,"posA":0.54,"pasA":47,"pasB":37,"tutA":0.766,"tutB":0.784,"kazA":25,"kazB":26}
+{"ad":"ayar:genislik=Dar","i":16,"sA":1,"sB":2,"gA":5,"gB":4,"posA":0.457,"pasA":40,"pasB":40,"tutA":0.775,"tutB":0.75,"kazA":21,"kazB":23}
+{"ad":"ayar:genislik=Geniş","i":2,"sA":1,"sB":0,"gA":3,"gB":3,"posA":0.548,"pasA":38,"pasB":35,"tutA":0.842,"tutB":0.743,"kazA":21,"kazB":20}
+{"ad":"ayar:genislik=Geniş","i":1,"sA":3,"sB":0,"gA":5,"gB":0,"posA":0.48,"pasA":41,"pasB":41,"tutA":0.805,"tutB":0.805,"kazA":28,"kazB":24}
+{"ad":"ayar:genislik=Geniş","i":3,"sA":0,"sB":3,"gA":1,"gB":6,"posA":0.419,"pasA":41,"pasB":37,"tutA":0.78,"tutB":0.811,"kazA":25,"kazB":28}
+{"ad":"ayar:genislik=Geniş","i":4,"sA":1,"sB":1,"gA":3,"gB":3,"posA":0.491,"pasA":44,"pasB":39,"tutA":0.705,"tutB":0.744,"kazA":26,"kazB":27}
+{"ad":"ayar:genislik=Geniş","i":5,"sA":3,"sB":1,"gA":5,"gB":3,"posA":0.503,"pasA":32,"pasB":43,"tutA":0.75,"tutB":0.674,"kazA":29,"kazB":26}
+{"ad":"ayar:genislik=Geniş","i":6,"sA":3,"sB":2,"gA":4,"gB":4,"posA":0.469,"pasA":34,"pasB":51,"tutA":0.765,"tutB":0.843,"kazA":14,"kazB":14}
+{"ad":"ayar:genislik=Geniş","i":7,"sA":1,"sB":3,"gA":2,"gB":6,"posA":0.393,"pasA":38,"pasB":37,"tutA":0.711,"tutB":0.784,"kazA":17,"kazB":19}
+{"ad":"ayar:genislik=Geniş","i":8,"sA":1,"sB":0,"gA":2,"gB":3,"posA":0.576,"pasA":38,"pasB":43,"tutA":0.842,"tutB":0.814,"kazA":18,"kazB":18}
+{"ad":"ayar:genislik=Geniş","i":9,"sA":1,"sB":1,"gA":2,"gB":2,"posA":0.526,"pasA":36,"pasB":49,"tutA":0.722,"tutB":0.796,"kazA":32,"kazB":31}
+{"ad":"ayar:genislik=Geniş","i":10,"sA":1,"sB":0,"gA":1,"gB":2,"posA":0.58,"pasA":50,"pasB":38,"tutA":0.68,"tutB":0.684,"kazA":26,"kazB":26}
+{"ad":"ayar:genislik=Geniş","i":11,"sA":3,"sB":1,"gA":3,"gB":1,"posA":0.556,"pasA":46,"pasB":32,"tutA":0.761,"tutB":0.594,"kazA":25,"kazB":22}
+{"ad":"ayar:genislik=Geniş","i":12,"sA":2,"sB":3,"gA":2,"gB":3,"posA":0.557,"pasA":49,"pasB":40,"tutA":0.755,"tutB":0.675,"kazA":27,"kazB":28}
+{"ad":"ayar:genislik=Geniş","i":14,"sA":2,"sB":2,"gA":6,"gB":3,"posA":0.478,"pasA":40,"pasB":36,"tutA":0.8,"tutB":0.806,"kazA":18,"kazB":19}
+{"ad":"ayar:genislik=Geniş","i":13,"sA":2,"sB":1,"gA":4,"gB":2,"posA":0.533,"pasA":42,"pasB":40,"tutA":0.833,"tutB":0.725,"kazA":20,"kazB":19}
+{"ad":"ayar:genislik=Geniş","i":15,"sA":2,"sB":1,"gA":3,"gB":3,"posA":0.568,"pasA":41,"pasB":42,"tutA":0.805,"tutB":0.857,"kazA":23,"kazB":22}
+{"ad":"ayar:genislik=Geniş","i":16,"sA":2,"sB":2,"gA":6,"gB":3,"posA":0.602,"pasA":44,"pasB":34,"tutA":0.841,"tutB":0.794,"kazA":20,"kazB":21}
+{"ad":"ayar:tempo=0.2","i":2,"sA":1,"sB":1,"gA":3,"gB":2,"posA":0.462,"pasA":45,"pasB":40,"tutA":0.644,"tutB":0.675,"kazA":29,"kazB":30}
+{"ad":"ayar:tempo=0.2","i":1,"sA":3,"sB":1,"gA":4,"gB":1,"posA":0.495,"pasA":42,"pasB":40,"tutA":0.833,"tutB":0.7,"kazA":22,"kazB":20}
+{"ad":"ayar:tempo=0.2","i":3,"sA":2,"sB":2,"gA":2,"gB":2,"posA":0.44,"pasA":39,"pasB":35,"tutA":0.795,"tutB":0.771,"kazA":25,"kazB":25}
+{"ad":"ayar:tempo=0.2","i":4,"sA":3,"sB":2,"gA":4,"gB":5,"posA":0.514,"pasA":38,"pasB":41,"tutA":0.842,"tutB":0.902,"kazA":15,"kazB":15}
+{"ad":"ayar:tempo=0.2","i":5,"sA":2,"sB":0,"gA":2,"gB":2,"posA":0.558,"pasA":44,"pasB":36,"tutA":0.841,"tutB":0.833,"kazA":16,"kazB":14}
+{"ad":"ayar:tempo=0.2","i":6,"sA":2,"sB":2,"gA":3,"gB":2,"posA":0.487,"pasA":48,"pasB":44,"tutA":0.75,"tutB":0.682,"kazA":21,"kazB":22}
+{"ad":"ayar:tempo=0.2","i":7,"sA":2,"sB":3,"gA":3,"gB":4,"posA":0.468,"pasA":38,"pasB":43,"tutA":0.711,"tutB":0.837,"kazA":15,"kazB":16}
+{"ad":"ayar:tempo=0.2","i":8,"sA":2,"sB":2,"gA":3,"gB":5,"posA":0.449,"pasA":44,"pasB":38,"tutA":0.795,"tutB":0.789,"kazA":20,"kazB":21}
+{"ad":"ayar:tempo=0.2","i":10,"sA":3,"sB":1,"gA":6,"gB":1,"posA":0.551,"pasA":40,"pasB":45,"tutA":0.75,"tutB":0.667,"kazA":21,"kazB":20}
+{"ad":"ayar:tempo=0.2","i":9,"sA":2,"sB":1,"gA":4,"gB":1,"posA":0.501,"pasA":54,"pasB":39,"tutA":0.796,"tutB":0.667,"kazA":27,"kazB":25}
+{"ad":"ayar:tempo=0.2","i":11,"sA":4,"sB":5,"gA":4,"gB":6,"posA":0.544,"pasA":45,"pasB":36,"tutA":0.889,"tutB":0.806,"kazA":12,"kazB":13}
+{"ad":"ayar:tempo=0.2","i":12,"sA":0,"sB":2,"gA":1,"gB":3,"posA":0.526,"pasA":55,"pasB":38,"tutA":0.782,"tutB":0.737,"kazA":21,"kazB":24}
+{"ad":"ayar:tempo=0.2","i":13,"sA":0,"sB":0,"gA":1,"gB":3,"posA":0.46,"pasA":45,"pasB":36,"tutA":0.778,"tutB":0.722,"kazA":26,"kazB":25}
+{"ad":"ayar:tempo=0.2","i":14,"sA":2,"sB":0,"gA":3,"gB":1,"posA":0.568,"pasA":46,"pasB":36,"tutA":0.761,"tutB":0.694,"kazA":23,"kazB":21}
+{"ad":"ayar:tempo=0.2","i":15,"sA":1,"sB":2,"gA":2,"gB":4,"posA":0.465,"pasA":46,"pasB":46,"tutA":0.696,"tutB":0.739,"kazA":30,"kazB":30}
+{"ad":"ayar:tempo=0.2","i":16,"sA":1,"sB":0,"gA":5,"gB":2,"posA":0.571,"pasA":45,"pasB":41,"tutA":0.844,"tutB":0.659,"kazA":21,"kazB":21}
+{"ad":"ayar:tempo=0.8","i":1,"sA":0,"sB":2,"gA":2,"gB":2,"posA":0.44,"pasA":37,"pasB":37,"tutA":0.703,"tutB":0.838,"kazA":26,"kazB":27}
+{"ad":"ayar:tempo=0.8","i":2,"sA":3,"sB":0,"gA":4,"gB":4,"posA":0.547,"pasA":38,"pasB":51,"tutA":0.737,"tutB":0.706,"kazA":27,"kazB":24}
+{"ad":"ayar:tempo=0.8","i":3,"sA":1,"sB":0,"gA":3,"gB":1,"posA":0.481,"pasA":32,"pasB":45,"tutA":0.875,"tutB":0.8,"kazA":23,"kazB":22}
+{"ad":"ayar:tempo=0.8","i":4,"sA":2,"sB":0,"gA":3,"gB":1,"posA":0.573,"pasA":38,"pasB":49,"tutA":0.763,"tutB":0.755,"kazA":24,"kazB":22}
+{"ad":"ayar:tempo=0.8","i":6,"sA":3,"sB":3,"gA":3,"gB":4,"posA":0.465,"pasA":31,"pasB":45,"tutA":0.806,"tutB":0.8,"kazA":20,"kazB":21}
+{"ad":"ayar:tempo=0.8","i":5,"sA":0,"sB":1,"gA":2,"gB":3,"posA":0.481,"pasA":35,"pasB":44,"tutA":0.771,"tutB":0.795,"kazA":23,"kazB":24}
+{"ad":"ayar:tempo=0.8","i":7,"sA":1,"sB":2,"gA":3,"gB":4,"posA":0.417,"pasA":36,"pasB":45,"tutA":0.694,"tutB":0.778,"kazA":22,"kazB":23}
+{"ad":"ayar:tempo=0.8","i":8,"sA":4,"sB":2,"gA":4,"gB":5,"posA":0.558,"pasA":46,"pasB":32,"tutA":0.804,"tutB":0.75,"kazA":21,"kazB":20}
+{"ad":"ayar:tempo=0.8","i":9,"sA":1,"sB":1,"gA":1,"gB":2,"posA":0.483,"pasA":31,"pasB":47,"tutA":0.871,"tutB":0.723,"kazA":24,"kazB":24}
+{"ad":"ayar:tempo=0.8","i":10,"sA":0,"sB":1,"gA":1,"gB":7,"posA":0.518,"pasA":43,"pasB":37,"tutA":0.721,"tutB":0.757,"kazA":23,"kazB":25}
+{"ad":"ayar:tempo=0.8","i":11,"sA":1,"sB":2,"gA":3,"gB":4,"posA":0.496,"pasA":45,"pasB":36,"tutA":0.733,"tutB":0.778,"kazA":24,"kazB":24}
+{"ad":"ayar:tempo=0.8","i":12,"sA":2,"sB":4,"gA":2,"gB":4,"posA":0.501,"pasA":41,"pasB":42,"tutA":0.78,"tutB":0.857,"kazA":23,"kazB":26}
+{"ad":"ayar:tempo=0.8","i":13,"sA":3,"sB":2,"gA":4,"gB":4,"posA":0.499,"pasA":41,"pasB":39,"tutA":0.78,"tutB":0.744,"kazA":19,"kazB":18}
+{"ad":"ayar:tempo=0.8","i":14,"sA":1,"sB":0,"gA":3,"gB":0,"posA":0.528,"pasA":42,"pasB":38,"tutA":0.738,"tutB":0.658,"kazA":28,"kazB":27}
+{"ad":"ayar:tempo=0.8","i":15,"sA":1,"sB":2,"gA":3,"gB":3,"posA":0.464,"pasA":41,"pasB":40,"tutA":0.756,"tutB":0.75,"kazA":24,"kazB":24}
+{"ad":"ayar:tempo=0.8","i":16,"sA":2,"sB":1,"gA":2,"gB":3,"posA":0.506,"pasA":39,"pasB":49,"tutA":0.795,"tutB":0.776,"kazA":28,"kazB":28}
+{"ad":"ayar:risk=0.2","i":1,"sA":3,"sB":1,"gA":4,"gB":2,"posA":0.52,"pasA":38,"pasB":41,"tutA":0.816,"tutB":0.683,"kazA":25,"kazB":22}
+{"ad":"ayar:risk=0.2","i":2,"sA":2,"sB":1,"gA":3,"gB":3,"posA":0.532,"pasA":52,"pasB":40,"tutA":0.846,"tutB":0.7,"kazA":20,"kazB":20}
+{"ad":"ayar:risk=0.2","i":3,"sA":0,"sB":2,"gA":0,"gB":5,"posA":0.378,"pasA":33,"pasB":54,"tutA":0.606,"tutB":0.852,"kazA":21,"kazB":23}
+{"ad":"ayar:risk=0.2","i":4,"sA":0,"sB":1,"gA":4,"gB":3,"posA":0.514,"pasA":38,"pasB":39,"tutA":0.789,"tutB":0.795,"kazA":24,"kazB":26}
+{"ad":"ayar:risk=0.2","i":5,"sA":2,"sB":3,"gA":3,"gB":5,"posA":0.393,"pasA":42,"pasB":45,"tutA":0.762,"tutB":0.8,"kazA":16,"kazB":17}
+{"ad":"ayar:risk=0.2","i":6,"sA":3,"sB":0,"gA":5,"gB":0,"posA":0.602,"pasA":43,"pasB":36,"tutA":0.86,"tutB":0.722,"kazA":22,"kazB":19}
+{"ad":"ayar:risk=0.2","i":7,"sA":0,"sB":3,"gA":0,"gB":4,"posA":0.403,"pasA":41,"pasB":44,"tutA":0.707,"tutB":0.773,"kazA":21,"kazB":23}
+{"ad":"ayar:risk=0.2","i":8,"sA":2,"sB":0,"gA":2,"gB":6,"posA":0.489,"pasA":44,"pasB":44,"tutA":0.727,"tutB":0.727,"kazA":24,"kazB":22}
+{"ad":"ayar:risk=0.2","i":9,"sA":1,"sB":3,"gA":3,"gB":6,"posA":0.298,"pasA":31,"pasB":47,"tutA":0.645,"tutB":0.894,"kazA":19,"kazB":21}
+{"ad":"ayar:risk=0.2","i":11,"sA":1,"sB":3,"gA":1,"gB":4,"posA":0.443,"pasA":36,"pasB":46,"tutA":0.583,"tutB":0.717,"kazA":22,"kazB":24}
+{"ad":"ayar:risk=0.2","i":10,"sA":2,"sB":2,"gA":7,"gB":3,"posA":0.52,"pasA":44,"pasB":34,"tutA":0.818,"tutB":0.853,"kazA":22,"kazB":23}
+{"ad":"ayar:risk=0.2","i":12,"sA":1,"sB":2,"gA":3,"gB":2,"posA":0.449,"pasA":38,"pasB":42,"tutA":0.763,"tutB":0.81,"kazA":16,"kazB":18}
+{"ad":"ayar:risk=0.2","i":13,"sA":1,"sB":2,"gA":3,"gB":2,"posA":0.478,"pasA":43,"pasB":44,"tutA":0.674,"tutB":0.659,"kazA":28,"kazB":29}
+{"ad":"ayar:risk=0.2","i":15,"sA":3,"sB":2,"gA":3,"gB":3,"posA":0.434,"pasA":43,"pasB":43,"tutA":0.814,"tutB":0.86,"kazA":15,"kazB":14}
+{"ad":"ayar:risk=0.2","i":14,"sA":1,"sB":0,"gA":3,"gB":1,"posA":0.569,"pasA":41,"pasB":58,"tutA":0.732,"tutB":0.759,"kazA":23,"kazB":22}
+{"ad":"ayar:risk=0.2","i":16,"sA":1,"sB":2,"gA":2,"gB":5,"posA":0.468,"pasA":34,"pasB":39,"tutA":0.647,"tutB":0.846,"kazA":23,"kazB":25}
+{"ad":"ayar:risk=0.8","i":1,"sA":3,"sB":0,"gA":4,"gB":1,"posA":0.458,"pasA":43,"pasB":40,"tutA":0.698,"tutB":0.65,"kazA":31,"kazB":28}
+{"ad":"ayar:risk=0.8","i":2,"sA":4,"sB":1,"gA":5,"gB":4,"posA":0.539,"pasA":40,"pasB":39,"tutA":0.75,"tutB":0.769,"kazA":22,"kazB":20}
+{"ad":"ayar:risk=0.8","i":3,"sA":2,"sB":0,"gA":4,"gB":1,"posA":0.451,"pasA":42,"pasB":35,"tutA":0.881,"tutB":0.857,"kazA":19,"kazB":17}
+{"ad":"ayar:risk=0.8","i":4,"sA":0,"sB":2,"gA":6,"gB":3,"posA":0.505,"pasA":40,"pasB":37,"tutA":0.8,"tutB":0.757,"kazA":20,"kazB":23}
+{"ad":"ayar:risk=0.8","i":5,"sA":1,"sB":0,"gA":3,"gB":2,"posA":0.53,"pasA":39,"pasB":41,"tutA":0.718,"tutB":0.707,"kazA":24,"kazB":22}
+{"ad":"ayar:risk=0.8","i":6,"sA":2,"sB":2,"gA":5,"gB":3,"posA":0.493,"pasA":37,"pasB":37,"tutA":0.811,"tutB":0.784,"kazA":22,"kazB":22}
+{"ad":"ayar:risk=0.8","i":8,"sA":2,"sB":1,"gA":2,"gB":3,"posA":0.578,"pasA":36,"pasB":45,"tutA":0.667,"tutB":0.622,"kazA":25,"kazB":25}
+{"ad":"ayar:risk=0.8","i":7,"sA":5,"sB":1,"gA":5,"gB":3,"posA":0.509,"pasA":44,"pasB":45,"tutA":0.795,"tutB":0.756,"kazA":24,"kazB":20}
+{"ad":"ayar:risk=0.8","i":9,"sA":3,"sB":1,"gA":5,"gB":3,"posA":0.521,"pasA":42,"pasB":44,"tutA":0.762,"tutB":0.795,"kazA":19,"kazB":16}
+{"ad":"ayar:risk=0.8","i":10,"sA":2,"sB":1,"gA":3,"gB":1,"posA":0.497,"pasA":47,"pasB":43,"tutA":0.787,"tutB":0.721,"kazA":21,"kazB":21}
+{"ad":"ayar:risk=0.8","i":11,"sA":1,"sB":1,"gA":5,"gB":3,"posA":0.537,"pasA":41,"pasB":43,"tutA":0.732,"tutB":0.698,"kazA":25,"kazB":25}
+{"ad":"ayar:risk=0.8","i":12,"sA":1,"sB":3,"gA":4,"gB":4,"posA":0.47,"pasA":42,"pasB":32,"tutA":0.714,"tutB":0.719,"kazA":27,"kazB":29}
+{"ad":"ayar:risk=0.8","i":13,"sA":1,"sB":3,"gA":3,"gB":4,"posA":0.455,"pasA":40,"pasB":52,"tutA":0.675,"tutB":0.808,"kazA":20,"kazB":21}
+{"ad":"ayar:risk=0.8","i":14,"sA":2,"sB":0,"gA":4,"gB":1,"posA":0.536,"pasA":47,"pasB":42,"tutA":0.83,"tutB":0.738,"kazA":27,"kazB":25}
+{"ad":"ayar:risk=0.8","i":15,"sA":1,"sB":3,"gA":1,"gB":3,"posA":0.463,"pasA":49,"pasB":39,"tutA":0.735,"tutB":0.795,"kazA":22,"kazB":24}
+{"ad":"ayar:risk=0.8","i":16,"sA":0,"sB":4,"gA":2,"gB":5,"posA":0.422,"pasA":40,"pasB":42,"tutA":0.775,"tutB":0.857,"kazA":22,"kazB":26}
+{"ad":"ayar:kazaninca=Yerleş","i":1,"sA":2,"sB":3,"gA":3,"gB":4,"posA":0.446,"pasA":40,"pasB":42,"tutA":0.75,"tutB":0.857,"kazA":14,"kazB":15}
+{"ad":"ayar:kazaninca=Yerleş","i":3,"sA":1,"sB":2,"gA":5,"gB":3,"posA":0.421,"pasA":37,"pasB":35,"tutA":0.811,"tutB":0.829,"kazA":19,"kazB":20}
+{"ad":"ayar:kazaninca=Yerleş","i":2,"sA":1,"sB":1,"gA":1,"gB":1,"posA":0.539,"pasA":41,"pasB":46,"tutA":0.805,"tutB":0.761,"kazA":23,"kazB":23}
+{"ad":"ayar:kazaninca=Yerleş","i":4,"sA":1,"sB":0,"gA":1,"gB":1,"posA":0.57,"pasA":46,"pasB":44,"tutA":0.674,"tutB":0.727,"kazA":26,"kazB":26}
+{"ad":"ayar:kazaninca=Yerleş","i":5,"sA":0,"sB":1,"gA":0,"gB":1,"posA":0.467,"pasA":53,"pasB":32,"tutA":0.717,"tutB":0.625,"kazA":28,"kazB":29}
+{"ad":"ayar:kazaninca=Yerleş","i":6,"sA":2,"sB":1,"gA":3,"gB":1,"posA":0.461,"pasA":40,"pasB":44,"tutA":0.8,"tutB":0.705,"kazA":19,"kazB":18}
+{"ad":"ayar:kazaninca=Yerleş","i":7,"sA":3,"sB":0,"gA":3,"gB":3,"posA":0.486,"pasA":42,"pasB":43,"tutA":0.786,"tutB":0.721,"kazA":21,"kazB":17}
+{"ad":"ayar:kazaninca=Yerleş","i":8,"sA":1,"sB":1,"gA":2,"gB":4,"posA":0.533,"pasA":41,"pasB":39,"tutA":0.805,"tutB":0.744,"kazA":16,"kazB":16}
+{"ad":"ayar:kazaninca=Yerleş","i":9,"sA":3,"sB":1,"gA":5,"gB":3,"posA":0.513,"pasA":41,"pasB":38,"tutA":0.732,"tutB":0.684,"kazA":27,"kazB":25}
+{"ad":"ayar:kazaninca=Yerleş","i":11,"sA":2,"sB":2,"gA":5,"gB":3,"posA":0.423,"pasA":36,"pasB":45,"tutA":0.833,"tutB":0.778,"kazA":17,"kazB":17}
+{"ad":"ayar:kazaninca=Yerleş","i":10,"sA":1,"sB":2,"gA":2,"gB":2,"posA":0.451,"pasA":40,"pasB":37,"tutA":0.75,"tutB":0.784,"kazA":19,"kazB":21}
+{"ad":"ayar:kazaninca=Yerleş","i":12,"sA":2,"sB":3,"gA":3,"gB":4,"posA":0.534,"pasA":53,"pasB":35,"tutA":0.755,"tutB":0.743,"kazA":19,"kazB":21}
+{"ad":"ayar:kazaninca=Yerleş","i":13,"sA":1,"sB":0,"gA":3,"gB":0,"posA":0.47,"pasA":39,"pasB":40,"tutA":0.718,"tutB":0.7,"kazA":29,"kazB":27}
+{"ad":"ayar:kazaninca=Yerleş","i":15,"sA":1,"sB":0,"gA":6,"gB":2,"posA":0.405,"pasA":36,"pasB":38,"tutA":0.667,"tutB":0.711,"kazA":22,"kazB":21}
+{"ad":"ayar:kazaninca=Yerleş","i":14,"sA":2,"sB":4,"gA":3,"gB":5,"posA":0.538,"pasA":48,"pasB":40,"tutA":0.771,"tutB":0.775,"kazA":19,"kazB":22}
+{"ad":"ayar:kazaninca=Yerleş","i":16,"sA":1,"sB":0,"gA":3,"gB":2,"posA":0.561,"pasA":43,"pasB":38,"tutA":0.651,"tutB":0.737,"kazA":25,"kazB":25}
+{"ad":"ayar:kazaninca=Kontra","i":1,"sA":1,"sB":1,"gA":3,"gB":1,"posA":0.553,"pasA":50,"pasB":40,"tutA":0.62,"tutB":0.7,"kazA":36,"kazB":35}
+{"ad":"ayar:kazaninca=Kontra","i":3,"sA":3,"sB":2,"gA":5,"gB":2,"posA":0.541,"pasA":40,"pasB":37,"tutA":0.775,"tutB":0.649,"kazA":24,"kazB":22}
+{"ad":"ayar:kazaninca=Kontra","i":2,"sA":1,"sB":2,"gA":2,"gB":3,"posA":0.521,"pasA":42,"pasB":39,"tutA":0.762,"tutB":0.744,"kazA":16,"kazB":18}
+{"ad":"ayar:kazaninca=Kontra","i":4,"sA":2,"sB":1,"gA":2,"gB":3,"posA":0.52,"pasA":45,"pasB":37,"tutA":0.822,"tutB":0.811,"kazA":19,"kazB":19}
+{"ad":"ayar:kazaninca=Kontra","i":5,"sA":1,"sB":2,"gA":2,"gB":5,"posA":0.466,"pasA":44,"pasB":42,"tutA":0.795,"tutB":0.857,"kazA":22,"kazB":22}
+{"ad":"ayar:kazaninca=Kontra","i":6,"sA":1,"sB":2,"gA":2,"gB":5,"posA":0.498,"pasA":45,"pasB":37,"tutA":0.644,"tutB":0.649,"kazA":29,"kazB":31}
+{"ad":"ayar:kazaninca=Kontra","i":7,"sA":2,"sB":2,"gA":6,"gB":4,"posA":0.535,"pasA":49,"pasB":37,"tutA":0.735,"tutB":0.73,"kazA":28,"kazB":28}
+{"ad":"ayar:kazaninca=Kontra","i":8,"sA":1,"sB":1,"gA":5,"gB":5,"posA":0.5,"pasA":47,"pasB":36,"tutA":0.872,"tutB":0.861,"kazA":19,"kazB":20}
+{"ad":"ayar:kazaninca=Kontra","i":10,"sA":2,"sB":2,"gA":2,"gB":2,"posA":0.547,"pasA":39,"pasB":45,"tutA":0.692,"tutB":0.711,"kazA":24,"kazB":25}
+{"ad":"ayar:kazaninca=Kontra","i":9,"sA":2,"sB":1,"gA":6,"gB":2,"posA":0.464,"pasA":46,"pasB":40,"tutA":0.761,"tutB":0.65,"kazA":25,"kazB":23}
+{"ad":"ayar:kazaninca=Kontra","i":11,"sA":2,"sB":2,"gA":4,"gB":5,"posA":0.465,"pasA":32,"pasB":43,"tutA":0.719,"tutB":0.837,"kazA":18,"kazB":17}
+{"ad":"ayar:kazaninca=Kontra","i":12,"sA":2,"sB":1,"gA":4,"gB":4,"posA":0.555,"pasA":33,"pasB":44,"tutA":0.667,"tutB":0.75,"kazA":22,"kazB":21}
+{"ad":"ayar:kazaninca=Kontra","i":13,"sA":1,"sB":0,"gA":1,"gB":2,"posA":0.527,"pasA":38,"pasB":34,"tutA":0.789,"tutB":0.647,"kazA":28,"kazB":26}
+{"ad":"ayar:kazaninca=Kontra","i":14,"sA":3,"sB":0,"gA":3,"gB":3,"posA":0.535,"pasA":35,"pasB":41,"tutA":0.743,"tutB":0.805,"kazA":27,"kazB":25}
+{"ad":"ayar:kazaninca=Kontra","i":15,"sA":1,"sB":2,"gA":4,"gB":2,"posA":0.527,"pasA":41,"pasB":35,"tutA":0.805,"tutB":0.771,"kazA":27,"kazB":27}
+{"ad":"ayar:kazaninca=Kontra","i":16,"sA":1,"sB":1,"gA":4,"gB":4,"posA":0.441,"pasA":37,"pasB":42,"tutA":0.676,"tutB":0.69,"kazA":27,"kazB":28}
+{"ad":"ayar:pasSurme=0.1","i":1,"sA":0,"sB":2,"gA":2,"gB":4,"posA":0.418,"pasA":49,"pasB":38,"tutA":0.776,"tutB":0.789,"kazA":25,"kazB":27}
+{"ad":"ayar:pasSurme=0.1","i":2,"sA":3,"sB":1,"gA":5,"gB":3,"posA":0.47,"pasA":57,"pasB":33,"tutA":0.825,"tutB":0.727,"kazA":21,"kazB":19}
+{"ad":"ayar:pasSurme=0.1","i":3,"sA":4,"sB":1,"gA":4,"gB":2,"posA":0.395,"pasA":55,"pasB":36,"tutA":0.782,"tutB":0.75,"kazA":23,"kazB":20}
+{"ad":"ayar:pasSurme=0.1","i":4,"sA":1,"sB":1,"gA":1,"gB":5,"posA":0.44,"pasA":56,"pasB":37,"tutA":0.821,"tutB":0.757,"kazA":23,"kazB":24}
+{"ad":"ayar:pasSurme=0.1","i":6,"sA":3,"sB":3,"gA":5,"gB":5,"posA":0.501,"pasA":55,"pasB":36,"tutA":0.8,"tutB":0.722,"kazA":21,"kazB":22}
+{"ad":"ayar:pasSurme=0.1","i":5,"sA":0,"sB":2,"gA":0,"gB":3,"posA":0.466,"pasA":68,"pasB":29,"tutA":0.765,"tutB":0.759,"kazA":26,"kazB":27}
+{"ad":"ayar:pasSurme=0.1","i":7,"sA":0,"sB":2,"gA":3,"gB":3,"posA":0.392,"pasA":52,"pasB":43,"tutA":0.788,"tutB":0.767,"kazA":19,"kazB":21}
+{"ad":"ayar:pasSurme=0.1","i":8,"sA":2,"sB":1,"gA":4,"gB":2,"posA":0.509,"pasA":62,"pasB":39,"tutA":0.823,"tutB":0.769,"kazA":23,"kazB":22}
+{"ad":"ayar:pasSurme=0.1","i":9,"sA":1,"sB":1,"gA":2,"gB":3,"posA":0.39,"pasA":50,"pasB":36,"tutA":0.78,"tutB":0.722,"kazA":19,"kazB":19}
+{"ad":"ayar:pasSurme=0.1","i":10,"sA":0,"sB":4,"gA":0,"gB":5,"posA":0.383,"pasA":58,"pasB":39,"tutA":0.741,"tutB":0.821,"kazA":17,"kazB":21}
+{"ad":"ayar:pasSurme=0.1","i":11,"sA":1,"sB":2,"gA":2,"gB":3,"posA":0.347,"pasA":43,"pasB":43,"tutA":0.744,"tutB":0.837,"kazA":22,"kazB":23}
+{"ad":"ayar:pasSurme=0.1","i":12,"sA":2,"sB":2,"gA":2,"gB":3,"posA":0.464,"pasA":64,"pasB":39,"tutA":0.813,"tutB":0.744,"kazA":24,"kazB":25}
+{"ad":"ayar:pasSurme=0.1","i":13,"sA":0,"sB":2,"gA":2,"gB":4,"posA":0.395,"pasA":50,"pasB":40,"tutA":0.74,"tutB":0.85,"kazA":22,"kazB":24}
+{"ad":"ayar:pasSurme=0.1","i":14,"sA":2,"sB":1,"gA":3,"gB":1,"posA":0.516,"pasA":73,"pasB":28,"tutA":0.822,"tutB":0.75,"kazA":25,"kazB":24}
+{"ad":"ayar:pasSurme=0.1","i":15,"sA":1,"sB":4,"gA":1,"gB":3,"posA":0.456,"pasA":62,"pasB":31,"tutA":0.726,"tutB":0.645,"kazA":20,"kazB":22}
+{"ad":"ayar:pasSurme=0.1","i":16,"sA":1,"sB":2,"gA":1,"gB":3,"posA":0.463,"pasA":62,"pasB":39,"tutA":0.742,"tutB":0.718,"kazA":25,"kazB":26}
+{"ad":"ayar:pasSurme=0.9","i":3,"sA":0,"sB":3,"gA":0,"gB":3,"posA":0.505,"pasA":18,"pasB":37,"tutA":0.722,"tutB":0.811,"kazA":17,"kazB":20}
+{"ad":"ayar:pasSurme=0.9","i":2,"sA":2,"sB":2,"gA":4,"gB":4,"posA":0.616,"pasA":35,"pasB":39,"tutA":0.714,"tutB":0.769,"kazA":23,"kazB":24}
+{"ad":"ayar:pasSurme=0.9","i":1,"sA":0,"sB":0,"gA":1,"gB":3,"posA":0.597,"pasA":29,"pasB":43,"tutA":0.517,"tutB":0.721,"kazA":33,"kazB":32}
+{"ad":"ayar:pasSurme=0.9","i":4,"sA":3,"sB":3,"gA":3,"gB":5,"posA":0.573,"pasA":33,"pasB":40,"tutA":0.667,"tutB":0.75,"kazA":24,"kazB":25}
+{"ad":"ayar:pasSurme=0.9","i":6,"sA":1,"sB":0,"gA":3,"gB":2,"posA":0.632,"pasA":28,"pasB":35,"tutA":0.679,"tutB":0.657,"kazA":22,"kazB":21}
+{"ad":"ayar:pasSurme=0.9","i":5,"sA":2,"sB":2,"gA":5,"gB":4,"posA":0.584,"pasA":28,"pasB":31,"tutA":0.714,"tutB":0.742,"kazA":19,"kazB":18}
+{"ad":"ayar:pasSurme=0.9","i":7,"sA":4,"sB":0,"gA":5,"gB":2,"posA":0.576,"pasA":23,"pasB":38,"tutA":0.696,"tutB":0.711,"kazA":27,"kazB":23}
+{"ad":"ayar:pasSurme=0.9","i":8,"sA":0,"sB":3,"gA":1,"gB":5,"posA":0.543,"pasA":24,"pasB":41,"tutA":0.667,"tutB":0.854,"kazA":19,"kazB":22}
+{"ad":"ayar:pasSurme=0.9","i":9,"sA":2,"sB":3,"gA":3,"gB":6,"posA":0.624,"pasA":43,"pasB":34,"tutA":0.744,"tutB":0.765,"kazA":22,"kazB":23}
+{"ad":"ayar:pasSurme=0.9","i":10,"sA":2,"sB":0,"gA":2,"gB":0,"posA":0.625,"pasA":40,"pasB":36,"tutA":0.725,"tutB":0.583,"kazA":27,"kazB":25}
+{"ad":"ayar:pasSurme=0.9","i":11,"sA":2,"sB":3,"gA":5,"gB":7,"posA":0.421,"pasA":22,"pasB":45,"tutA":0.773,"tutB":0.844,"kazA":19,"kazB":20}
+{"ad":"ayar:pasSurme=0.9","i":12,"sA":2,"sB":2,"gA":3,"gB":5,"posA":0.59,"pasA":28,"pasB":36,"tutA":0.679,"tutB":0.833,"kazA":18,"kazB":18}
+{"ad":"ayar:pasSurme=0.9","i":13,"sA":1,"sB":2,"gA":2,"gB":6,"posA":0.537,"pasA":20,"pasB":43,"tutA":0.4,"tutB":0.791,"kazA":28,"kazB":28}
+{"ad":"ayar:pasSurme=0.9","i":14,"sA":1,"sB":1,"gA":1,"gB":5,"posA":0.636,"pasA":30,"pasB":38,"tutA":0.833,"tutB":0.868,"kazA":15,"kazB":15}
+{"ad":"ayar:pasSurme=0.9","i":15,"sA":2,"sB":1,"gA":5,"gB":1,"posA":0.546,"pasA":25,"pasB":49,"tutA":0.76,"tutB":0.837,"kazA":18,"kazB":16}
+{"ad":"ayar:pasSurme=0.9","i":16,"sA":0,"sB":1,"gA":1,"gB":2,"posA":0.64,"pasA":25,"pasB":37,"tutA":0.76,"tutB":0.784,"kazA":23,"kazB":25}
+{"ad":"ayar:sabir=0.1","i":1,"sA":2,"sB":1,"gA":3,"gB":1,"posA":0.506,"pasA":37,"pasB":38,"tutA":0.784,"tutB":0.789,"kazA":20,"kazB":19}
+{"ad":"ayar:sabir=0.1","i":3,"sA":1,"sB":1,"gA":1,"gB":1,"posA":0.422,"pasA":38,"pasB":46,"tutA":0.632,"tutB":0.761,"kazA":21,"kazB":20}
+{"ad":"ayar:sabir=0.1","i":2,"sA":2,"sB":4,"gA":3,"gB":6,"posA":0.468,"pasA":39,"pasB":51,"tutA":0.692,"tutB":0.843,"kazA":21,"kazB":23}
+{"ad":"ayar:sabir=0.1","i":4,"sA":1,"sB":3,"gA":2,"gB":4,"posA":0.461,"pasA":37,"pasB":44,"tutA":0.73,"tutB":0.818,"kazA":18,"kazB":21}
+{"ad":"ayar:sabir=0.1","i":5,"sA":0,"sB":0,"gA":1,"gB":1,"posA":0.422,"pasA":48,"pasB":49,"tutA":0.729,"tutB":0.735,"kazA":17,"kazB":17}
+{"ad":"ayar:sabir=0.1","i":6,"sA":1,"sB":2,"gA":2,"gB":4,"posA":0.503,"pasA":43,"pasB":40,"tutA":0.721,"tutB":0.8,"kazA":22,"kazB":24}
+{"ad":"ayar:sabir=0.1","i":7,"sA":1,"sB":0,"gA":3,"gB":1,"posA":0.395,"pasA":39,"pasB":41,"tutA":0.667,"tutB":0.707,"kazA":32,"kazB":30}
+{"ad":"ayar:sabir=0.1","i":8,"sA":3,"sB":0,"gA":4,"gB":2,"posA":0.546,"pasA":45,"pasB":47,"tutA":0.844,"tutB":0.745,"kazA":21,"kazB":19}
+{"ad":"ayar:sabir=0.1","i":9,"sA":1,"sB":1,"gA":3,"gB":2,"posA":0.411,"pasA":46,"pasB":42,"tutA":0.783,"tutB":0.762,"kazA":21,"kazB":20}
+{"ad":"ayar:sabir=0.1","i":10,"sA":2,"sB":1,"gA":3,"gB":1,"posA":0.42,"pasA":38,"pasB":45,"tutA":0.763,"tutB":0.711,"kazA":18,"kazB":18}
+{"ad":"ayar:sabir=0.1","i":11,"sA":3,"sB":3,"gA":5,"gB":4,"posA":0.308,"pasA":36,"pasB":45,"tutA":0.778,"tutB":0.756,"kazA":21,"kazB":20}
+{"ad":"ayar:sabir=0.1","i":12,"sA":2,"sB":4,"gA":2,"gB":5,"posA":0.417,"pasA":39,"pasB":46,"tutA":0.744,"tutB":0.783,"kazA":23,"kazB":26}
+{"ad":"ayar:sabir=0.1","i":13,"sA":2,"sB":2,"gA":3,"gB":4,"posA":0.443,"pasA":37,"pasB":42,"tutA":0.757,"tutB":0.881,"kazA":22,"kazB":22}
+{"ad":"ayar:sabir=0.1","i":14,"sA":2,"sB":1,"gA":3,"gB":3,"posA":0.508,"pasA":45,"pasB":36,"tutA":0.756,"tutB":0.639,"kazA":20,"kazB":19}
+{"ad":"ayar:sabir=0.1","i":15,"sA":1,"sB":2,"gA":3,"gB":5,"posA":0.451,"pasA":39,"pasB":39,"tutA":0.692,"tutB":0.769,"kazA":28,"kazB":29}
+{"ad":"ayar:sabir=0.1","i":16,"sA":2,"sB":0,"gA":2,"gB":3,"posA":0.591,"pasA":53,"pasB":42,"tutA":0.679,"tutB":0.619,"kazA":30,"kazB":29}
+{"ad":"ayar:sabir=0.9","i":2,"sA":2,"sB":1,"gA":4,"gB":2,"posA":0.568,"pasA":40,"pasB":36,"tutA":0.9,"tutB":0.694,"kazA":23,"kazB":22}
+{"ad":"ayar:sabir=0.9","i":1,"sA":3,"sB":0,"gA":5,"gB":1,"posA":0.626,"pasA":32,"pasB":35,"tutA":0.875,"tutB":0.771,"kazA":17,"kazB":13}
+{"ad":"ayar:sabir=0.9","i":3,"sA":2,"sB":3,"gA":4,"gB":5,"posA":0.489,"pasA":40,"pasB":38,"tutA":0.825,"tutB":0.816,"kazA":14,"kazB":14}
+{"ad":"ayar:sabir=0.9","i":4,"sA":1,"sB":0,"gA":2,"gB":2,"posA":0.672,"pasA":35,"pasB":34,"tutA":0.829,"tutB":0.794,"kazA":15,"kazB":14}
+{"ad":"ayar:sabir=0.9","i":6,"sA":0,"sB":2,"gA":2,"gB":4,"posA":0.514,"pasA":42,"pasB":33,"tutA":0.81,"tutB":0.758,"kazA":15,"kazB":17}
+{"ad":"ayar:sabir=0.9","i":5,"sA":3,"sB":0,"gA":4,"gB":2,"posA":0.657,"pasA":45,"pasB":32,"tutA":0.844,"tutB":0.656,"kazA":20,"kazB":17}
+{"ad":"ayar:sabir=0.9","i":7,"sA":0,"sB":3,"gA":2,"gB":3,"posA":0.583,"pasA":42,"pasB":38,"tutA":0.81,"tutB":0.789,"kazA":15,"kazB":17}
+{"ad":"ayar:sabir=0.9","i":8,"sA":0,"sB":2,"gA":1,"gB":3,"posA":0.57,"pasA":40,"pasB":38,"tutA":0.725,"tutB":0.737,"kazA":16,"kazB":19}
+{"ad":"ayar:sabir=0.9","i":9,"sA":3,"sB":1,"gA":3,"gB":2,"posA":0.662,"pasA":36,"pasB":34,"tutA":0.722,"tutB":0.735,"kazA":18,"kazB":15}
+{"ad":"ayar:sabir=0.9","i":10,"sA":0,"sB":2,"gA":3,"gB":3,"posA":0.704,"pasA":46,"pasB":29,"tutA":0.761,"tutB":0.828,"kazA":17,"kazB":19}
+{"ad":"ayar:sabir=0.9","i":11,"sA":1,"sB":3,"gA":4,"gB":3,"posA":0.59,"pasA":37,"pasB":32,"tutA":0.784,"tutB":0.75,"kazA":16,"kazB":18}
+{"ad":"ayar:sabir=0.9","i":12,"sA":0,"sB":0,"gA":0,"gB":3,"posA":0.593,"pasA":37,"pasB":32,"tutA":0.811,"tutB":0.719,"kazA":21,"kazB":21}
+{"ad":"ayar:sabir=0.9","i":13,"sA":0,"sB":2,"gA":4,"gB":3,"posA":0.606,"pasA":36,"pasB":36,"tutA":0.75,"tutB":0.833,"kazA":17,"kazB":18}
+{"ad":"ayar:sabir=0.9","i":15,"sA":3,"sB":3,"gA":4,"gB":4,"posA":0.589,"pasA":43,"pasB":35,"tutA":0.791,"tutB":0.771,"kazA":15,"kazB":15}
+{"ad":"ayar:sabir=0.9","i":14,"sA":0,"sB":0,"gA":1,"gB":1,"posA":0.571,"pasA":47,"pasB":40,"tutA":0.681,"tutB":0.7,"kazA":23,"kazB":24}
+{"ad":"ayar:sabir=0.9","i":16,"sA":0,"sB":5,"gA":0,"gB":3,"posA":0.612,"pasA":42,"pasB":34,"tutA":0.667,"tutB":0.735,"kazA":20,"kazB":24}
+{"ad":"ayar:sut=0.1","i":1,"sA":0,"sB":0,"gA":2,"gB":2,"posA":0.486,"pasA":38,"pasB":39,"tutA":0.737,"tutB":0.744,"kazA":20,"kazB":19}
+{"ad":"ayar:sut=0.1","i":3,"sA":0,"sB":1,"gA":2,"gB":1,"posA":0.519,"pasA":46,"pasB":37,"tutA":0.717,"tutB":0.622,"kazA":24,"kazB":24}
+{"ad":"ayar:sut=0.1","i":2,"sA":1,"sB":2,"gA":2,"gB":3,"posA":0.465,"pasA":44,"pasB":48,"tutA":0.795,"tutB":0.792,"kazA":24,"kazB":25}
+{"ad":"ayar:sut=0.1","i":4,"sA":2,"sB":2,"gA":3,"gB":3,"posA":0.605,"pasA":44,"pasB":37,"tutA":0.727,"tutB":0.703,"kazA":28,"kazB":28}
+{"ad":"ayar:sut=0.1","i":5,"sA":1,"sB":2,"gA":1,"gB":2,"posA":0.51,"pasA":45,"pasB":40,"tutA":0.711,"tutB":0.7,"kazA":27,"kazB":27}
+{"ad":"ayar:sut=0.1","i":6,"sA":1,"sB":0,"gA":1,"gB":4,"posA":0.622,"pasA":49,"pasB":36,"tutA":0.714,"tutB":0.778,"kazA":23,"kazB":22}
+{"ad":"ayar:sut=0.1","i":7,"sA":1,"sB":3,"gA":2,"gB":4,"posA":0.468,"pasA":42,"pasB":43,"tutA":0.857,"tutB":0.814,"kazA":19,"kazB":20}
+{"ad":"ayar:sut=0.1","i":8,"sA":2,"sB":1,"gA":3,"gB":2,"posA":0.546,"pasA":35,"pasB":41,"tutA":0.8,"tutB":0.829,"kazA":15,"kazB":14}
+{"ad":"ayar:sut=0.1","i":9,"sA":1,"sB":1,"gA":2,"gB":3,"posA":0.421,"pasA":41,"pasB":40,"tutA":0.683,"tutB":0.65,"kazA":27,"kazB":26}
+{"ad":"ayar:sut=0.1","i":10,"sA":3,"sB":1,"gA":4,"gB":3,"posA":0.556,"pasA":46,"pasB":36,"tutA":0.87,"tutB":0.667,"kazA":21,"kazB":19}
+{"ad":"ayar:sut=0.1","i":11,"sA":0,"sB":3,"gA":0,"gB":4,"posA":0.396,"pasA":32,"pasB":50,"tutA":0.656,"tutB":0.82,"kazA":26,"kazB":29}
+{"ad":"ayar:sut=0.1","i":12,"sA":2,"sB":1,"gA":2,"gB":4,"posA":0.515,"pasA":42,"pasB":37,"tutA":0.786,"tutB":0.757,"kazA":14,"kazB":14}
+{"ad":"ayar:sut=0.1","i":13,"sA":0,"sB":4,"gA":2,"gB":7,"posA":0.481,"pasA":35,"pasB":42,"tutA":0.657,"tutB":0.833,"kazA":22,"kazB":25}
+{"ad":"ayar:sut=0.1","i":14,"sA":1,"sB":2,"gA":1,"gB":3,"posA":0.571,"pasA":53,"pasB":42,"tutA":0.698,"tutB":0.69,"kazA":28,"kazB":30}
+{"ad":"ayar:sut=0.1","i":15,"sA":0,"sB":3,"gA":1,"gB":3,"posA":0.531,"pasA":36,"pasB":42,"tutA":0.722,"tutB":0.833,"kazA":22,"kazB":25}
+{"ad":"ayar:sut=0.1","i":16,"sA":1,"sB":0,"gA":2,"gB":1,"posA":0.53,"pasA":44,"pasB":36,"tutA":0.795,"tutB":0.75,"kazA":20,"kazB":20}
+{"ad":"ayar:sut=0.9","i":1,"sA":1,"sB":2,"gA":4,"gB":2,"posA":0.454,"pasA":36,"pasB":42,"tutA":0.778,"tutB":0.81,"kazA":19,"kazB":20}
+{"ad":"ayar:sut=0.9","i":2,"sA":1,"sB":0,"gA":2,"gB":1,"posA":0.515,"pasA":45,"pasB":51,"tutA":0.644,"tutB":0.686,"kazA":29,"kazB":29}
+{"ad":"ayar:sut=0.9","i":3,"sA":2,"sB":2,"gA":4,"gB":2,"posA":0.493,"pasA":42,"pasB":43,"tutA":0.714,"tutB":0.744,"kazA":26,"kazB":25}
+{"ad":"ayar:sut=0.9","i":4,"sA":0,"sB":2,"gA":4,"gB":4,"posA":0.522,"pasA":43,"pasB":47,"tutA":0.767,"tutB":0.766,"kazA":27,"kazB":29}
+{"ad":"ayar:sut=0.9","i":5,"sA":2,"sB":1,"gA":1,"gB":3,"posA":0.546,"pasA":33,"pasB":43,"tutA":0.697,"tutB":0.814,"kazA":20,"kazB":20}
+{"ad":"ayar:sut=0.9","i":6,"sA":2,"sB":1,"gA":3,"gB":3,"posA":0.463,"pasA":39,"pasB":41,"tutA":0.667,"tutB":0.78,"kazA":22,"kazB":21}
+{"ad":"ayar:sut=0.9","i":7,"sA":0,"sB":4,"gA":4,"gB":5,"posA":0.437,"pasA":32,"pasB":46,"tutA":0.781,"tutB":0.783,"kazA":17,"kazB":20}
+{"ad":"ayar:sut=0.9","i":8,"sA":1,"sB":0,"gA":4,"gB":2,"posA":0.594,"pasA":48,"pasB":41,"tutA":0.792,"tutB":0.732,"kazA":24,"kazB":23}
+{"ad":"ayar:sut=0.9","i":9,"sA":0,"sB":0,"gA":1,"gB":1,"posA":0.533,"pasA":40,"pasB":46,"tutA":0.825,"tutB":0.761,"kazA":23,"kazB":23}
+{"ad":"ayar:sut=0.9","i":10,"sA":0,"sB":2,"gA":8,"gB":5,"posA":0.465,"pasA":36,"pasB":42,"tutA":0.722,"tutB":0.786,"kazA":18,"kazB":20}
+{"ad":"ayar:sut=0.9","i":11,"sA":1,"sB":4,"gA":4,"gB":5,"posA":0.347,"pasA":27,"pasB":48,"tutA":0.741,"tutB":0.833,"kazA":18,"kazB":20}
+{"ad":"ayar:sut=0.9","i":12,"sA":2,"sB":3,"gA":7,"gB":3,"posA":0.495,"pasA":43,"pasB":40,"tutA":0.791,"tutB":0.775,"kazA":19,"kazB":19}
+{"ad":"ayar:sut=0.9","i":13,"sA":1,"sB":1,"gA":3,"gB":4,"posA":0.463,"pasA":34,"pasB":43,"tutA":0.735,"tutB":0.837,"kazA":23,"kazB":23}
+{"ad":"ayar:sut=0.9","i":14,"sA":0,"sB":3,"gA":2,"gB":6,"posA":0.544,"pasA":40,"pasB":40,"tutA":0.775,"tutB":0.75,"kazA":20,"kazB":23}
+{"ad":"ayar:sut=0.9","i":15,"sA":3,"sB":1,"gA":6,"gB":2,"posA":0.57,"pasA":41,"pasB":41,"tutA":0.78,"tutB":0.707,"kazA":25,"kazB":23}
+{"ad":"ayar:sut=0.9","i":16,"sA":0,"sB":3,"gA":2,"gB":3,"posA":0.446,"pasA":39,"pasB":40,"tutA":0.744,"tutB":0.8,"kazA":25,"kazB":28}
+{"ad":"ayar:tetik=yok","i":1,"sA":2,"sB":0,"gA":3,"gB":3,"posA":0.462,"pasA":48,"pasB":39,"tutA":0.75,"tutB":0.718,"kazA":25,"kazB":23}
+{"ad":"ayar:tetik=yok","i":2,"sA":0,"sB":2,"gA":2,"gB":2,"posA":0.508,"pasA":42,"pasB":45,"tutA":0.81,"tutB":0.756,"kazA":24,"kazB":27}
+{"ad":"ayar:tetik=yok","i":3,"sA":4,"sB":2,"gA":5,"gB":5,"posA":0.518,"pasA":41,"pasB":37,"tutA":0.732,"tutB":0.784,"kazA":19,"kazB":16}
+{"ad":"ayar:tetik=yok","i":4,"sA":2,"sB":1,"gA":5,"gB":4,"posA":0.465,"pasA":44,"pasB":32,"tutA":0.75,"tutB":0.781,"kazA":22,"kazB":21}
+{"ad":"ayar:tetik=yok","i":5,"sA":0,"sB":1,"gA":0,"gB":2,"posA":0.562,"pasA":43,"pasB":43,"tutA":0.698,"tutB":0.744,"kazA":29,"kazB":29}
+{"ad":"ayar:tetik=yok","i":6,"sA":1,"sB":1,"gA":3,"gB":2,"posA":0.556,"pasA":51,"pasB":37,"tutA":0.745,"tutB":0.73,"kazA":18,"kazB":19}
+{"ad":"ayar:tetik=yok","i":7,"sA":3,"sB":3,"gA":5,"gB":3,"posA":0.453,"pasA":41,"pasB":46,"tutA":0.78,"tutB":0.717,"kazA":18,"kazB":17}
+{"ad":"ayar:tetik=yok","i":8,"sA":2,"sB":1,"gA":4,"gB":5,"posA":0.521,"pasA":45,"pasB":39,"tutA":0.756,"tutB":0.846,"kazA":21,"kazB":20}
+{"ad":"ayar:tetik=yok","i":9,"sA":2,"sB":4,"gA":1,"gB":4,"posA":0.455,"pasA":38,"pasB":45,"tutA":0.789,"tutB":0.911,"kazA":18,"kazB":20}
+{"ad":"ayar:tetik=yok","i":10,"sA":4,"sB":1,"gA":7,"gB":1,"posA":0.526,"pasA":43,"pasB":36,"tutA":0.837,"tutB":0.667,"kazA":20,"kazB":18}
+{"ad":"ayar:tetik=yok","i":11,"sA":1,"sB":3,"gA":5,"gB":4,"posA":0.365,"pasA":37,"pasB":45,"tutA":0.784,"tutB":0.667,"kazA":20,"kazB":22}
+{"ad":"ayar:tetik=yok","i":12,"sA":3,"sB":2,"gA":5,"gB":8,"posA":0.573,"pasA":38,"pasB":33,"tutA":0.737,"tutB":0.848,"kazA":23,"kazB":22}
+{"ad":"ayar:tetik=yok","i":13,"sA":0,"sB":2,"gA":1,"gB":5,"posA":0.444,"pasA":38,"pasB":40,"tutA":0.605,"tutB":0.775,"kazA":27,"kazB":29}
+{"ad":"ayar:tetik=yok","i":14,"sA":2,"sB":2,"gA":7,"gB":3,"posA":0.592,"pasA":48,"pasB":37,"tutA":0.813,"tutB":0.757,"kazA":25,"kazB":26}
+{"ad":"ayar:tetik=yok","i":15,"sA":3,"sB":2,"gA":3,"gB":1,"posA":0.58,"pasA":38,"pasB":43,"tutA":0.605,"tutB":0.721,"kazA":27,"kazB":24}
+{"ad":"ayar:tetik=yok","i":16,"sA":1,"sB":0,"gA":1,"gB":1,"posA":0.574,"pasA":42,"pasB":41,"tutA":0.643,"tutB":0.659,"kazA":23,"kazB":22}
+{"ad":"ayar:tetik=hepsi","i":1,"sA":2,"sB":0,"gA":3,"gB":3,"posA":0.462,"pasA":48,"pasB":39,"tutA":0.75,"tutB":0.718,"kazA":25,"kazB":23}
+{"ad":"ayar:tetik=hepsi","i":2,"sA":0,"sB":2,"gA":2,"gB":2,"posA":0.508,"pasA":42,"pasB":45,"tutA":0.81,"tutB":0.756,"kazA":24,"kazB":27}
+{"ad":"ayar:tetik=hepsi","i":3,"sA":4,"sB":2,"gA":5,"gB":5,"posA":0.518,"pasA":41,"pasB":37,"tutA":0.732,"tutB":0.784,"kazA":19,"kazB":16}
+{"ad":"ayar:tetik=hepsi","i":4,"sA":2,"sB":1,"gA":5,"gB":4,"posA":0.465,"pasA":44,"pasB":32,"tutA":0.75,"tutB":0.781,"kazA":22,"kazB":21}
+{"ad":"ayar:tetik=hepsi","i":5,"sA":0,"sB":1,"gA":0,"gB":2,"posA":0.562,"pasA":43,"pasB":43,"tutA":0.698,"tutB":0.744,"kazA":29,"kazB":29}
+{"ad":"ayar:tetik=hepsi","i":7,"sA":3,"sB":3,"gA":5,"gB":3,"posA":0.453,"pasA":41,"pasB":46,"tutA":0.78,"tutB":0.717,"kazA":18,"kazB":17}
+{"ad":"ayar:tetik=hepsi","i":6,"sA":1,"sB":1,"gA":3,"gB":2,"posA":0.556,"pasA":51,"pasB":37,"tutA":0.745,"tutB":0.73,"kazA":18,"kazB":19}
+{"ad":"ayar:tetik=hepsi","i":8,"sA":2,"sB":1,"gA":4,"gB":5,"posA":0.521,"pasA":45,"pasB":39,"tutA":0.756,"tutB":0.846,"kazA":21,"kazB":20}
+{"ad":"ayar:tetik=hepsi","i":9,"sA":2,"sB":4,"gA":1,"gB":4,"posA":0.455,"pasA":38,"pasB":45,"tutA":0.789,"tutB":0.911,"kazA":18,"kazB":20}
+{"ad":"ayar:tetik=hepsi","i":10,"sA":4,"sB":1,"gA":7,"gB":1,"posA":0.526,"pasA":43,"pasB":36,"tutA":0.837,"tutB":0.667,"kazA":20,"kazB":18}
+{"ad":"ayar:tetik=hepsi","i":11,"sA":1,"sB":3,"gA":5,"gB":4,"posA":0.365,"pasA":37,"pasB":45,"tutA":0.784,"tutB":0.667,"kazA":20,"kazB":22}
+{"ad":"ayar:tetik=hepsi","i":12,"sA":3,"sB":2,"gA":5,"gB":8,"posA":0.573,"pasA":38,"pasB":33,"tutA":0.737,"tutB":0.848,"kazA":23,"kazB":22}
+{"ad":"ayar:tetik=hepsi","i":13,"sA":0,"sB":2,"gA":1,"gB":5,"posA":0.444,"pasA":38,"pasB":40,"tutA":0.605,"tutB":0.775,"kazA":27,"kazB":29}
+{"ad":"ayar:tetik=hepsi","i":15,"sA":3,"sB":2,"gA":3,"gB":1,"posA":0.58,"pasA":38,"pasB":43,"tutA":0.605,"tutB":0.721,"kazA":27,"kazB":24}
+{"ad":"ayar:tetik=hepsi","i":14,"sA":2,"sB":2,"gA":7,"gB":3,"posA":0.592,"pasA":48,"pasB":37,"tutA":0.813,"tutB":0.757,"kazA":25,"kazB":26}
+{"ad":"ayar:tetik=hepsi","i":16,"sA":1,"sB":0,"gA":1,"gB":1,"posA":0.574,"pasA":42,"pasB":41,"tutA":0.643,"tutB":0.659,"kazA":23,"kazB":22}
+{"ad":"ayar:kayip=0.1","i":1,"sA":2,"sB":1,"gA":2,"gB":2,"posA":0.501,"pasA":46,"pasB":41,"tutA":0.804,"tutB":0.805,"kazA":28,"kazB":27}
+{"ad":"ayar:kayip=0.1","i":3,"sA":1,"sB":2,"gA":2,"gB":4,"posA":0.466,"pasA":48,"pasB":35,"tutA":0.792,"tutB":0.771,"kazA":21,"kazB":21}
+{"ad":"ayar:kayip=0.1","i":2,"sA":1,"sB":1,"gA":3,"gB":2,"posA":0.547,"pasA":41,"pasB":36,"tutA":0.732,"tutB":0.639,"kazA":25,"kazB":25}
+{"ad":"ayar:kayip=0.1","i":4,"sA":0,"sB":4,"gA":2,"gB":5,"posA":0.451,"pasA":35,"pasB":46,"tutA":0.771,"tutB":0.804,"kazA":15,"kazB":19}
+{"ad":"ayar:kayip=0.1","i":5,"sA":2,"sB":0,"gA":5,"gB":2,"posA":0.463,"pasA":39,"pasB":43,"tutA":0.641,"tutB":0.651,"kazA":23,"kazB":21}
+{"ad":"ayar:kayip=0.1","i":7,"sA":0,"sB":1,"gA":4,"gB":3,"posA":0.463,"pasA":39,"pasB":40,"tutA":0.795,"tutB":0.7,"kazA":18,"kazB":19}
+{"ad":"ayar:kayip=0.1","i":6,"sA":0,"sB":2,"gA":4,"gB":5,"posA":0.486,"pasA":34,"pasB":44,"tutA":0.735,"tutB":0.75,"kazA":18,"kazB":21}
+{"ad":"ayar:kayip=0.1","i":8,"sA":1,"sB":4,"gA":1,"gB":5,"posA":0.455,"pasA":36,"pasB":41,"tutA":0.694,"tutB":0.829,"kazA":14,"kazB":17}
+{"ad":"ayar:kayip=0.1","i":9,"sA":1,"sB":3,"gA":3,"gB":10,"posA":0.391,"pasA":36,"pasB":41,"tutA":0.806,"tutB":0.878,"kazA":15,"kazB":17}
+{"ad":"ayar:kayip=0.1","i":11,"sA":2,"sB":4,"gA":2,"gB":5,"posA":0.449,"pasA":39,"pasB":45,"tutA":0.769,"tutB":0.822,"kazA":19,"kazB":20}
+{"ad":"ayar:kayip=0.1","i":10,"sA":3,"sB":2,"gA":4,"gB":3,"posA":0.456,"pasA":38,"pasB":50,"tutA":0.763,"tutB":0.74,"kazA":25,"kazB":25}
+{"ad":"ayar:kayip=0.1","i":12,"sA":2,"sB":2,"gA":5,"gB":3,"posA":0.529,"pasA":38,"pasB":42,"tutA":0.868,"tutB":0.738,"kazA":18,"kazB":18}
+{"ad":"ayar:kayip=0.1","i":13,"sA":1,"sB":1,"gA":2,"gB":2,"posA":0.396,"pasA":33,"pasB":50,"tutA":0.636,"tutB":0.74,"kazA":24,"kazB":25}
+{"ad":"ayar:kayip=0.1","i":14,"sA":1,"sB":3,"gA":2,"gB":5,"posA":0.441,"pasA":40,"pasB":48,"tutA":0.675,"tutB":0.75,"kazA":19,"kazB":21}
+{"ad":"ayar:kayip=0.1","i":15,"sA":2,"sB":3,"gA":4,"gB":4,"posA":0.464,"pasA":38,"pasB":43,"tutA":0.842,"tutB":0.744,"kazA":18,"kazB":19}
+{"ad":"ayar:kayip=0.1","i":16,"sA":1,"sB":2,"gA":3,"gB":3,"posA":0.506,"pasA":34,"pasB":43,"tutA":0.824,"tutB":0.721,"kazA":22,"kazB":24}
+{"ad":"ayar:kayip=0.9","i":1,"sA":1,"sB":1,"gA":1,"gB":1,"posA":0.452,"pasA":42,"pasB":43,"tutA":0.69,"tutB":0.651,"kazA":29,"kazB":28}
+{"ad":"ayar:kayip=0.9","i":2,"sA":1,"sB":3,"gA":3,"gB":3,"posA":0.514,"pasA":46,"pasB":45,"tutA":0.761,"tutB":0.733,"kazA":30,"kazB":32}
+{"ad":"ayar:kayip=0.9","i":3,"sA":1,"sB":0,"gA":3,"gB":1,"posA":0.584,"pasA":35,"pasB":41,"tutA":0.743,"tutB":0.732,"kazA":23,"kazB":22}
+{"ad":"ayar:kayip=0.9","i":4,"sA":2,"sB":3,"gA":3,"gB":5,"posA":0.506,"pasA":45,"pasB":38,"tutA":0.889,"tutB":0.789,"kazA":15,"kazB":16}
+{"ad":"ayar:kayip=0.9","i":5,"sA":3,"sB":2,"gA":3,"gB":2,"posA":0.535,"pasA":36,"pasB":45,"tutA":0.778,"tutB":0.8,"kazA":20,"kazB":18}
+{"ad":"ayar:kayip=0.9","i":6,"sA":3,"sB":1,"gA":3,"gB":2,"posA":0.53,"pasA":40,"pasB":45,"tutA":0.85,"tutB":0.844,"kazA":21,"kazB":19}
+{"ad":"ayar:kayip=0.9","i":7,"sA":3,"sB":0,"gA":4,"gB":2,"posA":0.465,"pasA":46,"pasB":45,"tutA":0.652,"tutB":0.689,"kazA":26,"kazB":23}
+{"ad":"ayar:kayip=0.9","i":8,"sA":2,"sB":1,"gA":5,"gB":4,"posA":0.52,"pasA":46,"pasB":37,"tutA":0.783,"tutB":0.757,"kazA":21,"kazB":20}
+{"ad":"ayar:kayip=0.9","i":9,"sA":0,"sB":3,"gA":2,"gB":5,"posA":0.466,"pasA":37,"pasB":43,"tutA":0.784,"tutB":0.837,"kazA":18,"kazB":21}
+{"ad":"ayar:kayip=0.9","i":10,"sA":3,"sB":4,"gA":6,"gB":4,"posA":0.521,"pasA":32,"pasB":48,"tutA":0.75,"tutB":0.792,"kazA":25,"kazB":26}
+{"ad":"ayar:kayip=0.9","i":11,"sA":1,"sB":1,"gA":2,"gB":1,"posA":0.498,"pasA":36,"pasB":51,"tutA":0.806,"tutB":0.745,"kazA":21,"kazB":20}
+{"ad":"ayar:kayip=0.9","i":12,"sA":3,"sB":4,"gA":5,"gB":6,"posA":0.541,"pasA":43,"pasB":43,"tutA":0.721,"tutB":0.837,"kazA":14,"kazB":15}
+{"ad":"ayar:kayip=0.9","i":13,"sA":1,"sB":0,"gA":5,"gB":7,"posA":0.544,"pasA":42,"pasB":33,"tutA":0.762,"tutB":0.758,"kazA":22,"kazB":20}
+{"ad":"ayar:kayip=0.9","i":14,"sA":2,"sB":1,"gA":2,"gB":6,"posA":0.535,"pasA":38,"pasB":33,"tutA":0.763,"tutB":0.848,"kazA":14,"kazB":14}
+{"ad":"ayar:kayip=0.9","i":15,"sA":2,"sB":0,"gA":3,"gB":4,"posA":0.473,"pasA":37,"pasB":43,"tutA":0.784,"tutB":0.767,"kazA":22,"kazB":20}
+{"ad":"taktik:Dengeli|Sabırlı","i":1,"sA":3,"sB":0,"gA":5,"gB":1,"posA":0.593,"pasA":44,"pasB":36,"tutA":0.75,"tutB":0.667,"kazA":23,"kazB":20}
+{"ad":"ayar:kayip=0.9","i":16,"sA":1,"sB":2,"gA":3,"gB":2,"posA":0.489,"pasA":42,"pasB":38,"tutA":0.786,"tutB":0.737,"kazA":23,"kazB":24}
+{"ad":"taktik:Dengeli|Sabırlı","i":2,"sA":2,"sB":1,"gA":1,"gB":3,"posA":0.498,"pasA":33,"pasB":40,"tutA":0.818,"tutB":0.725,"kazA":16,"kazB":17}
+{"ad":"taktik:Dengeli|Sabırlı","i":3,"sA":0,"sB":0,"gA":1,"gB":2,"posA":0.491,"pasA":34,"pasB":48,"tutA":0.735,"tutB":0.771,"kazA":22,"kazB":21}
+{"ad":"taktik:Dengeli|Sabırlı","i":5,"sA":0,"sB":1,"gA":3,"gB":2,"posA":0.452,"pasA":38,"pasB":45,"tutA":0.711,"tutB":0.689,"kazA":27,"kazB":28}
+{"ad":"taktik:Dengeli|Sabırlı","i":4,"sA":3,"sB":3,"gA":5,"gB":3,"posA":0.605,"pasA":46,"pasB":32,"tutA":0.826,"tutB":0.813,"kazA":21,"kazB":21}
+{"ad":"taktik:Dengeli|Sabırlı","i":6,"sA":2,"sB":1,"gA":4,"gB":5,"posA":0.578,"pasA":47,"pasB":34,"tutA":0.787,"tutB":0.794,"kazA":19,"kazB":17}
+{"ad":"taktik:Dengeli|Sabırlı","i":7,"sA":1,"sB":3,"gA":5,"gB":3,"posA":0.452,"pasA":39,"pasB":42,"tutA":0.795,"tutB":0.762,"kazA":19,"kazB":21}
+{"ad":"taktik:Dengeli|Sabırlı","i":9,"sA":3,"sB":2,"gA":3,"gB":2,"posA":0.575,"pasA":43,"pasB":43,"tutA":0.767,"tutB":0.674,"kazA":24,"kazB":23}
+{"ad":"taktik:Dengeli|Sabırlı","i":8,"sA":3,"sB":0,"gA":4,"gB":0,"posA":0.523,"pasA":41,"pasB":40,"tutA":0.829,"tutB":0.775,"kazA":19,"kazB":16}
+{"ad":"taktik:Dengeli|Sabırlı","i":10,"sA":0,"sB":1,"gA":2,"gB":4,"posA":0.455,"pasA":41,"pasB":42,"tutA":0.634,"tutB":0.714,"kazA":26,"kazB":27}
+{"ad":"taktik:Dengeli|Sabırlı","i":11,"sA":1,"sB":3,"gA":1,"gB":4,"posA":0.497,"pasA":41,"pasB":41,"tutA":0.756,"tutB":0.78,"kazA":17,"kazB":19}
+{"ad":"taktik:Dengeli|Sabırlı","i":12,"sA":4,"sB":3,"gA":4,"gB":5,"posA":0.569,"pasA":43,"pasB":33,"tutA":0.86,"tutB":0.879,"kazA":11,"kazB":10}
+{"ad":"taktik:Dengeli|Sabırlı","i":13,"sA":2,"sB":1,"gA":3,"gB":5,"posA":0.496,"pasA":47,"pasB":37,"tutA":0.809,"tutB":0.811,"kazA":18,"kazB":16}
+{"ad":"taktik:Dengeli|Sabırlı","i":14,"sA":1,"sB":0,"gA":1,"gB":7,"posA":0.553,"pasA":47,"pasB":32,"tutA":0.809,"tutB":0.813,"kazA":20,"kazB":19}
+{"ad":"taktik:Dengeli|Sabırlı","i":15,"sA":2,"sB":1,"gA":4,"gB":1,"posA":0.526,"pasA":43,"pasB":35,"tutA":0.86,"tutB":0.714,"kazA":16,"kazB":15}
+{"ad":"taktik:Dengeli|Sabırlı","i":16,"sA":3,"sB":1,"gA":3,"gB":3,"posA":0.528,"pasA":44,"pasB":39,"tutA":0.75,"tutB":0.718,"kazA":24,"kazB":23}
+{"ad":"taktik:Dengeli|Sabırlı","i":17,"sA":3,"sB":0,"gA":5,"gB":5,"posA":0.498,"pasA":36,"pasB":36,"tutA":0.722,"tutB":0.75,"kazA":26,"kazB":22}
+{"ad":"taktik:Dengeli|Sabırlı","i":18,"sA":0,"sB":2,"gA":2,"gB":2,"posA":0.451,"pasA":43,"pasB":37,"tutA":0.698,"tutB":0.757,"kazA":19,"kazB":22}
+{"ad":"taktik:Dengeli|Sabırlı","i":19,"sA":0,"sB":1,"gA":1,"gB":3,"posA":0.422,"pasA":37,"pasB":41,"tutA":0.622,"tutB":0.732,"kazA":23,"kazB":23}
+{"ad":"taktik:Dengeli|Sabırlı","i":20,"sA":2,"sB":0,"gA":4,"gB":2,"posA":0.588,"pasA":43,"pasB":40,"tutA":0.767,"tutB":0.65,"kazA":25,"kazB":24}
+{"ad":"taktik:Dengeli|Sabırlı","i":21,"sA":2,"sB":2,"gA":4,"gB":2,"posA":0.46,"pasA":34,"pasB":48,"tutA":0.882,"tutB":0.854,"kazA":18,"kazB":18}
+{"ad":"taktik:Dengeli|Sabırlı","i":22,"sA":2,"sB":1,"gA":2,"gB":2,"posA":0.458,"pasA":36,"pasB":49,"tutA":0.75,"tutB":0.837,"kazA":24,"kazB":24}
+{"ad":"taktik:Dengeli|Sabırlı","i":23,"sA":3,"sB":3,"gA":5,"gB":5,"posA":0.433,"pasA":37,"pasB":42,"tutA":0.811,"tutB":0.881,"kazA":13,"kazB":12}
+{"ad":"taktik:Dengeli|Sabırlı","i":24,"sA":3,"sB":0,"gA":5,"gB":3,"posA":0.526,"pasA":42,"pasB":34,"tutA":0.786,"tutB":0.765,"kazA":31,"kazB":29}
+{"ad":"taktik:Dengeli|Sabırlı","i":25,"sA":5,"sB":0,"gA":5,"gB":0,"posA":0.457,"pasA":44,"pasB":43,"tutA":0.795,"tutB":0.721,"kazA":23,"kazB":19}
+{"ad":"taktik:Dengeli|Sabırlı","i":26,"sA":2,"sB":4,"gA":3,"gB":6,"posA":0.528,"pasA":41,"pasB":38,"tutA":0.732,"tutB":0.868,"kazA":20,"kazB":23}
+{"ad":"taktik:Dengeli|Sabırlı","i":27,"sA":2,"sB":0,"gA":6,"gB":0,"posA":0.501,"pasA":42,"pasB":47,"tutA":0.738,"tutB":0.723,"kazA":23,"kazB":21}
+{"ad":"taktik:Dengeli|Sabırlı","i":28,"sA":4,"sB":2,"gA":5,"gB":4,"posA":0.621,"pasA":49,"pasB":35,"tutA":0.816,"tutB":0.743,"kazA":19,"kazB":17}
+{"ad":"taktik:Dengeli|Sabırlı","i":29,"sA":2,"sB":0,"gA":6,"gB":3,"posA":0.54,"pasA":37,"pasB":44,"tutA":0.757,"tutB":0.795,"kazA":19,"kazB":16}
+{"ad":"taktik:Dengeli|Sabırlı","i":30,"sA":2,"sB":3,"gA":5,"gB":4,"posA":0.556,"pasA":42,"pasB":43,"tutA":0.762,"tutB":0.791,"kazA":19,"kazB":20}
+{"ad":"taktik:Dengeli|Dikine","i":1,"sA":2,"sB":1,"gA":5,"gB":2,"posA":0.451,"pasA":36,"pasB":39,"tutA":0.833,"tutB":0.821,"kazA":18,"kazB":16}
+{"ad":"taktik:Dengeli|Dikine","i":2,"sA":1,"sB":0,"gA":4,"gB":2,"posA":0.492,"pasA":54,"pasB":37,"tutA":0.778,"tutB":0.676,"kazA":23,"kazB":22}
+{"ad":"taktik:Dengeli|Dikine","i":3,"sA":2,"sB":1,"gA":2,"gB":2,"posA":0.48,"pasA":33,"pasB":44,"tutA":0.727,"tutB":0.727,"kazA":22,"kazB":22}
+{"ad":"taktik:Dengeli|Dikine","i":4,"sA":1,"sB":2,"gA":1,"gB":2,"posA":0.47,"pasA":49,"pasB":42,"tutA":0.694,"tutB":0.81,"kazA":21,"kazB":23}
+{"ad":"taktik:Dengeli|Dikine","i":5,"sA":3,"sB":0,"gA":5,"gB":4,"posA":0.497,"pasA":47,"pasB":35,"tutA":0.809,"tutB":0.714,"kazA":23,"kazB":20}
+{"ad":"taktik:Dengeli|Dikine","i":6,"sA":0,"sB":1,"gA":1,"gB":1,"posA":0.512,"pasA":36,"pasB":47,"tutA":0.694,"tutB":0.745,"kazA":20,"kazB":22}
+{"ad":"taktik:Dengeli|Dikine","i":7,"sA":0,"sB":1,"gA":0,"gB":2,"posA":0.525,"pasA":38,"pasB":43,"tutA":0.711,"tutB":0.674,"kazA":30,"kazB":30}
+{"ad":"taktik:Dengeli|Dikine","i":8,"sA":2,"sB":1,"gA":5,"gB":2,"posA":0.54,"pasA":41,"pasB":38,"tutA":0.756,"tutB":0.763,"kazA":23,"kazB":23}
+{"ad":"taktik:Dengeli|Dikine","i":9,"sA":0,"sB":1,"gA":0,"gB":3,"posA":0.437,"pasA":47,"pasB":41,"tutA":0.681,"tutB":0.683,"kazA":30,"kazB":31}
+{"ad":"taktik:Dengeli|Dikine","i":10,"sA":1,"sB":0,"gA":2,"gB":4,"posA":0.547,"pasA":40,"pasB":35,"tutA":0.75,"tutB":0.771,"kazA":22,"kazB":22}
+{"ad":"taktik:Dengeli|Dikine","i":11,"sA":2,"sB":0,"gA":3,"gB":2,"posA":0.49,"pasA":42,"pasB":42,"tutA":0.738,"tutB":0.762,"kazA":28,"kazB":25}
+{"ad":"taktik:Dengeli|Dikine","i":12,"sA":3,"sB":2,"gA":5,"gB":4,"posA":0.495,"pasA":37,"pasB":40,"tutA":0.784,"tutB":0.7,"kazA":25,"kazB":24}
+{"ad":"taktik:Dengeli|Dikine","i":13,"sA":4,"sB":1,"gA":8,"gB":7,"posA":0.446,"pasA":35,"pasB":40,"tutA":0.829,"tutB":0.825,"kazA":26,"kazB":22}
+{"ad":"taktik:Dengeli|Dikine","i":14,"sA":2,"sB":3,"gA":5,"gB":5,"posA":0.557,"pasA":48,"pasB":36,"tutA":0.792,"tutB":0.778,"kazA":22,"kazB":24}
+{"ad":"taktik:Dengeli|Dikine","i":15,"sA":1,"sB":2,"gA":4,"gB":5,"posA":0.445,"pasA":43,"pasB":38,"tutA":0.744,"tutB":0.658,"kazA":27,"kazB":28}
+{"ad":"taktik:Dengeli|Dikine","i":16,"sA":1,"sB":0,"gA":2,"gB":2,"posA":0.509,"pasA":48,"pasB":39,"tutA":0.667,"tutB":0.692,"kazA":34,"kazB":34}
+{"ad":"taktik:Dengeli|Dikine","i":17,"sA":0,"sB":1,"gA":3,"gB":1,"posA":0.45,"pasA":43,"pasB":51,"tutA":0.721,"tutB":0.725,"kazA":27,"kazB":27}
+{"ad":"taktik:Dengeli|Dikine","i":18,"sA":3,"sB":6,"gA":3,"gB":7,"posA":0.436,"pasA":41,"pasB":44,"tutA":0.78,"tutB":0.841,"kazA":18,"kazB":21}
+{"ad":"taktik:Dengeli|Dikine","i":19,"sA":1,"sB":1,"gA":3,"gB":5,"posA":0.505,"pasA":43,"pasB":36,"tutA":0.791,"tutB":0.694,"kazA":25,"kazB":25}
+{"ad":"taktik:Dengeli|Dikine","i":20,"sA":1,"sB":1,"gA":1,"gB":1,"posA":0.431,"pasA":40,"pasB":40,"tutA":0.7,"tutB":0.675,"kazA":26,"kazB":26}
+{"ad":"taktik:Dengeli|Dikine","i":21,"sA":3,"sB":2,"gA":4,"gB":3,"posA":0.482,"pasA":33,"pasB":46,"tutA":0.939,"tutB":0.783,"kazA":17,"kazB":16}
+{"ad":"taktik:Dengeli|Dikine","i":22,"sA":1,"sB":2,"gA":1,"gB":3,"posA":0.469,"pasA":37,"pasB":42,"tutA":0.676,"tutB":0.738,"kazA":25,"kazB":27}
+{"ad":"taktik:Dengeli|Dikine","i":23,"sA":1,"sB":1,"gA":3,"gB":3,"posA":0.447,"pasA":40,"pasB":40,"tutA":0.8,"tutB":0.75,"kazA":18,"kazB":18}
+{"ad":"taktik:Dengeli|Dikine","i":24,"sA":1,"sB":1,"gA":1,"gB":3,"posA":0.498,"pasA":40,"pasB":44,"tutA":0.725,"tutB":0.795,"kazA":19,"kazB":19}
+{"ad":"taktik:Dengeli|Dikine","i":25,"sA":1,"sB":1,"gA":5,"gB":2,"posA":0.455,"pasA":40,"pasB":37,"tutA":0.725,"tutB":0.595,"kazA":27,"kazB":26}
+{"ad":"taktik:Dengeli|Dikine","i":26,"sA":2,"sB":1,"gA":4,"gB":1,"posA":0.443,"pasA":40,"pasB":47,"tutA":0.75,"tutB":0.702,"kazA":26,"kazB":25}
+{"ad":"taktik:Dengeli|Dikine","i":27,"sA":1,"sB":2,"gA":1,"gB":2,"posA":0.421,"pasA":34,"pasB":38,"tutA":0.676,"tutB":0.763,"kazA":24,"kazB":24}
+{"ad":"taktik:Dengeli|Dikine","i":28,"sA":4,"sB":2,"gA":5,"gB":4,"posA":0.518,"pasA":48,"pasB":32,"tutA":0.792,"tutB":0.719,"kazA":26,"kazB":24}
+{"ad":"taktik:Dengeli|Dikine","i":29,"sA":0,"sB":1,"gA":3,"gB":2,"posA":0.471,"pasA":48,"pasB":39,"tutA":0.771,"tutB":0.744,"kazA":30,"kazB":30}
+{"ad":"taktik:Dengeli|Dikine","i":30,"sA":1,"sB":2,"gA":3,"gB":3,"posA":0.475,"pasA":44,"pasB":41,"tutA":0.727,"tutB":0.78,"kazA":21,"kazB":23}
+{"ad":"taktik:Dengeli|Kontra","i":1,"sA":0,"sB":1,"gA":3,"gB":1,"posA":0.464,"pasA":40,"pasB":40,"tutA":0.75,"tutB":0.8,"kazA":25,"kazB":26}
+{"ad":"taktik:Dengeli|Kontra","i":2,"sA":1,"sB":0,"gA":1,"gB":0,"posA":0.506,"pasA":49,"pasB":44,"tutA":0.735,"tutB":0.705,"kazA":20,"kazB":20}
+{"ad":"taktik:Dengeli|Kontra","i":3,"sA":1,"sB":0,"gA":4,"gB":0,"posA":0.458,"pasA":40,"pasB":38,"tutA":0.85,"tutB":0.763,"kazA":16,"kazB":15}
+{"ad":"taktik:Dengeli|Kontra","i":4,"sA":2,"sB":0,"gA":2,"gB":3,"posA":0.532,"pasA":46,"pasB":32,"tutA":0.804,"tutB":0.75,"kazA":18,"kazB":16}
+{"ad":"taktik:Dengeli|Kontra","i":5,"sA":2,"sB":0,"gA":8,"gB":0,"posA":0.566,"pasA":42,"pasB":36,"tutA":0.833,"tutB":0.694,"kazA":20,"kazB":17}
+{"ad":"taktik:Dengeli|Kontra","i":6,"sA":2,"sB":1,"gA":2,"gB":1,"posA":0.515,"pasA":36,"pasB":46,"tutA":0.722,"tutB":0.761,"kazA":22,"kazB":22}
+{"ad":"taktik:Dengeli|Kontra","i":7,"sA":1,"sB":0,"gA":2,"gB":3,"posA":0.521,"pasA":36,"pasB":38,"tutA":0.75,"tutB":0.842,"kazA":22,"kazB":20}
+{"ad":"taktik:Dengeli|Kontra","i":8,"sA":1,"sB":1,"gA":3,"gB":4,"posA":0.531,"pasA":39,"pasB":39,"tutA":0.821,"tutB":0.795,"kazA":18,"kazB":19}
+{"ad":"taktik:Dengeli|Kontra","i":9,"sA":1,"sB":2,"gA":2,"gB":2,"posA":0.542,"pasA":47,"pasB":41,"tutA":0.766,"tutB":0.78,"kazA":21,"kazB":22}
+{"ad":"taktik:Dengeli|Kontra","i":10,"sA":1,"sB":2,"gA":3,"gB":2,"posA":0.564,"pasA":43,"pasB":41,"tutA":0.767,"tutB":0.78,"kazA":19,"kazB":21}
+{"ad":"taktik:Dengeli|Kontra","i":11,"sA":4,"sB":2,"gA":4,"gB":2,"posA":0.545,"pasA":44,"pasB":44,"tutA":0.705,"tutB":0.727,"kazA":23,"kazB":21}
+{"ad":"taktik:Dengeli|Kontra","i":12,"sA":3,"sB":0,"gA":5,"gB":0,"posA":0.565,"pasA":47,"pasB":33,"tutA":0.766,"tutB":0.667,"kazA":19,"kazB":16}
+{"ad":"taktik:Dengeli|Kontra","i":13,"sA":1,"sB":1,"gA":1,"gB":2,"posA":0.398,"pasA":38,"pasB":42,"tutA":0.789,"tutB":0.857,"kazA":19,"kazB":18}
+{"ad":"taktik:Dengeli|Kontra","i":14,"sA":6,"sB":0,"gA":7,"gB":0,"posA":0.551,"pasA":46,"pasB":30,"tutA":0.87,"tutB":0.667,"kazA":22,"kazB":16}
+{"ad":"taktik:Dengeli|Kontra","i":15,"sA":2,"sB":0,"gA":4,"gB":0,"posA":0.451,"pasA":39,"pasB":40,"tutA":0.769,"tutB":0.725,"kazA":23,"kazB":21}
+{"ad":"taktik:Dengeli|Kontra","i":16,"sA":2,"sB":0,"gA":3,"gB":1,"posA":0.508,"pasA":48,"pasB":36,"tutA":0.813,"tutB":0.778,"kazA":21,"kazB":19}
+{"ad":"taktik:Dengeli|Kontra","i":17,"sA":3,"sB":0,"gA":3,"gB":3,"posA":0.503,"pasA":41,"pasB":44,"tutA":0.756,"tutB":0.773,"kazA":17,"kazB":13}
+{"ad":"taktik:Dengeli|Kontra","i":18,"sA":2,"sB":3,"gA":4,"gB":3,"posA":0.479,"pasA":43,"pasB":43,"tutA":0.814,"tutB":0.837,"kazA":13,"kazB":15}
+{"ad":"taktik:Dengeli|Kontra","i":19,"sA":2,"sB":0,"gA":2,"gB":0,"posA":0.468,"pasA":49,"pasB":39,"tutA":0.714,"tutB":0.769,"kazA":24,"kazB":21}
+{"ad":"taktik:Dengeli|Kontra","i":20,"sA":1,"sB":2,"gA":2,"gB":2,"posA":0.576,"pasA":49,"pasB":36,"tutA":0.796,"tutB":0.806,"kazA":16,"kazB":17}
+{"ad":"taktik:Dengeli|Kontra","i":21,"sA":1,"sB":1,"gA":5,"gB":5,"posA":0.447,"pasA":38,"pasB":41,"tutA":0.711,"tutB":0.732,"kazA":24,"kazB":24}
+{"ad":"taktik:Dengeli|Kontra","i":22,"sA":3,"sB":4,"gA":4,"gB":6,"posA":0.443,"pasA":32,"pasB":48,"tutA":0.719,"tutB":0.792,"kazA":17,"kazB":18}
+{"ad":"taktik:Dengeli|Kontra","i":23,"sA":0,"sB":1,"gA":6,"gB":1,"posA":0.501,"pasA":36,"pasB":40,"tutA":0.806,"tutB":0.775,"kazA":18,"kazB":18}
+{"ad":"taktik:Dengeli|Kontra","i":24,"sA":4,"sB":0,"gA":8,"gB":2,"posA":0.544,"pasA":47,"pasB":29,"tutA":0.83,"tutB":0.793,"kazA":21,"kazB":17}
+{"ad":"taktik:Dengeli|Kontra","i":25,"sA":2,"sB":0,"gA":4,"gB":4,"posA":0.538,"pasA":42,"pasB":38,"tutA":0.81,"tutB":0.868,"kazA":19,"kazB":16}
+{"ad":"taktik:Dengeli|Kontra","i":26,"sA":1,"sB":0,"gA":3,"gB":1,"posA":0.414,"pasA":39,"pasB":47,"tutA":0.744,"tutB":0.745,"kazA":23,"kazB":23}
+{"ad":"taktik:Dengeli|Kontra","i":27,"sA":0,"sB":1,"gA":1,"gB":1,"posA":0.417,"pasA":39,"pasB":39,"tutA":0.692,"tutB":0.744,"kazA":21,"kazB":22}
+{"ad":"taktik:Dengeli|Kontra","i":28,"sA":1,"sB":1,"gA":1,"gB":3,"posA":0.527,"pasA":46,"pasB":38,"tutA":0.696,"tutB":0.763,"kazA":16,"kazB":17}
+{"ad":"taktik:Dengeli|Kontra","i":29,"sA":2,"sB":1,"gA":3,"gB":1,"posA":0.496,"pasA":39,"pasB":38,"tutA":0.821,"tutB":0.789,"kazA":17,"kazB":15}
+{"ad":"taktik:Dengeli|Kontra","i":30,"sA":4,"sB":0,"gA":5,"gB":2,"posA":0.535,"pasA":40,"pasB":34,"tutA":0.775,"tutB":0.706,"kazA":24,"kazB":21}
+{"ad":"taktik:Dengeli|Ön alan","i":1,"sA":2,"sB":4,"gA":4,"gB":6,"posA":0.45,"pasA":31,"pasB":43,"tutA":0.677,"tutB":0.86,"kazA":23,"kazB":24}
+{"ad":"taktik:Dengeli|Ön alan","i":2,"sA":1,"sB":1,"gA":4,"gB":4,"posA":0.466,"pasA":33,"pasB":39,"tutA":0.758,"tutB":0.718,"kazA":29,"kazB":29}
+{"ad":"taktik:Dengeli|Ön alan","i":3,"sA":3,"sB":2,"gA":3,"gB":6,"posA":0.486,"pasA":40,"pasB":43,"tutA":0.825,"tutB":0.744,"kazA":28,"kazB":26}
+{"ad":"taktik:Dengeli|Ön alan","i":4,"sA":2,"sB":0,"gA":5,"gB":0,"posA":0.567,"pasA":47,"pasB":31,"tutA":0.83,"tutB":0.613,"kazA":26,"kazB":25}
+{"ad":"taktik:Dengeli|Ön alan","i":5,"sA":3,"sB":3,"gA":4,"gB":5,"posA":0.517,"pasA":41,"pasB":46,"tutA":0.78,"tutB":0.783,"kazA":27,"kazB":26}
+{"ad":"taktik:Dengeli|Ön alan","i":6,"sA":0,"sB":3,"gA":5,"gB":4,"posA":0.585,"pasA":38,"pasB":48,"tutA":0.789,"tutB":0.708,"kazA":24,"kazB":27}
+{"ad":"taktik:Dengeli|Ön alan","i":7,"sA":1,"sB":1,"gA":3,"gB":3,"posA":0.496,"pasA":43,"pasB":47,"tutA":0.767,"tutB":0.66,"kazA":28,"kazB":27}
+{"ad":"taktik:Dengeli|Ön alan","i":8,"sA":1,"sB":1,"gA":4,"gB":4,"posA":0.437,"pasA":38,"pasB":42,"tutA":0.789,"tutB":0.786,"kazA":24,"kazB":25}
+{"ad":"taktik:Dengeli|Ön alan","i":9,"sA":0,"sB":2,"gA":2,"gB":4,"posA":0.529,"pasA":48,"pasB":40,"tutA":0.729,"tutB":0.725,"kazA":29,"kazB":31}
+{"ad":"taktik:Dengeli|Ön alan","i":10,"sA":1,"sB":1,"gA":3,"gB":4,"posA":0.587,"pasA":42,"pasB":41,"tutA":0.81,"tutB":0.707,"kazA":22,"kazB":23}
+{"ad":"taktik:Dengeli|Ön alan","i":11,"sA":4,"sB":2,"gA":5,"gB":3,"posA":0.453,"pasA":40,"pasB":43,"tutA":0.725,"tutB":0.628,"kazA":32,"kazB":30}
+{"ad":"taktik:Dengeli|Ön alan","i":12,"sA":1,"sB":1,"gA":5,"gB":2,"posA":0.51,"pasA":40,"pasB":47,"tutA":0.7,"tutB":0.745,"kazA":23,"kazB":24}
+{"ad":"taktik:Dengeli|Ön alan","i":13,"sA":2,"sB":2,"gA":5,"gB":7,"posA":0.463,"pasA":37,"pasB":50,"tutA":0.73,"tutB":0.8,"kazA":28,"kazB":28}
+{"ad":"taktik:Dengeli|Ön alan","i":14,"sA":2,"sB":3,"gA":8,"gB":5,"posA":0.559,"pasA":41,"pasB":43,"tutA":0.732,"tutB":0.651,"kazA":25,"kazB":27}
+{"ad":"taktik:Dengeli|Ön alan","i":15,"sA":5,"sB":1,"gA":7,"gB":1,"posA":0.596,"pasA":45,"pasB":44,"tutA":0.8,"tutB":0.636,"kazA":26,"kazB":21}
+{"ad":"taktik:Dengeli|Ön alan","i":16,"sA":3,"sB":1,"gA":3,"gB":5,"posA":0.624,"pasA":49,"pasB":33,"tutA":0.776,"tutB":0.758,"kazA":23,"kazB":21}
+{"ad":"taktik:Dengeli|Ön alan","i":17,"sA":0,"sB":1,"gA":2,"gB":4,"posA":0.465,"pasA":41,"pasB":43,"tutA":0.756,"tutB":0.698,"kazA":27,"kazB":27}
+{"ad":"taktik:Dengeli|Ön alan","i":18,"sA":3,"sB":2,"gA":5,"gB":4,"posA":0.508,"pasA":38,"pasB":47,"tutA":0.816,"tutB":0.787,"kazA":20,"kazB":21}
+{"ad":"taktik:Dengeli|Ön alan","i":19,"sA":0,"sB":1,"gA":4,"gB":2,"posA":0.485,"pasA":46,"pasB":35,"tutA":0.717,"tutB":0.657,"kazA":25,"kazB":25}
+{"ad":"taktik:Dengeli|Ön alan","i":20,"sA":5,"sB":1,"gA":6,"gB":0,"posA":0.523,"pasA":38,"pasB":46,"tutA":0.816,"tutB":0.652,"kazA":26,"kazB":22}
+{"ad":"taktik:Dengeli|Ön alan","i":21,"sA":1,"sB":0,"gA":2,"gB":3,"posA":0.447,"pasA":45,"pasB":43,"tutA":0.711,"tutB":0.651,"kazA":23,"kazB":22}
+{"ad":"taktik:Dengeli|Ön alan","i":22,"sA":1,"sB":0,"gA":3,"gB":3,"posA":0.531,"pasA":37,"pasB":39,"tutA":0.784,"tutB":0.692,"kazA":25,"kazB":25}
+{"ad":"taktik:Dengeli|Ön alan","i":23,"sA":1,"sB":1,"gA":0,"gB":5,"posA":0.481,"pasA":40,"pasB":41,"tutA":0.75,"tutB":0.78,"kazA":27,"kazB":27}
+{"ad":"taktik:Dengeli|Ön alan","i":24,"sA":2,"sB":1,"gA":5,"gB":2,"posA":0.522,"pasA":33,"pasB":35,"tutA":0.818,"tutB":0.771,"kazA":24,"kazB":24}
+{"ad":"taktik:Dengeli|Ön alan","i":25,"sA":2,"sB":3,"gA":3,"gB":3,"posA":0.528,"pasA":41,"pasB":45,"tutA":0.756,"tutB":0.844,"kazA":22,"kazB":23}
+{"ad":"taktik:Dengeli|Ön alan","i":26,"sA":0,"sB":4,"gA":5,"gB":5,"posA":0.534,"pasA":46,"pasB":40,"tutA":0.804,"tutB":0.7,"kazA":22,"kazB":26}
+{"ad":"taktik:Dengeli|Ön alan","i":27,"sA":4,"sB":3,"gA":5,"gB":5,"posA":0.502,"pasA":41,"pasB":42,"tutA":0.805,"tutB":0.738,"kazA":19,"kazB":18}
+{"ad":"taktik:Dengeli|Ön alan","i":28,"sA":0,"sB":2,"gA":2,"gB":5,"posA":0.438,"pasA":42,"pasB":45,"tutA":0.69,"tutB":0.756,"kazA":25,"kazB":27}
+{"ad":"taktik:Dengeli|Ön alan","i":29,"sA":0,"sB":1,"gA":2,"gB":4,"posA":0.459,"pasA":44,"pasB":42,"tutA":0.659,"tutB":0.69,"kazA":30,"kazB":31}
+{"ad":"taktik:Dengeli|Ön alan","i":30,"sA":0,"sB":0,"gA":2,"gB":0,"posA":0.507,"pasA":40,"pasB":42,"tutA":0.75,"tutB":0.667,"kazA":22,"kazB":22}
+{"ad":"taktik:Dengeli|Kuyu önü","i":1,"sA":1,"sB":0,"gA":5,"gB":2,"posA":0.499,"pasA":43,"pasB":42,"tutA":0.767,"tutB":0.833,"kazA":23,"kazB":21}
+{"ad":"taktik:Dengeli|Kuyu önü","i":2,"sA":0,"sB":1,"gA":2,"gB":3,"posA":0.451,"pasA":32,"pasB":45,"tutA":0.688,"tutB":0.889,"kazA":17,"kazB":19}
+{"ad":"taktik:Dengeli|Kuyu önü","i":3,"sA":0,"sB":2,"gA":2,"gB":2,"posA":0.405,"pasA":34,"pasB":49,"tutA":0.853,"tutB":0.776,"kazA":23,"kazB":25}
+{"ad":"taktik:Dengeli|Kuyu önü","i":4,"sA":2,"sB":1,"gA":5,"gB":1,"posA":0.505,"pasA":43,"pasB":39,"tutA":0.837,"tutB":0.795,"kazA":20,"kazB":20}
+{"ad":"taktik:Dengeli|Kuyu önü","i":5,"sA":2,"sB":0,"gA":4,"gB":1,"posA":0.466,"pasA":36,"pasB":42,"tutA":0.861,"tutB":0.786,"kazA":17,"kazB":15}
+{"ad":"taktik:Dengeli|Kuyu önü","i":6,"sA":2,"sB":1,"gA":5,"gB":5,"posA":0.536,"pasA":46,"pasB":31,"tutA":0.804,"tutB":0.806,"kazA":18,"kazB":17}
+{"ad":"taktik:Dengeli|Kuyu önü","i":7,"sA":2,"sB":2,"gA":3,"gB":3,"posA":0.462,"pasA":30,"pasB":39,"tutA":0.767,"tutB":0.821,"kazA":22,"kazB":21}
+{"ad":"taktik:Dengeli|Kuyu önü","i":8,"sA":3,"sB":2,"gA":3,"gB":4,"posA":0.548,"pasA":41,"pasB":43,"tutA":0.829,"tutB":0.907,"kazA":11,"kazB":10}
+{"ad":"taktik:Dengeli|Kuyu önü","i":9,"sA":1,"sB":1,"gA":2,"gB":2,"posA":0.565,"pasA":46,"pasB":38,"tutA":0.739,"tutB":0.658,"kazA":24,"kazB":24}
+{"ad":"taktik:Dengeli|Kuyu önü","i":10,"sA":1,"sB":1,"gA":4,"gB":1,"posA":0.557,"pasA":39,"pasB":47,"tutA":0.821,"tutB":0.872,"kazA":18,"kazB":18}
+{"ad":"taktik:Dengeli|Kuyu önü","i":11,"sA":1,"sB":1,"gA":4,"gB":1,"posA":0.497,"pasA":45,"pasB":42,"tutA":0.756,"tutB":0.714,"kazA":24,"kazB":23}
+{"ad":"taktik:Dengeli|Kuyu önü","i":12,"sA":0,"sB":1,"gA":2,"gB":1,"posA":0.461,"pasA":38,"pasB":44,"tutA":0.763,"tutB":0.773,"kazA":24,"kazB":26}
+{"ad":"taktik:Dengeli|Kuyu önü","i":13,"sA":0,"sB":1,"gA":2,"gB":1,"posA":0.446,"pasA":46,"pasB":36,"tutA":0.87,"tutB":0.722,"kazA":12,"kazB":13}
+{"ad":"taktik:Dengeli|Kuyu önü","i":14,"sA":2,"sB":1,"gA":4,"gB":4,"posA":0.582,"pasA":47,"pasB":34,"tutA":0.787,"tutB":0.794,"kazA":18,"kazB":17}
+{"ad":"taktik:Dengeli|Kuyu önü","i":15,"sA":2,"sB":2,"gA":3,"gB":3,"posA":0.466,"pasA":38,"pasB":44,"tutA":0.842,"tutB":0.795,"kazA":20,"kazB":20}
+{"ad":"taktik:Dengeli|Kuyu önü","i":16,"sA":2,"sB":0,"gA":2,"gB":0,"posA":0.445,"pasA":38,"pasB":54,"tutA":0.763,"tutB":0.778,"kazA":19,"kazB":19}
+{"ad":"taktik:Dengeli|Kuyu önü","i":17,"sA":1,"sB":1,"gA":6,"gB":1,"posA":0.491,"pasA":39,"pasB":39,"tutA":0.897,"tutB":0.744,"kazA":20,"kazB":19}
+{"ad":"taktik:Dengeli|Kuyu önü","i":20,"sA":2,"sB":1,"gA":3,"gB":3,"posA":0.584,"pasA":44,"pasB":38,"tutA":0.727,"tutB":0.816,"kazA":19,"kazB":18}
+{"ad":"taktik:Dengeli|Kuyu önü","i":18,"sA":1,"sB":0,"gA":3,"gB":0,"posA":0.489,"pasA":43,"pasB":40,"tutA":0.884,"tutB":0.8,"kazA":17,"kazB":17}
+{"ad":"taktik:Dengeli|Kuyu önü","i":19,"sA":0,"sB":0,"gA":3,"gB":1,"posA":0.434,"pasA":38,"pasB":45,"tutA":0.789,"tutB":0.844,"kazA":21,"kazB":20}
+{"ad":"taktik:Dengeli|Kuyu önü","i":21,"sA":2,"sB":2,"gA":3,"gB":4,"posA":0.456,"pasA":43,"pasB":44,"tutA":0.791,"tutB":0.818,"kazA":18,"kazB":18}
+{"ad":"taktik:Dengeli|Kuyu önü","i":22,"sA":0,"sB":2,"gA":0,"gB":3,"posA":0.513,"pasA":47,"pasB":46,"tutA":0.745,"tutB":0.696,"kazA":22,"kazB":25}
+{"ad":"taktik:Dengeli|Kuyu önü","i":23,"sA":1,"sB":0,"gA":3,"gB":0,"posA":0.546,"pasA":47,"pasB":39,"tutA":0.723,"tutB":0.769,"kazA":22,"kazB":20}
+{"ad":"taktik:Dengeli|Kuyu önü","i":24,"sA":1,"sB":1,"gA":4,"gB":3,"posA":0.553,"pasA":42,"pasB":41,"tutA":0.81,"tutB":0.805,"kazA":15,"kazB":16}
+{"ad":"taktik:Dengeli|Kuyu önü","i":25,"sA":1,"sB":1,"gA":3,"gB":3,"posA":0.547,"pasA":42,"pasB":39,"tutA":0.619,"tutB":0.718,"kazA":23,"kazB":22}
+{"ad":"taktik:Dengeli|Kuyu önü","i":26,"sA":3,"sB":0,"gA":2,"gB":1,"posA":0.431,"pasA":37,"pasB":50,"tutA":0.676,"tutB":0.82,"kazA":19,"kazB":17}
+{"ad":"taktik:Dengeli|Kuyu önü","i":27,"sA":1,"sB":1,"gA":2,"gB":3,"posA":0.539,"pasA":41,"pasB":36,"tutA":0.732,"tutB":0.75,"kazA":24,"kazB":23}
+{"ad":"taktik:Dengeli|Kuyu önü","i":28,"sA":1,"sB":1,"gA":4,"gB":1,"posA":0.558,"pasA":45,"pasB":42,"tutA":0.822,"tutB":0.714,"kazA":15,"kazB":16}
+{"ad":"taktik:Dengeli|Kuyu önü","i":29,"sA":2,"sB":0,"gA":4,"gB":1,"posA":0.541,"pasA":44,"pasB":47,"tutA":0.841,"tutB":0.745,"kazA":26,"kazB":23}
+{"ad":"taktik:Dengeli|Kuyu önü","i":30,"sA":1,"sB":2,"gA":2,"gB":4,"posA":0.496,"pasA":47,"pasB":30,"tutA":0.766,"tutB":0.767,"kazA":16,"kazB":18}
+{"ad":"taktik:Sabırlı|Dikine","i":1,"sA":1,"sB":2,"gA":7,"gB":4,"posA":0.394,"pasA":33,"pasB":35,"tutA":0.788,"tutB":0.743,"kazA":19,"kazB":19}
+{"ad":"taktik:Sabırlı|Dikine","i":2,"sA":3,"sB":1,"gA":5,"gB":3,"posA":0.602,"pasA":46,"pasB":29,"tutA":0.848,"tutB":0.793,"kazA":17,"kazB":16}
+{"ad":"taktik:Sabırlı|Dikine","i":3,"sA":3,"sB":2,"gA":7,"gB":5,"posA":0.497,"pasA":45,"pasB":40,"tutA":0.778,"tutB":0.725,"kazA":20,"kazB":18}
+{"ad":"taktik:Sabırlı|Dikine","i":4,"sA":2,"sB":0,"gA":3,"gB":1,"posA":0.544,"pasA":46,"pasB":37,"tutA":0.783,"tutB":0.703,"kazA":23,"kazB":21}
+{"ad":"taktik:Sabırlı|Dikine","i":5,"sA":3,"sB":0,"gA":3,"gB":0,"posA":0.503,"pasA":47,"pasB":32,"tutA":0.83,"tutB":0.813,"kazA":17,"kazB":14}
+{"ad":"taktik:Sabırlı|Dikine","i":6,"sA":2,"sB":2,"gA":4,"gB":2,"posA":0.469,"pasA":37,"pasB":42,"tutA":0.865,"tutB":0.786,"kazA":23,"kazB":24}
+{"ad":"taktik:Sabırlı|Dikine","i":7,"sA":4,"sB":2,"gA":5,"gB":5,"posA":0.49,"pasA":35,"pasB":38,"tutA":0.657,"tutB":0.711,"kazA":25,"kazB":22}
+{"ad":"taktik:Sabırlı|Dikine","i":9,"sA":0,"sB":1,"gA":3,"gB":2,"posA":0.48,"pasA":49,"pasB":40,"tutA":0.673,"tutB":0.575,"kazA":33,"kazB":33}
+{"ad":"taktik:Sabırlı|Dikine","i":8,"sA":1,"sB":1,"gA":3,"gB":2,"posA":0.502,"pasA":37,"pasB":42,"tutA":0.676,"tutB":0.738,"kazA":21,"kazB":22}
+{"ad":"taktik:Sabırlı|Dikine","i":10,"sA":3,"sB":0,"gA":5,"gB":0,"posA":0.563,"pasA":44,"pasB":35,"tutA":0.795,"tutB":0.743,"kazA":22,"kazB":19}
+{"ad":"taktik:Sabırlı|Dikine","i":11,"sA":1,"sB":3,"gA":2,"gB":4,"posA":0.396,"pasA":38,"pasB":43,"tutA":0.763,"tutB":0.791,"kazA":16,"kazB":17}
+{"ad":"taktik:Sabırlı|Dikine","i":13,"sA":2,"sB":4,"gA":4,"gB":5,"posA":0.535,"pasA":43,"pasB":40,"tutA":0.767,"tutB":0.725,"kazA":22,"kazB":22}
+{"ad":"taktik:Sabırlı|Dikine","i":12,"sA":1,"sB":3,"gA":4,"gB":3,"posA":0.458,"pasA":47,"pasB":34,"tutA":0.766,"tutB":0.853,"kazA":23,"kazB":26}
+{"ad":"taktik:Sabırlı|Dikine","i":15,"sA":4,"sB":3,"gA":5,"gB":6,"posA":0.521,"pasA":43,"pasB":35,"tutA":0.86,"tutB":0.771,"kazA":16,"kazB":14}
+{"ad":"taktik:Sabırlı|Dikine","i":14,"sA":1,"sB":0,"gA":2,"gB":2,"posA":0.586,"pasA":53,"pasB":35,"tutA":0.736,"tutB":0.743,"kazA":21,"kazB":20}
+{"ad":"taktik:Sabırlı|Dikine","i":16,"sA":2,"sB":1,"gA":4,"gB":1,"posA":0.508,"pasA":44,"pasB":33,"tutA":0.818,"tutB":0.818,"kazA":22,"kazB":21}
+{"ad":"taktik:Sabırlı|Dikine","i":17,"sA":2,"sB":2,"gA":3,"gB":3,"posA":0.516,"pasA":41,"pasB":40,"tutA":0.732,"tutB":0.625,"kazA":24,"kazB":24}
+{"ad":"taktik:Sabırlı|Dikine","i":18,"sA":3,"sB":1,"gA":4,"gB":2,"posA":0.617,"pasA":47,"pasB":36,"tutA":0.766,"tutB":0.694,"kazA":23,"kazB":21}
+{"ad":"taktik:Sabırlı|Dikine","i":19,"sA":1,"sB":0,"gA":3,"gB":2,"posA":0.408,"pasA":40,"pasB":42,"tutA":0.75,"tutB":0.69,"kazA":27,"kazB":26}
+{"ad":"taktik:Sabırlı|Dikine","i":21,"sA":1,"sB":2,"gA":3,"gB":2,"posA":0.462,"pasA":45,"pasB":31,"tutA":0.733,"tutB":0.645,"kazA":23,"kazB":23}
+{"ad":"taktik:Sabırlı|Dikine","i":22,"sA":4,"sB":2,"gA":4,"gB":2,"posA":0.562,"pasA":48,"pasB":34,"tutA":0.854,"tutB":0.588,"kazA":29,"kazB":27}
+{"ad":"taktik:Sabırlı|Dikine","i":20,"sA":3,"sB":3,"gA":3,"gB":5,"posA":0.451,"pasA":41,"pasB":38,"tutA":0.707,"tutB":0.763,"kazA":21,"kazB":21}
+{"ad":"taktik:Sabırlı|Dikine","i":23,"sA":3,"sB":2,"gA":3,"gB":8,"posA":0.419,"pasA":32,"pasB":46,"tutA":0.781,"tutB":0.761,"kazA":20,"kazB":18}
+{"ad":"taktik:Sabırlı|Dikine","i":24,"sA":4,"sB":1,"gA":4,"gB":2,"posA":0.619,"pasA":53,"pasB":37,"tutA":0.736,"tutB":0.514,"kazA":27,"kazB":24}
+{"ad":"taktik:Sabırlı|Dikine","i":25,"sA":0,"sB":1,"gA":4,"gB":0,"posA":0.4,"pasA":35,"pasB":46,"tutA":0.743,"tutB":0.783,"kazA":26,"kazB":25}
+{"ad":"taktik:Sabırlı|Dikine","i":26,"sA":1,"sB":1,"gA":3,"gB":4,"posA":0.479,"pasA":40,"pasB":40,"tutA":0.8,"tutB":0.8,"kazA":20,"kazB":21}
+{"ad":"taktik:Sabırlı|Dikine","i":27,"sA":0,"sB":2,"gA":0,"gB":3,"posA":0.403,"pasA":40,"pasB":46,"tutA":0.725,"tutB":0.761,"kazA":27,"kazB":29}
+{"ad":"taktik:Sabırlı|Dikine","i":28,"sA":2,"sB":1,"gA":2,"gB":3,"posA":0.519,"pasA":50,"pasB":33,"tutA":0.8,"tutB":0.697,"kazA":23,"kazB":23}
+{"ad":"taktik:Sabırlı|Dikine","i":29,"sA":1,"sB":0,"gA":2,"gB":0,"posA":0.562,"pasA":43,"pasB":42,"tutA":0.814,"tutB":0.714,"kazA":24,"kazB":22}
+{"ad":"taktik:Sabırlı|Dikine","i":30,"sA":1,"sB":2,"gA":2,"gB":4,"posA":0.477,"pasA":41,"pasB":37,"tutA":0.854,"tutB":0.73,"kazA":24,"kazB":26}
+{"ad":"taktik:Sabırlı|Kontra","i":1,"sA":2,"sB":0,"gA":2,"gB":0,"posA":0.516,"pasA":47,"pasB":35,"tutA":0.723,"tutB":0.686,"kazA":24,"kazB":22}
+{"ad":"taktik:Sabırlı|Kontra","i":2,"sA":1,"sB":2,"gA":6,"gB":3,"posA":0.496,"pasA":42,"pasB":34,"tutA":0.81,"tutB":0.765,"kazA":16,"kazB":17}
+{"ad":"taktik:Sabırlı|Kontra","i":4,"sA":2,"sB":0,"gA":3,"gB":1,"posA":0.455,"pasA":40,"pasB":39,"tutA":0.75,"tutB":0.718,"kazA":21,"kazB":20}
+{"ad":"taktik:Sabırlı|Kontra","i":3,"sA":1,"sB":1,"gA":4,"gB":3,"posA":0.481,"pasA":49,"pasB":32,"tutA":0.816,"tutB":0.781,"kazA":17,"kazB":16}
+{"ad":"taktik:Sabırlı|Kontra","i":5,"sA":1,"sB":2,"gA":1,"gB":4,"posA":0.454,"pasA":51,"pasB":41,"tutA":0.765,"tutB":0.78,"kazA":17,"kazB":18}
+{"ad":"taktik:Sabırlı|Kontra","i":6,"sA":0,"sB":0,"gA":0,"gB":0,"posA":0.451,"pasA":43,"pasB":44,"tutA":0.767,"tutB":0.75,"kazA":22,"kazB":23}
+{"ad":"taktik:Sabırlı|Kontra","i":7,"sA":1,"sB":0,"gA":3,"gB":0,"posA":0.513,"pasA":41,"pasB":39,"tutA":0.732,"tutB":0.692,"kazA":21,"kazB":19}
+{"ad":"taktik:Sabırlı|Kontra","i":9,"sA":1,"sB":1,"gA":2,"gB":2,"posA":0.436,"pasA":38,"pasB":45,"tutA":0.816,"tutB":0.822,"kazA":16,"kazB":15}
+{"ad":"taktik:Sabırlı|Kontra","i":8,"sA":2,"sB":1,"gA":6,"gB":1,"posA":0.553,"pasA":46,"pasB":33,"tutA":0.804,"tutB":0.848,"kazA":19,"kazB":20}
+{"ad":"taktik:Sabırlı|Kontra","i":10,"sA":2,"sB":3,"gA":3,"gB":5,"posA":0.504,"pasA":32,"pasB":34,"tutA":0.813,"tutB":0.824,"kazA":15,"kazB":16}
+{"ad":"taktik:Sabırlı|Kontra","i":11,"sA":1,"sB":1,"gA":2,"gB":2,"posA":0.486,"pasA":46,"pasB":37,"tutA":0.761,"tutB":0.703,"kazA":21,"kazB":20}
+{"ad":"taktik:Sabırlı|Kontra","i":12,"sA":0,"sB":1,"gA":1,"gB":3,"posA":0.483,"pasA":46,"pasB":41,"tutA":0.717,"tutB":0.78,"kazA":17,"kazB":19}
+{"ad":"taktik:Sabırlı|Kontra","i":13,"sA":0,"sB":0,"gA":0,"gB":2,"posA":0.485,"pasA":39,"pasB":42,"tutA":0.744,"tutB":0.81,"kazA":18,"kazB":17}
+{"ad":"taktik:Sabırlı|Kontra","i":15,"sA":2,"sB":0,"gA":4,"gB":0,"posA":0.469,"pasA":41,"pasB":39,"tutA":0.829,"tutB":0.744,"kazA":15,"kazB":13}
+{"ad":"taktik:Sabırlı|Kontra","i":14,"sA":0,"sB":1,"gA":1,"gB":4,"posA":0.571,"pasA":45,"pasB":38,"tutA":0.578,"tutB":0.632,"kazA":28,"kazB":29}
+{"ad":"taktik:Sabırlı|Kontra","i":16,"sA":1,"sB":1,"gA":5,"gB":1,"posA":0.506,"pasA":40,"pasB":46,"tutA":0.725,"tutB":0.674,"kazA":21,"kazB":22}
+{"ad":"taktik:Sabırlı|Kontra","i":17,"sA":2,"sB":1,"gA":3,"gB":3,"posA":0.505,"pasA":38,"pasB":33,"tutA":0.895,"tutB":0.848,"kazA":15,"kazB":13}
+{"ad":"taktik:Sabırlı|Kontra","i":18,"sA":1,"sB":1,"gA":2,"gB":1,"posA":0.505,"pasA":52,"pasB":34,"tutA":0.712,"tutB":0.735,"kazA":23,"kazB":24}
+{"ad":"taktik:Sabırlı|Kontra","i":19,"sA":1,"sB":0,"gA":3,"gB":0,"posA":0.511,"pasA":39,"pasB":38,"tutA":0.744,"tutB":0.789,"kazA":21,"kazB":19}
+{"ad":"taktik:Sabırlı|Kontra","i":20,"sA":1,"sB":0,"gA":4,"gB":2,"posA":0.453,"pasA":40,"pasB":33,"tutA":0.775,"tutB":0.697,"kazA":23,"kazB":22}
+{"ad":"taktik:Sabırlı|Kontra","i":21,"sA":1,"sB":1,"gA":3,"gB":2,"posA":0.5,"pasA":51,"pasB":34,"tutA":0.784,"tutB":0.853,"kazA":15,"kazB":15}
+{"ad":"taktik:Sabırlı|Kontra","i":22,"sA":3,"sB":1,"gA":3,"gB":5,"posA":0.483,"pasA":40,"pasB":42,"tutA":0.725,"tutB":0.81,"kazA":18,"kazB":17}
+{"ad":"taktik:Sabırlı|Kontra","i":23,"sA":0,"sB":1,"gA":1,"gB":2,"posA":0.344,"pasA":38,"pasB":46,"tutA":0.684,"tutB":0.761,"kazA":21,"kazB":21}
+{"ad":"taktik:Sabırlı|Kontra","i":25,"sA":2,"sB":0,"gA":3,"gB":0,"posA":0.419,"pasA":37,"pasB":43,"tutA":0.73,"tutB":0.744,"kazA":19,"kazB":16}
+{"ad":"taktik:Sabırlı|Kontra","i":24,"sA":1,"sB":1,"gA":2,"gB":4,"posA":0.504,"pasA":46,"pasB":38,"tutA":0.674,"tutB":0.789,"kazA":23,"kazB":24}
+{"ad":"taktik:Sabırlı|Kontra","i":26,"sA":1,"sB":2,"gA":5,"gB":4,"posA":0.496,"pasA":41,"pasB":39,"tutA":0.829,"tutB":0.846,"kazA":15,"kazB":17}
+{"ad":"taktik:Sabırlı|Kontra","i":27,"sA":3,"sB":0,"gA":5,"gB":1,"posA":0.458,"pasA":40,"pasB":37,"tutA":0.85,"tutB":0.784,"kazA":17,"kazB":14}
+{"ad":"taktik:Sabırlı|Kontra","i":29,"sA":2,"sB":3,"gA":4,"gB":4,"posA":0.397,"pasA":40,"pasB":41,"tutA":0.8,"tutB":0.78,"kazA":15,"kazB":15}
+{"ad":"taktik:Sabırlı|Kontra","i":28,"sA":1,"sB":1,"gA":3,"gB":2,"posA":0.509,"pasA":44,"pasB":40,"tutA":0.841,"tutB":0.725,"kazA":20,"kazB":20}
+{"ad":"taktik:Sabırlı|Ön alan","i":1,"sA":4,"sB":3,"gA":8,"gB":5,"posA":0.498,"pasA":39,"pasB":37,"tutA":0.872,"tutB":0.73,"kazA":27,"kazB":25}
+{"ad":"taktik:Sabırlı|Kontra","i":30,"sA":0,"sB":0,"gA":2,"gB":1,"posA":0.417,"pasA":39,"pasB":48,"tutA":0.641,"tutB":0.833,"kazA":25,"kazB":26}
+{"ad":"taktik:Sabırlı|Ön alan","i":3,"sA":1,"sB":1,"gA":3,"gB":3,"posA":0.495,"pasA":36,"pasB":46,"tutA":0.667,"tutB":0.717,"kazA":24,"kazB":23}
+{"ad":"taktik:Sabırlı|Ön alan","i":2,"sA":3,"sB":2,"gA":3,"gB":4,"posA":0.512,"pasA":31,"pasB":46,"tutA":0.839,"tutB":0.717,"kazA":24,"kazB":23}
+{"ad":"taktik:Sabırlı|Ön alan","i":6,"sA":2,"sB":2,"gA":6,"gB":5,"posA":0.54,"pasA":42,"pasB":37,"tutA":0.81,"tutB":0.784,"kazA":16,"kazB":16}
+{"ad":"taktik:Sabırlı|Ön alan","i":4,"sA":0,"sB":4,"gA":0,"gB":7,"posA":0.564,"pasA":42,"pasB":37,"tutA":0.667,"tutB":0.73,"kazA":24,"kazB":28}
+{"ad":"taktik:Sabırlı|Ön alan","i":7,"sA":2,"sB":3,"gA":3,"gB":4,"posA":0.411,"pasA":36,"pasB":46,"tutA":0.75,"tutB":0.783,"kazA":16,"kazB":17}
+{"ad":"taktik:Sabırlı|Ön alan","i":5,"sA":3,"sB":3,"gA":4,"gB":5,"posA":0.508,"pasA":37,"pasB":52,"tutA":0.838,"tutB":0.731,"kazA":19,"kazB":19}
+{"ad":"taktik:Sabırlı|Ön alan","i":8,"sA":1,"sB":4,"gA":3,"gB":4,"posA":0.479,"pasA":46,"pasB":42,"tutA":0.739,"tutB":0.762,"kazA":21,"kazB":24}
+{"ad":"taktik:Sabırlı|Ön alan","i":9,"sA":0,"sB":1,"gA":3,"gB":3,"posA":0.571,"pasA":48,"pasB":34,"tutA":0.708,"tutB":0.588,"kazA":25,"kazB":25}
+{"ad":"taktik:Sabırlı|Ön alan","i":10,"sA":1,"sB":5,"gA":2,"gB":5,"posA":0.486,"pasA":51,"pasB":41,"tutA":0.647,"tutB":0.756,"kazA":21,"kazB":26}
+{"ad":"taktik:Sabırlı|Ön alan","i":11,"sA":4,"sB":3,"gA":6,"gB":5,"posA":0.449,"pasA":33,"pasB":47,"tutA":0.667,"tutB":0.83,"kazA":21,"kazB":19}
+{"ad":"taktik:Sabırlı|Ön alan","i":12,"sA":0,"sB":6,"gA":2,"gB":8,"posA":0.515,"pasA":47,"pasB":32,"tutA":0.787,"tutB":0.813,"kazA":17,"kazB":23}
+{"ad":"taktik:Sabırlı|Ön alan","i":13,"sA":0,"sB":1,"gA":1,"gB":1,"posA":0.494,"pasA":43,"pasB":40,"tutA":0.674,"tutB":0.775,"kazA":30,"kazB":31}
+{"ad":"taktik:Sabırlı|Ön alan","i":15,"sA":2,"sB":0,"gA":5,"gB":1,"posA":0.581,"pasA":40,"pasB":39,"tutA":0.725,"tutB":0.718,"kazA":22,"kazB":20}
+{"ad":"taktik:Sabırlı|Ön alan","i":14,"sA":1,"sB":1,"gA":2,"gB":4,"posA":0.584,"pasA":47,"pasB":38,"tutA":0.723,"tutB":0.684,"kazA":23,"kazB":23}
+{"ad":"taktik:Sabırlı|Ön alan","i":16,"sA":2,"sB":3,"gA":6,"gB":3,"posA":0.567,"pasA":36,"pasB":40,"tutA":0.806,"tutB":0.725,"kazA":18,"kazB":20}
+{"ad":"taktik:Sabırlı|Ön alan","i":17,"sA":0,"sB":4,"gA":1,"gB":7,"posA":0.471,"pasA":34,"pasB":44,"tutA":0.765,"tutB":0.773,"kazA":24,"kazB":28}
+{"ad":"taktik:Sabırlı|Ön alan","i":18,"sA":0,"sB":1,"gA":3,"gB":2,"posA":0.493,"pasA":42,"pasB":43,"tutA":0.738,"tutB":0.721,"kazA":26,"kazB":28}
+{"ad":"taktik:Sabırlı|Ön alan","i":19,"sA":1,"sB":1,"gA":7,"gB":2,"posA":0.461,"pasA":28,"pasB":44,"tutA":0.893,"tutB":0.727,"kazA":22,"kazB":22}
+{"ad":"taktik:Sabırlı|Ön alan","i":20,"sA":0,"sB":2,"gA":4,"gB":3,"posA":0.466,"pasA":44,"pasB":42,"tutA":0.773,"tutB":0.762,"kazA":16,"kazB":18}
+{"ad":"taktik:Sabırlı|Ön alan","i":21,"sA":2,"sB":2,"gA":4,"gB":5,"posA":0.476,"pasA":45,"pasB":41,"tutA":0.778,"tutB":0.732,"kazA":26,"kazB":25}
+{"ad":"taktik:Sabırlı|Ön alan","i":23,"sA":2,"sB":1,"gA":2,"gB":2,"posA":0.523,"pasA":44,"pasB":50,"tutA":0.682,"tutB":0.68,"kazA":26,"kazB":25}
+{"ad":"taktik:Sabırlı|Ön alan","i":22,"sA":1,"sB":2,"gA":5,"gB":5,"posA":0.555,"pasA":49,"pasB":32,"tutA":0.816,"tutB":0.781,"kazA":18,"kazB":19}
+{"ad":"taktik:Sabırlı|Ön alan","i":24,"sA":1,"sB":4,"gA":3,"gB":5,"posA":0.503,"pasA":48,"pasB":31,"tutA":0.75,"tutB":0.774,"kazA":13,"kazB":17}
+{"ad":"taktik:Sabırlı|Ön alan","i":25,"sA":2,"sB":4,"gA":3,"gB":5,"posA":0.429,"pasA":38,"pasB":46,"tutA":0.711,"tutB":0.783,"kazA":24,"kazB":25}
+{"ad":"taktik:Sabırlı|Ön alan","i":26,"sA":0,"sB":1,"gA":1,"gB":3,"posA":0.587,"pasA":43,"pasB":36,"tutA":0.837,"tutB":0.861,"kazA":17,"kazB":17}
+{"ad":"taktik:Sabırlı|Ön alan","i":27,"sA":1,"sB":3,"gA":3,"gB":5,"posA":0.415,"pasA":39,"pasB":40,"tutA":0.718,"tutB":0.775,"kazA":22,"kazB":24}
+{"ad":"taktik:Sabırlı|Ön alan","i":28,"sA":1,"sB":2,"gA":5,"gB":6,"posA":0.486,"pasA":39,"pasB":50,"tutA":0.641,"tutB":0.8,"kazA":22,"kazB":23}
+{"ad":"taktik:Sabırlı|Ön alan","i":30,"sA":3,"sB":2,"gA":5,"gB":2,"posA":0.587,"pasA":53,"pasB":35,"tutA":0.849,"tutB":0.657,"kazA":19,"kazB":18}
+{"ad":"taktik:Sabırlı|Ön alan","i":29,"sA":2,"sB":3,"gA":4,"gB":3,"posA":0.542,"pasA":51,"pasB":40,"tutA":0.725,"tutB":0.7,"kazA":20,"kazB":21}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":1,"sA":0,"sB":0,"gA":4,"gB":1,"posA":0.446,"pasA":51,"pasB":32,"tutA":0.804,"tutB":0.75,"kazA":17,"kazB":16}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":2,"sA":0,"sB":0,"gA":4,"gB":2,"posA":0.583,"pasA":47,"pasB":38,"tutA":0.787,"tutB":0.842,"kazA":18,"kazB":18}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":3,"sA":3,"sB":1,"gA":3,"gB":3,"posA":0.507,"pasA":46,"pasB":43,"tutA":0.761,"tutB":0.767,"kazA":16,"kazB":13}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":4,"sA":3,"sB":0,"gA":4,"gB":0,"posA":0.584,"pasA":53,"pasB":36,"tutA":0.83,"tutB":0.667,"kazA":16,"kazB":14}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":5,"sA":1,"sB":3,"gA":2,"gB":4,"posA":0.397,"pasA":40,"pasB":41,"tutA":0.625,"tutB":0.756,"kazA":23,"kazB":24}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":6,"sA":1,"sB":3,"gA":1,"gB":4,"posA":0.36,"pasA":36,"pasB":40,"tutA":0.694,"tutB":0.725,"kazA":20,"kazB":22}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":8,"sA":0,"sB":1,"gA":1,"gB":1,"posA":0.548,"pasA":47,"pasB":37,"tutA":0.809,"tutB":0.838,"kazA":19,"kazB":20}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":7,"sA":2,"sB":0,"gA":2,"gB":0,"posA":0.536,"pasA":49,"pasB":36,"tutA":0.878,"tutB":0.722,"kazA":17,"kazB":14}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":9,"sA":1,"sB":1,"gA":2,"gB":1,"posA":0.478,"pasA":50,"pasB":30,"tutA":0.7,"tutB":0.567,"kazA":23,"kazB":22}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":10,"sA":1,"sB":0,"gA":4,"gB":2,"posA":0.528,"pasA":46,"pasB":37,"tutA":0.761,"tutB":0.757,"kazA":17,"kazB":16}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":13,"sA":1,"sB":3,"gA":1,"gB":4,"posA":0.543,"pasA":46,"pasB":44,"tutA":0.761,"tutB":0.795,"kazA":14,"kazB":16}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":12,"sA":2,"sB":1,"gA":2,"gB":1,"posA":0.544,"pasA":41,"pasB":42,"tutA":0.756,"tutB":0.786,"kazA":18,"kazB":17}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":11,"sA":0,"sB":0,"gA":5,"gB":1,"posA":0.418,"pasA":45,"pasB":42,"tutA":0.867,"tutB":0.786,"kazA":17,"kazB":17}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":14,"sA":1,"sB":3,"gA":5,"gB":2,"posA":0.429,"pasA":41,"pasB":44,"tutA":0.634,"tutB":0.75,"kazA":20,"kazB":22}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":17,"sA":2,"sB":1,"gA":3,"gB":1,"posA":0.503,"pasA":37,"pasB":52,"tutA":0.784,"tutB":0.731,"kazA":17,"kazB":16}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":16,"sA":3,"sB":1,"gA":3,"gB":2,"posA":0.582,"pasA":49,"pasB":36,"tutA":0.857,"tutB":0.806,"kazA":19,"kazB":17}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":15,"sA":1,"sB":0,"gA":2,"gB":1,"posA":0.462,"pasA":39,"pasB":34,"tutA":0.769,"tutB":0.735,"kazA":23,"kazB":22}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":18,"sA":2,"sB":0,"gA":5,"gB":1,"posA":0.62,"pasA":51,"pasB":30,"tutA":0.902,"tutB":0.9,"kazA":14,"kazB":12}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":19,"sA":2,"sB":0,"gA":3,"gB":2,"posA":0.537,"pasA":43,"pasB":37,"tutA":0.837,"tutB":0.838,"kazA":16,"kazB":14}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":21,"sA":3,"sB":1,"gA":5,"gB":1,"posA":0.547,"pasA":46,"pasB":39,"tutA":0.848,"tutB":0.769,"kazA":17,"kazB":15}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":20,"sA":0,"sB":2,"gA":0,"gB":5,"posA":0.493,"pasA":43,"pasB":38,"tutA":0.791,"tutB":0.921,"kazA":19,"kazB":21}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":22,"sA":2,"sB":1,"gA":5,"gB":2,"posA":0.573,"pasA":43,"pasB":38,"tutA":0.884,"tutB":0.816,"kazA":16,"kazB":15}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":24,"sA":2,"sB":1,"gA":2,"gB":2,"posA":0.498,"pasA":48,"pasB":40,"tutA":0.667,"tutB":0.65,"kazA":21,"kazB":20}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":23,"sA":1,"sB":1,"gA":3,"gB":2,"posA":0.501,"pasA":49,"pasB":39,"tutA":0.837,"tutB":0.795,"kazA":17,"kazB":17}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":25,"sA":1,"sB":2,"gA":2,"gB":3,"posA":0.397,"pasA":38,"pasB":44,"tutA":0.605,"tutB":0.818,"kazA":27,"kazB":27}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":27,"sA":3,"sB":0,"gA":3,"gB":2,"posA":0.621,"pasA":55,"pasB":30,"tutA":0.873,"tutB":0.833,"kazA":16,"kazB":12}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":26,"sA":2,"sB":1,"gA":2,"gB":3,"posA":0.53,"pasA":47,"pasB":36,"tutA":0.745,"tutB":0.75,"kazA":22,"kazB":21}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":29,"sA":3,"sB":0,"gA":3,"gB":2,"posA":0.525,"pasA":32,"pasB":45,"tutA":0.75,"tutB":0.844,"kazA":15,"kazB":12}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":28,"sA":1,"sB":3,"gA":4,"gB":3,"posA":0.509,"pasA":51,"pasB":45,"tutA":0.745,"tutB":0.8,"kazA":16,"kazB":19}
+{"ad":"taktik:Sabırlı|Kuyu önü","i":30,"sA":0,"sB":1,"gA":1,"gB":0,"posA":0.503,"pasA":42,"pasB":38,"tutA":0.762,"tutB":0.763,"kazA":17,"kazB":18}
+{"ad":"taktik:Dikine|Kontra","i":1,"sA":1,"sB":3,"gA":4,"gB":5,"posA":0.471,"pasA":41,"pasB":44,"tutA":0.78,"tutB":0.682,"kazA":23,"kazB":25}
+{"ad":"taktik:Dikine|Kontra","i":2,"sA":1,"sB":1,"gA":1,"gB":1,"posA":0.441,"pasA":47,"pasB":36,"tutA":0.766,"tutB":0.778,"kazA":21,"kazB":22}
+{"ad":"taktik:Dikine|Kontra","i":3,"sA":0,"sB":1,"gA":1,"gB":1,"posA":0.432,"pasA":36,"pasB":44,"tutA":0.667,"tutB":0.818,"kazA":20,"kazB":21}
+{"ad":"taktik:Dikine|Kontra","i":4,"sA":5,"sB":1,"gA":6,"gB":1,"posA":0.58,"pasA":36,"pasB":38,"tutA":0.833,"tutB":0.816,"kazA":19,"kazB":14}
+{"ad":"taktik:Dikine|Kontra","i":6,"sA":1,"sB":1,"gA":3,"gB":2,"posA":0.562,"pasA":50,"pasB":35,"tutA":0.76,"tutB":0.857,"kazA":17,"kazB":17}
+{"ad":"taktik:Dikine|Kontra","i":5,"sA":0,"sB":1,"gA":4,"gB":3,"posA":0.476,"pasA":31,"pasB":45,"tutA":0.774,"tutB":0.822,"kazA":20,"kazB":21}
+{"ad":"taktik:Dikine|Kontra","i":7,"sA":1,"sB":0,"gA":3,"gB":1,"posA":0.536,"pasA":41,"pasB":32,"tutA":0.78,"tutB":0.844,"kazA":27,"kazB":26}
+{"ad":"taktik:Dikine|Kontra","i":8,"sA":1,"sB":1,"gA":2,"gB":1,"posA":0.556,"pasA":37,"pasB":42,"tutA":0.838,"tutB":0.881,"kazA":22,"kazB":22}
+{"ad":"taktik:Dikine|Kontra","i":9,"sA":1,"sB":2,"gA":4,"gB":2,"posA":0.376,"pasA":31,"pasB":39,"tutA":0.774,"tutB":0.795,"kazA":13,"kazB":14}
+{"ad":"taktik:Dikine|Kontra","i":10,"sA":4,"sB":1,"gA":5,"gB":5,"posA":0.523,"pasA":42,"pasB":42,"tutA":0.738,"tutB":0.714,"kazA":27,"kazB":25}
+{"ad":"taktik:Dikine|Kontra","i":11,"sA":3,"sB":2,"gA":5,"gB":3,"posA":0.497,"pasA":31,"pasB":48,"tutA":0.645,"tutB":0.708,"kazA":27,"kazB":25}
+{"ad":"taktik:Dikine|Kontra","i":12,"sA":0,"sB":1,"gA":1,"gB":3,"posA":0.565,"pasA":38,"pasB":36,"tutA":0.737,"tutB":0.861,"kazA":18,"kazB":20}
+{"ad":"taktik:Dikine|Kontra","i":13,"sA":2,"sB":1,"gA":3,"gB":2,"posA":0.536,"pasA":41,"pasB":37,"tutA":0.756,"tutB":0.838,"kazA":17,"kazB":16}
+{"ad":"taktik:Dikine|Kontra","i":14,"sA":1,"sB":1,"gA":1,"gB":3,"posA":0.479,"pasA":38,"pasB":41,"tutA":0.605,"tutB":0.756,"kazA":22,"kazB":23}
+{"ad":"taktik:Dikine|Kontra","i":15,"sA":0,"sB":0,"gA":1,"gB":1,"posA":0.509,"pasA":43,"pasB":41,"tutA":0.698,"tutB":0.829,"kazA":24,"kazB":24}
+{"ad":"taktik:Dikine|Kontra","i":16,"sA":1,"sB":1,"gA":3,"gB":3,"posA":0.51,"pasA":42,"pasB":43,"tutA":0.762,"tutB":0.884,"kazA":15,"kazB":15}
+{"ad":"taktik:Dikine|Kontra","i":17,"sA":1,"sB":2,"gA":4,"gB":3,"posA":0.476,"pasA":42,"pasB":33,"tutA":0.714,"tutB":0.667,"kazA":25,"kazB":25}
+{"ad":"taktik:Dikine|Kontra","i":18,"sA":1,"sB":2,"gA":5,"gB":2,"posA":0.481,"pasA":45,"pasB":40,"tutA":0.711,"tutB":0.7,"kazA":25,"kazB":26}
+{"ad":"taktik:Dikine|Kontra","i":19,"sA":2,"sB":1,"gA":4,"gB":1,"posA":0.474,"pasA":40,"pasB":42,"tutA":0.825,"tutB":0.762,"kazA":20,"kazB":18}
+{"ad":"taktik:Dikine|Kontra","i":20,"sA":1,"sB":2,"gA":3,"gB":3,"posA":0.488,"pasA":41,"pasB":43,"tutA":0.756,"tutB":0.767,"kazA":18,"kazB":20}
+{"ad":"taktik:Dikine|Kontra","i":22,"sA":1,"sB":0,"gA":2,"gB":0,"posA":0.575,"pasA":37,"pasB":45,"tutA":0.622,"tutB":0.711,"kazA":21,"kazB":21}
+{"ad":"taktik:Dikine|Kontra","i":21,"sA":3,"sB":2,"gA":5,"gB":2,"posA":0.492,"pasA":36,"pasB":41,"tutA":0.861,"tutB":0.78,"kazA":18,"kazB":17}
+{"ad":"taktik:Dikine|Kontra","i":23,"sA":1,"sB":2,"gA":2,"gB":6,"posA":0.457,"pasA":36,"pasB":41,"tutA":0.583,"tutB":0.732,"kazA":31,"kazB":31}
+{"ad":"taktik:Dikine|Kontra","i":24,"sA":1,"sB":0,"gA":4,"gB":3,"posA":0.49,"pasA":39,"pasB":44,"tutA":0.718,"tutB":0.727,"kazA":18,"kazB":18}
+{"ad":"taktik:Dikine|Kontra","i":25,"sA":2,"sB":1,"gA":6,"gB":1,"posA":0.466,"pasA":42,"pasB":33,"tutA":0.81,"tutB":0.788,"kazA":25,"kazB":23}
+{"ad":"taktik:Dikine|Kontra","i":26,"sA":1,"sB":0,"gA":3,"gB":1,"posA":0.577,"pasA":38,"pasB":40,"tutA":0.737,"tutB":0.775,"kazA":21,"kazB":20}
+{"ad":"taktik:Dikine|Kontra","i":27,"sA":2,"sB":0,"gA":5,"gB":1,"posA":0.502,"pasA":42,"pasB":34,"tutA":0.857,"tutB":0.794,"kazA":19,"kazB":16}
+{"ad":"taktik:Dikine|Kontra","i":28,"sA":0,"sB":1,"gA":1,"gB":3,"posA":0.501,"pasA":42,"pasB":39,"tutA":0.738,"tutB":0.769,"kazA":19,"kazB":21}
+{"ad":"taktik:Dikine|Kontra","i":29,"sA":1,"sB":3,"gA":1,"gB":4,"posA":0.513,"pasA":47,"pasB":34,"tutA":0.83,"tutB":0.794,"kazA":14,"kazB":15}
+{"ad":"taktik:Dikine|Kontra","i":30,"sA":0,"sB":0,"gA":2,"gB":2,"posA":0.488,"pasA":37,"pasB":45,"tutA":0.784,"tutB":0.844,"kazA":17,"kazB":17}
+{"ad":"taktik:Dikine|Ön alan","i":1,"sA":1,"sB":3,"gA":3,"gB":5,"posA":0.47,"pasA":41,"pasB":46,"tutA":0.854,"tutB":0.739,"kazA":27,"kazB":29}
+{"ad":"taktik:Dikine|Ön alan","i":2,"sA":3,"sB":1,"gA":4,"gB":2,"posA":0.512,"pasA":39,"pasB":45,"tutA":0.872,"tutB":0.778,"kazA":20,"kazB":18}
+{"ad":"taktik:Dikine|Ön alan","i":3,"sA":1,"sB":2,"gA":3,"gB":6,"posA":0.398,"pasA":33,"pasB":48,"tutA":0.758,"tutB":0.792,"kazA":21,"kazB":21}
+{"ad":"taktik:Dikine|Ön alan","i":4,"sA":2,"sB":1,"gA":3,"gB":3,"posA":0.568,"pasA":43,"pasB":42,"tutA":0.767,"tutB":0.762,"kazA":24,"kazB":24}
+{"ad":"taktik:Dikine|Ön alan","i":5,"sA":1,"sB":1,"gA":2,"gB":2,"posA":0.409,"pasA":41,"pasB":47,"tutA":0.61,"tutB":0.702,"kazA":29,"kazB":28}
+{"ad":"taktik:Dikine|Ön alan","i":6,"sA":3,"sB":1,"gA":4,"gB":8,"posA":0.542,"pasA":39,"pasB":44,"tutA":0.769,"tutB":0.818,"kazA":24,"kazB":23}
+{"ad":"taktik:Dikine|Ön alan","i":7,"sA":4,"sB":1,"gA":7,"gB":2,"posA":0.472,"pasA":32,"pasB":49,"tutA":0.813,"tutB":0.816,"kazA":20,"kazB":17}
+{"ad":"taktik:Dikine|Ön alan","i":8,"sA":1,"sB":3,"gA":2,"gB":4,"posA":0.522,"pasA":46,"pasB":52,"tutA":0.652,"tutB":0.635,"kazA":34,"kazB":36}
+{"ad":"taktik:Dikine|Ön alan","i":9,"sA":2,"sB":4,"gA":4,"gB":4,"posA":0.484,"pasA":35,"pasB":35,"tutA":0.743,"tutB":0.8,"kazA":28,"kazB":30}
+{"ad":"taktik:Dikine|Ön alan","i":10,"sA":1,"sB":2,"gA":3,"gB":4,"posA":0.462,"pasA":44,"pasB":47,"tutA":0.818,"tutB":0.745,"kazA":22,"kazB":23}
+{"ad":"taktik:Dikine|Ön alan","i":11,"sA":2,"sB":2,"gA":4,"gB":5,"posA":0.585,"pasA":36,"pasB":37,"tutA":0.778,"tutB":0.892,"kazA":23,"kazB":23}
+{"ad":"taktik:Dikine|Ön alan","i":12,"sA":0,"sB":3,"gA":1,"gB":7,"posA":0.491,"pasA":38,"pasB":43,"tutA":0.789,"tutB":0.837,"kazA":24,"kazB":27}
+{"ad":"taktik:Dikine|Ön alan","i":13,"sA":0,"sB":4,"gA":0,"gB":5,"posA":0.452,"pasA":34,"pasB":43,"tutA":0.676,"tutB":0.86,"kazA":24,"kazB":27}
+{"ad":"taktik:Dikine|Ön alan","i":14,"sA":1,"sB":5,"gA":2,"gB":7,"posA":0.524,"pasA":43,"pasB":42,"tutA":0.721,"tutB":0.738,"kazA":24,"kazB":29}
+{"ad":"taktik:Dikine|Ön alan","i":15,"sA":1,"sB":1,"gA":4,"gB":5,"posA":0.467,"pasA":34,"pasB":42,"tutA":0.676,"tutB":0.786,"kazA":27,"kazB":26}
+{"ad":"taktik:Dikine|Ön alan","i":16,"sA":2,"sB":2,"gA":2,"gB":8,"posA":0.465,"pasA":29,"pasB":43,"tutA":0.69,"tutB":0.814,"kazA":22,"kazB":22}
+{"ad":"taktik:Dikine|Ön alan","i":17,"sA":3,"sB":3,"gA":4,"gB":5,"posA":0.516,"pasA":43,"pasB":43,"tutA":0.721,"tutB":0.767,"kazA":29,"kazB":28}
+{"ad":"taktik:Dikine|Ön alan","i":18,"sA":1,"sB":3,"gA":2,"gB":7,"posA":0.526,"pasA":41,"pasB":34,"tutA":0.659,"tutB":0.765,"kazA":24,"kazB":27}
+{"ad":"taktik:Dikine|Ön alan","i":19,"sA":1,"sB":2,"gA":4,"gB":3,"posA":0.472,"pasA":37,"pasB":44,"tutA":0.73,"tutB":0.75,"kazA":21,"kazB":21}
+{"ad":"taktik:Dikine|Ön alan","i":20,"sA":2,"sB":2,"gA":4,"gB":3,"posA":0.494,"pasA":40,"pasB":40,"tutA":0.75,"tutB":0.75,"kazA":21,"kazB":22}
+{"ad":"taktik:Dikine|Ön alan","i":21,"sA":0,"sB":2,"gA":0,"gB":3,"posA":0.411,"pasA":39,"pasB":49,"tutA":0.667,"tutB":0.796,"kazA":20,"kazB":21}
+{"ad":"taktik:Dikine|Ön alan","i":22,"sA":1,"sB":4,"gA":2,"gB":5,"posA":0.381,"pasA":29,"pasB":44,"tutA":0.724,"tutB":0.818,"kazA":13,"kazB":17}
+{"ad":"taktik:Dikine|Ön alan","i":23,"sA":1,"sB":5,"gA":3,"gB":5,"posA":0.457,"pasA":39,"pasB":45,"tutA":0.769,"tutB":0.778,"kazA":19,"kazB":23}
+{"ad":"taktik:Dikine|Ön alan","i":24,"sA":2,"sB":0,"gA":4,"gB":1,"posA":0.514,"pasA":43,"pasB":47,"tutA":0.791,"tutB":0.766,"kazA":23,"kazB":22}
+{"ad":"taktik:Dikine|Ön alan","i":25,"sA":1,"sB":1,"gA":1,"gB":2,"posA":0.479,"pasA":45,"pasB":51,"tutA":0.644,"tutB":0.706,"kazA":24,"kazB":23}
+{"ad":"taktik:Dikine|Ön alan","i":27,"sA":2,"sB":2,"gA":3,"gB":6,"posA":0.513,"pasA":32,"pasB":40,"tutA":0.656,"tutB":0.8,"kazA":23,"kazB":22}
+{"ad":"taktik:Dikine|Ön alan","i":26,"sA":1,"sB":4,"gA":5,"gB":6,"posA":0.528,"pasA":46,"pasB":37,"tutA":0.761,"tutB":0.757,"kazA":19,"kazB":23}
+{"ad":"taktik:Dikine|Ön alan","i":28,"sA":1,"sB":4,"gA":4,"gB":5,"posA":0.478,"pasA":36,"pasB":41,"tutA":0.75,"tutB":0.854,"kazA":16,"kazB":19}
+{"ad":"taktik:Dikine|Ön alan","i":29,"sA":1,"sB":3,"gA":2,"gB":6,"posA":0.493,"pasA":40,"pasB":36,"tutA":0.875,"tutB":0.833,"kazA":22,"kazB":23}
+{"ad":"taktik:Dikine|Kuyu önü","i":1,"sA":2,"sB":1,"gA":3,"gB":2,"posA":0.519,"pasA":44,"pasB":38,"tutA":0.818,"tutB":0.737,"kazA":19,"kazB":17}
+{"ad":"taktik:Dikine|Ön alan","i":30,"sA":2,"sB":4,"gA":2,"gB":7,"posA":0.489,"pasA":40,"pasB":46,"tutA":0.75,"tutB":0.783,"kazA":19,"kazB":21}
+{"ad":"taktik:Dikine|Kuyu önü","i":2,"sA":4,"sB":0,"gA":6,"gB":1,"posA":0.572,"pasA":45,"pasB":36,"tutA":0.8,"tutB":0.75,"kazA":21,"kazB":18}
+{"ad":"taktik:Dikine|Kuyu önü","i":3,"sA":2,"sB":1,"gA":2,"gB":1,"posA":0.542,"pasA":46,"pasB":44,"tutA":0.739,"tutB":0.705,"kazA":22,"kazB":20}
+{"ad":"taktik:Dikine|Kuyu önü","i":5,"sA":0,"sB":3,"gA":1,"gB":4,"posA":0.458,"pasA":39,"pasB":36,"tutA":0.667,"tutB":0.778,"kazA":19,"kazB":22}
+{"ad":"taktik:Dikine|Kuyu önü","i":4,"sA":2,"sB":0,"gA":6,"gB":3,"posA":0.613,"pasA":44,"pasB":36,"tutA":0.818,"tutB":0.806,"kazA":22,"kazB":21}
+{"ad":"taktik:Dikine|Kuyu önü","i":6,"sA":3,"sB":1,"gA":3,"gB":1,"posA":0.552,"pasA":37,"pasB":48,"tutA":0.892,"tutB":0.771,"kazA":26,"kazB":26}
+{"ad":"taktik:Dikine|Kuyu önü","i":7,"sA":4,"sB":2,"gA":6,"gB":2,"posA":0.494,"pasA":33,"pasB":44,"tutA":0.818,"tutB":0.818,"kazA":20,"kazB":17}
+{"ad":"taktik:Dikine|Kuyu önü","i":9,"sA":2,"sB":1,"gA":2,"gB":3,"posA":0.52,"pasA":42,"pasB":43,"tutA":0.714,"tutB":0.767,"kazA":19,"kazB":17}
+{"ad":"taktik:Dikine|Kuyu önü","i":8,"sA":2,"sB":0,"gA":5,"gB":1,"posA":0.547,"pasA":47,"pasB":42,"tutA":0.851,"tutB":0.786,"kazA":20,"kazB":19}
+{"ad":"taktik:Dikine|Kuyu önü","i":10,"sA":0,"sB":1,"gA":0,"gB":3,"posA":0.482,"pasA":35,"pasB":48,"tutA":0.743,"tutB":0.75,"kazA":20,"kazB":22}
+{"ad":"taktik:Dikine|Kuyu önü","i":11,"sA":1,"sB":4,"gA":3,"gB":6,"posA":0.533,"pasA":40,"pasB":37,"tutA":0.75,"tutB":0.946,"kazA":18,"kazB":21}
+{"ad":"taktik:Dikine|Kuyu önü","i":12,"sA":3,"sB":0,"gA":3,"gB":0,"posA":0.522,"pasA":32,"pasB":38,"tutA":0.781,"tutB":0.789,"kazA":17,"kazB":16}
+{"ad":"taktik:Dikine|Kuyu önü","i":13,"sA":0,"sB":1,"gA":0,"gB":2,"posA":0.478,"pasA":40,"pasB":42,"tutA":0.825,"tutB":0.833,"kazA":19,"kazB":19}
+{"ad":"taktik:Dikine|Kuyu önü","i":15,"sA":1,"sB":0,"gA":1,"gB":3,"posA":0.523,"pasA":38,"pasB":50,"tutA":0.684,"tutB":0.84,"kazA":23,"kazB":21}
+{"ad":"taktik:Dikine|Kuyu önü","i":14,"sA":0,"sB":0,"gA":2,"gB":1,"posA":0.488,"pasA":45,"pasB":38,"tutA":0.689,"tutB":0.737,"kazA":23,"kazB":24}
+{"ad":"taktik:Dikine|Kuyu önü","i":16,"sA":1,"sB":2,"gA":3,"gB":2,"posA":0.497,"pasA":40,"pasB":39,"tutA":0.775,"tutB":0.769,"kazA":18,"kazB":19}
+{"ad":"taktik:Dikine|Kuyu önü","i":17,"sA":2,"sB":0,"gA":9,"gB":2,"posA":0.571,"pasA":37,"pasB":50,"tutA":0.811,"tutB":0.8,"kazA":20,"kazB":17}
+{"ad":"taktik:Dikine|Kuyu önü","i":18,"sA":0,"sB":1,"gA":0,"gB":2,"posA":0.48,"pasA":48,"pasB":38,"tutA":0.667,"tutB":0.632,"kazA":26,"kazB":27}
+{"ad":"taktik:Dikine|Kuyu önü","i":20,"sA":4,"sB":1,"gA":4,"gB":7,"posA":0.561,"pasA":37,"pasB":43,"tutA":0.784,"tutB":0.837,"kazA":15,"kazB":13}
+{"ad":"taktik:Dikine|Kuyu önü","i":19,"sA":1,"sB":1,"gA":4,"gB":3,"posA":0.44,"pasA":33,"pasB":43,"tutA":0.758,"tutB":0.791,"kazA":20,"kazB":19}
+{"ad":"taktik:Dikine|Kuyu önü","i":21,"sA":1,"sB":1,"gA":1,"gB":2,"posA":0.488,"pasA":42,"pasB":38,"tutA":0.69,"tutB":0.789,"kazA":22,"kazB":21}
+{"ad":"taktik:Dikine|Kuyu önü","i":23,"sA":1,"sB":1,"gA":3,"gB":2,"posA":0.469,"pasA":29,"pasB":43,"tutA":0.793,"tutB":0.814,"kazA":17,"kazB":17}
+{"ad":"taktik:Dikine|Kuyu önü","i":22,"sA":0,"sB":1,"gA":0,"gB":2,"posA":0.487,"pasA":43,"pasB":44,"tutA":0.651,"tutB":0.75,"kazA":20,"kazB":22}
+{"ad":"taktik:Dikine|Kuyu önü","i":24,"sA":0,"sB":1,"gA":4,"gB":1,"posA":0.466,"pasA":41,"pasB":40,"tutA":0.732,"tutB":0.75,"kazA":19,"kazB":21}
+{"ad":"taktik:Dikine|Kuyu önü","i":25,"sA":3,"sB":0,"gA":4,"gB":0,"posA":0.388,"pasA":41,"pasB":48,"tutA":0.659,"tutB":0.75,"kazA":31,"kazB":28}
+{"ad":"taktik:Dikine|Kuyu önü","i":26,"sA":4,"sB":1,"gA":5,"gB":1,"posA":0.542,"pasA":49,"pasB":32,"tutA":0.857,"tutB":0.75,"kazA":19,"kazB":17}
+{"ad":"taktik:Dikine|Kuyu önü","i":27,"sA":3,"sB":2,"gA":3,"gB":3,"posA":0.535,"pasA":40,"pasB":35,"tutA":0.925,"tutB":0.8,"kazA":11,"kazB":12}
+{"ad":"taktik:Dikine|Kuyu önü","i":28,"sA":2,"sB":2,"gA":4,"gB":2,"posA":0.467,"pasA":40,"pasB":41,"tutA":0.75,"tutB":0.732,"kazA":21,"kazB":22}
+{"ad":"taktik:Dikine|Kuyu önü","i":29,"sA":3,"sB":2,"gA":3,"gB":3,"posA":0.543,"pasA":38,"pasB":44,"tutA":0.684,"tutB":0.705,"kazA":23,"kazB":21}
+{"ad":"taktik:Dikine|Kuyu önü","i":30,"sA":2,"sB":1,"gA":4,"gB":1,"posA":0.583,"pasA":44,"pasB":37,"tutA":0.864,"tutB":0.784,"kazA":16,"kazB":16}
+{"ad":"taktik:Kontra|Ön alan","i":1,"sA":2,"sB":2,"gA":3,"gB":6,"posA":0.497,"pasA":32,"pasB":45,"tutA":0.781,"tutB":0.778,"kazA":21,"kazB":21}
+{"ad":"taktik:Kontra|Ön alan","i":2,"sA":3,"sB":3,"gA":5,"gB":4,"posA":0.542,"pasA":47,"pasB":37,"tutA":0.745,"tutB":0.676,"kazA":23,"kazB":24}
+{"ad":"taktik:Kontra|Ön alan","i":3,"sA":0,"sB":1,"gA":0,"gB":3,"posA":0.574,"pasA":40,"pasB":44,"tutA":0.675,"tutB":0.705,"kazA":24,"kazB":24}
+{"ad":"taktik:Kontra|Ön alan","i":4,"sA":1,"sB":3,"gA":2,"gB":5,"posA":0.541,"pasA":40,"pasB":39,"tutA":0.725,"tutB":0.744,"kazA":16,"kazB":18}
+{"ad":"taktik:Kontra|Ön alan","i":6,"sA":0,"sB":4,"gA":0,"gB":8,"posA":0.512,"pasA":37,"pasB":42,"tutA":0.649,"tutB":0.786,"kazA":27,"kazB":31}
+{"ad":"taktik:Kontra|Ön alan","i":5,"sA":2,"sB":2,"gA":2,"gB":3,"posA":0.493,"pasA":30,"pasB":52,"tutA":0.667,"tutB":0.865,"kazA":29,"kazB":28}
+{"ad":"taktik:Kontra|Ön alan","i":7,"sA":2,"sB":5,"gA":5,"gB":6,"posA":0.494,"pasA":29,"pasB":37,"tutA":0.966,"tutB":0.838,"kazA":15,"kazB":17}
+{"ad":"taktik:Kontra|Ön alan","i":8,"sA":2,"sB":1,"gA":6,"gB":2,"posA":0.561,"pasA":37,"pasB":39,"tutA":0.73,"tutB":0.718,"kazA":20,"kazB":20}
+{"ad":"taktik:Kontra|Ön alan","i":10,"sA":0,"sB":3,"gA":1,"gB":5,"posA":0.53,"pasA":45,"pasB":41,"tutA":0.733,"tutB":0.854,"kazA":16,"kazB":20}
+{"ad":"taktik:Kontra|Ön alan","i":9,"sA":1,"sB":1,"gA":2,"gB":5,"posA":0.511,"pasA":42,"pasB":39,"tutA":0.714,"tutB":0.667,"kazA":23,"kazB":22}
+{"ad":"taktik:Kontra|Ön alan","i":11,"sA":1,"sB":2,"gA":4,"gB":3,"posA":0.5,"pasA":38,"pasB":49,"tutA":0.711,"tutB":0.694,"kazA":26,"kazB":26}
+{"ad":"taktik:Kontra|Ön alan","i":12,"sA":1,"sB":2,"gA":2,"gB":4,"posA":0.514,"pasA":38,"pasB":41,"tutA":0.789,"tutB":0.732,"kazA":17,"kazB":19}
+{"ad":"taktik:Kontra|Ön alan","i":13,"sA":0,"sB":3,"gA":0,"gB":6,"posA":0.453,"pasA":36,"pasB":44,"tutA":0.778,"tutB":0.795,"kazA":20,"kazB":23}
+{"ad":"taktik:Kontra|Ön alan","i":14,"sA":1,"sB":1,"gA":3,"gB":3,"posA":0.574,"pasA":47,"pasB":39,"tutA":0.787,"tutB":0.744,"kazA":22,"kazB":23}
+{"ad":"taktik:Kontra|Ön alan","i":15,"sA":1,"sB":3,"gA":1,"gB":5,"posA":0.525,"pasA":34,"pasB":48,"tutA":0.706,"tutB":0.75,"kazA":20,"kazB":21}
+{"ad":"taktik:Kontra|Ön alan","i":16,"sA":1,"sB":3,"gA":1,"gB":5,"posA":0.509,"pasA":45,"pasB":40,"tutA":0.733,"tutB":0.75,"kazA":25,"kazB":27}
+{"ad":"taktik:Kontra|Ön alan","i":17,"sA":3,"sB":1,"gA":6,"gB":6,"posA":0.512,"pasA":39,"pasB":35,"tutA":0.846,"tutB":0.771,"kazA":21,"kazB":18}
+{"ad":"taktik:Kontra|Ön alan","i":18,"sA":1,"sB":2,"gA":1,"gB":5,"posA":0.542,"pasA":38,"pasB":48,"tutA":0.711,"tutB":0.771,"kazA":20,"kazB":22}
+{"ad":"taktik:Kontra|Ön alan","i":19,"sA":0,"sB":2,"gA":0,"gB":4,"posA":0.438,"pasA":39,"pasB":52,"tutA":0.692,"tutB":0.808,"kazA":23,"kazB":25}
+{"ad":"taktik:Kontra|Ön alan","i":20,"sA":2,"sB":2,"gA":2,"gB":3,"posA":0.548,"pasA":32,"pasB":42,"tutA":0.813,"tutB":0.762,"kazA":21,"kazB":21}
+{"ad":"taktik:Kontra|Ön alan","i":21,"sA":0,"sB":2,"gA":1,"gB":4,"posA":0.485,"pasA":32,"pasB":47,"tutA":0.813,"tutB":0.787,"kazA":22,"kazB":24}
+{"ad":"taktik:Kontra|Ön alan","i":22,"sA":0,"sB":3,"gA":2,"gB":6,"posA":0.54,"pasA":36,"pasB":40,"tutA":0.639,"tutB":0.775,"kazA":17,"kazB":20}
+{"ad":"taktik:Kontra|Ön alan","i":23,"sA":2,"sB":2,"gA":5,"gB":3,"posA":0.502,"pasA":35,"pasB":40,"tutA":0.743,"tutB":0.775,"kazA":22,"kazB":22}
+{"ad":"taktik:Kontra|Ön alan","i":24,"sA":1,"sB":1,"gA":1,"gB":4,"posA":0.506,"pasA":42,"pasB":43,"tutA":0.762,"tutB":0.698,"kazA":26,"kazB":27}
+{"ad":"taktik:Kontra|Ön alan","i":25,"sA":0,"sB":2,"gA":2,"gB":5,"posA":0.462,"pasA":43,"pasB":41,"tutA":0.744,"tutB":0.732,"kazA":27,"kazB":29}
+{"ad":"taktik:Kontra|Ön alan","i":26,"sA":1,"sB":1,"gA":3,"gB":5,"posA":0.55,"pasA":37,"pasB":48,"tutA":0.676,"tutB":0.771,"kazA":27,"kazB":27}
+{"ad":"taktik:Kontra|Ön alan","i":27,"sA":0,"sB":4,"gA":2,"gB":7,"posA":0.467,"pasA":32,"pasB":44,"tutA":0.781,"tutB":0.75,"kazA":19,"kazB":23}
+{"ad":"taktik:Kontra|Ön alan","i":28,"sA":1,"sB":2,"gA":1,"gB":4,"posA":0.428,"pasA":34,"pasB":44,"tutA":0.676,"tutB":0.773,"kazA":22,"kazB":22}
+{"ad":"taktik:Kontra|Ön alan","i":29,"sA":0,"sB":3,"gA":0,"gB":3,"posA":0.472,"pasA":48,"pasB":42,"tutA":0.729,"tutB":0.762,"kazA":20,"kazB":22}
+{"ad":"taktik:Kontra|Ön alan","i":30,"sA":3,"sB":2,"gA":5,"gB":5,"posA":0.501,"pasA":36,"pasB":44,"tutA":0.861,"tutB":0.705,"kazA":18,"kazB":18}
+{"ad":"taktik:Kontra|Kuyu önü","i":1,"sA":1,"sB":1,"gA":1,"gB":2,"posA":0.424,"pasA":29,"pasB":48,"tutA":0.69,"tutB":0.75,"kazA":16,"kazB":16}
+{"ad":"taktik:Kontra|Kuyu önü","i":2,"sA":0,"sB":1,"gA":0,"gB":2,"posA":0.436,"pasA":31,"pasB":43,"tutA":0.742,"tutB":0.791,"kazA":14,"kazB":16}
+{"ad":"taktik:Kontra|Kuyu önü","i":3,"sA":0,"sB":0,"gA":3,"gB":2,"posA":0.529,"pasA":39,"pasB":44,"tutA":0.769,"tutB":0.773,"kazA":16,"kazB":15}
+{"ad":"taktik:Kontra|Kuyu önü","i":4,"sA":0,"sB":4,"gA":1,"gB":4,"posA":0.529,"pasA":43,"pasB":38,"tutA":0.767,"tutB":0.789,"kazA":13,"kazB":17}
+{"ad":"taktik:Kontra|Kuyu önü","i":5,"sA":0,"sB":0,"gA":2,"gB":1,"posA":0.521,"pasA":41,"pasB":41,"tutA":0.78,"tutB":0.634,"kazA":20,"kazB":20}
+{"ad":"taktik:Kontra|Kuyu önü","i":6,"sA":0,"sB":0,"gA":1,"gB":1,"posA":0.519,"pasA":43,"pasB":38,"tutA":0.884,"tutB":0.763,"kazA":13,"kazB":14}
+{"ad":"taktik:Kontra|Kuyu önü","i":7,"sA":0,"sB":1,"gA":0,"gB":1,"posA":0.464,"pasA":32,"pasB":40,"tutA":0.813,"tutB":0.85,"kazA":13,"kazB":13}
+{"ad":"taktik:Kontra|Kuyu önü","i":8,"sA":0,"sB":3,"gA":0,"gB":4,"posA":0.491,"pasA":41,"pasB":42,"tutA":0.707,"tutB":0.81,"kazA":12,"kazB":15}
+{"ad":"taktik:Kontra|Kuyu önü","i":9,"sA":0,"sB":0,"gA":0,"gB":4,"posA":0.498,"pasA":43,"pasB":47,"tutA":0.744,"tutB":0.787,"kazA":15,"kazB":15}
+{"ad":"taktik:Kontra|Kuyu önü","i":11,"sA":3,"sB":2,"gA":3,"gB":6,"posA":0.551,"pasA":33,"pasB":44,"tutA":0.758,"tutB":0.818,"kazA":16,"kazB":15}
+{"ad":"taktik:Kontra|Kuyu önü","i":10,"sA":0,"sB":0,"gA":0,"gB":6,"posA":0.471,"pasA":36,"pasB":47,"tutA":0.778,"tutB":0.745,"kazA":19,"kazB":20}
+{"ad":"taktik:Kontra|Kuyu önü","i":12,"sA":1,"sB":0,"gA":1,"gB":0,"posA":0.561,"pasA":46,"pasB":32,"tutA":0.783,"tutB":0.719,"kazA":15,"kazB":15}
+{"ad":"taktik:Kontra|Kuyu önü","i":13,"sA":1,"sB":0,"gA":2,"gB":2,"posA":0.624,"pasA":38,"pasB":41,"tutA":0.789,"tutB":0.756,"kazA":14,"kazB":12}
+{"ad":"taktik:Kontra|Kuyu önü","i":14,"sA":1,"sB":2,"gA":1,"gB":2,"posA":0.454,"pasA":45,"pasB":43,"tutA":0.733,"tutB":0.744,"kazA":17,"kazB":19}
+{"ad":"taktik:Kontra|Kuyu önü","i":15,"sA":1,"sB":3,"gA":3,"gB":4,"posA":0.476,"pasA":34,"pasB":39,"tutA":0.794,"tutB":0.872,"kazA":12,"kazB":14}
+{"ad":"taktik:Kontra|Kuyu önü","i":16,"sA":0,"sB":0,"gA":2,"gB":1,"posA":0.578,"pasA":46,"pasB":43,"tutA":0.739,"tutB":0.814,"kazA":18,"kazB":18}
+{"ad":"taktik:Kontra|Kuyu önü","i":17,"sA":3,"sB":1,"gA":3,"gB":2,"posA":0.508,"pasA":36,"pasB":44,"tutA":0.806,"tutB":0.705,"kazA":18,"kazB":15}
+{"ad":"taktik:Kontra|Kuyu önü","i":19,"sA":0,"sB":1,"gA":0,"gB":2,"posA":0.469,"pasA":40,"pasB":41,"tutA":0.85,"tutB":0.805,"kazA":14,"kazB":15}
+{"ad":"taktik:Kontra|Kuyu önü","i":18,"sA":0,"sB":2,"gA":0,"gB":3,"posA":0.527,"pasA":40,"pasB":38,"tutA":0.7,"tutB":0.789,"kazA":19,"kazB":21}
+{"ad":"taktik:Kontra|Kuyu önü","i":20,"sA":1,"sB":1,"gA":1,"gB":1,"posA":0.546,"pasA":41,"pasB":44,"tutA":0.854,"tutB":0.773,"kazA":14,"kazB":15}
+{"ad":"taktik:Kontra|Kuyu önü","i":21,"sA":3,"sB":2,"gA":4,"gB":2,"posA":0.612,"pasA":38,"pasB":39,"tutA":0.816,"tutB":0.744,"kazA":14,"kazB":13}
+{"ad":"taktik:Kontra|Kuyu önü","i":23,"sA":1,"sB":4,"gA":1,"gB":5,"posA":0.544,"pasA":39,"pasB":40,"tutA":0.667,"tutB":0.8,"kazA":15,"kazB":17}
+{"ad":"taktik:Kontra|Kuyu önü","i":22,"sA":1,"sB":0,"gA":5,"gB":0,"posA":0.594,"pasA":40,"pasB":34,"tutA":0.925,"tutB":0.794,"kazA":14,"kazB":14}
+{"ad":"taktik:Kontra|Kuyu önü","i":24,"sA":0,"sB":0,"gA":1,"gB":0,"posA":0.539,"pasA":41,"pasB":44,"tutA":0.854,"tutB":0.795,"kazA":13,"kazB":13}
+{"ad":"taktik:Kontra|Kuyu önü","i":25,"sA":1,"sB":0,"gA":1,"gB":1,"posA":0.551,"pasA":49,"pasB":42,"tutA":0.776,"tutB":0.786,"kazA":23,"kazB":22}
+{"ad":"taktik:Kontra|Kuyu önü","i":26,"sA":3,"sB":0,"gA":4,"gB":3,"posA":0.541,"pasA":44,"pasB":40,"tutA":0.727,"tutB":0.775,"kazA":17,"kazB":14}
+{"ad":"taktik:Kontra|Kuyu önü","i":27,"sA":1,"sB":2,"gA":2,"gB":4,"posA":0.508,"pasA":42,"pasB":38,"tutA":0.714,"tutB":0.763,"kazA":18,"kazB":18}
+{"ad":"taktik:Kontra|Kuyu önü","i":28,"sA":3,"sB":0,"gA":3,"gB":0,"posA":0.483,"pasA":39,"pasB":47,"tutA":0.744,"tutB":0.766,"kazA":17,"kazB":14}
+{"ad":"taktik:Kontra|Kuyu önü","i":29,"sA":1,"sB":2,"gA":2,"gB":3,"posA":0.428,"pasA":39,"pasB":47,"tutA":0.846,"tutB":0.872,"kazA":14,"kazB":15}
+{"ad":"taktik:Kontra|Kuyu önü","i":30,"sA":0,"sB":2,"gA":1,"gB":3,"posA":0.553,"pasA":45,"pasB":37,"tutA":0.756,"tutB":0.784,"kazA":17,"kazB":20}
+{"ad":"taktik:Ön alan|Kuyu önü","i":1,"sA":1,"sB":1,"gA":3,"gB":4,"posA":0.484,"pasA":47,"pasB":46,"tutA":0.723,"tutB":0.783,"kazA":23,"kazB":22}
+{"ad":"taktik:Ön alan|Kuyu önü","i":2,"sA":0,"sB":0,"gA":4,"gB":1,"posA":0.511,"pasA":41,"pasB":47,"tutA":0.683,"tutB":0.787,"kazA":19,"kazB":20}
+{"ad":"taktik:Ön alan|Kuyu önü","i":3,"sA":2,"sB":1,"gA":3,"gB":4,"posA":0.463,"pasA":42,"pasB":48,"tutA":0.714,"tutB":0.771,"kazA":28,"kazB":27}
+{"ad":"taktik:Ön alan|Kuyu önü","i":4,"sA":1,"sB":2,"gA":2,"gB":2,"posA":0.459,"pasA":46,"pasB":43,"tutA":0.783,"tutB":0.86,"kazA":18,"kazB":20}
+{"ad":"taktik:Ön alan|Kuyu önü","i":5,"sA":5,"sB":1,"gA":7,"gB":2,"posA":0.442,"pasA":49,"pasB":44,"tutA":0.857,"tutB":0.773,"kazA":21,"kazB":16}
+{"ad":"taktik:Ön alan|Kuyu önü","i":6,"sA":1,"sB":0,"gA":1,"gB":2,"posA":0.455,"pasA":43,"pasB":46,"tutA":0.651,"tutB":0.739,"kazA":27,"kazB":27}
+{"ad":"taktik:Ön alan|Kuyu önü","i":7,"sA":2,"sB":3,"gA":3,"gB":4,"posA":0.487,"pasA":31,"pasB":46,"tutA":0.677,"tutB":0.804,"kazA":17,"kazB":18}
+{"ad":"taktik:Ön alan|Kuyu önü","i":8,"sA":2,"sB":3,"gA":4,"gB":3,"posA":0.446,"pasA":42,"pasB":40,"tutA":0.667,"tutB":0.825,"kazA":18,"kazB":21}
+{"ad":"taktik:Ön alan|Kuyu önü","i":9,"sA":1,"sB":0,"gA":3,"gB":4,"posA":0.416,"pasA":39,"pasB":37,"tutA":0.846,"tutB":0.838,"kazA":21,"kazB":19}
+{"ad":"taktik:Ön alan|Kuyu önü","i":10,"sA":1,"sB":1,"gA":3,"gB":2,"posA":0.496,"pasA":47,"pasB":34,"tutA":0.745,"tutB":0.794,"kazA":15,"kazB":16}
+{"ad":"taktik:Ön alan|Kuyu önü","i":11,"sA":2,"sB":0,"gA":4,"gB":1,"posA":0.481,"pasA":41,"pasB":41,"tutA":0.805,"tutB":0.805,"kazA":20,"kazB":17}
+{"ad":"taktik:Ön alan|Kuyu önü","i":12,"sA":4,"sB":0,"gA":9,"gB":1,"posA":0.509,"pasA":42,"pasB":29,"tutA":0.833,"tutB":0.69,"kazA":25,"kazB":21}
+{"ad":"taktik:Ön alan|Kuyu önü","i":13,"sA":3,"sB":0,"gA":4,"gB":2,"posA":0.491,"pasA":48,"pasB":35,"tutA":0.771,"tutB":0.771,"kazA":19,"kazB":15}
+{"ad":"taktik:Ön alan|Kuyu önü","i":14,"sA":1,"sB":1,"gA":3,"gB":2,"posA":0.488,"pasA":42,"pasB":46,"tutA":0.762,"tutB":0.761,"kazA":26,"kazB":26}
+{"ad":"taktik:Ön alan|Kuyu önü","i":15,"sA":0,"sB":2,"gA":2,"gB":5,"posA":0.396,"pasA":34,"pasB":48,"tutA":0.647,"tutB":0.875,"kazA":18,"kazB":19}
+{"ad":"taktik:Ön alan|Kuyu önü","i":16,"sA":2,"sB":0,"gA":4,"gB":1,"posA":0.524,"pasA":41,"pasB":44,"tutA":0.756,"tutB":0.818,"kazA":18,"kazB":17}
+{"ad":"taktik:Ön alan|Kuyu önü","i":17,"sA":2,"sB":3,"gA":4,"gB":4,"posA":0.532,"pasA":37,"pasB":36,"tutA":0.811,"tutB":0.778,"kazA":19,"kazB":19}
+{"ad":"taktik:Ön alan|Kuyu önü","i":18,"sA":1,"sB":1,"gA":2,"gB":3,"posA":0.472,"pasA":44,"pasB":45,"tutA":0.591,"tutB":0.778,"kazA":29,"kazB":29}
+{"ad":"taktik:Ön alan|Kuyu önü","i":19,"sA":2,"sB":1,"gA":4,"gB":1,"posA":0.484,"pasA":48,"pasB":43,"tutA":0.729,"tutB":0.791,"kazA":19,"kazB":18}
+{"ad":"taktik:Ön alan|Kuyu önü","i":20,"sA":4,"sB":1,"gA":5,"gB":2,"posA":0.523,"pasA":40,"pasB":43,"tutA":0.75,"tutB":0.767,"kazA":28,"kazB":26}
+{"ad":"taktik:Ön alan|Kuyu önü","i":21,"sA":2,"sB":2,"gA":3,"gB":3,"posA":0.451,"pasA":39,"pasB":44,"tutA":0.769,"tutB":0.795,"kazA":23,"kazB":23}
+{"ad":"taktik:Ön alan|Kuyu önü","i":22,"sA":3,"sB":2,"gA":5,"gB":3,"posA":0.464,"pasA":38,"pasB":47,"tutA":0.763,"tutB":0.809,"kazA":14,"kazB":14}
+{"ad":"taktik:Ön alan|Kuyu önü","i":23,"sA":1,"sB":3,"gA":4,"gB":6,"posA":0.468,"pasA":34,"pasB":46,"tutA":0.676,"tutB":0.87,"kazA":17,"kazB":19}
+{"ad":"taktik:Ön alan|Kuyu önü","i":24,"sA":0,"sB":1,"gA":5,"gB":3,"posA":0.464,"pasA":46,"pasB":38,"tutA":0.761,"tutB":0.895,"kazA":20,"kazB":22}
+{"ad":"taktik:Ön alan|Kuyu önü","i":25,"sA":1,"sB":0,"gA":4,"gB":0,"posA":0.523,"pasA":42,"pasB":42,"tutA":0.738,"tutB":0.643,"kazA":23,"kazB":22}
+{"ad":"taktik:Ön alan|Kuyu önü","i":26,"sA":1,"sB":0,"gA":1,"gB":1,"posA":0.508,"pasA":40,"pasB":39,"tutA":0.725,"tutB":0.795,"kazA":22,"kazB":21}
+{"ad":"taktik:Ön alan|Kuyu önü","i":27,"sA":4,"sB":2,"gA":4,"gB":4,"posA":0.485,"pasA":40,"pasB":48,"tutA":0.775,"tutB":0.833,"kazA":20,"kazB":18}
+{"ad":"taktik:Ön alan|Kuyu önü","i":28,"sA":1,"sB":0,"gA":5,"gB":0,"posA":0.551,"pasA":49,"pasB":33,"tutA":0.898,"tutB":0.758,"kazA":19,"kazB":19}
+{"ad":"taktik:Ön alan|Kuyu önü","i":29,"sA":4,"sB":0,"gA":5,"gB":1,"posA":0.541,"pasA":46,"pasB":41,"tutA":0.761,"tutB":0.78,"kazA":22,"kazB":17}
+{"ad":"taktik:Ön alan|Kuyu önü","i":30,"sA":1,"sB":2,"gA":4,"gB":2,"posA":0.445,"pasA":45,"pasB":43,"tutA":0.844,"tutB":0.86,"kazA":17,"kazB":18}
+{"ad":"tetik2:pres=2 · varsayılan tetik (Geri pas, Kanatta)","i":4,"sA":2,"sB":0,"gA":5,"gB":3,"posA":0.591,"pasA":35,"pasB":38,"tutA":0.743,"tutB":0.763,"kazA":22,"kazB":20}
+{"ad":"tetik2:pres=2 · varsayılan tetik (Geri pas, Kanatta)","i":3,"sA":1,"sB":5,"gA":2,"gB":8,"posA":0.42,"pasA":32,"pasB":45,"tutA":0.625,"tutB":0.911,"kazA":24,"kazB":28}
+{"ad":"tetik2:pres=2 · varsayılan tetik (Geri pas, Kanatta)","i":2,"sA":0,"sB":1,"gA":1,"gB":3,"posA":0.484,"pasA":41,"pasB":44,"tutA":0.683,"tutB":0.773,"kazA":26,"kazB":27}
+{"ad":"tetik2:pres=2 · varsayılan tetik (Geri pas, Kanatta)","i":1,"sA":2,"sB":3,"gA":3,"gB":4,"posA":0.532,"pasA":48,"pasB":39,"tutA":0.771,"tutB":0.821,"kazA":26,"kazB":26}
+{"ad":"tetik2:pres=2 · varsayılan tetik (Geri pas, Kanatta)","i":5,"sA":2,"sB":2,"gA":5,"gB":3,"posA":0.506,"pasA":37,"pasB":47,"tutA":0.838,"tutB":0.723,"kazA":20,"kazB":20}
+{"ad":"tetik2:pres=2 · varsayılan tetik (Geri pas, Kanatta)","i":6,"sA":2,"sB":1,"gA":4,"gB":1,"posA":0.52,"pasA":45,"pasB":30,"tutA":0.778,"tutB":0.833,"kazA":26,"kazB":25}
+{"ad":"tetik2:pres=2 · varsayılan tetik (Geri pas, Kanatta)","i":8,"sA":2,"sB":1,"gA":6,"gB":2,"posA":0.521,"pasA":47,"pasB":36,"tutA":0.809,"tutB":0.722,"kazA":20,"kazB":20}
+{"ad":"tetik2:pres=2 · varsayılan tetik (Geri pas, Kanatta)","i":7,"sA":1,"sB":1,"gA":8,"gB":2,"posA":0.528,"pasA":39,"pasB":39,"tutA":0.769,"tutB":0.795,"kazA":31,"kazB":30}
+{"ad":"tetik2:pres=2 · varsayılan tetik (Geri pas, Kanatta)","i":9,"sA":2,"sB":2,"gA":5,"gB":4,"posA":0.534,"pasA":42,"pasB":34,"tutA":0.714,"tutB":0.706,"kazA":21,"kazB":20}
+{"ad":"tetik2:pres=2 · varsayılan tetik (Geri pas, Kanatta)","i":10,"sA":3,"sB":1,"gA":4,"gB":4,"posA":0.581,"pasA":47,"pasB":33,"tutA":0.681,"tutB":0.606,"kazA":23,"kazB":22}
+{"ad":"tetik2:pres=2 · varsayılan tetik (Geri pas, Kanatta)","i":12,"sA":2,"sB":1,"gA":3,"gB":2,"posA":0.556,"pasA":40,"pasB":33,"tutA":0.775,"tutB":0.788,"kazA":17,"kazB":17}
+{"ad":"tetik2:pres=2 · varsayılan tetik (Geri pas, Kanatta)","i":11,"sA":2,"sB":0,"gA":4,"gB":3,"posA":0.556,"pasA":33,"pasB":39,"tutA":0.727,"tutB":0.769,"kazA":26,"kazB":24}
+{"ad":"tetik2:pres=2 · varsayılan tetik (Geri pas, Kanatta)","i":13,"sA":0,"sB":2,"gA":2,"gB":4,"posA":0.473,"pasA":39,"pasB":49,"tutA":0.718,"tutB":0.735,"kazA":25,"kazB":27}
+{"ad":"tetik2:pres=2 · varsayılan tetik (Geri pas, Kanatta)","i":15,"sA":0,"sB":3,"gA":4,"gB":3,"posA":0.419,"pasA":32,"pasB":50,"tutA":0.656,"tutB":0.74,"kazA":22,"kazB":25}
+{"ad":"tetik2:pres=2 · varsayılan tetik (Geri pas, Kanatta)","i":14,"sA":3,"sB":1,"gA":5,"gB":4,"posA":0.503,"pasA":42,"pasB":37,"tutA":0.786,"tutB":0.811,"kazA":28,"kazB":26}
+{"ad":"tetik2:pres=2 · varsayılan tetik (Geri pas, Kanatta)","i":16,"sA":2,"sB":0,"gA":3,"gB":2,"posA":0.566,"pasA":41,"pasB":43,"tutA":0.659,"tutB":0.767,"kazA":31,"kazB":30}
+{"ad":"tetik2:pres=2 · tetik yok (sürekli basar)","i":1,"sA":0,"sB":2,"gA":2,"gB":4,"posA":0.522,"pasA":35,"pasB":39,"tutA":0.8,"tutB":0.897,"kazA":18,"kazB":20}
+{"ad":"tetik2:pres=2 · tetik yok (sürekli basar)","i":3,"sA":1,"sB":0,"gA":3,"gB":1,"posA":0.513,"pasA":34,"pasB":42,"tutA":0.735,"tutB":0.667,"kazA":28,"kazB":26}
+{"ad":"tetik2:pres=2 · tetik yok (sürekli basar)","i":2,"sA":2,"sB":2,"gA":4,"gB":3,"posA":0.518,"pasA":40,"pasB":45,"tutA":0.725,"tutB":0.711,"kazA":27,"kazB":28}
+{"ad":"tetik2:pres=2 · tetik yok (sürekli basar)","i":4,"sA":1,"sB":1,"gA":5,"gB":2,"posA":0.506,"pasA":38,"pasB":44,"tutA":0.684,"tutB":0.727,"kazA":22,"kazB":22}
+{"ad":"tetik2:pres=2 · tetik yok (sürekli basar)","i":5,"sA":1,"sB":1,"gA":1,"gB":5,"posA":0.506,"pasA":43,"pasB":43,"tutA":0.791,"tutB":0.837,"kazA":25,"kazB":24}
+{"ad":"tetik2:pres=2 · tetik yok (sürekli basar)","i":7,"sA":1,"sB":1,"gA":3,"gB":3,"posA":0.512,"pasA":45,"pasB":38,"tutA":0.8,"tutB":0.763,"kazA":22,"kazB":21}
+{"ad":"tetik2:pres=2 · tetik yok (sürekli basar)","i":6,"sA":2,"sB":1,"gA":4,"gB":2,"posA":0.559,"pasA":34,"pasB":31,"tutA":0.735,"tutB":0.774,"kazA":26,"kazB":26}
+{"ad":"tetik2:pres=2 · tetik yok (sürekli basar)","i":8,"sA":1,"sB":2,"gA":2,"gB":2,"posA":0.556,"pasA":42,"pasB":46,"tutA":0.69,"tutB":0.717,"kazA":28,"kazB":30}
+{"ad":"tetik2:pres=2 · tetik yok (sürekli basar)","i":9,"sA":0,"sB":4,"gA":2,"gB":4,"posA":0.478,"pasA":37,"pasB":39,"tutA":0.811,"tutB":0.821,"kazA":21,"kazB":25}
+{"ad":"tetik2:pres=2 · tetik yok (sürekli basar)","i":11,"sA":2,"sB":2,"gA":3,"gB":5,"posA":0.45,"pasA":36,"pasB":40,"tutA":0.694,"tutB":0.725,"kazA":21,"kazB":20}
+{"ad":"tetik2:pres=2 · tetik yok (sürekli basar)","i":10,"sA":4,"sB":1,"gA":4,"gB":2,"posA":0.54,"pasA":43,"pasB":42,"tutA":0.744,"tutB":0.643,"kazA":23,"kazB":22}
+{"ad":"tetik2:pres=2 · tetik yok (sürekli basar)","i":12,"sA":2,"sB":1,"gA":4,"gB":3,"posA":0.585,"pasA":48,"pasB":33,"tutA":0.708,"tutB":0.788,"kazA":22,"kazB":21}
+{"ad":"tetik2:pres=2 · tetik yok (sürekli basar)","i":13,"sA":2,"sB":2,"gA":2,"gB":4,"posA":0.48,"pasA":44,"pasB":36,"tutA":0.795,"tutB":0.694,"kazA":17,"kazB":17}
+{"ad":"tetik2:pres=2 · tetik yok (sürekli basar)","i":15,"sA":0,"sB":1,"gA":2,"gB":3,"posA":0.494,"pasA":41,"pasB":52,"tutA":0.683,"tutB":0.75,"kazA":27,"kazB":28}
+{"ad":"tetik2:pres=2 · tetik yok (sürekli basar)","i":16,"sA":1,"sB":0,"gA":1,"gB":2,"posA":0.545,"pasA":42,"pasB":39,"tutA":0.69,"tutB":0.718,"kazA":31,"kazB":31}
+{"ad":"tetik2:pres=2 · tetik yok (sürekli basar)","i":14,"sA":2,"sB":1,"gA":4,"gB":1,"posA":0.557,"pasA":48,"pasB":42,"tutA":0.813,"tutB":0.667,"kazA":25,"kazB":24}
+{"ad":"tetik2:pres=2 · bütün tetikler","i":1,"sA":0,"sB":4,"gA":1,"gB":4,"posA":0.467,"pasA":46,"pasB":39,"tutA":0.826,"tutB":0.795,"kazA":20,"kazB":24}
+{"ad":"tetik2:pres=2 · bütün tetikler","i":2,"sA":1,"sB":0,"gA":4,"gB":3,"posA":0.527,"pasA":44,"pasB":43,"tutA":0.727,"tutB":0.721,"kazA":25,"kazB":25}
+{"ad":"tetik2:pres=2 · bütün tetikler","i":3,"sA":2,"sB":2,"gA":3,"gB":3,"posA":0.532,"pasA":35,"pasB":45,"tutA":0.686,"tutB":0.778,"kazA":22,"kazB":22}
+{"ad":"tetik2:pres=2 · bütün tetikler","i":4,"sA":1,"sB":1,"gA":5,"gB":2,"posA":0.544,"pasA":41,"pasB":44,"tutA":0.732,"tutB":0.727,"kazA":22,"kazB":23}
+{"ad":"tetik2:pres=2 · bütün tetikler","i":5,"sA":2,"sB":2,"gA":3,"gB":2,"posA":0.487,"pasA":38,"pasB":42,"tutA":0.711,"tutB":0.786,"kazA":27,"kazB":27}
+{"ad":"tetik2:pres=2 · bütün tetikler","i":6,"sA":3,"sB":2,"gA":4,"gB":4,"posA":0.491,"pasA":40,"pasB":37,"tutA":0.825,"tutB":0.838,"kazA":22,"kazB":21}
+{"ad":"tetik2:pres=2 · bütün tetikler","i":7,"sA":1,"sB":3,"gA":5,"gB":4,"posA":0.49,"pasA":44,"pasB":38,"tutA":0.795,"tutB":0.816,"kazA":19,"kazB":21}
+{"ad":"tetik2:pres=2 · bütün tetikler","i":8,"sA":1,"sB":1,"gA":2,"gB":1,"posA":0.485,"pasA":37,"pasB":49,"tutA":0.757,"tutB":0.755,"kazA":21,"kazB":22}
+{"ad":"tetik2:pres=2 · bütün tetikler","i":9,"sA":1,"sB":2,"gA":1,"gB":3,"posA":0.51,"pasA":44,"pasB":36,"tutA":0.795,"tutB":0.75,"kazA":18,"kazB":19}
+{"ad":"tetik2:pres=2 · bütün tetikler","i":11,"sA":2,"sB":3,"gA":2,"gB":3,"posA":0.44,"pasA":34,"pasB":45,"tutA":0.706,"tutB":0.822,"kazA":16,"kazB":17}
+{"ad":"tetik2:pres=2 · bütün tetikler","i":10,"sA":1,"sB":1,"gA":4,"gB":2,"posA":0.548,"pasA":48,"pasB":38,"tutA":0.729,"tutB":0.711,"kazA":24,"kazB":25}
+{"ad":"tetik2:pres=2 · bütün tetikler","i":12,"sA":2,"sB":1,"gA":3,"gB":1,"posA":0.569,"pasA":44,"pasB":34,"tutA":0.818,"tutB":0.794,"kazA":21,"kazB":20}
+{"ad":"tetik2:pres=2 · bütün tetikler","i":13,"sA":1,"sB":2,"gA":0,"gB":2,"posA":0.524,"pasA":43,"pasB":41,"tutA":0.651,"tutB":0.561,"kazA":27,"kazB":28}
+{"ad":"tetik2:pres=2 · bütün tetikler","i":15,"sA":2,"sB":3,"gA":3,"gB":4,"posA":0.448,"pasA":39,"pasB":40,"tutA":0.667,"tutB":0.75,"kazA":30,"kazB":32}
+{"ad":"tetik2:pres=2 · bütün tetikler","i":14,"sA":2,"sB":1,"gA":2,"gB":2,"posA":0.504,"pasA":38,"pasB":43,"tutA":0.789,"tutB":0.86,"kazA":19,"kazB":19}
+{"ad":"tetik2:pres=2 · bütün tetikler","i":16,"sA":3,"sB":1,"gA":4,"gB":4,"posA":0.522,"pasA":38,"pasB":44,"tutA":0.763,"tutB":0.818,"kazA":25,"kazB":23}
