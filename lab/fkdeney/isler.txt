@@ -1,0 +1,69 @@
+node tools/v5-fake.js hiz28/fk 0 2 12 150 10 > lab/fkdeney/fake/fk-0.jsonl 2> lab/fkdeney/fake/fk-0.log
+node tools/v5-fake.js hiz28/fk 1 2 12 150 10 > lab/fkdeney/fake/fk-1.jsonl 2> lab/fkdeney/fake/fk-1.log
+node tools/v5-fake.js hiz28/fk 2 2 12 150 10 > lab/fkdeney/fake/fk-2.jsonl 2> lab/fkdeney/fake/fk-2.log
+node tools/v5-fake.js hiz28/fk 6 2 12 150 10 > lab/fkdeney/fake/fk-6.jsonl 2> lab/fkdeney/fake/fk-6.log
+node tools/v5-fake.js hiz28/fkp 0 2 12 150 10 > lab/fkdeney/fake/fkp-0.jsonl 2> lab/fkdeney/fake/fkp-0.log
+node tools/v5-fake.js hiz28/fkp 1 2 12 150 10 > lab/fkdeney/fake/fkp-1.jsonl 2> lab/fkdeney/fake/fkp-1.log
+node tools/v5-fake.js hiz28/fkp 2 2 12 150 10 > lab/fkdeney/fake/fkp-2.jsonl 2> lab/fkdeney/fake/fkp-2.log
+node tools/v5-fake.js hiz28/fkp 6 2 12 150 10 > lab/fkdeney/fake/fkp-6.jsonl 2> lab/fkdeney/fake/fkp-6.log
+node tools/v5-fakepas.js hiz28/fk 0 12 10 > lab/fkdeney/fakepas/fk-0.jsonl 2> lab/fkdeney/fakepas/fk-0.log
+node tools/v5-fakepas.js hiz28/fk 1 12 10 > lab/fkdeney/fakepas/fk-1.jsonl 2> lab/fkdeney/fakepas/fk-1.log
+node tools/v5-fakepas.js hiz28/fk 2 12 10 > lab/fkdeney/fakepas/fk-2.jsonl 2> lab/fkdeney/fakepas/fk-2.log
+node tools/v5-fakepas.js hiz28/fk 6 12 10 > lab/fkdeney/fakepas/fk-6.jsonl 2> lab/fkdeney/fakepas/fk-6.log
+node tools/v5-fakepas.js hiz28/fk 7 12 10 > lab/fkdeney/fakepas/fk-7.jsonl 2> lab/fkdeney/fakepas/fk-7.log
+node tools/v5-fakepas.js hiz28/fk 8 12 10 > lab/fkdeney/fakepas/fk-8.jsonl 2> lab/fkdeney/fakepas/fk-8.log
+node tools/v5-fakepas.js hiz28/fk 9 12 10 > lab/fkdeney/fakepas/fk-9.jsonl 2> lab/fkdeney/fakepas/fk-9.log
+node tools/v5-fakepas.js hiz28/fk 11 12 10 > lab/fkdeney/fakepas/fk-11.jsonl 2> lab/fkdeney/fakepas/fk-11.log
+node tools/v5-fakepas.js hiz28/fkp 0 12 10 > lab/fkdeney/fakepas/fkp-0.jsonl 2> lab/fkdeney/fakepas/fkp-0.log
+node tools/v5-fakepas.js hiz28/fkp 1 12 10 > lab/fkdeney/fakepas/fkp-1.jsonl 2> lab/fkdeney/fakepas/fkp-1.log
+node tools/v5-fakepas.js hiz28/fkp 2 12 10 > lab/fkdeney/fakepas/fkp-2.jsonl 2> lab/fkdeney/fakepas/fkp-2.log
+node tools/v5-fakepas.js hiz28/fkp 6 12 10 > lab/fkdeney/fakepas/fkp-6.jsonl 2> lab/fkdeney/fakepas/fkp-6.log
+node tools/v5-fakepas.js hiz28/fkp 7 12 10 > lab/fkdeney/fakepas/fkp-7.jsonl 2> lab/fkdeney/fakepas/fkp-7.log
+node tools/v5-fakepas.js hiz28/fkp 8 12 10 > lab/fkdeney/fakepas/fkp-8.jsonl 2> lab/fkdeney/fakepas/fkp-8.log
+node tools/v5-fakepas.js hiz28/fkp 9 12 10 > lab/fkdeney/fakepas/fkp-9.jsonl 2> lab/fkdeney/fakepas/fkp-9.log
+node tools/v5-fakepas.js hiz28/fkp 11 12 10 > lab/fkdeney/fakepas/fkp-11.jsonl 2> lab/fkdeney/fakepas/fkp-11.log
+node tools/v5-stat.js hiz28/fk 0 > lab/fkdeney/stat/fk-0.json 2>&1
+node tools/v5-stat.js hiz28/fkp 0 > lab/fkdeney/stat/fkp-0.json 2>&1
+node tools/v5-stat.js hiz28/fkp 1 > lab/fkdeney/stat/fkp-1.json 2>&1
+node tools/v5-stat.js hiz28/opt 2 > lab/fkdeney/stat/opt-2.json 2>&1
+node tools/v5-stat.js hiz28/fk 2 > lab/fkdeney/stat/fk-2.json 2>&1
+node tools/v5-stat.js hiz28/fkp 2 > lab/fkdeney/stat/fkp-2.json 2>&1
+node tools/v5-stat.js hiz28/opt 3 > lab/fkdeney/stat/opt-3.json 2>&1
+node tools/v5-stat.js hiz28/fk 3 > lab/fkdeney/stat/fk-3.json 2>&1
+node tools/v5-stat.js hiz28/fkp 3 > lab/fkdeney/stat/fkp-3.json 2>&1
+node tools/v5-stat.js hiz28/opt 4 > lab/fkdeney/stat/opt-4.json 2>&1
+node tools/v5-stat.js hiz28/fk 4 > lab/fkdeney/stat/fk-4.json 2>&1
+node tools/v5-stat.js hiz28/fkp 4 > lab/fkdeney/stat/fkp-4.json 2>&1
+node tools/v5-stat.js hiz28/opt 5 > lab/fkdeney/stat/opt-5.json 2>&1
+node tools/v5-stat.js hiz28/fk 5 > lab/fkdeney/stat/fk-5.json 2>&1
+node tools/v5-stat.js hiz28/fkp 5 > lab/fkdeney/stat/fkp-5.json 2>&1
+node tools/v5-stat.js hiz28/opt 6 > lab/fkdeney/stat/opt-6.json 2>&1
+node tools/v5-stat.js hiz28/fk 6 > lab/fkdeney/stat/fk-6.json 2>&1
+node tools/v5-stat.js hiz28/fkp 6 > lab/fkdeney/stat/fkp-6.json 2>&1
+node tools/v5-stat.js hiz28/opt 7 > lab/fkdeney/stat/opt-7.json 2>&1
+node tools/v5-stat.js hiz28/fk 7 > lab/fkdeney/stat/fk-7.json 2>&1
+node tools/v5-stat.js hiz28/fkp 7 > lab/fkdeney/stat/fkp-7.json 2>&1
+node tools/v5-stat.js hiz28/opt 8 > lab/fkdeney/stat/opt-8.json 2>&1
+node tools/v5-stat.js hiz28/fk 8 > lab/fkdeney/stat/fk-8.json 2>&1
+node tools/v5-stat.js hiz28/fkp 8 > lab/fkdeney/stat/fkp-8.json 2>&1
+node tools/v5-stat.js hiz28/opt 9 > lab/fkdeney/stat/opt-9.json 2>&1
+node tools/v5-stat.js hiz28/fk 9 > lab/fkdeney/stat/fk-9.json 2>&1
+node tools/v5-stat.js hiz28/fkp 9 > lab/fkdeney/stat/fkp-9.json 2>&1
+node tools/v5-stat.js hiz28/opt 10 > lab/fkdeney/stat/opt-10.json 2>&1
+node tools/v5-stat.js hiz28/fk 10 > lab/fkdeney/stat/fk-10.json 2>&1
+node tools/v5-stat.js hiz28/fkp 10 > lab/fkdeney/stat/fkp-10.json 2>&1
+node tools/v5-stat.js hiz28/opt 11 > lab/fkdeney/stat/opt-11.json 2>&1
+node tools/v5-stat.js hiz28/fk 11 > lab/fkdeney/stat/fk-11.json 2>&1
+node tools/v5-stat.js hiz28/fkp 11 > lab/fkdeney/stat/fkp-11.json 2>&1
+node tools/v5-stat.js hiz28/opt 12 > lab/fkdeney/stat/opt-12.json 2>&1
+node tools/v5-stat.js hiz28/fk 12 > lab/fkdeney/stat/fk-12.json 2>&1
+node tools/v5-stat.js hiz28/fkp 12 > lab/fkdeney/stat/fkp-12.json 2>&1
+node tools/v5-stat.js hiz28/opt 13 > lab/fkdeney/stat/opt-13.json 2>&1
+node tools/v5-stat.js hiz28/fk 13 > lab/fkdeney/stat/fk-13.json 2>&1
+node tools/v5-stat.js hiz28/fkp 13 > lab/fkdeney/stat/fkp-13.json 2>&1
+node tools/v5-stat.js hiz28/opt 14 > lab/fkdeney/stat/opt-14.json 2>&1
+node tools/v5-stat.js hiz28/fk 14 > lab/fkdeney/stat/fk-14.json 2>&1
+node tools/v5-stat.js hiz28/fkp 14 > lab/fkdeney/stat/fkp-14.json 2>&1
+node tools/v5-stat.js hiz28/opt 15 > lab/fkdeney/stat/opt-15.json 2>&1
+node tools/v5-stat.js hiz28/fk 15 > lab/fkdeney/stat/fk-15.json 2>&1
+node tools/v5-stat.js hiz28/fkp 15 > lab/fkdeney/stat/fkp-15.json 2>&1
