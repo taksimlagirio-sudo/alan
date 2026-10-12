@@ -174,9 +174,10 @@
     for (const p of m.ps) { if (F.fooled.has(p.id) && m.tick > F.ra[p.id]) F.fooled.delete(p.id); } } /* hareketi yanil yönetir */
   // Katı gövdeler: iç içe giren iki oyuncu yarı yarıya ayrılır, birbirine doğru hızları silinir (3 geçiş: üç kişi üst üste binince tek geçiş yetmez)
   function govdeAyir(ps) {
-    const BD = C().Turn.TQ.minD; for (let it = 0; it < 3; it++) for (let i = 0; i < ps.length; i++) for (let j = i + 1; j < ps.length; j++) { const a = ps[i], b = ps[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy); if (d >= BD) continue;
+    const BD = C().Turn.TQ.minD; for (let it = 0; it < 3; it++) { let degdi = false; for (let i = 0; i < ps.length; i++) for (let j = i + 1; j < ps.length; j++) { const a = ps[i], b = ps[j], dx = b.x - a.x, dy = b.y - a.y; if (dx >= BD || dx <= -BD || dy >= BD || dy <= -BD) continue; /* hız: x ya da y farkı tek başına gövde mesafesini aşıyorsa uzaklık zaten büyüktür (sonuç aynı) */ const d = Math.hypot(dx, dy); if (d >= BD) continue; degdi = true;
       const ux = d > 1e-4 ? dx / d : 1, uy = d > 1e-4 ? dy / d : 0, o = (BD - d) / 2; a.x -= ux * o; a.y -= uy * o; b.x += ux * o; b.y += uy * o; const rv = (b.vx - a.vx) * ux + (b.vy - a.vy) * uy; if (rv < 0) { a.vx += ux * rv / 2; a.vy += uy * rv / 2; b.vx -= ux * rv / 2; b.vy -= uy * rv / 2; }
       for (const p of [a, b]) { p.x = cl(p.x, .8, W - .8); p.y = cl(p.y, .8, H - .8); if (p.role !== 'Bekçi') outOfKuyu(p, true); } }
+      if (!degdi) break; } /* hız: bu turda kimse iç içe değildiyse sonraki turlar da hiçbir şey değiştirmez */
   }
   function move(m) {
     for (const p of m.ps) {
