@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0D09;color:#F6F3EC;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#FFD25A}a:hover{color:#F6F3EC}
+button{font:inherit;color:inherit}
+</style>
+<script src="alan-v5/core.js"></script>
+<script src="alan-v5/shot-table.js"></script>
+<script src="alan-v5/value-table.js"></script>
+<script src="alan-v5/decide.js"></script>
+<script src="alan-v5/match.js"></script>
+<script src="alan-v5/shape.js"></script>
+</helmet>
+<div style="max-width:1500px;margin:0 auto;padding:22px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box">
+  <header style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(246,243,236,.14);padding-bottom:12px">
+    <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
+      <span style="font-size:30px;font-weight:800;letter-spacing:-.02em">İkili Sahne</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.6">ALAN v5 motoru · bire bir · gövde, dönüş, fiske, fake, kapma</span>
+    </div>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#FFD25A">{{ sonuc }}</span>
+  </header>
+  <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+    <div style="flex:1 1 680px;min-width:0;display:flex;flex-direction:column;gap:10px">
+      <div style="position:relative;border:1px solid rgba(246,243,236,.14);background:#0B0A07">
+        <canvas ref="{{ cv }}" width="1280" height="760" style="width:100%;display:block;aspect-ratio:1280/760"></canvas>
+        <div style="position:absolute;left:14px;top:12px;display:flex;gap:8px;flex-wrap:wrap;pointer-events:none">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(14,13,9,.8);padding:5px 9px;border-left:3px solid #3D5BF0">{{ atAd }} · hücum</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(14,13,9,.8);padding:5px 9px;border-left:3px solid #E0531F">{{ dfAd }} · {{ dfIs }}</span>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:16px;display:flex;justify-content:center;pointer-events:none">
+          <span style="font-size:22px;font-weight:700;background:rgba(14,13,9,.82);padding:8px 16px;opacity:{{ anOp }}">{{ anYazi }}</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:13px">
+        <button onClick="{{ oynat }}" style="background:#F6F3EC;color:#0E0D09;border:none;padding:8px 16px;cursor:pointer;font-weight:600">{{ oynatTxt }}</button>
+        <button onClick="{{ geri }}" style="background:transparent;border:1px solid rgba(246,243,236,.25);padding:8px 11px;cursor:pointer">◀ tik</button>
+        <button onClick="{{ ileri }}" style="background:transparent;border:1px solid rgba(246,243,236,.25);padding:8px 11px;cursor:pointer">tik ▶</button>
+        <button onClick="{{ bastan }}" style="background:transparent;border:1px solid rgba(246,243,236,.25);padding:8px 11px;cursor:pointer">Baştan</button>
+        <button onClick="{{ yeniZar }}" style="background:transparent;border:1px solid rgba(246,243,236,.25);padding:8px 11px;cursor:pointer">Yeni zar</button>
+        <div style="display:flex;gap:4px">
+          <sc-for list="{{ hizlar }}" as="h" hint-placeholder-count="4">
+            <button onClick="{{ h.set }}" style="background:{{ h.bg }};color:{{ h.fg }};border:1px solid rgba(246,243,236,.25);padding:8px 10px;cursor:pointer">{{ h.ad }}</button>
+          </sc-for>
+        </div>
+        <input type="range" min="0" max="{{ zMax }}" value="{{ zVal }}" onInput="{{ zaman }}" style="flex:1 1 160px;min-width:120px;accent-color:#FFD25A">
+        <span style="opacity:.7">{{ saat }}</span>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.75">
+        <span><span style="color:#FFD25A">━</span> Çekirdek ve izi</span><span>┅ dokunma menzili</span><span><span style="color:#FFD25A">◠</span> gövdeyle koruma</span><span><span style="color:#FFD25A">✦</span> temas</span><span>↻ dönüş · fiske hızlı</span><span>◌ fake / sersem</span><span>▲ uzanma · ◠ omuz (hazırlık)</span>
+      </div>
+    </div>
+    <aside style="flex:1 1 340px;max-width:100%;display:flex;flex-direction:column;gap:12px">
+      <div style="background:#16150F;border:1px solid rgba(246,243,236,.1);padding:14px;display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.6">Sahne</span>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px">
+          <sc-for list="{{ sahneler }}" as="s" hint-placeholder-count="6">
+            <button onClick="{{ s.set }}" style="text-align:left;background:{{ s.bg }};color:{{ s.fg }};border:1px solid rgba(246,243,236,.18);padding:8px 10px;cursor:pointer;display:flex;flex-direction:column;gap:2px">
+              <span style="font-weight:700;font-size:14px">{{ s.ad }}</span>
+              <span style="font-size:12px;opacity:.7;line-height:1.3">{{ s.not }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+      <sc-for list="{{ ozGrup }}" as="g" hint-placeholder-count="2">
+        <div style="background:#16150F;border:1px solid rgba(246,243,236,.1);border-left:3px solid {{ g.renk }};padding:12px 14px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.6">{{ g.ad }}</span>
+          <sc-for list="{{ g.ozler }}" as="o" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) 30px 34px 30px;gap:6px;align-items:center;font-size:14px">
+              <span>{{ o.ad }}</span>
+              <button onClick="{{ o.eksi }}" style="background:transparent;border:1px solid rgba(246,243,236,.2);cursor:pointer;padding:3px 0">−</button>
+              <span style="text-align:center;font-family:'JetBrains Mono',monospace;font-weight:600">{{ o.v }}</span>
+              <button onClick="{{ o.arti }}" style="background:transparent;border:1px solid rgba(246,243,236,.2);cursor:pointer;padding:3px 0">+</button>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+      <div style="background:#16150F;border:1px solid rgba(246,243,236,.1);padding:14px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.6">30 kez oynat</span>
+          <button onClick="{{ seri }}" style="background:transparent;border:1px solid #FFD25A;color:#FFD25A;padding:6px 12px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px">{{ seriTxt }}</button>
+        </div>
+        <sc-for list="{{ istat }}" as="s" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) 46px 120px;gap:8px;align-items:center;font-family:'JetBrains Mono',monospace;font-size:12px">
+            <span>{{ s.ad }}</span><span style="text-align:right">{{ s.n }}</span>
+            <div style="height:8px;background:rgba(246,243,236,.08)"><div style="height:100%;width:{{ s.w }};background:{{ s.c }}"></div></div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="background:#16150F;border:1px solid rgba(246,243,236,.1);padding:12px 14px;max-height:260px;overflow:auto;display:flex;flex-direction:column;gap:4px;font-family:'JetBrains Mono',monospace;font-size:12px">
+        <sc-for list="{{ olaylar }}" as="e" hint-placeholder-count="5">
+          <div style="display:flex;gap:8px"><span style="opacity:.5;min-width:38px">{{ e.t }}</span><span style="color:{{ e.c }}">{{ e.text }}</span></div>
+        </sc-for>
+      </div>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { sahne: 'onden', hiz: .25, calis: true, seed: 1, k: 0, at: { surme: 12, ceviklik: 12, hiz: 12, okuma: 10 }, df: { kesme: 12, ceviklik: 12, hiz: 12, okuma: 10, yogunluk: 10 }, istat: null, seriOn: false };
+  cv = React.createRef(); fr = []; t = 0; cam = null;
+  SAH = {
+    onden: { ad: 'Önden pres', not: 'Taşıyıcı ileri sürer, presçi karşıdan gelir', at: [40, 25, .12, 0, 0], df: [47.5, 25, 0, 0] },
+    sirt: { ad: 'Sırtı dönük', not: 'Presçi arkasında; Çekirdek gövdenin öbür yanında', at: [46, 25, 0, 0, Math.PI], df: [48.3, 25.3, 0, 0] },
+    yan: { ad: 'Yandan', not: 'Presçi yandan kesmeye gelir', at: [41, 25, .14, 0, 0], df: [45, 31, 0, 0] },
+    kenar: { ad: 'Kenarda', not: 'Duvar dibinde: kenardan çalım ya da sıkışma', at: [44, 3.2, .1, 0, 0], df: [49, 6, 0, 0] },
+    ornD: { ad: '▶ Örnek: kenarda başarılı', not: 'Rakip hizada: Çekirdek duvardan arkasına, taşıyıcı yanından kayıp arkasına', at: [44, 4, .1, 0, 0], df: [48.5, 4, 0, 0], seed: 1056, odak: 'kenardan çalım' },
+    ornK: { ad: '▶ Örnek: kenarda başarısız', not: 'Rakip duvara daha yakın: denendi ama tutmadı', at: [44, 5, .1, 0, 0], df: [48.5, 3.5, 0, 0], seed: 1070, odak: 'kenardan çalım' },
+    kenarDuz: { ad: 'Kenar · rakip hizada', not: 'Presçi duvara taşıyıcıyla aynı uzaklıkta, tam önünde', at: [44, 4, .1, 0, 0], df: [48.5, 4, 0, 0] },
+    kenarUst: { ad: 'Kenar · rakip duvar tarafında', not: 'Presçi duvara daha yakın, önde', at: [44, 5, .1, 0, 0], df: [48.5, 3.5, 0, 0] },
+    ornB: { ad: '▶ Örnek: köşede başarılı', not: 'Gerçek bir deneme: taşıyıcı rakibin arkasında Çekirdekle buluşur', at: [80, 4, .08, 0, 0], df: [84, 6, 0, 0], seed: 1014, odak: 'kenardan çalım' },
+    kenarOn: { ad: 'Kenar · önden kapalı', not: 'Duvar dibinde, presçi tam önünde: duvardan sektirip dolaşma', at: [44, 3, .1, 0, 0], df: [48, 4.2, 0, 0] },
+    kenarIc: { ad: 'Kenar · içeriden geliyor', not: 'Presçi içeriden kapatıyor, duvar tarafı açık', at: [44, 3.5, .12, 0, 0], df: [47, 8, 0, 0] },
+    kenarBas: { ad: 'Kenar · basarak gelen', not: 'Presçi hızla geliyor: momentumunu duvarla cezalandırma', at: [45, 3.5, .1, 0, 0], df: [49, 5, -.3, -.05] },
+    kose: { ad: 'Köşe', not: 'Rakip Kuyu\'ya yakın köşe: sıkışma ya da duvarla kaçış', at: [80, 4, .08, 0, 0], df: [84, 6, 0, 0] },
+    arka: { ad: 'Arkadan yetişme', not: 'Hızlı süren taşıyıcıya arkadan gövde koyma', at: [44, 25, .2, 0, 0], df: [41, 27, .2, 0] },
+    fake: { ad: 'Fake pres', not: 'Presçinin Okuma 18, taşıyıcının 8: aldatma', at: [40, 25, .12, 0, 0], df: [47.5, 25, 0, 0], ayar: { at: { okuma: 8 }, df: { okuma: 18 } } }
+  };
+  componentDidMount() { const go = () => { if (!window.AlanMatch || !window.AlanShape) return setTimeout(go, 50); this.kur(); this.loop(); }; go(); }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); this.seriDur = true; }
+  yeniMac(seed, S, A) { const M = window.AlanMatch, tac = { sistem: 'Alan', pres: 1, arkada: 0, blok: 'Orta', genislik: 'Normal', tempo: .5, risk: .5, kazaninca: 'Dengeli' };
+    const m = M.createMatch(seed, { len: 99999, tac: [tac, tac], attrs: [A.at, A.df] }), at = m.ps.find(p => p.team === 0 && p.i === 3), df = m.ps.find(p => p.team === 1 && p.i === 3), bk = m.ps.filter(p => p.role === 'Bekçi');
+    m.ps = [at, df, ...bk]; [at.x, at.y, at.vx, at.vy, at.ca] = S.at; [df.x, df.y, df.vx, df.vy] = S.df; at.tx = at.x; at.ty = at.y; df.tx = df.x; df.ty = df.y; m.holder = at; m.ball = null; m.fl = null; m.decT = 2; m.ch = .4; return { m, at, df }; }
+  sonucu(o, t0) { const { m, at, df } = o; if (m.holder && m.holder.team === 1) return 'Savunma kaptı'; if (m.events.some(e => e._t > t0 && e.type === 'gonder')) return 'Gönderdi'; if (m.holder === at && at.x - df.x > 3 && Math.hypot(at.x - df.x, at.y - df.y) > 3.6) return 'Geçti'; if (!m.holder && m.tick - (o.bos || m.tick) > 90) return 'Boşta kaldı'; if (m.tick - t0 > 600) return 'Saklamayı sürdürdü'; return null; }
+  adim(o) { const m = o.m, e0 = m.events[0]; window.AlanMatch.step(m); const yeni = []; for (let i = 0; i < m.events.length && m.events[i] !== e0; i++) { m.events[i]._t = m.tick; yeni.push(m.events[i]); } if (m.holder) o.bos = null; else if (o.bos == null) o.bos = m.tick; return yeni; }
+  kur() { const S = this.SAH[this.state.sahne], o = this.yeniMac(S.seed || this.state.seed, S, S.seed ? { at: { surme: 12, ceviklik: 12, hiz: 12, okuma: 10 }, df: { kesme: 12, ceviklik: 12, hiz: 12, okuma: 10, yogunluk: 10 } } : { at: this.state.at, df: this.state.df }), C = window.AlanCore; this.o = o; this.t0 = o.m.tick; this.fr = []; this.t = 0; this.son = null; this.bitti = null; this.cam = null; this.log = [];
+    this.kaydet([]); for (let i = 0; i < 700 && !this.son; i++) { const y = this.adim(o); const r = this.sonucu(o, this.t0); this.kaydet(y); if (r) this.son = { r, t: this.fr.length - 1 }; }
+    if (this.son) for (let i = 0; i < 50; i++) this.kaydet(this.adim(o));
+    if (S.odak) { const i = this.fr.findIndex(f => f.ev.some(e => e.text.includes(S.odak))); if (i >= 0) { this.t = Math.max(0, i - 25); this.son = this.son || { r: '', t: this.fr.length - 1 }; this.setState({ k: this.state.k + 1, hiz: .1, calis: true }); return; } } /* örnek: çalımdan biraz önceden 0,2× başlar */
+    this.setState({ k: this.state.k + 1 }); }
+  kaydet(yeni) { const { m, at, df } = this.o; this.fr.push({ t: m.tick, h: m.holder ? m.ps.indexOf(m.holder) : -1, b: m.ball ? [m.ball.x, m.ball.y] : null, ch: m.ch, ps: m.ps.map(p => ({ x: p.x, y: p.y, vx: p.vx || 0, vy: p.vy || 0, ca: p.ca, job: p.job || '', nt: !!p.noTouch, pp: p.pplan && p.pplan.until > m.tick ? p.pplan.k : '', fs: p.fiske && p.fiske > m.tick, fk: m.fake && m.fake.hid === p.id && m.tick <= m.fake.until ? { k: m.fake.k, f: (m.tick - m.fake.t0) / Math.max(1, m.fake.until - m.fake.t0), a: Math.atan2(m.fake.to.y - p.y, m.fake.to.x - p.x) } : null, ald: p.adandi > m.tick && !p.hamle ? (p.adNeden === 'geçildi' ? 'GEÇİLDİ' : 'ALDANDI') : '', kw: p.kenarW ? { x: p.kenarW.x, y: p.kenarW.y } : null, hm: p.hamle ? { k: p.hamle.k, f: Math.min(1, (m.tick - p.hamle.t0) / p.hamle.W) } : null, sn: p.son && m.tick - p.son.t < 24 ? { k: p.son.k, ok: p.son.ok, a: (m.tick - p.son.t) / 24, x: p.son.x, y: p.son.y } : null, name: p.name, team: p.team, role: p.role })), ev: yeni.map(e => ({ type: e.type, team: e.team, text: e.text })) }); }
+  loop() { let son = performance.now(); const f = now => { const dt = Math.min(.05, (now - son) / 1000); son = now; if (this.state.calis && this.fr.length) { this.t = Math.min(this.fr.length - 1, this.t + dt * 60 * this.state.hiz); if (this.t >= this.fr.length - 1) this.setState({ calis: false }); } this.ciz(); this.n = (this.n || 0) + 1; if (this.n % 6 === 0) this.forceUpdate(); this.raf = requestAnimationFrame(f); }; this.raf = requestAnimationFrame(f); }
+  // iki tik arasını yumuşatır (yavaş oynatmada tik tik zıplama olmasın): konumlar doğrusal, Çekirdek açısı en kısa yoldan
+  ara(t) { const i = Math.floor(t), A = this.fr[i], B = this.fr[i + 1], u = t - i; if (!A || !B || u < .001) return A; const L = (p, q) => p + (q - p) * u, LA = (p, q) => p == null || q == null ? (q ?? p) : p + Math.atan2(Math.sin(q - p), Math.cos(q - p)) * u;
+    if (A.h !== B.h) { const cp = Fr => Fr.h >= 0 ? (p => [p.x + Math.cos(p.ca ?? 0) * window.AlanCore.Q.body, p.y + Math.sin(p.ca ?? 0) * window.AlanCore.Q.body])(Fr.ps[Fr.h]) : Fr.b, c0 = cp(A), c1 = cp(B); return { ...A, h: -1, b: c0 && c1 ? [L(c0[0], c1[0]), L(c0[1], c1[1])] : c0 || c1, ps: A.ps.map((p, k) => ({ ...p, x: L(p.x, B.ps[k].x), y: L(p.y, B.ps[k].y) })) }; } /* sahip değişirken Çekirdek iki konum arasında kayar */
+    return { ...A, ch: L(A.ch, B.ch), b: A.b && B.b ? [L(A.b[0], B.b[0]), L(A.b[1], B.b[1])] : A.b, ps: A.ps.map((p, k) => { const q = B.ps[k]; return { ...p, x: L(p.x, q.x), y: L(p.y, q.y), vx: L(p.vx, q.vx), vy: L(p.vy, q.vy), ca: A.h === B.h ? LA(p.ca, q.ca) : p.ca }; }) }; }
+  ciz() { const cv = this.cv.current, F = this.ara(this.t); if (!cv || !F) return; const x = cv.getContext('2d'), W = cv.width, H = cv.height, C = window.AlanCore, TQ = C.Turn.TQ, Q = C.Q, BR = TQ.minD / 2, i0 = Math.floor(this.t);
+    const a = F.ps[0], d = F.ps[1], mx = (a.x + d.x) / 2, my = (a.y + d.y) / 2; if (!this.cam) this.cam = { x: mx, y: my }; this.cam.x += (mx - this.cam.x) * .08; this.cam.y += (my - this.cam.y) * .08; const s = 34, ox = W / 2 - this.cam.x * s, oy = H / 2 - this.cam.y * s, X = v => ox + v * s, Y = v => oy + v * s;
+    x.fillStyle = '#0B0A07'; x.fillRect(0, 0, W, H); x.strokeStyle = 'rgba(246,243,236,.05)'; x.lineWidth = 1; for (let g = Math.floor((this.cam.x - 20) / 2) * 2; g < this.cam.x + 20; g += 2) { x.beginPath(); x.moveTo(X(g), 0); x.lineTo(X(g), H); x.stroke(); } for (let g = Math.floor((this.cam.y - 12) / 2) * 2; g < this.cam.y + 12; g += 2) { x.beginPath(); x.moveTo(0, Y(g)); x.lineTo(W, Y(g)); x.stroke(); }
+    x.fillStyle = 'rgba(246,243,236,.06)'; if (Y(0) > 0) x.fillRect(0, 0, W, Y(0)); if (Y(50) < H) x.fillRect(0, Y(50), W, H - Y(50)); x.strokeStyle = 'rgba(246,243,236,.5)'; x.lineWidth = 3; x.strokeRect(X(0), Y(0), 100 * s, 50 * s); x.setLineDash([6, 8]); x.lineWidth = 1.5; x.beginPath(); x.moveTo(X(50), Y(0)); x.lineTo(X(50), Y(50)); x.stroke(); x.setLineDash([]);
+    for (const kx of [0, 100]) { x.fillStyle = '#050403'; x.beginPath(); x.arc(X(kx), Y(25), C.KR * s, 0, 7); x.fill(); x.strokeStyle = 'rgba(246,243,236,.35)'; x.stroke(); }
+    // Çekirdek izi
+    const cp = Fr => { if (!Fr) return null; if (Fr.h >= 0) { const p = Fr.ps[Fr.h], c = p.ca ?? 0; return [p.x + Math.cos(c) * Q.body, p.y + Math.sin(c) * Q.body]; } return Fr.b; };
+    x.lineCap = 'round'; for (let k = Math.max(1, i0 - 70); k <= i0; k++) { const p0 = cp(this.fr[k - 1]), p1 = cp(this.fr[k]); if (!p0 || !p1) continue; const al = (k - (i0 - 70)) / 70; x.strokeStyle = `rgba(255,210,90,${.5 * al})`; x.lineWidth = 2 + 4 * al; x.beginPath(); x.moveTo(X(p0[0]), Y(p0[1])); x.lineTo(X(p1[0]), Y(p1[1])); x.stroke(); }
+    // oyuncular: dokunma menzili, gövde (temasta ezilir), yön, koruma yayı
+    const RN = ['#3D5BF0', '#E0531F'], h = F.h >= 0 ? F.ps[F.h] : null, cc = cp(F);
+    let temas = null; const dd = Math.hypot(a.x - d.x, a.y - d.y); if (dd < TQ.minD + .25) temas = { x: (a.x + d.x) / 2, y: (a.y + d.y) / 2, nx: (d.x - a.x) / (dd || 1), ny: (d.y - a.y) / (dd || 1), k: 1 - Math.max(0, dd - TQ.minD + .25) / .5 };
+    for (const p of F.ps) { if (Math.abs(p.x - this.cam.x) > 22 || Math.abs(p.y - this.cam.y) > 14) continue; const R = p.role === 'Bekçi' ? BR * 1.1 : BR;
+      x.setLineDash([5, 6]); x.strokeStyle = p.nt ? 'rgba(246,243,236,.15)' : 'rgba(246,243,236,.28)'; x.lineWidth = 1.5; x.beginPath(); x.arc(X(p.x), Y(p.y), Q.reach * s, 0, 7); x.stroke(); x.setLineDash([]);
+      x.save(); x.translate(X(p.x), Y(p.y)); if (temas && (p === a || p === d)) { const an = Math.atan2(temas.ny, temas.nx); x.rotate(an); x.scale(1 - .12 * temas.k, 1 + .06 * temas.k); x.rotate(-an); }
+      else if (p.fk || p.ald) { const an = p.fk ? p.fk.a : Math.atan2(p.vy, p.vx), e = p.fk ? Math.sin(Math.min(1, p.fk.f) * Math.PI) * (p.fk.k === 'gövde' ? 1 : .6) : .7; x.rotate(an); x.translate(e * .22 * s, 0); x.scale(1 + .12 * e, 1 - .07 * e); x.rotate(-an); } /* fake: gösterilen yana ağırlık verme; aldanan: yanlış yana yüklenme */
+      x.fillStyle = p.nt ? 'rgba(120,118,110,.9)' : RN[p.team]; x.beginPath(); x.arc(0, 0, R * s, 0, 7); x.fill(); x.lineWidth = 3; x.strokeStyle = p === h ? '#F6F3EC' : 'rgba(14,13,9,.9)'; x.stroke(); x.restore();
+      const sp = Math.hypot(p.vx, p.vy); if (sp > .02) { const L2 = Math.min(3.2, sp * 12); x.strokeStyle = 'rgba(246,243,236,.55)'; x.lineWidth = 2; x.beginPath(); x.moveTo(X(p.x), Y(p.y)); x.lineTo(X(p.x + p.vx / sp * L2), Y(p.y + p.vy / sp * L2)); x.stroke(); }
+      x.font = "600 13px 'JetBrains Mono', monospace"; x.textAlign = 'center'; x.fillStyle = 'rgba(246,243,236,.9)'; x.fillText(p.name, X(p.x), Y(p.y) - R * s - 26); x.font = "11px 'JetBrains Mono', monospace"; x.fillStyle = 'rgba(246,243,236,.55)'; x.fillText((p.nt ? 'sersem · ' : '') + (p.pp === 'fake' ? 'FAKE · ' : p.pp ? p.pp + ' · ' : '') + p.job.slice(0, 28), X(p.x), Y(p.y) - R * s - 12);
+      if (p.nt || p.pp === 'fake') { x.setLineDash([3, 5]); x.strokeStyle = p.pp === 'fake' ? 'rgba(255,210,90,.8)' : 'rgba(246,243,236,.5)'; x.lineWidth = 2; x.beginPath(); x.arc(X(p.x), Y(p.y), (R + .45) * s, 0, 7); x.stroke(); x.setLineDash([]); } }
+    if (h && cc) { const R = BR, opp = F.ps.filter(q => q.team !== h.team && q.role !== 'Bekçi').sort((u, v) => Math.hypot(u.x - h.x, u.y - h.y) - Math.hypot(v.x - h.x, v.y - h.y))[0];
+      if (opp && Math.hypot(opp.x - h.x, opp.y - h.y) < 4.5) { const ao = Math.atan2(opp.y - h.y, opp.x - h.x), ac = h.ca ?? 0, df2 = Math.abs(Math.atan2(Math.sin(ac - ao), Math.cos(ac - ao))); if (df2 > 1.9) { x.strokeStyle = '#FFD25A'; x.lineWidth = 6; x.beginPath(); x.arc(X(h.x), Y(h.y), (R + .18) * s, ao - .75, ao + .75); x.stroke(); } }
+      const P = this.fr[Math.max(0, i0 - 4)]; if (P && P.h === F.h) { let w = (h.ca ?? 0) - (P.ps[P.h].ca ?? 0); w = Math.atan2(Math.sin(w), Math.cos(w)); if (Math.abs(w) > .06) { x.strokeStyle = h.fs ? '#FFD25A' : 'rgba(246,243,236,.7)'; x.lineWidth = h.fs ? 4 : 2.5; const a1 = h.ca ?? 0, a0 = a1 - w * 2.2; x.beginPath(); x.arc(X(h.x), Y(h.y), (Q.body + .55) * s, Math.min(a0, a1), Math.max(a0, a1)); x.stroke(); const ex = h.x + Math.cos(a1) * (Q.body + .55), ey = h.y + Math.sin(a1) * (Q.body + .55), tg = a1 + Math.sign(w) * Math.PI / 2; x.fillStyle = x.strokeStyle; x.beginPath(); x.moveTo(X(ex + Math.cos(tg) * .4), Y(ey + Math.sin(tg) * .4)); x.lineTo(X(ex + Math.cos(tg + 2.4) * .3), Y(ey + Math.sin(tg + 2.4) * .3)); x.lineTo(X(ex + Math.cos(tg - 2.4) * .3), Y(ey + Math.sin(tg - 2.4) * .3)); x.fill(); if (h.fs) { x.font = "700 14px 'JetBrains Mono', monospace"; x.fillText('FİSKE', X(ex) + 18, Y(ey)); } } } }
+    // fake: gösterilen niyetin soluk "hayali" (pas/gönderme: hatta hayalet Çekirdek, gövde: yana kesikli ok) ve aldananın yanlış adımı
+    for (const p of F.ps) { if (p.fk) { const an = p.fk.a, f = Math.min(1, p.fk.f), al = .55 * Math.sin(f * Math.PI); x.setLineDash([8, 8]); x.strokeStyle = `rgba(246,243,236,${al})`; x.lineWidth = 2.5; x.beginPath(); if (p.fk.k === 'gövde') { x.moveTo(X(p.x), Y(p.y)); x.lineTo(X(p.x + Math.cos(an) * 3.2), Y(p.y + Math.sin(an) * 3.2)); } else { const L2 = 2 + f * 7; x.moveTo(X(p.x + Math.cos(an) * 1.4), Y(p.y + Math.sin(an) * 1.4)); x.lineTo(X(p.x + Math.cos(an) * L2), Y(p.y + Math.sin(an) * L2)); } x.stroke(); x.setLineDash([]);
+        if (p.fk.k !== 'gövde' && f > .4) { const L2 = 1.4 + (f - .4) / .6 * 6; x.fillStyle = `rgba(246,243,236,${al * .7})`; x.beginPath(); x.arc(X(p.x + Math.cos(an) * L2), Y(p.y + Math.sin(an) * L2), .38 * s, 0, 7); x.fill(); }
+        x.font = "700 12px 'JetBrains Mono', monospace"; x.textAlign = 'center'; x.fillStyle = `rgba(246,243,236,${.4 + al})`; x.fillText(p.fk.k === 'gövde' ? 'GÖVDE FAKE' : p.fk.k === 'pas' ? 'PAS FAKE' : 'GÖNDERME FAKE', X(p.x), Y(p.y) + BR * s + 22); }
+      if (p.ald) { x.font = "700 12px 'JetBrains Mono', monospace"; x.textAlign = 'center'; x.fillStyle = '#FFD25A'; x.fillText(p.ald, X(p.x), Y(p.y) + BR * s + 22); } }
+    // kenardan çalım: Çekirdek duvara gider (çizgisi izde), taşıyıcı rakibin öbür yanından dolaşır; dolaşma noktası halka ile
+    for (const p of F.ps) if (p.kw) { x.setLineDash([4, 6]); x.strokeStyle = 'rgba(255,210,90,.8)'; x.lineWidth = 2; x.beginPath(); x.moveTo(X(p.x), Y(p.y)); x.lineTo(X(p.kw.x), Y(p.kw.y)); x.stroke(); x.setLineDash([]); x.beginPath(); x.arc(X(p.kw.x), Y(p.kw.y), .5 * s, 0, 7); x.stroke(); x.font = "700 12px 'JetBrains Mono', monospace"; x.textAlign = 'center'; x.fillStyle = '#FFD25A'; x.fillText('KENAR ÇALIMI · dolaş', X(p.x), Y(p.y) + BR * s + 22); }
+    // ikili hamlesi: hazırlıkta savunmacı Çekirdeğe (uzanma) ya da taşıyıcının gövdesine (omuz) doğru yüklenir; vuruş anında sonuç: tuttu (altın) ya da boşa (gri)
+    for (const p of F.ps) { const hm = p.hm, sn = p.sn; if (hm && h) { const tgx = hm.k === 'omuz' ? h.x : cc[0], tgy = hm.k === 'omuz' ? h.y : cc[1], an = Math.atan2(tgy - p.y, tgx - p.x), e = hm.f * hm.f;
+        if (hm.k === 'uzan') { const L2 = BR + (Q.reach + 1 - BR) * e, w = .5 - .3 * e; x.fillStyle = `rgba(246,243,236,${.18 + .4 * e})`; x.beginPath(); x.moveTo(X(p.x + Math.cos(an + w) * BR), Y(p.y + Math.sin(an + w) * BR)); x.lineTo(X(p.x + Math.cos(an) * L2), Y(p.y + Math.sin(an) * L2)); x.lineTo(X(p.x + Math.cos(an - w) * BR), Y(p.y + Math.sin(an - w) * BR)); x.fill(); }
+        else { x.strokeStyle = `rgba(255,210,90,${.4 + .5 * e})`; x.lineWidth = 6 + 4 * e; x.beginPath(); x.arc(X(p.x), Y(p.y), (BR + .12) * s, an - .7, an + .7); x.stroke(); for (let k = 1; k <= 3; k++) { x.strokeStyle = `rgba(246,243,236,${.25 * e / k})`; x.lineWidth = 2; x.beginPath(); x.arc(X(p.x - Math.cos(an) * k * .45), Y(p.y - Math.sin(an) * k * .45), (BR + .12) * s, an - .5, an + .5); x.stroke(); } }
+        x.font = "700 12px 'JetBrains Mono', monospace"; x.textAlign = 'center'; x.fillStyle = 'rgba(246,243,236,.85)'; x.fillText(hm.k === 'omuz' ? 'OMUZ' : 'UZANIYOR', X(p.x), Y(p.y) + BR * s + 22); }
+      if (sn) { const al = 1 - sn.a, r = (.6 + sn.a * 1.4) * s; x.strokeStyle = sn.ok ? `rgba(255,210,90,${al})` : `rgba(246,243,236,${.6 * al})`; x.lineWidth = 3; x.beginPath(); x.arc(X(sn.x), Y(sn.y), r, 0, 7); x.stroke(); if (sn.a < .6) { x.font = "700 13px 'JetBrains Mono', monospace"; x.textAlign = 'center'; x.fillStyle = x.strokeStyle; x.fillText(sn.ok ? (sn.k === 'omuz' ? 'OMUZ!' : 'ALDI') : 'BOŞA', X(sn.x), Y(sn.y) - r - 6); } } }
+    if (temas) { const tx = X(temas.x), ty = Y(temas.y), r = 10 + 10 * temas.k; x.strokeStyle = `rgba(255,210,90,${.4 + .5 * temas.k})`; x.lineWidth = 2.5; for (let k = 0; k < 6; k++) { const an = k * Math.PI / 3 + i0 * .1; x.beginPath(); x.moveTo(tx + Math.cos(an) * r * .35, ty + Math.sin(an) * r * .35); x.lineTo(tx + Math.cos(an) * r, ty + Math.sin(an) * r); x.stroke(); } }
+    if (cc) { x.fillStyle = '#F6F3EC'; x.beginPath(); x.arc(X(cc[0]), Y(cc[1]), .42 * s, 0, 7); x.fill(); x.strokeStyle = '#FFD25A'; x.lineWidth = 3; x.beginPath(); x.arc(X(cc[0]), Y(cc[1]), .42 * s + 4, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * (F.ch || 0)); x.stroke(); }
+    x.textAlign = 'left'; }
+  git(t) { this.setState({ calis: false }); this.t = Math.max(0, Math.min(this.fr.length - 1, t)); this.forceUpdate(); }
+  oz(g, k, dv) { const o = { ...this.state[g], [k]: Math.max(4, Math.min(20, this.state[g][k] + dv)) }; this.setState({ [g]: o, calis: true }, () => this.kur()); }
+  seriCalis() { if (this.state.seriOn) { this.seriDur = true; return; } this.seriDur = false; const S = this.SAH[this.state.sahne], A = { at: this.state.at, df: this.state.df }, out = { n: 0, r: {}, ev: { fiske: 0, fake: 0, ald: 0, kac: 0, sure: 0 } }; this.setState({ seriOn: true, istat: out });
+    const bir = () => { if (this.seriDur || out.n >= 30) { this.setState({ seriOn: false, istat: { ...out } }); return; } const o = this.yeniMac(1000 + out.n * 7 + this.state.seed, S, A), t0 = o.m.tick; let r = null;
+      for (let i = 0; i < 700 && !r; i++) { const y = this.adim(o); for (const e of y) { if (/fiske/.test(e.text)) out.ev.fiske++; if (e.type === 'fake') { out.ev.fake++; if (/aldandı/.test(e.text)) out.ev.ald++; } if (/kaçırdı/.test(e.text)) out.ev.kac++; } r = this.sonucu(o, t0); }
+      out.ev.sure += o.m.tick - t0; out.r[r || 'Saklamayı sürdürdü'] = (out.r[r || 'Saklamayı sürdürdü'] || 0) + 1; out.n++; this.setState({ istat: { ...out } }); setTimeout(bir, 0); }; bir(); }
+  renderVals() { const S = this.state, F = this.fr[Math.floor(this.t)], RN = ['#3D5BF0', '#E0531F'];
+    const evs = []; for (let i = 0; i <= Math.floor(this.t) && i < this.fr.length; i++) for (const e of this.fr[i].ev) evs.push({ t: ((this.fr[i].t - (this.fr[0] ? this.fr[0].t : 0)) / 30).toFixed(2), text: e.text, c: e.type === 'sayi' ? '#FFD25A' : RN[e.team] || '#F6F3EC', i });
+    const sonEv = evs.length ? evs[evs.length - 1] : null, anOp = sonEv && Math.floor(this.t) - sonEv.i < 70 ? 1 : 0;
+    const bitti = this.son && Math.floor(this.t) >= this.son.t ? this.son.r : null, ist = S.istat, rk = { 'Geçti': '#3D5BF0', 'Gönderdi': '#3D5BF0', 'Saklamayı sürdürdü': '#8FA0F6', 'Savunma kaptı': '#E0531F', 'Boşta kaldı': 'rgba(246,243,236,.5)' };
+    const istat = ist ? [...Object.entries(ist.r).map(([k, v]) => ({ ad: k, n: v, w: (v / Math.max(1, ist.n) * 100) + '%', c: rk[k] || '#F6F3EC' })), { ad: 'fiske (toplam)', n: ist.ev.fiske, w: Math.min(100, ist.ev.fiske / Math.max(1, ist.n) * 50) + '%', c: '#FFD25A' }, { ad: 'fake · aldanan', n: `${ist.ev.fake}·${ist.ev.ald}`, w: (ist.ev.ald / Math.max(1, ist.ev.fake) * 100) + '%', c: '#FFD25A' }, { ad: 'ortalama süre (sn)', n: (ist.ev.sure / Math.max(1, ist.n) / 30).toFixed(1), w: Math.min(100, ist.ev.sure / Math.max(1, ist.n) / 3) + '%', c: 'rgba(246,243,236,.6)' }] : [{ ad: 'Henüz oynatılmadı', n: '', w: '0%', c: 'transparent' }];
+    const OZ = { surme: 'Sürme', ceviklik: 'Çeviklik', hiz: 'Hız', okuma: 'Okuma', kesme: 'Kesme', yogunluk: 'Yoğunluk' };
+    return { cv: this.cv, sonuc: bitti ? 'Sonuç: ' + bitti : S.seriOn ? `oynatılıyor ${ist ? ist.n : 0}/30` : '', atAd: F ? F.ps[0].name : '', dfAd: F ? F.ps[1].name : '', dfIs: F ? (F.ps[1].pp === 'fake' ? 'fake pres' : F.ps[1].job.split(' ')[0] || 'savunma') : '',
+      anYazi: sonEv ? sonEv.text : '', anOp, oynat: () => { if (this.t >= this.fr.length - 1) this.t = 0; this.setState({ calis: !S.calis }); }, oynatTxt: S.calis ? 'Duraklat' : 'Oynat', geri: () => this.git(Math.floor(this.t) - 1), ileri: () => this.git(Math.floor(this.t) + 1), bastan: () => { this.t = 0; this.cam = null; this.setState({ calis: true }); }, yeniZar: () => this.setState({ seed: S.seed + 1, calis: true }, () => this.kur()),
+      hizlar: [[.1, '0,2×'], [.25, '0,5×'], [.5, '1×'], [1, '2×']].map(([v, ad]) => ({ ad, bg: S.hiz === v ? '#F6F3EC' : 'transparent', fg: S.hiz === v ? '#0E0D09' : '#F6F3EC', set: () => this.setState({ hiz: v }) })),
+      zMax: Math.max(1, this.fr.length - 1), zVal: Math.floor(this.t), zaman: e => this.git(+e.target.value), saat: `${(Math.floor(this.t) / 30).toFixed(2)} / ${((this.fr.length - 1) / 30).toFixed(2)} sn`,
+      sahneler: Object.entries(this.SAH).map(([k, v]) => ({ ad: v.ad, not: v.not, bg: S.sahne === k ? '#F6F3EC' : 'transparent', fg: S.sahne === k ? '#0E0D09' : '#F6F3EC', set: () => { const ay = v.ayar || {}; this.setState({ sahne: k, calis: true, istat: null, at: { ...S.at, ...(ay.at || {}) }, df: { ...S.df, ...(ay.df || {}) } }, () => this.kur()); } })),
+      ozGrup: [['at', 'Taşıyıcı', '#3D5BF0', ['surme', 'ceviklik', 'hiz', 'okuma']], ['df', 'Presçi', '#E0531F', ['kesme', 'ceviklik', 'hiz', 'okuma', 'yogunluk']]].map(([g, ad, renk, ks]) => ({ ad, renk, ozler: ks.map(k => ({ ad: OZ[k], v: S[g][k], eksi: () => this.oz(g, k, -2), arti: () => this.oz(g, k, 2) })) })),
+      seri: () => this.seriCalis(), seriTxt: S.seriOn ? 'Durdur' : 'Başlat', istat, olaylar: evs.slice(-40).reverse() }; }
+}
+</script>
+</body>
+</html>

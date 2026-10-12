@@ -12,4 +12,4 @@ while (!m.over && m.tick < 5400) { const sc = m.score.slice(); M.step(m);
   if (m.holder) { for (const p of ps) if (p.r == null) p.r = m.holder.team === p.t ? 1 : 0; if (hT != null && m.holder.team !== hT) swaps++; hT = m.holder.team; }
   if (m.tick % 300 === 0) iz = (Math.imul(iz, 31) + Math.round(m.ps.reduce((s, p) => s + p.x * 7 + p.y, 0) * 1000)) | 0; }
 const P = ps.filter(p => p.r != null);
-console.log(JSON.stringify({ i, tac: [tA, tB], skor: m.score, sn: +((Date.now() - t0) / 1000).toFixed(1), gonder: sh, pas: P.length, tutma: +(P.reduce((s, p) => s + p.r, 0) / P.length).toFixed(2), elDegisti: swaps, ikili: m.st.duel, iz }));
+console.log(JSON.stringify({ i, tac: [tA, tB], skor: m.score, sn: +((Date.now() - t0) / 1000).toFixed(1), gonder: sh, pas: P.length, tutma: +(P.reduce((s, p) => s + p.r, 0) / P.length).toFixed(2), elDegisti: swaps, ikili: m.st.duel, calim: m.st.calim || [0, 0], kendineOlay: m.events.length, iz }));

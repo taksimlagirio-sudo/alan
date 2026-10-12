@@ -1,0 +1,17 @@
+{"tur":"önüne","P":0.985,"uz":7.8,"rak":4.4,"ot":false,"sonuc":1,"t":42,"team":0}
+{"tur":"önüne","P":0.993,"uz":14.1,"rak":2.8,"ot":false,"sonuc":1,"t":82,"team":0}
+{"tur":"pas","P":0.972,"uz":11.8,"rak":7.3,"ot":false,"sonuc":1,"t":106,"team":0}
+{"tur":"kenardan","P":0.994,"uz":12.7,"rak":6.6,"ot":false,"sonuc":1,"t":155,"team":0}
+{"tur":"önüne","P":0.988,"uz":44.3,"rak":6,"ot":false,"sonuc":1,"t":283,"team":0}
+{"tur":"kenardan","P":0.995,"uz":12,"rak":3.4,"ot":false,"sonuc":0,"t":404,"team":0}
+{"tur":"pas","P":1,"uz":15.5,"rak":4.2,"ot":false,"sonuc":1,"t":570,"team":1}
+{"tur":"pas","P":1,"uz":28.3,"rak":3.2,"ot":false,"sonuc":1,"t":796,"team":1}
+{"tur":"kenardan","P":0.378,"uz":55.8,"rak":40.1,"ot":false,"sonuc":1,"t":3574,"team":1}
+{"tur":"önüne","P":0.982,"uz":36.7,"rak":2.5,"ot":false,"sonuc":1,"t":3753,"team":0}
+{"tur":"pas","P":0.996,"uz":13.7,"rak":2.8,"ot":false,"sonuc":1,"t":3840,"team":0}
+{"tur":"kenardan","P":0.79,"uz":39.7,"rak":6.4,"ot":false,"sonuc":1,"t":3900,"team":0}
+{"tur":"pas","P":0.994,"uz":19.8,"rak":2.8,"ot":false,"sonuc":1,"t":3988,"team":0}
+{"tur":"pas","P":0.988,"uz":6.2,"rak":1.7,"ot":false,"sonuc":1,"t":4041,"team":0}
+{"tur":"pas","P":0.997,"uz":8.9,"rak":4.4,"ot":false,"sonuc":0,"t":4065,"team":0}
+{"tur":"önüne","P":0.894,"uz":13.5,"rak":2.7,"ot":false,"sonuc":1,"t":4165,"team":1}
+{"tur":"önüne","P":1,"uz":18.3,"rak":1.6,"ot":false,"sonuc":1,"t":4251,"team":0}

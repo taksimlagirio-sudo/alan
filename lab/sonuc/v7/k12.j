@@ -1,0 +1,13 @@
+{"tur":"önüne","P":0.99,"uz":11,"rak":3.3,"ot":false,"sonuc":1,"t":41,"team":0}
+{"tur":"kenardan","P":0.999,"uz":16,"rak":5.4,"ot":false,"sonuc":1,"t":67,"team":0}
+{"tur":"önüne","P":0.999,"uz":34.4,"rak":3.7,"ot":false,"sonuc":1,"t":152,"team":0}
+{"tur":"önüne","P":0.992,"uz":16,"rak":1.2,"ot":false,"sonuc":1,"t":290,"team":1}
+{"tur":"önüne","P":0.996,"uz":21.8,"rak":6.6,"ot":false,"sonuc":1,"t":342,"team":1}
+{"tur":"kendine","P":0.953,"uz":11.9,"rak":5.5,"ot":false,"sonuc":1,"t":386,"team":1}
+{"tur":"önüne","P":0.989,"uz":26.9,"rak":2.6,"ot":false,"sonuc":1,"t":525,"team":1}
+{"tur":"pas","P":1,"uz":17.4,"rak":3,"ot":false,"sonuc":1,"t":666,"team":0}
+{"tur":"kenardan","P":0.497,"uz":40.1,"rak":34.9,"ot":false,"sonuc":1,"t":4290,"team":0}
+{"tur":"kenardan","P":0.998,"uz":24.4,"rak":4,"ot":false,"sonuc":1,"t":4432,"team":1}
+{"tur":"pas","P":1,"uz":29.5,"rak":2.9,"ot":false,"sonuc":1,"t":4551,"team":1}
+{"tur":"önüne","P":0.999,"uz":24.5,"rak":4.5,"ot":false,"sonuc":1,"t":4640,"team":1}
+{"tur":"kenardan","P":0.377,"uz":58.1,"rak":22,"ot":false,"sonuc":0,"t":5240,"team":1}

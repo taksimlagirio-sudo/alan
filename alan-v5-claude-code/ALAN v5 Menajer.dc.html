@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5DC;color:#16150F;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1F3FD1}a:hover{color:#E0531F}
+button,select{font:inherit;color:inherit}
+</style>
+</helmet>
+<div style="max-width:1320px;margin:0 auto;padding:20px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box">
+  <header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;background:#16150F;color:#F6F3EC;padding:14px 20px">
+    <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
+      <span style="font-size:28px;font-weight:800;letter-spacing:-.02em">{{ bizAd }}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;opacity:.85">maç öncesi · kadro ve taktik</span>
+    </div>
+    <button onClick="{{ git }}" style="background:#F6F3EC;color:#16150F;border:0;padding:12px 22px;font-weight:800;font-size:17px;cursor:pointer">Maça çık: {{ bizAd }} – {{ rakipAd }} →</button>
+  </header>
+
+  <section style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase">Rakip · analiz</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px">
+      <sc-for list="{{ rakipler }}" as="r" hint-placeholder-count="3">
+        <button onClick="{{ r.sec }}" style="text-align:left;background:{{ r.bg }};color:{{ r.fg }};border:2px solid #16150F;padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline"><span style="font-size:20px;font-weight:800">{{ r.ad }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px">{{ r.tarz }}</span></div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px">savunma {{ r.sav }} · hücum {{ r.huc }}</div>
+          <sc-for list="{{ r.notlar }}" as="n" hint-placeholder-count="3"><div style="font-size:14px;line-height:1.35">· {{ n }}</div></sc-for>
+        </button>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+    <div style="flex:1 1 560px;min-width:0;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        <sc-for list="{{ gorunum }}" as="g" hint-placeholder-count="2">
+          <button onClick="{{ g.sec }}" style="background:{{ g.bg }};color:{{ g.fg }};border:2px solid #16150F;padding:7px 14px;cursor:pointer;font-weight:600">{{ g.ad }}</button>
+        </sc-for>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:12px;margin-left:auto">diziliş</span>
+        <sc-for list="{{ dizler }}" as="d" hint-placeholder-count="6">
+          <button onClick="{{ d.sec }}" style="background:{{ d.bg }};color:{{ d.fg }};border:1.5px solid #16150F;padding:5px 8px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px">{{ d.ad }}</button>
+        </sc-for>
+      </div>
+      <div style="position:relative;aspect-ratio:2/1;background:#2F6B3F;border:2px solid #16150F;overflow:hidden">
+        <div style="position:absolute;left:50%;top:0;bottom:0;width:2px;background:rgba(246,243,236,.5)"></div>
+        <div style="position:absolute;left:-5.5%;top:39%;width:11%;height:22%;border-radius:50%;background:#0E0D09"></div>
+        <div style="position:absolute;right:-5.5%;top:39%;width:11%;height:22%;border-radius:50%;background:#0E0D09"></div>
+        <div style="position:absolute;right:12px;top:10px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#F6F3EC;opacity:.85">hücum yönü →</div>
+        <sc-for list="{{ yerler }}" as="y" hint-placeholder-count="7">
+          <button onClick="{{ y.sec }}" style="position:absolute;left:{{ y.x }};top:{{ y.y }};transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;border:0;cursor:pointer;padding:0">
+            <span style="width:46px;height:46px;border-radius:50%;background:{{ y.renk }};border:3px solid {{ y.kenar }};display:flex;align-items:center;justify-content:center;color:#F6F3EC;font-weight:800;font-size:15px">{{ y.no }}</span>
+            <span style="background:rgba(14,13,9,.82);color:#F6F3EC;padding:2px 6px;font-size:13px;font-weight:600;white-space:nowrap">{{ y.ad }}</span>
+            <span style="background:rgba(246,243,236,.9);color:#16150F;padding:1px 5px;font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap">{{ y.rol }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="font-size:14px;line-height:1.4">Bir yere dokun, sağdan oyuncuyu ve rolünü seç. Savunma ve hücum için ayrı diziliş; oyuncu her ikisinde de aynı numaradaki yerde oynar.</div>
+    </div>
+
+    <div style="flex:1 1 360px;min-width:0;display:flex;flex-direction:column;gap:12px">
+      <div style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:19px;font-weight:800">{{ selBaslik }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px">{{ selAlt }}</span></div>
+        <sc-if value="{{ selSaha }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:13px">Top bizdeyken</span>
+            <div style="display:flex;gap:4px;flex-wrap:wrap"><sc-for list="{{ hRoller }}" as="o" hint-placeholder-count="5"><button onClick="{{ o.sec }}" style="flex:1;min-width:64px;background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid #16150F;padding:6px;cursor:pointer;font-size:14px" title="{{ o.acik }}">{{ o.ad }}</button></sc-for></div>
+            <span style="font-size:13px">Top rakipteyken</span>
+            <div style="display:flex;gap:4px;flex-wrap:wrap"><sc-for list="{{ sRoller }}" as="o" hint-placeholder-count="5"><button onClick="{{ o.sec }}" style="flex:1;min-width:64px;background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid #16150F;padding:6px;cursor:pointer;font-size:14px" title="{{ o.acik }}">{{ o.ad }}</button></sc-for></div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.4">{{ rolAcik }}</span>
+          </div>
+        </sc-if>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.75">bu yere oyuncu</div>
+        <div style="display:flex;flex-direction:column;gap:4px;max-height:330px;overflow:auto">
+          <sc-for list="{{ adaylar }}" as="a" hint-placeholder-count="6">
+            <button onClick="{{ a.sec }}" style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;text-align:left;background:{{ a.bg }};color:{{ a.fg }};border:1.5px solid #16150F;padding:6px 8px;cursor:pointer">
+              <span style="font-weight:700">{{ a.ad }} <span style="font-weight:400;font-size:13px">· {{ a.tip }}</span></span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px">{{ a.yer }}</span>
+              <span style="grid-column:1/-1;font-family:'JetBrains Mono',monospace;font-size:12px">{{ a.ozet }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase">Takım talimatları</div>
+        <sc-for list="{{ talimat }}" as="t" hint-placeholder-count="8">
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <span style="font-size:13px">{{ t.ad }}</span>
+            <div style="display:flex;gap:4px;flex-wrap:wrap"><sc-for list="{{ t.ops }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.sec }}" style="flex:1;min-width:52px;background:{{ o.bg }};color:{{ o.fg }};border:1.5px solid #16150F;padding:5px;cursor:pointer;font-size:14px">{{ o.ad }}</button></sc-for></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section style="border:2px solid #16150F;background:#F6F3EC;padding:12px 14px;overflow-x:auto">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Kadro · {{ bizAd }}</div>
+    <div style="display:grid;grid-template-columns:minmax(120px,1.4fr) 60px repeat(8,minmax(44px,1fr));gap:4px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;min-width:640px">
+      <span style="font-weight:600">Oyuncu</span><span style="font-weight:600">Yer</span>
+      <sc-for list="{{ ozBaslik }}" as="b" hint-placeholder-count="8"><span style="font-weight:600;text-align:center">{{ b }}</span></sc-for>
+      <sc-for list="{{ kadro }}" as="k" hint-placeholder-count="12">
+        <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px">{{ k.ad }}</span>
+        <span>{{ k.yer }}</span>
+        <sc-for list="{{ k.oz }}" as="z" hint-placeholder-count="8"><span style="text-align:center;font-weight:{{ z.w }};background:{{ z.bg }};color:{{ z.fg }};padding:2px 0">{{ z.v }}</span></sc-for>
+      </sc-for>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const OZ = [['okuma', 'Oku'], ['aktarim', 'Akt'], ['tutus', 'Tut'], ['kesme', 'Kes'], ['yogunluk', 'Yoğ'], ['hiz', 'Hız'], ['cesaret', 'Ces'], ['surme', 'Sür']];
+const a = (okuma, aktarim, tutus, kesme, yogunluk, hiz, cesaret, surme) => ({ okuma, aktarim, tutus, kesme, yogunluk, hiz, cesaret, surme });
+const KADRO = [
+  { id: 'aras', ad: 'Aras', tip: 'Bekçi', a: a(13, 11, 15, 10, 10, 10, 11, 8) },
+  { id: 'levent', ad: 'Levent', tip: 'Bekçi', a: a(10, 9, 13, 9, 11, 12, 13, 8) },
+  { id: 'deniz', ad: 'Deniz', tip: 'Kesici', a: a(13, 10, 11, 15, 13, 9, 11, 8) },
+  { id: 'mert', ad: 'Mert', tip: 'Duvar', a: a(11, 9, 10, 13, 16, 8, 12, 7) },
+  { id: 'ece', ad: 'Ece', tip: 'Kurucu', a: a(14, 15, 12, 10, 9, 10, 10, 11) },
+  { id: 'cansu', ad: 'Cansu', tip: 'Okuyucu', a: a(15, 13, 11, 12, 10, 10, 9, 10) },
+  { id: 'kaan', ad: 'Kaan', tip: 'Koşucu', a: a(10, 9, 10, 8, 9, 16, 12, 13) },
+  { id: 'selin', ad: 'Selin', tip: 'Sürücü', a: a(11, 11, 11, 8, 9, 14, 13, 15) },
+  { id: 'tuna', ad: 'Tuna', tip: 'Pivot', a: a(12, 13, 14, 9, 13, 9, 11, 10) },
+  { id: 'ilgin', ad: 'Ilgın', tip: 'Çok yönlü', a: a(11, 11, 11, 12, 11, 13, 10, 11) },
+  { id: 'bora', ad: 'Bora', tip: 'Cesur', a: a(10, 11, 10, 10, 11, 12, 15, 12) },
+  { id: 'yaz', ad: 'Yaz', tip: 'Genç', a: a(9, 10, 10, 10, 10, 14, 11, 12) }
+];
+const RAKIP = [
+  { ad: 'Demir Blok', tarz: 'Savunmacı · kontra', tac: { sistem: 'Alan', pres: 1, arkada: 2, blok: 'Düşük', genislik: 'Dar', tempo: .4, risk: .3, kazaninca: 'Kontra' }, diz: { sav: '3-2-1', huc: '2-2-2' },
+    roller: [{ h: 'Kurucu', s: 'Süpürücü' }, { h: 'Serbest', s: 'Süpürücü' }, { h: 'Serbest', s: 'Markajcı' }, { h: 'Serbest', s: 'Bölge' }, { h: 'Koşucu', s: 'Presçi' }, { h: 'Koşucu', s: 'Önde' }],
+    notlar: ['Düşük blok, iki kişi hep arkada: Kuyu önü kalabalık', 'Topu kazanınca iki hızlı uç kontraya çıkar', 'Kesme ve Yoğunluk yüksek, Sürme zayıf: sabırlı pasla açılır'],
+    oyuncular: [['Kaya', a(12, 9, 14, 10, 11, 9, 11, 7)], ['Bulut', a(11, 9, 10, 15, 14, 8, 11, 7)], ['Taş', a(10, 8, 10, 14, 16, 8, 12, 7)], ['Ayaz', a(13, 11, 10, 13, 12, 9, 10, 8)], ['Gökay', a(10, 10, 10, 12, 13, 10, 11, 8)], ['Rüzgâr', a(9, 9, 10, 8, 9, 16, 12, 12)], ['Şimşek', a(9, 10, 10, 8, 9, 15, 13, 12)]] },
+  { ad: 'Fırtına', tarz: 'Hücumcu · ön alan', tac: { sistem: 'Adam adama', pres: 2, arkada: 1, blok: 'Yüksek', genislik: 'Geniş', tempo: .8, risk: .8, kazaninca: 'Dengeli' }, diz: { sav: '2-2-2', huc: '2-1-3' },
+    roller: [{ h: 'Serbest', s: 'Bölge' }, { h: 'Kurucu', s: 'Süpürücü' }, { h: 'Koşucu', s: 'Presçi' }, { h: 'Kanat', s: 'Presçi' }, { h: 'Kanat', s: 'Bölge' }, { h: 'Pivot', s: 'Presçi' }],
+    notlar: ['Yüksek blok, iki presçi: arkası açık kalır', 'Adam adama: oyuncular yer değiştirdikçe dağılır', 'Hızlı ve cesur, Okuma düşük: uzun pasa ve boşluğa zayıf'],
+    oyuncular: [['Tufan', a(9, 9, 12, 9, 10, 12, 14, 8)], ['Alp', a(9, 10, 10, 12, 11, 14, 13, 9)], ['Baran', a(9, 11, 10, 11, 10, 13, 14, 11)], ['Efe', a(10, 10, 10, 12, 12, 15, 13, 10)], ['Kartal', a(9, 12, 11, 9, 9, 15, 14, 14)], ['Yıldırım', a(9, 11, 10, 9, 9, 16, 13, 14)], ['Volkan', a(10, 12, 13, 9, 13, 13, 15, 11)]] },
+  { ad: 'Saat Kulesi', tarz: 'Sabırlı · topa sahip', tac: { sistem: 'Alan', pres: 1, arkada: 1, blok: 'Orta', genislik: 'Geniş', tempo: .2, risk: .2, kazaninca: 'Yerleş' }, diz: { sav: '2-3-1', huc: '2-2-2' },
+    roller: [{ h: 'Kurucu', s: 'Bölge' }, { h: 'Kurucu', s: 'Süpürücü' }, { h: 'Serbest', s: 'Bölge' }, { h: 'Serbest', s: 'Bölge' }, { h: 'Kanat', s: 'Presçi' }, { h: 'Pivot', s: 'Bölge' }],
+    notlar: ['Düşük tempo, az risk: topu uzun tutar, rakibi üstüne çeker', 'Okuma ve Aktarım yüksek, Hız düşük: arkaya koşulara geç döner', 'Kazanınca yerleşir: kontraya az çıkar, yüksek pres onu zorlar'],
+    oyuncular: [['Zaman', a(14, 12, 13, 10, 10, 9, 10, 8)], ['Akrep', a(14, 14, 11, 12, 10, 9, 9, 10)], ['Yelkovan', a(15, 15, 11, 11, 10, 9, 9, 11)], ['Sarkaç', a(14, 15, 12, 10, 10, 10, 10, 12)], ['Çark', a(13, 13, 12, 12, 11, 10, 9, 10)], ['Kadran', a(13, 14, 11, 9, 9, 11, 10, 13)], ['Zemberek', a(13, 13, 14, 9, 12, 9, 10, 11)]] }
+];
+const DS = ['2-2-2', '3-2-1', '2-3-1', '3-1-2', '4-1-1', '2-1-2-1'], DH = ['2-2-2', '1-3-2', '2-1-3', '1-2-3', '3-1-2', '2-3-1', '1-2-1-2'];
+const HR = { Serbest: 'Yerleşim hesabına göre boşluk arar', Kurucu: 'Topun gerisinde kalır, oyunu kurar', Kanat: 'Çizgide, geniş durur', 'Koşucu': 'Son çizginin arkasına koşar', Pivot: 'Kuyu önünde, ortada durur' };
+const SR = { 'Bölge': 'Bölgesini tutar, topa göre kayar', 'Süpürücü': 'En arkada kalır', 'Presçi': 'Taşıyıcıya ilk basan', 'Markajcı': 'Rakibin en tehlikelisini takip eder', 'Önde': 'Kontra için ileride bekler' };
+function dizSlots(str) { const rows = String(str).split('-').map(Number).filter(n => n > 0), R = rows.length, LS = { 1: [0], 2: [-.5, .5], 3: [-.8, 0, .8], 4: [-.9, -.3, .3, .9], 5: [-.9, -.45, 0, .45, .9] }, out = []; rows.forEach((n, k) => { const d = R > 1 ? .2 + .6 * k / (R - 1) : .45; for (const l of (LS[n] || LS[3])) out.push({ d, l }); }); return out; }
+const KEY = 'alan-v5-menajer-kurulum';
+class Component extends DCLogic {
+  state = (() => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.dizilim && s.dizilim.length === 7) return { ...s, sel: 0 }; } catch (e) {} return { rakip: 0, gor: 'sav', diz: { sav: '2-2-2', huc: '2-2-2' }, dizilim: ['aras', 'deniz', 'mert', 'ece', 'cansu', 'kaan', 'tuna'], roller: [{ h: 'Kurucu', s: 'Süpürücü' }, { h: 'Serbest', s: 'Bölge' }, { h: 'Kurucu', s: 'Bölge' }, { h: 'Serbest', s: 'Presçi' }, { h: 'Koşucu', s: 'Önde' }, { h: 'Pivot', s: 'Bölge' }], tac: { sistem: 'Alan', pres: 1, arkada: 1, blok: 'Orta', genislik: 'Normal', tempo: .5, risk: .5, kazaninca: 'Dengeli' }, sel: 0 }; })();
+  set(p) { this.setState(p, () => { const { sel, ...k } = this.state; try { localStorage.setItem(KEY, JSON.stringify(k)); } catch (e) {} }); }
+  renderVals() {
+    const S = this.state, bizAd = 'Liman', R = RAKIP[S.rakip], on = c => c ? ['#16150F', '#F6F3EC'] : ['transparent', '#16150F'], P = id => KADRO.find(k => k.id === id);
+    const pts = dizSlots(S.diz[S.gor]), yerler = [{ x: '5%', y: '50%' }].concat(pts.slice(0, 6).map(q => ({ x: (8 + q.d * 84).toFixed(1) + '%', y: (50 + q.l * 38).toFixed(1) + '%' })));
+    const assign = id => { const d = S.dizilim.slice(), j = d.indexOf(id); if (j >= 0) d[j] = d[S.sel]; d[S.sel] = id; this.set({ dizilim: d }); };
+    const role = (k, v) => { const r = S.roller.map((x, i) => i === S.sel - 1 ? { ...x, [k]: v } : x); this.set({ roller: r }); };
+    const sp = P(S.dizilim[S.sel]), saha = S.sel > 0, rr = saha ? S.roller[S.sel - 1] : null;
+    const ozet = p => OZ.map(([k, l]) => ({ k, l, v: p.a[k] })).sort((u, v) => v.v - u.v).slice(0, 3).map(z => `${z.l} ${z.v}`).join(' · ');
+    const T = S.tac, tRow = (k, ad, vals, lab) => ({ ad, ops: vals.map((v, i) => { const [bg, fg] = on(T[k] === v); return { ad: lab ? lab[i] : String(v), bg, fg, sec: () => this.set({ tac: { ...T, [k]: v } }) }; }) });
+    return {
+      bizAd, rakipAd: R.ad,
+      rakipler: RAKIP.map((r, i) => { const [bg, fg] = on(i === S.rakip); return { ad: r.ad, tarz: r.tarz, sav: r.diz.sav, huc: r.diz.huc, notlar: r.notlar, bg, fg, sec: () => this.set({ rakip: i }) }; }),
+      gorunum: [['sav', 'Savunmada'], ['huc', 'Hücumda']].map(([k, ad]) => { const [bg, fg] = on(S.gor === k); return { ad, bg, fg, sec: () => this.set({ gor: k }) }; }),
+      dizler: (S.gor === 'sav' ? DS : DH).map(d => { const [bg, fg] = on(S.diz[S.gor] === d); return { ad: d, bg, fg, sec: () => this.set({ diz: { ...S.diz, [S.gor]: d } }) }; }),
+      yerler: yerler.map((q, i) => { const p = P(S.dizilim[i]), r = i ? S.roller[i - 1] : null; return { x: q.x, y: q.y, no: i ? String(i) : 'B', ad: p ? p.ad : '–', rol: i ? (S.gor === 'sav' ? r.s : r.h) : 'Bekçi', renk: i ? '#1F3FD1' : '#122A99', kenar: i === S.sel ? '#FFD25A' : '#F6F3EC', sec: () => this.setState({ sel: i }) }; }),
+      selBaslik: sp ? sp.ad : '–', selAlt: saha ? `${S.sel} numara · ${sp ? sp.tip : ''}` : 'Bekçi',
+      selSaha: saha,
+      hRoller: Object.keys(HR).map(k => { const [bg, fg] = on(rr && rr.h === k); return { ad: k, acik: HR[k], bg, fg, sec: () => role('h', k) }; }),
+      sRoller: Object.keys(SR).map(k => { const [bg, fg] = on(rr && rr.s === k); return { ad: k, acik: SR[k], bg, fg, sec: () => role('s', k) }; }),
+      rolAcik: rr ? `${rr.h}: ${HR[rr.h]} · ${rr.s}: ${SR[rr.s]}` : '',
+      adaylar: KADRO.slice().sort((u, v) => ((v.tip === 'Bekçi') === (S.sel === 0)) - ((u.tip === 'Bekçi') === (S.sel === 0))).map(p => { const j = S.dizilim.indexOf(p.id), [bg, fg] = on(j === S.sel); return { ad: p.ad, tip: p.tip, yer: j < 0 ? 'yedek' : j ? `${j} numara` : 'Bekçi', ozet: ozet(p), bg, fg, sec: () => assign(p.id) }; }),
+      talimat: [tRow('sistem', 'Savunma sistemi', ['Alan', 'Adam adama', 'Kenara sıkıştır']), tRow('pres', 'Basan kişi', [0, 1, 2, 3]), tRow('arkada', 'Arkada kalan', [0, 1, 2]), tRow('blok', 'Blok', ['Düşük', 'Orta', 'Yüksek']), tRow('genislik', 'Hücum genişliği', ['Dar', 'Normal', 'Geniş']), tRow('tempo', 'Tempo', [.2, .5, .8], ['Düşük', 'Orta', 'Yüksek']), tRow('risk', 'Risk', [.2, .5, .8], ['Düşük', 'Orta', 'Yüksek']), tRow('kazaninca', 'Kazanınca', ['Yerleş', 'Dengeli', 'Kontra'])],
+      ozBaslik: OZ.map(z => z[1]),
+      kadro: KADRO.map(p => { const j = S.dizilim.indexOf(p.id); return { ad: p.ad, yer: j < 0 ? 'yedek' : j ? '#' + j : 'B', oz: OZ.map(([k]) => { const v = p.a[k]; return { v, w: v >= 14 ? 700 : 400, bg: v >= 14 ? '#16150F' : v <= 9 ? '#E9E5DC' : 'transparent', fg: v >= 14 ? '#F6F3EC' : '#16150F' }; }) }; }),
+      git: () => { const biz = S.dizilim.map(id => { const p = P(id); return { ad: p.ad, a: p.a }; }), rk = R.oyuncular.map(([ad, a2]) => ({ ad, a: a2 }));
+        localStorage.setItem('alan-v5-menajer', JSON.stringify({ ad: [bizAd, R.ad], tac: [S.tac, R.tac], diz: [S.diz, R.diz], oyuncular: [biz, rk], roller: [S.roller, R.roller] })); window.location.href = 'ALAN v5 Maç.html?menajer=1'; }
+    };
+  }
+}
+</script>
+</body>
+</html>
