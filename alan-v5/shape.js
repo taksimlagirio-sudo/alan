@@ -38,6 +38,11 @@
   const gside = (a, t, off) => { const gx = ownX(t), dx = gx - a.x, dy = H / 2 - a.y, L = Math.hypot(dx, dy) || 1; return { x: a.x + dx / L * off, y: a.y + dy / L * off }; };
   // Çekirdek uçarken: herkes yörüngede nereye, ne zaman varabileceğini hesaplar
   // Alıcı da Çekirdeğin gerçekte gideceği yeri okur (pası atanın niyetini değil): hedefi yörüngede yetişebildiği ilk nokta.
+  // Alıcının karşılama noktası (maç ve akıl aynı kuralı kullanır): en erken yetiştiği yere değil, yetişebildiği yerlerin en rahatına gider: rakipten uzak (boşluğu korur), rakipten önce varabildiği, fazla beklemeden. Geniş duran oyuncu kendiliğinden Çekirdeğe doğru içeri dalmaz.
+  // pts: Çekirdeğin yolu · ps: oyuncular · rc: alıcının tepki süresi · iMax: bu tikten sonrası seçilmez (alıcı Çekirdekten kaçmaz, ona gelir)
+  function alici(pts, p, ps, rc, iMax) { const nb = p.role !== 'Bekçi', KR0 = window.AlanCore.KR + .3, inK = q => Math.hypot(q.x, q.y - 25) < KR0 || Math.hypot(q.x - 100, q.y - 25) < KR0, v = spd(p) * SPR, opp = ps.filter(o => o.team !== p.team && o.role !== 'Bekçi'); let bs = -1e9, best = null;
+    for (let i = 0; i < pts.length; i += 2) { const q = pts[i]; if (nb && inK(q)) continue; const tr = rc + Math.max(0, Math.hypot(q.x - p.x, q.y - p.y) - 1.4) / v; if (tr > i) continue; let td = 1e9; for (const o of opp) td = Math.min(td, Math.max(0, 14 - ok(o) * S.react) + Math.max(0, Math.hypot(q.x - o.x, q.y - o.y) - 1.4) / (spd(o) * SPR)); if (td < i) continue; if (i > iMax) continue; const margin = td - i, sc = Dd().freeAt(ps, p.team, q.x, q.y) - S.rcvRisk * Math.exp(-margin / S.rcvMarginT); if (sc > bs) { bs = sc; best = { t: i, x: q.x, y: q.y }; } }
+    return best; }
   function flightRead(m) {
     const b = m.ball, K = C(), out = new Map(); if (!b) return null;
     // kafadaki oyunda (lite) yörünge her tik değil, 6 tikte bir yeniden hesaplanır (aradaki tiklerde aynı yörünge, Çekirdeğin ilerlediği kadar kaydırılarak kullanılır)
@@ -47,9 +52,7 @@
       const nb = p.role !== 'Bekçi', KR0 = window.AlanCore.KR + .3, inK = q => Math.hypot(q.x, q.y - 25) < KR0 || Math.hypot(q.x - 100, q.y - 25) < KR0; /* v5 · Bekçi dışında kimse Kuyu alanına giremez: o alandaki noktalara yetişemez (eskiden savunmacı Kuyu içinde yetişeceğini sanıyor, Bekçi de karışmıyordu) */ const rc = p.team === b.team && m.fl && m.fl.q === p ? 0 : Math.max(0, 14 - ok(p) * S.react - (m.tick - (m.fl ? m.fl.t0 || m.tick : m.tick))), v = spd(p) * SPR; let best = null;
       const isRecv = p.team === b.team && m.fl && m.fl.q === p;
       if (isRecv) {
-        // Alıcı en erken yetiştiği yere değil, yetişebildiği yerlerin en rahatına gider: rakipten uzak (boşluğu korur), rakipten önce varabildiği, fazla beklemeden. Geniş duran oyuncu kendiliğinden Çekirdeğe doğru içeri dalmaz.
-        const opp = m.ps.filter(o => o.team !== p.team && o.role !== 'Bekçi'); let bs = -1e9;
-        for (let i = 0; i < pts.length; i += 2) { const q = pts[i]; if (nb && inK(q)) continue; const tr = rc + Math.max(0, Math.hypot(q.x - p.x, q.y - p.y) - 1.4) / v; if (tr > i) continue; let td = 1e9; for (const o of opp) td = Math.min(td, Math.max(0, 14 - ok(o) * S.react) + Math.max(0, Math.hypot(q.x - o.x, q.y - o.y) - 1.4) / (spd(o) * SPR)); if (td < i) continue; const abs = m.tick + i; if (p._rcvB === b && abs > p._rcvAbs + 2) continue; const margin = td - i, sc = Dd().freeAt(m.ps, p.team, q.x, q.y) - S.rcvRisk * Math.exp(-margin / S.rcvMarginT); if (sc > bs) { bs = sc; best = { t: i, x: q.x, y: q.y }; } }
+        best = alici(pts, p, m.ps, rc, p._rcvB === b ? p._rcvAbs + 2 - m.tick : 1e9);
         if (best) { p._rcvB = b; p._rcvAbs = m.tick + best.t; } // seçilen karşılama anı sonradan ileri kaydırılmaz: alıcı Çekirdekten kaçmaz, ona gelir
       }
       if (!best) for (let i = 0; i < pts.length; i += 2) { const q = pts[i]; if (nb && inK(q)) continue; const tr = rc + Math.max(0, Math.hypot(q.x - p.x, q.y - p.y) - 1.4) / v; if (tr <= i) { best = { t: i, x: q.x, y: q.y }; break; } }
@@ -201,6 +204,7 @@
         /* v5 · geri geri savunma (jokey): yakındaki savunmacı sabit bir noktada beklemez; taşıyıcıyla kendi Kuyu'su arasında, taşıyıcının hızına göre mesafe koruyarak geri çekilir ve onunla birlikte kayar. Uzaktayken iki işi (taşıyıcı + pas hattı) kapatır, yaklaştıkça taşıyıcıya döner. Taşıyıcı durursa mesafeyi kapatır (ikiliye hazırlanır) */
         const kx = ownX(dd.team), hsp = Math.hypot(h.vx || 0, h.vy || 0), gl = Math.hypot(kx - h.x, 25 - h.y) || 1, mes = cl(2.2 + hsp * 14 - (hsp < .05 ? 1 : 0), 1.6, 5), jx = h.x + (kx - h.x) / gl * mes + (h.vx || 0) * 6, jy = h.y + (25 - h.y) / gl * mes + (h.vy || 0) * 6, w = cl((9 - ddD) / 6, 0, 1);
         if (dd._cb) { dd.tx = dd._cb.x * (1 - w) + jx * w; dd.ty = dd._cb.y * (1 - w) + jy * w; dd.sprint = Math.hypot(dd.tx - dd.x, dd.ty - dd.y) > 1.5; dd.job = w > .5 ? 'geri geri' : 'ikisini kapat'; } } }
+    if (h && h.role === 'Bekçi') { const kg = ownX(h.team), KRk = window.AlanCore.KR, cs = Dd().coreSide(h), cx = h.x + cs.ux * window.AlanCore.Q.body, cy = h.y + cs.uy * window.AlanCore.Q.body, dc = Math.hypot(cx - kg, cy - 25); if (dc < KRk + 1.5) { const q = ps.filter(z => z.team !== h.team && z.role !== 'Bekçi' && !z.noTouch).sort((u, v) => Math.hypot(u.x - h.x, u.y - h.y) - Math.hypot(v.x - h.x, v.y - h.y))[0]; if (q && Math.hypot(q.x - h.x, q.y - h.y) < 6) { const ux = (cx - kg) / (dc || 1), uy = (cy - 25) / (dc || 1); q.tx = kg + ux * (KRk + .35); q.ty = 25 + uy * (KRk + .35); q.sprint = true; q.job = 'pres · Çekirdeğe uzan'; } } } /* v5 · Bekçi Çekirdeği alanın kenarında saklıyorsa en yakın rakip, alanın sınırında Çekirdeğe en yakın noktaya gider (gövdesi giremez, menzili girer) */
     for (const p of ps) if (p.role === 'Bekçi' && !chase.has(p) && p !== h) { const b = base.get(p); p.tx = b.x; p.ty = b.y; p.job = 'Bekçi'; p.sprint = Math.hypot(b.x - p.x, b.y - p.y) > 1.2; } /* v5 · Bekçi açıyı kapatmak için koşar (eskiden hep yürüyordu, geride kalıyordu) */
     for (const p of ps) { p.tx = cl(p.tx, 1.5, 98.5); p.ty = cl(p.ty, 1.5, 48.5); if (p.role !== 'Bekçi' && window.AlanMatch.kuyuSafe) { const q = window.AlanMatch.kuyuSafe(p.tx, p.ty); if (q) { p.tx = q.x; p.ty = q.y; } } } // hedef siyah alanın içindeyse kenarına alınır
     m.E = E; m.att = att;
@@ -243,5 +247,5 @@
     const g0 = gside(E, 1 - att, 2.2); return { x: g0.x + (best.x - g0.x) * w, y: g0.y + (best.y - g0.y) * w };
   }
   function metrics(m) { const bx = m.holder ? m.holder.x : m.ball.x, by = m.holder ? m.holder.y : m.ball.y; let n = 0; for (const p of m.ps) if (p !== m.holder && p.role !== 'Bekçi' && !p.press && Math.hypot(p.x - bx, p.y - by) < 8) n++; return { swarm: n }; }
-  window.AlanShape = { S, position, metrics, seen, flightRead, bekci };
+  window.AlanShape = { S, position, metrics, seen, flightRead, bekci, alici };
 })();

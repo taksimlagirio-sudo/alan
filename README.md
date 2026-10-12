@@ -1,6 +1,6 @@
-# ALAN v5
+# ALAN
 
-Statik site; derleme yok. Netlify / Cloudflare Pages: kök klasör, build komutu boş.
-Giriş: index.html (taktik ekranı) → canli.html (canlı maç).
+Statik site; derleme yok. Cloudflare / Netlify: kök klasör, build komutu boş.
+Giriş: index.html (kadro → taktik → canlı maç). Motor: alan-v5/.
 
-Motor, ölçüm araçları, eski sürümler ve raporlar `arsiv` dalında.
+Motor notları, ölçüm araçları ve eski sürümler `arsiv` dalında.

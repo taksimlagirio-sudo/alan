@@ -11,59 +11,59 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body{margin:0;background:#0E0D09;color:#F6F3EC;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
-a{color:#8EA2FF}a:hover{color:#FFD25A}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#8EA2FF}a:hover{color:var(--gold)}
 button,select,input{font:inherit;color:inherit}
 </style>
 <script src="alan-v5/kadro.js"></script>
 <script src="alan-v5/core.js"></script>
 </helmet>
-<div style="min-height:100vh;display:flex;flex-direction:column;background:#0E0D09">
-  <header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 14px;padding:10px clamp(10px,3vw,22px);border-bottom:1px solid rgba(246,243,236,.1);background:#14130E">
+<div style="min-height:100vh;display:flex;flex-direction:column;background:var(--bg)">
+  <header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 14px;padding:10px clamp(10px,3vw,22px);border-bottom:1px solid rgba(var(--ink-rgb),.1);background:var(--panel)">
     <div style="display:flex;align-items:center;gap:10px;min-width:0">
-      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;padding:5px 8px;border:1px solid rgba(246,243,236,.3)">ALAN</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.16em;font-weight:700;padding:6px 9px;border:1.5px solid #F6F3EC">ALAN</span>
       <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:{{ durumRenk }}">{{ durum }}</span>
     </div>
     <div style="display:flex;align-items:center;gap:16px">
-      <div style="display:flex;align-items:center;gap:10px"><span style="font-size:clamp(15px,4vw,24px);font-weight:800">{{ ad0 }}</span><span style="width:30px;height:30px;background:#3D5BF0;display:flex;align-items:center;justify-content:center;font-weight:800">{{ harf0 }}</span></div>
-      <div style="display:flex;flex-direction:column;align-items:center;min-width:92px;background:#0B0A07;border:1px solid rgba(246,243,236,.14);padding:6px 12px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="font-size:clamp(15px,4vw,24px);font-weight:800">{{ ad0 }}</span><span style="width:32px;height:32px;border-radius:50%;background:#3D5BF0;display:flex;align-items:center;justify-content:center;font-weight:800">{{ harf0 }}</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;min-width:96px;background:var(--bg);border:1px solid rgba(var(--ink-rgb),.14);border-radius:14px;padding:7px 14px">
         <span style="font-family:'JetBrains Mono',monospace;font-size:clamp(24px,7vw,34px);font-weight:600;line-height:1">{{ skor }}</span>
-        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#FFD25A;margin-top:3px">{{ saat }}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--gold);margin-top:3px">{{ saat }}</span>
       </div>
-      <div style="display:flex;align-items:center;gap:10px"><span style="width:30px;height:30px;background:#E0531F;display:flex;align-items:center;justify-content:center;font-weight:800">{{ harf1 }}</span><span style="font-size:clamp(15px,4vw,24px);font-weight:800">{{ ad1 }}</span></div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:32px;height:32px;border-radius:50%;background:#E0531F;display:flex;align-items:center;justify-content:center;font-weight:800">{{ harf1 }}</span><span style="font-size:clamp(15px,4vw,24px);font-weight:800">{{ ad1 }}</span></div>
     </div>
     <div style="display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap">
-      <button onClick="{{ kayit }}" style="background:{{ kayitBg }};border:1px solid rgba(246,243,236,.25);padding:9px 12px;cursor:pointer;font-size:14px">{{ kayitTxt }}</button>
+      <button onClick="{{ kayit }}" style="background:{{ kayitBg }};border:1px solid rgba(var(--ink-rgb),.25);border-radius:999px;padding:9px 14px;cursor:pointer;font-size:14px">{{ kayitTxt }}</button>
       <sc-if value="{{ kayitUrl }}" hint-placeholder-val="{{ false }}">
-        <a href="{{ kayitUrl }}" download="{{ kayitAd }}" style="display:flex;align-items:center;color:#FFD25A;border:1px solid #FFD25A;padding:9px 12px;text-decoration:none;font-size:14px">Kaydı indir</a>
+        <a href="{{ kayitUrl }}" download="{{ kayitAd }}" style="display:flex;align-items:center;color:var(--gold);border:1px solid var(--gold);border-radius:999px;padding:9px 14px;text-decoration:none;font-size:14px">Kaydı indir</a>
       </sc-if>
-      <button onClick="{{ sesDegis }}" style="background:transparent;border:1px solid rgba(246,243,236,.25);padding:9px 12px;cursor:pointer;font-size:14px">{{ sesTxt }}</button>
-      <button onClick="{{ taktikeGit }}" style="background:transparent;border:1px solid rgba(246,243,236,.25);padding:9px 12px;cursor:pointer;font-size:14px">Rakip seç</button>
-      <button onClick="{{ yeniMac }}" style="background:transparent;border:1px solid rgba(246,243,236,.25);padding:9px 12px;cursor:pointer;font-size:14px">Yeni maç</button>
-      <button onClick="{{ taktikAc }}" style="background:#FFD25A;color:#0E0D09;border:0;padding:10px 16px;font-weight:800;font-size:15px;cursor:pointer">Taktik</button>
+      <button onClick="{{ sesDegis }}" style="background:transparent;border:1px solid rgba(var(--ink-rgb),.25);border-radius:999px;padding:9px 14px;cursor:pointer;font-size:14px">{{ sesTxt }}</button>
+      <button onClick="{{ taktikeGit }}" style="background:transparent;border:1px solid rgba(var(--ink-rgb),.25);border-radius:999px;padding:9px 14px;cursor:pointer;font-size:14px">Rakip seç</button>
+      <button onClick="{{ yeniMac }}" style="background:transparent;border:1px solid rgba(var(--ink-rgb),.25);border-radius:999px;padding:9px 14px;cursor:pointer;font-size:14px">Yeni maç</button>
+      <button onClick="{{ taktikAc }}" style="background:#FFD25A;color:#0E0D09;border:0;border-radius:12px;padding:10px 18px;font-weight:800;font-size:15px;cursor:pointer">Taktik</button>
     </div>
   </header>
 
   <main style="display:flex;flex-wrap:wrap;gap:clamp(10px,2vw,18px);padding:clamp(8px,2vw,16px) clamp(8px,3vw,22px) 26px;align-items:flex-start">
     <section style="display:flex;flex-direction:column;gap:10px;min-width:0;flex:2.1 1 min(560px,100%)">
-      <div ref="{{ kapRef }}" style="position:{{ kapPos }};inset:{{ kapInset }};z-index:{{ kapZ }};border:1px solid rgba(246,243,236,.14);background:#0C0C0A;overflow:hidden;aspect-ratio:{{ kapOran }}">
+      <div ref="{{ kapRef }}" style="position:{{ kapPos }};inset:{{ kapInset }};z-index:{{ kapZ }};border:1px solid rgba(var(--ink-rgb),.14);border-radius:18px;background:var(--saha);overflow:hidden;aspect-ratio:{{ kapOran }}">
         <sc-if value="{{ tamEkran }}" hint-placeholder-val="{{ false }}">
-          <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:8;display:flex;align-items:center;gap:12px;background:rgba(11,10,7,.85);border:1px solid rgba(246,243,236,.18);padding:6px 14px">
+          <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:8;display:flex;align-items:center;gap:12px;background:rgba(11,10,7,.85);border:1px solid rgba(246,243,236,.18);border-radius:999px;padding:6px 16px">
             <span style="font-weight:800;font-size:clamp(13px,3vw,18px)">{{ ad0 }}</span>
             <span style="font-family:'JetBrains Mono',monospace;font-size:clamp(20px,5vw,28px);font-weight:600">{{ skor }}</span>
             <span style="font-weight:800;font-size:clamp(13px,3vw,18px)">{{ ad1 }}</span>
             <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#FFD25A">{{ saat }}</span>
           </div>
           <div style="position:absolute;right:12px;bottom:12px;z-index:8;display:flex;gap:8px">
-            <button onClick="{{ oynat }}" style="min-width:48px;height:48px;background:#F6F3EC;color:#0E0D09;border:0;cursor:pointer;font-size:18px;font-weight:800">{{ oynatTxt }}</button>
-            <button onClick="{{ tamEkranDegis }}" style="height:48px;padding:0 16px;background:rgba(11,10,7,.85);border:1px solid rgba(246,243,236,.3);cursor:pointer;font-size:14px">Çık</button>
+            <button onClick="{{ oynat }}" style="min-width:48px;height:48px;border-radius:50%;background:#F6F3EC;color:#0E0D09;border:0;cursor:pointer;font-size:18px;font-weight:800">{{ oynatTxt }}</button>
+            <button onClick="{{ tamEkranDegis }}" style="height:48px;padding:0 18px;border-radius:999px;background:rgba(11,10,7,.85);border:1px solid rgba(246,243,236,.3);cursor:pointer;font-size:14px">Çık</button>
           </div>
         </sc-if>
         <div style="position:absolute;inset:0;perspective:1500px;perspective-origin:50% 0%">
           <canvas ref="{{ cvRef }}" width="1960" height="980" style="position:absolute;left:7%;top:4%;width:86%;height:auto;aspect-ratio:2/1;transform:rotateX(28deg);transform-origin:50% 0%;display:block"></canvas>
         </div>
         <sc-if value="{{ topSahibi }}" hint-placeholder-val="{{ false }}">
-          <div style="position:absolute;left:14px;bottom:14px;display:flex;align-items:center;gap:8px;background:rgba(11,10,7,.82);padding:6px 10px 6px 6px">
+          <div style="position:absolute;left:14px;bottom:14px;display:flex;align-items:center;gap:8px;background:rgba(11,10,7,.82);color:#F6F3EC;border-radius:10px;overflow:hidden;padding:6px 12px 6px 0">
             <span style="width:6px;align-self:stretch;background:{{ tsRenk }}"></span>
             <span style="font-weight:700;font-size:15px">{{ tsAd }}</span>
             <span style="font-family:'JetBrains Mono',monospace;font-size:11px;opacity:.75">{{ tsAlt }}</span>
@@ -79,8 +79,8 @@ button,select,input{font:inherit;color:inherit}
             </div>
             <span style="font-size:17px;font-weight:600;color:#FFD25A">{{ sonuc }}</span>
             <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
-              <button onClick="{{ yeniMac }}" style="background:#FFD25A;color:#0E0D09;border:0;padding:12px 20px;font-weight:800;font-size:16px;cursor:pointer">Yeni maç · aynı kurulum</button>
-              <button onClick="{{ taktikeGit }}" style="background:transparent;border:1px solid rgba(246,243,236,.3);padding:12px 18px;cursor:pointer;font-size:15px">Rakibi ya da taktiği değiştir →</button>
+              <button onClick="{{ yeniMac }}" style="background:#FFD25A;color:#0E0D09;border:0;border-radius:12px;padding:12px 22px;font-weight:800;font-size:16px;cursor:pointer">Yeni maç · aynı kurulum</button>
+              <button onClick="{{ taktikeGit }}" style="background:transparent;border:1px solid rgba(246,243,236,.3);border-radius:12px;padding:12px 18px;cursor:pointer;font-size:15px">Rakibi ya da taktiği değiştir →</button>
             </div>
           </div>
         </sc-if>
@@ -90,55 +90,55 @@ button,select,input{font:inherit;color:inherit}
             <span style="font-size:30px;font-weight:800;letter-spacing:-.01em">Önce taktiğini kur</span>
             <span style="font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.7">son kurulum: {{ kapiOzet }}</span>
             <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
-              <button onClick="{{ taktikeGit }}" style="background:#FFD25A;color:#0E0D09;border:0;padding:12px 20px;font-weight:800;font-size:16px;cursor:pointer">Taktik ekranı →</button>
-              <button onClick="{{ kapiBasla }}" style="background:transparent;border:1px solid rgba(246,243,236,.3);padding:12px 18px;cursor:pointer;font-size:15px">Son kurulumla başla</button>
+              <button onClick="{{ taktikeGit }}" style="background:#FFD25A;color:#0E0D09;border:0;border-radius:12px;padding:12px 22px;font-weight:800;font-size:16px;cursor:pointer">Taktik ekranı →</button>
+              <button onClick="{{ kapiBasla }}" style="background:transparent;border:1px solid rgba(246,243,236,.3);border-radius:12px;padding:12px 18px;cursor:pointer;font-size:15px">Son kurulumla başla</button>
             </div>
           </div>
         </sc-if>
         <sc-if value="{{ yukleniyor }}" hint-placeholder-val="{{ true }}">
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(14,13,9,.82)">
             <span style="font-size:clamp(15px,4vw,24px);font-weight:800">{{ yukBaslik }}</span>
-            <div style="width:min(70%,360px);height:4px;background:rgba(246,243,236,.15);position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:{{ yukPct }};background:#FFD25A"></div></div>
+            <div style="width:min(70%,360px);height:6px;border-radius:3px;overflow:hidden;background:rgba(246,243,236,.15);position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:{{ yukPct }};border-radius:3px;background:#FFD25A"></div></div>
             <span style="font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.7">maç izlemenin önünde oynanıyor · sonucu göstermez</span>
           </div>
         </sc-if>
       </div>
 
-      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;background:#17160F;border:1px solid rgba(246,243,236,.1);padding:10px 12px">
-        <button onClick="{{ oynat }}" style="width:42px;height:42px;background:#F6F3EC;color:#0E0D09;border:0;cursor:pointer;font-size:16px;font-weight:800;flex:none">{{ oynatTxt }}</button>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;background:var(--panel);border:1px solid rgba(var(--ink-rgb),.1);border-radius:16px;padding:10px 12px">
+        <button onClick="{{ oynat }}" style="width:44px;height:44px;border-radius:50%;background:#F6F3EC;color:#0E0D09;border:0;cursor:pointer;font-size:16px;font-weight:800;flex:none">{{ oynatTxt }}</button>
         <div onClick="{{ ara }}" ref="{{ zamanRef }}" style="position:relative;flex:1 1 180px;min-width:140px;height:28px;cursor:pointer">
-          <div style="position:absolute;left:0;right:0;top:12px;height:4px;background:rgba(246,243,236,.1)"></div>
-          <div style="position:absolute;left:0;top:12px;height:4px;width:{{ hazirPct }};background:rgba(246,243,236,.28)"></div>
-          <div style="position:absolute;left:0;top:12px;height:4px;width:{{ izlePct }};background:#FFD25A"></div>
+          <div style="position:absolute;left:0;right:0;top:11px;height:6px;border-radius:3px;background:rgba(var(--ink-rgb),.1)"></div>
+          <div style="position:absolute;left:0;top:11px;height:6px;border-radius:3px;width:{{ hazirPct }};background:rgba(var(--ink-rgb),.28)"></div>
+          <div style="position:absolute;left:0;top:11px;height:6px;border-radius:3px;width:{{ izlePct }};background:#FFD25A"></div>
           <sc-for list="{{ isaretler }}" as="i" hint-placeholder-count="0">
             <span title="{{ i.t }}" style="position:absolute;left:{{ i.x }};top:4px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:{{ i.c }};border:2px solid #0E0D09"></span>
           </sc-for>
         </div>
-        <div style="display:flex;gap:2px;flex:none">
+        <div style="display:flex;gap:2px;flex:none;padding:3px;border-radius:999px;background:rgba(var(--ink-rgb),.07)">
           <sc-for list="{{ hizlar }}" as="h" hint-placeholder-count="4">
-            <button onClick="{{ h.sec }}" style="background:{{ h.bg }};color:{{ h.fg }};border:1px solid rgba(246,243,236,.2);padding:6px 9px;min-height:36px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px">{{ h.ad }}</button>
+            <button onClick="{{ h.sec }}" style="background:{{ h.bg }};color:{{ h.fg }};border:0;border-radius:999px;padding:6px 11px;min-height:32px;cursor:pointer;font-weight:700;font-family:'JetBrains Mono',monospace;font-size:12px">{{ h.ad }}</button>
           </sc-for>
         </div>
-        <button onClick="{{ tamEkranDegis }}" title="Tam ekran" style="flex:none;height:36px;padding:0 12px;background:transparent;border:1px solid rgba(246,243,236,.25);cursor:pointer;font-size:13px">⛶ Tam ekran</button>
+        <button onClick="{{ tamEkranDegis }}" title="Tam ekran" style="flex:none;height:38px;padding:0 14px;border-radius:999px;background:transparent;border:1px solid rgba(var(--ink-rgb),.25);cursor:pointer;font-size:13px">⛶ Tam ekran</button>
       </div>
     </section>
 
     <aside style="display:flex;flex-direction:column;gap:14px;min-width:0;flex:1 1 min(300px,100%)">
-      <div style="background:#17160F;border:1px solid rgba(246,243,236,.1);padding:14px 16px;display:flex;flex-direction:column;gap:12px">
+      <div style="background:var(--panel);border:1px solid rgba(var(--ink-rgb),.1);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:12px">
         <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;opacity:.6">MAÇ</span>
         <sc-for list="{{ istat }}" as="s" hint-placeholder-count="5">
           <div style="display:flex;flex-direction:column;gap:5px">
             <div style="display:grid;grid-template-columns:48px 1fr 48px;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:14px"><span>{{ s.a }}</span><span style="text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-size:13px;opacity:.75">{{ s.ad }}</span><span style="text-align:right">{{ s.b }}</span></div>
-            <div style="display:flex;height:5px;gap:3px;background:rgba(246,243,236,.08)"><span style="flex:{{ s.fa }};background:#3D5BF0"></span><span style="flex:{{ s.fb }};background:#E0531F"></span></div>
+            <div style="display:flex;height:6px;gap:3px"><span style="flex:{{ s.fa }};background:#3D5BF0;border-radius:3px"></span><span style="flex:{{ s.fb }};background:#E0531F;border-radius:3px"></span></div>
           </div>
         </sc-for>
       </div>
 
-      <div style="background:#17160F;border:1px solid rgba(246,243,236,.1);padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+      <div style="background:var(--panel);border:1px solid rgba(var(--ink-rgb),.1);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
         <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;opacity:.6">AKIŞ</span>
         <div style="display:flex;flex-direction:column;gap:2px;max-height:320px;overflow:auto">
           <sc-for list="{{ akis }}" as="o" hint-placeholder-count="6">
-            <div style="display:grid;grid-template-columns:46px 8px minmax(0,1fr);gap:8px;align-items:baseline;padding:5px 0;border-bottom:1px solid rgba(246,243,236,.06);font-weight:{{ o.w }}">
+            <div style="display:grid;grid-template-columns:46px 8px minmax(0,1fr);gap:8px;align-items:baseline;padding:5px 0;border-bottom:1px solid rgba(var(--ink-rgb),.06);font-weight:{{ o.w }}">
               <span style="font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.6">{{ o.t }}</span>
               <span style="width:8px;height:8px;border-radius:50%;background:{{ o.c }};align-self:center"></span>
               <span style="font-size:14px;line-height:1.35">{{ o.text }}</span>
@@ -149,7 +149,7 @@ button,select,input{font:inherit;color:inherit}
 
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
         <sc-for list="{{ kadrolar }}" as="k" hint-placeholder-count="2">
-          <div style="background:#17160F;border:1px solid rgba(246,243,236,.1);padding:12px 14px;display:flex;flex-direction:column;gap:4px">
+          <div style="background:var(--panel);border:1px solid rgba(var(--ink-rgb),.1);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:4px">
             <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:{{ k.c }}">{{ k.ad }}</span>
             <sc-for list="{{ k.ps }}" as="p" hint-placeholder-count="7">
               <div style="display:flex;justify-content:space-between;gap:6px;font-size:14px;font-weight:{{ p.w }}"><span>{{ p.ad }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;opacity:.6">{{ p.r }}</span></div>
@@ -162,19 +162,21 @@ button,select,input{font:inherit;color:inherit}
 
   <sc-if value="{{ taktikAcik }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.72)">
-      <iframe src="{{ taktikSrc }}" style="position:absolute;left:2%;top:2%;width:96%;height:96%;border:1px solid rgba(246,243,236,.15);background:#0E0D09"></iframe>
-      <button onClick="{{ taktikKapat }}" style="position:absolute;right:3%;top:3.2%;z-index:2;background:#0E0D09;border:1px solid rgba(246,243,236,.3);padding:6px 10px;cursor:pointer">✕ kapat</button>
+      <iframe src="{{ taktikSrc }}" style="position:absolute;left:2%;top:2%;width:96%;height:96%;border:1px solid rgba(var(--ink-rgb),.15);border-radius:20px;background:var(--bg)"></iframe>
+      <button onClick="{{ taktikKapat }}" style="position:absolute;right:3%;top:3.2%;z-index:2;background:var(--bg);border:1px solid rgba(var(--ink-rgb),.3);border-radius:999px;padding:8px 14px;cursor:pointer">✕ kapat</button>
     </div>
   </sc-if>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script>
-const SPD = [['1×', .5], ['1,5×', .75], ['2×', 1], ['4×', 2]], W = 100, H = 50, mmss = t => { const s = Math.floor(t / 60); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+const SPD = [['0,25×', .125], ['0,5×', .25], ['1×', .5], ['1,5×', .75], ['2×', 1], ['4×', 2]], W = 100, H = 50, mmss = t => { const s = Math.floor(t / 30); /* standart hız: motorun 30 tiki = 1 maç saniyesi (eski 0,5×) */ return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
 class Component extends DCLogic {
   state = { n: 0, calis: false, hiz: .5, taktik: false, ses: localStorage.getItem('alan-ses') !== '0' };
   cvRef = React.createRef(); kapRef = React.createRef(); zamanRef = React.createRef();
   kareler = []; olaylar = []; ps = null; t = 0; len = 5400; gen = 0; hesapta = true; acildi = false; st = { k: -1, hold: [0, 0], pass: [0, 0], ok: [0, 0], kaz: [0, 0], gon: [0, 0], son: null }; golSon = 0;
-  componentDidMount() { const go = () => { if (!window.ALAN_KADRO || !window.AlanCore) return setTimeout(go, 50); this.c = this.cfg(); if (/[?&]basla=1/.test(location.search)) this.basla(); else this.setState({ kapi: true }); this.loop(); }; go(); /* taktik ekranından "Maça çık" ile gelinmediyse maç başlamaz: önce kapı */
+  /* tema (ALAN Oyun kabuğu ile ortak): gece / gündüz. Saha (yayın) iki temada da koyu kalır */
+  tema() { const t = localStorage.getItem('alan-oyun-tema') === 'gunduz' ? { bg: '#F6F7F9', panel: '#FFFFFF', ink: '#12141A', rgb: '18,20,26', gold: '#946600' } : { bg: '#0E0D09', panel: '#16150F', ink: '#F6F3EC', rgb: '246,243,236', gold: '#FFD25A' }, r = document.documentElement.style; r.setProperty('--bg', t.bg); r.setProperty('--panel', t.panel); r.setProperty('--ink', t.ink); r.setProperty('--ink-rgb', t.rgb); r.setProperty('--gold', t.gold); this.gd = t.ink !== '#F6F3EC'; r.setProperty('--saha', this.gd ? '#AEBDC8' : '#0C0C0A'); /* gündüz: açık yayın sahası */ document.body.style.background = t.bg; document.body.style.color = t.ink; }
+  componentDidMount() { this.tema(); this.onTema = e => { if (e.key === 'alan-oyun-tema') this.tema(); }; addEventListener('storage', this.onTema); const go = () => { if (!window.ALAN_KADRO || !window.AlanCore) return setTimeout(go, 50); this.c = this.cfg(); if (/[?&]basla=1/.test(location.search)) this.basla(); else this.setState({ kapi: true }); this.loop(); }; go(); /* taktik ekranından "Maça çık" ile gelinmediyse maç başlamaz: önce kapı */
     this.onMsg = e => { const d = e.data; if (d && d.tip === 'alan-taktik') { this.setState({ taktik: false }); this.degistir(d); } }; addEventListener('message', this.onMsg); }
   // Tam ekran: tarayıcının gerçek tam ekranı (saha kutusu); desteklenmezse (iPhone Safari) saha kutusu ekranı kaplar. Skor ve oynat/çık düğmeleri sahanın üstünde
   tamEkranDegis() { const kap = this.kapRef.current; if (this.state.tam) { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); this.setState({ tam: false, tamGercek: false }); return; }
@@ -200,7 +202,7 @@ class Component extends DCLogic {
     this.wk.postMessage(yeni); }
   al(d) { if (d.tip === 'hata') { console.error(d.msg); return; } if (d.gen !== this.gen) return; if (d.tip === 'basla') { this.ps = d.ps; return; } if (d.tip !== 'kare') return;
     for (const [t, f] of d.kare) this.kareler[t] = f; if (d.olay.length) this.olaylar.push(...d.olay); if (d.son) this.hesapta = false;
-    if (!this.acildi && (this.kareler.length - this.t >= .19 * (this.len - this.t) || !this.hesapta)) /* kalan maçın %19'u hesaplanınca başlar, gerisi arka planda */ { this.acildi = true; this.setState({ calis: true }); } }
+    if (!this.acildi && (this.kareler.length - this.t >= .3 * (this.len - this.t) || !this.hesapta)) /* kalan maçın %30'u hesaplanınca başlar (takılınca da aynı kuralla devam eder), gerisi arka planda */ { this.acildi = true; this.tampon = false; this.setState({ calis: true }); } }
   degistir(d) { const snapT = Math.floor(Math.floor(this.t) / 60) * 60; if (!this.kareler[snapT]) return; this.kareler.length = snapT + 1; this.olaylar = this.olaylar.filter(o => o.tick <= snapT); this.olaylar.push({ tick: snapT, type: 'taktik', team: 0, text: `${this.c.ad[0]} taktiğini değiştirdi` });
     this.t = snapT; this.st = { k: -1, hold: [0, 0], pass: [0, 0], ok: [0, 0], kaz: [0, 0], gon: [0, 0], son: null }; this.gen++; this.hesapta = true; this.acildi = false; this.golSon = snapT; this.setState({ calis: false });
     const dm = { tip: 'degistir', gen: this.gen, snapT, t: d.t || 0, tac: d.tac, diz: d.diz, roller: d.roller, ay: {} }; if (this.kayitMac) { this.kayitMac.degisiklik = this.kayitMac.degisiklik.filter(x => x.snapT < snapT); this.kayitMac.degisiklik.push(dm); try { localStorage.setItem('alan-v5-son-mac', JSON.stringify(this.kayitMac)); } catch (e) {} }
@@ -208,7 +210,7 @@ class Component extends DCLogic {
   istat(upto) { const S = this.st; for (let k = S.k + 1; k <= upto; k++) { const f = this.kareler[k]; if (!f) break; const hi = f[30]; if (hi >= 0) { const tm = hi < 7 ? 0 : 1; S.hold[tm]++; if (S.son && S.son.i !== hi) { if (S.son.tm === tm) { S.pass[tm]++; S.ok[tm]++; } else { S.pass[S.son.tm]++; S.kaz[tm]++; } } S.son = { i: hi, tm }; } S.k = k; }
     for (const o of this.olaylar) if (!o._g && o.tick <= upto && /gönderdi/.test(o.text || '')) { o._g = 1; const tm = this.ps && this.ps.find(p => (o.text || '').startsWith(p.name)); if (tm) S.gon[tm.team]++; } }
   loop() { let son = performance.now(); const f = now => { const dt = Math.min(.05, (now - son) / 1000); son = now; const S = this.state;
-      if (S.calis && this.acildi) { const nx = this.t + S.hiz * dt * 60 * (this.yavas && now < this.yavas ? .3 : 1); /* 1× = saniyede 30 tik (test ekranının 1×'i ile aynı) */ if (this.kareler[Math.floor(nx)]) this.t = nx; else if (!this.hesapta) this.setState({ calis: false }); }
+      if (S.calis && this.acildi) { const nx = this.t + S.hiz * dt * 60 * (this.yavas && now < this.yavas ? .3 : 1); /* 1× = saniyede 30 tik (test ekranının 1×'i ile aynı) */ if (this.kareler[Math.floor(nx)]) this.t = nx; else if (!this.hesapta) this.setState({ calis: false }); else { this.acildi = false; this.tampon = true; this.forceUpdate(); } } /* izleme hesaba yetişti: kare kare takılmak yerine durur, kalan maçın %19'u yeniden hazır olunca devam eder (yükleme ekranıyla) */
       this.ciz(); this.fakeCiz(); this.dokunSes(Math.floor(this.t)); this.gol(Math.floor(this.t)); this.k = (this.k || 0) + 1; if (this.k % 6 === 0) this.setState({ n: this.k }); this.raf = requestAnimationFrame(f); }; this.raf = requestAnimationFrame(f); }
   // Fake: gösterilen niyetin soluk hayalet izi (gönderme/pas: hat ve hayalet Çekirdek, gövde: kısa ok) ve aldananların kesikli halkası
   // Fake (yayın dili): çizgi ve yazı yok. Gösterilen niyet, Çekirdeğin o yöne kısa bir altın "hayaleti" olarak (gövde fake'inde taşıyıcının takım renginde kısa bir gölgesi) belirip söner;
@@ -304,7 +306,7 @@ class Component extends DCLogic {
     /* keskinlik: tuval, ekrandaki gerçek boyutuyla ve piksel yoğunluğuyla çizilir (eskiden sabit 1200×600 büyütülüyordu) */ const dpr = Math.min(2.5, window.devicePixelRatio || 1), cw = Math.round(cv.clientWidth * dpr); if (cw > 0 && cv.width !== cw) { cv.width = cw; cv.height = Math.round(cw / 2); }
     const x = cv.getContext('2d'), s = cv.width / W, t = Math.floor(this.t), f = this.kareler[t], GOLD = '#FFD25A';
     /* yayın kamerası · gece arenası (ALAN Saha Görünümü 3a) */
-    x.fillStyle = '#17202A'; x.fillRect(0, 0, cv.width, cv.height);
+    x.fillStyle = this.gd ? '#8FA3B2' : '#17202A'; x.fillRect(0, 0, cv.width, cv.height); /* gündüz arenası: açık mavi-gri zemin, beyaz çizgiler okunur */
     const sp = x.createRadialGradient(cv.width * .55, cv.height * .45, 60, cv.width * .5, cv.height * .5, cv.width * .62); sp.addColorStop(0, 'rgba(120,150,170,.30)'); sp.addColorStop(1, 'rgba(0,0,0,.35)'); x.fillStyle = sp; x.fillRect(0, 0, cv.width, cv.height);
     for (let k = 1; k < 10; k += 2) { x.fillStyle = 'rgba(255,255,255,.025)'; x.fillRect(k * 10 * s, 0, 10 * s, cv.height); }
     if (f && this.ps) { this.arena(x, cv, s, f, t, GOLD); return; }
@@ -340,27 +342,27 @@ class Component extends DCLogic {
     const ad = c ? c.ad : ['Liman', '…'], hi = f ? f[30] : -1, h = ps && hi >= 0 ? ps[hi] : null, sum = (a, b) => a + b || 1;
     const ist = [['Topa sahip', `%${Math.round(S.hold[0] / sum(S.hold[0], S.hold[1]) * 100)}`, `%${Math.round(S.hold[1] / sum(S.hold[0], S.hold[1]) * 100)}`, S.hold[0], S.hold[1]], ['Tutan pas', S.ok[0], S.ok[1], S.ok[0], S.ok[1]], ['Gönderme', S.gon[0], S.gon[1], S.gon[0], S.gon[1]], ['Top kazanma', S.kaz[0], S.kaz[1], S.kaz[0], S.kaz[1]]].map(([a2, x1, x2, fa, fb]) => ({ ad: a2, a: String(x1), b: String(x2), fa: String(fa), fb: String(fb) }));
     const gor = this.olaylar.filter(o => o.tick <= t), RN = ['#3D5BF0', '#E0531F'];
-    const yuk = !this.acildi, hz = Math.min(1, (this.kareler.length - t) / Math.max(1, .19 * (len - t)));
+    const yuk = !this.acildi, hz = Math.min(1, (this.kareler.length - t) / Math.max(1, .3 * (len - t))); /* çubuk başlama koşuluyla aynı ölçüde (%30) dolar */
     const roller = (c && c.roller) || [null, null], rl = (tm, i) => { const r = roller[tm] && roller[tm][i - 1]; return i === 0 ? 'B' : r ? r.h : ''; };
     return {
-      ad0: ad[0], ad1: ad[1], harf0: ad[0][0], harf1: ad[1][0], skor: f ? `${f[32]} – ${f[33]}` : '0 – 0', saat: mmss(t), durum: yuk ? 'HAZIRLANIYOR' : Sx.calis ? 'CANLI' : 'DURAKLATILDI', durumRenk: yuk ? '#FFD25A' : Sx.calis ? '#FF6B5B' : 'rgba(246,243,236,.6)',
+      ad0: ad[0], ad1: ad[1], harf0: ad[0][0], harf1: ad[1][0], skor: f ? `${f[32]} – ${f[33]}` : '0 – 0', saat: mmss(t), durum: yuk ? 'HAZIRLANIYOR' : Sx.calis ? 'CANLI' : 'DURAKLATILDI', durumRenk: yuk ? '#FFD25A' : Sx.calis ? '#FF6B5B' : 'rgba(var(--ink-rgb),.6)',
       cvRef: this.cvRef, kapRef: this.kapRef, zamanRef: this.zamanRef,
       tamEkran: !!Sx.tam, tamEkranDegis: () => this.tamEkranDegis(), kapPos: Sx.tam && !Sx.tamGercek ? 'fixed' : 'relative', kapInset: Sx.tam && !Sx.tamGercek ? '0' : 'auto', kapZ: Sx.tam ? 60 : 'auto', kapOran: Sx.tam ? 'auto' : '2/1.12',
-      topSahibi: !!h, tsAd: h ? h.name : '', tsAlt: h ? (h.role === 'Bekçi' ? 'Bekçi' : `şarj %${Math.round(f[31] * 100)}`) : '', tsRenk: h ? RN[h.team] : '#F6F3EC',
-      bitti: !Sx.kapi && this.acildi && !this.hesapta && this.kareler.length > 60 && t >= this.kareler.length - 1, sonSkor: f ? `${f[32]} – ${f[33]}` : '0 – 0', bizAdB: (c ? c.ad[0] : 'Liman').toUpperCase(), rakipAdB: (c ? c.ad[1] : '').toUpperCase(), sonuc: f ? (f[32] > f[33] ? 'Kazandın' : f[32] < f[33] ? 'Kaybettin' : 'Berabere') : '', yeniMac: () => this.yeniMac(),
-      kapi: !!Sx.kapi, kapiOzet: c ? `${c.ad[0]} – ${c.ad[1]} · savunma ${typeof c.diz[0].sav === 'string' && !(c.dizArr && c.dizArr[0]) ? c.diz[0].sav : 'serbest'} · ${c.tac[0].blok.toLowerCase()} blok · pres ${c.tac[0].pres}` : '', taktikeGit: () => { window.location.href = 'index.html'; }, kapiBasla: () => { this.setState({ kapi: false }); this.basla(); },
-      yukleniyor: yuk && !Sx.kapi, yukBaslik: this.gen > 1 ? 'Yeni taktikle yeniden oynanıyor' : 'Maç hazırlanıyor', yukPct: Math.round(Math.max(0, hz) * 100) + '%',
+      topSahibi: !!h, tsAd: h ? h.name : '', tsAlt: h ? (h.role === 'Bekçi' ? 'Bekçi' : `şarj %${Math.round(f[31] * 100)}`) : '', tsRenk: h ? RN[h.team] : 'var(--ink)',
+      bitti: !Sx.kapi && this.acildi && !this.hesapta && this.kareler.length > 60 && t >= this.kareler.length - 1, sonSkor: f ? `${f[32]} – ${f[33]}` : '0 – 0', bizAdB: (c ? c.ad[0] : 'Liman').toUpperCase(), rakipAdB: (c ? c.ad[1] : '').toUpperCase(), sonuc: (() => { const bt = !Sx.kapi && this.acildi && !this.hesapta && this.kareler.length > 60 && t >= this.kareler.length - 1; if (bt && f && window.parent !== window && this._sonGen !== this.gen) { this._sonGen = this.gen; this.istat(this.kareler.length - 1); const S = this.st; window.parent.postMessage({ tip: 'alan-mac-son', ad: c ? c.ad : ['Liman', 'Rakip'], skor: [f[32], f[33]], st: { hold: S.hold, pass: S.pass, ok: S.ok, kaz: S.kaz, gon: S.gon }, goller: this.olaylar.filter(o => o.type === 'sayi').map(o => ({ dk: mmss(o.tick), team: o.team, text: o.text })) }, '*'); } return f ? (f[32] > f[33] ? 'Kazandın' : f[32] < f[33] ? 'Kaybettin' : 'Berabere') : ''; })(), yeniMac: () => this.yeniMac(), /* kabuk içindeyse maç sonu kabuğa bildirilir */
+      kapi: !!Sx.kapi, kapiOzet: c ? `${c.ad[0]} – ${c.ad[1]} · savunma ${typeof c.diz[0].sav === 'string' && !(c.dizArr && c.dizArr[0]) ? c.diz[0].sav : 'serbest'} · ${c.tac[0].blok.toLowerCase()} blok · pres ${c.tac[0].pres}` : '', taktikeGit: () => { if (window.parent !== window) window.parent.postMessage({ tip: 'alan-git', ekran: 'taktik' }, '*'); else window.location.href = 'taktik.html'; }, kapiBasla: () => { this.setState({ kapi: false }); this.basla(); },
+      yukleniyor: yuk && !Sx.kapi, yukBaslik: this.tampon ? 'Hesap yetişiyor · maç birazdan sürüyor' : this.gen > 1 ? 'Yeni taktikle yeniden oynanıyor' : 'Maç hazırlanıyor', yukPct: Math.round(Math.max(0, hz) * 100) + '%',
       oynat: () => { if (this.acildi) this.setState({ calis: !Sx.calis }); }, oynatTxt: Sx.calis ? '❚❚' : '▶\uFE0E',
       ara: e => { const r = this.zamanRef.current.getBoundingClientRect(), v = Math.floor((e.clientX - r.left) / r.width * len); if (this.kareler[v]) { this.t = v; this.golSon = v; this.forceUpdate(); } },
       hazirPct: (this.kareler.length / len * 100).toFixed(1) + '%', izlePct: (t / len * 100).toFixed(1) + '%',
-      isaretler: gor.filter(o => o.type === 'sayi').map(o => ({ x: (o.tick / len * 100).toFixed(1) + '%', c: RN[o.team] || '#F6F3EC', t: `${mmss(o.tick)} ${o.text}` })),
-      hizlar: SPD.map(([a2, v]) => ({ ad: a2, bg: Sx.hiz === v ? '#F6F3EC' : 'transparent', fg: Sx.hiz === v ? '#0E0D09' : '#F6F3EC', sec: () => this.setState({ hiz: v }) })),
+      isaretler: gor.filter(o => o.type === 'sayi').map(o => ({ x: (o.tick / len * 100).toFixed(1) + '%', c: RN[o.team] || 'var(--ink)', t: `${mmss(o.tick)} ${o.text}` })),
+      hizlar: SPD.map(([a2, v]) => ({ ad: a2, bg: Sx.hiz === v ? 'var(--ink)' : 'transparent', fg: Sx.hiz === v ? 'var(--bg)' : 'var(--ink)', sec: () => this.setState({ hiz: v }) })),
       istat: ist,
-      akis: gor.slice(-40).reverse().map(o => ({ t: mmss(o.tick), text: o.text, c: o.type === 'sayi' ? '#FFD25A' : RN[o.team] || 'rgba(246,243,236,.4)', w: o.type === 'sayi' ? 700 : 400 })),
+      akis: gor.slice(-40).reverse().map(o => ({ t: mmss(o.tick), text: o.text, c: o.type === 'sayi' ? '#FFD25A' : RN[o.team] || 'rgba(var(--ink-rgb),.4)', w: o.type === 'sayi' ? 700 : 400 })),
       kadrolar: [0, 1].map(tm => ({ ad: ad[tm].toUpperCase(), c: RN[tm], ps: ps ? ps.filter(p => p.team === tm).map(p => ({ ad: p.name, r: rl(tm, p.i), w: h === p ? 700 : 400 })) : [] })),
       kayit: () => this.kayitDegis(), kayitTxt: Sx.kayitOn ? `● Kaydı durdur · ${Math.floor((Date.now() - (Sx.kayitT0 || Date.now())) / 1000)} sn` : 'Maçı kaydet', kayitBg: Sx.kayitOn ? '#C8321E' : 'transparent', kayitUrl: Sx.kayitUrl || null, kayitAd: Sx.kayitAd || 'ALAN-mac.webm',
       sesTxt: Sx.ses ? 'Ses açık' : 'Ses kapalı', sesDegis: () => { const v = !Sx.ses; localStorage.setItem('alan-ses', v ? '1' : '0'); this.setState({ ses: v }); },
-      taktikAcik: Sx.taktik, taktikSrc: `index.html?mac=1&skor=${encodeURIComponent(f ? f[32] + ' – ' + f[33] : '0 – 0')}&dk=${mmss(t)}`, taktikAc: () => this.setState({ taktik: true, calis: false }), taktikKapat: () => this.setState({ taktik: false })
+      taktikAcik: Sx.taktik, taktikSrc: `taktik.html?mac=1&skor=${encodeURIComponent(f ? f[32] + ' – ' + f[33] : '0 – 0')}&dk=${mmss(t)}`, taktikAc: () => this.setState({ taktik: true, calis: false }), taktikKapat: () => this.setState({ taktik: false })
     }; }
 }
 </script>

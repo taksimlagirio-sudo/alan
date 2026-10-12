@@ -7,7 +7,7 @@ self.ALAN_OKC = function (p, ch) { const v = (p && p.a && p.a.okuma) ?? 10, E = 
 (function () {
   // Math.hypot ile bit bit aynı sonucu veren iki argümanlı sürüm (V8'in kendi algoritması: en büyüğe bölüp karelerin toplamı); yerleşik çağrıdan ~5 kat hızlı.
   const hyp = (x, y) => { x = x < 0 ? -x : x; y = y < 0 ? -y : y; if (x === Infinity || y === Infinity) return Infinity; const m = x > y ? x : y; if (m !== m || x !== x || y !== y) return NaN; if (m === 0) return 0; const a = x / m, b = y / m; return Math.sqrt(a * a + b * b) * m; };
-  const W = 100, H = 50, KR = 8, MOUTH = 4.25; /* Kuyu alanı yarıçapı 8 (Bekçi dışında kimse giremez), ağız 8,5 birim */
+  const W = 100, H = 50, KR = 9, MOUTH = 5; /* Kuyu alanı yarıçapı 9 (Bekçi dışında kimse giremez), ağız 10 birim */
   // Çekirdek fiziği parametreleri. Hepsi deneme sahasından ayarlanabilir.
   const P = {
     fric: .010,     // temel sürtünme (tik başına hız oranı)
@@ -192,7 +192,7 @@ self.ALAN_OKC = function (p, ch) { const v = (p && p.a && p.a.okuma) ?? 10, E = 
   function stepAll(b, src, p, q, rnd) { if (b.done) return null; const ox = b.x, oy = b.y; stepBall(b, src, p); if (b.done) return null; return contact(b, src, q, rnd, ox, oy); }
   // Dönüş: Çekirdek gövdenin içinden geçemez, kenarında bir açıda durur. Öbür yana geçmek için ya gövdenin etrafından dolaşır (Sürme hızında; taşıyıcı hızlandıkça yavaşlar), ya da fiskeyle bir an gövdeden ayrılır (hızlı ama boşta).
   // Rakip Çekirdeğe ancak gövde araya girmiyorsa uzanabilir. Yolu oyuncu kafasında seçer: süre + (Okuma ile görülen) açıkta kalma riski.
-  const TQ = { w0: .1, wSk: .008, wV: .6, vRef: .25, flickW: .4, timeK: .003, react: 14, reactOk: .5, grab: 0, rivV: .2, pHold: .3, pHoldSk: .025, cdHold: 12, pLoose: .55, cdLoose: 3, tail: 6, shield: .8, minD: 1.7 };
+  const TQ = { w0: .1, wSk: .008, wV: .6, vRef: .25, flickW: .2, timeK: .003, react: 14, reactOk: .5, grab: 0, rivV: .2, pHold: .3, pHoldSk: .025, cdHold: 12, pLoose: .55, cdLoose: 3, tail: 6, shield: .8, minD: 1.7 };
   const wrapA = a => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
   const Turn = { TQ,
     omega(p) { const a = p.a || {}, v = hyp(p.vx || 0, p.vy || 0); return Math.max(.03, (TQ.w0 + ((a.surme ?? 10) - 10) * TQ.wSk) * (1 - TQ.wV * Math.min(1, v / TQ.vRef))); },
