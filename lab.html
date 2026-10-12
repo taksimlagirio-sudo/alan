@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#0E0D09;color:#F6F3EC;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased}a{color:#FFD25A}a:hover{color:#F6F3EC}button,select,input{font:inherit;color:inherit}</style>
+<script src="alan-v5/kadro.js"></script>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;gap:18px;padding:clamp(12px,3vw,28px);max-width:1280px;margin:0 auto;box-sizing:border-box">
+  <header style="display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 16px">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.16em;padding:6px 9px;border:1.5px solid #F6F3EC">ALAN</span>
+    <span style="font-size:30px;font-weight:800;letter-spacing:-.02em">Taktik laboratuvarı</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.6">{{ altBaslik }}</span>
+  </header>
+
+  <div style="display:flex;flex-wrap:wrap;gap:6px;padding:4px;border-radius:999px;background:#16150F;border:1px solid rgba(246,243,236,.1);align-self:flex-start">
+    <sc-for list="{{ kipler }}" as="k" hint-placeholder-count="2"><button onClick="{{ k.sec }}" style="padding:9px 16px;border-radius:999px;cursor:pointer;font-weight:700;font-size:14px;border:0;background:{{ k.bg }};color:{{ k.fg }}">{{ k.ad }}</button></sc-for>
+  </div>
+  <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px">
+    <sc-if value="{{ turKip }}" hint-placeholder-val="{{ true }}">
+      <div style="grid-column:1/-1;display:flex;flex-direction:column;gap:6px;padding:16px;border-radius:16px;background:#16150F;border:1px solid rgba(246,243,236,.1)">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;opacity:.6">TARZ × TARZ</span>
+        <span style="font-size:14px;line-height:1.45;opacity:.85">{{ turAciklama }}</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{ tekKip }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:8px;padding:16px;border-radius:16px;background:#16150F;border:1px solid rgba(246,243,236,.1)">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;opacity:.6">BİZ · LİMAN</span>
+      <span style="font-size:15px;line-height:1.4">{{ bizOzet }}</span>
+      <span style="font-size:12px;opacity:.6;line-height:1.4">Taktik ekranındaki son kurulum kullanılır (kadro, diziliş, roller, ayarlar).</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;padding:16px;border-radius:16px;background:#16150F;border:1px solid rgba(246,243,236,.1)">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;opacity:.6">RAKİP</span>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <sc-for list="{{ rakipler }}" as="r" hint-placeholder-count="3"><button onClick="{{ r.sec }}" style="padding:8px 12px;border-radius:999px;cursor:pointer;font-weight:600;background:{{ r.bg }};color:{{ r.fg }};border:1px solid rgba(246,243,236,.25)">{{ r.ad }}</button></sc-for>
+      </div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;opacity:.65">{{ rakipOzet }}</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;padding:16px;border-radius:16px;background:#16150F;border:1px solid rgba(246,243,236,.1)">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;opacity:.6">KARŞILAŞTIRMA (BİZDE)</span>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <sc-for list="{{ ayarlar }}" as="a" hint-placeholder-count="6"><button onClick="{{ a.sec }}" style="padding:7px 11px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:600;background:{{ a.bg }};color:{{ a.fg }};border:1px solid rgba(246,243,236,.25)">{{ a.ad }}</button></sc-for>
+      </div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;opacity:.65">değerler: {{ degerler }}</span>
+    </div>
+    </sc-if>
+    <div style="display:flex;flex-direction:column;gap:8px;padding:16px;border-radius:16px;background:#16150F;border:1px solid rgba(246,243,236,.1)">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;opacity:.6">MAÇ SAYISI (HÜCRE BAŞI)</span>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <sc-for list="{{ nler }}" as="n" hint-placeholder-count="4"><button onClick="{{ n.sec }}" style="padding:7px 12px;border-radius:999px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;background:{{ n.bg }};color:{{ n.fg }};border:1px solid rgba(246,243,236,.25)">{{ n.ad }}</button></sc-for>
+      </div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;opacity:.65">{{ sureTahmin }}</span>
+    </div>
+  </section>
+
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
+    <button onClick="{{ calistir }}" style="padding:13px 22px;border-radius:12px;border:0;background:{{ anaBg }};color:#0E0D09;font-weight:800;font-size:16px;cursor:pointer">{{ anaTxt }}</button>
+    <div style="flex:1 1 240px;height:8px;border-radius:4px;background:rgba(246,243,236,.1);overflow:hidden"><div style="height:100%;width:{{ ilerPct }};background:#FFD25A;border-radius:4px"></div></div>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.75">{{ durum }}</span>
+  </div>
+
+  <sc-if value="{{ turKip }}" hint-placeholder-val="{{ true }}">
+  <section style="overflow-x:auto;border-radius:16px;background:#16150F;border:1px solid rgba(246,243,236,.1)">
+    <div style="min-width:860px;display:flex;flex-direction:column">
+      <div style="display:grid;grid-template-columns:28px 1.6fr repeat(8,minmax(0,.62fr)) .8fr .9fr .8fr;gap:6px;align-items:center;padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;opacity:.65;border-bottom:1px solid rgba(246,243,236,.1)">
+        <span>#</span><span>TARZ ↓ · KARŞISINDA →</span>
+        <sc-for list="{{ turUst }}" as="u" hint-placeholder-count="8"><span title="{{ u.tam }}" style="text-align:center">{{ u.ad }}</span></sc-for>
+        <span style="text-align:right">PUAN</span><span style="text-align:right">G/B/M</span><span style="text-align:right">FARK</span>
+      </div>
+      <sc-for list="{{ turSatir }}" as="s" hint-placeholder-count="8">
+        <div style="display:grid;grid-template-columns:28px 1.6fr repeat(8,minmax(0,.62fr)) .8fr .9fr .8fr;gap:6px;align-items:center;padding:8px 16px;border-bottom:1px solid rgba(246,243,236,.06);font-family:'JetBrains Mono',monospace;font-size:13px">
+          <span style="opacity:.55">{{ s.sira }}</span>
+          <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px">{{ s.ad }}</span>
+          <sc-for list="{{ s.h }}" as="h" hint-placeholder-count="8"><span style="text-align:center;padding:7px 0;border-radius:8px;background:{{ h.bg }};opacity:{{ h.op }};font-weight:600">{{ h.t }}</span></sc-for>
+          <span style="text-align:right;font-weight:800">{{ s.toplam }}</span>
+          <span style="text-align:right;opacity:.75">{{ s.gbm }}</span>
+          <span style="text-align:right">{{ s.fark }}</span>
+        </div>
+      </sc-for>
+      <sc-if value="{{ turBos }}" hint-placeholder-val="{{ true }}"><div style="padding:22px 16px;opacity:.6;font-size:15px">"Çalıştır"a bas. Her hücre: satırdaki tarzın, sütundaki tarza karşı aldığı puan oranı (%). Altın = üstün, kırmızı = geride. Sıralama toplam puana göre.</div></sc-if>
+    </div>
+  </section>
+  </sc-if>
+  <sc-if value="{{ tekKip }}" hint-placeholder-val="{{ false }}">
+  <section style="overflow-x:auto;border-radius:16px;background:#16150F;border:1px solid rgba(246,243,236,.1)">
+    <div style="min-width:820px;display:flex;flex-direction:column">
+      <div style="display:grid;grid-template-columns:1.1fr .7fr 1fr .9fr .9fr .9fr .9fr .9fr .8fr;gap:8px;padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;opacity:.6;border-bottom:1px solid rgba(246,243,236,.1)">
+        <span>{{ ayarAd }}</span><span>MAÇ</span><span>G / B / M</span><span>PUAN ORANI</span><span>SAYI · FARK</span><span>GÖNDERME</span><span>PAS TUTMA</span><span>TOPA SAHİP</span><span>FAKE</span>
+      </div>
+      <sc-for list="{{ satirlar }}" as="s" hint-placeholder-count="0">
+        <div style="display:grid;grid-template-columns:1.1fr .7fr 1fr .9fr .9fr .9fr .9fr .9fr .8fr;gap:8px;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(246,243,236,.06);font-family:'JetBrains Mono',monospace;font-size:14px">
+          <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px">{{ s.ad }}</span>
+          <span style="opacity:.75">{{ s.n }}</span>
+          <span>{{ s.gbm }}</span>
+          <span style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:700;color:{{ s.renk }}">{{ s.puan }}</span><span style="height:5px;border-radius:3px;background:rgba(246,243,236,.1);overflow:hidden"><span style="display:block;height:100%;width:{{ s.puanW }};background:{{ s.renk }}"></span></span></span>
+          <span>{{ s.sayi }}</span>
+          <span>{{ s.gon }}</span>
+          <span>{{ s.pas }}</span>
+          <span>{{ s.sahip }}</span>
+          <span>{{ s.fake }}</span>
+        </div>
+      </sc-for>
+      <sc-if value="{{ bos }}" hint-placeholder-val="{{ true }}"><div style="padding:22px 16px;opacity:.6;font-size:15px">Ayarı ve rakibi seç, "Çalıştır"a bas. Her değer için aynı tohumlarla aynı sayıda maç oynanır; fark taktikten gelir.</div></sc-if>
+    </div>
+  </section>
+  </sc-if>
+  <span style="font-size:12.5px;opacity:.6;line-height:1.5">Puan oranı: galibiyet 3, beraberlik 1 üzerinden alınan puanın yüzdesi; ± şans payı (yaklaşık %95). 30 maçtan az hücreler "yön" sayılır. Maçlar görüntüsüz, arka planda, birden çok çekirdekte oynanır.</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+// Taktik şablonları: temel kurulumun (Taktik ekranı) üstüne yazılan ayar takımları. Kadro, diziliş ve roller aynı kalır; fark tarzdan gelir
+const SB = { 'Dengeli': {}, 'Yüksek pres': { pres: 3, blok: 'Yüksek', arkada: 1, tempo: .7, risk: .6, kazaninca: 'Kontra', sistem: 'Adam adama' }, 'Ön alan': { pres: 2, blok: 'Yüksek', arkada: 1, tempo: .6, risk: .5, kazaninca: 'Dengeli' }, 'Blok + kontra': { pres: 0, blok: 'Düşük', arkada: 2, genislik: 'Dar', tempo: .8, risk: .7, kazaninca: 'Kontra' }, 'Top hakimiyeti': { pres: 1, blok: 'Orta', arkada: 1, genislik: 'Geniş', tempo: .25, risk: .25, kazaninca: 'Yerleş' }, 'Kanat oyunu': { pres: 1, blok: 'Orta', genislik: 'Geniş', tempo: .55, risk: .5, kazaninca: 'Dengeli' }, 'Direkt': { pres: 1, blok: 'Orta', genislik: 'Normal', tempo: .85, risk: .8, kazaninca: 'Kontra' }, 'Kenara sıkıştır': { sistem: 'Kenara sıkıştır', pres: 2, blok: 'Orta', arkada: 1, kazaninca: 'Dengeli' } };
+const AY = { sablon: { ad: 'Şablonlar', v: Object.keys(SB) }, pres: { ad: 'Pres', v: [0, 1, 2, 3], f: v => v + ' kişi' }, blok: { ad: 'Blok', v: ['Düşük', 'Orta', 'Yüksek'] }, genislik: { ad: 'Genişlik', v: ['Dar', 'Normal', 'Geniş'] }, tempo: { ad: 'Tempo', v: [.2, .5, .8], f: v => v < .4 ? 'düşük' : v < .7 ? 'orta' : 'yüksek' }, risk: { ad: 'Risk', v: [.2, .5, .8], f: v => v < .4 ? 'düşük' : v < .7 ? 'orta' : 'yüksek' }, sistem: { ad: 'Savunma', v: ['Alan', 'Adam adama', 'Kenara sıkıştır'] }, kazaninca: { ad: 'Kazanınca', v: ['Yerleş', 'Dengeli', 'Kontra'] }, arkada: { ad: 'Arkada', v: [0, 1, 2], f: v => v + ' kişi' } };
+class Component extends DCLogic {
+  state = { kip: 'tur', rakip: 1, ayar: 'sablon', n: 30, calis: false, bitti: 0, top: 0, sonuc: {}, tur: [] };
+  // Tarz × tarz (ilk laboratuvarlardaki gibi): her şablon her şablonla oynar. İki takım da aynı kadro, diziliş ve rollerle; fark yalnızca tarzdan gelir. Maçların yarısında taraflar yer değiştirir (taraf etkisi silinir)
+  turnuva() { const K = window.ALAN_KADRO, c = this.cfg(), N = this.state.n, ad = Object.keys(SB), base = { sistem: 'Alan', pres: 1, arkada: 1, blok: 'Orta', genislik: 'Normal', tempo: .5, risk: .5, kazaninca: 'Dengeli' };
+    const biz = c && c.oyuncular ? c.oyuncular[0] : null, d0 = c && c.dizArr && c.dizArr[0] ? c.dizArr[0] : (c ? c.diz[0] : null), r0 = c ? c.roller[0] : null, isler = [];
+    for (let i = 0; i < ad.length; i++) for (let j = i + 1; j < ad.length; j++) for (let k = 0; k < N; k++) { const sw = k % 2 === 1, A = { ...base, ...SB[ad[i]] }, B = { ...base, ...SB[ad[j]] }; isler.push({ i, j, sw, tohum: 1000 + k * 7919, tac: sw ? [B, A] : [A, B], diz: [d0, d0], roller: [r0, r0], oyuncular: [biz, biz], len: 2700 }); }
+    const tur = []; this.dur(); const W = Math.max(2, Math.min(8, (navigator.hardwareConcurrency || 4) - 1)); let n = 0; this.t0 = Date.now(); this.setState({ calis: true, bitti: 0, top: isler.length, tur, sonuc: {} });
+    const ver = w => { if (n >= isler.length) { w.terminate(); return; } const jb = isler[n++]; w._j = jb; w.postMessage(jb); };
+    for (let k = 0; k < W; k++) { const w = new Worker('alan-v5/lab-isci.js'); w.onmessage = e => { const d = e.data, jb = w._j; if (d.ok) { const s = jb.sw ? [d.skor[1], d.skor[0]] : d.skor, g = jb.sw ? [d.gonderme[1], d.gonderme[0]] : d.gonderme; tur.push({ i: jb.i, j: jb.j, s, g, ms: d.ms }); } else console.error(d.err); const b = this.state.bitti + 1; this.setState({ bitti: b, tur }, () => { if (b >= isler.length) this.setState({ calis: false }); }); ver(w); }; this.isci.push(w); ver(w); } }
+  turOzet() { const ad = Object.keys(SB), m = ad.map(() => ad.map(() => ({ p: 0, n: 0, fs: 0 }))), T = ad.map(() => ({ p: 0, n: 0, fs: 0, g: 0, b: 0, mg: 0 }));
+    for (const x of this.state.tur) { const [a, b] = x.s, pa = a > b ? 3 : a === b ? 1 : 0, pb = b > a ? 3 : a === b ? 1 : 0; for (const [r, c, p, f] of [[x.i, x.j, pa, a - b], [x.j, x.i, pb, b - a]]) { m[r][c].p += p; m[r][c].n++; m[r][c].fs += f; T[r].p += p; T[r].n++; T[r].fs += f; if (p === 3) T[r].g++; else if (p === 1) T[r].b++; else T[r].mg++; } }
+    const renk = o => o == null ? 'transparent' : o > .5 ? `rgba(255,210,90,${Math.min(.55, (o - .5) * 1.6)})` : `rgba(224,83,31,${Math.min(.55, (.5 - o) * 1.6)})`;
+    const sira = ad.map((a, r) => ({ a, r, o: T[r].n ? T[r].p / (3 * T[r].n) : -1 })).sort((u, v) => v.o - u.o);
+    const KISA = { 'Dengeli': 'DNG', 'Yüksek pres': 'YPR', 'Ön alan': 'ÖNA', 'Blok + kontra': 'BLK', 'Top hakimiyeti': 'TOP', 'Kanat oyunu': 'KNT', 'Direkt': 'DRK', 'Kenara sıkıştır': 'KNR' }, ust = sira.map(s => ({ ad: KISA[s.a] || s.a.slice(0, 3).toUpperCase(), tam: s.a }));
+    const satir = sira.map((s, k) => ({ sira: k + 1, ad: s.a + ' · ' + (KISA[s.a] || ''), toplam: T[s.r].n ? `%${Math.round(s.o * 100)}` : '–', gbm: `${T[s.r].g}/${T[s.r].b}/${T[s.r].mg}`, fark: T[s.r].n ? (T[s.r].fs / T[s.r].n >= 0 ? '+' : '') + (T[s.r].fs / T[s.r].n).toFixed(2) : '–',
+      h: sira.map(c => { if (c.r === s.r) return { t: '·', bg: 'transparent', op: '.3' }; const z = m[s.r][c.r]; if (!z.n) return { t: '…', bg: 'transparent', op: '.4' }; const o = z.p / (3 * z.n); return { t: `${Math.round(o * 100)}`, bg: renk(o), op: '1' }; }) }));
+    return { ust, satir }; }
+  componentDidMount() { if (!window.ALAN_KADRO) { const t = setInterval(() => { if (window.ALAN_KADRO) { clearInterval(t); this.forceUpdate(); } }, 60); } }
+  componentWillUnmount() { this.dur(); }
+  cfg() { let c = null; try { c = JSON.parse(localStorage.getItem('alan-v5-menajer')); } catch (e) {} return c; }
+  // kayıt yoksa: Taktik ekranını görünmez açıp onun varsayılan (ya da son) kurulumunu kaydettirir; laboratuvar Taktik ekranıyla aynı kadroyu, dizilişi ve rolleri kullanır
+  kurulumAl(sonra) { const f = document.createElement('iframe'); f.style.cssText = 'position:fixed;width:10px;height:10px;opacity:0;pointer-events:none;left:-20px;top:-20px'; f.src = 'taktik.html?kaydet=1'; const bit = () => { removeEventListener('message', on); clearTimeout(to); f.remove(); this.forceUpdate(); sonra(); }, on = e => { if (e.data && e.data.tip === 'alan-kurulum-hazir') bit(); }, to = setTimeout(bit, 8000); addEventListener('message', on); document.body.append(f); }
+  dur() { for (const w of this.isci || []) w.terminate(); this.isci = []; }
+  // her hücre (ayarın bir değeri) aynı N tohumla oynar; işler paralel işçilere dağıtılır
+  calistir() { if (this.state.calis) { this.dur(); this.setState({ calis: false }); return; } if (!this.cfg()) { this.kurulumAl(() => this.cfg() ? this.calistir() : alert('Liman kurulumu okunamadı.')); return; } if (this.state.kip === 'tur') { this.turnuva(); return; } const K = window.ALAN_KADRO, c = this.cfg(), R = K.RAKIP[this.state.rakip], A = AY[this.state.ayar], N = this.state.n;
+    const tac0 = c && c.tac ? c.tac[0] : { sistem: 'Alan', pres: 1, arkada: 1, blok: 'Orta', genislik: 'Normal', tempo: .5, risk: .5, kazaninca: 'Dengeli' }, biz = c && c.oyuncular ? c.oyuncular[0] : null, rk = R.oyuncular.map(([ad, a]) => ({ ad, a })), diz = [c && c.dizArr && c.dizArr[0] ? c.dizArr[0] : (c ? c.diz[0] : null), R.diz], roller = [c ? c.roller[0] : null, R.roller];
+    const isler = []; A.v.forEach((v, ci) => { for (let k = 0; k < N; k++) isler.push({ id: ci + ':' + k, ci, tohum: 1000 + k * 7919, tac: [this.state.ayar === 'sablon' ? { ...tac0, ...SB[v] } : { ...tac0, [this.state.ayar]: v }, { ...R.tac, yz: true }], diz, roller, oyuncular: [biz, rk], len: 2700 }); /* lab maçı yarım uzunlukta: hesap yarıya iner */ });
+    const sonuc = {}; A.v.forEach((v, ci) => sonuc[ci] = []); this.dur(); const W = Math.max(2, Math.min(8, (navigator.hardwareConcurrency || 4) - 1)); let i = 0; this.t0 = Date.now(); this.setState({ calis: true, bitti: 0, top: isler.length, sonuc });
+    const ver = w => { if (i >= isler.length) { w.terminate(); return; } const j = isler[i++]; w._j = j; w.postMessage(j); };
+    for (let k = 0; k < W; k++) { const w = new Worker('alan-v5/lab-isci.js'); w.onmessage = e => { const d = e.data; if (d.ok) sonuc[w._j.ci].push(d); else console.error(d.err); const b = this.state.bitti + 1; this.setState({ bitti: b, sonuc }, () => { if (b >= isler.length) this.setState({ calis: false }); }); ver(w); }; this.isci.push(w); ver(w); } }
+  renderVals() { const K = window.ALAN_KADRO, S = this.state, A = AY[S.ayar], c = this.cfg(), on = x => x ? ['#F6F3EC', '#0E0D09'] : ['transparent', '#F6F3EC'];
+    if (!K) return { altBaslik: 'yükleniyor…', bizOzet: '', rakipler: [], rakipOzet: '', ayarlar: [], degerler: '', nler: [], sureTahmin: '', calistir: () => {}, anaTxt: '…', anaBg: '#FFD25A', ilerPct: '0%', durum: '', ayarAd: '', satirlar: [], bos: true, kipler: [], tekKip: false, turKip: true, turUst: [], turSatir: [], turBos: true, turAciklama: '' };
+    const R = K.RAKIP[S.rakip], t0 = c && c.tac ? c.tac[0] : null, fmt = v => A.f ? A.f(v) : String(v), el = Date.now() - (this.t0 || Date.now()), W0 = Math.max(2, Math.min(8, (navigator.hardwareConcurrency || 4) - 1)), msOrt = (() => { const a = Object.values(S.sonuc).flat(); return a.length ? a.reduce((s, x) => s + x.ms, 0) / a.length : null; })(), kalan = msOrt ? Math.round((S.top - S.bitti) * msOrt / W0 / 1000) : null; /* tahmin: maç başı ortalama hesap süresi × kalan maç ÷ paralel işçi (ilk maçlar biterken paralel işler sayılmıyordu, tahmin şişiyordu) */
+    const satirlar = A.v.map((v, ci) => { const r = (S.sonuc[ci] || []), n = r.length; if (!n) return { ad: fmt(v), n: '0', gbm: '–', puan: '–', puanW: '0%', renk: 'rgba(246,243,236,.4)', sayi: '–', gon: '–', pas: '–', sahip: '–', fake: '–' };
+      let g = 0, b = 0, mg = 0, sb = 0, sr = 0, gb = 0, gr = 0, pa = 0, pt = 0, h0 = 0, h1 = 0, fk = 0; const pts = []; for (const x of r) { const [a, c2] = x.skor; if (a > c2) { g++; pts.push(3); } else if (a === c2) { b++; pts.push(1); } else { mg++; pts.push(0); } sb += a; sr += c2; gb += x.gonderme[0]; gr += x.gonderme[1]; pa += x.pas[0]; pt += x.tutan[0]; h0 += x.sahip[0]; h1 += x.sahip[1]; fk += x.fake[0]; }
+      const ort = pts.reduce((s, p) => s + p, 0) / n, sd = Math.sqrt(pts.reduce((s, p) => s + (p - ort) ** 2, 0) / Math.max(1, n - 1)), oran = ort / 3, pay = 1.96 * sd / Math.sqrt(n) / 3;
+      const fk2 = r.map(x => x.skor[0] - x.skor[1]), fo = fk2.reduce((s, p) => s + p, 0) / n, fsd = Math.sqrt(fk2.reduce((s, p) => s + (p - fo) ** 2, 0) / Math.max(1, n - 1)), fpay = 1.96 * fsd / Math.sqrt(n); /* sayı farkı: puandan daha sık değişir, daha az maçla yön verir */
+      return { ad: fmt(v) + (S.ayar !== 'sablon' && v === (t0 && t0[S.ayar]) ? ' · şu an' : ''), n: n + (n < 30 ? ' (yön)' : ''), gbm: `${g} / ${b} / ${mg}`, puan: `%${Math.round(oran * 100)} ±${Math.round(pay * 100)}`, puanW: Math.round(oran * 100) + '%', renk: oran > .55 ? '#2FB37A' : oran < .4 ? '#E0531F' : '#FFD25A', sayi: `${(sb / n).toFixed(2)} – ${(sr / n).toFixed(2)} · ${fo >= 0 ? '+' : ''}${fo.toFixed(2)}±${fpay.toFixed(2)}`, gon: `${(gb / n).toFixed(1)} – ${(gr / n).toFixed(1)}`, pas: pa ? `%${Math.round(pt / pa * 100)}` : '–', sahip: `%${Math.round(h0 / Math.max(1, h0 + h1) * 100)}`, fake: (fk / n).toFixed(1) }; });
+    return {
+      altBaslik: 'alan-v5 motoru · aynı tohumlarla karşılaştırma · yarım maç (90 sn)', bizOzet: t0 ? `${t0.sistem} · pres ${t0.pres} · arkada ${t0.arkada} · blok ${t0.blok} · genişlik ${t0.genislik} · kazanınca ${t0.kazaninca}` : 'Taktik ekranının varsayılan kurulumu (Çalıştır\'a basınca otomatik alınır).',
+      rakipler: K.RAKIP.map((r, i) => { const [bg, fg] = on(i === S.rakip); return { ad: r.ad, bg, fg, sec: () => !S.calis && this.setState({ rakip: i, sonuc: {}, bitti: 0, top: 0 }) }; }), rakipOzet: `${R.tarz || ''} · ${R.diz.sav} / ${R.diz.huc} · ${R.tac.blok.toLowerCase()} blok · pres ${R.tac.pres}`,
+      ayarlar: Object.entries(AY).map(([k, a]) => { const [bg, fg] = on(k === S.ayar); return { ad: a.ad, bg, fg, sec: () => !S.calis && this.setState({ ayar: k, sonuc: {}, bitti: 0, top: 0 }) }; }), degerler: S.ayar === 'sablon' ? A.v.map(k => k + (Object.keys(SB[k]).length ? ` (${Object.entries(SB[k]).map(([a, b]) => `${a} ${a === 'tempo' || a === 'risk' ? (b < .4 ? 'düşük' : b < .7 ? 'orta' : 'yüksek') : a === 'pres' || a === 'arkada' ? b + ' kişi' : b}`).join(', ')})` : ' (taktik ekranındaki gibi)')).join(' · ') : A.v.map(fmt).join(' · '),
+      nler: [6, 12, 20, 30].map(n => { const [bg, fg] = on(n === S.n); return { ad: String(n), bg, fg, sec: () => !S.calis && this.setState({ n }) }; }), sureTahmin: `${A.v.length * S.n} maç · tahmini ${Math.round(A.v.length * S.n * 30 / Math.max(2, Math.min(8, (navigator.hardwareConcurrency || 4) - 1)) / 60)} dk`,
+      calistir: () => this.calistir(), anaTxt: S.calis ? 'Durdur' : 'Çalıştır', anaBg: S.calis ? '#F6F3EC' : '#FFD25A', ilerPct: S.top ? Math.round(S.bitti / S.top * 100) + '%' : '0%', durum: S.top ? `${S.bitti} / ${S.top} maç${kalan != null && S.calis ? ` · ~${Math.ceil(kalan / 60)} dk kaldı` : S.bitti >= S.top ? ' · bitti' : ''}` : '',
+      ayarAd: A.ad.toUpperCase(), satirlar, bos: !S.top,
+      ...(() => { const nS = Object.keys(SB).length, ciftler = nS * (nS - 1) / 2, TO = this.turOzet(), tur = S.kip === 'tur';
+        return { kipler: [['tur', 'Tarz × tarz'], ['tek', 'Liman vs rakip']].map(([k, a]) => { const [bg, fg] = on(k === S.kip); return { ad: a, bg, fg, sec: () => !S.calis && this.setState({ kip: k, bitti: 0, top: 0, sonuc: {}, tur: [] }) }; }), tekKip: !tur, turKip: tur, turUst: TO.ust, turSatir: TO.satir, turBos: !S.tur.length,
+          turAciklama: `${nS} şablon · ${ciftler} eşleşme × ${S.n} maç = ${ciftler * S.n} maç · iki takım da Liman kadrosu, aynı diziliş ve rollerle; maçların yarısında taraflar yer değiştirir`,
+          ...(tur ? { sureTahmin: `${ciftler * S.n} maç · tahmini ${Math.round(ciftler * S.n * 30 / Math.max(2, Math.min(8, (navigator.hardwareConcurrency || 4) - 1)) / 60)} dk` } : {}) }; })() };
+  }
+}
+</script>
+</body>
+</html>
