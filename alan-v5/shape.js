@@ -4,7 +4,9 @@
   const cl = (v, a, b) => v < a ? a : v > b ? b : v, dirOf = t => t === 0 ? 1 : -1, ownX = t => t === 0 ? 0 : W, oppX = t => t === 0 ? W : 0;
   const ok = p => (p.a && p.a.okuma) ?? 10, spd = p => .17 + ((p.a && p.a.hiz) ?? 10) * .006, SPR = 1.25;
   // Pres tetikleri: ilk presçi her zaman basar; ek presçiler (taktikteki sayıya kadar) yalnız seçili tetiklerden biri varken katılır. Tetik seçilmemişse sürekli basılır. Karşı pres penceresinde tetik aranmaz.
-  function presLim(m, dt, h, att) { const n = dt.pres ?? 1, T = dt.tetik; if (!h || !T || !T.length || dt._kp || n <= 1) return n; const ps = m._pas, yeni = ps && ps.team === att && m.tick - ps.t < 90, dir = att === 0 ? 1 : -1;
+  // skor ve zaman farkındalığı (savunma): yenik takımın kalesini korumasının değeri düşer, Çekirdeği geri almanın değeri artar (macEff oranı). Bu yüzden daha çok kişiyle ve daha yüksekten basar; önde olan geri çekilir. Menajerin pres ayarı taban
+  function macPres(m, t) { const ME = window.AlanMatch && window.AlanMatch.macEff; if (!ME) return 0; const w = ME(m, t, {}), o = w && w.macK; return o == null ? 0 : o < .45 ? 2 : o < .75 ? 1 : o > 1.6 ? -1 : 0; }
+  function presLim(m, dt, h, att) { const n = Math.max(0, Math.min(5, (dt.pres ?? 1) + macPres(m, 1 - att))), T = dt.tetik; if (!h || !T || !T.length || dt._kp || n <= 1) return n; const ps = m._pas, yeni = ps && ps.team === att && m.tick - ps.t < 90, dir = att === 0 ? 1 : -1;
     const on = (T.includes('Geri pas') && yeni && (ps.tx - ps.fx) * dir < -2) || (T.includes('Kanatta') && Math.abs(h.y - 25) > 15) || (T.includes('Zayıf kontrol') && (h.slowT || 0) > m.tick) || (T.includes('Arkası dönük') && h.ca != null && Math.cos(h.ca) * dir < -.3) || (T.includes('Uzun pas havada') && yeni && ps.len > 25);
     return on ? n : Math.min(n, 1); }
   const S = { bekSerbest: true,
@@ -98,7 +100,7 @@
     const nSup = defs.filter(p => p.rs === 'Süpürücü').length, nOn = defs.filter(p => p.rs === 'Önde').length, sweep = new Set(defs.filter(p => p.rs !== 'Önde').sort((u, v) => ((v.rs === 'Süpürücü') - (u.rs === 'Süpürücü')) || u.slot.d - v.slot.d).slice(0, Math.max(dtac.arkada, nSup))), up = new Set(defs.filter(p => !sweep.has(p)).sort((u, v) => ((v.rs === 'Önde') - (u.rs === 'Önde')) || v.slot.d - u.slot.d).slice(0, Math.max(nOn, dtac.onde || 0)));
     const press = [], pLim = presLim(m, dtac, h, att);
     if (h) {
-      const R = S.pressR[dtac.blok] ?? 20, cand = defs.filter(p => !sweep.has(p) && !up.has(p)).sort((u, v) => ((v.rs === 'Presçi') - (u.rs === 'Presçi')) * 1e3 + Math.hypot(u.x - h.x, u.y - h.y) - Math.hypot(v.x - h.x, v.y - h.y));
+      const mp = macPres(m, 1 - att), BL = ['Düşük', 'Orta', 'Yüksek'], bi = Math.max(0, Math.min(2, BL.indexOf(dtac.blok) + (mp > 0 ? mp : 0))), R = S.pressR[BL[bi]] ?? S.pressR[dtac.blok] ?? 20, /* yenikken daha yüksekten basar */ cand = defs.filter(p => !sweep.has(p) && !up.has(p)).sort((u, v) => ((v.rs === 'Presçi') - (u.rs === 'Presçi')) * 1e3 + Math.hypot(u.x - h.x, u.y - h.y) - Math.hypot(v.x - h.x, v.y - h.y));
       for (const p of cand) { if (press.length >= pLim) break; if (p.lock > m.tick || Math.hypot(p.x - h.x, p.y - h.y) < R * (p.rs === 'Presçi' ? 1.5 : 1)) press.push(p); } // Presçi ilk basar ve daha uzaktan çıkar
       press.sort((u, v) => (u.lock > m.tick ? u.lockAt : m.tick) - (v.lock > m.tick ? v.lockAt : m.tick) || Math.hypot(u.x - h.x, u.y - h.y) - Math.hypot(v.x - h.x, v.y - h.y));
       for (const p of defs) if (!press.includes(p)) p.lock = 0;
