@@ -196,6 +196,7 @@
   const AYR = 7; function topaYigilma(m) { const fl = m.fl, b = m.ball; if (m.holder || !b || !fl || !fl.q || b.defl || b.done || fl.kind === 'gönder') return; const t = b.team, P = fl.q, ax = P.tx ?? P.x, ay = P.ty ?? P.y;
     for (const p of m.ps) { if (p.team !== t || p === P || p.role === 'Bekçi' || /alıcı|kovala/.test(p.job || '')) continue; const tx = p.tx ?? p.x, ty = p.ty ?? p.y, dx = tx - ax, dy = ty - ay, d = Math.hypot(dx, dy); if (d >= AYR) continue; const l0 = Math.hypot(p.x - ax, p.y - ay) || 1, ux = d > .1 ? dx / d : (p.x - ax) / l0, uy = d > .1 ? dy / d : (p.y - ay) / l0; p.tx = cl(ax + ux * AYR, 2, 98); p.ty = cl(ay + uy * AYR, 2, 48); } }
   const GON = { taban: 2, baski: 1.5, hareket: 1, guc: .6 };
+  const BEK_SURE = 150; // Bekçinin kendi alanında Çekirdeği tutabileceği süre (tik; 1× hızda 5 sn)
   const BODY_R = 1.0, BODY_E = .35; // Çekirdeğin çarptığı gövde yarıçapı, sekme esnekliği
   // Siyah alan (Kuyu dairesi): Bekçi dışında kimse giremez. Oyuncu dairenin kenarına itilir, içeri doğru hızı silinir (kenarı boyunca kayabilir).
   const KUYU_PAD = .6;
@@ -228,6 +229,8 @@
   }
   function step(m) {
     if (m.over) return; const K = C(), D = Dd(), ps = m.ps; m.tick++; if (!m._lite) D.D._tick = m.tick;
+    // Bekçi süresi (kural): Bekçi Çekirdeği kendi alanında (Kuyu dairesi + 1,5) en fazla BEK_SURE tik tutabilir; aşarsa Çekirdek alan sınırında en yakın rakibe geçer
+    { const h = m.holder; if (h && h.role === 'Bekçi') { const kg = h.team === 0 ? 0 : W, ic = Math.hypot(h.x - kg, h.y - 25) < K.KR + 1.5; if (ic) { if (h.bekBas == null) h.bekBas = m.tick; if (m.tick - h.bekBas >= BEK_SURE) { h.bekBas = null; const ux = (W / 2 - kg) / (W / 2), sx = kg + ux * (K.KR + 2.5), sy = 25; let q = null, qd = 1e9; for (const o of ps) if (o.team !== h.team && o.role !== 'Bekçi') { const dd = Math.hypot(o.x - sx, o.y - sy); if (dd < qd) { qd = dd; q = o; } } if (q) { q.x = sx; q.y = sy; q.vx = q.vy = 0; h.stun = m.tick + 20; ev(m, 'kesme', q.team, `${h.name} süreyi aştı · Çekirdek ${q.name}'e geçti`); take(m, q, `${q.name} serbest başlıyor`); return; } } } else h.bekBas = null; } for (const p of ps) if (p !== m.holder) p.bekBas = null; }
     for (const p of ps) { p.noTouch = p.stun > m.tick || (p.adandi > m.tick && !m.holder); if (p.adandi > m.tick && !p.hamle && p.adT) { p.tx = p.adT.x; p.ty = p.adT.y; p.sprint = true; p.job = p.adNeden || 'adandı · dönemiyor'; } if (p.hamle && (!m.holder || m.holder.id !== p.hamle.hid || m.tick > p.hamle.t0 + 30)) p.hamle = null; }
     if (window.AlanShape) window.AlanShape.position(m); else position(m); topaYigilma(m); perde(m); dolan(m); fakeYonet(m);
     /* v5 · Çekirdeğin yön değişimine tepki: vuruş, duvar ya da sekmeyle yeni bir yol başladığında rakipler bunu ancak tepki süreleri dolunca görür (12 − Okuma × 0,5 tik). O zamana kadar eski hedeflerine (taşıyıcıya, eski yola) gitmeyi sürdürürler; taşıyıcı bu arada arkalarına geçebilir */
@@ -289,7 +292,7 @@
     else {
       const bx0 = b.x, by0 = b.y, r = K.stepAll(b, ps, null, null, m.r);
       // v5 · Çekirdek bir gövdenin içinden geçemez: tutamadığı (ya da tutmaya çalışmadığı) gövdeden seker
-      if (!(r && r.took) && !b.done) K.govde(b, bx0, by0, ps, p => (p === b.from && (b.t || 0) < 4) || (p.role === 'Bekçi' && Math.hypot(p.x - (p.team === 0 ? 0 : W), p.y - 25) < K.KR), BODY_R, BODY_E); /* süpürmeli: hızlı Çekirdek de gövdeyi delip geçemez */
+      if (!(r && r.took) && !b.done) K.govde(b, bx0, by0, ps, p => p === b.from && (b.t || 0) < 4, BODY_R, BODY_E); /* Bekçi de dahil: tutamadığı (sersem, aldanmış, hazırlıksız) Çekirdek onun gövdesinden seker, içinden geçmez */ /* süpürmeli: hızlı Çekirdek de gövdeyi delip geçemez */
       if (r && r.took) { const fl = m.fl; take(m, r.p, fl && fl.kind === 'gönder' && r.p.role === 'Bekçi' ? `${r.p.name} göndermeyi tuttu` : `${r.p.name} aktarımı kesti`); return; }
       if (r && !r.took && m.fl) { m.fl.end = { x: b.x, y: b.y }; }
       if (b.done && String(b.done).startsWith('kuyu')) { const sc = b.done === 'kuyu-sag' ? 0 : 1; m.score[sc]++; if (b.shotPk != null && m.st.cal) m.st.cal.g++; ev(m, 'sayi', sc, `SAYI · ${b.from ? b.from.name : ''} · ${m.score[0]}–${m.score[1]}`); kickoff(m, 1 - sc); }
