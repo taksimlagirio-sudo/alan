@@ -61,7 +61,7 @@ button{font:inherit;color:inherit}
   </sc-if>
 
   <div style="display:{{ taktikGoster }};flex:1">
-    <iframe src="taktik.html" title="Taktik" style="width:100%;height:calc(100vh - 64px);border:0;display:block;background:#0E0D09"></iframe>
+    <iframe src="taktik.html?kabuk=1" title="Taktik" style="width:100%;height:calc(100vh - 64px);border:0;display:block;background:#0E0D09"></iframe>
   </div>
   <div style="display:{{ macGoster }};flex:1">
     <sc-if value="{{ macVar }}" hint-placeholder-val="{{ false }}">
@@ -129,7 +129,7 @@ class Component extends DCLogic {
     return {
       v, temaTxt: S.tema === 'gece' ? '☾ Gece' : '☀ Gündüz', temaDegis: () => { const t = S.tema === 'gece' ? 'gunduz' : 'gece'; localStorage.setItem('alan-oyun-tema', t); this.setState({ tema: t }); for (const fr of document.querySelectorAll('iframe')) try { fr.contentWindow.dispatchEvent(new StorageEvent('storage', { key: 'alan-oyun-tema' })); } catch (e) {} /* aynı sekmedeki sayfalara da haber ver */ },
       sekmeler: sek, kadroAcik: S.ekran === 'kadro', sonucAcik: S.ekran === 'sonuc' && !!d, taktikGoster: S.ekran === 'taktik' ? 'block' : 'none', macGoster: S.ekran === 'mac' || (S.ekran === 'sonuc' && !d) ? 'block' : 'none',
-      macVar: S.mac > 0, macYok: S.mac === 0, macSrc: 'canli.html?basla=1&k=' + S.mac,
+      macVar: S.mac > 0, macYok: S.mac === 0, macSrc: 'canli.html?basla=1&kabuk=1&k=' + S.mac,
       taktigeGit: () => this.git('taktik'), yeniMac: () => this.git('mac', true),
       kadroOzet: `${kad.length} oyuncu · kartı seç, taktikte diz`,
       kadro: kad.map(p => ({ ad: p.ad, tip: p.tip.toUpperCase(), harf: p.ad[0], ort: ort(p), b: p === sp ? v.gold : 'rgba(' + v.inkRgb + ',.1)', sec: () => this.setState({ sec: p.id }), bar: OZ.map(([k]) => ({ h: Math.round(deger(p, k) / 20 * 100) + '%', c: renk(deger(p, k)) })) })),
