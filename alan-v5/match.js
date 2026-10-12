@@ -173,10 +173,12 @@
       const ta = F.k === 'gövde' ? su : fz < .4 ? su + Math.PI : su, c0 = h.ca ?? ta, dd = Math.atan2(Math.sin(ta - c0), Math.cos(ta - c0)), w = C().Turn.omega(h) * 1.6; h.ca = c0 + Math.sign(dd) * Math.min(Math.abs(dd), w); } /* gösterme: Çekirdek gövdenin etrafından o yana döner (Sürme hızında, biraz hızlı) */
     for (const p of m.ps) { if (F.fooled.has(p.id) && m.tick > F.ra[p.id]) F.fooled.delete(p.id); } } /* hareketi yanil yönetir */
   // Katı gövdeler: iç içe giren iki oyuncu yarı yarıya ayrılır, birbirine doğru hızları silinir (3 geçiş: üç kişi üst üste binince tek geçiş yetmez)
+  let GX = new Float64Array(64), GY = new Float64Array(64); /* hız: gövde ayırmada konumların düz kopyası */
   function govdeAyir(ps) {
-    const BD = C().Turn.TQ.minD; for (let it = 0; it < 3; it++) { let degdi = false; for (let i = 0; i < ps.length; i++) for (let j = i + 1; j < ps.length; j++) { const a = ps[i], b = ps[j], dx = b.x - a.x, dy = b.y - a.y; if (dx >= BD || dx <= -BD || dy >= BD || dy <= -BD) continue; /* hız: x ya da y farkı tek başına gövde mesafesini aşıyorsa uzaklık zaten büyüktür (sonuç aynı) */ const d = Math.hypot(dx, dy); if (d >= BD) continue; degdi = true;
+    const BD = C().Turn.TQ.minD, n = ps.length; if (n > GX.length) { GX = new Float64Array(n * 2); GY = new Float64Array(n * 2); } for (let i = 0; i < n; i++) { GX[i] = ps[i].x; GY[i] = ps[i].y; } /* hız: konumlar düz diziden okunur (farklı biçimli oyuncu nesnelerini her çiftte okumak yavaş); kımıldayan oyuncunun yeri hemen diziye geri yazılır, sonuç aynı */
+    for (let it = 0; it < 3; it++) { let degdi = false; for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { const dx = GX[j] - GX[i], dy = GY[j] - GY[i]; if (dx >= BD || dx <= -BD || dy >= BD || dy <= -BD) continue; /* hız: x ya da y farkı tek başına gövde mesafesini aşıyorsa uzaklık zaten büyüktür (sonuç aynı) */ const d = Math.hypot(dx, dy); if (d >= BD) continue; degdi = true; const a = ps[i], b = ps[j];
       const ux = d > 1e-4 ? dx / d : 1, uy = d > 1e-4 ? dy / d : 0, o = (BD - d) / 2; a.x -= ux * o; a.y -= uy * o; b.x += ux * o; b.y += uy * o; const rv = (b.vx - a.vx) * ux + (b.vy - a.vy) * uy; if (rv < 0) { a.vx += ux * rv / 2; a.vy += uy * rv / 2; b.vx -= ux * rv / 2; b.vy -= uy * rv / 2; }
-      for (const p of [a, b]) { p.x = cl(p.x, .8, W - .8); p.y = cl(p.y, .8, H - .8); if (p.role !== 'Bekçi') outOfKuyu(p, true); } }
+      for (const p of [a, b]) { p.x = cl(p.x, .8, W - .8); p.y = cl(p.y, .8, H - .8); if (p.role !== 'Bekçi') outOfKuyu(p, true); } GX[i] = a.x; GY[i] = a.y; GX[j] = b.x; GY[j] = b.y; }
       if (!degdi) break; } /* hız: bu turda kimse iç içe değildiyse sonraki turlar da hiçbir şey değiştirmez */
   }
   function move(m) {
