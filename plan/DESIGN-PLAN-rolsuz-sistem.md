@@ -107,7 +107,7 @@ Davranışı **talimat** belirlesin, başarıyı **özellik**. Etikete bağlı �
 
 **Yön (ölçüm sonrası kesinleşecek):** Okuma'yı ayırmak (ör. Tepki · Görüş/pas seçeneği görmek · Yer tutma · Karar/baskı altında doğru seçim); Cesaret'e gerçek bir anlam vermek (ör. ikiliye girme isteği, riskli pas/gönderme) ya da kaldırmak; Bekçiye özel özellikler gerekip gerekmediği (refleks/uzanma, alan hakimiyeti).
 
-**Claude Code'un ölçümü (sürüyor):** Liman'ın Bekçi dışı oyuncularında her özellik tek tek ±4; Liman üç rakibe karşı, 2 tohum; 114 maç. Çıktı: her özelliğin sayı farkına ve tek tek mekaniklere (pas tutma, ikili, pres, top kapma, gönderme) etkisi; hiçbir şeye yaramayan, ters çalışan ya da başka bir özellikle aynı işi yapan özellikler. Sonuç bu nota eklenecek; Aşama 2'yi buna göre tasarla.
+**Özellik ölçümü (ertelendi, kullanıcı kararı):** Şu an taktik derinlik aşamasındayız. Özellik ölçümü yeni özellik listesiyle (ayrılmış Okuma vb.) daha anlamlı olacak; liste yeniden tanımlanınca yapılacak: her özellik tek tek ±4; genel etkisi, tek tek mekaniklere etkisi ve taktiğe göre değeri (çeşitlilik için: hız kontrada, okuma topa sahip oyunda daha değerli mi).
 
 **Ekrana etkisi:** Menajere gösterilecek "uyum" bilgisi kurala değil ölçüme dayansın: "Bu oyuncu, istediğin bu işte şu kadar etkili." (Ölçüm tablosundan türetilebilir.)
 
@@ -169,7 +169,7 @@ Gerekirse ince ayrımlar: rakibin hangi kanatta olduğu, set hücumunda savunma 
    Mekanik öneriler (kural değil): **ikinci kişi desteği** (presçinin yanında boştaki topu toplamaya hazır biri; "ikinci presçi kaçış yolunu kapatır" fikriyle aynı aile) · **ikili kararının kalibrasyonu** (aklın ikiliye girerken kullandığı kazanma tahmini ile gerçek sonuç; şiddet daha düşük ihtimalli ikililere soktuğu hâlde oran düşmüyor, tahmin ile sonuç zayıf ilişkili olabilir; Claude Code ölçebilir) · **dürtülen topun yönü** savunmacının gövde yönüne ya da arkadaşa doğru (rastgele yerine).
 
 5. **Baskı pasın isabetini etkilemiyor (kodda):** `decide.js` `applyError` pas sapmasını yalnız Aktarım ve tek dokunuşla hesaplıyor; baskı yalnız gönderme için (`match.js` `ek *= D.gonEk(...)`, yalnız `o.kind === 'gönder'`). Dibinde iki rakip olan oyuncu, boştaki kadar isabetli pas atıyor; presin "rakibi hataya zorlama" yolu yok. Öneri: göndermedeki baskı terimini (gonEk) pasa da uygulamak; akıl da aynı fonksiyonla tahmin etsin (kafada ayrı taklit yok). Claude Code baskı altında pası ölçüyor (pas tutma, yön, aklın tahmini); sonuç buraya eklenecek.
-6. **Saha ölçüleri oransal yazılsın:** Motorda 100, 50, 25 (orta çizgi), pres hattı (42, 62), bölge sınırları ve gönderme tablosu sabit sayı. Saha boyutu değişmeyecekse sorun değil; ama yeni yazılan kodda ölçüler sahaya oransal yazılırsa ileride saha boyutu denemek (ör. ±%10) ucuz olur. Kullanıcının görüşü: 7'ye 7 ve 100 × 50 kalsın.
+6. **Saha ölçüleri tek yerden, oransal (ÖNCELİKLİ, Aşama 1'in başında):** Kullanıcı sahanın eninde sonunda büyüyeceğini düşünüyor (daha geniş alan → daha çeşitli taktik). Motorda 100, 50, 25 (orta çizgi), pres hattı (42, 62), bölge sınırları, Kuyu ağzı, Bekçi alanı ve gönderme tablosu sabit sayı. Bunlar tek bir yerden okunan, sahaya oransal ayarlara çevrilsin; rolsüz sistem ve evreler yazılırken sabitler çoğalmadan. Sonra Claude Code aynı motoru üç boyutta ölçer (100×50, 115×57, 130×65): laboratuvarın tarz × tarz tablosu (taktik çeşitliliği: birden çok geçerli tarz, gerçek karşılıklar), taktik etkilerinin büyüklüğü, sayı, pas, pres, hesap süresi. Maç süresi saha ile birlikte ayarlanabilmeli. 7'ye 7 şimdilik kalır.
 
 ## 7b · İleride: menajerlik ve dünya katmanı (motor dışı; motorla bağları)
 
@@ -191,6 +191,12 @@ Kullanıcının yönü: Oyun hem bilgisayarda hem mobilde, offline ve online; ay
 - **Ayrı kariyer yolu:** scout → transfer yöneticisi → direktör → menajer.
 - **Zamanlama:** Kritik kitle gerektirir; önce yapay zekâ çalışanlar, oyuncu sayısı arttıkça insanlara açılır.
 
+**Performans ve ekonomi:** Başarı "ne kadar kazandın" ile değil "elindekiyle beklenenden ne kadar fazlasını yaptın" ile ölçülür (ayın menajeri, ödüller, gelir).
+- Her maç için **beklenen sonuç**: sonuçlarla güncellenen takım puanı (Elo gibi) + kadro gücü (özellik ölçümünden). Beklenti piyasa değerinden değil **sahaya çıkan kadronun gerçek gücünden** hesaplanır (kadroyu zayıf gösterip ödül toplamaya karşı).
+- Gelir: **sabit taban** (lig payı, taraftar) + **performans primi** (beklentiyi aşma). Kazanamayan kulübün bütçesi zorlanır, oyuncu satmak gerekebilir.
+- Frenler: ölüm sarmalına karşı sabit taban ve yükselme–düşme; zenginleşme sarmalına karşı değerle artan maaş ve kadro sınırı.
+- **Çeşitlilik şartı:** Bir özelliğin değeri taktiğe göre değişmeli; yoksa herkes aynı oyuncuyu ister, pazar ve oyun tekdüzeleşir (ölçülebilir; özellik ölçümünün parçası).
+
 **İleride, fikir aşamasında:** Başkanlık sistemi (kulübün sahibi ya da seçilmiş başkanı: bütçe, menajer ve çalışan atama), taraftarlar (kulübe bağlılık; gelire, atmosfere, başkanlık seçimine etkisi). Tasarımı sonra; ilke: her biri gerçek bir karar ve ödünleşim yaratsın, süs olmasın.
 
 **Motor bağları (şimdiden önemli olanlar):**
@@ -202,9 +208,9 @@ Kullanıcının yönü: Oyun hem bilgisayarda hem mobilde, offline ve online; ay
 
 ## 7 · Sıra ve teslim
 
-1. **Aşama 1** (şimdi): talimat sistemi + hazır paketler + gizli avantajların kaldırılması (3.1–3.4), **veri yapısı baştan evreye bağlı ve miraslı**. Bekçi unvanının atanabilmesi (kullanıcı onayıyla).
+1. **Aşama 1** (şimdi): önce saha ölçülerini tek yerden ve oransal yap (6.6), sonra talimat sistemi + hazır paketler + gizli avantajların kaldırılması (3.1–3.4), **veri yapısı baştan evreye bağlı ve miraslı**. Bekçi unvanının atanabilmesi (kullanıcı onayıyla).
 2. Her zip → Claude Code kontrol paketi → rapor (açılış, donma, hız, istatistik, taktik etkisi). Ek olarak: hazır paketlerle oynanan maçların bugüne yakınlığı ve "aynı talimat = aynı davranış" testi.
-3. **Aşama 2** (özellik ölçümü gelince): özellik listesinin yeniden tanımı (4).
+3. **Aşama 2** (taktik derinlikten sonra): özellik listesinin yeniden tanımı (4), ardından özellik ölçümü.
 4. **Aşama 3:** oyun evreleri, isteğe bağlı derinlik (4b).
 5. Ara işler: bölüm 6'daki açık işler (özellikle ikili/pres mekaniği, madde 4) uygun bir zip'e.
 6. Sonra: menajere uyum bilgisi (ölçümden).
