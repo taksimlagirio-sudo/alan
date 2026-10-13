@@ -13,9 +13,9 @@ function olcDonma(M, D, K, seed, ri, maxT, maxMs) {
     M.step(m); const h = m.holder; if (h !== ph) { ph = h; hT = m.tick; }
     for (const p of m.ps) { const v = Math.hypot(p.vx || 0, p.vy || 0); if (v < .03) { if (!still.has(p)) still.set(p, m.tick); } else still.delete(p); }
     if (m._pas && m._pas !== lp) { lp = m._pas; pas++; }
-    if (!h || h.role === 'Bekçi') continue; tot++; if (m.tick - hT <= 40) continue; n++;
+    if (!h || h.role === 'Bekçi') continue; tot++; if (m.tick - hT <= 120) continue; /* 2 sn = 120 tik (1 sn = 60 tik) */ n++;
     const A = m.ps.filter(p => p.team === h.team && p !== h && p.role !== 'Bekçi'), Df = m.ps.filter(p => p.team !== h.team && p.role !== 'Bekçi');
-    dA += A.filter(p => still.has(p)).length; dA1 += A.filter(p => still.has(p) && m.tick - still.get(p) > 20).length; dD += Df.filter(p => still.has(p)).length; ac += A.filter(q => D.laneOk(m.ps, h.team, h, q) > .5).length;
+    dA += A.filter(p => still.has(p)).length; dA1 += A.filter(p => still.has(p) && m.tick - still.get(p) > 60).length; dD += Df.filter(p => still.has(p)).length; ac += A.filter(q => D.laneOk(m.ps, h.team, h, q) > .5).length;
   }
   return { tik: m.tick, ms: +((performance.now() - T0) / m.tick).toFixed(1), tot, n, dA, dA1, dD, ac, pas, skor: m.score.join('-') };
 }
