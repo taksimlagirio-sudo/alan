@@ -188,6 +188,12 @@ Kullanıcının yönü: Oyun hem bilgisayarda hem mobilde, offline ve online; ay
 4. **Her sezon yeni kuşak:** Altyapılardan yeni oyuncular; sayısı kulüp sayısıyla orantılı (havuz büyür, kulüp başına yetenek sabit kalır). Altyapıya yatırım yapan daha iyi çıkarır.
 5. **Özellik tavanı (20):** Zirvede kadrolar benzeşince farkı taktik yaratır; oyunun asıl değeri öne çıkar.
 
+**Olmayacaklar (kullanıcı kararı):** Kondisyon (maç içi de maçlar arası da), sakatlık, zorunlu rotasyon. Gerekçe: menajerin elinde olmayan sebeplerle düzeni bozarlar, taktik özgürlüğü kısıtlarlar. Kaybın sebebi menajerin kararı olmalı, şans değil. Yüksek presin bedeli kondisyondan değil oyunun kendisinden gelir: arkada bırakılan alan (ofsayt yok, bu yüzden risk büyük).
+
+**Kadro derinliğinin anlamı taktik seçimden gelir:** Mesele farklı taktiklere uygun oyunculara sahip olabilmek. Düşük bloğa karşı sabırlı kurucu, yüksek prese karşı hızlı koşucu; maç içinde plan değiştirmek için oyuncu değişikliği (yorgunluk için değil). Bunun şartları:
+- Rakip tarzları sahada gerçekten farklı olmalı (taktik derinlik aşaması).
+- Bir özelliğin değeri taktiğe göre değişmeli (yukarıdaki çeşitlilik şartı); yoksa her taktiğe aynı 7 oyuncu en iyidir ve geniş kadro boşa durur. Özellik ölçümü bunu da ölçmeli: aynı oyuncu iki farklı taktikte ne kadar farklı değer üretiyor.
+
 **Gerçek kişi rolleri (özgün mekanik):** Scout, transfer yöneticisi, ileride direktör; menajer bu görevleri gerçek oyunculara açabilir, istemeyen yapay zekâ çalışanla oynar.
 - **Bilgi gizli olmalı:** Özelliklerin tam değeri görünmez, gözlemle netleşir (maç izleme, istatistik, scout raporu). Yoksa scout'a iş kalmaz.
 - **Ölçülebilir itibar:** Sistem gerçek değerleri bildiği için scout'un isabeti otomatik ölçülür ("tahminleri ortalama ±1,2 sapıyor").

@@ -1,0 +1,19 @@
+// Durma ölçümü: taşıyıcı topu tutarken sahadaki topsuz oyuncular duruyor mu, açık pas yolu kaç tane.
+// Her tik (taşıyıcı varken): duran topsuz oyuncu sayısı (hız < 0,04 birim/tik, Bekçi hariç), 1 saniyeden uzun duranlar;
+// taşıyıcı topu ≥ 2 sn tuttuğunda (uzun tutuş) aynı sayılar ayrıca; açık pas yolu: laneOk ≥ 0,7 olan arkadaş sayısı (taşıyıcının kullandığı hesap).
+// Salınım (hücumda topsuz oyuncular; savunmada bölge/kapatma/markaj görevindekiler, pres ve kovalama hariç): hedefi (tx,ty) 2 birimden fazla değişince yeni hedef sayılır. hedef/dk, hedefe varma oranı (1,5 birim), geri dönüş (3 sn içinde bir önceki hedefe 2 birimden yakın yeni hedef: A→B→A).
+// Kullanım: node tools/v5-durma.js <motor> <senaryo> [tohum kayması]
+const { kur } = require('./kurulum'); const [dir, sS, kS] = process.argv.slice(2), sc = +sS, KAY = +kS || 0;
+const { m, adim, g } = kur(dir, sc, KAY); const AD = g.AlanDecide, T0 = Date.now(); let hesapMs = 0;
+const HD = new Map(), SL = { huc: { hedef: 0, vardi: 0, geri: 0, oyuncuTik: 0 }, sav: { hedef: 0, vardi: 0, geri: 0, oyuncuTik: 0 } }; const dur = new Map(), S = { n: 0, durH: 0, durS: 0, uzunH: 0, uzunS: 0, yolN: 0, yol: 0, uz: { n: 0, durH: 0, durS: 0, yol: 0, uzunH: 0, uzunS: 0 } }; let h0 = null, ht = 0;
+while (!m.over && m.tick < (+process.env.LEN || 5400)) { const t1 = Date.now(); adim(); hesapMs += Date.now() - t1; const h = m.holder;
+  for (const p of m.ps) { if (!h || p === h || p.role === 'Bekçi' || p.tx == null) { HD.delete(p); continue; } const j = String(p.job || ''), G = p.team === h.team ? SL.huc : /^(bölge|kapatma|markaj)/.test(j) ? SL.sav : null; if (!G) { HD.delete(p); continue; } G.oyuncuTik++; let s = HD.get(p); if (!s) { s = { x: p.tx, y: p.ty, t: m.tick, vardi: 0, gecmis: [] }; HD.set(p, s); }
+    if (Math.hypot(p.tx - s.x, p.ty - s.y) > 2) { G.hedef++; if (s.vardi) G.vardi++; const g2 = s.gecmis.length ? s.gecmis[s.gecmis.length - 1] : null; if (g2 && m.tick - g2.t < 180 && Math.hypot(p.tx - g2.x, p.ty - g2.y) < 2) G.geri++; s.gecmis.push({ x: s.x, y: s.y, t: s.t }); if (s.gecmis.length > 3) s.gecmis.shift(); s.x = p.tx; s.y = p.ty; s.t = m.tick; s.vardi = 0; }
+    else if (Math.hypot(p.x - s.x, p.y - s.y) < 1.5) s.vardi = 1; } if (!h) { h0 = null; continue; } if (h !== h0) { h0 = h; ht = m.tick; }
+  let dH = 0, dS = 0, uH = 0, uS = 0; for (const p of m.ps) { if (p === h || p.role === 'Bekçi') continue; const v = Math.hypot(p.vx || 0, p.vy || 0), k = dur.get(p) || 0, k2 = v < .04 ? k + 1 : 0; dur.set(p, k2); if (k2 > 0) { if (p.team === h.team) dH++; else dS++; } if (k2 >= 60) { if (p.team === h.team) uH++; else uS++; } }
+  S.n++; S.durH += dH; S.durS += dS; S.uzunH += uH; S.uzunS += uS;
+  const uzun = m.tick - ht >= 120; if (uzun) { S.uz.n++; S.uz.durH += dH; S.uz.durS += dS; S.uz.uzunH += uH; S.uz.uzunS += uS; }
+  if (m.tick % 6 === 0) { let y = 0; for (const q of m.ps) if (q.team === h.team && q !== h && q.role !== 'Bekçi' && AD.laneOk(m.ps, h.team, h, q) >= .7) y++; S.yolN++; S.yol += y; if (uzun) { S.uz.yolN = (S.uz.yolN || 0) + 1; S.uz.yol += y; } } }
+const o = (a, b) => b ? +(a / b).toFixed(3) : null;
+console.log(JSON.stringify({ sc, kay: KAY, skor: m.score, hesapSn: +(hesapMs / 1000).toFixed(1), pas: m.st.pass, pasOk: m.st.passOk, gon: m.st.shot, salinim: Object.fromEntries(['huc', 'sav'].map(k => [k, { hedefDk: o(SL[k].hedef * 3600, SL[k].oyuncuTik), varma: o(SL[k].vardi, SL[k].hedef), geriDonus: o(SL[k].geri, SL[k].hedef) }])), hucDuran: o(S.durH, S.n), savDuran: o(S.durS, S.n), hucUzunDuran: o(S.uzunH, S.n), savUzunDuran: o(S.uzunS, S.n), acikYol: o(S.yol, S.yolN),
+  uzunTutus: { pay: o(S.uz.n, S.n), hucDuran: o(S.uz.durH, S.uz.n), savDuran: o(S.uz.durS, S.uz.n), hucUzunDuran: o(S.uz.uzunH, S.uz.n), savUzunDuran: o(S.uz.uzunS, S.uz.n), acikYol: o(S.uz.yol, S.uz.yolN) } }));
