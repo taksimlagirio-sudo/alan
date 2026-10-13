@@ -1,0 +1,1 @@
+tohum 11 · skor 1,2 · süre 374 sn · en uzun hareketsiz 0 tik (tik -1) · en yavaş adım 5081 ms (tik 674) · 0,5 sn üstü adım 205
