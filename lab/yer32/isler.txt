@@ -1,0 +1,8 @@
+node tools/v5-yer.js hiz30/z32 0 10 150 10 > lab/yer32/s0.jsonl 2> lab/yer32/s0.log
+node tools/v5-yer.js hiz30/z32 1 10 150 10 > lab/yer32/s1.jsonl 2> lab/yer32/s1.log
+node tools/v5-yer.js hiz30/z32 2 10 150 10 > lab/yer32/s2.jsonl 2> lab/yer32/s2.log
+node tools/v5-yer.js hiz30/z32 6 10 150 10 > lab/yer32/s6.jsonl 2> lab/yer32/s6.log
+node tools/v5-yer.js hiz30/z32 7 10 150 10 > lab/yer32/s7.jsonl 2> lab/yer32/s7.log
+node tools/v5-yer.js hiz30/z32 8 10 150 10 > lab/yer32/s8.jsonl 2> lab/yer32/s8.log
+node tools/v5-yer.js hiz30/z32 9 10 150 10 > lab/yer32/s9.jsonl 2> lab/yer32/s9.log
+node tools/v5-yer.js hiz30/z32 11 10 150 10 > lab/yer32/s11.jsonl 2> lab/yer32/s11.log
