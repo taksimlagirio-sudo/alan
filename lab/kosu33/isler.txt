@@ -1,0 +1,40 @@
+node tools/v5-kosu2.js hiz30/z33 0 0 > lab/kosu33/b0.json 2>&1
+node tools/v5-kosu2.js hiz30/z33 1 0 > lab/kosu33/b1.json 2>&1
+node tools/v5-kosu2.js hiz30/z33 2 0 > lab/kosu33/b2.json 2>&1
+node tools/v5-kosu2.js hiz30/z33 3 0 > lab/kosu33/b3.json 2>&1
+node tools/v5-kosu2.js hiz30/z33 4 0 > lab/kosu33/b4.json 2>&1
+node tools/v5-kosu2.js hiz30/z33 5 0 > lab/kosu33/b5.json 2>&1
+node tools/v5-kosu2.js hiz30/z33 6 0 > lab/kosu33/b6.json 2>&1
+node tools/v5-kosu2.js hiz30/z33 7 0 > lab/kosu33/b7.json 2>&1
+node tools/v5-kosu2.js hiz30/z33 8 0 > lab/kosu33/b8.json 2>&1
+node tools/v5-kosu2.js hiz30/z33 9 0 > lab/kosu33/b9.json 2>&1
+node tools/v5-kosu2.js hiz30/z33 10 0 > lab/kosu33/b10.json 2>&1
+node tools/v5-kosu2.js hiz30/z33 11 0 > lab/kosu33/b11.json 2>&1
+node tools/v5-kosu2.js hiz30/z33 12 0 > lab/kosu33/b12.json 2>&1
+node tools/v5-kosu2.js hiz30/z33 13 0 > lab/kosu33/b13.json 2>&1
+node tools/v5-kosu2.js hiz30/z33 14 0 > lab/kosu33/b14.json 2>&1
+node tools/v5-kosu2.js hiz30/z33 15 0 > lab/kosu33/b15.json 2>&1
+LKOSU=1 node tools/v5-kosu2.js hiz30/z33 0 0 > lab/kosu33/k1-0.json 2>&1
+LKOSU=0 node tools/v5-kosu2.js hiz30/z33 0 0 > lab/kosu33/k0-0.json 2>&1
+LKOSU=1 node tools/v5-kosu2.js hiz30/z33 1 0 > lab/kosu33/k1-1.json 2>&1
+LKOSU=0 node tools/v5-kosu2.js hiz30/z33 1 0 > lab/kosu33/k0-1.json 2>&1
+LKOSU=1 node tools/v5-kosu2.js hiz30/z33 2 0 > lab/kosu33/k1-2.json 2>&1
+LKOSU=0 node tools/v5-kosu2.js hiz30/z33 2 0 > lab/kosu33/k0-2.json 2>&1
+LKOSU=1 node tools/v5-kosu2.js hiz30/z33 3 0 > lab/kosu33/k1-3.json 2>&1
+LKOSU=0 node tools/v5-kosu2.js hiz30/z33 3 0 > lab/kosu33/k0-3.json 2>&1
+LKOSU=1 node tools/v5-kosu2.js hiz30/z33 4 0 > lab/kosu33/k1-4.json 2>&1
+LKOSU=0 node tools/v5-kosu2.js hiz30/z33 4 0 > lab/kosu33/k0-4.json 2>&1
+LKOSU=1 node tools/v5-kosu2.js hiz30/z33 5 0 > lab/kosu33/k1-5.json 2>&1
+LKOSU=0 node tools/v5-kosu2.js hiz30/z33 5 0 > lab/kosu33/k0-5.json 2>&1
+LKOSU=1 node tools/v5-kosu2.js hiz30/z33 9 0 > lab/kosu33/k1-9.json 2>&1
+LKOSU=0 node tools/v5-kosu2.js hiz30/z33 9 0 > lab/kosu33/k0-9.json 2>&1
+LKOSU=1 node tools/v5-kosu2.js hiz30/z33 10 0 > lab/kosu33/k1-10.json 2>&1
+LKOSU=0 node tools/v5-kosu2.js hiz30/z33 10 0 > lab/kosu33/k0-10.json 2>&1
+LKOSU=1 node tools/v5-kosu2.js hiz30/z33 11 0 > lab/kosu33/k1-11.json 2>&1
+LKOSU=0 node tools/v5-kosu2.js hiz30/z33 11 0 > lab/kosu33/k0-11.json 2>&1
+LKOSU=1 node tools/v5-kosu2.js hiz30/z33 12 0 > lab/kosu33/k1-12.json 2>&1
+LKOSU=0 node tools/v5-kosu2.js hiz30/z33 12 0 > lab/kosu33/k0-12.json 2>&1
+LKOSU=1 node tools/v5-kosu2.js hiz30/z33 13 0 > lab/kosu33/k1-13.json 2>&1
+LKOSU=0 node tools/v5-kosu2.js hiz30/z33 13 0 > lab/kosu33/k0-13.json 2>&1
+LKOSU=1 node tools/v5-kosu2.js hiz30/z33 14 0 > lab/kosu33/k1-14.json 2>&1
+LKOSU=0 node tools/v5-kosu2.js hiz30/z33 14 0 > lab/kosu33/k0-14.json 2>&1

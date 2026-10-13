@@ -1,0 +1,14 @@
+node tools/v5-kalib-iz.js hiz30/z33 1 3447,5346 > lab/kalib33/iz1.jsonl 2>&1
+node tools/v5-kalib-iz.js hiz30/z33 2 696,4395 > lab/kalib33/iz2.jsonl 2>&1
+node tools/v5-kalib-iz.js hiz30/z33 3 3487 > lab/kalib33/iz3.jsonl 2>&1
+node tools/v5-kalib-iz.js hiz30/z33 4 782,1715,4109,5102 > lab/kalib33/iz4.jsonl 2>&1
+node tools/v5-kalib-iz.js hiz30/z33 5 1723,3121 > lab/kalib33/iz5.jsonl 2>&1
+node tools/v5-kalib-iz.js hiz30/z33 6 648 > lab/kalib33/iz6.jsonl 2>&1
+node tools/v5-kalib-iz.js hiz30/z33 7 272 > lab/kalib33/iz7.jsonl 2>&1
+node tools/v5-kalib-iz.js hiz30/z33 8 5032 > lab/kalib33/iz8.jsonl 2>&1
+node tools/v5-kalib-iz.js hiz30/z33 9 4066,4352 > lab/kalib33/iz9.jsonl 2>&1
+node tools/v5-kalib-iz.js hiz30/z33 10 1702,2031,5136 > lab/kalib33/iz10.jsonl 2>&1
+node tools/v5-kalib-iz.js hiz30/z33 11 4160 > lab/kalib33/iz11.jsonl 2>&1
+node tools/v5-kalib-iz.js hiz30/z33 12 907,2956,3303 > lab/kalib33/iz12.jsonl 2>&1
+node tools/v5-kalib-iz.js hiz30/z33 13 4373 > lab/kalib33/iz13.jsonl 2>&1
+node tools/v5-kalib-iz.js hiz30/z33 14 4143 > lab/kalib33/iz14.jsonl 2>&1
