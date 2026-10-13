@@ -203,7 +203,7 @@ const TET = ['Geri pas', 'Kanatta', 'Zayıf kontrol', 'Arkası dönük', 'Uzun p
 const KEY = 'alan-v5-taktik';
 const VARS = () => ({ tab: 'huc', gor: 'sav', sel: 1, rakip: 1, dizilim: ['aras', 'deniz', 'mert', 'ece', 'cansu', 'kaan', 'tuna'],
   shape: { sav: SL('2-2-2'), huc: SL('2-1-3') },
-  H: { pasSurme: .5, tempo: .55, risk: .5, sut: .5, sabir: .5 }, S: { sistem: 'Alan', blok: .5, pres: 1, arkada: 1, tetik: ['Geri pas', 'Kanatta'] },
+  H: { pasSurme: .5, tempo: .55, risk: .5, sut: .5, sabir: .5 }, S: { sistem: 'Alan', blok: .5, pres: 1, siddet: .5, arkada: 1, tetik: ['Geri pas', 'Kanatta'] },
   G: { kazan: .55, kontra: 3, kayip: .6, kpSure: 3 }, P: {} });
 class Component extends DCLogic {
   state = (() => { const v = VARS(); try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.shape && s.shape.sav && s.shape.sav.length === 6) return { ...v, ...s, sel: 1 }; } catch (e) {} return v; })();
@@ -226,7 +226,7 @@ class Component extends DCLogic {
       return { h: ho, s: so, hOto: P.hg === 'Oto', sOto: P.sg === 'Oto' }; }); }
   tac() { const S = this.state, k3 = (v, a) => v < .34 ? a[0] : v < .67 ? a[1] : a[2], w = Math.max(...S.shape.huc.map(s => s.l)) - Math.min(...S.shape.huc.map(s => s.l));
     const ws = Math.max(...S.shape.sav.map(s => s.l)) - Math.min(...S.shape.sav.map(s => s.l)); /* savunma genişliği: savunma dizilişindeki yanal açılım (tahtadaki yerleşim) */
-    return { sistem: S.S.sistem, pres: S.S.pres, arkada: S.S.arkada, blok: k3(S.S.blok, ['Düşük', 'Orta', 'Yüksek']), genislik: w < 1.1 ? 'Dar' : w < 1.55 ? 'Normal' : 'Geniş', savGen: +ws.toFixed(2), tempo: r2(S.H.tempo), risk: r2(S.H.risk), kazaninca: k3(S.G.kazan, ['Yerleş', 'Dengeli', 'Kontra']), pasSurme: r2(S.H.pasSurme), sabir: r2(S.H.sabir), sut: r2(S.H.sut), tetik: S.S.tetik.slice(), kontraN: S.G.kontra, kayip: r2(S.G.kayip), kpSure: S.G.kpSure }; }
+    return { sistem: S.S.sistem, pres: S.S.pres, siddet: r2(S.S.siddet ?? .5), arkada: S.S.arkada, blok: k3(S.S.blok, ['Düşük', 'Orta', 'Yüksek']), genislik: w < 1.1 ? 'Dar' : w < 1.55 ? 'Normal' : 'Geniş', savGen: +ws.toFixed(2), tempo: r2(S.H.tempo), risk: r2(S.H.risk), kazaninca: k3(S.G.kazan, ['Yerleş', 'Dengeli', 'Kontra']), pasSurme: r2(S.H.pasSurme), sabir: r2(S.H.sabir), sut: r2(S.H.sut), tetik: S.S.tetik.slice(), kontraN: S.G.kontra, kayip: r2(S.G.kayip), kpSure: S.G.kpSure }; }
   renderVals() { return this.dikey(this.kademe(this.renderVals0())); }
   // kaydırıcı yerine 5 kademe: her kademe min–max arasındaki bir değeri seçer; seçili kademeye kadar dolu
   // dikey tahta (telefon): kendi Kuyu'n altta. Yatay koordinatlar (x: boy, y: en) dikeye çevrilir
@@ -279,6 +279,7 @@ class Component extends DCLogic {
     if (S.tab === 'sav') gruplar = [
       { baslik: 'NASIL SAVUNULUR', items: [sec(true, 'Savunma tarzı', ['Alan', 'Adam adama', 'Kenara sıkıştır'], D.sistem, v => this.up('S', 'sistem', v), '', ['Bölge', 'Adam adama', 'Kenara sıkıştır'], D.sistem === 'Alan' ? 'Herkes bölgesini tutar, topa göre kayar.' : D.sistem === 'Adam adama' ? 'Her oyuncu bir rakibi izler; rakip yer değiştirdikçe şekil dağılır.' : 'Taşıyıcıyı çizgiye iter, orada kapatır.'),
         sec(true, 'Basan oyuncu sayısı', [0, 1, 2, 3], D.pres, v => this.up('S', 'pres', v), '', ['Kimse', '1', '2', '3']),
+        kay(true, 'Pres şiddeti', D.siddet ?? .5, e => this.up('S', 'siddet', +e.target.value), 'uzaktan bekler, temkinli girer', 'üstüne koşar, sert girer', (D.siddet ?? .5) < .34 ? 'temkinli' : (D.siddet ?? .5) < .67 ? 'orta' : 'sert'),
         sec(true, 'Pres ne zaman tetiklenir', TET, D.tetik, v => this.up('S', 'tetik', D.tetik.includes(v) ? D.tetik.filter(x => x !== v) : D.tetik.concat([v])), `${D.tetik.length} tetik`, null, '', true),
         sec(true, 'Arkada kalan', [0, 1, 2], D.arkada, v => this.up('S', 'arkada', v), '', ['Kimse', '1', '2'], 'Top bizde değilken bile ileri çıkmayan, son hattı tutan oyuncu sayısı.')] },
       { baslik: 'ŞEKİL', items: [M(true, { kaydir: false, secmeli: false, ad: 'Savunma bloğu', deger: `${T.blok} · ${br(lSp * 20)} genişlik`, aciklama: 'Blok yüksekliği, darlık ve hat aralığı soldaki sahada "Top rakipteyken" görünümünde.', ops: [] })] }];

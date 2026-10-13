@@ -6,7 +6,11 @@
   const inWin = (m, t) => m.winTeam === t && m.tick - m.winT < WIN_T;
   // Topu kaybedince (karşı pres penceresi = kpSure sn): Geçiş savunması (kayip) 0 → geri çekil (kimse basmaz, blok düşük), 0,5 → taktikteki pres, 1 → +2 presçi
   function kpEff(m, t, r) { const tq = m.tac[t]; if (!(m.winTeam === 1 - t && m.winT != null && m.tick - m.winT < (tq.kpSure ?? 3) * 60)) return r; const k = tq.kayip ?? .5; return k < .34 ? { ...r, pres: 0, blok: 'Düşük', _kp: 'geri' } : { ...r, pres: Math.max(0, Math.min(4, Math.round((tq.pres ?? 1) + (k - .5) * 4))), _kp: 'pres' }; }
-  function tacEff(m, t) { return macEff(m, t, kpEff(m, t, tacEff0(m, t))); }
+  // YZ uyumu (sadece tac.yz): rakip düşük blokta bekliyorsa (son 4 sn'de taşıyıcımıza basan yok, rakibin saha oyuncuları kendi yarısında) ve skor berabere ya da gerideyse tempo bir kademe artar; gerideyken son 30 sn'de sabır da bir kademe düşer. Önde iken dokunmaz. Kullanıcının takımında karar menajerin
+  function yzUyum(m, t, r) { if (!(m.tac[t] && m.tac[t].yz)) return r; const d = m.score[t] - m.score[1 - t]; if (d > 0) return r; const h = m.holder;
+    if (h && h.team === t) { const og = t === 0 ? 100 : 0, geri = m.ps.filter(p => p.team !== t && p.role !== 'Bekçi' && Math.abs(p.x - og) < 50).length, yakin = m.ps.some(p => p.team !== t && p.role !== 'Bekçi' && Math.hypot(p.x - h.x, p.y - h.y) < 5); if (yakin) m._yzBas = m.tick; m._yzBekle = geri >= 5 && m.tick - (m._yzBas || 0) > 240; }
+    if (!m._yzBekle) return r; const kal = (m.len || 5400) - m.tick; return { ...r, tempo: Math.min(.9, (r.tempo ?? .5) + .4), sabir: Math.max(.1, (r.sabir ?? .5) - (d < 0 ? (kal < 1800 ? .5 : .35) : .2)) }; } /* beklemek işe yaramıyor: daha hızlı çevir, ileri pası daha çok dene (gerideyken ve sona doğru daha çok) */
+  function tacEff(m, t) { return yzUyum(m, t, macEff(m, t, kpEff(m, t, tacEff0(m, t)))); }
   // Zaman ve skor farkındalığı: bir sayı atmanın ve yemenin değeri, kalan süre ve skor farkına göre maç puanına (galibiyet 3, beraberlik 1) etkisinden ölçülür.
   // Kalan sayılar Poisson (iki takım için tik başına MAC.oran). g = bir sayı atmanın beklenen puan kazancı, c = bir sayı yemenin beklenen puan kaybı. Kaybın bedeli g'ye göre c kadar tartılır: önde ve sona yakın takım kayıptan çok korkar (risk düşer, blok geri çekilir); geride olan riske girer.
   const MAC = { oran: 1.8 / 5400, uc: [.35, 2.8] };
@@ -268,7 +272,7 @@
       for (const q of ps) {
         if (q.team === h.team || q.noTouch || q.cd > m.tick || q.hamle) continue; if (Math.hypot(q.x - h.x, q.y - h.y) > D.DU.engage + .6) continue; /* v5 · Bekçi de ikiliye girer; hamlenin hazırlığı mesafeyi kapatır */
         const P = D.duelP(q, h, ps), est = P + (m.r() - .5) * (20 - (q.a.okuma ?? 10)) * .03; q.cd = m.tick + D.DU.cd;
-        if (est < D.commitThr(q, h, ps)) continue;
+        const sdq = (m.tac[q.team] && m.tac[q.team].siddet) ?? .5; if (est < D.commitThr(q, h, ps) - (sdq - .5) * .2) continue; /* pres şiddeti: sert takım ikiliye daha kolay girer (kazanma ihtimali daha düşükken bile), temkinli takım emin olmadan girmez */
         const kx = h.x + Math.cos(h.ca ?? 0) * K.Q.body, ky = h.y + Math.sin(h.ca ?? 0) * K.Q.body, shd = K.Turn.shielded(h, q, kx, ky), cv = ((q.a.ceviklik ?? 10) - 10) * .25;
         q.hamle = { k: shd ? 'omuz' : 'uzan', hid: h.id, t0: m.tick, W: Math.max(2, Math.round((shd ? 4 : 5) - cv)) }; q.cd = m.tick + q.hamle.W + D.DU.cd;
         /* v5 · kendini adama: hamleye giren savunmacı hazırlık + toparlanma süresince yönünü değiştiremez (Çeviklik kısaltır); o sürede boşa çıkan Çekirdeğe uzanamaz. Taşıyıcı hamleyi Okuma farkıyla sezerse hemen karar verir (kenar çalımı, fiske, pas ile cevap) */
