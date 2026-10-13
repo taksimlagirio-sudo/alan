@@ -165,7 +165,40 @@ Gerekirse ince ayrımlar: rakibin hangi kanatta olduğu, set hücumunda savunma 
    | kaybedilen ikiliden sonra 2 sn içinde rakip gönderdi | 1,0 | 0,8 | 2,7 |
 
    Sebep üç yerde: (a) ikili kazanma oranı şiddetle hiç değişmiyor; daha çok ikili, aynı oran. (b) Kazanılan ikilinin yarısı topu dürtüp boşa düşürüyor; yön rastgele (`match.js` ikili, `(m.r() - .5) * 1.6`), presçinin yanında toplayacak arkadaş olmadığından sert takımda boştaki topun ~yarısını rakip alıyor. (c) Geçilen savunmacılar pas kesmeyi biraz azaltıyor.
+   **Düzeltme (sonraki analiz):** Pres sayıya dönüşüyor: top sayısı değil kazanılan yer değişiyor. Şiddet 0 → 1: rakip yarısında kazanılan %31 → %38, Liman sayısı 1,25 → 2,25, gönderme başına sayı %15 → %24. Blok düşük → yüksek: rakip yarısında kazanılan %25 → %41, Liman sayısı 1,25 → 2,58, rakip sayısı 0,67 → 2,00 (arkada açılan boşluk). Yani pres gerçek bir risk/ödül kararı; eksik olan yalnız **zorlanan hata** (madde 5).
    Mekanik öneriler (kural değil): **ikinci kişi desteği** (presçinin yanında boştaki topu toplamaya hazır biri; "ikinci presçi kaçış yolunu kapatır" fikriyle aynı aile) · **ikili kararının kalibrasyonu** (aklın ikiliye girerken kullandığı kazanma tahmini ile gerçek sonuç; şiddet daha düşük ihtimalli ikililere soktuğu hâlde oran düşmüyor, tahmin ile sonuç zayıf ilişkili olabilir; Claude Code ölçebilir) · **dürtülen topun yönü** savunmacının gövde yönüne ya da arkadaşa doğru (rastgele yerine).
+
+5. **Baskı pasın isabetini etkilemiyor (kodda):** `decide.js` `applyError` pas sapmasını yalnız Aktarım ve tek dokunuşla hesaplıyor; baskı yalnız gönderme için (`match.js` `ek *= D.gonEk(...)`, yalnız `o.kind === 'gönder'`). Dibinde iki rakip olan oyuncu, boştaki kadar isabetli pas atıyor; presin "rakibi hataya zorlama" yolu yok. Öneri: göndermedeki baskı terimini (gonEk) pasa da uygulamak; akıl da aynı fonksiyonla tahmin etsin (kafada ayrı taklit yok). Claude Code baskı altında pası ölçüyor (pas tutma, yön, aklın tahmini); sonuç buraya eklenecek.
+6. **Saha ölçüleri oransal yazılsın:** Motorda 100, 50, 25 (orta çizgi), pres hattı (42, 62), bölge sınırları ve gönderme tablosu sabit sayı. Saha boyutu değişmeyecekse sorun değil; ama yeni yazılan kodda ölçüler sahaya oransal yazılırsa ileride saha boyutu denemek (ör. ±%10) ucuz olur. Kullanıcının görüşü: 7'ye 7 ve 100 × 50 kalsın.
+
+## 7b · İleride: menajerlik ve dünya katmanı (motor dışı; motorla bağları)
+
+Kullanıcının yönü: Oyun hem bilgisayarda hem mobilde, offline ve online; aynı anda tek cihazda oynanır, kariyer cihazlar arasında taşınır. Bunlar motorun dışında, ama motordaki kararlar bunlarla uyumlu kalmalı. Ayrıntılı tasarım sonra; burada yön ve motor bağları.
+
+**Online yapı:** turnuvalar, aşamalar, gruplar, sezonlar; tabakalı ligler ve yükselme–düşme (yeni ve küçük kulüpler alttan başlar; güçlü kulüplerin üstte kalması sorun değil).
+
+**Oyuncu yaşam döngüsü (yaş yok, emeklilik yok):** Oyuncular insan değil; yaşlanma istenmiyor. Dolaşım ve statikleşmeye karşı:
+1. **Kullan ya da kaybet:** Özellikler oynayarak ve yapılan işle gelişir, uzun süre oynamayınca yavaşça geriler (faaliyete bağlı, yaşa değil). Rolsüz sistemle örtüşür: oyuncu hangi işi yapıyorsa o yanı gelişir.
+2. **Ekonomi:** Maaş oyuncunun gerçek değeriyle artar; bütçe ve kadro sınırı en iyileri biriktirmeyi pahalı kılar.
+3. **Sözleşme ve oyuncu iradesi:** Sözleşmesi biten oyuncu, oynamıyorsa ya da daha iyi teklif varsa ayrılabilir; serbestler havuza döner.
+4. **Her sezon yeni kuşak:** Altyapılardan yeni oyuncular; sayısı kulüp sayısıyla orantılı (havuz büyür, kulüp başına yetenek sabit kalır). Altyapıya yatırım yapan daha iyi çıkarır.
+5. **Özellik tavanı (20):** Zirvede kadrolar benzeşince farkı taktik yaratır; oyunun asıl değeri öne çıkar.
+
+**Gerçek kişi rolleri (özgün mekanik):** Scout, transfer yöneticisi, ileride direktör; menajer bu görevleri gerçek oyunculara açabilir, istemeyen yapay zekâ çalışanla oynar.
+- **Bilgi gizli olmalı:** Özelliklerin tam değeri görünmez, gözlemle netleşir (maç izleme, istatistik, scout raporu). Yoksa scout'a iş kalmaz.
+- **Ölçülebilir itibar:** Sistem gerçek değerleri bildiği için scout'un isabeti otomatik ölçülür ("tahminleri ortalama ±1,2 sapıyor").
+- **Güven ve hile koruması:** Sınırlı yetki (bütçe tavanı, satışta alt fiyat, onay gereken işlemler), her işlemin kaydı, bağlantılı hesapların şüpheli transferlerinin işaretlenmesi; ödeme oyun içi para ve itibarla (gerçek parayla değil).
+- **Ayrı kariyer yolu:** scout → transfer yöneticisi → direktör → menajer.
+- **Zamanlama:** Kritik kitle gerektirir; önce yapay zekâ çalışanlar, oyuncu sayısı arttıkça insanlara açılır.
+
+**İleride, fikir aşamasında:** Başkanlık sistemi (kulübün sahibi ya da seçilmiş başkanı: bütçe, menajer ve çalışan atama), taraftarlar (kulübe bağlılık; gelire, atmosfere, başkanlık seçimine etkisi). Tasarımı sonra; ilke: her biri gerçek bir karar ve ödünleşim yaratsın, süs olmasın.
+
+**Motor bağları (şimdiden önemli olanlar):**
+- **Özellik ölçümü** → oyuncunun değeri, maaşı, gelişim önceliği (keyfi değil, sahadaki etkiden).
+- **Özellikler sahada okunabilir olmalı:** Gizli bilgi sisteminde hızlı oyuncu hızlı görünmeli, iyi pasçı iyi pas atmalı; sahada izi olmayan özelliği ne scout ne menajer fark edebilir. Özellik ölçümü bunu da sınar.
+- **Oyuncunun maçta yaptığı işin kaydı** (görev, ikili, pas, koşu) → "kullan ya da kaybet" gelişimi. Motor bunu büyük ölçüde zaten biliyor; ileride oyuncu başına özetlenmeli.
+- **Hafif mod ve hesap bütçesi:** İzlenmeyen maçlar ve online dünyada sunucu hesabı için.
+- **Kayıtlar sonucu tutsun:** Kariyer kaydı maç sonuçlarını saklar, yeniden oynatmaya dayanmaz; kayıtlar motor sürümünü taşır. Yarım kalan maç taşınacaksa zarın (rastgele sayı üreteci) durumu kayda sayı olarak girmeli.
 
 ## 7 · Sıra ve teslim
 
