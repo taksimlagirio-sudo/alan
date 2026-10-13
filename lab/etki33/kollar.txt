@@ -1,0 +1,14 @@
+taban	{}
+kosu0	{"tl":{"5":{"huc":{"kosu":0}}}}
+kosu1	{"tl":{"5":{"huc":{"kosu":1}}}}
+destek0	{"tl":{"3":{"huc":{"destek":0}}}}
+destek1	{"tl":{"3":{"huc":{"destek":1}}}}
+pres0	{"tl":{"3":{"sav":{"pres":0}}}}
+pres1	{"tl":{"3":{"sav":{"pres":1}}}}
+adam1	{"tl":{"2":{"sav":{"adam":1,"kimi":6}}}}
+evreKur	{"tac":{"evre":{"sav.kurma":{"blok":"Yüksek","siddet":1}}}}
+tuzak	{"tac":{"tuzak":"kenar"}}
+doldur	{"tl":{"5":{"huc":{"kosu":1}},"4":{"huc":{"doldur":5}}}}
+kosul	{"tac":{"kosul":[{"ne":"esit","ayar":{"blok":"Yüksek","siddet":1}}]}}
+planSol	{"tac":{"plan":{"taraf":"sol"}}}
+planSag	{"tac":{"plan":{"taraf":"sag"}}}
