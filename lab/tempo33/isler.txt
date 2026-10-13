@@ -1,0 +1,16 @@
+LTEMPO=0.2 node tools/v5-savunma.js hiz30/z33 2 0 > lab/tempo33/t0.2-2-0.json 2>&1
+LTEMPO=0.8 node tools/v5-savunma.js hiz30/z33 2 0 > lab/tempo33/t0.8-2-0.json 2>&1
+LTEMPO=0.2 node tools/v5-savunma.js hiz30/z33 0 0 > lab/tempo33/t0.2-0-0.json 2>&1
+LTEMPO=0.8 node tools/v5-savunma.js hiz30/z33 0 0 > lab/tempo33/t0.8-0-0.json 2>&1
+LTEMPO=0.2 node tools/v5-savunma.js hiz30/z33 2 1 > lab/tempo33/t0.2-2-1.json 2>&1
+LTEMPO=0.8 node tools/v5-savunma.js hiz30/z33 2 1 > lab/tempo33/t0.8-2-1.json 2>&1
+LTEMPO=0.2 node tools/v5-savunma.js hiz30/z33 0 1 > lab/tempo33/t0.2-0-1.json 2>&1
+LTEMPO=0.8 node tools/v5-savunma.js hiz30/z33 0 1 > lab/tempo33/t0.8-0-1.json 2>&1
+LTEMPO=0.2 node tools/v5-savunma.js hiz30/z33 2 2 > lab/tempo33/t0.2-2-2.json 2>&1
+LTEMPO=0.8 node tools/v5-savunma.js hiz30/z33 2 2 > lab/tempo33/t0.8-2-2.json 2>&1
+LTEMPO=0.2 node tools/v5-savunma.js hiz30/z33 0 2 > lab/tempo33/t0.2-0-2.json 2>&1
+LTEMPO=0.8 node tools/v5-savunma.js hiz30/z33 0 2 > lab/tempo33/t0.8-0-2.json 2>&1
+LTEMPO=0.2 node tools/v5-savunma.js hiz30/z33 2 3 > lab/tempo33/t0.2-2-3.json 2>&1
+LTEMPO=0.8 node tools/v5-savunma.js hiz30/z33 2 3 > lab/tempo33/t0.8-2-3.json 2>&1
+LTEMPO=0.2 node tools/v5-savunma.js hiz30/z33 0 3 > lab/tempo33/t0.2-0-3.json 2>&1
+LTEMPO=0.8 node tools/v5-savunma.js hiz30/z33 0 3 > lab/tempo33/t0.8-0-3.json 2>&1
