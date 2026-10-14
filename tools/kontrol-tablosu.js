@@ -7,7 +7,7 @@ function olc(d) {
   const A = { mac: 0, dk: 0, tik: 0, hs: 0, say: 0, gon: 0, gonSay: 0, pas: 0, pasTut: 0, kesme: 0, disari: 0,
     kov: 0, kovBiz: 0, sayYer: 0, yakinDirek: 0, dar: 0, darSay: 0, darYakin: 0, dirN: 0, dirUz: 0, uzGen: 0, uzGenSay: 0, yakGen: 0, yakGenSay: 0,
     kazBos: 0, kazDur: 0, verN: 0, verGeri: 0, baskiN: 0, tutSec: 0, tutKay: 0,
-    savT: 0, bosVar: 0, cift: 0, ciftArka: 0, holdT: 0, presYok: 0, hucDur: 0, uzunDur: 0, durN: 0 };
+    savT: 0, bosVar: 0, iki4: 0, kaz3: 0, kaz3gon: 0, git: 0, kontraSay: 0, hwN: 0, hwKay: 0, hwGer: 0, cift: 0, ciftArka: 0, holdT: 0, presYok: 0, hucDur: 0, uzunDur: 0, durN: 0 };
   for (const f of fs.readdirSync(d).filter(f => f.endsWith('.json.gz'))) {
     const k = oku(d + '/' + f), W = k.saha.W, H = k.saha.H, N = k.oyuncular.length, L = k.LEN, tm = i => k.oyuncular[i].takim;
     const X = (t, i) => k.P.x[t * N + i] / 100, Y = (t, i) => k.P.y[t * N + i] / 100, J = (t, i) => k.gorevler[k.P.job[t * N + i]], ileri = (t, x) => t === 0 ? x : W - x;
@@ -47,15 +47,18 @@ function olc(d) {
       if (h !== sonH && sonH !== 255 && sonT === ht) { let t0 = t - 1; while (t0 > 0 && k.T.hold[t0] === 255) t0--; const t1 = Math.min(L - 1, t0 + 60); A.verN++; if (ileri(ht, X(t1, sonH)) - ileri(ht, X(t0, sonH)) < -2) A.verGeri++; }
       sonT = ht; sonH = h;
       if (ileri(ht, X(t, h)) > W / 2) { A.holdT++; let yak = false; for (let i = 0; i < N; i++) if (tm(i) !== ht && k.oyuncular[i].rol !== 'Bekçi' && Math.hypot(X(t, i) - X(t, h), Y(t, i) - Y(t, h)) < 12) { yak = true; break; } if (!yak) A.presYok++; } }
+    for (let t = 0; t < L; t++) if (k.T.gcGit[t]) A.git++;
+    { let st = -1; for (let t = 1; t < L - 1; t++) { const h = k.T.hold[t]; if (h === 255) continue; const ht = tm(h); if (st >= 0 && ht !== st && !santra(t)) { A.kaz3++; if (k.olay.some(o => o.tur === 'gonder' && o.takim === ht && o.t >= t && o.t < t + 180)) A.kaz3gon++; if (k.olay.some(o => o.tur === 'sayi' && o.takim === ht && o.t >= t && o.t < t + 300)) A.kontraSay++; } st = ht; } }
     // Baskı altında "tut" ve sonrası
     for (const kr of k.karar) { if (kr.kim == null || !kr.s || !kr.s.length || kr.t >= L) continue; const t = kr.t, h = kr.kim; if (k.T.hold[t] !== h) continue;
       let en = 1e9; for (let i = 0; i < N; i++) if (tm(i) !== tm(h)) en = Math.min(en, Math.hypot(X(t, i) - X(t, h), Y(t, i) - Y(t, h))); if (en >= 4) continue;
-      A.baskiN++; if (/^tut/.test(kr.s[0][0])) { A.tutSec++; for (let u = t; u < t + 60 && u < L; u++) { const g2 = k.T.hold[u]; if (g2 !== 255 && tm(g2) !== tm(h)) { A.tutKay++; break; } } } }
+      A.baskiN++; const hw = kr.s[0][4]; if (/^tut/.test(kr.s[0][0]) && hw) { A.hwN++; A.hwKay += hw[0]; for (let u = t; u < t + Math.max(hw[2] || 30, 30) && u < L; u++) { const g2 = k.T.hold[u]; if (g2 !== 255 && tm(g2) !== tm(h)) { A.hwGer++; break; } } } if (/^tut/.test(kr.s[0][0])) { A.tutSec++; for (let u = t; u < t + 60 && u < L; u++) { const g2 = k.T.hold[u]; if (g2 !== 255 && tm(g2) !== tm(h)) { A.tutKay++; break; } } } }
     // Savunma: boş hücumcu ve çift adam (6 tikte bir)
     for (let t = 0; t < L; t += 6) { const h = k.T.hold[t]; if (h === 255) continue; const at = tm(h); A.savT++; let bos = false, cift = null;
       for (let i = 0; i < N; i++) { if (tm(i) !== at || i === h || k.oyuncular[i].rol === 'Bekçi' || ileri(at, X(t, i)) < W / 2) continue;
         let en = 1e9; const yak = []; for (let j = 0; j < N; j++) if (tm(j) !== at && k.oyuncular[j].rol !== 'Bekçi') { const dd = Math.hypot(X(t, j) - X(t, i), Y(t, j) - Y(t, i)); en = Math.min(en, dd); if (dd < 4) yak.push(j); }
         if (en > 8) bos = true; if (yak.length >= 2 && !cift) cift = yak; }
+      for (let i = 0; i < N; i++) { if (tm(i) !== at || i === h || k.oyuncular[i].rol === 'Bekçi') continue; let c = 0; for (let j = 0; j < N; j++) if (tm(j) !== at && k.oyuncular[j].rol !== 'Bekçi' && Math.hypot(X(t, j) - X(t, i), Y(t, j) - Y(t, i)) < 4) c++; if (c >= 2) { A.iki4++; break; } }
       if (bos) A.bosVar++; if (bos && cift) { A.cift++; if (cift.filter(j => /^arkada/.test(J(t, j) || '')).length >= 2) A.ciftArka++; } }
   }
   const p = (a, b) => b ? 100 * a / b : null;
@@ -69,7 +72,9 @@ function olc(d) {
     'Kontra: önü boşken 12+ tik topla duran / dk': [A.kazDur / A.dk, -1], 'Pastan sonra geri koşan pasçı %': [p(A.verGeri, A.verN), -1],
     'Baskı altında "tut" seçimi %': [p(A.tutSec, A.baskiN), -1], '"Tut"tan sonra 1 sn\'de kayıp %': [p(A.tutKay, A.tutSec), -1],
     'Boş hücumcu (rakip yarısı, 8 br) zamanın %': [p(A.bosVar, A.savT), -1], 'Boş adam + çift adam anı / dk (6 tikte bir örnek)': [A.cift / A.dk, -1],
-    '  bunlarda iki kişi "arkada" / dk': [A.ciftArka / A.dk, -1], 'Taşıyıcıya baskı yok (rakip yarısı) %': [p(A.presYok, A.holdT), -1],
+    '  bunlarda iki kişi "arkada" / dk': [A.ciftArka / A.dk, -1], 'Taşıyıcıya baskı yok (rakip yarısı) %': [p(A.presYok, A.holdT), -1], 'Topsuz rakipte 4 br içinde 2 savunmacı (bütün saha) / dk': [A.iki4 / A.dk, -1],
+    'Top kazanınca 3 sn içinde gönderme %': [p(A.kaz3gon, A.kaz3), 1], 'Top kazanınca 5 sn içinde sayı / dk': [A.kontraSay / A.dk, 0], 'Geçiş "git" tik / dk': [A.git / A.dk, 1],
+    'Baskı altında "tut": akıl kayıp % (n)': [p(A.hwKay, A.hwN), 0, A.hwN || null], 'Baskı altında "tut": gerçek kayıp % (aynı anlar)': [p(A.hwGer, A.hwN), 0],
     'Her an duran hücumcu': [A.hucDur / A.durN, -1], 'Uzun tutuşta 1 sn+ duran hücumcu': [A.uzunDur / A.durN, -1] } };
 }
 
