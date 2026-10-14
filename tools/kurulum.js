@@ -19,7 +19,7 @@ function kur(dir, sc, KAY = 0, yama = {}) {
     ['Maç içi değişiklik: Fırtına–Liman', rk(R[1]), lm(), [{ tick: 1200, t: 1, tac: { kazaninca: 'Kontra', risk: .9 }, diz: { sav: '3-2-1', huc: '2-3-1' } }, { tick: 3000, t: 0, tac: { pres: 0, blok: 'Düşük' } }, { tick: 4200, t: 1, tac: { sistem: 'Adam adama', pres: 3 } }]],
   ][sc];
   const [ad, A0, B0, gec = []] = S, T = [A0, B0];
-  const m = M.createMatch(1000 + sc * 7 + KAY * 100003, { tac: T.map(x => x.tac), len: 5400, diz: T.map(x => x.diz) });
+  const m = M.createMatch(1000 + sc * 7 + KAY * 100003, { tac: T.map(x => x.tac), len: +process.env.LEN || globalThis.ALAN_MAC_LEN || 5400, diz: T.map(x => x.diz) });
   if (T.some(x => x.rast)) { let r0 = (sc * 2654435761) >>> 0; const Rn = () => (r0 = (Math.imul(r0, 1664525) + 1013904223) >>> 0) / 4294967296; for (const p of m.ps) for (const k of Object.keys(p.a)) p.a[k] = 6 + Math.floor(Rn() * 11); }
   for (const t of [0, 1]) { const Ao = T[t].oyuncular; if (Ao) for (const p of m.ps) if (p.team === t && Ao[p.i]) { p.name = Ao[p.i].ad; p.a = { ...p.a, ...Ao[p.i].a }; } }
   const egUy = (Rr) => { for (const p of m.ps) { const r = Rr[p.team] && Rr[p.team][p.i - 1]; if (r && r.eg) p.eg = r.eg; } };
