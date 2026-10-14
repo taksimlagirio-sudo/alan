@@ -345,7 +345,7 @@
     const b = m.ball;
     if (b.done === 'durdu') { let best = null, bd = 1e9; for (const p of ps) { const d = Math.hypot(p.x - b.x, p.y - b.y); if (d < bd) { bd = d; best = p; } } if (bd < K.Q.reach && m.r() < K.ctrlP(b, best, ps)) take(m, best, `${best.name} boştaki Çekirdeği aldı`); }
     else {
-      const bx0 = b.x, by0 = b.y, r = K.stepAll(b, ps, null, null, m.r);
+      const bx0 = b.x, by0 = b.y, r = K.stepAll(b, ps, null, null, m.r); if ((b.direk || 0) !== (b._dk0 || 0)) { b._dk0 = b.direk; const st = m.st.direk || (m.st.direk = [0, 0]); st[b.team]++; ev(m, 'direk', b.team, `${b.from ? b.from.name + ' · ' : ''}Direkten sekti`); } /* v5 · direk çarpması maç olayı (sayım kayıttan kesin) */
       // v5 · Çekirdek bir gövdenin içinden geçemez: tutamadığı (ya da tutmaya çalışmadığı) gövdeden seker
       if (!(r && r.took) && !b.done) K.govde(b, bx0, by0, ps, p => p === b.from && (b.t || 0) < 4, BODY_R, BODY_E); /* Bekçi de dahil: tutamadığı (sersem, aldanmış, hazırlıksız) Çekirdek onun gövdesinden seker, içinden geçmez */ /* süpürmeli: hızlı Çekirdek de gövdeyi delip geçemez */
       if (r && r.took) { const fl = m.fl; take(m, r.p, fl && fl.kind === 'gönder' && r.p.role === 'Bekçi' ? `${r.p.name} göndermeyi tuttu` : `${r.p.name} aktarımı kesti`); return; }
