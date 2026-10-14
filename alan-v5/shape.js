@@ -15,7 +15,7 @@
     look: .6, lag0: 10, lagOk: .4,  // algı gecikmesi: 10 - Okuma×0.4 tik; öngörü: (Okuma-6) × 0.6 tik ileri
     react: .5,        // pası okuma gecikmesi: 14 - Okuma × bu tik
     reactLoose: 6, reactLooseOk: .25, // boşa çıkan Çekirdeği fark etme: 6 - Okuma × 0.25 tik
-    marginT: .6,      // "ben de yetişirim" payı (tik): (20-Okuma) × bu
+    marginT: .6, bekOnce: 2, /* Bekçi çıkışı: rakipten en az bu kadar tik önce varmalı (+ (20 − Yerleşim) × marginT) */      // "ben de yetişirim" payı (tik): (20-Okuma) × bu
     chaseMargin: .015,// "ilk ben varırım" emin olma payı: (20-Okuma) × bu
     destekK: .06, zoneR: 7, zoneOk: .5, zoneDng: 9, ayr: 4.5, ortakMin: .3, ortakR: 3.5, prT0: 22, prStill: 1.2, prCost: .55, prPmin: .3, prHat: { 'Düşük': 42 * GKX, 'Orta': 62 * GKX, 'Yüksek': 100 * GKX }, prDis: .08, prHold: 120, markOff: 2.5, markW: .75,
     pressR: { 'Düşük': 12, 'Orta': 20, 'Yüksek': 32 }, lock: 40,
@@ -109,6 +109,7 @@
       const ownPass = !loose && m.ball.team === t, firstMate = ownPass && !recvFirst ? mine.reduce((A2, B2) => (B2[1].est < A2[1].est ? B2 : A2))[0] : null; /* v5 · kendi pasımız havadayken tek kişi gider */
       const toMate = !loose && m.ball.team === t && recvFirst;
       for (const [p, r] of mine) { const recv = m.fl && m.fl.q === p && !loose; if (toMate && !recv) continue; if (ownPass && !toMate && p !== firstMate) continue; const rt = loose ? S.reactLoose - ok(p, 'tepki') * S.reactLooseOk : 14 - ok(p, 'tepki') * S.react; if (!recv && p.chB !== m.ball && m.tick - sh.ballT < rt) continue; const kaleye = p.role === 'Bekçi' && fr.pts && fr.pts.some(q => Math.hypot(q.x - ownX(p.team), q.y - GCY) < window.AlanCore.KR + 6); /* v5 · Çekirdek Kuyu'ya doğru geliyorsa Bekçi de herkes gibi (hatta uzanması geniş olduğu için daha erken) karışır */
+          if (p.role === 'Bekçi' && !recv && Math.hypot(r.x - ownX(p.team), r.y - GCY) > window.AlanCore.KR) { let oE = 1e9; for (const [q, rq2] of fr.arr) if (q.team !== t && !q.noTouch && rq2.est < oE) oE = rq2.est; if (r.est + S.bekOnce + (20 - ok(p, 'yerlesim')) * S.marginT >= oE) continue; } /* v5 · Bekçi alanının dışındaki topa ancak rakipten belirgin önce varacaksa çıkar (kaleci forvetten önce varacaksa çıkar); pay Yerleşim'le küçülür. Yetişemeyeceği pas için Kuyu'yu bırakmaz, açıortayda yeniden yerleşir */
           if (recv || r.est <= bestE + (p.role === 'Bekçi' ? (kaleye ? (20 - ok(p, 'yerlesim')) * S.marginT + 5 : 0) : (20 - ok(p, 'gorus')) * S.marginT + 1)) { /* v5 · Bekçi Kuyu'yu ancak topa takımında ilk o varacaksa bırakır: payı yok */ chase.add(p); p.tx = r.x; p.ty = r.y; p.sprint = true; p.job = recv ? 'alıcı' : 'kovala'; p.chB = m.ball; } }
     }
     if (m.fl && m.fl.kind === 'gönder' && m.ball && !m.ball.done) { const gx = oppX(m.ball.team), dr = dirOf(m.ball.team); for (const p of ps) { if (p.team !== m.ball.team || p.role === 'Bekçi' || p === m.ball.from || chase.has(p)) continue; if (Math.hypot(p.x - gx, p.y - GCY) < 28 && m.tick - sh.ballT >= 14 - ok(p, 'tepki') * S.react) { chase.add(p); p.tx = gx - dr * (5 + (p.id % 3) * 2); p.ty = GCY + ((p.id % 4) - 1.5) * 4; p.sprint = true; p.job = 'sekme'; } } }
