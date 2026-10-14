@@ -1,6 +1,6 @@
 // Bekçi'nin uzanma payı (dalış) sadece kendi Kuyu'suna bu kadar yakınken geçerli; dışarıda herkes gibi uzanır. 0: her yerde.
-/* Saha ölçüsü: tek kaynak. Deney için core.js'ten önce self.ALAN_SAHA_BOY = [120, 60] verilir. Geometri sabitleri KX = W / 100, KY = H / 50 ile ölçeklenir; beden ve fizik sabitleri mutlak kalır (alan-v5/SAHA-SABITLERI.md). 100 × 50'de KX = KY = 1: bütün çarpımlar tam, oyun birebir aynı */
-self.ALAN_SAHA = (() => { const b = self.ALAN_SAHA_BOY || [100, 50], W = b[0], H = b[1]; return { W, H, CY: H / 2, KX: W / 100, KY: H / 50 }; })();
+/* Saha ölçüsü: tek kaynak. Varsayılan 120 × 60 (zip47, kullanıcı kararı). Deney için core.js'ten önce self.ALAN_SAHA_BOY = [100, 50] verilir. Geometri sabitleri KX = W / 100, KY = H / 50 ile ölçeklenir; beden ve fizik sabitleri mutlak kalır (alan-v5/SAHA-SABITLERI.md). 100 × 50'de KX = KY = 1: bütün çarpımlar tam, oyun birebir aynı */
+self.ALAN_SAHA = (() => { const b = self.ALAN_SAHA_BOY || [120, 60], W = b[0], H = b[1]; return { W, H, CY: H / 2, KX: W / 100, KY: H / 50 }; })();
 self.ALAN_BEK_ALAN = 12;
 // Arkadaşın kontrol edemediği Çekirdek: true → gelişi yönünde kaçar (sekmez); false → eski hâl (gövdeden seker).
 self.ALAN_KACIR = true;
