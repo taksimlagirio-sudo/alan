@@ -174,7 +174,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
   function contact(b, src, q, rnd, ox, oy) {
     q = q || Q; rnd = rnd || Math.random; const sx = b.x - ox, sy = b.y - oy, sl = sx * sx + sy * sy; let best = null, bd = 1e9;
     for (const p of src) {
-      if (p.noTouch || (b.cds && (b.cds.get(p) || 0) > b.t)) continue; if (p === b.from && b.t < 8) continue; if (b.recv && p.team === b.team && p !== b.recv && !b.defl) continue; // arkadaş başkasına giden pası bırakır
+      if (p.noTouch || (b.cds && (b.cds.get(p) || 0) > b.t)) continue; if (p === b.from && b.t < 8) continue; if (b.recv && p.team === b.team && p !== b.recv && !b.defl) continue; if (b.gon && p.team === b.team && p.role !== 'Bekçi' && !b.defl) continue; /* v5 · arkadaş kendi takımının göndermesini de bırakır (Uzanma arttıkça önündeki arkadaşın kendi şutunu kesmesi buradandı) */ // arkadaş başkasına giden pası bırakır
       const t0 = sl > 0 ? ((p.x - ox) * sx + (p.y - oy) * sy) / sl : 1, tt = Math.max(0, Math.min(1, t0)), dd = hyp(ox + sx * tt - p.x, oy + sy * tt - p.y), R = oppReach(b, p, q, (p.role === 'Bekçi' && (!self.ALAN_BEK_ALAN || hyp(p.x - (p.team === 0 ? 0 : 100), p.y - 25) < self.ALAN_BEK_ALAN) ? bekR(b, p, q) : q.reach + ((self.ALAN_OZ(p, 'uzanma')) - 10) * .04) * (t0 < 0 ? q.awayK : 1)); const R2 = Math.max(R, 1.15); // kendisinden uzaklaşan Çekirdeğe ancak dibindeyse yetişir · v5: ama gövde yarıçapının (1,0) altına inmez; yoksa yanında koşan oyuncu, gövdesinden seken Çekirdeğe hiç dokunamıyordu (ikisi de topla süzülüyordu)
       if (dd < R2 && dd < bd) { bd = dd; best = p; }
     }

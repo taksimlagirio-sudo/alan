@@ -8,19 +8,24 @@
   const ALAN_G = { R: .25, D: .03 }; /* Alan gücü 6 → R 7, D 0,88 · 14 → R 9, D 1,12 (Claude Code ölçümüyle oturur) */
   const GECIS_VARS = tq => tq.gecisH || ({ Kontra: 'esit', 'Yerleş': 'hic' })[tq.kazaninca] || 'ustun', KP_VARS = tq => tq.kpYer || ((tq.kayip ?? .5) < .34 ? 'hic' : (tq.kayip ?? .5) > .66 ? 'her' : 'rakip');
   const geriSay = (m, lz, E) => { const ox = ownX(lz); let n = 0; for (const q of m.ps) if (q.team === lz && q.role !== 'Bekçi' && Math.abs(q.x - ox) < Math.abs(E.x - ox)) n++; return n; };
-  function gecisBasla(m, p) { const lz = 1 - p.team, geri = geriSay(m, lz, p); m.gecisGeri = geri; m.gc = null;
-    if (geri < 4) { const tL = (m.tac0 && m.tac0[lz]) || m.tac[lz] || {}, yer = KP_VARS(tL), rakYar = Math.abs(p.x - ownX(lz)) > 50, kpOn = yer === 'her' || (yer === 'rakip' && rakYar);
-      const kpIds = kpOn ? m.ps.filter(q => q.team === lz && q.role !== 'Bekçi' && Math.hypot(q.x - p.x, q.y - p.y) < 8).sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y)).slice(0, 3).map(q => q.id) : [];
-      m.gc = { team: p.team, t0: m.tick, kendi: Math.abs(p.x - ownX(p.team)) < 35, git: false, on: [], kp: kpIds.length ? { ids: kpIds, bitis: m.tick + Math.round((tL.kpSure ?? 2) * 60) } : null }; gecisGuncelle(m); }
+  /* v5 · karşı pres geçişten ayrıldı: kaybeden takım dağınık olmasa da menajerin kuralı geçerli (zip42: yalnız dağınıkken başlıyordu, 8 birim içinde çoğu zaman tek kişi vardı). Basanlar kayıp anında topa en yakın KP_N saha oyuncusu, KP_R birim içinde (≈1 sn koşu) */
+  const KP_N = 3, KP_R = 16, gecisEsik = tq => tq.gecisEsik ?? 4;
+  function gecisBasla(m, p) { const lz = 1 - p.team, geri = geriSay(m, lz, p); m.gecisGeri = geri; m.gc = null; m.kp = null;
+    { const tL = (m.tac0 && m.tac0[lz]) || m.tac[lz] || {}, yer = KP_VARS(tL), rakYar = Math.abs(p.x - ownX(lz)) > 50, kpOn = yer === 'her' || (yer === 'rakip' && rakYar);
+      const kpIds = kpOn ? m.ps.filter(q => q.team === lz && q.role !== 'Bekçi' && Math.hypot(q.x - p.x, q.y - p.y) < KP_R).sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y)).slice(0, KP_N).map(q => q.id) : [];
+      if (kpIds.length) m.kp = { team: lz, ids: kpIds, bitis: m.tick + Math.round((tL.kpSure ?? 2) * 60) }; }
+    const tW = (m.tac0 && m.tac0[p.team]) || m.tac[p.team] || {};
+    if (geri < gecisEsik(tW)) { m.gc = { team: p.team, t0: m.tick, kendi: Math.abs(p.x - ownX(p.team)) < 35, git: false, on: [] }; gecisGuncelle(m); }
     m.gecis = !!m.gc; }
   function gecisGuncelle(m) { const g = m.gc; if (!g) { m.gecis = false; return; } const h = m.holder, b = m.ball, bt = h ? h.team : b ? b.team : null;
-    if (bt !== g.team) { m.gc = null; m.gecis = false; return; } const E = h || b, lz = 1 - g.team, geri = geriSay(m, lz, E); if (geri >= 4) { m.gc = null; m.gecis = false; return; }
+    if (bt !== g.team) { m.gc = null; m.gecis = false; return; } const E = h || b, lz = 1 - g.team, geri = geriSay(m, lz, E); if (geri >= gecisEsik(tq0(m, g.team))) { m.gc = null; m.gecis = false; return; }
     const tq = (m.tac0 && m.tac0[g.team]) || m.tac[g.team] || {}, kural = GECIS_VARS(tq), dir = dirOf(g.team), on = m.ps.filter(q => q.team === g.team && q.role !== 'Bekçi' && q !== h && (q.x - E.x) * dir > 0), n = on.length;
     g.biz = n; g.rakip = geri; g.git = kural === 'her' || (kural === 'esit' && n >= geri) || (kural === 'ustun' && n > geri);
     if (g.git && g.kendi && h) { const d = m.ps.filter(q => q.team === g.team && q.role !== 'Bekçi' && q !== h && !on.includes(q)).sort((u, v) => Math.hypot(u.x - h.x, u.y - h.y) - Math.hypot(v.x - h.x, v.y - h.y))[0]; if (d) on.push(d); }
-    g.on = g.git ? on.map(q => q.id) : []; if (g.kp && m.tick >= g.kp.bitis) g.kp = null; m.gecis = true; }
+    g.on = g.git ? on.map(q => q.id) : []; m.gecis = true; }
+  const tq0 = (m, t) => (m.tac0 && m.tac0[t]) || m.tac[t] || {};
   const inWin = (m, t) => !!(m.gc && m.gc.team === t && m.gc.git);
-  function kpAkt(m, t) { const g = m.gc; return g && g.team === 1 - t && g.kp && m.tick < g.kp.bitis ? g.kp.ids : null; }
+  function kpAkt(m, t) { const k = m.kp; if (!k) return null; const h = m.holder, b = m.ball, bt = h ? h.team : b ? b.team : null; if (m.tick >= k.bitis || bt === t) { m.kp = null; return null; } return k.team === t ? k.ids : null; } /* top geri kazanılınca ya da süre dolunca biter */
   function kpEff(m, t, r) { return kpAkt(m, t) ? { ...r, _kp: 'pres' } : r; }
   // YZ uyumu (sadece tac.yz): rakip düşük blokta bekliyorsa (son 4 sn'de taşıyıcımıza basan yok, rakibin saha oyuncuları kendi yarısında) ve skor berabere ya da gerideyse tempo bir kademe artar; gerideyken son 30 sn'de sabır da bir kademe düşer. Önde iken dokunmaz. Kullanıcının takımında karar menajerin
   function yzUyum(m, t, r) { if (!(m.tac[t] && m.tac[t].yz)) return r; const d = m.score[t] - m.score[1 - t]; if (d > 0) return r; const h = m.holder;
@@ -224,7 +229,7 @@
   function govdeAyir(ps) {
     const BD = C().Turn.TQ.minD, n = ps.length; if (n > GX.length) { GX = new Float64Array(n * 2); GY = new Float64Array(n * 2); } for (let i = 0; i < n; i++) { GX[i] = ps[i].x; GY[i] = ps[i].y; } /* hız: konumlar düz diziden okunur (farklı biçimli oyuncu nesnelerini her çiftte okumak yavaş); kımıldayan oyuncunun yeri hemen diziye geri yazılır, sonuç aynı */
     for (let it = 0; it < 3; it++) { let degdi = false; for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { const dx = GX[j] - GX[i], dy = GY[j] - GY[i]; if (dx >= BD || dx <= -BD || dy >= BD || dy <= -BD) continue; /* hız: x ya da y farkı tek başına gövde mesafesini aşıyorsa uzaklık zaten büyüktür (sonuç aynı) */ const d = Math.hypot(dx, dy); if (d >= BD) continue; degdi = true; const a = ps[i], b = ps[j];
-      const ux = d > 1e-4 ? dx / d : 1, uy = d > 1e-4 ? dy / d : 0, o = (BD - d) / 2; a.x -= ux * o; a.y -= uy * o; b.x += ux * o; b.y += uy * o; const rv = (b.vx - a.vx) * ux + (b.vy - a.vy) * uy; if (rv < 0) { a.vx += ux * rv / 2; a.vy += uy * rv / 2; b.vx -= ux * rv / 2; b.vy -= uy * rv / 2; }
+      const ux = d > 1e-4 ? dx / d : 1, uy = d > 1e-4 ? dy / d : 0, ga = 1 + (self.ALAN_OZ(a, 'guc') - 10) * .05, gb = 1 + (self.ALAN_OZ(b, 'guc') - 10) * .05, ka = gb / (ga + gb), kb = 1 - ka, o = BD - d; /* v5 · Güç: çarpışmada güçlü olan daha az itilir (eşitse yarı yarıya, eskisi gibi) */ a.x -= ux * o * ka; a.y -= uy * o * ka; b.x += ux * o * kb; b.y += uy * o * kb; const rv = (b.vx - a.vx) * ux + (b.vy - a.vy) * uy; if (rv < 0) { a.vx += ux * rv * ka; a.vy += uy * rv * ka; b.vx -= ux * rv * kb; b.vy -= uy * rv * kb; }
       for (const p of [a, b]) { p.x = cl(p.x, .8, W - .8); p.y = cl(p.y, .8, H - .8); if (p.role !== 'Bekçi') outOfKuyu(p, true); } GX[i] = a.x; GY[i] = a.y; GX[j] = b.x; GY[j] = b.y; }
       if (!degdi) break; } /* hız: bu turda kimse iç içe değildiyse sonraki turlar da hiçbir şey değiştirmez */
   }
@@ -256,10 +261,10 @@
   function launch(m, h, o) {
     if (o.kind !== 'gönder') { const tp = o.to || o.q || h; m._pas = { team: h.team, fx: h.x, tx: tp.x, len: Math.hypot(tp.x - h.x, tp.y - h.y), t: m.tick }; } // pres tetikleri için son pas
     const D = Dd(), K = C(); let ek = o.ot || 1; if (o.kind === 'gönder') ek *= D.gonEk(h, m.ps, o.shot); else ek *= D.pasEk(h, m.ps); /* baskı altında pas dağılır */ /* v5 · gönderme isabeti: baskı, hareket ve güç dağıtır; Aktarım küçültür */
-    const v = D.applyError(h, o.launch, m.r, ek), t = h.team; const tk = o.ot ? ' · tek dokunuş' : ''; if (o.ot) { m.st.ot = m.st.ot || [0, 0]; m.st.ot[t]++; if (o.kind !== 'gönder' && o.kind !== 'aşırt' && o.kind !== 'kenardan') ev(m, 'pas', t, `${h.name} tek dokunuşla → ${o.q ? o.q.name : ''} · şarj %${Math.round(m.ch * 100)}`); }
+    const v = D.applyError(h, o.launch, m.r, ek, o.kind === 'gönder'), t = h.team; /* v5 · göndermenin isabeti Gönderme'den (zip42'de maç Pas'ı kullanıyordu; yalnız akıl Gönderme'yi görüyordu) */ const tk = o.ot ? ' · tek dokunuş' : ''; if (o.ot) { m.st.ot = m.st.ot || [0, 0]; m.st.ot[t]++; if (o.kind !== 'gönder' && o.kind !== 'aşırt' && o.kind !== 'kenardan') ev(m, 'pas', t, `${h.name} tek dokunuşla → ${o.q ? o.q.name : ''} · şarj %${Math.round(m.ch * 100)}`); }
     const cp = corePos(m) || { x: h.x, y: h.y }; m.ball = K.makeBall({ x: cp.x, y: cp.y, vx: v.vx, vy: v.vy, team: t, ch: m.ch, from: h, recv: o.q || null }); if (o.kind === 'aşırt') { m.st.lob = m.st.lob || [0, 0]; m.st.lob[t]++; ev(m, 'pas', t, `${h.name} aşırttı → ${o.q.name}${tk}`); } m.holder = null;
     const pr = K.predict(m.ball, m.ps, null, 600); m.fl = { t0: m.tick, kind: o.kind, q: o.q || null, to: o.to, end: { x: pr.end.x, y: pr.end.y }, shot: o.shot };
-    if (o.kind === 'gönder') { m.st.shot[t]++; m.ball.shotPk = o.det ? o.det.Pk : null; if (!m.lite) { const c = m.st.cal || (m.st.cal = { n: 0, pk: 0, g: 0 }); if (m.ball.shotPk != null) { c.n++; c.pk += m.ball.shotPk; } } ev(m, 'gonder', t, `${h.name} ${o.shot} gönderdi${tk} · şarj %${Math.round(m.ch * 100)}`); }
+    if (o.kind === 'gönder') { m.ball.gon = true; m.st.shot[t]++; m.ball.shotPk = o.det ? o.det.Pk : null; if (!m.lite) { const c = m.st.cal || (m.st.cal = { n: 0, pk: 0, g: 0 }); if (m.ball.shotPk != null) { c.n++; c.pk += m.ball.shotPk; } } ev(m, 'gonder', t, `${h.name} ${o.shot} gönderdi${tk} · şarj %${Math.round(m.ch * 100)}`); }
     else if (o.kind === 'çalım') { m.st.calim = m.st.calim || [0, 0]; m.st.calim[t]++; h.kenarW = { x: o.wp1 ? o.wp1.x : o.wp.x, y: o.wp1 ? o.wp1.y : o.wp.y, sonra: o.wp1 ? { x: o.wp.x, y: o.wp.y } : null, until: m.tick + 60 }; ev(m, 'pas', t, `${h.name} kenardan çalım`); }
     else { m.st.pass[t]++; if (o.kind === 'kenardan') { m.st.bank[t]++; if (o.kendine) { m.st.calim = m.st.calim || [0, 0]; m.st.calim[t]++; ev(m, 'pas', t, `${h.name} kenardan çalım · kendine sektirdi`); } else ev(m, 'pas', t, `${h.name} kenardan sektirdi → ${o.q.name}${tk}`); } if (o.kind === 'önüne') m.st.lead[t]++; if (o.why === 'kombinasyon') { m.st.combo = m.st.combo || [0, 0]; m.st.combo[t]++; } }
   }

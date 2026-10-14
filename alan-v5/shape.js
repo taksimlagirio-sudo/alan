@@ -20,7 +20,7 @@
     pressR: { 'Düşük': 12, 'Orta': 20, 'Yüksek': 32 }, lock: 40,
     runK: .6, // Kontra koşusunda boşluk değerinin ağırlığı
     vacOk0: 6, vacOkStep: 4, vacLeft: 7, vacEmpty: 6, vacLeash: .4, // açılan boşluk: 1 sn önce bir savunmacının durduğu, şimdi 6 birimde kimsenin olmadığı yer (savunmacı 7+ uzaklaşmış). Okuma 8–9 bir, 12–13 iki, 16+ üç boşluk fark eder
-    kanatK: .12, kurucuK: .08, pivotGap: 0, // deney: Pivot'un Kuyu'ya en az bu kadar uzak durması (0 = serbest) // rol talimatının dışına çıkmanın bedeli
+    durusEl: 3, kanatK: .12, kurucuK: .08, pivotGap: 0, // deney: Pivot'un Kuyu'ya en az bu kadar uzak durması (0 = serbest) // rol talimatının dışına çıkmanın bedeli
     recT: 120, recOk: 1.2, rcvRisk: 1, rcvMarginT: 10, // alıcı: beklemenin bedeli rakibin o noktaya alıcıdan ne kadar geç vardığına (pay, tik) bağlı; pay büyükse beklemek ucuz, küçükse pahalı runK: .6, // Kontra koşusunda boşluk değerinin ağırlığı
     W: { runSprint: 4, deep: 6, tv: 1, tvPass: .9, tvDrive: .85, dlReach: 4, defReach: 5, leash: .12, hyst: .04, noise: .01 }
   };
@@ -77,9 +77,9 @@
   function durusW(f) { if (f <= DUR_A[0]) return [1, 0, 0]; if (f >= DUR_A[2]) return [0, 0, 1]; if (f <= DUR_A[1]) { const u = (f - DUR_A[0]) / (DUR_A[1] - DUR_A[0]); return [1 - u, u, 0]; } const u = (f - DUR_A[1]) / (DUR_A[2] - DUR_A[1]); return [0, 1 - u, u]; }
   function slotBase(m, p, E, att) {
     const b = slotBase0(m, p, E, att), D = m.tac[p.team] && m.tac[p.team].durus, pl = D && D[att ? 'huc' : 'sav']; if (!pl) return b;
-    const t = p.team, x0 = ownX(t), dir = dirOf(t), w = durusW((E.x - x0) * dir); let ox = 0, oy = 0;
-    for (let k = 0; k < 3; k++) { const q = w[k] && pl[k] && pl[k][p.i - 1]; if (!q) continue; const d0 = durusDef(m, p, k, att); if (q.f != null) ox += w[k] * (x0 + dir * q.f - d0.x); if (q.y != null) oy += w[k] * (q.y - d0.y); } /* bir oyuncunun yalnız ileri ya da yalnız yan değeri verilebilir; verilmeyen varsayılandan */
-    return (ox || oy) ? { x: cl(b.x + ox, 2, 98), y: cl(b.y + oy, 2, 48) } : b;
+    const t = p.team, x0 = ownX(t), dir = dirOf(t), w = durusW((E.x - x0) * dir); let ox = 0, oy = 0, el = 0;
+    for (let k = 0; k < 3; k++) { const q = w[k] && pl[k] && pl[k][p.i - 1]; if (!q) continue; if (q.f != null || q.y != null) el += w[k]; const d0 = durusDef(m, p, k, att); if (q.f != null) ox += w[k] * (x0 + dir * q.f - d0.x); if (q.y != null) oy += w[k] * (q.y - d0.y); } /* bir oyuncunun yalnız ileri ya da yalnız yan değeri verilebilir; verilmeyen varsayılandan */
+    return (ox || oy) ? { x: cl(b.x + ox, 2, 98), y: cl(b.y + oy, 2, 48), el } : b; /* el: bu evin menajerin elinden çıkma payı (0–1) */
   }
   function slotBase0(m, p, E, att) {
     const t = p.team, tac = m.tac[t], s = att && p.rslot ? p.rslot : p.slot, x0 = ownX(t), dir = dirOf(t), bd = (E.x - x0) * dir;
@@ -196,7 +196,8 @@
     const roleLeash = p => Math.pow(2, (.5 - window.AlanMatch.tl(p, 'huc', 'serbest')) * 2); /* serbestlik talimatı */
     const genis = p => Math.abs((p.rslot || p.slot).l) >= .75, roleY = (p, c) => { const ds = window.AlanMatch.tl(p, 'huc', 'destek'); return (genis(p) ? S.kanatK * Math.max(0, 13 - Math.abs(c.y - 25)) / 13 : 0) + (ds < .5 ? Math.min(1.5, (.5 - ds) / .3) * S.kurucuK * Math.max(0, (c.x - E.x) * dirOf(att) + 2) / 10 : 0) + (Math.abs(ds - .5) > .1 ? S.destekK * Math.min(4, Math.pow((Math.hypot(c.x - E.x, c.y - E.y) - (6 + ds * 14)) / 8, 2)) : 0); }; /* destek mesafesi: hedef mesafeden sapma (orta talimatta yok) */ /* rolsüz: genişlik dizilişten, destek mesafesi talimattan */ // talimatın dışına çıkmanın bedeli
     const roleRun = p => !runners.has(p) ? S.runK * .6 * (window.AlanMatch.tl(p, 'huc', 'kosu') - .5) / .5 : 0; /* koşu talimatı: 0,5 üstü koşu noktalarına ek değer, altı ceza (yerinde kalır) */
-    const leashK = p => (win ? (runners.has(p) ? .01 : 2.5) : roleLeash(p)); /* geçişte koşucu serbest, kalanlar evlerinde */
+    const elK = p => { const bs = base.get(p); return 1 + S.durusEl * ((bs && bs.el) || 0); }; /* v5 · tahtada elle yeri verilen oyuncu: ev menajerin açık talimatı, aday tartımı onu evine daha sıkı bağlar */
+    const leashK = p => elK(p) * (win ? (runners.has(p) ? .01 : 2.5) : roleLeash(p)); /* geçişte koşucu serbest, kalanlar evlerinde */
     for (const p of atk) {
       if (chase.has(p)) continue;
       if (guard.has(p)) { const g = gside(guard.get(p), att, 3 + (20 - ok(p, 'yeralma')) * .2); p.tx = g.x; p.ty = g.y; p.job = 'güvence'; p.otx = null; continue; }
