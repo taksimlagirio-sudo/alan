@@ -1,0 +1,7 @@
+// v5-oz-kopya.js özeti: aynı an, aynı zar; kollar arasında farklar (Liman'ın kararı, sürme payı, şut, gol, top kimde).
+const fs = require('fs'); const [dir] = process.argv.slice(2);
+for (const oz of ['surme', 'uzanma']) { const L = fs.readdirSync(dir).filter(f => f.startsWith(oz + '-') && f.endsWith('.jsonl')).flatMap(f => fs.readFileSync(dir + '/' + f, 'utf8').split('\n').filter(l => l.startsWith('{')).map(JSON.parse)); if (!L.length) continue;
+  for (const [ad, F] of [['Liman topta', x => x.kim === 0], ['Rakip topta', x => x.kim === 1]]) { const A = L.filter(F); if (!A.length) continue; const kollar = Object.keys(A[0].kol);
+    console.log(`\n== ${oz} · ${ad} (${A.length} an × ${A[0].kol[kollar[0]].length} zar)`);
+    for (const v of kollar) { const R = A.flatMap(x => x.kol[v]), n = R.length, s = k => R.reduce((a, r) => a + (r[k] || 0), 0); const ilk = {}; for (const r of R) if (r.ilk) ilk[r.ilk] = (ilk[r.ilk] || 0) + 1; const ik = Object.values(ilk).reduce((a, b) => a + b, 0) || 1;
+      console.log(`  ${v.padStart(2)}: Liman şut/an ${(s('sut') / n).toFixed(3)} · atılan ${(s('at') / n).toFixed(3)} · yenen ${(s('ye') / n).toFixed(3)} · Liman topu tuttuğu tik ${(s('tut') / n).toFixed(0)} (sürerek %${(100 * s('sur') / Math.max(1, s('tut'))).toFixed(0)}) · sonda top Liman'da %${(100 * R.filter(r => r.son === 0).length / n).toFixed(0)} · ilk karar: ${Object.entries(ilk).sort((a, b) => b[1] - a[1]).map(([k, c]) => k + ' %' + (100 * c / ik).toFixed(0)).join(', ')}`); } } }

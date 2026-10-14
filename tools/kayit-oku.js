@@ -1,7 +1,7 @@
 // Birleşik ölçüm, adım 2: kayit.js kayıtlarını okur ve ölçer. Maç yeniden oynatılmaz.
 // Modül: oku(dosya) → kayıt (diziler açılmış). Ölçümler: ol.genel, ol.durma, ol.salinim, ol.kosu, ol.pasTahmin, ol.evre
 const fs = require('fs'), zlib = require('zlib');
-const TIP = { hold: Uint8Array, bx: Int16Array, by: Int16Array, bt: Int8Array, ch: Uint8Array, ev0: Int8Array, ev1: Int8Array, gcT: Int8Array, gcGit: Uint8Array, gcOn: Uint8Array, kp: Uint8Array, x: Int16Array, y: Int16Array, vx: Int16Array, vy: Int16Array, tx: Int16Array, ty: Int16Array, job: Uint8Array };
+const TIP = { hold: Uint8Array, bx: Int16Array, by: Int16Array, bt: Int8Array, ch: Uint8Array, ev0: Int8Array, ev1: Int8Array, gcT: Int8Array, gcGit: Uint8Array, gcOn: Uint8Array, kp: Uint8Array, kpT: Int8Array, x: Int16Array, y: Int16Array, vx: Int16Array, vy: Int16Array, tx: Int16Array, ty: Int16Array, job: Uint8Array };
 const ac = (s, C) => { const b = Buffer.from(s, 'base64'), a = new Uint8Array(b.length); a.set(b); return new C(a.buffer); };
 function oku(f) { const k = JSON.parse(zlib.gunzipSync(fs.readFileSync(f))); for (const [g, o] of [['T', k.T], ['P', k.P]]) for (const key of Object.keys(o)) o[key] = ac(o[key], TIP[key]); k.lane = ac(k.lane, Uint8Array); return k; }
 const ileri = (t, x) => t === 0 ? x : 100 - x;
