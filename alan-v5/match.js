@@ -1,11 +1,26 @@
 (function () {
   // Katman 4 (basit) · Yerleşim + maç döngüsü. Talimata sadık, kusursuz değil.
   const C = () => window.AlanCore, Dd = () => window.AlanDecide, W = 100, H = 50;
-  const TAC0 = { blok: 'Orta', pres: 1, arkada: 1, onde: 0, genislik: 'Normal', risk: .5, tempo: .5, kazaninca: 'Dengeli' };
-  const WIN_T = 180; // geçiş penceresi: Çekirdek kazanıldıktan sonraki 3 saniye
-  const inWin = (m, t) => m.gecis !== false && m.winTeam === t && m.tick - m.winT < WIN_T;
-  // Topu kaybedince (karşı pres penceresi = kpSure sn): Geçiş savunması (kayip) 0 → geri çekil (kimse basmaz, blok düşük), 0,5 → taktikteki pres, 1 → +2 presçi
-  function kpEff(m, t, r) { const tq = m.tac[t]; if (!(m.gecis !== false && m.winTeam === 1 - t && m.winT != null && m.tick - m.winT < (tq.kpSure ?? 3) * 60)) return r; const k = tq.kayip ?? .5; return k < .34 ? { ...r, pres: 0, blok: 'Düşük', _kp: 'geri' } : { ...r, pres: Math.max(0, Math.min(4, Math.round((tq.pres ?? 1) + (k - .5) * 4))), _kp: 'pres' }; }
+  const TAC0 = { blok: 'Orta', pres: 1, onde: 0, genislik: 'Normal', risk: .5, tempo: .5, kazaninca: 'Dengeli' };
+  /* v5 · Geçiş: bir süre ya da bölge değil, durumdan doğan an (m.gc). Top el değiştirdiğinde kaybeden takım dağınıksa (topun gerisinde Bekçi dışında 4'ten az oyuncu) başlar; kaybeden takım yerleşince (4+) ya da top yeniden el değiştirince biter. Her tik bakılır.
+     Hücum geçişi (kazanan): kural tac.gecisH — 'ustun' (önde sayıca üstünsek git) · 'esit' (eşitsek de) · 'her' · 'hic'. Sayı sahadan: topun önündeki bizden (Bekçi ve taşıyıcı hariç) ile topun önündeki rakipten (Bekçi hariç). Git derse katılanlar topun önündekiler + taşıyıcı; top kendi bölgemizde (ilk 35) kazanıldıysa en yakın bir destek. Kalanlar evlerinde güvence. Katılan sayısı her tik yeniden bakılır. Kaç kişi ayarı yok.
+     Savunma geçişi (kaybeden): karşı pres kuralı tac.kpYer — 'rakip' (rakip yarısında kaybedersek) · 'her' · 'hic'; süre tac.kpSure (1–3 sn). Basanlar kayıp anında topun 8 birim içindekiler (en fazla 3); kimse yoksa basılmaz. Süre dolunca ya da geçiş bitince döner. Diğerleri savunma planındaki evlerine */
+  const GECIS_VARS = tq => tq.gecisH || ({ Kontra: 'esit', 'Yerleş': 'hic' })[tq.kazaninca] || 'ustun', KP_VARS = tq => tq.kpYer || ((tq.kayip ?? .5) < .34 ? 'hic' : (tq.kayip ?? .5) > .66 ? 'her' : 'rakip');
+  const geriSay = (m, lz, E) => { const ox = ownX(lz); let n = 0; for (const q of m.ps) if (q.team === lz && q.role !== 'Bekçi' && Math.abs(q.x - ox) < Math.abs(E.x - ox)) n++; return n; };
+  function gecisBasla(m, p) { const lz = 1 - p.team, geri = geriSay(m, lz, p); m.gecisGeri = geri; m.gc = null;
+    if (geri < 4) { const tL = (m.tac0 && m.tac0[lz]) || m.tac[lz] || {}, yer = KP_VARS(tL), rakYar = Math.abs(p.x - ownX(lz)) > 50, kpOn = yer === 'her' || (yer === 'rakip' && rakYar);
+      const kpIds = kpOn ? m.ps.filter(q => q.team === lz && q.role !== 'Bekçi' && Math.hypot(q.x - p.x, q.y - p.y) < 8).sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y)).slice(0, 3).map(q => q.id) : [];
+      m.gc = { team: p.team, t0: m.tick, kendi: Math.abs(p.x - ownX(p.team)) < 35, git: false, on: [], kp: kpIds.length ? { ids: kpIds, bitis: m.tick + Math.round((tL.kpSure ?? 2) * 60) } : null }; gecisGuncelle(m); }
+    m.gecis = !!m.gc; }
+  function gecisGuncelle(m) { const g = m.gc; if (!g) { m.gecis = false; return; } const h = m.holder, b = m.ball, bt = h ? h.team : b ? b.team : null;
+    if (bt !== g.team) { m.gc = null; m.gecis = false; return; } const E = h || b, lz = 1 - g.team, geri = geriSay(m, lz, E); if (geri >= 4) { m.gc = null; m.gecis = false; return; }
+    const tq = (m.tac0 && m.tac0[g.team]) || m.tac[g.team] || {}, kural = GECIS_VARS(tq), dir = dirOf(g.team), on = m.ps.filter(q => q.team === g.team && q.role !== 'Bekçi' && q !== h && (q.x - E.x) * dir > 0), n = on.length;
+    g.biz = n; g.rakip = geri; g.git = kural === 'her' || (kural === 'esit' && n >= geri) || (kural === 'ustun' && n > geri);
+    if (g.git && g.kendi && h) { const d = m.ps.filter(q => q.team === g.team && q.role !== 'Bekçi' && q !== h && !on.includes(q)).sort((u, v) => Math.hypot(u.x - h.x, u.y - h.y) - Math.hypot(v.x - h.x, v.y - h.y))[0]; if (d) on.push(d); }
+    g.on = g.git ? on.map(q => q.id) : []; if (g.kp && m.tick >= g.kp.bitis) g.kp = null; m.gecis = true; }
+  const inWin = (m, t) => !!(m.gc && m.gc.team === t && m.gc.git);
+  function kpAkt(m, t) { const g = m.gc; return g && g.team === 1 - t && g.kp && m.tick < g.kp.bitis ? g.kp.ids : null; }
+  function kpEff(m, t, r) { return kpAkt(m, t) ? { ...r, _kp: 'pres' } : r; }
   // YZ uyumu (sadece tac.yz): rakip düşük blokta bekliyorsa (son 4 sn'de taşıyıcımıza basan yok, rakibin saha oyuncuları kendi yarısında) ve skor berabere ya da gerideyse tempo bir kademe artar; gerideyken son 30 sn'de sabır da bir kademe düşer. Önde iken dokunmaz. Kullanıcının takımında karar menajerin
   function yzUyum(m, t, r) { if (!(m.tac[t] && m.tac[t].yz)) return r; const d = m.score[t] - m.score[1 - t]; if (d > 0) return r; const h = m.holder;
     if (h && h.team === t) { const og = t === 0 ? 100 : 0, geri = m.ps.filter(p => p.team !== t && p.role !== 'Bekçi' && Math.abs(p.x - og) < 50).length, yakin = m.ps.some(p => p.team !== t && p.role !== 'Bekçi' && Math.hypot(p.x - h.x, p.y - h.y) < 5); if (yakin) m._yzBas = m.tick; m._yzBekle = geri >= 5 && m.tick - (m._yzBas || 0) > 240; }
@@ -23,7 +38,7 @@
     m.macDurum = m.macDurum || [null, null]; m.macDurum[t] = { oran: +oran.toFixed(2), g: +w.g.toFixed(3), c: +w.c.toFixed(3) }; const birim = Math.max(.05, (w.g + w.c) / 2), eK = k => { const k2 = d + ':' + k; let x = m._macE && m._macE[k2]; if (x == null) { m._macE = m._macE || {}; x = m._macE[k2] = macW(d, k * 60).e0; } return x; }, eT = dt => { const r = Math.max(0, kal - dt) / 60, k = Math.floor(r), f = r - k; return eK(k) * (1 - f) + eK(k + 1) * f; }; /* v5 · kalan süre 60 tiklik kovaya yuvarlanmaz, iki kova arasında doğrusal: 0,5 sn ile 1 sn beklemenin bedeli artık farklı */
     // geçen zamanın değeri: seçenek dt tik sürerse maç puanı beklentisi ne kadar değişir (sayı birimine çevrilmiş). Önde olana zaman lehte, geride olana aleyhte
     const zaman = dt => (eT(dt) - eT(0)) / birim; return { ...tq, macK: oran, macZ: zaman }; } /* menajerin risk ayarı korunur; kaybın bedeli kararda doğrudan bu oranla tartılır */
-  function tacEff0(m, t) { const tq = m.tac[t], kon = tq.kazaninca === 'Kontra' && inWin(m, t), yer = tq.kazaninca === 'Yerleş' && inWin(m, t); return kon ? { ...tq, risk: Math.min(1, (tq.risk ?? .5) + .25), tempo: Math.max(tq.tempo ?? .5, .8) } : yer ? { ...tq, risk: Math.max(0, (tq.risk ?? .5) - .25), tempo: Math.min(tq.tempo ?? .5, .3) } : tq; }
+  function tacEff0(m, t) { const tq = m.tac[t], kon = inWin(m, t), yer = false; /* geçiş oyunu (git): risk +0,25, tempo en az 0,8; "yerleş" geçiş oynamaz, yerleşik plan */ return kon ? { ...tq, risk: Math.min(1, (tq.risk ?? .5) + .25), tempo: Math.max(tq.tempo ?? .5, .8) } : yer ? { ...tq, risk: Math.max(0, (tq.risk ?? .5) - .25), tempo: Math.min(tq.tempo ?? .5, .3) } : tq; }
   const BLOK = { 'Düşük': 22, 'Orta': 34, 'Yüksek': 50 }, GEN = { 'Dar': 28, 'Normal': 38, 'Geniş': 46 };
   const SLOTS = [{ role: 'Bekçi', d: 0, l: 0 }, { role: 'Bek', d: .2, l: -.5 }, { role: 'Bek', d: .2, l: .5 }, { role: 'Orta', d: .45, l: -.35 }, { role: 'Orta', d: .45, l: .35 }, { role: 'Kanat', d: .75, l: -.85 }, { role: 'Uç', d: .8, l: .25 }];
   const NAMES = [['Aras', 'Deniz', 'Ece', 'Kaan', 'Mert', 'Selin', 'Tuna'], ['Bora', 'Cem', 'Duru', 'Ilgaz', 'Nehir', 'Rüzgâr', 'Yaz']];
@@ -48,21 +63,20 @@
   // v5 · rolsüz sistem (Aşama 1): davranışı oyuncu başına TALİMAT belirler, başarıyı özellik. Talimatlar evreye bağlı (şimdilik 'huc' = top bizde, 'sav' = top rakipte); verilmeyen değer üst seviyeden gelir (oyuncu → takım evresi → varsayılan). Paketler (Kurucu, Markajcı…) yalnız başlangıç önerisi: talimat değerleri üretir, motor paket adına bakmaz.
   const TLV = { huc: { kosu: .5, istek: .5, destek: .5, risk: .5, ritim: .5, tempo: .5, gonder: .5, serbest: .5, doldur: null }, sav: { adam: 0, kimi: null, pres: .5 } };
   const PAKET = { h: { Kurucu: { destek: .2, serbest: 0, kosu: .3 }, Kanat: { serbest: .21 }, Koşucu: { kosu: 1, serbest: .76 }, Pivot: { serbest: .21 }, Serbest: {} }, s: { Süpürücü: {}, Markajcı: { adam: 1 }, Presçi: { pres: 1 }, Önde: {}, Bölge: {} } };
-  // v5 · Katman 2 · oyun evreleri: her takım her an bir evrededir. Top bizde: geçiş (kazandıktan sonra 3 sn) · kurma (top kendi üçte birimizde) · ilerleme · son (rakip üçte biri). Top rakipte: geçiş (kaybettikten sonra karşı pres süresi) · kurma (rakip kendi arka bölgesinde) · orta · son (bizim üçte birimizde). Sınırlar: kendi Kuyu'muza uzaklık 35 / 65.
-  // Her evre isteğe bağlı kendi ayarlarını (tac.evre['huc.kurma'] = { tempo, blok, siddet, diz, … }) ve oyuncu talimatlarını (p.tl['huc.kurma']) taşır; verilmeyen her şey üst seviyeden gelir. Evre değişince yalnız hedefler değişir: oyuncular yeni yerlerine koşar
+  // v5 · Evreler (yalnız bilgi): top bizde geçiş (m.gc git) · kurma (kendi Kuyu'muza uzaklık < 35) · ilerleme · son; top rakipte geçiş (karşı pres) · kurma · orta · son. Ayar taşımaz.
   const EVRE = { huc: ['gecis', 'kurma', 'ilerleme', 'son'], sav: ['gecis', 'kurma', 'orta', 'son'] }, EVKOD = ['huc.gecis', 'huc.kurma', 'huc.ilerleme', 'huc.son', 'sav.gecis', 'sav.kurma', 'sav.orta', 'sav.son'];
   function evreBul(m, t) { const h = m.holder, bt = h ? h.team : (m.ball ? m.ball.team : null), E = h || m.ball || { x: 50, y: 25 }, dG = Math.abs(E.x - (t === 0 ? 0 : W)), b = (m.tac0 && m.tac0[t]) || m.tac[t] || {};
-    if (bt === t) { if (m.gecis !== false && m.winTeam === t && m.winT != null && m.tick - m.winT < WIN_T) return 'huc.gecis'; return dG < 35 ? 'huc.kurma' : dG < 65 ? 'huc.ilerleme' : 'huc.son'; }
-    if (m.gecis !== false && m.winTeam === 1 - t && m.winT != null && m.tick - m.winT < (b.kpSure ?? 3) * 60) return 'sav.gecis'; return dG > 65 ? 'sav.kurma' : dG > 35 ? 'sav.orta' : 'sav.son'; }
+    if (bt === t) { if (inWin(m, t)) return 'huc.gecis'; return dG < 35 ? 'huc.kurma' : dG < 65 ? 'huc.ilerleme' : 'huc.son'; }
+    if (kpAkt(m, t)) return 'sav.gecis'; return dG > 65 ? 'sav.kurma' : dG > 35 ? 'sav.orta' : 'sav.son'; }
   function evreUygula(m) { m.tac0 = m.tac0 || [null, null]; m.evre = m.evre || [null, null];
-    for (const t of [0, 1]) { const cur = m.tac[t]; if (!cur) continue; if (!cur._ev) m.tac0[t] = cur; const b = m.tac0[t] || cur, key = evreBul(m, t), ev = key.slice(0, 3), ad = key.slice(4), ez = b.evre && b.evre[key];
-      if (!m.evre[t] || m.evre[t].key !== key) { m.evre[t] = { key, ev, ad, t0: m.tick }; const dz = ez && ez.diz;
-        for (const p of m.ps) { if (p.team !== t) continue; p._ea = { [ev]: ad }; if (p.role === 'Bekçi') continue; if (p.slot0 === undefined) { p.slot0 = p.slot; p.rslot0 = p.rslot; } const s = dz && dz[p.i - 1]; if (ev === 'sav') p.slot = s ? { ...p.slot0, d: s.d, l: s.l } : p.slot0; else p.rslot = s ? { d: s.d, l: s.l } : p.rslot0; } }
-      let mg = ez ? { ...b, ...ez, evre: b.evre, _ev: key } : b;
+    for (const t of [0, 1]) { const cur = m.tac[t]; if (!cur) continue; if (!cur._ev) m.tac0[t] = cur; const b = m.tac0[t] || cur, key = evreBul(m, t), ev = key.slice(0, 3), ad = key.slice(4);
+      /* v5 · evreler artık yalnız bilgi (Canlı'daki "ŞU AN"); ayar anahtarı değil. Evre başına ayar, diziliş ve talimat kalktı: yer topa bağlı plandan (tac.durus), geçiş durumdan (m.gc). Eski kayıtlardaki tac.evre yok sayılır */
+      if (!m.evre[t] || m.evre[t].key !== key) m.evre[t] = { key, ev, ad, t0: m.tick };
+      let mg = b;
       /* v5 · Katman 5 · koşullar: menajerin açık "eğer–ise" kuralları (skor farkı, kalan süre); evre ve takım ayarının üstüne yazar */
-      if (b.kosul && b.kosul.length) { const fark = m.score[t] - m.score[1 - t], kal = (m.len - m.tick) / 60, akt = []; for (const k of b.kosul) { const okS = k.ne === 'onde' ? fark > 0 : k.ne === 'geride' ? fark < 0 : k.ne === 'esit' ? fark === 0 : true, okT = k.son == null || kal <= k.son; if (okS && okT && k.ayar) { mg = { ...mg, ...k.ayar, evre: b.evre, _ev: mg._ev || 'kosul' }; akt.push(k.ne); } } m.kosulAkt = m.kosulAkt || [[], []]; m.kosulAkt[t] = akt; }
+      if (b.kosul && b.kosul.length) { const fark = m.score[t] - m.score[1 - t], kal = (m.len - m.tick) / 60, akt = []; for (const k of b.kosul) { const okS = k.ne === 'onde' ? fark > 0 : k.ne === 'geride' ? fark < 0 : k.ne === 'esit' ? fark === 0 : true, okT = k.son == null || kal <= k.son; if (okS && okT && k.ayar) { mg = { ...mg, ...k.ayar, _ev: 'kosul' }; akt.push(k.ne); } } m.kosulAkt = m.kosulAkt || [[], []]; m.kosulAkt[t] = akt; }
       m.tac[t] = mg; } }
-  function tl(p, ev, k) { const ea = p && p._ea && p._ea[ev], oe = ea && p.tl && p.tl[ev + '.' + ea]; if (oe && oe[k] != null) return oe[k]; const o = p && p.tl && p.tl[ev]; if (o && o[k] != null) return o[k]; const T = p && p.tlT && p.tlT[ev]; if (T && T[k] != null) return T[k]; return TLV[ev] ? TLV[ev][k] : null; }
+  function tl(p, ev, k) { /* talimat: oyuncu (mod geneli) → takım → varsayılan; evre başına talimat kalktı */ const o = p && p.tl && p.tl[ev]; if (o && o[k] != null) return o[k]; const T = p && p.tlT && p.tlT[ev]; if (T && T[k] != null) return T[k]; return TLV[ev] ? TLV[ev][k] : null; }
   function tlKur(r) { const h = r && r.tl && r.tl.huc, s = r && r.tl && r.tl.sav; return { huc: { ...(PAKET.h[r && r.h] || {}), ...(h || {}) }, sav: { ...(PAKET.s[r && r.s] || {}), ...(s || {}) } }; }
   const RSLOT = { 'Kurucu': s => ({ d: .1, l: s.l * .4 }), 'Kanat': s => ({ d: Math.max(s.d, .55), l: s.l < 0 ? -1 : 1 }), 'Koşucu': s => ({ d: .8, l: s.l }), 'Pivot': () => ({ d: .85, l: 0 }) };
   const STYLES = {
@@ -97,7 +111,7 @@
   }
   function ev(m, type, team, text) { const s = Math.floor(m.tick / 60); m.events.unshift({ t: `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`, type, team, text }); if (m.events.length > 120) m.events.pop(); }
   function kickoff(m, t) {
-    for (const p of m.ps) { const tq = (m.tac0 && m.tac0[p.team]) || m.tac[p.team] || {}, huc = p.team === t, s = (huc ? (p.rslot0 || p.rslot) : null) || p.slot0 || p.slot, x0 = ownX(p.team), dir = dirOf(p.team), bl = { 'Düşük': [8, 24], 'Orta': [10, 30], 'Yüksek': [13, 33] }[tq.blok] || [10, 30], d = p.role === 'Bekçi' ? 3 : huc ? Math.min(46, 12 + s.d * 34) : Math.min(46, bl[0] + s.d * bl[1]); p.x = x0 + dir * d; p.y = 25 + s.l * (huc ? 20 : 16); p.vx = p.vy = 0; p.tx = p.x; p.ty = p.y; } m.winT = null; m.gecis = false; /* santra: başlayan takım hücum dizilişiyle, savunan takım savunma dizilişiyle ve bloğuna göre derinlikte dizilir */
+    for (const p of m.ps) { const tq = (m.tac0 && m.tac0[p.team]) || m.tac[p.team] || {}, huc = p.team === t, s = (huc ? (p.rslot0 || p.rslot) : null) || p.slot0 || p.slot, x0 = ownX(p.team), dir = dirOf(p.team), bl = { 'Düşük': [8, 24], 'Orta': [10, 30], 'Yüksek': [13, 33] }[tq.blok] || [10, 30], d = p.role === 'Bekçi' ? 3 : huc ? Math.min(46, 12 + s.d * 34) : Math.min(46, bl[0] + s.d * bl[1]); p.x = x0 + dir * d; p.y = 25 + s.l * (huc ? 20 : 16); p.vx = p.vy = 0; p.tx = p.x; p.ty = p.y; } m.winT = null; m.gecis = false; m.gc = null; /* santra: başlayan takım hücum dizilişiyle, savunan takım savunma dizilişiyle ve bloğuna göre derinlikte dizilir */
     const h = m.ps.find(p => p.team === t && p.i === 3); h.x = 50; h.y = 25; m.holder = h; m.ball = null; m.ch = .3; m.decT = 30; m.fl = null;
   }
   // takımın şekli: savunmada kompakt ve blok yüksekliğinde, hücumda uzun ve genişlik talimatında
@@ -259,10 +273,10 @@
       let one = null; if (!m._lite && (p.a.okuma ?? 10) >= D.D.otOk) { const tE = tacEff(m, p.team), r = D.decideOT(p, m.ps, chFull, m.r, tE, ot), rc = D.decide(p, m.ps, chCtrl, m.r, tE); const ctrlBest = rc.opts.length ? rc.opts[0].v : 0; const b0 = rc.best; p._plan = b0 && b0.q && b0.to && b0.det && ['pas', 'önüne', 'aşırt', 'kenardan'].includes(b0.kind) ? { kind: b0.kind, q: b0.q, to: { x: b0.to.x, y: b0.to.y }, P: b0.det.P ?? 0, t: m.tick } : null; if (r && r.v > ctrlBest + (D.D.otMargin + (tl(p, 'huc', 'ritim') - .5) * .06)) one = r; }
       if (one) { m.ch = chFull; one.ot = ot; launch(m, p, one); return; }
       m.ch = chCtrl; } }
-    else { m.st.steal[p.team]++; m.ch = .3; m.winT = m.tick; m.winTeam = p.team; { const lz = 1 - p.team, ox = lz === 0 ? 0 : W, geri = m.ps.filter(q => q.team === lz && q.role !== 'Bekçi' && Math.abs(q.x - ox) < Math.abs(p.x - ox)).length; m.gecis = geri < 4; m.gecisGeri = geri; } /* geçiş yalnız kaybeden takım dağınıkken: topun gerisinde 4+ oyuncusu varsa yerleşiktir, geçiş oyunu (kontra / karşı pres) olmaz */ ev(m, 'kesme', p.team, how || `${p.name} Çekirdeği aldı`); }
+    else { m.st.steal[p.team]++; m.ch = .3; m.winT = m.tick; m.winTeam = p.team; gecisBasla(m, p); /* geçiş yalnız kaybeden takım dağınıkken: topun gerisinde 4+ oyuncusu varsa yerleşiktir, geçiş oyunu (kontra / karşı pres) olmaz */ ev(m, 'kesme', p.team, how || `${p.name} Çekirdeği aldı`); }
   }
   function step(m) {
-    if (m.over) return; const K = C(), D = Dd(), ps = m.ps; m.tick++; if (!m._lite) D.D._tick = m.tick; evreUygula(m);
+    if (m.over) return; const K = C(), D = Dd(), ps = m.ps; m.tick++; if (!m._lite) D.D._tick = m.tick; gecisGuncelle(m); evreUygula(m);
     // Bekçi süresi (kural): Bekçi Çekirdeği kendi alanında (Kuyu dairesi + 1,5) en fazla BEK_SURE tik tutabilir; aşarsa Çekirdek alan sınırında en yakın rakibe geçer
     { const h = m.holder; if (h && h.role === 'Bekçi') { const kg = h.team === 0 ? 0 : W, ic = Math.hypot(h.x - kg, h.y - 25) < K.KR + 1.5; if (ic) { if (h.bekBas == null) h.bekBas = m.tick; if (m.tick - h.bekBas >= BEK_SURE) { h.bekBas = null; const ux = (W / 2 - kg) / (W / 2), sx = kg + ux * (K.KR + 2.5), sy = 25; let q = null, qd = 1e9; for (const o of ps) if (o.team !== h.team && o.role !== 'Bekçi') { const dd = Math.hypot(o.x - sx, o.y - sy); if (dd < qd) { qd = dd; q = o; } } if (q) { q.x = sx; q.y = sy; q.vx = q.vy = 0; h.stun = m.tick + 20; ev(m, 'kesme', q.team, `${h.name} süreyi aştı · Çekirdek ${q.name}'e geçti`); take(m, q, `${q.name} serbest başlıyor`); return; } } } else h.bekBas = null; } for (const p of ps) if (p !== m.holder) p.bekBas = null; }
     for (const p of ps) { p.noTouch = p.stun > m.tick || (p.adandi > m.tick && !m.holder); if (p.adandi > m.tick && !p.hamle && p.adT) { p.tx = p.adT.x; p.ty = p.adT.y; p.sprint = true; p.job = p.adNeden || 'adandı · dönemiyor'; } if (p.hamle && (!m.holder || m.holder.id !== p.hamle.hid || m.tick > p.hamle.t0 + 30)) p.hamle = null; }
@@ -350,5 +364,5 @@
   function notSayi(m, t, atan) { const N = m.not; if (!N) return; const pre = N.s == null ? 0 : (t === 0 ? N.s : -N.s); if (atan) N.p[atan.id] = (N.p[atan.id] || 0) + (1 - pre); const bk = m.ps.find(p => p.team !== t && p.role === 'Bekçi'); if (bk) N.p[bk.id] = (N.p[bk.id] || 0) - .5 * (1 - pre); N.s = null; N.actor = null; }
   function notlar(m) { const N = m.not || { p: {} }; return m.ps.map(p => ({ id: p.id, ad: p.name, team: p.team, rol: p.role, puan: +(N.p[p.id] || 0).toFixed(3), not: +Math.max(3, Math.min(10, 6.3 + ((N.p[p.id] || 0) - NOT_0) * NOT_K)).toFixed(1) })); }
   const _step = step; step = function (m) { const s0 = m.score[0], s1 = m.score[1], son = m.not && m.not.actor; _step(m); if (m.score[0] > s0) notSayi(m, 0, son && son.team === 0 ? son : null); else if (m.score[1] > s1) notSayi(m, 1, son && son.team === 1 ? son : null); else notTik(m); };
-  window.AlanMatch = { kopya, EVRE, EVKOD, evreBul, evreUygula, tl, TLV, PAKET, tlKur,  macEff, notlar, NOT_K, govdeAyir, ivme, spd, tacEff, dizUygula, dizSlots, corePos, outOfKuyu, kuyuSafe, STYLES, assignRoles, WIN_T, inWin, TAC0, BLOK, GEN, createMatch, step, run, position, move, slotPos };
+  window.AlanMatch = { GECIS_VARS, KP_VARS, kpAkt, inWin, gecisGuncelle, kopya, EVRE, EVKOD, evreBul, evreUygula, tl, TLV, PAKET, tlKur,  macEff, notlar, NOT_K, govdeAyir, ivme, spd, tacEff, dizUygula, dizSlots, corePos, outOfKuyu, kuyuSafe, STYLES, assignRoles, inWin, TAC0, BLOK, GEN, createMatch, step, run, position, move, slotPos };
 })();
