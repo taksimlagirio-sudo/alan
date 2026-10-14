@@ -20,7 +20,7 @@
     pressR: { 'Düşük': 12, 'Orta': 20, 'Yüksek': 32 }, lock: 40,
     runK: .6, // Kontra koşusunda boşluk değerinin ağırlığı
     vacOk0: 6, vacOkStep: 4, vacLeft: 7, vacEmpty: 6, vacLeash: .4, // açılan boşluk: 1 sn önce bir savunmacının durduğu, şimdi 6 birimde kimsenin olmadığı yer (savunmacı 7+ uzaklaşmış). Okuma 8–9 bir, 12–13 iki, 16+ üç boşluk fark eder
-    durusEl: 6, kanatK: .12, kurucuK: .08, pivotGap: 0, // deney: Pivot'un Kuyu'ya en az bu kadar uzak durması (0 = serbest) // rol talimatının dışına çıkmanın bedeli
+    durusEl: .5, kanatK: .12, kurucuK: .08, pivotGap: 0, // deney: Pivot'un Kuyu'ya en az bu kadar uzak durması (0 = serbest) // rol talimatının dışına çıkmanın bedeli
     recT: 120, recOk: 1.2, rcvRisk: 1, rcvMarginT: 10, // alıcı: beklemenin bedeli rakibin o noktaya alıcıdan ne kadar geç vardığına (pay, tik) bağlı; pay büyükse beklemek ucuz, küçükse pahalı runK: .6, // Kontra koşusunda boşluk değerinin ağırlığı
     W: { runSprint: 4, deep: 6, tv: 1, tvPass: .9, tvDrive: .85, dlReach: 4, defReach: 5, leash: .12, hyst: .04, noise: .01 }
   };
@@ -186,8 +186,8 @@
     const hang = ps.filter(q => q.team === dt && q.role !== 'Bekçi' && (q.x - E.x) * dirOf(att) < -8), guard = new Map();
     const G = m.gc && m.gc.team === att && m.gc.git ? m.gc : null; /* v5 · geçiş (git): koşucular durumdan (m.gc.on), güvence kalanlardan */
     { const nG = Math.max(0, G ? hang.length : hang.length - (m.tac[att].risk > .7 ? 1 : 0)),
-      pool = atk.filter(q => !chase.has(q) && !(G && G.on.includes(q.id))).sort((u, v) => u.slot.d - v.slot.d);
-      for (const hq of hang.sort((a, b) => threat(dt, b.x, b.y) - threat(dt, a.x, a.y)).slice(0, nG)) { let bi = null, bd = 1e9; for (const q of pool) { if (guard.has(q)) continue; const d = Math.hypot(q.x - hq.x, q.y - hq.y) + q.slot.d * 30; if (d < bd) { bd = d; bi = q; } } if (bi) guard.set(bi, hq); } }
+      pool = atk.filter(q => !chase.has(q) && !(G && G.on.includes(q.id)) && (q.rslot || q.slot).d < .6 /* güvence hücum dizilişinin arka ve orta çizgisinden: öndeki üçlü (d ≥ 0,6) rakip tutmak için geri çekilmez. Eskiden arkada bekleyen her rakibe bir kişi gidiyordu; 4 rakip bekleyince kanatlar da geri çekiliyordu */).sort((u, v) => (u.rslot || u.slot).d - (v.rslot || v.slot).d); /* v5 · güvence hücum yerinden ve evinden seçilir (zip44: savunma slotu ve anlık yerden seçiliyordu; çizgiye konan kanat son bölgede zamanının yarısında arkada rakip tutuyordu). Menajerin elle yer verdiği oyuncu güvenceye ancak başka kimse yoksa çekilir */
+      for (const hq of hang.sort((a, b) => threat(dt, b.x, b.y) - threat(dt, a.x, a.y)).slice(0, nG)) { let bi = null, bd = 1e9; for (const q of pool) { if (guard.has(q)) continue; const bq = base.get(q) || q, d = Math.hypot(bq.x - hq.x, bq.y - hq.y) + (q.rslot || q.slot).d * 30 + (bq.el || 0) * 40; if (d < bd) { bd = d; bi = q; } } if (bi) guard.set(bi, hq); } }
     const Wt = S.W, win = !!G;
     // Geçiş (git): koşucular m.gc.on (topun önündekiler + taşıyıcı, gerekirse bir destek); onlar evine bağlı değil, kalanlar evlerinde güvence
     const runners = G ? new Set(atk.filter(q => G.on.includes(q.id) && !chase.has(q) && !guard.has(q))) : new Set();
@@ -196,7 +196,9 @@
     const roleLeash = p => Math.pow(2, (.5 - window.AlanMatch.tl(p, 'huc', 'serbest')) * 2); /* serbestlik talimatı */
     const genis = p => Math.abs((p.rslot || p.slot).l) >= .75, roleY = (p, c) => { const ds = window.AlanMatch.tl(p, 'huc', 'destek'); return (genis(p) ? S.kanatK * Math.max(0, 13 - Math.abs(c.y - 25)) / 13 : 0) + (ds < .5 ? Math.min(1.5, (.5 - ds) / .3) * S.kurucuK * Math.max(0, (c.x - E.x) * dirOf(att) + 2) / 10 : 0) + (Math.abs(ds - .5) > .1 ? S.destekK * Math.min(4, Math.pow((Math.hypot(c.x - E.x, c.y - E.y) - (6 + ds * 14)) / 8, 2)) : 0); }; /* destek mesafesi: hedef mesafeden sapma (orta talimatta yok) */ /* rolsüz: genişlik dizilişten, destek mesafesi talimattan */ // talimatın dışına çıkmanın bedeli
     const roleRun = p => !runners.has(p) ? S.runK * .6 * (window.AlanMatch.tl(p, 'huc', 'kosu') - .5) / .5 : 0; /* koşu talimatı: 0,5 üstü koşu noktalarına ek değer, altı ceza (yerinde kalır) */
-    const elK = p => { const bs = base.get(p), el = (bs && bs.el) || 0; return el ? Math.max(1, 2 / roleLeash(p)) * (1 + S.durusEl * el) : 1; }; /* ellenen oyuncu en az serbestlik 0 kadar bağlı (roleLeash 2), üstüne el payı */ /* v5 · tahtada elle yeri verilen oyuncu: ev menajerin açık talimatı, aday tartımı onu evine daha sıkı bağlar */
+    const elOf = p => { const bs = base.get(p); return (bs && bs.el) || 0; }, elK = p => 1 + S.durusEl * elOf(p); /* v5 · elle verilen yer evi belirler; ne kadar uzaklaşacağını serbestlik. El payı bağa yalnız küçük bir ek (serbestlik yüksek oyuncu serbestlik 0'a dönmez) */
+    const elDar = p => elOf(p) > .5 && window.AlanMatch.tl(p, 'huc', 'serbest') < .5; /* çizgiye konmuş, serbestliği düşük: Kuyu önüne ve arkaya kendisi koşmaz, ancak bir pas çağırırsa gider */ /* v5 · tahtada elle yeri verilen oyuncu: ev menajerin açık talimatı, aday tartımı onu evine daha sıkı bağlar */
+    const vacL = p => elOf(p) ? 1 + (S.vacLeash - 1) * Math.min(1, window.AlanMatch.tl(p, 'huc', 'serbest') * 2) : S.vacLeash; /* açılan boşluk bağı gevşetir; elle konan oyuncuda gevşeme serbestlikle: 0'da hiç, 0,5 ve üstünde tam */
     const leashK = p => elK(p) * (win ? (runners.has(p) ? .01 : 2.5) : roleLeash(p)); /* geçişte koşucu serbest, kalanlar evlerinde */
     for (const p of atk) {
       if (chase.has(p)) continue;
@@ -208,23 +210,23 @@
       if (p.otx != null) cands.push({ x: p.otx, y: p.oty, keep: 1 });
       for (let gx = -16; gx <= 16; gx += 8) for (let gy = -16; gy <= 16; gy += 8) cands.push({ x: bs.x + gx, y: bs.y + gy }); if (p.otx != null) for (let k = 0; k < 6; k++) { const an = k * 1.047; cands.push({ x: p.otx + Math.cos(an) * 4, y: p.oty + Math.sin(an) * 4 }); }
       const lastD = sn.filter(o => o.role !== 'Bekçi').reduce((mx, o) => Math.max(mx, (o.x - ownX(att)) * dirOf(att)), 0);
-      if ((p.slot.d >= .6 && window.AlanMatch.tl(p, 'huc', 'kosu') >= .25) || window.AlanMatch.tl(p, 'huc', 'kosu') >= .75) for (const yy of [p.y, bs.y, 15, 35]) cands.push({ x: ownX(att) + dirOf(att) * Math.min(94, lastD + 4), y: yy });
+      if (!elDar(p) && ((p.slot.d >= .6 && window.AlanMatch.tl(p, 'huc', 'kosu') >= .25) || window.AlanMatch.tl(p, 'huc', 'kosu') >= .75)) for (const yy of [p.y, bs.y, 15, 35]) cands.push({ x: ownX(att) + dirOf(att) * Math.min(94, lastD + 4), y: yy });
       if (runners.has(p)) { const lastO = sn.filter(o => o.role !== 'Bekçi').reduce((mx, o) => Math.max(mx, (o.x - ownX(att)) * dirOf(att)), 0); for (const fx of [12, 22, 32]) for (const yy of [10, 18, 25, 32, 40]) cands.push({ x: cl(p.x + dirOf(att) * fx, 3, 97), y: yy }); for (const yy of [12, 25, 38]) cands.push({ x: cl(ownX(att) + dirOf(att) * (lastO + 4), 3, 97), y: yy }); }
       // Açılan boşluk: yerini bırakmış (başka birini takip eden, prese çıkan) savunmacının bölgesi. Oyuncu bunu kendi algısıyla görür (rakibi kusurlu ve gecikmeli görür);
       // kaç tanesini fark ettiğini Okuma belirler. Oraya gitmek talimattan sapma sayılmaz (bağ gevşer): boşluğu kullanmak hücumcunun işi.
       { const nV = Math.max(0, Math.round((ok(p, 'yeralma') - S.vacOk0) / S.vacOkStep)); if (nV > 0) { const vac = []; for (const d of defs) { const bd = d.past && d.past.length >= 3 ? d.past[0] : null, sd = sn.find(o => o.ref === d); if (!bd || !sd) continue; if (Math.hypot(sd.x - bd.x, sd.y - bd.y) < S.vacLeft) continue; let near = 1e9; for (const o of sn) if (o.role !== 'Bekçi') near = Math.min(near, Math.hypot(o.x - bd.x, o.y - bd.y)); if (near < S.vacEmpty) continue; vac.push({ x: bd.x, y: bd.y, w: threat(att, bd.x, bd.y) }); }
         vac.sort((a, b) => b.w - a.w).slice(0, nV).forEach(v => { cands.push({ x: v.x, y: v.y, vac: 1 }); cands.push({ x: v.x + dirOf(att) * 4, y: v.y, vac: 1 }); }); } }
       if (genis(p)) for (const dx of [-8, 0, 8, 16]) cands.push({ x: cl(bs.x + dirOf(att) * dx, 3, 97), y: ((p.rslot || p.slot).l < 0 ? 4 : 46) });
-      if (Math.abs(E.x - oppX(att)) < 40 && ((p.slot.d >= .45 && window.AlanMatch.tl(p, 'huc', 'kosu') >= .25) || window.AlanMatch.tl(p, 'huc', 'kosu') >= .75) && window.AlanMatch.tl(p, 'huc', 'destek') >= .3) for (const r of [11, 19]) for (const an of [-.8, -.27, .27, .8]) cands.push({ x: oppX(att) - dirOf(att) * r * Math.cos(an), y: 25 + r * Math.sin(an) });
+      if (!elDar(p) && Math.abs(E.x - oppX(att)) < 40 && ((p.slot.d >= .45 && window.AlanMatch.tl(p, 'huc', 'kosu') >= .25) || window.AlanMatch.tl(p, 'huc', 'kosu') >= .75) && window.AlanMatch.tl(p, 'huc', 'destek') >= .3) for (const r of [11, 19]) for (const an of [-.8, -.27, .27, .8]) cands.push({ x: oppX(att) - dirOf(att) * r * Math.cos(an), y: 25 + r * Math.sin(an) });
       const mates = atkAll.filter(q => q !== p).map(q => q === h ? { x: h.x, y: h.y } : { x: q.tx ?? q.x, y: q.ty ?? q.y });
       const nearOf = (x, y) => { let b = null, bd = 1e9; for (const o of sn) { if (o.role === 'Bekçi') continue; const d = Math.hypot(o.x - x, o.y - y); if (d < bd) { bd = d; b = o; } } return [b, bd]; };
       const mNear = mates.map(q => nearOf(q.x, q.y)), ePr = oppIn(sn, E.x, E.y), mateObjs = atk.filter(q => q !== p && !chase.has(q)).map(q => ({ x: q.tx ?? q.x, y: q.ty ?? q.y }));
       // iki aşama: önce dünyayı şu anki hâliyle (savunmanın cevabı olmadan) hızlıca tart, en umutlu birkaç noktada savunmanın cevabını da hesapla
-      const pre = cands.filter(c => c.x >= 2 && c.x <= 98 && c.y >= 2 && c.y <= 48).map(c => { const lsh = Math.hypot(c.x - bs.x, c.y - bs.y) / 12 * (c.vac ? S.vacLeash : 1); return { c, q: (runners.has(p) ? S.runK * runV(p, c, sn) : 0) + roleRun(p) * runV(p, c, sn) - roleY(p, c) + teamV(m, sn, att, E, c, mateObjs, 0) - Wt.leash * leashK(p) * lsh * lsh }; }).sort((a, b) => b.q - a.q).slice(0, Wt.deep);
+      const pre = cands.filter(c => c.x >= 2 && c.x <= 98 && c.y >= 2 && c.y <= 48).map(c => { const lsh = Math.hypot(c.x - bs.x, c.y - bs.y) / 12 * (c.vac ? vacL(p) : 1); return { c, q: (runners.has(p) ? S.runK * runV(p, c, sn) : 0) + roleRun(p) * runV(p, c, sn) - roleY(p, c) + teamV(m, sn, att, E, c, mateObjs, 0) - Wt.leash * leashK(p) * lsh * lsh }; }).sort((a, b) => b.q - a.q).slice(0, Wt.deep);
       let best = null, bv = -1e9;
       for (const { c } of pre) {
         // Tek ölçü: burada durursam, savunma en iyi cevabını verdiğinde takımın en iyi seçeneği ne kadar iyi? (taşıyıcının kullandığı aynı değer ve hat hesabıyla)
-        const lsh = Math.hypot(c.x - bs.x, c.y - bs.y) / 12 * (c.vac ? S.vacLeash : 1);
+        const lsh = Math.hypot(c.x - bs.x, c.y - bs.y) / 12 * (c.vac ? vacL(p) : 1);
         const v = (runners.has(p) ? S.runK * runV(p, c, sn) : 0) + roleRun(p) * runV(p, c, sn) - roleY(p, c) + Wt.tv * teamV(m, sn, att, E, c, mateObjs, ok(p, 'yeralma'), p) - Wt.leash * leashK(p) * lsh * lsh + hsh(p.id, Math.round(c.x * 3 + c.y * 7), Math.floor(m.tick / 30)) * (20 - ok(p, 'yeralma')) * Wt.noise * 2;
         if (v > bv) { bv = v; best = c; }
       }
