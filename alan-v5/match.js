@@ -25,7 +25,7 @@
     g.on = g.git ? on.map(q => q.id) : []; m.gecis = true; }
   const tq0 = (m, t) => (m.tac0 && m.tac0[t]) || m.tac[t] || {};
   const inWin = (m, t) => !!(m.gc && m.gc.team === t && m.gc.git);
-  function kpAkt(m, t) { const k = m.kp; if (!k) return null; const h = m.holder, b = m.ball, bt = h ? h.team : b ? b.team : null; if (m.tick >= k.bitis || bt === t) { m.kp = null; return null; } return k.team === t ? k.ids : null; } /* top geri kazanılınca ya da süre dolunca biter */
+  function kpAkt(m, t) { const k = m.kp; if (!k) return null; const h = m.holder, b = m.ball, bt = h ? h.team : b ? b.team : null; if (m.tick >= k.bitis || bt === k.team) { m.kp = null; return null; } /* zip43 hatası: çağıranın takımına bakıyordu, topu tutan takım için çağrılınca karşı pres siliniyordu */ return k.team === t ? k.ids : null; } /* top geri kazanılınca ya da süre dolunca biter */
   function kpEff(m, t, r) { return kpAkt(m, t) ? { ...r, _kp: 'pres' } : r; }
   // YZ uyumu (sadece tac.yz): rakip düşük blokta bekliyorsa (son 4 sn'de taşıyıcımıza basan yok, rakibin saha oyuncuları kendi yarısında) ve skor berabere ya da gerideyse tempo bir kademe artar; gerideyken son 30 sn'de sabır da bir kademe düşer. Önde iken dokunmaz. Kullanıcının takımında karar menajerin
   function yzUyum(m, t, r) { if (!(m.tac[t] && m.tac[t].yz)) return r; const d = m.score[t] - m.score[1 - t]; if (d > 0) return r; const h = m.holder;
