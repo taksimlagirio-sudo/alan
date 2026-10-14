@@ -1,6 +1,6 @@
 # ALAN · Design için plan: taktik kurulumu (sekiz evre yerine iki mod)
 
-Görsel taslak: https://claude.ai/artifact/Bn2wnFmcU468zXobEtyBUZ (dört pano; 2. ve 3. oynanabilir).
+Görsel taslak: https://claude.ai/artifact/Bn2wnFmcU468zXobEtyBUZ (beş pano; 2. ve 3. oynanabilir; 4. ve 5. ekran taslağı).
 Kullanıcı taslağı onayladı. Bu belge motordaki karşılığıdır.
 
 ## 0 · Neden
@@ -42,9 +42,28 @@ Kullanıcı taslağı onayladı. Bu belge motordaki karşılığıdır.
 - Kim basar: topun 8 birim içindeki oyuncular (en fazla 3). Kimse yoksa basılmaz. Diğerleri aynı anda savunma planındaki evlerine döner. Süre dolunca basanlar da döner.
 - Bugünkü `kpSure` bu sürenin kendisi olur; `kayip` ayarı bu kuralın içine girer.
 
+## 2b · Ekran (zip38'deki taktik ekranına bakılarak)
+
+**Korunacaklar:** Tahta merkezde, şekil sürüklenerek kuruluyor. "Tercihlerinden çıkan tarz" kartı ve "bu kurgunun bedeli" (ayarların ne anlama geldiğini düz dille söylüyor). "Motora giden" kutusu.
+
+**Bugünkü sorunlar:**
+1. **Talimatlar tahtadan kopuk.** Oyuncular sekmesinde tek bir uzun liste (11 hücum + 3 savunma kaydırıcısı). Tahta "Top rakipteyken" iken sağda "Topa sahipken" talimatları açık olabiliyor: menajer neyi ayarladığını tahtada görmüyor.
+2. **Evreler her yerde.** Oyuncular sekmesinde 7 evre çipi: 6 oyuncu × 14 talimat × 7 evre ayarlanabilir.
+3. **Aynı ayar iki yerde.** Pas↔sürme ve tempo hem takım hem oyuncu ayarı; "Kenara sıkıştır" hem Pres tuzağı'nda hem Savunma tarzı'nda; "Adam adama" hem takım savunma tarzında hem oyuncunun "alanı tutar / adam tutar" talimatında. Hangisinin geçerli olduğu belli değil.
+4. **"Arkada" motorda yaşıyor.** Ekrandan kalktı ama "Motora giden"de `arkada 2` var; motor bunu kontra penceresinde geride kalan güvence sayısı olarak kullanıyor (`shape.js`, `m.tac[att].arkada`). Kullanıcı bu sayıyı dizilişin belirlemesini istemişti. Yeni geçişte güvence = topun önünde olmayanlar (2. bölüm); `arkada` tamamen kalkar.
+
+**Yeni ekran:**
+- **Mod her yerde tek:** Ekranın başında "Topa sahipken / Topa sahip değilken". Tahta, duruş resimleri, talimatlar hep aynı moddadır; ikisi aynı anda farklı olamaz.
+- **Tahtada oyuncuya tıklayınca** sağda yalnız o modun talimatları açılır: hücumda koşu, topu nerede ister, destek, serbestlik, boşluk doldurur, pas riski (5–6); savunmada adam/alan, kimi tutar, kişisel pres (3). Serbestlik tahtada oyuncunun evi etrafında bir alan olarak görünür ve değiştikçe büyür/küçülür; koşu, evinin ilerisine bir ok olarak.
+- **Tahtanın altındaki küçük resimler:** dört evre yerine üç duruş (kendi bölgemiz, orta, son bölge). Tıklanan duruş tahtada açılır, sürüklenerek değiştirilir. "Kazanınca" ve "Kaybedince" resimleri kalkar; yerine iki cümlelik **Geçiş kartı** (2. bölüm).
+- **Oyuncular sekmesi = genel bakış tablosu:** satırda oyuncular, sütunda ana talimatlar (iki modun öne çıkanları). Okumak ve karşılaştırmak için; hücreden değiştirilebilir ama asıl yer tahta. Rolsüz sistemde menajerin kurduğu rolleri tek bakışta gösterir ("Ece: dar serbestlik, topu ayağına, az koşu").
+- **Tekrarlar tek yerde:** Takım ayarı temel, oyuncu talimatı ondan sapma ("takımın ayarı" / "daha çok" / "daha az"); pres şiddetinde kurulan kural tempo ve pas↔sürmeye de uygulanır. Kenara sıkıştırma tek yerde (savunma tarzı); adam adama tek yerde (oyuncunun talimatı; takım düğmesi "herkese uygula" kısayolu olur).
+- **Evre çipleri kalkar.** Duruşa özel talimat yalnız "ince ayar" açılınca görünür.
+- Başlangıç önerisi düğmeleri (Kurucu, Kanat, Süpürücü …) kalabilir: talimatları dolduran kısayol.
+
 ## 3 · Kalkanlar ve kalanlar
 
-Kalkar: sekiz evre ve evre başına ayarlar (`EVKOD`, `evreBul`, `evreUygula`, `tac.evre`), evre başına talimatlar, `kontraN`, ayrı blok ve genişlik ayarları (duruşları üreten kısayol olarak kalır).
+Kalkar: sekiz evre ve evre başına ayarlar (`EVKOD`, `evreBul`, `evreUygula`, `tac.evre`), evre başına talimatlar, `kontraN`, `arkada`, ayrı blok ve genişlik ayarları (duruşları üreten kısayol olarak kalır).
 Kalır: pres şiddeti, pres tetikleri, tempo, risk, sabır, koşullar (skora göre), maç planı (taraf, hedef), tuzak, doldurma, oyuncu talimatları, akıl ve bütün yerleşim kuralları.
 Evre ölçüsü ekranda bilgi olarak kalabilir ("top şu an ilerleme bölgesinde") ama ayar anahtarı olmaz.
 
