@@ -181,12 +181,28 @@ Kullanıcının yönü: Oyun hem bilgisayarda hem mobilde, offline ve online; ay
 
 **Online yapı:** turnuvalar, aşamalar, gruplar, sezonlar; tabakalı ligler ve yükselme–düşme (yeni ve küçük kulüpler alttan başlar; güçlü kulüplerin üstte kalması sorun değil).
 
-**Oyuncu yaşam döngüsü (yaş yok, emeklilik yok):** Oyuncular insan değil; yaşlanma istenmiyor. Dolaşım ve statikleşmeye karşı:
-1. **Kullan ya da kaybet:** Özellikler oynayarak ve yapılan işle gelişir, uzun süre oynamayınca yavaşça geriler (faaliyete bağlı, yaşa değil). Rolsüz sistemle örtüşür: oyuncu hangi işi yapıyorsa o yanı gelişir.
-2. **Ekonomi:** Maaş oyuncunun gerçek değeriyle artar; bütçe ve kadro sınırı en iyileri biriktirmeyi pahalı kılar.
+**Oyuncu yaşam döngüsü (yaş yok, yaşlanma yok):** Oyuncular insan değil; özellikler yaşla düşmez. Dolaşım ve statikleşmeye karşı:
+1. **Kariyer süresi (kullanıcı kararı):** Her oyuncunun baştan belli, görünür bir kariyer süresi var (örnek: 6–10 sezon, oyuncudan oyuncuya farklı; bir kuşak aynı anda gitmesin). Süre dolunca oyuncu ayrılır; **özellikleri son güne kadar düşmez**. Adı dünyaya uygun seçilir (oyuncular insan değil; "emeklilik" yerine örneğin lisans süresi, Design karar verir).
+   - Neden: ayrılan, yeteneğinden bağımsız ayrılır; havuz yeteneklilerle dolmaz. Dünyadaki toplam yetenek ≈ sezon başına gelen yeni oyuncu × kariyer süresi (tek, anlaşılır ayar).
+   - Kalan süre piyasa değişkeni olur: kalan 1 sezonlu yıldız ucuz ve hemen işe yarar, 5 sezonlu genç uzun vadeli yatırım.
+   - Giden oyuncu kayıp değil hikâye: kulübün efsaneler listesi gibi.
+   - (Vazgeçilen fikirler: "uzun süre kulüpsüz kalan dünyadan çıkar" havuzu yetenekliler lehine çarpıtır; "seviye oynanan lige çekilir" gereksiz karmaşıklık.)
+2. **Kullan ya da kaybet yalnız profili şekillendirir:** Oyuncu sahada hangi işi yapıyorsa o yanı gelişir, kullanılmayan yanı yavaşça körelir (koşucu olarak oynayan koşuculaşır). Rolsüz sistemle örtüşür. Sonuç: kimse her şeyde 20 olmaz, "en iyi oyuncu" tek bir sıralama değil; bir taktik için en iyisi başkası için vasat olabilir.
 3. **Sözleşme ve oyuncu iradesi:** Sözleşmesi biten oyuncu, oynamıyorsa ya da daha iyi teklif varsa ayrılabilir; serbestler havuza döner.
-4. **Her sezon yeni kuşak:** Altyapılardan yeni oyuncular; sayısı kulüp sayısıyla orantılı (havuz büyür, kulüp başına yetenek sabit kalır). Altyapıya yatırım yapan daha iyi çıkarır.
-5. **Özellik tavanı (20):** Zirvede kadrolar benzeşince farkı taktik yaratır; oyunun asıl değeri öne çıkar.
+4. **Özellik tavanı (20):** Zirvede kadrolar benzeşince farkı taktik yaratır; oyunun asıl değeri öne çıkar.
+
+**Altyapı (yaşsız dünyada):** "Genç" yaşı küçük değil, henüz şekillenmemiş oyuncu: özellikleri düşük, gelişmeye açık, profili belirsiz. Asıl değeri: **hazır oyuncu yerine kendi taktiğine göre şekillendirdiğin oyuncu.** Seçim: hazır oyuncu (pahalı, hemen, profili sabit) ya da yetiştirmek (ucuz, zaman ister, belirsiz, tam senin sistemine göre).
+- **Gelişim payı (gizli):** Ne kadar ve ne hızla gelişebileceği; oynadıkça ortaya çıkar. Scout'un işi bunu erken tahmin etmek.
+- **Gelişim maç süresi ister:** Genç oynarsa bugün takım zayıflar, oynamazsa gelişmez (gerçek gerilim). Çıkışlar: kiralık (alt lig kulübünde oynar; online'da iki tarafa da yarar), altyapı maçları (yavaş gelişim, risksiz).
+- **Yatırım ve kimlik:** Yatırım sezon başına aday sayısını ve kalitesini belirler; kulüp bir yön seçebilir (hızlı oyuncu ya da pasör yetiştiren altyapı) ve bu zamanla kulübün kimliği olur.
+- **Dünyaya giriş:** Sezon başına yeni oyuncu sayısı kulüp sayısıyla orantılı (kulüp başına yetenek sabit kalır).
+
+**Kimse domine etmesin (kullanıcı şartı):** Tek fren yetmez; birbirini tamamlayanlar:
+1. **Ligin maaş tavanı:** Her ligde kulübün toplam maaşına görünür, basit bir üst sınır (gizli katsayı değil, herkesin bildiği kural). Para biriktirmek işe yaramaz.
+2. **Maaş kaliteyle orantıdan hızlı artar:** 18'lik oyuncu 14'lüğün çok katı pahalı. Tavanla birlikte seçim doğar: birkaç yıldız + vasat ekip mi, dengeli kadro mu (ikisinin taktik sonuçları farklı).
+3. **Kadro sayısı sınırı:** Oyuncu biriktirmeyi engeller; iyiler kulüplere dağılır.
+4. **Gelir beklentiyi aşmaya bağlı** (aşağıda, performans ve ekonomi): güçlü kadro kazanınca az prim alır.
+5. **Motor tarafı:** Bütçe kadroların ne kadar farklı olabileceğini sınırlar; o farkın sahada ne kadar avantaja dönüştüğünü motor belirler. Küçük kalite farkı neredeyse kesin galibiyetse bütçe ne yaparsa yapsın güçlü domine eder. Zayıf takımın kazanma şansı hep olmalı ve taktik farkı kapatabilmeli. Özellik ölçümünde ölçülür: belli bir kalite farkında zayıf takım yüzde kaç kazanıyor, taktik bunu ne kadar değiştiriyor.
 
 **Olmayacaklar (kullanıcı kararı):** Kondisyon (maç içi de maçlar arası da), sakatlık, zorunlu rotasyon. Gerekçe: menajerin elinde olmayan sebeplerle düzeni bozarlar, taktik özgürlüğü kısıtlarlar. Kaybın sebebi menajerin kararı olmalı, şans değil. Yüksek presin bedeli kondisyondan değil oyunun kendisinden gelir: arkada bırakılan alan (ofsayt yok, bu yüzden risk büyük).
 
@@ -212,7 +228,7 @@ Kullanıcının yönü: Oyun hem bilgisayarda hem mobilde, offline ve online; ay
 **Motor bağları (şimdiden önemli olanlar):**
 - **Özellik ölçümü** → oyuncunun değeri, maaşı, gelişim önceliği (keyfi değil, sahadaki etkiden).
 - **Özellikler sahada okunabilir olmalı:** Gizli bilgi sisteminde hızlı oyuncu hızlı görünmeli, iyi pasçı iyi pas atmalı; sahada izi olmayan özelliği ne scout ne menajer fark edebilir. Özellik ölçümü bunu da sınar.
-- **Oyuncunun maçta yaptığı işin kaydı** (görev, ikili, pas, koşu) → "kullan ya da kaybet" gelişimi. Motor bunu büyük ölçüde zaten biliyor; ileride oyuncu başına özetlenmeli.
+- **Oyuncunun maçta yaptığı işin kaydı** (görev, ikili, pas, koşu) → "kullan ya da kaybet" profil gelişimi. Motor bunu büyük ölçüde zaten biliyor; ileride oyuncu başına özetlenmeli.
 - **Hafif mod ve hesap bütçesi:** İzlenmeyen maçlar ve online dünyada sunucu hesabı için.
 - **Kayıtlar sonucu tutsun:** Kariyer kaydı maç sonuçlarını saklar, yeniden oynatmaya dayanmaz; kayıtlar motor sürümünü taşır. Yarım kalan maç taşınacaksa zarın (rastgele sayı üreteci) durumu kayda sayı olarak girmeli.
 
