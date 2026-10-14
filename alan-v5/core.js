@@ -14,7 +14,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
   const { W: GW, H: GH, CY: GCY } = self.ALAN_SAHA;
   // Math.hypot ile bit bit aynı sonucu veren iki argümanlı sürüm (V8'in kendi algoritması: en büyüğe bölüp karelerin toplamı); yerleşik çağrıdan ~5 kat hızlı.
   const hyp = (x, y) => { x = x < 0 ? -x : x; y = y < 0 ? -y : y; if (x === Infinity || y === Infinity) return Infinity; const m = x > y ? x : y; if (m !== m || x !== x || y !== y) return NaN; if (m === 0) return 0; const r = (m === x ? y : x) / m; return Math.sqrt(1 + r * r) * m; }; /* hız: büyük olan kendisine bölününce tam 1 olur (1·1 = 1); toplam ve sonuç aynı, bir bölme ve bir çarpma eksik */
-  const W = GW, H = GH, KR = 9, MOUTH = 5, GX1 = W * 2 + 1, GY1 = H * 2 + 1, GW1 = W + 1, GH1 = H + 1, GXM = W === 100 ? 99.999 : W - .001, GYM = H === 50 ? 49.999 : H - .001; /* ızgaralar saha ölçüsünden (100 × 50: 201 × 101 yarım birim, 101 × 51 tam birim) */ /* Kuyu alanı yarıçapı 9 (Bekçi dışında kimse giremez), ağız 10 birim */
+  const W = GW, H = GH, KR = 9, MOUTH = 5, DIREK = self.ALAN_DIREK ?? .3 /* v5 · ağzın uçlarındaki direk yarıçapı (mutlak). Deney: core.js'ten önce self.ALAN_DIREK = .6; 0 = direksiz (zip48 ile birebir) */, GX1 = W * 2 + 1, GY1 = H * 2 + 1, GW1 = W + 1, GH1 = H + 1, GXM = W === 100 ? 99.999 : W - .001, GYM = H === 50 ? 49.999 : H - .001; /* ızgaralar saha ölçüsünden (100 × 50: 201 × 101 yarım birim, 101 × 51 tam birim) */ /* Kuyu alanı yarıçapı 9 (Bekçi dışında kimse giremez), ağız 10 birim */
   // Çekirdek fiziği parametreleri. Hepsi deneme sahasından ayarlanabilir.
   const P = {
     fric: .010,     // temel sürtünme (tik başına hız oranı)
@@ -47,6 +47,14 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
   // hızlı alan: 1 birimlik ızgarada Mavi(+)/Turuncu(-) toplamı, çift doğrusal okunur (sadece kafadaki simülasyon için)
   function makeGrid(src) { const g = new Float32Array(GW1 * GH1); for (let j = 0; j <= H; j++) for (let i = 0; i <= W; i++) { let s = 0; for (const p of src) { const dx = i - p.x, dy = j - p.y; if (dx * dx + dy * dy > 400) continue; s += (p.team === 0 ? 1 : -1) * infl(p, i, j); } g[j * GW1 + i] = s; } return g; }
   function gridS(g, x, y) { x = Math.max(0, Math.min(GXM, x)); y = Math.max(0, Math.min(GYM, y)); const i = x | 0, j = y | 0, fx = x - i, fy = y - j, a = g[j * GW1 + i], b = g[j * GW1 + i + 1], c = g[(j + 1) * GW1 + i], d = g[(j + 1) * GW1 + i + 1]; return a + (b - a) * fx + (c - a) * fy + (a - b - c + d) * fx * fy; }
+  // v5 · Direk: Kuyu ağzının iki ucunda yuvarlak engel, merkezi duvar çizgisinde (x = 0,5 | W − 0,5; y = orta ± MOUTH). Bu tikteki yol (x,y)→(x+vx,y+vy) direğe duvar çizgisinden önce değerse
+  // Çekirdek değdiği noktada durur ve duvar sekmesinin kuralıyla seker (hız yüzeye göre yansır, rest ile azalır, enerji wallLoss kadar düşer). Dar açıdan ağzın kenarını sıyıran yol önce direğe değer: açı eşiği yok, geometri.
+  // Dönüş: null ya da [x, y, vx, vy]. Üç adım fonksiyonu (stepBall, rollTo, predict) aynı fonksiyonu çağırır.
+  function direk(x, y, vx, vy, p) { if (DIREK <= 0) return null; const nx = x + vx; if (x > DIREK + 4 && nx > DIREK + 4 && x < W - DIREK - 4 && nx < W - DIREK - 4) return null; const L2 = vx * vx + vy * vy; if (L2 < 1e-12) return null;
+    let tw = 2; if (nx <= .5 && Math.abs(vx) > 1e-9) tw = (.5 - x) / vx; else if (nx >= W - .5 && Math.abs(vx) > 1e-9) tw = (W - .5 - x) / vx;
+    let bt = 2, bx = 0, by = 0; for (const px of [.5, W - .5]) for (const py of [H / 2 - MOUTH, H / 2 + MOUTH]) { const fx = x - px, fy = y - py, c0 = fx * fx + fy * fy - DIREK * DIREK; if (c0 <= 0) continue; const bb = fx * vx + fy * vy; if (bb >= 0) continue; const disc = bb * bb - L2 * c0; if (disc < 0) continue; const t = (-bb - Math.sqrt(disc)) / L2; if (t < 0 || t > 1 || t >= bt) continue; bt = t; bx = px; by = py; }
+    if (bt > 1 || bt > tw) return null; const cx = x + vx * bt, cy = y + vy * bt; let nnx = cx - bx, nny = cy - by; const nl = hyp(nnx, nny) || 1; nnx /= nl; nny /= nl; const vn = vx * nnx + vy * nny;
+    return [bx + nnx * (DIREK + 1e-3), by + nny * (DIREK + 1e-3), (vx - 2 * vn * nnx) * p.rest, (vy - 2 * vn * nny) * p.rest]; }
   function chgMul(ch, p) { p = p || P; return 1 - p.chgV / 2 + p.chgV * ch; }
   function makeBall(o) { return Object.assign({ x: W / 2, y: H / 2, vx: 0, vy: 0, e: P.e0, ch: .5, team: 0, alive: true, dead: 0, t: 0, dist: 0, walls: 0, done: null, log: [] }, o); }
   function ev(b, k, txt) { b.log.push({ t: b.t, k, txt }); }
@@ -61,6 +69,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
     const f = 1 - drag; b.vx *= f; b.vy *= f;
     const s1 = hyp(b.vx, b.vy); if (s1 > 0) { const r = Math.max(0, s1 - p.roll) / s1; b.vx *= r; b.vy *= r; }
     let nx = b.x + b.vx, ny = b.y + b.vy;
+    const dk = direk(b.x, b.y, b.vx, b.vy, p); if (dk) { nx = dk[0]; ny = dk[1]; b.vx = dk[2]; b.vy = dk[3]; b.walls++; b.direk = (b.direk || 0) + 1; if (b.alive) b.e = Math.max(0, b.e - p.wallLoss); ev(b, 'direk', 'Direkten sekti'); } else
     for (const ex of [0, W]) {
       const hit = ex === 0 ? nx <= .5 : nx >= W - .5; if (!hit) continue;
       const wx = ex === 0 ? .5 : W - .5, tt = Math.abs(b.vx) > 1e-9 ? (wx - b.x) / b.vx : 0, yy = b.y + b.vy * Math.max(0, Math.min(1, tt));
@@ -85,12 +94,13 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
       const f = 1 - drag; vx *= f; vy *= f;
       const s1 = hyp(vx, vy); if (s1 > 0) { const r = Math.max(0, s1 - p.roll) / s1; vx *= r; vy *= r; }
       let nx = x + vx, ny = y + vy, done = false;
+      const dk = direk(x, y, vx, vy, p); if (dk) { nx = dk[0]; ny = dk[1]; vx = dk[2]; vy = dk[3]; if (alive) e = Math.max(0, e - p.wallLoss); } else {
       if (nx <= .5) { const wx = .5, tt = Math.abs(vx) > 1e-9 ? (wx - x) / vx : 0, yy = y + vy * Math.max(0, Math.min(1, tt));
         if (alive && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = true; }
         else { nx = 1 - nx; vx = -vx * p.rest; vy *= p.rest; if (alive) e = Math.max(0, e - p.wallLoss); } }
       if (!done && nx >= W - .5) { const wx = W - .5, tt = Math.abs(vx) > 1e-9 ? (wx - x) / vx : 0, yy = y + vy * Math.max(0, Math.min(1, tt));
         if (alive && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = true; }
-        else { nx = 2 * W - 1 - nx; vx = -vx * p.rest; vy *= p.rest; if (alive) e = Math.max(0, e - p.wallLoss); } }
+        else { nx = 2 * W - 1 - nx; vx = -vx * p.rest; vy *= p.rest; if (alive) e = Math.max(0, e - p.wallLoss); } } }
       if (!done) {
         if (ny < .5 || ny > H - .5) { ny = ny < .5 ? 1 - ny : 2 * H - 1 - ny; vy = -vy * p.rest; vx *= p.rest; if (alive) e = Math.max(0, e - p.wallLoss); }
         x = nx; y = ny;
@@ -115,12 +125,13 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
       const f = 1 - drag; vx *= f; vy *= f;
       const s1 = hyp(vx, vy); if (s1 > 0) { const r = Math.max(0, s1 - p.roll) / s1; vx *= r; vy *= r; }
       let nx = x + vx, ny = y + vy;
+      const dk = direk(x, y, vx, vy, p); if (dk) { nx = dk[0]; ny = dk[1]; vx = dk[2]; vy = dk[3]; walls++; b.direk = (b.direk || 0) + 1; if (alive) e = Math.max(0, e - p.wallLoss); b.log.push({ t, k: 'direk', txt: 'Direkten sekti' }); } else {
       if (nx <= .5) { const wx = .5, tt = Math.abs(vx) > 1e-9 ? (wx - x) / vx : 0, yy = y + vy * Math.max(0, Math.min(1, tt));
         if (alive && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = 'kuyu-sol'; b.log.push({ t, k: 'kuyu', txt: `KUYU · sol Kuyu'ya girdi` }); }
         else { nx = 1 - nx; vx = -vx * p.rest; vy *= p.rest; walls++; if (alive) e = Math.max(0, e - p.wallLoss); b.log.push({ t, k: 'kenar', txt: `Kenardan sekti (sol uç, Kuyu'nun dışı)` }); } }
       if (!done && nx >= W - .5) { const wx = W - .5, tt = Math.abs(vx) > 1e-9 ? (wx - x) / vx : 0, yy = y + vy * Math.max(0, Math.min(1, tt));
         if (alive && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = 'kuyu-sag'; b.log.push({ t, k: 'kuyu', txt: `KUYU · sağ Kuyu'ya girdi` }); }
-        else { nx = 2 * W - 1 - nx; vx = -vx * p.rest; vy *= p.rest; walls++; if (alive) e = Math.max(0, e - p.wallLoss); b.log.push({ t, k: 'kenar', txt: `Kenardan sekti (sağ uç, Kuyu'nun dışı)` }); } }
+        else { nx = 2 * W - 1 - nx; vx = -vx * p.rest; vy *= p.rest; walls++; if (alive) e = Math.max(0, e - p.wallLoss); b.log.push({ t, k: 'kenar', txt: `Kenardan sekti (sağ uç, Kuyu'nun dışı)` }); } } }
       if (!done) {
         if (ny < .5 || ny > H - .5) { ny = ny < .5 ? 1 - ny : 2 * H - 1 - ny; vy = -vy * p.rest; vx *= p.rest; walls++; if (alive) e = Math.max(0, e - p.wallLoss); b.log.push({ t, k: 'kenar', txt: `Kenardan sekti (${ny < H / 2 ? 'üst' : 'alt'})` }); }
         dist += hyp(nx - x, ny - y); x = nx; y = ny; t++;
@@ -228,7 +239,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
     choose(p, a0, a1, opps, rnd) { const ok = self.ALAN_OKC(p, 'kontrol'), err = Math.max(0, 16 - ok) * .2, lam = Math.max(.3, Math.min(1.1, .3 + (ok - 5) * .08)), sd = Turn.shortDir(a0, a1), seen = opps.map(o => ({ ...o, x: o.x + (rnd() - .5) * err, y: o.y + (rnd() - .5) * err })), C = [{ mode: 'dolaş', dir: sd }, { mode: 'dolaş', dir: -sd }, { mode: 'fiske', dir: sd }, { mode: 'fiske', dir: -sd }];
       for (const c of C) { const s = Turn.simulate(p, a0, a1, c, seen, null); c.keep = s.keep; c.cost = (s.t ?? 200) * TQ.timeK + lam * (1 - s.keep) + (rnd() - .5) * Math.max(0, 16 - ok) * .02; }
       return C.sort((x, y) => x.cost - y.cost)[0]; } };
-  window.AlanCore = { hyp, pack, rollTo, oppReach, Turn, touchCap, W, H, KR, MOUTH, P, Q, bekR, infl, K, makeGrid, gridS, chgMul, makeBall, stepBall, predict, solveLaunch, ctrlP, contact, stepAll, thruP };
+  window.AlanCore = { hyp, pack, rollTo, oppReach, Turn, touchCap, W, H, KR, MOUTH, DIREK, direk, P, Q, bekR, infl, K, makeGrid, gridS, chgMul, makeBall, stepBall, predict, solveLaunch, ctrlP, contact, stepAll, thruP };
 })();
 
 // v5 · Çekirdek gövdelerin içinden geçemez (süpürmeli çarpışma): bu tikteki yol (x0,y0)→(b.x,b.y) boyunca ilk değdiği gövdede durur.

@@ -210,7 +210,7 @@
   // Gönderme tablosu: sadece Bekçi varken (Çekirdek–Kuyu hattında yerleşmiş) bu mesafe, açı ve şarjla yapılan göndermenin gerçek fizikle girme oranı.
   // Tahmin değil ölçüm: her hücre ilk istendiğinde gerçek vuruşlarla (güçlü/plase, iki köşe, Aktarım 10 hatası) bir kez oynanır ve saklanır.
   // Önceden ölçülmüş tablo (shot-table.js) varsa ve Kuyu ölçüsü aynıysa onu kullanır; yoksa hücreleri ilk istendiğinde ölçer.
-  const SHT_SURUM = 'v5-14 · Bekçi derinliği ağza göre', SHT = new Map(); { const T0 = window.ALAN_SHT; if (T0 && T0.mouth === C().MOUTH && T0.kr === C().KR && T0.surum === SHT_SURUM) for (const [k, v] of T0.cells) SHT.set(k, v); }
+  const SHT_SURUM = 'v5-15 · direk ' + C().DIREK, SHT = new Map(); { const T0 = window.ALAN_SHT; if (T0 && T0.mouth === C().MOUTH && T0.kr === C().KR && T0.surum === SHT_SURUM && (T0.direk ?? 0) === C().DIREK) for (const [k, v] of T0.cells) SHT.set(k, v); }
   function shotCell(di, ai, ci) {
     // Hücre, taşıyıcının kafasındaki gönderme denemesiyle aynı yoldan ölçülür (imagine: Aktarım hatası, Bekçi'nin tepkisi ve uzanması dahil). Böylece "buradan gönderirsem" ile "şimdi gönderirsem" aynı sayıyı verir.
     const key = di * 10000 + ai * 100 + ci; if (SHT.has(key)) return SHT.get(key);
