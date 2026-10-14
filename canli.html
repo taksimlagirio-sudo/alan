@@ -173,7 +173,7 @@ button,select,input{font:inherit;color:inherit}
 
   <sc-if value="{{ taktikAcik }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.72)">
-      <iframe src="{{ taktikSrc }}" style="position:absolute;left:2%;top:2%;width:96%;height:96%;border:1px solid rgba(var(--ink-rgb),.15);border-radius:20px;background:var(--bg)"></iframe>
+      <iframe ref="{{ taktikRef }}" data-src="{{ taktikSrc }}" style="position:absolute;left:2%;top:2%;width:96%;height:96%;border:1px solid rgba(var(--ink-rgb),.15);border-radius:20px;background:var(--bg)"></iframe>
       <button onClick="{{ taktikKapat }}" style="position:absolute;right:3%;top:3.2%;z-index:2;background:var(--bg);border:1px solid rgba(var(--ink-rgb),.3);border-radius:999px;padding:8px 14px;cursor:pointer">✕ kapat</button>
     </div>
   </sc-if>
@@ -385,7 +385,7 @@ class Component extends DCLogic {
       kadrolar: [0, 1].map(tm => ({ ad: ad[tm].toUpperCase(), c: RN[tm], ps: ps ? ps.filter(p => p.team === tm).map(p => ({ ad: p.name, r: rl(tm, p.i), w: h === p ? 700 : 400 })) : [] })),
       kayit: () => this.kayitDegis(), kayitTxt: Sx.kayitOn ? `● Kaydı durdur · ${Math.floor((Date.now() - (Sx.kayitT0 || Date.now())) / 1000)} sn` : 'Maçı kaydet', kayitBg: Sx.kayitOn ? '#C8321E' : 'transparent', kayitUrl: Sx.kayitUrl || null, kayitAd: Sx.kayitAd || 'ALAN-mac.webm',
       sesTxt: Sx.ses ? 'Ses açık' : 'Ses kapalı', sesDegis: () => { const v = !Sx.ses; localStorage.setItem('alan-ses', v ? '1' : '0'); this.setState({ ses: v }); },
-      taktikAcik: Sx.taktik, taktikSrc: `taktik.html?mac=1&skor=${encodeURIComponent(f ? f[32] + ' – ' + f[33] : '0 – 0')}&dk=${mmss(t)}`, taktikAc: () => this.setState({ taktik: true, calis: false }), taktikKapat: () => this.setState({ taktik: false })
+      taktikAcik: Sx.taktik, taktikRef: el => { if (el && !el.dataset.yuk && el.dataset.src) { el.dataset.yuk = 1; el.src = el.dataset.src; } }, /* src şablon dolmadan istek atmasın diye ref ile */ taktikSrc: `taktik.html?mac=1&skor=${encodeURIComponent(f ? f[32] + ' – ' + f[33] : '0 – 0')}&dk=${mmss(t)}`, taktikAc: () => this.setState({ taktik: true, calis: false }), taktikKapat: () => this.setState({ taktik: false })
     }; }
 }
 </script>

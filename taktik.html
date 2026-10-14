@@ -338,10 +338,10 @@ class Component extends DCLogic {
     const yerler = [{ x: '4.5%', y: '50%', i: 0 }].concat(sh.map((s, k) => ({ ...XYd(k), i: k + 1 }))).map(q => { const p = P(S.dizilim[q.i]), r = q.i ? rol[q.i - 1] : null;
       return { x: q.x, y: q.y, no: q.i ? String(q.i) : 'B', ad: p ? p.ad : '–', rol: q.i ? (g === 'sav' ? r.s : r.h) : 'Bekçi', renk: q.i ? '#3D5BF0' : '#22339C', kenar: q.i === S.sel ? '#FFD25A' : q.i && dur[q.i - 1].el ? '#8EA2FF' : 'rgba(var(--ink-rgb),.85)', imlec: q.i ? 'grab' : 'pointer',
         down: e => { if (!q.i) { this.setState({ sel: 0, tab: S.tab === 'plan' ? 'takim' : S.tab }); return; } this.drag = { i: q.i, x0: e.clientX, y0: e.clientY, moved: false }; if (this.sahaRef.current && this.sahaRef.current.setPointerCapture) try { this.sahaRef.current.setPointerCapture(e.pointerId); } catch (x) {} e.preventDefault(); } }; });
-    const dv = sh.map(s => s.d), lv = sh.map(s => s.l), dSp = Math.max(...dv) - Math.min(...dv), lSp = Math.max(...lv) - Math.min(...lv), br = v => `${Math.round(v)} br`;
+    const dv = sh.map(s => s.d), lv = sh.map(s => s.l), dSp = Math.max(...dv) - Math.min(...dv), lSp = Math.max(...lv) - Math.min(...lv), SZ = window.ALAN_SAHA || { KX: 1, KY: 1 }, br = (v, k) => `${Math.round(v * (k === 'y' ? SZ.KY : SZ.KX))} br` /* tahta 100×50 şeması; yazı gerçek saha biriminde */;
     const sekil = [
       { ad: g === 'sav' ? 'Hatlar arası mesafe (savunma)' : 'Hatlar arası mesafe (hücum)', sol: 'sıkı', sag: 'açık', min: .15, max: 1, step: .01, val: r2(dSp), deger: br(dSp * (bx1 - bx0)), set: e => this.span(g, 'd', +e.target.value) },
-      { ad: g === 'sav' ? 'Savunma genişliği' : 'Hücum genişliği', sol: 'dar', sag: 'geniş', min: .3, max: 2, step: .01, val: r2(lSp), deger: br(lSp * 20), set: e => this.span(g, 'l', +e.target.value) }
+      { ad: g === 'sav' ? 'Savunma genişliği' : 'Hücum genişliği', sol: 'dar', sag: 'geniş', min: .3, max: 2, step: .01, val: r2(lSp), deger: br(lSp * 20, 'y'), set: e => this.span(g, 'l', +e.target.value) }
     ].concat(g === 'sav' ? [{ ad: 'Blok yüksekliği', sol: 'derin', sag: 'önde', min: 0, max: 1, step: .01, val: S.S.blok, deger: T.blok, set: e => this.up('S', 'blok', +e.target.value) }] : [{ ad: 'Oyuncular arası destek', sol: 'yakın', sag: 'uzak', min: .5, max: 1.5, step: .01, val: S.yk || 1, deger: `ort. ${br(this.ort(sh, bx1 - bx0))}`, set: e => { const v = +e.target.value; this.yay(g, v / (S.yk || 1), v); } }]);
     // tarz: etiketten değil, tercihlerden
     const H = S.H, D = S.S, G = { ...S.G, kazan: { hic: 0, ustun: .5, esit: .75, her: 1 }[S.G.gecisH] ?? .5, kayip: { hic: 0, rakip: .6, her: 1 }[S.G.kpYer] ?? .6 }, ax = {
@@ -437,7 +437,7 @@ class Component extends DCLogic {
       kutu: (() => { const fs = dur.map(q => q.f), a = Math.max(1, Math.min(...fs) - 4), b = Math.min(99, Math.max(...fs) + 4); return { x: pct(a), w: pct(b - a), ad: 'DURUŞ · TOP ' + ['KENDİ BÖLGEMİZDE', 'ORTADA', 'SON BÖLGEDE'][dk] }; })(), topX: pct(DUR_A[dk]), topYD: pct(100 - DUR_A[dk]),
       durusBaslik: (g === 'sav' ? 'SAVUNMA PLANI' : 'HÜCUM PLANI') + ' · ÜÇ DURUŞ · dokun, tahtada aç', duruslar, alanlar, gecisKart, gecisSatir, gecisNot, tabloBas, tablo, spKapat: () => this.setState({ sel: null }), durusSifirVar: !!(Dg[dk] && Dg[dk].some(Boolean)), durusSifir,
       golgeler, yerler, sahaRef: this.sahaRef, pmove: this.pmove, pup: this.pup,
-      olcu: `hat aralığı ${br(dSp * (bx1 - bx0))} · genişlik ${br(lSp * 20)}`, sekil,
+      olcu: `hat aralığı ${br(dSp * (bx1 - bx0))} · genişlik ${br(lSp * 20, 'y')}`, sekil,
       tarzBaslik, eksen: ent.map(([ad, v]) => ({ ad, v: String(Math.round(v * 100)), w: Math.round(v * 100) + '%' })), bedel: bedel.slice(0, 4),
       gel, modDegis, modTxt: gel ? 'Gelişmiş' : 'Basit', cizgiler, presHat: blok, blokVar: g === 'sav', blokDown, sekmeler, oyuncuSekme: S.tab !== 'plan' && S.sel != null, oyuncular, sp, gruplar: gruplar.filter(g => !g.gizli),
       motorOzet: `sistem ${T.sistem} · şiddet ${T.siddet} · blok ${T.blok} · genişlik ${T.genislik} · tempo ${T.tempo} · risk ${T.risk} · geçiş: ${GHAD[GH.indexOf(T.gecisH)].toLowerCase()} · karşı pres: ${KYAD[KY.indexOf(T.kpYer)].toLowerCase()}, ${T.kpSure} sn · elle duruş: ${['huc', 'sav'].map(x => ((S.D && S.D[x]) || []).filter(a => a && a.some(Boolean)).length).join('+')} · görevler: ${rol.map(r => r.h[0] + '/' + r.s[0]).join(' ')}`
