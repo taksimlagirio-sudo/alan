@@ -178,7 +178,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
     thruV: .9, thruK: .6, thruMax: .55, thruKeep: .6 // hızlı Çekirdeğin gövdeyi delmesi: hız eşiği, eğim, tavan, kalan hız
   };
   // Bekçi'nin menzili: gövde + uzanma. Uzanmak için zaman gerekir: Çekirdek yola çıktıktan sonra tepki süresi (Okuma) geçince menzil büyür (Hız hızlandırır).
-  function bekR(b, p, q) { q = q || Q; const a = p.a || {}, re = q.bekReact - self.ALAN_OKC(p, 'bekci') * q.bekReactOk; return q.bekBody + Math.min(q.bekDive, Math.max(0, (b.tp ?? b.t ?? 0) - re) * (q.bekDiveV + ((a.hiz ?? 10) - 10) * .01)); }
+  function bekR(b, p, q) { q = q || Q; const a = p.a || {}, re = (q.bekReact - self.ALAN_OKC(p, 'bekci') * q.bekReactOk) * (p._yer && !self.ALAN_BEKCI_A_ESKI ? .6 : 1); /* v5 · Öneri A.4: yerleşmiş Bekçi (hızı < 0,05, hedefine 1'den yakın) daha çabuk tepki verir: yer tutmanın değeri */ return q.bekBody + Math.min(q.bekDive, Math.max(0, (b.tp ?? b.t ?? 0) - re) * (q.bekDiveV + ((a.hiz ?? 10) - 10) * .01)); }
   // Dokunuşun fiziği: Çekirdeğin oyuncuya göre hızı (oyuncu ona doğru koşuyorsa artar, onunla aynı yöne gidiyorsa azalır) ve oyuncunun o an söndürebileceği hız.
   function touchCap(b, p, src, q) { q = q || Q; const mate = p.team === b.team, a = p.a || {}, sk = p.role === 'Bekçi' ? self.ALAN_OZ(p, 'hakimiyet') : mate ? self.ALAN_OZ(p, 'kontrol') : self.ALAN_OZ(p, 'kesme'); /* v5 · Bekçi: Alan hakimiyeti · arkadaş: Kontrol · rakip (pas arası): Kesme */
     let pr = 0; for (const o of src) if (o.team !== p.team) pr += infl(o, p.x, p.y);
