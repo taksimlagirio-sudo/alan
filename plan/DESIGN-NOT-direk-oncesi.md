@@ -20,6 +20,20 @@ Yani "dar açı" değil, "kenarı sıyıran" bir sayı. Direk tam bunu yakalar.
 
 75°+ sayıların %8'i. 60–75° diliminin oranı (%30) en yüksekle aynı, dar açının asıl cömert olduğu yer burası.
 
+### 2b · Açı ve mesafe birlikte (mesafe: ağız ortasına)
+| Açı | Yakın (0–15) | Orta (15–25) | Uzak (25+) |
+|---|---|---|---|
+| 0–30° | 5/7 (%71) | 3/14 (%21) | 3/31 (%10) |
+| 30–60° | 10/14 (%71) | 5/16 (%31) | 10/56 (%18) |
+| 60–75° | 2/3 (%67) | 3/14 (%21) | **5/16 (%31)** |
+| 75°+ | 1/5 (%20) | 2/12 (%17) | 1/9 (%11) |
+
+- Karşı karşıya (yakın, düz) %71: zor değil, sorun yok.
+- Uzaktan düz %10: makul.
+- **Sorun bir hücrede: uzak ve geniş (25+, 60–75°) %31, uzaktan düzün üç katı.** Gözlenen Cansu sayısı da burada (30 birim, 69°). Hücrede 16 gönderme var, oran gürültülü; ama yön mantığa ters.
+- Bekçi: Bu hücrede giren sayılarda Çekirdek Bekçi'nin ort. 2,1 birim yakınından geçiyor (uzaktan düz girenlerde 3,5). Bekçi yerinde ama durduramıyor. Adaylar: (1) ağız kenarını sıyırma, direk çözer; (2) Bekçi'nin yakın direkte uzanışı / tepkisi yetmiyor.
+- **Ölçüt (kullanıcı):** Uzaktan geniş açı, uzaktan düzden kolay olmamalı; karşı karşıyadan çok daha zor olmalı.
+
 ## 3 · Ağza nereden giriyor (51 sayı)
 - Geliş açısı (arka çizgiye dikle): 0–30° 18 · 30–60° 19 · 60–75° 11 · 75°+ 3.
 - **Ağız kenarına 1 birimden yakın giren: 17 / 51 (üçte biri).** Geliş açıları 15°–81° arası dağınık; yalnız dar açıdan gelenler değil.
@@ -29,5 +43,8 @@ Yani "dar açı" değil, "kenarı sıyıran" bir sayı. Direk tam bunu yakalar.
 ## 4 · Ayrıca
 `MOUTH = 5` mutlak: 100×50'de ağız sahanın %20'si, 120×60'ta %17'si. Saha büyüyünce ağız göreceli olarak küçüldü (sayı düşüşünün bir parçası olabilir). Bilinçli mi?
 
-## 5 · Direkten sonra Claude Code
-Aynı 16 maç: aynı tablo, toplam sayı ve gönderme, direkten sekme sayısı ve direkten sekip giren sayı, 75°+ gönderme seçimi, hız.
+## 5 · "Herkes 20" tam değil
+Kayıtlarda Alan gücü ve Soğukkanlılık 10, diğer bütün özellikler 20. Bu iki özellik `HEPSI_20` ayarına girmemiş görünüyor (sonradan eklendikleri için). Önceki ölçümler bozulmuyor (iki takımda ve her ölçümde aynı), ama 20 olmaları isteniyorsa ayar güncellenmeli.
+
+## 6 · Direkten sonra Claude Code
+Aynı 16 maç: 2 ve 2b tabloları, toplam sayı ve gönderme, direkten sekme sayısı ve direkten sekip giren sayı, 75°+ gönderme seçimi, hız. Uzak-geniş hücre hâlâ yüksekse: oradaki sayılarda Bekçi'nin neden yetişemediği (gerekirse daha çok maç).
