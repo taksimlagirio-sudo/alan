@@ -1,5 +1,6 @@
 // v5 maç işçisi: v3d motoru. Maçı izlemenin önünde oynar, kareleri sayfaya gönderir. Taktik değişince maç baştan aynı tohumla, değişiklik geçmişiyle yeniden oynanır (v3d'de kopya yok; motor belirlenimci).
 self.window = self;
+{ const sb = /[?&]saha=(\d+)x(\d+)/.exec(self.location && self.location.search || ''); if (sb) self.ALAN_SAHA_BOY = [+sb[1], +sb[2]]; } /* deney: new Worker('mac-isci.js?saha=140x70'). Verilmezse 100 × 50 */
 importScripts('core.js', 'shot-table.js', 'value-table.js', 'decide.js', 'match.js', 'shape.js');
 const M = self.AlanMatch, NF = 42; let gen = 0, m = null, len = 5400, kur = null, gecmis = [], buf = null, sonDec = null;
 const yeniBuf = () => ({ kare: [], olay: [], karar: [] });
