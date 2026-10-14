@@ -223,6 +223,8 @@ Kullanıcının yönü: Oyun hem bilgisayarda hem mobilde, offline ve online; ay
 - Frenler: ölüm sarmalına karşı sabit taban ve yükselme–düşme; zenginleşme sarmalına karşı değerle artan maaş ve kadro sınırı.
 - **Çeşitlilik şartı:** Bir özelliğin değeri taktiğe göre değişmeli; yoksa herkes aynı oyuncuyu ister, pazar ve oyun tekdüzeleşir (ölçülebilir; özellik ölçümünün parçası).
 
+**Gerçek para (kullanıcı kararları):** Reklam hiçbir yerde yok, mobilde de. Güç satılmaz (para ile oyuncu, bütçe, özellik yok): online rekabette taktik yerine cüzdan kazanırdı. Analiz araçları satılmaz. Gelir modeli sonra konuşulacak.
+
 **İleride, fikir aşamasında:** Başkanlık sistemi (kulübün sahibi ya da seçilmiş başkanı: bütçe, menajer ve çalışan atama), taraftarlar (kulübe bağlılık; gelire, atmosfere, başkanlık seçimine etkisi). Tasarımı sonra; ilke: her biri gerçek bir karar ve ödünleşim yaratsın, süs olmasın.
 
 **Motor bağları (şimdiden önemli olanlar):**
