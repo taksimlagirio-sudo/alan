@@ -4,7 +4,7 @@
 function olcDonma(M, D, K, seed, ri, maxT, maxMs) {
   const R = K.RAKIP[ri % K.RAKIP.length], ids = ['aras', 'deniz', 'mert', 'ece', 'cansu', 'kaan', 'tuna'];
   const tacL = { sistem: 'Alan', pres: 1, arkada: 1, blok: 'Orta', genislik: 'Normal', tempo: .5, risk: .5, kazaninca: 'Dengeli' };
-  const m = M.createMatch(seed, { tac: [tacL, { ...R.tac, yz: true }], len: 5400, diz: [{ sav: '2-2-2', huc: '2-1-3' }, R.diz] });
+  const m = M.createMatch(seed, { tac: [tacL, { ...R.tac, yz: true }], len: self.ALAN_MAC_LEN, diz: [{ sav: '2-2-2', huc: '2-1-3' }, R.diz] });
   const oy = [ids.map(id => { const p = K.KADRO.find(k => k.id === id); return { ad: p.ad, a: p.a }; }), R.oyuncular.map(([ad, a]) => ({ ad, a }))];
   for (const t of [0, 1]) for (const p of m.ps) if (p.team === t) { const o = oy[t][p.i]; if (o) { p.name = o.ad; p.a = { ...p.a, ...o.a }; } }
   M.assignRoles(m, [[{ h: 'Kurucu', s: 'Bölge' }, { h: 'Serbest', s: 'Bölge' }, { h: 'Serbest', s: 'Bölge' }, { h: 'Kanat', s: 'Bölge' }, { h: 'Pivot', s: 'Bölge' }, { h: 'Serbest', s: 'Bölge' }], R.roller]);
