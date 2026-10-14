@@ -10,6 +10,8 @@
 const fs = require('fs'), zlib = require('zlib'); const { kur } = require('./kurulum');
 const [dir, sS, out, kS] = process.argv.slice(2), sc = +sS, KAY = +kS || 0;
 const { M, m, ad, adim, g } = kur(dir, sc, KAY, { 'match.js': ['m.fl = { t0: m.tick, kind: o.kind,', 'm.fl = { o, t0: m.tick, kind: o.kind,'] }); const AD = g.AlanDecide;
+if (process.env.LTABAN) { const v = +process.env.LTABAN; for (const p of m.ps) for (const k of Object.keys(p.a)) if (typeof p.a[k] === 'number') p.a[k] = v; } /* özellik ölçümü: iki takımda bütün sayısal özellikler aynı taban */
+if (process.env.LOZ) { for (const kv of process.env.LOZ.split(',')) { const [k, v] = kv.split(':'), bek = ['refleks', 'yerlesim', 'hakimiyet'].includes(k); for (const p of m.ps) if (p.team === 0 && (p.role === 'Bekçi') === bek) p.a = { ...p.a, [k]: +v }; } } /* Liman'ın saha oyuncularında (Bekçi özelliğiyse Bekçi'sinde) tek özellik */
 if (process.env.LTAC) { const o = JSON.parse(process.env.LTAC); m.tac[0] = { ...m.tac[0], ...o }; if (m.tac0 && m.tac0[0]) m.tac0[0] = { ...m.tac0[0], ...o }; } /* deney: Liman'ın (takım 0) taktiğine ek */
 const LEN = +process.env.LEN || 5400, N = m.ps.length, ps = m.ps, idx = new Map(ps.map((p, i) => [p, i]));
 const T = { hold: new Uint8Array(LEN), bx: new Int16Array(LEN), by: new Int16Array(LEN), bt: new Int8Array(LEN).fill(-1), ch: new Uint8Array(LEN), ev0: new Int8Array(LEN).fill(-1), ev1: new Int8Array(LEN).fill(-1), gcT: new Int8Array(LEN).fill(-1), gcGit: new Uint8Array(LEN), gcOn: new Uint8Array(LEN), kp: new Uint8Array(LEN) };
@@ -27,7 +29,7 @@ while (!m.over && m.tick < LEN) { const t1 = Date.now(); adim(); hesapMs += Date
   if (m.events[0] !== e0) { const yeni = []; for (const e of m.events) { if (e === e0) break; yeni.push(e); } for (const e of yeni.reverse()) olay.push({ t, tur: e.type, takim: e.team, metin: e.text }); e0 = m.events[0]; }
   if (m.lastDec && m.lastDec !== ld) { ld = m.lastDec; karar.push({ t, kim: h ? idx.get(h) : null, s: ld.opts.map(x => [x.kind, x.q, x.P == null ? null : +x.P.toFixed(3), x.v == null ? null : +x.v.toFixed(4)]) }); } }
 const b64 = a => Buffer.from(a.buffer, a.byteOffset, a.byteLength).toString('base64');
-const kayit = { surum: 3, ltac: process.env.LTAC || null, motor: dir, sc, ad, kay: KAY, n, N, LEN, oyuncular: ps.map(p => ({ id: p.id, takim: p.team, rol: p.role, ad: p.name, a: p.a })), tac: m.tac0 || m.tac, gorevler: jobs,
+const kayit = { surum: 3, ltac: process.env.LTAC || null, ltaban: process.env.LTABAN || null, loz: process.env.LOZ || null, motor: dir, sc, ad, kay: KAY, n, N, LEN, oyuncular: ps.map(p => ({ id: p.id, takim: p.team, rol: p.role, ad: p.name, a: p.a })), tac: m.tac0 || m.tac, gorevler: jobs,
   T: Object.fromEntries(Object.entries(T).map(([k, v]) => [k, b64(v)])), P: Object.fromEntries(Object.entries(P).map(([k, v]) => [k, b64(v)])), lane: b64(LN),
   pas, sahip, olay, karar, skor: m.score, st: m.st, hesapSn: +(hesapMs / 1000).toFixed(1) };
 fs.writeFileSync(out, zlib.gzipSync(JSON.stringify(kayit)));
