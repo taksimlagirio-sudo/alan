@@ -1,0 +1,27 @@
+node tools/v5-kosu2.js hiz30/z38 5 0 > lab/z38/kosu-5.json 2>&1
+node tools/v5-kosu2.js hiz30/z38 6 0 > lab/z38/kosu-6.json 2>&1
+node tools/v5-kosu2.js hiz30/z38 7 0 > lab/z38/kosu-7.json 2>&1
+node tools/v5-kosu2.js hiz30/z38 8 0 > lab/z38/kosu-8.json 2>&1
+node tools/v5-kosu2.js hiz30/z38 9 0 > lab/z38/kosu-9.json 2>&1
+node tools/v5-kosu2.js hiz30/z38 10 0 > lab/z38/kosu-10.json 2>&1
+node tools/v5-kosu2.js hiz30/z38 11 0 > lab/z38/kosu-11.json 2>&1
+node tools/v5-kosu2.js hiz30/z38 12 0 > lab/z38/kosu-12.json 2>&1
+node tools/v5-kosu2.js hiz30/z38 13 0 > lab/z38/kosu-13.json 2>&1
+node tools/v5-kosu2.js hiz30/z38 14 0 > lab/z38/kosu-14.json 2>&1
+node tools/v5-kosu2.js hiz30/z38 15 0 > lab/z38/kosu-15.json 2>&1
+node tools/v5-kalib3.js hiz30/z38 0 4 12 24 > lab/z38/kalib-0.jsonl 2>&1
+node tools/v5-kalib3.js hiz30/z38 1 4 12 24 > lab/z38/kalib-1.jsonl 2>&1
+node tools/v5-kalib3.js hiz30/z38 2 4 12 24 > lab/z38/kalib-2.jsonl 2>&1
+node tools/v5-kalib3.js hiz30/z38 3 4 12 24 > lab/z38/kalib-3.jsonl 2>&1
+node tools/v5-kalib3.js hiz30/z38 4 4 12 24 > lab/z38/kalib-4.jsonl 2>&1
+node tools/v5-kalib3.js hiz30/z38 5 4 12 24 > lab/z38/kalib-5.jsonl 2>&1
+node tools/v5-kalib3.js hiz30/z38 6 4 12 24 > lab/z38/kalib-6.jsonl 2>&1
+node tools/v5-kalib3.js hiz30/z38 7 4 12 24 > lab/z38/kalib-7.jsonl 2>&1
+node tools/v5-kalib3.js hiz30/z38 8 4 12 24 > lab/z38/kalib-8.jsonl 2>&1
+node tools/v5-kalib3.js hiz30/z38 9 4 12 24 > lab/z38/kalib-9.jsonl 2>&1
+node tools/v5-kalib3.js hiz30/z38 10 4 12 24 > lab/z38/kalib-10.jsonl 2>&1
+node tools/v5-kalib3.js hiz30/z38 11 4 12 24 > lab/z38/kalib-11.jsonl 2>&1
+node tools/v5-kalib3.js hiz30/z38 12 4 12 24 > lab/z38/kalib-12.jsonl 2>&1
+node tools/v5-kalib3.js hiz30/z38 13 4 12 24 > lab/z38/kalib-13.jsonl 2>&1
+node tools/v5-kalib3.js hiz30/z38 14 4 12 24 > lab/z38/kalib-14.jsonl 2>&1
+node tools/v5-kalib3.js hiz30/z38 15 4 12 24 > lab/z38/kalib-15.jsonl 2>&1
