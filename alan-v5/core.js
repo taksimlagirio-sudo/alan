@@ -3,7 +3,11 @@ self.ALAN_BEK_ALAN = 12;
 // Arkadaşın kontrol edemediği Çekirdek: true → gelişi yönünde kaçar (sekmez); false → eski hâl (gövdeden seker).
 self.ALAN_KACIR = true;
 // Okuma kanalları (sadece ölçüm için): ALAN_OKX = { eq: [kanallar], only: kanal, mid } verilirse, o kanallarda herkes mid Okuma'yla oynar. Verilmezse etkisiz.
-self.ALAN_OKC = function (p, ch) { const v = (p && p.a && p.a.okuma) ?? 10, E = self.ALAN_OKX; if (!E) return v; if (E.only) return E.only === ch ? v : E.mid; return E.eq && E.eq.includes(ch) ? E.mid : v; };
+/* v5 · özellik standardı: her özellik tek iş. Eski kayıtlar (okuma, aktarim, tutus, yogunluk) eşlemeyle okunur. Bağlama tablosu: alan-v5/OZELLIKLER.md */
+self.ALAN_OZ_ESKI = { tepki: 'okuma', gorus: 'okuma', yeralma: 'okuma', pas: 'aktarim', gonderme: 'aktarim', kontrol: 'tutus', yukleme: 'tutus', guc: 'yogunluk', uzanma: 'yogunluk', refleks: 'okuma', yerlesim: 'okuma', hakimiyet: 'tutus' };
+self.ALAN_OZ = function (p, k) { const a = p && p.a; if (!a) return 10; const v = a[k]; if (v != null) return v; const e = self.ALAN_OZ_ESKI[k], w = e && a[e]; return w != null ? w : 10; };
+self.ALAN_OKC_K = { tepki: 'tepki', bekci: 'refleks', kontrol: 'gorus' }; /* eski kanal adı → özellik (ölçüm deneyleri ALAN_OKX ile sürer) */
+self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch] || ch), E = self.ALAN_OKX; if (!E) return v; if (E.only) return E.only === ch ? v : E.mid; return E.eq && E.eq.includes(ch) ? E.mid : v; };
 (function () {
   // Math.hypot ile bit bit aynı sonucu veren iki argümanlı sürüm (V8'in kendi algoritması: en büyüğe bölüp karelerin toplamı); yerleşik çağrıdan ~5 kat hızlı.
   const hyp = (x, y) => { x = x < 0 ? -x : x; y = y < 0 ? -y : y; if (x === Infinity || y === Infinity) return Infinity; const m = x > y ? x : y; if (m !== m || x !== x || y !== y) return NaN; if (m === 0) return 0; const r = (m === x ? y : x) / m; return Math.sqrt(1 + r * r) * m; }; /* hız: büyük olan kendisine bölününce tam 1 olur (1·1 = 1); toplam ve sonuç aynı, bir bölme ve bir çarpma eksik */
@@ -159,7 +163,7 @@ self.ALAN_OKC = function (p, ch) { const v = (p && p.a && p.a.okuma) ?? 10, E = 
   // Bekçi'nin menzili: gövde + uzanma. Uzanmak için zaman gerekir: Çekirdek yola çıktıktan sonra tepki süresi (Okuma) geçince menzil büyür (Hız hızlandırır).
   function bekR(b, p, q) { q = q || Q; const a = p.a || {}, re = q.bekReact - self.ALAN_OKC(p, 'bekci') * q.bekReactOk; return q.bekBody + Math.min(q.bekDive, Math.max(0, (b.tp ?? b.t ?? 0) - re) * (q.bekDiveV + ((a.hiz ?? 10) - 10) * .01)); }
   // Dokunuşun fiziği: Çekirdeğin oyuncuya göre hızı (oyuncu ona doğru koşuyorsa artar, onunla aynı yöne gidiyorsa azalır) ve oyuncunun o an söndürebileceği hız.
-  function touchCap(b, p, src, q) { q = q || Q; const mate = p.team === b.team, a = p.a || {}, sk = p.role === 'Bekçi' || mate ? (a.tutus ?? 10) : ((a.kesme ?? 10) + (a.tutus ?? 10)) / 2;
+  function touchCap(b, p, src, q) { q = q || Q; const mate = p.team === b.team, a = p.a || {}, sk = p.role === 'Bekçi' ? self.ALAN_OZ(p, 'hakimiyet') : mate ? self.ALAN_OZ(p, 'kontrol') : self.ALAN_OZ(p, 'kesme'); /* v5 · Bekçi: Alan hakimiyeti · arkadaş: Kontrol · rakip (pas arası): Kesme */
     let pr = 0; for (const o of src) if (o.team !== p.team) pr += infl(o, p.x, p.y);
     const tau = Math.max(1, q.tepki0 - self.ALAN_OKC(p, p.role === 'Bekçi' ? 'bekci' : 'tepki') * q.tepkiOk), haz = Math.min(1, (b.tp ?? b.t ?? 99) / tau), cap = (q.cap0 + (sk - 10) * q.capSk - (b.alive ? b.ch * q.capCh : 0) - q.capPr * (1 - Math.exp(-Math.max(0, pr - .4) * q.pressK / q.pressMax))) * (q.capHaz + (1 - q.capHaz) * haz), vrx = b.vx - (p.vx || 0), vry = b.vy - (p.vy || 0);
     return { cap: Math.max(.08, cap * (p.role === 'Bekçi' && !mate ? q.bekEl : 1)), vr: hyp(vrx, vry), vrx, vry, s: q.capS0 + (20 - sk) * q.capSsk, sk }; }
@@ -171,7 +175,7 @@ self.ALAN_OKC = function (p, ch) { const v = (p && p.a && p.a.okuma) ?? 10, E = 
     q = q || Q; rnd = rnd || Math.random; const sx = b.x - ox, sy = b.y - oy, sl = sx * sx + sy * sy; let best = null, bd = 1e9;
     for (const p of src) {
       if (p.noTouch || (b.cds && (b.cds.get(p) || 0) > b.t)) continue; if (p === b.from && b.t < 8) continue; if (b.recv && p.team === b.team && p !== b.recv && !b.defl) continue; // arkadaş başkasına giden pası bırakır
-      const t0 = sl > 0 ? ((p.x - ox) * sx + (p.y - oy) * sy) / sl : 1, tt = Math.max(0, Math.min(1, t0)), dd = hyp(ox + sx * tt - p.x, oy + sy * tt - p.y), R = oppReach(b, p, q, (p.role === 'Bekçi' && (!self.ALAN_BEK_ALAN || hyp(p.x - (p.team === 0 ? 0 : 100), p.y - 25) < self.ALAN_BEK_ALAN) ? bekR(b, p, q) : q.reach + (((p.a && p.a.yogunluk) ?? 10) - 10) * .04) * (t0 < 0 ? q.awayK : 1)); const R2 = Math.max(R, 1.15); // kendisinden uzaklaşan Çekirdeğe ancak dibindeyse yetişir · v5: ama gövde yarıçapının (1,0) altına inmez; yoksa yanında koşan oyuncu, gövdesinden seken Çekirdeğe hiç dokunamıyordu (ikisi de topla süzülüyordu)
+      const t0 = sl > 0 ? ((p.x - ox) * sx + (p.y - oy) * sy) / sl : 1, tt = Math.max(0, Math.min(1, t0)), dd = hyp(ox + sx * tt - p.x, oy + sy * tt - p.y), R = oppReach(b, p, q, (p.role === 'Bekçi' && (!self.ALAN_BEK_ALAN || hyp(p.x - (p.team === 0 ? 0 : 100), p.y - 25) < self.ALAN_BEK_ALAN) ? bekR(b, p, q) : q.reach + ((self.ALAN_OZ(p, 'uzanma')) - 10) * .04) * (t0 < 0 ? q.awayK : 1)); const R2 = Math.max(R, 1.15); // kendisinden uzaklaşan Çekirdeğe ancak dibindeyse yetişir · v5: ama gövde yarıçapının (1,0) altına inmez; yoksa yanında koşan oyuncu, gövdesinden seken Çekirdeğe hiç dokunamıyordu (ikisi de topla süzülüyordu)
       if (dd < R2 && dd < bd) { bd = dd; best = p; }
     }
     if (!best) return null;
@@ -192,10 +196,12 @@ self.ALAN_OKC = function (p, ch) { const v = (p && p.a && p.a.okuma) ?? 10, E = 
   function stepAll(b, src, p, q, rnd) { if (b.done) return null; const ox = b.x, oy = b.y; stepBall(b, src, p); if (b.done) return null; return contact(b, src, q, rnd, ox, oy); }
   // Dönüş: Çekirdek gövdenin içinden geçemez, kenarında bir açıda durur. Öbür yana geçmek için ya gövdenin etrafından dolaşır (Sürme hızında; taşıyıcı hızlandıkça yavaşlar), ya da fiskeyle bir an gövdeden ayrılır (hızlı ama boşta).
   // Rakip Çekirdeğe ancak gövde araya girmiyorsa uzanabilir. Yolu oyuncu kafasında seçer: süre + (Okuma ile görülen) açıkta kalma riski.
-  const TQ = { w0: .1, wSk: .008, wV: .6, vRef: .25, flickW: .2, timeK: .003, react: 14, reactOk: .5, grab: 0, rivV: .2, pHold: .3, pHoldSk: .025, cdHold: 12, pLoose: .55, cdLoose: 3, tail: 6, shield: .8, minD: 1.7 };
+  const TQ = { tarafIyi: 1.12, tarafKotu: .9, w0: .1, wSk: .008, wV: .6, vRef: .25, flickW: .2, timeK: .003, react: 14, reactOk: .5, grab: 0, rivV: .2, pHold: .3, pHoldSk: .025, cdHold: 12, pLoose: .55, cdLoose: 3, tail: 6, shield: .8, minD: 1.7 };
   const wrapA = a => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
   const Turn = { TQ,
-    omega(p) { const a = p.a || {}, v = hyp(p.vx || 0, p.vy || 0); return Math.max(.03, (TQ.w0 + ((a.surme ?? 10) - 10) * TQ.wSk) * (1 - TQ.wV * Math.min(1, v / TQ.vRef))); },
+    /* v5 · Taraf: oyuncu Çekirdeği taşımayı tercih ettiği yanda (gidiş yönüne göre sol / sağ) daha hızlı döner ve fiske atar, öbür yanda biraz yavaş; iki yanlı ortalama. Puan değil, ödünleşim */
+    taraf(p) { const t = p.a && p.a.taraf; if (!t || t === 'iki' || p.ca == null) return 1; const vx = p.vx || 0, vy = p.vy || 0, sp = hyp(vx, vy); if (sp < .04) return 1; const cr = vx * Math.sin(p.ca) - vy * Math.cos(p.ca), sol = cr < 0; return (t === 'sol') === sol ? TQ.tarafIyi : TQ.tarafKotu; },
+    omega(p) { const a = p.a || {}, v = hyp(p.vx || 0, p.vy || 0); return Math.max(.03, (TQ.w0 + ((a.surme ?? 10) - 10) * TQ.wSk) * (1 - TQ.wV * Math.min(1, v / TQ.vRef)) * Turn.taraf(p)); },
     shortDir(a0, a1) { return wrapA(a1 - a0) >= 0 ? 1 : -1; },
     arc(a0, a1, dir) { let d = wrapA(a1 - a0); if (dir > 0 && d < 0) d += 2 * Math.PI; if (dir < 0 && d > 0) d -= 2 * Math.PI; return Math.abs(d); },
     shielded(p, o, cx, cy) { const sx = cx - o.x, sy = cy - o.y, L2 = sx * sx + sy * sy || 1, t = Math.max(0, Math.min(1, ((p.x - o.x) * sx + (p.y - o.y) * sy) / L2)); return hyp(o.x + sx * t - p.x, o.y + sy * t - p.y) < TQ.shield; },
@@ -205,7 +211,7 @@ self.ALAN_OKC = function (p, ch) { const v = (p && p.a && p.a.okuma) ?? 10, E = 
       const p = { ...p0 }, opps = opps0.map(o => ({ ...o, cd: 0 })), body = Q.body, R = Q.reach, A = Turn.arc(a0, a1, plan.dir), sur = (p.a || {}).surme ?? 10, fr = [];
       let done = 0, keep = 1, res = null, tEnd = null, landed = false;
       for (let t = 0; t < 200 && !res; t++) {
-        p.x += p.vx || 0; p.y += p.vy || 0; const w = plan.mode === 'fiske' ? TQ.flickW : Turn.omega(p); done += Math.min(w, A - done);
+        p.x += p.vx || 0; p.y += p.vy || 0; const w = plan.mode === 'fiske' ? TQ.flickW * Turn.taraf(p) : Turn.omega(p); done += Math.min(w, A - done);
         const an = a0 + plan.dir * done, cx = p.x + Math.cos(an) * body, cy = p.y + Math.sin(an) * body, fly = plan.mode === 'fiske' && done < A;
         if (plan.mode === 'fiske' && done >= A && !landed) { landed = true; const m = Turn.flickMiss(p); if (rnd) { if (rnd() < m) res = 'fiske kaçtı'; } else keep *= 1 - m; }
         for (const o of opps) { if (res) break; const ok = self.ALAN_OKC(o, 'tepki');
