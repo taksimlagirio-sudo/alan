@@ -179,6 +179,21 @@ Gerekirse ince ayrımlar: rakibin hangi kanatta olduğu, set hücumunda savunma 
 
 Kullanıcının yönü: Oyun hem bilgisayarda hem mobilde, offline ve online; aynı anda tek cihazda oynanır, kariyer cihazlar arasında taşınır. Bunlar motorun dışında, ama motordaki kararlar bunlarla uyumlu kalmalı. Ayrıntılı tasarım sonra; burada yön ve motor bağları.
 
+**Offline dünya: ligler, kümeler, kupalar (kullanıcı kararı: 7 lig).** Gerçek ligler takip edilmez; gerçek liglerin değeri (birbirinden farklı olmaları) kurgusal bir dünyada kurulur.
+- **7 lig, her birinin karakteri var.** Ligi ayıran şey isim ya da renk değil, menajere farklı iş yaptıran özellikler:
+  - *Oyun kültürü:* o ligin yapay zekâ kulüpleri belli tarzlara yatkın (birinde çoğu takım yüksek pres, ötekinde düşük blok ve kontra). Lig değiştiren menajer taktiğini yeniden düşünür; farklı tarzlara karşı farklı oyuncu gerekir (kadro derinliğinin anlamı).
+  - *Ekonomi:* maaş tavanı, bütçe, altyapı gücü, kulüp sayısı. Zengin lig (kaliteli kadro, büyük beklenti) ile yetenek yetiştiren lig (güçlü altyapı, küçük bütçe, en iyisini satmak zorunda) bambaşka menajerlik.
+  - *Sporun kuralları her ligde aynı* (saha, oyuncu sayısı, süre): neyin neden olduğu anlaşılır kalsın.
+  - Örnek karakterler (taslak; ad ve ayrıntı sonra): zengin merkez lig; yetenek fabrikası; pres kültürü; düşük blok ve kontra kültürü; sabırlı, teknik lig; yükselen lig; küçük, uzak lig (yeni menajerin kariyere başladığı yer).
+- **Kümeler:** Ligler büyüklüğe göre 2–3 kademe (örnek: büyük ligler 3 × 10 takım, küçükler 2 × 10). Yükselme–düşme (örnek: 2 yukarı, 2 aşağı; istenirse bir eleme maçı). Her kademenin kendi maaş tavanı: alt kademede kadro kurmak ucuz, iyi oyuncuyu tutmak zor.
+- **Kupalar:**
+  - *Lig kupası:* eleme usulü, bütün kademeler. Alt ligin büyüğü elemesi; şansı bilerek az tuttuğumuz bu dünyada hikâyenin büyük kısmı buradan doğar.
+  - *Ligler arası turnuva:* her ligin en iyileri (grup + eleme). Farklı oyun kültürleri burada çarpışır.
+  - *Lig katsayısı:* bir ligin kulüpleri turnuvada başarılı oldukça (son birkaç sezonun ortalaması) o lig turnuvaya daha çok takım gönderir; ligler zamanla güçlenip zayıflar, dünya durağan kalmaz.
+- **Menajer kariyeri:** Ligler ve kademeler arasında iş değiştirir; teklifler itibara göre (kazandığına değil, eldeki kadroyla beklentiyi ne kadar aştığına) gelir.
+- **Dünyanın kurulumu:** Liglerin karakteri elle tasarlanır (oyunun kimliği); kulüpler ve oyuncular her yeni kariyerde yeniden üretilir (her kariyer farklı).
+- **Önkoşul: hızlı sonuç modeli.** 7 lig × ~25 kulüp ≈ 175 kulüp, haftada ~85 maç. Motor bir maçı dakikalar içinde hesaplıyor; menajerin izlemediği maçlar tam motorla oynatılamaz. Gerekli: takım gücü ve taktik eşleşmesinden gerçekçi skor üreten, motordan ölçülerek kurulmuş ve motorla tutarlılığı ölçülen bir sonuç modeli (aşağıdaki "hafif mod"). Lig sistemi ondan önce kurulamaz. Claude Code'un kayıt ve ölçüm araçlarıyla yapılabilir.
+
 **Online yapı:** turnuvalar, aşamalar, gruplar, sezonlar; tabakalı ligler ve yükselme–düşme (yeni ve küçük kulüpler alttan başlar; güçlü kulüplerin üstte kalması sorun değil).
 
 **Oyuncu yaşam döngüsü (yaş yok, yaşlanma yok):** Oyuncular insan değil; özellikler yaşla düşmez. Dolaşım ve statikleşmeye karşı:
