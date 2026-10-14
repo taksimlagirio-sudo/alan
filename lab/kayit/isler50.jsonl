@@ -1,0 +1,8 @@
+{"out":"lab/kayit/z50/0.json.gz","args":["hiz30/z50","0"]}
+{"out":"lab/kayit/z50d0/0.json.gz","args":["hiz30/z50","0"],"env":{"DIREK":"0"}}
+{"out":"lab/kayit/z50/1.json.gz","args":["hiz30/z50","1"]}
+{"out":"lab/kayit/z50d0/1.json.gz","args":["hiz30/z50","1"],"env":{"DIREK":"0"}}
+{"out":"lab/kayit/z50/2.json.gz","args":["hiz30/z50","2"]}
+{"out":"lab/kayit/z50d0/2.json.gz","args":["hiz30/z50","2"],"env":{"DIREK":"0"}}
+{"out":"lab/kayit/z50/3.json.gz","args":["hiz30/z50","3"]}
+{"out":"lab/kayit/z50d0/3.json.gz","args":["hiz30/z50","3"],"env":{"DIREK":"0"}}
