@@ -2,6 +2,10 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Kontra başlangıcı ve hızlı hücum (main `f6ef99c`) — ölçülmedi
+- Kontra açılırken de rakip en öndeki oyuncumuzun gerisinde sayılır (önce topun gerisinde: kendi kalesi önünde top kazanan takım hiç kontraya çıkamıyordu, 00:15 Baran). Bayrak `ALAN_KONTRA_SURE_ESKI` (sürme ve başlangıç birlikte).
+- Hızlı hücum (`ALAN_HIZLI_HUCUM_ESKI`): top bizdeyken, el değiştirmeden (ör. uzun pas presi aştı) rakip en öndeki oyuncumuzun gerisinde eşikten (4) az kişiyle yakalanırsa kontra gibi oynanır (aynı risk/tempo, koşucular, 4 sn). Topa sahip olma başına bir kez; son bölgede başlamaz. Evre kodu `huc.hizli` (EVKOD 8), Canlı'da "Hızlı hücum".
+
 ## 16 Ekim 2026 · Hücum: kontra ve riskli oyun (beş kural) — ölçülmedi
 Kaynak: 01:14–01:16 Fırtına kontrası (Yıldırım keser, Volkan geri Alp'e, Alp→Baran→Alp; Kartal ve Volkan koşarken).
 1. `ALAN_KONTRA_SURE_ESKI`: kontra (m.gc) rakibin dağınıklığını topa göre değil en öndeki oyuncumuza göre ölçer (rakibin kaç saha oyuncusu onunla kendi kalesi arasında, eşik 4); en çok 240 tik. Önce: tek geri pas kontrayı kalıcı bitiriyordu.
