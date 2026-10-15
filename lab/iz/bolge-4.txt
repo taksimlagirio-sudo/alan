@@ -1,0 +1,47 @@
+16.12 Ece: — · Rüzgâr 19.4/17.0, Şimşek 27.4/17.0  ||  Cansu: — · Şimşek 19.4/17.0, Rüzgâr 27.4/17.0
+16.22 Ece: Rüzgâr · Rüzgâr 18.4/17.0, Şimşek 26.6/17.0  ||  Cansu: Şimşek · Şimşek 18.4/17.0, Rüzgâr 26.6/17.0
+16.83 Ece: Rüzgâr · Rüzgâr 8.6/17.0, Ayaz 18.4/17.0  ||  Cansu: Ayaz · Ayaz 4.4/17.0, Rüzgâr 10.0/17.0
+16.90 Ece: (bölgede değil)  ||  Cansu: Ayaz · Ayaz 3.4/17.0, Rüzgâr 9.7/17.0
+17.10 Ece: — · Rüzgâr 4.1/24.9(arkada tutuyor), Ayaz 6.6/26.0(arkada tutuyor)  ||  Cansu: Şimşek · Şimşek 4.3/24.8, Ayaz 9.5/26.0(arkada tutuyor)
+17.22 Ece: Gökay · Ayaz 4.5/26.0(arkada tutuyor), Rüzgâr 4.7/25.7(arkada tutuyor)  ||  Cansu: Şimşek · Şimşek 3.4/25.6, Gökay 9.6/23.0
+17.27 Ece: Ayaz · Ayaz 3.5/25.7, Rüzgâr 5.2/26.0(arkada tutuyor)  ||  Cansu: Gökay · Şimşek 3.0/25.8(arkada tutuyor), Gökay 8.5/23.3
+18.10 Ece: — · Ayaz 6.8/19.7, Gökay 15.1/20.6  ||  Cansu: Gökay · Gökay 2.4/20.6, Şimşek 17.8/25.4(arkada tutuyor)
+18.18 Ece: — · Ayaz 8.5/19.3, Gökay 15.4/20.1  ||  Cansu: — · Gökay 4.0/20.1, Ayaz 19.0/19.3
+18.50 Ece: Ayaz · Ayaz 14.2/18.5, Gökay 17.4/19.0  ||  Cansu: — · Gökay 10.8/19.0, Ayaz 22.0/18.5
+18.63 Ece: — · Ayaz 16.3/18.3, Gökay 18.2/18.7  ||  Cansu: — · Gökay 12.8/18.7, Ayaz 23.3/18.3
+18.80 Ece: Ayaz · Ayaz 17.7/18.1, Gökay 17.8/18.4  ||  Cansu: — · Gökay 15.3/18.4, Şimşek 24.3/24.6(arkada tutuyor)
+18.92 Ece: — · Ayaz 15.8/18.1, Gökay 18.9/18.2  ||  Cansu: — · Gökay 17.1/18.2, Ayaz 22.2/18.1
+18.93 Ece: Ayaz · Ayaz 15.5/18.1, Gökay 19.0/18.2  ||  Cansu: — · Gökay 17.3/18.2, Ayaz 22.0/18.1
+18.97 Ece: — · Ayaz 14.9/18.1, Gökay 19.1/18.2  ||  Cansu: — · Gökay 17.5/18.2, Ayaz 21.5/18.1
+18.98 Ece: Ayaz · Ayaz 14.5/18.1, Gökay 19.1/18.2  ||  Cansu: — · Gökay 17.5/18.2, Ayaz 21.3/18.1
+19.00 Ece: Ayaz · Ayaz 14.2/18.1, Gökay 19.0/18.2  ||  Cansu: Gökay · Gökay 17.5/18.2, Ayaz 21.0/18.1
+19.30 Ece: Ayaz · Ayaz 7.8/18.3, Gökay 17.3/18.1  ||  Cansu: — · Gökay 13.8/18.1, Ayaz 17.8/18.3
+19.33 Ece: — · Şimşek 21.0/21.4, Rüzgâr 21.6/26.0(arkada tutuyor)  ||  Cansu: Şimşek · Şimşek 6.2/21.4, Rüzgâr 22.3/26.0(arkada tutuyor)
+19.40 Ece: Rüzgâr · Şimşek 20.4/21.4, Rüzgâr 21.1/26.0  ||  Cansu: Şimşek · Şimşek 5.5/21.4, Rüzgâr 22.1/26.0
+19.53 Ece: — · Rüzgâr 18.4/26.0(arkada tutuyor), Şimşek 20.2/22.4  ||  Cansu: Şimşek · Şimşek 5.9/22.4, Rüzgâr 20.7/26.0(arkada tutuyor)
+19.58 Ece: Rüzgâr · Rüzgâr 18.3/26.0, Şimşek 20.8/22.9  ||  Cansu: Şimşek · Şimşek 7.3/22.9, Rüzgâr 20.8/26.0
+19.63 Ece: — · Rüzgâr 16.5/26.0(arkada tutuyor), Şimşek 20.7/23.5  ||  Cansu: Şimşek · Şimşek 7.4/23.5, Rüzgâr 19.8/26.0(arkada tutuyor)
+19.68 Ece: Rüzgâr · Rüzgâr 16.3/26.0, Şimşek 21.5/24.2  ||  Cansu: Şimşek · Şimşek 9.1/24.2, Rüzgâr 19.9/26.0
+19.73 Ece: — · Rüzgâr 14.5/26.0(arkada tutuyor), Şimşek 21.4/25.0  ||  Cansu: Şimşek · Şimşek 9.2/25.0, Rüzgâr 19.1/26.0(arkada tutuyor)
+19.78 Ece: Rüzgâr · Rüzgâr 14.2/26.0, Ayaz 21.4/19.2  ||  Cansu: Şimşek · Şimşek 11.0/25.9, Rüzgâr 19.2/26.0
+19.83 Ece: Rüzgâr · Rüzgâr 12.4/25.2, Ayaz 21.2/19.2  ||  Cansu: — · Şimşek 11.2/26.0(arkada tutuyor), Rüzgâr 18.5/25.2
+20.12 Ece: — · Ayaz 16.4/18.8, Gökay 24.1/21.4  ||  Cansu: — · Gökay 16.4/21.4, Şimşek 17.2/26.0(arkada tutuyor)
+20.57 Ece: — · Ayaz 14.1/18.5, Gökay 19.8/20.3  ||  Cansu: Gökay · Gökay 9.5/20.3, Ayaz 14.2/18.5
+20.83 Ece: Ayaz · Ayaz 12.9/17.8, Gökay 18.3/18.3  ||  Cansu: (bölgede değil)
+20.85 Ece: (bölgede değil)  ||  Cansu: Gökay · Gökay 3.6/18.9, Ayaz 9.7/18.2
+21.18 Ece: Şimşek · Rüzgâr 7.6/17.0, Şimşek 13.8/17.0  ||  Cansu: Gökay · Gökay 8.3/17.0, Şimşek 14.8/17.0
+21.55 Ece: — · Rüzgâr 5.6/20.8, Şimşek 15.0/26.0(arkada tutuyor)  ||  Cansu: Ayaz · Gökay 8.4/21.3, Ayaz 14.9/20.3
+21.62 Ece: Rüzgâr · Rüzgâr 5.9/21.1, Şimşek 14.8/26.0(arkada tutuyor)  ||  Cansu: — · Gökay 8.7/21.6, Rüzgâr 14.9/21.1
+21.70 Ece: Rüzgâr · Rüzgâr 5.4/21.8, Şimşek 14.3/26.0(arkada tutuyor)  ||  Cansu: Gökay · Gökay 7.9/22.3, Rüzgâr 13.9/21.8
+21.72 Ece: Şimşek · Rüzgâr 5.3/17.0, Şimşek 14.3/17.0  ||  Cansu: Gökay · Gökay 7.7/17.0, Rüzgâr 13.6/17.0
+21.78 Ece: Rüzgâr · Rüzgâr 4.5/17.0, Ayaz 15.6/17.0  ||  Cansu: Gökay · Gökay 6.7/17.0, Rüzgâr 13.1/17.0
+22.42 Ece: Şimşek · Rüzgâr 10.3/17.0, Ayaz 11.2/17.0  ||  Cansu: Rüzgâr · Gökay 0.9/17.0, Ayaz 10.9/17.0
+22.45 Ece: — · Rüzgâr 11.0/17.0, Ayaz 11.3/17.0  ||  Cansu: Rüzgâr · Gökay 0.8/17.0, Ayaz 11.2/17.0
+22.53 Ece: Gökay · Ayaz 11.0/17.0, Rüzgâr 12.4/17.0  ||  Cansu: Rüzgâr · Gökay 0.6/17.0, Ayaz 12.5/17.0
+22.62 Ece: Rüzgâr · Ayaz 10.7/17.0, Rüzgâr 13.8/17.0  ||  Cansu: Gökay · Gökay 1.3/17.0, Ayaz 13.2/17.0
+22.65 Ece: — · Ayaz 10.8/17.0, Gökay 14.0/17.0  ||  Cansu: Gökay · Gökay 1.7/17.0, Ayaz 13.4/17.0
+22.70 Ece: Şimşek · Ayaz 10.2/17.0, Gökay 12.2/17.0  ||  Cansu: Gökay · Gökay 3.5/17.0, Ayaz 14.6/17.0
+22.73 Ece: — · Ayaz 10.3/17.0, Gökay 12.3/17.0  ||  Cansu: Gökay · Gökay 3.5/17.0, Ayaz 14.5/17.0
+22.80 Ece: Rüzgâr · Ayaz 9.7/21.3, Gökay 12.1/24.4  ||  Cansu: Gökay · Gökay 3.7/24.4, Ayaz 14.7/21.3
+22.87 Ece: (bölgede değil)  ||  Cansu: Gökay · Gökay 3.9/19.2, Ayaz 14.6/18.3
+22.90 Ece: Rüzgâr · Ayaz 8.5/21.3, Gökay 12.7/24.3  ||  Cansu: Gökay · Gökay 3.5/24.3, Ayaz 14.0/21.3
