@@ -129,6 +129,27 @@
     let tm = 1e9, tO = 1e9; for (const p of seen) { if (p === h) continue; const tt = Math.hypot(p.x - b.x, p.y - b.y) / (.17 + (p.a.hiz ?? 10) * .006); if (p.team === h.team) tm = Math.min(tm, tt); else tO = Math.min(tO, tt); }
     const sv = 1 / (1 + Math.exp((tm - tO) / 12)); return { m: sv, o: 1 - sv, k: 0, ...X };
   }
+  // v5 · Kafa = maç. Uçan Çekirdek maçın kopyasında, maçın kendi adımıyla (yer alma, kovalama, Bekçi, temas, gövdeler) oynatılır; ayrı taklit yok.
+  // Rakipler aklın gördüğü yerde (Okuma'ya bağlı algı hatası). Top birine geçince, sayı olunca ya da süre dolunca biter. Maçta bir kural değişirse kafadaki de değişir.
+  function ucusMac(h, src, seen, b, q, to, rnd) {
+    const M = window.AlanMatch, K = C(), Mr = D._mac, team = h.team; let c;
+    if (Mr && Mr.ps === src) { const ev = Mr.events, ld = Mr.lastDec, pr = Mr.pre; Mr.events = []; Mr.lastDec = null; Mr.pre = null; try { c = M.kopya(Mr); } finally { Mr.events = ev; Mr.lastDec = ld; Mr.pre = pr; } }
+    else { c = M.createMatch(1, {}); c.ps = M.kopya(src); if (Mr) { c.tac = Mr.tac; c.diz = Mr.diz; } c.tick = D._tick || 0; }
+    c.r.s = Math.floor(rnd() * 4294967296) >>> 0;
+    for (let k = 0; k < src.length; k++) { const s = seen[k], p = c.ps[k]; if (p.team !== team && s !== src[k]) { p.x = s.x; p.y = s.y; } }
+    const hc = c.ps[src.indexOf(h)], qi = q ? src.indexOf(q) : -1, qc = qi >= 0 ? c.ps[qi] : null;
+    c.holder = null; c.ball = K.makeBall({ x: b.x, y: b.y, vx: b.vx, vy: b.vy, team, ch: b.ch, from: hc, recv: qc }); if (D._gon) c.ball.gon = true;
+    const pr0 = K.predict(c.ball, c.ps, null, 240); if (!pr0.pts || !pr0.pts.length) return simOne(K, h, b, seen, q, 0, to, {}); /* yol yok (Çekirdek Kuyu'da başlıyor gibi): eski deneme */ c.ch = b.ch; c.fl = { t0: c.tick, kind: D._gon ? 'gönder' : 'pas', q: qc, to: to || null, end: pr0.end };
+    if (!D._gon) { const tp = to || qc || hc; c._pas = { team, fx: h.x, tx: tp.x, len: Math.hypot(tp.x - h.x, tp.y - h.y), t: c.tick }; } /* maçtaki launch gibi: pres tetikleri için son pas */ c._lite = true; c.decT = 99; c.len = 1e9; c.devre = false; c.over = false; c.fake = null;
+    const s0 = c.score[team], s1 = c.score[1 - team], tk = D._tick, mc = D._mac; let R = null;
+    let hata = false; try { for (let t = 0; t < D.simMax; t++) { M.step(c);
+        if (c.score[team] > s0) { R = { m: 0, o: 0, k: 1, x: b.x, y: b.y }; break; } if (c.score[1 - team] > s1) { R = { m: 0, o: 1, k: 0, x: b.x, y: b.y }; break; }
+        if (c.holder) { R = c.holder.team === team ? { m: 1, o: 0, k: 0, x: c.holder.x, y: c.holder.y } : { m: 0, o: 1, k: 0, x: c.holder.x, y: c.holder.y }; break; } if (!c.ball) break; } }
+    catch (e) { hata = true; } finally { D._tick = tk; D._mac = mc; }
+    if (hata) { self.__kafaHata = (self.__kafaHata || 0) + 1; return simOne(K, h, b, seen, q, 0, to, {}); } /* kopyada beklenmeyen durum: eski deneme (sayılır) */
+    if (R) return R; const bx = c.ball ? c.ball.x : b.x, by = c.ball ? c.ball.y : b.y; let tm = 1e9, tO = 1e9; for (const p of c.ps) { if (p === hc) continue; const tt = Math.hypot(p.x - bx, p.y - by) / (.17 + (p.a.hiz ?? 10) * .006); if (p.team === team) tm = Math.min(tm, tt); else tO = Math.min(tO, tt); }
+    const sv = 1 / (1 + Math.exp((tm - tO) / 12)); return { m: sv, o: 1 - sv, k: 0, x: bx, y: by };
+  }
   // Kafada simülasyon. Dönüş: P (arkadaş alır), Pk (Kuyu), Pl (rakip alır), end
   function imagine(h, src, b0, rnd, trials, q, to) {
     const K = C(), cache = {}; trials = trials || D.trials; let mate = 0, kuyu = 0, opp = 0, ex = 0, ey = 0; const err = (20 - (self.ALAN_OZ(h, 'gorus'))) * D.errOk;
@@ -137,7 +158,7 @@
       const v = applyError(h, b0, rnd, (D._ot || 1) * pe), o0 = h.id >= 0 && b0.x === h.x && b0.y === h.y ? (cs => ({ x: h.x + cs.ux * K.Q.body, y: h.y + cs.uy * K.Q.body }))(coreSide(h)) : b0 /* v5 · Çekirdek maçtaki gibi gövdenin kenarından çıkar */, b = K.makeBall({ x: o0.x, y: o0.y, vx: v.vx, vy: v.vy, team: h.team, ch: b0.ch, from: h, recv: q || null });
       // Algı hatası rakip gövdelerinde her yöne; Bekçi'de sadece Kuyu–Çekirdek hattı boyunca (Bekçi'nin hep o hatta durduğunu herkes bilir, belirsiz olan ne kadar önde olduğudur)
       const kendi = q && q.id === h.id, seen = src.map(p => { if (p === h) return kendi ? { ...p } : p; /* kendine pas: taşıyıcının hayali kopyası alıcıdır (gerçek oyuncu hareket ettirilmez) */ if (p.team === h.team) return { ...p }; const e1 = (rnd() - .5) * err * D.errPos, e2 = (rnd() - .5) * err * D.errPos; if (p.role === 'Bekçi') { const gx = p.team === 0 ? 0 : GW, dx = b0.x - gx, dy = b0.y - GCY, L = Math.hypot(dx, dy) || 1; return { ...p, x: p.x + dx / L * e1, y: p.y + dy / L * e1 }; } return { ...p, x: p.x + e1, y: p.y + e2 }; });
-      if (kendi) b.from = seen[src.indexOf(h)]; /* vuruştan hemen sonra kendi gövdesi Çekirdeğe dokunmaz */ const R = simOne(K, h, b, seen, q, 0, to, cache); mate += R.m; kuyu += R.k; opp += R.o; ex += R.x; ey += R.y; D._jitS = null; /* belirsizlik yalnız bu denemenin kovalamasında */
+      if (kendi) b.from = seen[src.indexOf(h)]; /* vuruştan hemen sonra kendi gövdesi Çekirdeğe dokunmaz */ const R = (D._gon && !self.ALAN_KAFA_ESKI) || (self.ALAN_KAFA_PAS && !D._gon) ? ucusMac(h, src, seen, b, q, to, rnd) : simOne(K, h, b, seen, q, 0, to, cache); /* v5 · kafa = maç: gönderme (bayrakla pas da) maçın kendi kurallarıyla oynatılır. Eski taklit: self.ALAN_KAFA_ESKI = true */ mate += R.m; kuyu += R.k; opp += R.o; ex += R.x; ey += R.y; D._jitS = null; /* belirsizlik yalnız bu denemenin kovalamasında */
     }
     return { P: mate / trials, Pk: kuyu / trials, Pl: opp / trials, end: { x: ex / trials, y: ey / trials } };
   }
