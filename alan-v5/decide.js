@@ -264,7 +264,11 @@
     return src.map(p => { if (p.role === 'Bekçi') return p; const sp = .17 + (p.a.hiz ?? 10) * .006; let gx, gy, maxD;
       if (p.team !== team) { maxD = sp * 1.15 * Math.max(0, T - (14 - (self.ALAN_OZ(p, 'tepki')) * .5)); if (near.has(p)) { const gxk = p.team === 0 ? 0 : GW, dx = gxk - B.x, dy = GCY - B.y, L = Math.hypot(dx, dy) || 1; gx = B.x + dx / L * 2; gy = B.y + dy / L * 2; } else { const gxk = p.team === 0 ? 0 : GW, geride = Math.abs(p.x - gxk) > Math.abs(B.x - gxk) - 2; if (geride) { gx = B.x + (gxk - B.x) * .45; gy = B.y + (GCY - B.y) * .45; maxD *= 1.25 / 1.15; } else { gx = p.x + (B.x - p.x) * .25; gy = p.y + (B.y - p.y) * .5; } } } /* Çekirdeğin önünde kalmış (geride yakalanmış) savunmacı Çekirdekle Kuyu'su arasına koşarak döner: kontrada zaman savunmanın yerleşmesi demek */
       else { if (p.tx == null || (p.x === B.x && p.y === B.y)) return p; maxD = sp * T; gx = p.tx; gy = p.ty; }
-      const dx = gx - p.x, dy = gy - p.y, d = Math.hypot(dx, dy); if (d < .01) return p; const k = Math.min(1, maxD / d); return { ...p, x: p.x + dx * k, y: p.y + dy * k, vx: 0, vy: 0, _o: p }; });
+      if (self.ALAN_DONUK_ESKI || !(window.AlanMatch && window.AlanMatch.ivme)) { const dx = gx - p.x, dy = gy - p.y, d = Math.hypot(dx, dy); if (d < .01) return p; const k = Math.min(1, maxD / d); return { ...p, x: p.x + dx * k, y: p.y + dy * k, vx: 0, vy: 0, _o: p }; }
+      // v5 · donuk olmayan dünya: oyuncu şu anki hızıyla, maçtaki ivme kuralıyla (dönüş, fren, hızlanma) hedefine doğru T tik ileri kayar; rakip tepki süresine kadar mevcut hızıyla sürer. Hız korunur (geri koşan savunmacı "yerine varmış" sayılmaz)
+      const IV = window.AlanMatch.ivme, q = { ...p, vx: p.vx || 0, vy: p.vy || 0, _o: p }, rk = p.team !== team, vmax = sp * (rk ? 1.25 : (p.sprint ? 1.25 : 1)), rc = rk ? Math.max(0, 14 - self.ALAN_OZ(p, 'tepki') * .5) : 0, n = Math.min(Math.round(T), 60);
+      for (let t = 0; t < n; t++) { let wx = q.vx, wy = q.vy; if (t >= rc) { const ex = gx - q.x, ey = gy - q.y, e = Math.hypot(ex, ey); if (e < .05) { wx = 0; wy = 0; } else { const v = Math.min(vmax, e * .5); wx = ex / e * v; wy = ey / e * v; } } IV(q, wx, wy, vmax); q.x += q.vx; q.y += q.vy; }
+      return q; });
   }
   // İkinci adım: Çekirdek bu oyuncudayken (tahmini dünyada) en iyi sonraki pas
   function secondStep(world, carrier, ch, rnd) {
