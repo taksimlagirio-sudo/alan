@@ -1,0 +1,166 @@
+
+#1 0.0–1.4 sn · Liman topta · ilerleme · Gökay aktarımı kesti
+  Mert: boşluk (1.4 sn) · ileri 23→48 (top 60→77) · yol 25.9 · durdu 0 sn · gidip-gelme 0
+  Cansu: boşluk (0.7 sn) → alıcı (0.8 sn) · ileri 47→76 (top 60→77) · yol 29.7 · durdu 0 sn · gidip-gelme 0
+  Tuna: boşluk (1.4 sn) · ileri 47→77 (top 60→77) · yol 29.8 · durdu 0 sn · gidip-gelme 0
+
+#2 1.4–9.7 sn · Demir Blok topta · kurma → ilerleme → kurma → ilerleme → son bölge · Gökay aktarımı kesti / Cansu uzanıp dürttü, Çekirdek boşta / Şimşek plase gönderdi · şarj %60 / Aras göndermeyi tuttu
+  Mert: arkada · Rüzgâr ↔ kovala ×2 (6.8 sn) · ileri 48→11 (top 78→13) · yol 129.4 · durdu 0.5 sn · gidip-gelme 3
+  Cansu: bölge ↔ bölge · Şimşek ×3 (2.3 sn) → bölge · Taş (0.7 sn) → bölge · Gökay (0.6 sn) → bölge (0.3 sn) → kovala (0.9 sn) → bölge · Şimşek (0.6 sn) → kapatma · Rüzgâr (0.6 sn) · ileri 76→29 (top 78→13) · yol 136.3 · durdu 0 sn · gidip-gelme 10
+  Tuna: kovala (0.4 sn) → bölge (0.4 sn) → bölge · Gökay ↔ kovala ×3 (5.7 sn) · ileri 77→38 (top 78→13) · yol 126.9 · durdu 0.1 sn · gidip-gelme 14
+
+#3 9.8–16.1 sn · Liman topta · kurma → ilerleme → son bölge · Aras göndermeyi tuttu / Tuna güçlü gönderdi · şarj %56 / Kaan plase gönderdi · şarj %56 / Kaan plase gönderdi · şarj %56 / Cansu güçlü gönderdi · şarj %57 / SAYI · Cansu · 1–0
+  Mert: boşluk (0.3 sn) → alıcı (0.5 sn) → ◆ top bende (0.0 sn) → boşluk (1.1 sn) → güvence (3.6 sn) · ileri 11→71 (top 12→119) · yol 109.1 · durdu 0 sn · gidip-gelme 7
+     pas: pas→Deniz P 0.994
+  Cansu: boşluk (5.2 sn) → sekme (0.3 sn) → kovala (0.3 sn) → ◆ top bende (0.0 sn) · ileri 29→116 (top 12→119) · yol 123.1 · durdu 0 sn · gidip-gelme 5
+     pas: gönder→null P 0
+  Tuna: alıcı (0.7 sn) → ◆ top bende (0.2 sn) → boşluk (3.3 sn) → alıcı (0.7 sn) → ◆ top bende (0.0 sn) → boşluk (0.7 sn) · ileri 39→111 (top 12→119) · yol 111.3 · durdu 0 sn · gidip-gelme 3
+     [10.4] seçti fake pas göster → kenardan · inanılırlık %87 0.066; diğer: sür 0.064, sür 0.064, sür 0.064
+     pas: kendine→Tuna P 0.994, önüne→Mert P 0.994, gönder→null P 0.16666666666666666
+
+#4 16.1–22.9 sn · Demir Blok topta · ilerleme → kurma → ilerleme → kurma → ilerleme → son bölge · SAYI · Cansu · 1–0 / Rüzgâr plase gönderdi · şarj %63 / Şimşek plase gönderdi · şarj %66 / Şimşek plase gönderdi · şarj %68 / Rüzgâr güçlü gönderdi · şarj %68 / SAYI · Rüzgâr · 1–1
+  Mert: arkada · alan (1.0 sn) → arkada · Şimşek (2.1 sn) → kovala (0.7 sn) → geri koşu (0.3 sn) · ileri 19→9 (top 60→2) · yol 107.8 · durdu 0.1 sn · gidip-gelme 5
+  Cansu: bölge · Şimşek (0.3 sn) → bölge · Ayaz (0.3 sn) → bölge · Gökay (1.2 sn) → bölge · Şimşek (0.5 sn) → bölge (0.3 sn) → bölge · Gökay (0.8 sn) → geri koşu (0.5 sn) · ileri 30→16 (top 60→2) · yol 95.6 · durdu 0.1 sn · gidip-gelme 14
+  Tuna: kapatma · Şimşek (0.6 sn) → kovala ↔ bölge · Gökay ×2 (1.3 sn) → bölge · Gökay (1.3 sn) → bölge · Ayaz (0.5 sn) → kapatma · Taş (0.3 sn) → geri koşu (0.7 sn) · ileri 41→39 (top 60→2) · yol 97.3 · durdu 0.1 sn · gidip-gelme 11
+
+#5 22.9–24.4 sn · Liman topta · ilerleme · SAYI · Rüzgâr · 1–1 / Rüzgâr aktarımı kesti
+  Mert: boşluk (1.4 sn) · ileri 23→48 (top 60→77) · yol 27.3 · durdu 0 sn · gidip-gelme 0
+  Cansu: boşluk (1.4 sn) · ileri 47→77 (top 60→77) · yol 29.9 · durdu 0 sn · gidip-gelme 0
+  Tuna: boşluk (0.7 sn) → alıcı (0.8 sn) · ileri 47→76 (top 60→77) · yol 29.8 · durdu 0 sn · gidip-gelme 0
+
+#6 24.4–27.4 sn · Demir Blok topta · kurma · Rüzgâr aktarımı kesti / Rüzgâr'in fiskesi Tuna'e çarptı / Cansu aktarımı kesti
+  Mert: arkada · Gökay (0.3 sn) → arkada · Rüzgâr (2.3 sn) · ileri 49→38 (top 78→90) · yol 49.1 · durdu 0 sn · gidip-gelme 1
+  Cansu: bölge (0.6 sn) → kovala (1.7 sn) · ileri 77→90 (top 78→90) · yol 54.9 · durdu 0 sn · gidip-gelme 3
+  Tuna: bölge · Rüzgâr (0.3 sn) → pres (0.4 sn) → bölge · Gökay (1.7 sn) → bölge (0.3 sn) · ileri 76→73 (top 78→90) · yol 43.5 · durdu 0.1 sn · gidip-gelme 3
+
+#7 27.4–30.6 sn · Liman topta · son bölge → geçiş · Cansu aktarımı kesti / Cansu'in fiskesi Gökay'e çarptı / Bulut aktarımı kesti
+  Mert: güvence (3.1 sn) · ileri 38→78 (top 90→112) · yol 50.6 · durdu 0 sn · gidip-gelme 0
+  Cansu: ◆ top bende (0.5 sn) → boşluk (1.2 sn) → alıcı ↔ ◆ top bende ×2 (1.4 sn) · ileri 90→111 (top 90→112) · yol 53.5 · durdu 0 sn · gidip-gelme 2
+     [27.5] seçti fake gövde göster → sür · inanılırlık %25 0.152; diğer: fake pas göster → sür · inanılırlık %53 0.148, fake gönder göster → gönder · inanılırlık %20 0.142, sür 0.025 | [27.6] seçti sür 0.146; diğer: tut 0.041, sür 0.039, sür 0.034 | [27.8] seçti sür 0.041; diğer: sür 0.027, önüne→Kaan 0.011, önüne→Tuna 0.007 | [30.0] seçti tut 0.221; diğer: fake gönder göster → gönder · inanılırlık %18 0.126, sür 0.124, sür 0.120
+     pas: önüne→Tuna P 0.994, kendine→Cansu P 0.994
+  Tuna: boşluk (0.5 sn) → alıcı (0.8 sn) → ◆ top bende (0.4 sn) → boşluk (0.8 sn) → kontra koşusu (0.4 sn) · ileri 73→114 (top 90→112) · yol 63.2 · durdu 0 sn · gidip-gelme 2
+     [28.8] seçti sür 0.096; diğer: sür 0.094, tut 0.092, sür 0.091 | [29.0] seçti sür 0.097; diğer: sür 0.095, sür 0.092, tut 0.088
+     pas: kenardan→Cansu P 0.994
+
+#8 30.7–36.4 sn · Demir Blok topta · kurma → ilerleme → son bölge · Bulut aktarımı kesti / Bulut'in fiskesi Cansu'e çarptı / Rüzgâr güçlü gönderdi · şarj %59 / Kaan aktarımı kesti
+  Mert: arkada · Rüzgâr ↔ arkada · alan ×2 (5.5 sn) · ileri 79→11 (top 111→41) · yol 96.1 · durdu 0 sn · gidip-gelme 1
+  Cansu: bölge ↔ pres ×2 (2.0 sn) → bölge · Şimşek ↔ kapatma · Şimşek ×2 (2.4 sn) → bölge · Ayaz (0.4 sn) · ileri 111→34 (top 111→41) · yol 101.4 · durdu 0 sn · gidip-gelme 5
+  Tuna: geri koşu (0.7 sn) → bölge ↔ kovala ×2 (3.6 sn) → bölge · Ayaz (0.5 sn) → bölge · Taş (0.3 sn) · ileri 114→54 (top 111→41) · yol 100.4 · durdu 0 sn · gidip-gelme 4
+
+#9 36.5–44.7 sn · Liman topta · ilerleme → kurma → ilerleme → kurma → ilerleme → son bölge → ilerleme · Kaan aktarımı kesti / Kaan'in fiskesi Gökay'e çarptı / Ayaz aktarımı kesti
+  Mert: güvence ↔ boşluk ×3 (6.9 sn) → boşluk (1.4 sn) · ileri 11→42 (top 43→68) · yol 132.6 · durdu 0.4 sn · gidip-gelme 0
+  Cansu: boşluk ↔ ◆ top bende ×2 (2.6 sn) → alıcı (0.7 sn) → ◆ top bende (0.0 sn) → boşluk (4.8 sn) · ileri 35→111 (top 43→68) · yol 115.5 · durdu 2.1 sn · gidip-gelme 0
+     pas: önüne→Tuna P 0.994, önüne→Deniz P 0.994
+  Tuna: boşluk (0.4 sn) → alıcı (0.4 sn) → ◆ top bende (0.3 sn) → boşluk (3.9 sn) → alıcı (0.8 sn) → ◆ top bende (0.8 sn) → boşluk (1.4 sn) · ileri 54→113 (top 43→68) · yol 125.7 · durdu 0.6 sn · gidip-gelme 0
+     [37.4] seçti sür 0.073; diğer: önüne→Cansu 0.064, önüne→Deniz 0.059, tut 0.047 | [37.5] seçti sür 0.076; diğer: sür 0.075, sür 0.074, tut 0.063 | [42.4] seçti tut 1 sn bekle 0.468; diğer: fake pas göster → kenardan · inanılırlık %0 0.451, tut 0.191, sür 0.114 | [43.1] seçti fake gövde göster → sür · inanılırlık %25 0.033; diğer: kenardan→Cansu 0.021, fake pas göster → pas · inanılırlık %56 0.016, sür -0.021
+     pas: önüne→Deniz P 0.994, kendine→Tuna P 0.994, önüne→Cansu P 0.392
+
+#10 44.7–48.3 sn · Demir Blok topta · ilerleme → geçiş → ilerleme → geçiş · Ayaz aktarımı kesti / Şimşek güçlü gönderdi · şarj %73 / SAYI · Şimşek · 1–2
+  Mert: arkada · alan ↔ arkada · Ayaz ×2 (1.8 sn) → pres (1.3 sn) · ileri 42→16 (top 68→2) · yol 59.3 · durdu 0 sn · gidip-gelme 3
+  Cansu: geri koşu (2.0 sn) → bölge (1.3 sn) · ileri 111→42 (top 68→2) · yol 71.3 · durdu 0 sn · gidip-gelme 3
+  Tuna: geri koşu (1.9 sn) → bölge · Ayaz (1.6 sn) · ileri 113→44 (top 68→2) · yol 70.4 · durdu 0 sn · gidip-gelme 1
+
+#11 48.3–53.0 sn · Liman topta · ilerleme → son bölge · SAYI · Şimşek · 1–2 / Tuna güçlü gönderdi · şarj %55 / SAYI · Tuna · 2–2
+  Mert: boşluk (3.0 sn) → güvence (1.6 sn) · ileri 23→76 (top 60→118) · yol 58.5 · durdu 0.6 sn · gidip-gelme 0
+  Cansu: boşluk (2.9 sn) → alıcı (0.5 sn) → ◆ top bende (0.2 sn) → boşluk (0.8 sn) · ileri 47→108 (top 60→118) · yol 83.6 · durdu 0 sn · gidip-gelme 0
+     [51.8] seçti tut 0.348; diğer: kenardan→Cansu 0.130, kenardan→Cansu 0.121, sür 0.119
+     pas: kendine→Cansu P 0.994, önüne→Kaan P 0.9724705767761062
+  Tuna: boşluk (1.6 sn) → alıcı (0.5 sn) → ◆ top bende (0.4 sn) → boşluk (1.6 sn) → alıcı (0.4 sn) → ◆ top bende (0.0 sn) · ileri 47→114 (top 60→118) · yol 89.8 · durdu 0 sn · gidip-gelme 0
+     [50.5] seçti fake gövde göster → kenardan · inanılırlık %88 0.087; diğer: sür 0.082, sür 0.081, fake pas göster → sür · inanılırlık %86 0.081 | [50.7] seçti sür 0.080; diğer: sür 0.079, önüne→Deniz 0.067, önüne→Mert 0.064
+     pas: önüne→Ece P 0.994, gönder→null P 0
+
+#12 53.0–56.7 sn · Demir Blok topta · ilerleme → son bölge → ilerleme → son bölge · SAYI · Tuna · 2–2 / Bulut'in fiskesi Tuna'e çarptı / Mert aktarımı kesti
+  Mert: arkada · alan (0.6 sn) → arkada · Şimşek (1.8 sn) → kovala (0.3 sn) · ileri 19→38 (top 60→37) · yol 57.7 · durdu 0 sn · gidip-gelme 3
+  Cansu: bölge · Şimşek ↔ bölge · Gökay ×2 (2.2 sn) → pres (0.3 sn) · ileri 30→42 (top 60→37) · yol 57.8 · durdu 0 sn · gidip-gelme 5
+  Tuna: bölge · Ayaz (0.5 sn) → kovala (0.5 sn) → pres (0.4 sn) → bölge · Gökay (0.5 sn) · ileri 41→61 (top 60→37) · yol 63 · durdu 0 sn · gidip-gelme 13
+
+#13 56.7–59.1 sn · Liman topta · kurma → ilerleme · Mert aktarımı kesti / Şimşek aktarımı kesti
+  Mert: ◆ top bende (0.8 sn) → güvence (1.0 sn) → kovala (0.3 sn) → ◆ top bende (0.0 sn) · ileri 38→45 (top 38→56) · yol 31.1 · durdu 0 sn · gidip-gelme 0
+     [56.8] seçti sür 0.067; diğer: sür 0.066, sür 0.066, pas→Ece 0.064 | [57.0] seçti sür 0.067; diğer: sür 0.066, fake gövde göster → sür · inanılırlık %25 -0.001, fake pas göster → sür · inanılırlık %16 -0.011 | [57.1] seçti fake gövde göster → sür · inanılırlık %25 0.019; diğer: sür -0.023, sür -0.026, pas→Kaan -0.030 | [57.3] seçti sür 0.067; diğer: sür 0.067, sür 0.067, önüne→Tuna -0.049
+     pas: önüne→Tuna P 0.994, önüne→Kaan P 0.9870157230636537
+  Cansu: boşluk (2.4 sn) · ileri 42→80 (top 38→56) · yol 46.5 · durdu 0 sn · gidip-gelme 0
+  Tuna: boşluk (0.8 sn) → alıcı (0.5 sn) → ◆ top bende (0.5 sn) → boşluk (0.6 sn) · ileri 61→72 (top 38→56) · yol 32.3 · durdu 0.3 sn · gidip-gelme 0
+     [58.0] seçti sür 0.081; diğer: fake pas göster → sür · inanılırlık %18 0.081, tut 0.041, tut 0,5 sn bekle -0.019 | [58.1] seçti fake pas göster → önüne · inanılırlık %35 0.084; diğer: tut 0.074, sür 0.029, sür 0.029 | [58.3] seçti tut -0.001; diğer: önüne→Cansu -0.002, sür -0.021, sür -0.022
+     pas: önüne→Deniz P 0.994
+
+#14 59.1–59.8 sn · Demir Blok topta · ilerleme · Şimşek aktarımı kesti / Gökay fiskeyi kaçırdı / Kaan aktarımı kesti
+  Mert: arkada · Şimşek (0.3 sn) · ileri 45→44 (top 56→66) · yol 10.7 · durdu 0 sn · gidip-gelme 2
+  Cansu: geri koşu (0.7 sn) · ileri 80→69 (top 56→66) · yol 13.5 · durdu 0 sn · gidip-gelme 0
+  Tuna:  · ileri 72→65 (top 56→66) · yol 11.8 · durdu 0 sn · gidip-gelme 3
+
+#15 59.9–60.0 sn · Liman topta · ilerleme · Kaan aktarımı kesti
+  Mert:  · ileri 44→42 (top 67→67) · yol 2.2 · durdu 0 sn · gidip-gelme 0
+  Cansu:  · ileri 69→68 (top 67→67) · yol 1.6 · durdu 0 sn · gidip-gelme 0
+  Tuna:  · ileri 65→65 (top 67→67) · yol 1.2 · durdu 0 sn · gidip-gelme 0
+
+#16 60.0–66.1 sn · Demir Blok topta · ilerleme → kurma → ilerleme → son bölge · Rüzgâr plase gönderdi · şarj %55 / Cansu aktarımı kesti
+  Mert: arkada · alan (1.3 sn) → arkada · Gökay (0.3 sn) → arkada · Şimşek (3.6 sn) · ileri 19→10 (top 60→18) · yol 94.2 · durdu 0 sn · gidip-gelme 9
+  Cansu: bölge · Şimşek ↔ kovala ×2 (1.4 sn) → bölge ↔ kapatma · Şimşek ×2 (1.4 sn) → kapatma · Rüzgâr (0.7 sn) → kovala (0.5 sn) → bölge (0.5 sn) · ileri 30→19 (top 60→18) · yol 103.7 · durdu 0 sn · gidip-gelme 5
+  Tuna: kapatma · Rüzgâr (0.5 sn) → bölge · Şimşek (0.8 sn) → bölge · Taş (0.4 sn) → bölge · Gökay (2.9 sn) → bölge (0.5 sn) · ileri 41→53 (top 60→18) · yol 87.4 · durdu 0 sn · gidip-gelme 5
+
+#17 66.2–72.4 sn · Liman topta · kurma → ilerleme → son bölge · Cansu aktarımı kesti / Tuna güçlü gönderdi · şarj %70 / Ayaz aktarımı kesti
+  Mert: boşluk ↔ güvence ×3 (2.7 sn) → güvence (2.9 sn) · ileri 10→81 (top 19→111) · yol 101.8 · durdu 0 sn · gidip-gelme 7
+  Cansu: ◆ top bende ↔ boşluk ×2 (1.4 sn) → boşluk (1.1 sn) → alıcı (0.7 sn) → ◆ top bende (0.2 sn) → boşluk (2.3 sn) · ileri 19→108 (top 19→111) · yol 116.9 · durdu 0.1 sn · gidip-gelme 1
+     [66.2] seçti fake pas göster → sür · inanılırlık %88 0.057; diğer: önüne→Kaan -0.021, pas→Kaan -0.022, pas→Kaan -0.022 | [66.3] seçti sür 0.062; diğer: önüne→Mert 0.060, pas→Mert 0.060, kenardan→Kaan -0.019 | [67.7] seçti sür 0.067; diğer: fake pas göster → önüne · inanılırlık %88 0.067, önüne→Tuna 0.065, önüne→Mert 0.061 | [69.7] seçti tut 0.088; diğer: önüne→Deniz 0.068, pas→Deniz 0.067, pas→Deniz 0.067
+     pas: önüne→Kaan P 0.9937797418897694, önüne→Tuna P 0.994, önüne→Kaan P 0.994
+  Tuna: boşluk (1.9 sn) → alıcı (0.8 sn) → ◆ top bende (0.2 sn) → boşluk (1.5 sn) → alıcı (0.5 sn) → ◆ top bende (1.0 sn) → boşluk (0.3 sn) · ileri 53→106 (top 19→111) · yol 103.2 · durdu 0.8 sn · gidip-gelme 0
+     [68.8] seçti fake gövde göster → kenardan · inanılırlık %88 0.074; diğer: sür 0.073, sür 0.073, önüne→Mert 0.062 | [71.1] seçti tut 0,5 sn bekle 0.404; diğer: tut 0.250, fake gönder göster → gönder · inanılırlık %0 0.231, sür 0.147 | [71.6] seçti tut 0.298; diğer: fake gönder göster → önüne · inanılırlık %1 0.265, fake pas göster → kenardan · inanılırlık %8 0.220, önüne→Kaan 0.166 | [71.8] seçti tut 0.307; diğer: fake gönder göster → kenardan · inanılırlık %0 0.227, tut 1 sn bekle 0.180, fake pas göster → gönder · inanılırlık %5 0.165 | [71.9] seçti fake pas göster → gönder · inanılırlık %29 0.269; diğer: fake gövde göster → gönder · inanılırlık %60 0.207, fake gönder göster → gönder · inanılırlık %9 0.207, tut 0.186
+     pas: önüne→Cansu P 0.994, gönder→null P 0.8333333333333334
+
+#18 72.4–73.8 sn · Demir Blok topta · kurma · Ayaz aktarımı kesti / İkili · Mert, Rüzgâr'den Çekirdeği aldı / Mert'in fiskesi Rüzgâr'e çarptı
+  Mert: arkada · Gökay (0.6 sn) · ileri 81→88 (top 110→88) · yol 21.9 · durdu 0 sn · gidip-gelme 2
+  Cansu: bölge (1.0 sn) · ileri 108→95 (top 110→88) · yol 22.1 · durdu 0 sn · gidip-gelme 0
+  Tuna: bölge (0.5 sn) · ileri 106→92 (top 110→88) · yol 24.6 · durdu 0 sn · gidip-gelme 9
+
+#19 73.8–76.3 sn · Liman topta · son bölge · İkili · Mert, Rüzgâr'den Çekirdeği aldı / Mert'in fiskesi Rüzgâr'e çarptı / Bulut uzanıp dürttü, Çekirdek boşta / Gökay aktarımı kesti
+  Mert: ◆ top bende (0.0 sn) → perde (0.3 sn) → güvence (0.7 sn) → boşluk (0.4 sn) · ileri 88→77 (top 88→104) · yol 32.4 · durdu 0 sn · gidip-gelme 8
+  Cansu: boşluk (1.2 sn) → alıcı (0.6 sn) → ◆ top bende (0.3 sn) · ileri 94→106 (top 88→104) · yol 38.4 · durdu 0.1 sn · gidip-gelme 0
+     [75.7] seçti tut 0.197; diğer: fake pas göster → sür · inanılırlık %24 0.108, fake gönder göster → gönder · inanılırlık %2 0.106, pas→Mert 0.102 | [75.9] seçti fake gönder göster → gönder · inanılırlık %87 0.715; diğer: fake gövde göster → sür · inanılırlık %0 0.408, gönder güçlü 0.282, fake pas göster → pas · inanılırlık %37 0.265
+  Tuna: boşluk ↔ ◆ top bende ×2 (2.1 sn) · ileri 92→110 (top 88→104) · yol 37.9 · durdu 0 sn · gidip-gelme 2
+     [74.7] seçti fake gönder göster → önüne · inanılırlık %20 0.134; diğer: fake pas göster → gönder · inanılırlık %88 0.115, pas→Ece 0.110, pas→Ece 0.110
+     pas: pas→Ece P 0.994
+
+#20 76.3–82.3 sn · Demir Blok topta · kurma → ilerleme · Gökay aktarımı kesti / Rüzgâr'in fiskesi Ece'e çarptı / Deniz aktarımı kesti
+  Mert: arkada · alan (0.6 sn) → arkada · Rüzgâr (1.9 sn) → kovala (0.5 sn) → arkada · Şimşek (0.6 sn) → arkada · Rüzgâr (1.7 sn) · ileri 77→26 (top 104→46) · yol 100.9 · durdu 0 sn · gidip-gelme 4
+  Cansu: pres · dolanıyor (0.3 sn) → bölge (3.0 sn) → pres (0.4 sn) → bölge · Şimşek (0.6 sn) · ileri 106→45 (top 104→46) · yol 102.8 · durdu 0 sn · gidip-gelme 8
+  Tuna: geri koşu (0.4 sn) → bölge ↔ bölge · Gökay ×2 (3.3 sn) → bölge · Gökay (1.2 sn) · ileri 110→59 (top 104→46) · yol 81.9 · durdu 0 sn · gidip-gelme 7
+
+#21 82.3–87.8 sn · Liman topta · ilerleme → son bölge · Deniz aktarımı kesti / Cansu'in fiskesi Gökay'e çarptı / Cansu plase gönderdi · şarj %64 / Kaya göndermeyi tuttu
+  Mert: güvence (5.3 sn) · ileri 26→104 (top 47→119) · yol 87.4 · durdu 0 sn · gidip-gelme 2
+  Cansu: boşluk (3.3 sn) → alıcı (0.9 sn) → ◆ top bende (1.1 sn) · ileri 45→115 (top 47→119) · yol 100.4 · durdu 0.2 sn · gidip-gelme 1
+     [86.5] seçti tut 0,5 sn bekle 0.308; diğer: tut 1 sn bekle 0.224, sür 0.153, fake pas göster → sür · inanılırlık %0 0.153 | [86.8] seçti fake gönder göster → gönder · inanılırlık %20 0.210; diğer: tut 0.165, fake pas göster → sür · inanılırlık %7 0.146, fake gövde göster → sür · inanılırlık %25 0.145 | [87.0] seçti sür 0.144; diğer: sür 0.136, gönder güçlü 0.071, gönder güçlü 0.070 | [87.2] seçti sür 0.153; diğer: sür 0.144, gönder plase 0.090, gönder güçlü 0.082 | [87.4] seçti tut 0.198; diğer: sür 0.143, gönder plase 0.121, gönder plase 0.091
+     pas: gönder→null P 1
+  Tuna: boşluk (0.9 sn) → alıcı (0.3 sn) → ◆ top bende (0.0 sn) → boşluk (0.3 sn) → alıcı (0.3 sn) → ◆ top bende (1.5 sn) → boşluk (2.1 sn) · ileri 59→113 (top 47→119) · yol 77.3 · durdu 0.6 sn · gidip-gelme 0
+     [84.1] seçti sür 0.122; diğer: fake gövde göster → sür · inanılırlık %25 0.121, fake pas göster → sür · inanılırlık %79 0.121, sür 0.119 | [84.3] seçti sür 0.132; diğer: fake gövde göster → sür · inanılırlık %25 0.132, fake gönder göster → sür · inanılırlık %20 0.132, fake pas göster → sür · inanılırlık %74 0.132 | [84.5] seçti tut 0,5 sn bekle 0.344; diğer: gönder güçlü 0.152, tut 0.148, fake gövde göster → sür · inanılırlık %25 0.148 | [84.6] seçti fake pas göster → sür · inanılırlık %0 0.261; diğer: tut 0.252, gönder güçlü 0.231, fake gönder göster → önüne · inanılırlık %78 0.151 | [84.8] seçti sür 0.147; diğer: gönder güçlü 0.143, sür 0.143, sür 0.136 | [85.0] seçti tut 0,5 sn bekle 0.373; diğer: tut 0.284, sür 0.158, sür 0.153 | [85.5] seçti tut 0.435; diğer: tut 0,5 sn bekle 0.394, sür 0.158, sür 0.153
+     pas: önüne→Kaan P 0.994, önüne→Cansu P 0.994
+
+#22 87.8–98.6 sn · Demir Blok topta · kurma → ilerleme → son bölge → ilerleme → son bölge · Kaya göndermeyi tuttu / Rüzgâr plase gönderdi · şarj %70 / Ayaz'in fiskesi Kaan'e çarptı / Rüzgâr plase gönderdi · şarj %68 / Şimşek güçlü gönderdi · şarj %69 / SAYI · Şimşek · 2–3
+  Mert: arkada · Şimşek ↔ arkada · Rüzgâr ×3 (3.5 sn) → arkada · Rüzgâr (1.0 sn) → arkada · alan (0.8 sn) → boşluk (0.5 sn) → geri koşu (0.4 sn) → pres (0.6 sn) → arkada · Şimşek (2.5 sn) · ileri 104→15 (top 119→2) · yol 156 · durdu 0.7 sn · gidip-gelme 15
+  Cansu: bölge ↔ pres ×2 (2.3 sn) → bölge · Şimşek ↔ kapatma · Şimşek ×2 (1.6 sn) → boşluk (0.5 sn) → kapatma · Şimşek (1.1 sn) → bölge · Gökay ↔ bölge ×2 (2.3 sn) · ileri 115→19 (top 119→2) · yol 179.9 · durdu 0 sn · gidip-gelme 6
+  Tuna: bölge ↔ kapatma · Gökay ×4 (4.9 sn) → bölge · Gökay (0.3 sn) → boşluk (0.5 sn) → geri koşu (0.9 sn) → bölge · Taş (0.4 sn) → bölge · Bulut (0.7 sn) → bölge · Gökay (0.8 sn) → bölge · Ayaz (0.3 sn) · ileri 113→27 (top 119→2) · yol 179 · durdu 0.1 sn · gidip-gelme 9
+
+#23 98.6–105.7 sn · Liman topta · ilerleme → kurma → ilerleme → son bölge → ilerleme → son bölge · SAYI · Şimşek · 2–3 / Kaan güçlü gönderdi · şarj %43 / Kaya göndermeyi tuttu
+  Mert: boşluk (2.5 sn) → alıcı (0.7 sn) → ◆ top bende (0.7 sn) → güvence ↔ boşluk ×2 (2.8 sn) · ileri 23→51 (top 60→107) · yol 112.3 · durdu 0.4 sn · gidip-gelme 4
+     [101.9] seçti sür 0.053; diğer: sür 0.053, sür 0.053, tut 0.018 | [102.1] seçti tut 0.079; diğer: sür 0.053, sür 0.053, sür 0.053 | [102.2] seçti tut 0.072; diğer: pas→Deniz 0.055, sür 0.053, sür 0.053 | [102.4] seçti tut 0.071; diğer: pas→Deniz 0.055, sür 0.053, sür 0.053
+     pas: kenardan→Cansu P 0.9409910197226208
+  Cansu: boşluk (0.7 sn) → alıcı (0.3 sn) → ◆ top bende (0.0 sn) → boşluk (3.0 sn) → alıcı (0.9 sn) → ◆ top bende (0.2 sn) → boşluk (1.9 sn) · ileri 47→114 (top 60→107) · yol 124.9 · durdu 0.1 sn · gidip-gelme 0
+     [103.5] seçti fake pas göster → kenardan · inanılırlık %88 0.102; diğer: sür 0.101, önüne→Ece 0.100, önüne→Ece 0.099
+     pas: pas→Deniz P 0.994, pas→Deniz P 0.994
+  Tuna: boşluk (7.0 sn) · ileri 47→111 (top 60→107) · yol 84.4 · durdu 1.5 sn · gidip-gelme 1
+
+#24 105.7–114.3 sn · Demir Blok topta · kurma → ilerleme → kurma → ilerleme → son bölge · Kaya göndermeyi tuttu / Rüzgâr güçlü gönderdi · şarj %38 / Şimşek güçlü gönderdi · şarj %39 / SAYI · Şimşek · 2–4
+  Mert: arkada · Şimşek ↔ arkada · Rüzgâr ×2 (7.9 sn) · ileri 51→13 (top 111→1) · yol 122.2 · durdu 0 sn · gidip-gelme 7
+  Cansu: geri koşu (0.3 sn) → pres (0.6 sn) → kovala ↔ bölge ×2 (2.5 sn) → bölge ↔ bölge · Şimşek ×3 (3.2 sn) · ileri 114→28 (top 111→1) · yol 152.5 · durdu 0 sn · gidip-gelme 12
+  Tuna: bölge (1.2 sn) → bölge · Gökay ↔ bölge ×4 (5.8 sn) · ileri 111→48 (top 111→1) · yol 137.3 · durdu 0 sn · gidip-gelme 6
+
+#25 114.4–119.8 sn · Liman topta · ilerleme → son bölge → ilerleme → son bölge · SAYI · Şimşek · 2–4 / Tuna güçlü gönderdi · şarj %55 / Kaan'in fiskesi Taş'e çarptı / Kaan güçlü gönderdi · şarj %56 / Gökay aktarımı kesti
+  Mert: boşluk ↔ güvence ×3 (5.3 sn) · ileri 23→77 (top 60→109) · yol 85.1 · durdu 0.1 sn · gidip-gelme 3
+  Cansu: boşluk (1.4 sn) → alıcı ↔ ◆ top bende ×2 (0.7 sn) → ◆ top bende (0.0 sn) → boşluk (1.2 sn) → alıcı (0.7 sn) → ◆ top bende (0.0 sn) → boşluk (0.8 sn) · ileri 47→112 (top 60→109) · yol 99.3 · durdu 0 sn · gidip-gelme 2
+     pas: kendine→Cansu P 0.994, önüne→Deniz P 0.994, pas→Kaan P 0.9732797738066465
+  Tuna: boşluk (4.4 sn) → alıcı (0.4 sn) → ◆ top bende (0.0 sn) → boşluk (0.5 sn) · ileri 47→113 (top 60→109) · yol 93.3 · durdu 0 sn · gidip-gelme 0
+     pas: gönder→null P 0.8333333333333334
+
+#26 119.8–120.0 sn · Demir Blok topta · kurma · Gökay aktarımı kesti
+  Mert:  · ileri 77→78 (top 107→108) · yol 1.7 · durdu 0 sn · gidip-gelme 0
+  Cansu:  · ileri 112→111 (top 107→108) · yol 3.2 · durdu 0 sn · gidip-gelme 0
+  Tuna:  · ileri 113→111 (top 107→108) · yol 2.9 · durdu 0 sn · gidip-gelme 0
