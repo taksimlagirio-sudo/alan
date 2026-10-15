@@ -2,6 +2,10 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Savunma: kapatma = pas yolu · `ALAN_PAS_YOLU_ESKI` — ölçülmedi
+- Kapatmaya giden, topla rakip arasındaki çizgide rakibe yakın durur (yolun üçte biri, en az 3 br). Önceden rakibin kale tarafında duruyordu: markajdan farkı yoktu, arkadakiyle aynı yeri tutuyordu (00:05 Yıldırım ve Baran ikisi de Kaan'ın arkasında).
+- Sayfa: yükleme ekranında hesaplanan maç saati; işçi hata verirse mesaj (main `cd326ff`).
+
 ## 16 Ekim 2026 · Savunma: hızlı eşleşme · `ALAN_HIZLI_ESLES_ESKI` — ölçülmedi
 - Arkadaki iki (üç) oyuncu derindeki rakipleri sırayla değil, en geç varanın da en erken varacağı şekilde paylaşır; gerekirse adam devredilir. Eski eşleşme %15'ten fazla yavaş değilse sürer. (00:03: Baran Ece'ye 19 br koşuyordu; Alp Kaan'ı Baran'a bırakıp Ece'ye gitmeliydi.)
 
