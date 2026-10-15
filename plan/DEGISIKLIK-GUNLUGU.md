@@ -2,6 +2,14 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 15 Ekim 2026 · Canlı sayfa: görev göstergesi (main `b34694c`)
+- Sahada bir oyuncuya dokununca kart açılır: ad, rol, motorun görev etiketi (ör. `bölge · Kaan`), düz Türkçe açıklaması, hedefine uzaklık. Sahada: seçilen oyuncunun halkası, hedefe kesik çizgi ve çarpı, bağlı olduğu rakibin kesik halkası. Aynı oyuncuya ya da boşa dokununca kapanır. Kart, oyuncunun karşı yarısında durur.
+- İşçi (`mac-isci.js`): kare 42'den 84 sayıya çıktı; 42–83 oyuncu başına görev sırası, hedef x, hedef y. Görev yazıları `kare` mesajında `is` dizisiyle bir kez gelir. Oynanışa etkisi yok (yalnız okuma).
+- Yükleme çubuğu artık başlama payıyla aynı ölçüde (%30) dolar (önce %20'de doluyordu).
+
+## 15 Ekim 2026 · Boş top yolu: çökme önlendi (main `21ea5ba`)
+- Boş top yolunun son noktası okunurken çökme: `shape.js` flightRead, `decide.js` chasePlan ve recvPoint korumalı. Oynanış aynı.
+
 ## 15 Ekim 2026 · Canlı sayfa: başlama payı %30 (main `ec4dc5c`)
 - Maç, oynanacak devrenin kalanının %30'u hesaplanınca başlar (önce %20); takılınca da aynı kural. Sebep: tarayıcıda hesap izlemeden yavaş kalabiliyor (bu konteynerde zip78 ~11 tik/sn, izleme 30 tik/sn).
 

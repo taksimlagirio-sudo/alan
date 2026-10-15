@@ -12,7 +12,8 @@ Kullanıcının kararı: **Design yalnız tasarım verir; oyun motoruna karışm
 1. Yalnız sayfa dosyaları alınır. Paketteki `alan-v5/*.js` yok sayılır; sitedeki motorun üstüne yazılmaz.
 2. Sayfanın motordan beklediği yeni bir şey varsa (yeni bir alan, yeni bir mesaj), motora Claude Code ekler.
 3. Oynanışa dokunan sayfa ayarları her pakette kontrol edilip korunur. Şu an: **Canlı sayfada başlama payı %30** (`kareler.length - t >= .3 * (hedef - t)`; Design'ın dosyasında %20 yazıyordu).
+4. Canlı sayfadaki **görev göstergesi** korunur: sahaya dokununca oyuncunun görev kartı ve hedefi (`dokun`, `gorevCiz`, `gorev`, `ekrana`, `gorevAcik`, `isler`; kare 42–83). Design görünümünü değiştirebilir; işlev kalmalı.
 
 ## Sitedeki motor
-- Son sürüm: zip78 + canlı sayfa %30 (main `ec4dc5c`).
+- Son sürüm: zip78 + canlı sayfa %30 + görev göstergesi (main `b34694c`).
 - Motorun zip71'e göre farkı: `plan/zip78-motor.diff`, `plan/DESIGN-NOT-zip78-sitede.md`.
