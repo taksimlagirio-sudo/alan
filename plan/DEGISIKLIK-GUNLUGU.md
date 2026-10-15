@@ -2,6 +2,10 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Kapatma bölgede kalır · `ALAN_KAPATMA_BOLGE_ESKI` — ölçülmedi
+- Arkadakiler (süpürücüler, sweep) ortak atamada kapatmaya aday değil; kapatma bağlılığında (top birindeyken ve havadayken) da kalmazlar. Diğerleri kapatmaya ancak kapatma noktası (pas yolu noktası) kendi bölgesinin içindeyse (evden S.zoneR + Yeralma × S.zoneOk) gider. Markaj talimatı ve pres ayrı. (00:01 Alp, en arkadan 32 br öne Cansu'nun pas yoluna çıkıyordu; Ece ve Kaan arkada boş.)
+- Karar kartı: görev kartında top sahibinin son kararı (en iyi 4 seçenek, değer, ihtimal) (main `fe5839f`).
+
 ## 16 Ekim 2026 · Arkadakiler: buluşma noktası ve kale ağzı — ölçülmedi
 - `ALAN_BULUSMA_ESKI`: pas havadayken (sekmemiş) arkadakiler alıcının topla buluşacağı noktaya (flightRead) göre yer alır: adamı alıcıysa o noktanın kale tarafına; adamı yoksa kale ortasından o noktaya giden çizgide. (01:30 Alp, Ece'nin topu alacağı yerin değil topun uçtuğu köşenin tarafına koşuyordu.)
 - `ALAN_KALE_AGZI_ESKI`: savunmadaki derinlik (gD) x farkı değil kale ortasına uzaklık. Etkiler: arkadakilerin adam seçimi (derin rakip), adamı olmayan arkadakinin yeri, arkada boş bırakma, önde tutulan, tehlikedeki "arkasında boşluk".
