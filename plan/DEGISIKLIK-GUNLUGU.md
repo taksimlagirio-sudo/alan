@@ -2,6 +2,9 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Pres: önce kale tarafı · `ALAN_KALE_TARAFI_ESKI` — ölçülmedi
+- İlk presçi rakiple kale arasında değilse topa girmez: rakibin 10 tik sonraki yerinin 2 br kale tarafına koşar; düz yol rakibin 2,5 br yakınından geçiyorsa yanından (3,5 br) dolaşır (görev "pres · kale tarafına"). Rakip kaleye presçinin hızının %90'ından hızlı gidiyorsa yanında, iç tarafta koşar ("pres · yanında"). Topa girme planı (direkt/dolaş/fake) yalnız kale tarafındayken ya da top açıkta ve 1,6 br yakındayken. "Kenara sıkıştır" sistemi eskisi gibi. (01:06 Volkan, Tuna'yı arkadan kovalıyordu.)
+
 ## 16 Ekim 2026 · Kontra başlangıcı ve hızlı hücum (main `f6ef99c`) — ölçülmedi
 - Kontra açılırken de rakip en öndeki oyuncumuzun gerisinde sayılır (önce topun gerisinde: kendi kalesi önünde top kazanan takım hiç kontraya çıkamıyordu, 00:15 Baran). Bayrak `ALAN_KONTRA_SURE_ESKI` (sürme ve başlangıç birlikte).
 - Hızlı hücum (`ALAN_HIZLI_HUCUM_ESKI`): top bizdeyken, el değiştirmeden (ör. uzun pas presi aştı) rakip en öndeki oyuncumuzun gerisinde eşikten (4) az kişiyle yakalanırsa kontra gibi oynanır (aynı risk/tempo, koşucular, 4 sn). Topa sahip olma başına bir kez; son bölgede başlamaz. Evre kodu `huc.hizli` (EVKOD 8), Canlı'da "Hızlı hücum".
