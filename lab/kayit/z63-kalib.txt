@@ -1,0 +1,22 @@
+hepsi                        n   490 · beklenen kayıp %21.6 · gerçek %16.1 · beklemede tutma (Pk) %98.3 · sonraki hamle tutma %79.8
+baskı altında (rakip < 4)    n   246 · beklenen kayıp %23.4 · gerçek %19.9 · beklemede tutma (Pk) %97.1 · sonraki hamle tutma %79.0
+baskısız                     n   244 · beklenen kayıp %19.8 · gerçek %12.3 · beklemede tutma (Pk) %99.6 · sonraki hamle tutma %80.6
+rakip pres 0                 n    19 · beklenen kayıp %36.8 · gerçek %21.1 · beklemede tutma (Pk) %97.8 · sonraki hamle tutma %63.6
+rakip pres 1                 n   276 · beklenen kayıp %19.4 · gerçek %15.9 · beklemede tutma (Pk) %98.2 · sonraki hamle tutma %82.1
+rakip pres 2                 n   146 · beklenen kayıp %21.0 · gerçek %13.0 · beklemede tutma (Pk) %98.5 · sonraki hamle tutma %80.5
+rakip pres 3                 n    49 · beklenen kayıp %29.6 · gerçek %24.5 · beklemede tutma (Pk) %98.7 · sonraki hamle tutma %71.3
+  baskı altında, rakip pres 0 n     7 · beklenen kayıp %46.6 · gerçek %42.9 · beklemede tutma (Pk) %93.9 · sonraki hamle tutma %54.5
+  baskı altında, rakip pres 1 n   137 · beklenen kayıp %20.5 · gerçek %17.5 · beklemede tutma (Pk) %96.8 · sonraki hamle tutma %82.2
+  baskı altında, rakip pres 2 n    79 · beklenen kayıp %23.2 · gerçek %19.0 · beklemede tutma (Pk) %97.2 · sonraki hamle tutma %79.6
+  baskı altında, rakip pres 3 n    23 · beklenen kayıp %34.8 · gerçek %30.4 · beklemede tutma (Pk) %99.4 · sonraki hamle tutma %65.7
+beklenen kayba göre dilimler:
+  beklenen 0–0.05            n   285 · beklenen kayıp %0.8 · gerçek %16.1 · beklemede tutma (Pk) %100.0 · sonraki hamle tutma %99.2
+  beklenen 0.05–0.1          n    18 · beklenen kayıp %7.7 · gerçek %22.2 · beklemede tutma (Pk) %99.5 · sonraki hamle tutma %92.9
+  beklenen 0.1–0.2           n    20 · beklenen kayıp %14.1 · gerçek %0.0 · beklemede tutma (Pk) %97.2 · sonraki hamle tutma %88.7
+  beklenen 0.2–0.4           n    37 · beklenen kayıp %31.0 · gerçek %10.8 · beklemede tutma (Pk) %94.8 · sonraki hamle tutma %74.1
+  beklenen 0.4–1             n   130 · beklenen kayıp %67.7 · gerçek %19.2 · beklemede tutma (Pk) %95.7 · sonraki hamle tutma %35.6
+sonraki hamleye göre:
+  sür                        n    50 · beklenen kayıp %5.7 · gerçek %32.0 · beklemede tutma (Pk) %94.3 · sonraki hamle tutma %100.0
+  kenardan                   n   108 · beklenen kayıp %5.9 · gerçek %4.6 · beklemede tutma (Pk) %99.8 · sonraki hamle tutma %94.4
+  önüne                      n   179 · beklenen kayıp %5.8 · gerçek %17.9 · beklemede tutma (Pk) %98.5 · sonraki hamle tutma %95.7
+  fake                       n   141 · beklenen kayıp %60.5 · gerçek %17.7 · beklemede tutma (Pk) %98.6 · sonraki hamle tutma %40.0
