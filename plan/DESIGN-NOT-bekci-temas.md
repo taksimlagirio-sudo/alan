@@ -14,7 +14,10 @@ Claude Code'dan Design'a. Design'ın düzeltmesi doğru: A2 önerisinde tepkiyi 
 - `core.js contact`: Bekçi uzanması (`bekR`, 1,74 → 2,90) yalnız Kuyu'ya **12 birimden yakınken** (`ALAN_BEK_ALAN = 12`); dışında saha oyuncusu uzanması (gövde 0,9, tepki `reachReact` 6 tik, büyüme 0,12 / tik).
 - Yani öne çıkan Bekçi, tam şutun geleceği anda ellerini kaybediyor. 12–13 ve ötesinde (4 sayı) bu doğrudan; 7–12 arasında ise Bekçi şutçunun dibinde, top 1–2 tikte yanından geçiyor (uzanma 1,74–2,16'da).
 
-**Öneri (tek yer):** Öne çıkış Bekçi'yi kendi uzanma bölgesinin dışına koymasın: `rOut` üst sınırı `ALAN_BEK_ALAN − 1` (ya da `ALAN_BEK_ALAN` öne çıkış sınırına eşitlensin; ikisi aynı sabitten okunsun). Ayrıca karşı karşıyada şutçuya ne kadar yaklaşılacağı (bugün "taşıyıcının 3 birim önü") gözden geçirilmeli: şutçunun dibindeki Bekçi'nin yanından top 1–2 tikte geçiyor, uzanma büyüyemiyor.
+**Karar (kullanıcı):** Bekçi'nin uzanmasının yer sınırı olmasın; Bekçi her yerde Bekçi uzanmasıyla (`bekR`) uzanır. `ALAN_BEK_ALAN` koşulu kaldırılır (bayrakla eski hâli: örn. `ALAN_BEK_ALAN_ESKI`). Bir sabit ve bir istisna eksilir.
+- Bekçi zaten alanının dışına yalnız serbest topa ve rakipten önce varacaksa çıkıyor (zip59); geniş uzanmanın orta sahada pas kesmeye dönüşmesi beklenmez. Kontrol tablosunda "Bekçi pas kovalaması" ve "kovaladığını kazanma" satırlarıyla izlenir.
+- Gönderme tablosu bundan etkilenmez (tabloda Bekçi kalesinde); akıl aynı `contact`'ı kullandığı için ayrıca bir şey gerekmez.
+- Karşı karşıyada şutçuya ne kadar yaklaşılacağı (bugün "taşıyıcının 3 birim önü") ayrı bir soru olarak kalıyor: şutçunun dibindeki Bekçi'nin yanından top 1–2 tikte geçiyor, uzanma (1,74 → 2,16) büyüyemiyor. Önce uzanma sınırı kalksın, tablo ondan sonra bunu gösterir.
 
 ## 2 · Değdiği sayılarda: sekme yönü baskın
 | Sonuç | Temas | Ardından 1 sn'de sayı |
@@ -43,6 +46,6 @@ Sekenlerin yönü: **dışarı 101**, Kuyu yönüne ama ağız dışına 9, **Ku
 - Kuyu'ya doğru seken ↓ (bugün temasların %7'si, bunların %83'ü sayı).
 - Gönderme başına sayı ↓, sayı / dk ↓.
 - Gönderme tablosu yeniden üretilmeli (`bekR` değişmiyor ama çelme yönü ve öne çıkış akıl tarafından da görülüyor mu, kontrol edilmeli).
-- Bekçi'yi değiştirmeden ölçmek için iki bayrak ayrı olsun (öne çıkış sınırı / çelme).
+- İki değişiklik ayrı bayrakla gelsin (uzanma sınırı / çelme).
 
 Not: Bekçi özelliği farklı iki takımla ölçüm yapılacaksa Refleks ve Alan hakimiyeti değiştirilecek (Okuma değil).
