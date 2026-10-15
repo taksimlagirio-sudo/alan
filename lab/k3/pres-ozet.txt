@@ -1,0 +1,50 @@
+hepsi · 156 an
+  kural (basar)      3 sn'de rakip gönderme 0.641 · rakip sayı 0.109 · top kazanıldı %54 · topun en ileri noktası 98.5
+  bu presçi basmaz   3 sn'de rakip gönderme 0.564 · rakip sayı 0.083 · top kazanıldı %47 · topun en ileri noktası 99.0
+  kimse basmaz       3 sn'de rakip gönderme 0.548 · rakip sayı 0.099 · top kazanıldı %45 · topun en ileri noktası 98.2
+  en iyi kol (tehlike = gönderme + 3×sayı − 0,5×kazanma): kural (basar) %54 · bu presçi basmaz %26 · kimse basmaz %19
+taşıyıcı kendi üçte birinde · 19 an
+  kural (basar)      3 sn'de rakip gönderme 0.053 · rakip sayı 0.000 · top kazanıldı %29 · topun en ileri noktası 62.8
+  bu presçi basmaz   3 sn'de rakip gönderme 0.000 · rakip sayı 0.000 · top kazanıldı %24 · topun en ileri noktası 65.3
+  kimse basmaz       3 sn'de rakip gönderme 0.053 · rakip sayı 0.026 · top kazanıldı %18 · topun en ileri noktası 61.8
+  en iyi kol (tehlike = gönderme + 3×sayı − 0,5×kazanma): kural (basar) %84 · bu presçi basmaz %16 · kimse basmaz %0
+orta üçte bir · 76 an
+  kural (basar)      3 sn'de rakip gönderme 0.388 · rakip sayı 0.053 · top kazanıldı %41 · topun en ileri noktası 94.2
+  bu presçi basmaz   3 sn'de rakip gönderme 0.434 · rakip sayı 0.059 · top kazanıldı %31 · topun en ileri noktası 95.2
+  kimse basmaz       3 sn'de rakip gönderme 0.355 · rakip sayı 0.046 · top kazanıldı %31 · topun en ileri noktası 94.5
+  en iyi kol (tehlike = gönderme + 3×sayı − 0,5×kazanma): kural (basar) %61 · bu presçi basmaz %26 · kimse basmaz %13
+son üçte bir (bizim kaleye yakın) · 61 an
+  kural (basar)      3 sn'de rakip gönderme 1.139 · rakip sayı 0.213 · top kazanıldı %78 · topun en ileri noktası 115.0
+  bu presçi basmaz   3 sn'de rakip gönderme 0.902 · rakip sayı 0.139 · top kazanıldı %75 · topun en ileri noktası 114.2
+  kimse basmaz       3 sn'de rakip gönderme 0.943 · rakip sayı 0.189 · top kazanıldı %71 · topun en ileri noktası 114.2
+  en iyi kol (tehlike = gönderme + 3×sayı − 0,5×kazanma): kural (basar) %38 · bu presçi basmaz %30 · kimse basmaz %33
+basmaya başlarken taşıyıcıya 0–6 br · 60 an
+  kural (basar)      3 sn'de rakip gönderme 0.775 · rakip sayı 0.167 · top kazanıldı %62 · topun en ileri noktası 100.3
+  bu presçi basmaz   3 sn'de rakip gönderme 0.650 · rakip sayı 0.083 · top kazanıldı %61 · topun en ileri noktası 100.3
+  kimse basmaz       3 sn'de rakip gönderme 0.633 · rakip sayı 0.117 · top kazanıldı %56 · topun en ileri noktası 100.0
+  en iyi kol (tehlike = gönderme + 3×sayı − 0,5×kazanma): kural (basar) %50 · bu presçi basmaz %25 · kimse basmaz %25
+basmaya başlarken taşıyıcıya 6–12 br · 42 an
+  kural (basar)      3 sn'de rakip gönderme 0.774 · rakip sayı 0.083 · top kazanıldı %58 · topun en ileri noktası 106.3
+  bu presçi basmaz   3 sn'de rakip gönderme 0.643 · rakip sayı 0.095 · top kazanıldı %50 · topun en ileri noktası 105.9
+  kimse basmaz       3 sn'de rakip gönderme 0.750 · rakip sayı 0.143 · top kazanıldı %54 · topun en ileri noktası 105.7
+  en iyi kol (tehlike = gönderme + 3×sayı − 0,5×kazanma): kural (basar) %48 · bu presçi basmaz %36 · kimse basmaz %17
+basmaya başlarken taşıyıcıya 12–99 br · 54 an
+  kural (basar)      3 sn'de rakip gönderme 0.389 · rakip sayı 0.065 · top kazanıldı %43 · topun en ileri noktası 90.5
+  bu presçi basmaz   3 sn'de rakip gönderme 0.407 · rakip sayı 0.074 · top kazanıldı %31 · topun en ileri noktası 92.0
+  kimse basmaz       3 sn'de rakip gönderme 0.296 · rakip sayı 0.046 · top kazanıldı %27 · topun en ileri noktası 90.5
+  en iyi kol (tehlike = gönderme + 3×sayı − 0,5×kazanma): kural (basar) %65 · bu presçi basmaz %20 · kimse basmaz %15
+presçi hattından <15 br önde · 75 an
+  kural (basar)      3 sn'de rakip gönderme 0.973 · rakip sayı 0.153 · top kazanıldı %67 · topun en ileri noktası 111.0
+  bu presçi basmaz   3 sn'de rakip gönderme 0.773 · rakip sayı 0.120 · top kazanıldı %62 · topun en ileri noktası 109.8
+  kimse basmaz       3 sn'de rakip gönderme 0.800 · rakip sayı 0.160 · top kazanıldı %61 · topun en ileri noktası 109.3
+  en iyi kol (tehlike = gönderme + 3×sayı − 0,5×kazanma): kural (basar) %39 · bu presçi basmaz %33 · kimse basmaz %28
+presçi hattından 15–30 br önde · 42 an
+  kural (basar)      3 sn'de rakip gönderme 0.345 · rakip sayı 0.083 · top kazanıldı %46 · topun en ileri noktası 89.5
+  bu presçi basmaz   3 sn'de rakip gönderme 0.381 · rakip sayı 0.048 · top kazanıldı %29 · topun en ileri noktası 91.2
+  kimse basmaz       3 sn'de rakip gönderme 0.250 · rakip sayı 0.036 · top kazanıldı %30 · topun en ileri noktası 88.7
+  en iyi kol (tehlike = gönderme + 3×sayı − 0,5×kazanma): kural (basar) %69 · bu presçi basmaz %21 · kimse basmaz %10
+presçi hattından 30–+ br önde · 39 an
+  kural (basar)      3 sn'de rakip gönderme 0.321 · rakip sayı 0.051 · top kazanıldı %38 · topun en ileri noktası 84.2
+  bu presçi basmaz   3 sn'de rakip gönderme 0.359 · rakip sayı 0.051 · top kazanıldı %40 · topun en ileri noktası 86.4
+  kimse basmaz       3 sn'de rakip gönderme 0.385 · rakip sayı 0.051 · top kazanıldı %31 · topun en ileri noktası 87.3
+  en iyi kol (tehlike = gönderme + 3×sayı − 0,5×kazanma): kural (basar) %69 · bu presçi basmaz %18 · kimse basmaz %13
