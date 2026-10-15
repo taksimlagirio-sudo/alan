@@ -41,7 +41,7 @@ function olc(d) {
         A.onN++; const dd = Math.hypot(k.T.bx[u] / 100 - p.to[0] / 100, k.T.by[u] / 100 - p.to[1] / 100); A.onUz += dd; if (dd <= 3) A.onYakin++;
         if (hz(Math.max(0, u - 3), h) > .15) { A.kosAl++; let dur = false; for (let w = u; w < u + 20 && k.T.hold[w] === h; w++) if (hz(w, h) < .05) { dur = true; break; } if (dur) A.kosDur++; if (hz(u + 10, h) > .15 && hz(u + 30, h) > .12) A.kosDevam++;
           const dks = k.dk ? k.dk.find(x => x >= u) : (k.karar.find(x => x.kim === h && x.t >= u) || {}).t; const ot = k.ot ? k.ot.find(([x, i]) => i === h && x >= u - 2 && x <= u + 2) : null;
-          if (ot) A.ilkOT++; else if (dks != null && dks < u + 60) { A.ilkK += dks - u; A.ilkKN++; } } }
+          if (ot) A.ilkOT++; if (dks != null && dks < u + 60) { A.ilkK += dks - u; A.ilkKN++; } } }
       for (let t = 0; t < L; t++) { const h = k.T.hold[t]; if (h === 255 || k.oyuncular[h].rol === 'Bekçi') continue; A.tasT++; if (hz(t, h) > .15) A.tasKos++; } }
     // Bekçi pas kovalaması (rakibin göndermesine gidiş hariç) ve sonucu
     for (const bi of [0, 1].map(bekci)) { const bt = tm(bi); let t = 0;
@@ -85,7 +85,7 @@ function olc(d) {
     'Top kazanınca 3 sn içinde gönderme %': [p(A.kaz3gon, A.kaz3), 1], 'Top kazanınca 5 sn içinde sayı / dk': [A.kontraSay / A.dk, 0], 'Geçiş "git" tik / dk': [A.git / A.dk, 1],
     'Baskı altında "tut": akıl kayıp % (n)': [p(A.hwKay, A.hwN), 0, A.hwN || null], 'Baskı altında "tut": gerçek kayıp % (aynı anlar)': [p(A.hwGer, A.hwN), 0],
     'Önüne pas: hedefin ±3 içinde alınan %': [p(A.onYakin, A.onN), 1], 'Önüne pas: alış–hedef uzaklık': [A.onUz / A.onN, -1], 'Koşarak alıp koşmaya devam eden %': [p(A.kosDevam, A.kosAl), 1], 'Koşarak alıp ilk 20 tikte duran %': [p(A.kosDur, A.kosAl), -1],
-    'Koşarak alınca ilk karara kadar (tik; tek dokunuş hariç)': [A.ilkKN ? A.ilkK / A.ilkKN : null, -1], 'Koşarak alınca tek dokunuş kararı %': [A.ilkOT ? p(A.ilkOT, A.kosAl) : null, 0], 'Taşıyıcı topla koşuyor %': [p(A.tasKos, A.tasT), 1],
+    'Koşarak alınca ilk karara kadar (tik)': [A.ilkKN ? A.ilkK / A.ilkKN : null, -1], 'Taşıyıcı topla koşuyor %': [p(A.tasKos, A.tasT), 1],
     'Her an duran hücumcu': [A.hucDur / A.durN, -1], 'Uzun tutuşta 1 sn+ duran hücumcu': [A.uzunDur / A.durN, -1] } };
 }
 
