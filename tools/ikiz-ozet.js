@@ -1,0 +1,11 @@
+// gonder-ikiz.js çıktılarını özetler: mesafe dilimine göre aklın kararındaki tahmin (Pk), aynı topla akıl, aynı topla maç kopyası;
+// maç kopyasında göndermenin nasıl bittiği; tek iz çiftinde Bekçi'nin topa en yakın mesafesi ve o ana kadar yürüdüğü yol.
+const fs = require('fs'); const R = []; for (const d of process.argv.slice(2)) for (const f of fs.readdirSync(d).filter(f => f.endsWith('.json'))) R.push(...JSON.parse(fs.readFileSync(d + '/' + f)).R);
+const ort = (A, f) => A.length ? A.reduce((s, r) => s + f(r), 0) / A.length : NaN, yz = x => (100 * x).toFixed(1);
+const yakin = iz => { if (!iz || !iz.length) return null; let b = 1e9, j = 0; iz.forEach((p, i) => { if (p[2] == null) return; const d = Math.hypot(p[0] - p[2], p[1] - p[3]); if (d < b) { b = d; j = i; } }); const yol = Math.hypot(iz[j][0] - iz[0][0], iz[j][1] - iz[0][1]); return { d: b, t: j, yol }; };
+console.log('dilim | n | kararda Pk | aynı top: akıl | aynı top: maç | maçta bitiş (bekçi tuttu / rakip / biz / serbest / gol)');
+for (const [a, b] of [[0, 15], [15, 25], [25, 99], [0, 99]]) { const A = R.filter(r => r.mes >= a && r.mes < b && r.Pk != null); const S = {}; for (const r of A) for (const [k, v] of Object.entries(r.son)) S[k] = (S[k] || 0) + v; const tot = Object.values(S).reduce((x, y) => x + y, 0) || 1;
+  console.log(`${a}–${b === 99 ? '+' : b} | ${A.length} | %${yz(ort(A, r => r.Pk))} | %${yz(ort(A, r => r.akilPk))} | %${yz(ort(A, r => r.gercekP))} | ${['bekci', 'rakip', 'biz', 'serbest', 'sure', 'karsi'].map(k => k + ' %' + yz((S[k] || 0) / tot)).join(' · ')} · gol %${yz(ort(A, r => r.gercekP))}`); }
+console.log('\nTek iz çifti (aynı top): Bekçi topa en yakın mesafe, o ana kadar Bekçi yolu (birim), o an (tik)');
+for (const [a, b] of [[0, 15], [15, 25], [25, 99]]) { const A = R.filter(r => r.mes >= a && r.mes < b).map(r => ({ r, A: yakin(r.izA), G: yakin(r.izG) })).filter(x => x.A && x.G);
+  console.log(`${a}–${b === 99 ? '+' : b} | n ${A.length} | akıl: mesafe ${ort(A, x => x.A.d).toFixed(2)} yol ${ort(A, x => x.A.yol).toFixed(2)} tik ${ort(A, x => x.A.t).toFixed(1)} | maç: mesafe ${ort(A, x => x.G.d).toFixed(2)} yol ${ort(A, x => x.G.yol).toFixed(2)} tik ${ort(A, x => x.G.t).toFixed(1)}`); }
