@@ -1,0 +1,16 @@
+yakın değerli karar: 1298 (sür seçilen 822, fake/tut seçilen 476)
+hız grubu              seçilen   n    2 sn sonra top bizde   ilerleme (br)   3 sn gönderme   5 sn sayı   aklın farkı
+yavaş (< 0,08)       sür         97   % 61.9                  1.5          % 55.7        % 9.3    0.0080
+yavaş (< 0,08)       fake/tut    76   % 63.2                 -0.8          % 50.0        % 7.9    0.0083
+orta (0,08–0,18)     sür         77   % 85.7                 15.9          % 40.3        %14.3    0.0064
+orta (0,08–0,18)     fake/tut    56   % 73.2                 15.5          % 41.1        % 8.9    0.0050
+hızlı (> 0,18)       sür        648   % 74.8                 15.6          % 46.3        % 8.5    0.0040
+hızlı (> 0,18)       fake/tut   344   % 71.5                 11.4          % 37.8        % 9.0    0.0051
+
+önü (rakip) uzaklığına göre, hızlı taşıyıcı:
+  rakip < 4  sür       n  300 · bizde %71.7 · ilerleme 14.7 · gönderme %48.3
+  rakip < 4  fake/tut  n  152 · bizde %66.4 · ilerleme 9.8 · gönderme %35.5
+  4–8        sür       n  173 · bizde %78.6 · ilerleme 15.5 · gönderme %41.0
+  4–8        fake/tut  n   98 · bizde %69.4 · ilerleme 9.2 · gönderme %34.7
+  8+         sür       n  175 · bizde %76.6 · ilerleme 17.3 · gönderme %48.0
+  8+         fake/tut  n   94 · bizde %81.9 · ilerleme 16.4 · gönderme %44.7
