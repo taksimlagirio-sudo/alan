@@ -109,6 +109,12 @@
       K.govde(b, ox, oy, seen, c => c.role === 'Bekçi' || (c === b.from && (b.t || 0) < 4) || (q && c.team === h.team && c === (qq || q)), BODY_R, BODY_E); /* pas denemesinde de süpürmeli gövde (maçla aynı) */
     }
     const X = { x: b.x, y: b.y };
+    if (hit && hit.role === 'Bekçi' && hit.team !== h.team && !self.ALAN_BEK_HAYAL_ESKI && depth < 3) {
+      // v5 · Bekçi teması maçtaki kuralın kendisiyle (core.contact): uzanma, tutma zarı, delme, çelme yönü. Eskiden burada ayrı bir tahmin vardı (tut / delip geçer / sekip kime düşer) ve maçtaki Bekçi değiştikçe ondan kopuyordu (gönderme iyimserliği)
+      const b2 = K.makeBall({ x: b.x, y: b.y, vx: b.vx, vy: b.vy, team: b.team, ch: b.ch, from: b.from, recv: b.recv }); b2.e = b.e; b2.alive = b.alive; b2.t = b.t; b2.tp = b.tp; b2.gon = b.gon; b2.cds = new Map(b.cds || []);
+      const r0 = K.contact(b2, seen, null, D._imR || Math.random, b.x - b.vx, b.y - b.vy); if (!r0 || r0.took || b2.done) return { m: 0, o: 1, k: 0, x: b.x, y: b.y };
+      const R3 = simOne(K, h, b2, seen, null, depth + 1, null, cache); return { m: R3.m, o: R3.o, k: R3.k, x: b.x, y: b.y };
+    }
     if (hit) {
       const P = K.ctrlP(b, hit, seen);
       // kontrol hatası: arkadaşın söndüremediği hız Çekirdeği geliş yönünde sürdürür (maçtaki kural); oradan oyun sürer (kaba sabit .4 / .6 yerine)
@@ -126,7 +132,7 @@
   // Kafada simülasyon. Dönüş: P (arkadaş alır), Pk (Kuyu), Pl (rakip alır), end
   function imagine(h, src, b0, rnd, trials, q, to) {
     const K = C(), cache = {}; trials = trials || D.trials; let mate = 0, kuyu = 0, opp = 0, ex = 0, ey = 0; const err = (20 - (self.ALAN_OZ(h, 'gorus'))) * D.errOk;
-    const pe = h.id >= 0 ? pasEk(h, src) : 1;
+    const pe = h.id >= 0 ? pasEk(h, src) : 1; D._imR = rnd; /* Bekçi temasının zarı denemenin kendi zarıyla */
     for (let k = 0; k < trials; k++) { D._jitS = rnd(); /* her denemede rakiplerin tepkisi biraz farklı: kimse rakibin bir sonraki hareketini kesin bilemez (foto finiş yarışları ~%50 çıkar) */
       const v = applyError(h, b0, rnd, (D._ot || 1) * pe), o0 = h.id >= 0 && b0.x === h.x && b0.y === h.y ? (cs => ({ x: h.x + cs.ux * K.Q.body, y: h.y + cs.uy * K.Q.body }))(coreSide(h)) : b0 /* v5 · Çekirdek maçtaki gibi gövdenin kenarından çıkar */, b = K.makeBall({ x: o0.x, y: o0.y, vx: v.vx, vy: v.vy, team: h.team, ch: b0.ch, from: h, recv: q || null });
       // Algı hatası rakip gövdelerinde her yöne; Bekçi'de sadece Kuyu–Çekirdek hattı boyunca (Bekçi'nin hep o hatta durduğunu herkes bilir, belirsiz olan ne kadar önde olduğudur)
