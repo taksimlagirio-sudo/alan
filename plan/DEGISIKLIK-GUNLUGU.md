@@ -2,6 +2,16 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Savunma: üç kural (main `8feae43`) — ölçülmedi, kullanıcı maçta deniyor
+Kaynak: kullanıcının iPad maçı (tohum 909623), görev kartlarıyla görülen anlar.
+- Boş top (`ALAN_BOS_TOP_ESKI`): rakip topa 6+ tik önce varacaksa topa koşulmaz; oyuncu işine (adamı, bölgesi) devam eder. Kendi kale önündeki kural ayrı. (00:41 Alp, Kaan topa çok daha yakınken topa koşuyordu.)
+- Arkada boş bırakma (`ALAN_ARKA_BOS_ESKI`): kapatacağı rakipten daha derinde, kendisinden başka kimsenin arkasında olmadığı rakip varsa kapatmaya gidilmez, kapatmada kalınmaz. (00:42 Alp, Kaan'ı bırakıp Mert'i kapatmaya çıkıyordu.)
+- Önde tutulan (`ALAN_ONDE_TUTULAN_ESKI`): arkadaki, bir arkadaşının kale tarafından tuttuğu rakibe çıkmaz; rakip o arkadaşı geçerse alır. (00:50 Mert, Ece'nin orta sahada tuttuğu Yıldırım'a çıkıyordu.)
+- Sayfa: tohum kutusu (Maç sekmesinde maç yokken ve üst çubukta; main `c000087`).
+
+## 16 Ekim 2026 · Çalışma: testleri kullanıcı yapar
+Kullanıcının kararı: Claude Code istenen kuralları uygular ve siteye koyar; ölçüm ve maç testi yapmaz. Mantık hatalarını kullanıcı maçta görüp bildirir. Her kural kendi bayrağıyla, tek tek geri alınabilir.
+
 ## 15 Ekim 2026 · Canlı sayfa: görev göstergesi (main `b34694c`)
 - Sahada bir oyuncuya dokununca kart açılır: ad, rol, motorun görev etiketi (ör. `bölge · Kaan`), düz Türkçe açıklaması, hedefine uzaklık. Sahada: seçilen oyuncunun halkası, hedefe kesik çizgi ve çarpı, bağlı olduğu rakibin kesik halkası. Aynı oyuncuya ya da boşa dokununca kapanır. Kart, oyuncunun karşı yarısında durur.
 - İşçi (`mac-isci.js`): kare 42'den 84 sayıya çıktı; 42–83 oyuncu başına görev sırası, hedef x, hedef y. Görev yazıları `kare` mesajında `is` dizisiyle bir kez gelir. Oynanışa etkisi yok (yalnız okuma).
