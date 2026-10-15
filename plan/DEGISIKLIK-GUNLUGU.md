@@ -2,6 +2,9 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Savunma: tehlike konumdan · `ALAN_ANLIK_YOL_ESKI` — ölçülmedi
+- Rakibin tehlikesi (`dng`) artık yalnız konum (kaleye yakınlık); anlık pas yolunun açıklığı çarpanı kalktı. Adam tutmak sürekli iş: yol kapalı diye rakip bırakılmaz. Etkiler: arkadakilerin adam seçimi, bölgede tehlikeli rakip çekimi, ortak atama (kapatma). (00:09 Deniz, Kartal–Volkan yolu kapalı diye Volkan'ı tutmuyordu.)
+
 ## 16 Ekim 2026 · Savunma: adamı olmayan arkadaki · `ALAN_ARKA_ALAN_ESKI` — ölçülmedi
 - "arkada · alan" artık topun 3 br önüne değil, top ile kale ortası arasındaki çizgide, en derindeki rakibin 2 br gerisine gider (ikinci boştaki 4 br daha geride; kaleden en az 6 br). (00:09 Deniz, Volkan yanındayken Kartal'a 40 br koşuyordu.)
 
