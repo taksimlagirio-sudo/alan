@@ -2,6 +2,9 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Savunma: hızlı eşleşme · `ALAN_HIZLI_ESLES_ESKI` — ölçülmedi
+- Arkadaki iki (üç) oyuncu derindeki rakipleri sırayla değil, en geç varanın da en erken varacağı şekilde paylaşır; gerekirse adam devredilir. Eski eşleşme %15'ten fazla yavaş değilse sürer. (00:03: Baran Ece'ye 19 br koşuyordu; Alp Kaan'ı Baran'a bırakıp Ece'ye gitmeliydi.)
+
 ## 16 Ekim 2026 · Savunma: üç kural (main `8feae43`) — ölçülmedi, kullanıcı maçta deniyor
 Kaynak: kullanıcının iPad maçı (tohum 909623), görev kartlarıyla görülen anlar.
 - Boş top (`ALAN_BOS_TOP_ESKI`): rakip topa 6+ tik önce varacaksa topa koşulmaz; oyuncu işine (adamı, bölgesi) devam eder. Kendi kale önündeki kural ayrı. (00:41 Alp, Kaan topa çok daha yakınken topa koşuyordu.)
