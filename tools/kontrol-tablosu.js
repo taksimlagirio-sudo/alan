@@ -7,7 +7,7 @@ function olc(d) {
   const A = { mac: 0, dk: 0, tik: 0, hs: 0, say: 0, gon: 0, gonSay: 0, pas: 0, pasTut: 0, kesme: 0, disari: 0,
     kov: 0, kovBiz: 0, sayYer: 0, yakinDirek: 0, dar: 0, darSay: 0, darYakin: 0, dirN: 0, dirUz: 0, uzGen: 0, uzGenSay: 0, yakGen: 0, yakGenSay: 0,
     kazBos: 0, kazDur: 0, verN: 0, verGeri: 0, baskiN: 0, tutSec: 0, tutKay: 0,
-    savT: 0, bosVar: 0, iki4: 0, kaz3: 0, kaz3gon: 0, git: 0, kontraSay: 0, hwN: 0, hwKay: 0, hwGer: 0, cift: 0, ciftArka: 0, holdT: 0, presYok: 0, hucDur: 0, uzunDur: 0, durN: 0 };
+    savT: 0, bosVar: 0, iki4: 0, kaz3: 0, kaz3gon: 0, git: 0, kontraSay: 0, hwN: 0, hwKay: 0, hwGer: 0, temVar: 0, temN: 0, temTut: 0, temKuyu: 0, temKuyuSay: 0, saySay: 0, sayDeg: 0, cift: 0, ciftArka: 0, holdT: 0, presYok: 0, hucDur: 0, uzunDur: 0, durN: 0 };
   for (const f of fs.readdirSync(d).filter(f => f.endsWith('.json.gz'))) {
     const k = oku(d + '/' + f), W = k.saha.W, H = k.saha.H, N = k.oyuncular.length, L = k.LEN, tm = i => k.oyuncular[i].takim;
     const X = (t, i) => k.P.x[t * N + i] / 100, Y = (t, i) => k.P.y[t * N + i] / 100, J = (t, i) => k.gorevler[k.P.job[t * N + i]], ileri = (t, x) => t === 0 ? x : W - x;
@@ -28,12 +28,14 @@ function olc(d) {
       if (a >= 60) { A.dar++; A.dirN++; A.dirUz += Math.hypot(X(t, bi) - (gx === 0 ? .5 : W - .5), Y(t, bi) - (sy < H / 2 ? H / 2 - 5 : H / 2 + 5)); }
       if (a >= 60 && a < 75 && m >= 25) { A.uzGen++; if (s) A.uzGenSay++; }
       if (a >= 60 && a < 75 && m < 15) { A.yakGen++; if (s) A.yakGenSay++; }
+      if (s && k.tem) { A.saySay++; const sn = k.olay.find((p, j) => j > oi && p.tur === 'sayi').t; if (k.tem.some(e => e.gon && e.t >= t && e.t <= sn)) A.sayDeg++; }
       if (!s) return; A.gonSay++; if (a >= 60) A.darSay++; if (hed <= 3) A.sayYer++;
       // yakın direk: gönderenin yarısından, Bekçi'nin dış tarafından giren
       let te = k.olay.find((p, j) => j > oi && p.tur === 'sayi').t; while (te > t && Math.abs(k.T.bx[te] / 100 - W / 2) < 1 && Math.abs(k.T.by[te] / 100 - H / 2) < 1) te--;
       const ey = k.T.by[te] / 100, by = Y(te, bi);
       if ((sy - H / 2) * (ey - H / 2) > 0 && Math.abs(ey - H / 2) > Math.abs(by - H / 2) * ((sy - H / 2) * (by - H / 2) > 0 ? 1 : -1)) { A.yakinDirek++; if (a >= 60) A.darYakin++; }
     });
+    if (k.tem) { A.temVar++; for (const e of k.tem) { if (!e.gon) continue; A.temN++; if (e.ovx == null) { A.temTut++; continue; } const gx = e.bek === 0 ? 0 : W, tt = Math.abs(e.ovx) > 1e-6 ? (gx - e.ox) / e.ovx : -1; if (tt > 0 && Math.abs(e.oy + e.ovy * tt - H / 2) <= 6) { A.temKuyu++; if (k.olay.some(o => o.tur === 'sayi' && o.t > e.t && o.t <= e.t + 60)) A.temKuyuSay++; } } }
     // Bekçi pas kovalaması (rakibin göndermesine gidiş hariç) ve sonucu
     for (const bi of [0, 1].map(bekci)) { const bt = tm(bi); let t = 0;
       while (t < L) { if (J(t, bi) !== 'kovala') { t++; continue; } const t0 = t; while (t < L && J(t, bi) === 'kovala') t++; if (t - t0 < 6) continue;
@@ -67,7 +69,7 @@ function olc(d) {
     'Pas / dk': [A.pas / A.dk, 0], 'Pas tutma %': [p(A.pasTut, A.pas), 1], 'Kesme / dk': [A.kesme / A.dk, 0], 'Hesap ms/tik': [1000 * A.hs / A.tik, -1],
     'Saha dışında Çekirdek (tik)': [A.disari, -1],
     'Bekçi pas kovalaması / dk': [A.kov / A.dk, -1], 'Bekçi kovaladığını kazanıyor %': [p(A.kovBiz, A.kov), 1], 'Sayılarda Bekçi yerinde %': [p(A.sayYer, A.gonSay), 1],
-    'Yakın direkten sayı / dk': [A.yakinDirek / A.dk, -1], 'Dar açı (60°+) gönderme başına sayı %': [p(A.darSay, A.dar), -1], 'Dar açıda Bekçi–yakın direk': [A.dirUz / A.dirN, -1],
+    'Yakın direkten sayı / dk': [A.yakinDirek / A.dk, -1], 'Sayılarda Bekçi topa değmiş %': [A.temVar ? p(A.sayDeg, A.saySay) : null, 1], 'Bekçi teması (gönderme): tuttu %': [A.temVar ? p(A.temTut, A.temN) : null, 0], 'Bekçi teması: Kuyu\'ya seken % (n)': [A.temVar ? p(A.temKuyu, A.temN) : null, -1, A.temVar ? A.temKuyu : null], 'Dar açı (60°+) gönderme başına sayı %': [p(A.darSay, A.dar), -1], 'Dar açıda Bekçi–yakın direk': [A.dirUz / A.dirN, -1],
     'Uzak geniş (25+, 60–75°) sayı % (n)': [p(A.uzGenSay, A.uzGen), -1, A.uzGen], 'Yakın geniş (<15, 60–75°) sayı % (n)': [p(A.yakGenSay, A.yakGen), -1, A.yakGen],
     'Kontra: önü boşken 12+ tik topla duran / dk': [A.kazDur / A.dk, -1], 'Pastan sonra geri koşan pasçı %': [p(A.verGeri, A.verN), -1],
     'Baskı altında "tut" seçimi %': [p(A.tutSec, A.baskiN), -1], '"Tut"tan sonra 1 sn\'de kayıp %': [p(A.tutKay, A.tutSec), -1],
