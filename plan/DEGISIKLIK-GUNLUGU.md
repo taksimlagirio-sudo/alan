@@ -2,6 +2,10 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Arkadakiler: buluşma noktası ve kale ağzı — ölçülmedi
+- `ALAN_BULUSMA_ESKI`: pas havadayken (sekmemiş) arkadakiler alıcının topla buluşacağı noktaya (flightRead) göre yer alır: adamı alıcıysa o noktanın kale tarafına; adamı yoksa kale ortasından o noktaya giden çizgide. (01:30 Alp, Ece'nin topu alacağı yerin değil topun uçtuğu köşenin tarafına koşuyordu.)
+- `ALAN_KALE_AGZI_ESKI`: savunmadaki derinlik (gD) x farkı değil kale ortasına uzaklık. Etkiler: arkadakilerin adam seçimi (derin rakip), adamı olmayan arkadakinin yeri, arkada boş bırakma, önde tutulan, tehlikedeki "arkasında boşluk".
+
 ## 16 Ekim 2026 · Pres: önce kale tarafı · `ALAN_KALE_TARAFI_ESKI` — ölçülmedi
 - İlk presçi rakiple kale arasında değilse topa girmez: rakibin 10 tik sonraki yerinin 2 br kale tarafına koşar; düz yol rakibin 2,5 br yakınından geçiyorsa yanından (3,5 br) dolaşır (görev "pres · kale tarafına"). Rakip kaleye presçinin hızının %90'ından hızlı gidiyorsa yanında, iç tarafta koşar ("pres · yanında"). Topa girme planı (direkt/dolaş/fake) yalnız kale tarafındayken ya da top açıkta ve 1,6 br yakındayken. "Kenara sıkıştır" sistemi eskisi gibi. (01:06 Volkan, Tuna'yı arkadan kovalıyordu.)
 
