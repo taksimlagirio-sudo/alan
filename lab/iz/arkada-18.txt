@@ -1,0 +1,341 @@
+kayıtla fark (birim): 0.004
+67.50 * Deniz→Rüzgâr | Mert→Şimşek         eşik 0.01 · Rüzgâr 0.028, Şimşek 0.018, Gökay 0.013, Ayaz 0.01, Taş 0.007, Bulut 0.006
+67.52 * Deniz→Şimşek | Mert→Gökay          eşik 0.006 · Şimşek 0.018, Gökay 0.013, Rüzgâr 0.009, Taş 0.007, Bulut 0.006, Ayaz 0.006
+67.53   Deniz→Şimşek | Mert→Gökay          eşik 0.006 · Şimşek 0.018, Gökay 0.013, Rüzgâr 0.009, Taş 0.007, Bulut 0.006, Ayaz 0.006
+67.55 * Deniz→Rüzgâr | Mert→Şimşek         eşik 0.01 · Rüzgâr 0.029, Şimşek 0.018, Gökay 0.013, Ayaz 0.01, Taş 0.007
+67.57   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.01 · Rüzgâr 0.03, Şimşek 0.019, Gökay 0.014, Ayaz 0.01, Taş 0.008
+67.58   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.011 · Rüzgâr 0.03, Şimşek 0.019, Gökay 0.014, Ayaz 0.01, Taş 0.008
+67.60   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.011 · Rüzgâr 0.031, Şimşek 0.019, Gökay 0.014, Ayaz 0.011, Taş 0.008
+67.62   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.011 · Rüzgâr 0.031, Şimşek 0.02, Gökay 0.014, Ayaz 0.011, Taş 0.008
+67.63   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.011 · Rüzgâr 0.032, Şimşek 0.02, Gökay 0.014, Ayaz 0.011, Taş 0.008
+67.65   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.011 · Rüzgâr 0.032, Şimşek 0.02, Gökay 0.015, Ayaz 0.011, Taş 0.008
+67.67 * Deniz→Şimşek | Mert→Gökay          eşik 0.007 · Şimşek 0.021, Gökay 0.015, Ayaz 0.011, Rüzgâr 0.01, Taş 0.008
+67.68   Deniz→Şimşek | Mert→Gökay          eşik 0.007 · Şimşek 0.021, Gökay 0.015, Ayaz 0.011, Rüzgâr 0.01, Taş 0.008
+67.70   Deniz→Şimşek | Mert→Gökay          eşik 0.007 · Şimşek 0.021, Gökay 0.015, Ayaz 0.011, Rüzgâr 0.01, Taş 0.007
+67.72   Deniz→Şimşek | Mert→Gökay          eşik 0.008 · Şimşek 0.021, Gökay 0.016, Ayaz 0.011, Rüzgâr 0.01, Taş 0.007
+67.73   Deniz→Şimşek | Mert→Gökay          eşik 0.008 · Şimşek 0.022, Gökay 0.016, Ayaz 0.011, Rüzgâr 0.011, Taş 0.007
+67.75   Deniz→Şimşek | Mert→Gökay          eşik 0.008 · Şimşek 0.022, Gökay 0.016, Ayaz 0.011, Rüzgâr 0.011, Taş 0.007
+67.77   Deniz→Şimşek | Mert→Gökay          eşik 0.008 · Şimşek 0.022, Gökay 0.017, Ayaz 0.011, Rüzgâr 0.011, Taş 0.007
+67.78   Deniz→Şimşek | Mert→Gökay          eşik 0.008 · Şimşek 0.023, Gökay 0.017, Ayaz 0.011, Rüzgâr 0.011, Taş 0.007
+67.80   Deniz→Şimşek | Mert→Gökay          eşik 0.008 · Şimşek 0.023, Gökay 0.017, Rüzgâr 0.011, Ayaz 0.011, Taş 0.007
+67.82   Deniz→Şimşek | Mert→Gökay          eşik 0.008 · Şimşek 0.023, Gökay 0.017, Rüzgâr 0.011, Ayaz 0.01, Taş 0.007
+67.83   Deniz→Şimşek | Mert→Gökay          eşik 0.008 · Şimşek 0.024, Gökay 0.017, Rüzgâr 0.012, Ayaz 0.009, Taş 0.007
+67.85   Deniz→Şimşek | Mert→Gökay          eşik 0.008 · Şimşek 0.024, Gökay 0.017, Rüzgâr 0.012, Ayaz 0.01, Taş 0.007
+67.87 * Deniz→Rüzgâr | Mert→Şimşek         eşik 0.014 · Rüzgâr 0.04, Şimşek 0.025, Gökay 0.018, Ayaz 0.014, Taş 0.007
+67.88   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.014 · Rüzgâr 0.04, Şimşek 0.025, Gökay 0.018, Ayaz 0.014, Taş 0.007
+67.90   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.014 · Rüzgâr 0.041, Şimşek 0.025, Gökay 0.018, Ayaz 0.014, Taş 0.007
+67.92   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.015 · Rüzgâr 0.042, Şimşek 0.026, Gökay 0.018, Ayaz 0.014, Taş 0.007
+67.93   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.015 · Rüzgâr 0.042, Şimşek 0.026, Gökay 0.018, Ayaz 0.015, Taş 0.007
+67.95 * Deniz→Şimşek | Mert→Rüzgâr         eşik 0.005 · Şimşek 0.014, Rüzgâr 0.013, Gökay 0.011, Taş 0.007, Ayaz 0.005
+67.97 * Deniz→Rüzgâr | Mert→Şimşek         eşik 0.015 · Rüzgâr 0.043, Şimşek 0.027, Gökay 0.018, Ayaz 0.015
+67.98   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.015 · Rüzgâr 0.044, Şimşek 0.027, Gökay 0.019, Ayaz 0.015
+68.00   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.015 · Rüzgâr 0.044, Şimşek 0.028, Gökay 0.019, Ayaz 0.016
+68.02   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.016 · Rüzgâr 0.045, Şimşek 0.028, Gökay 0.019, Ayaz 0.016
+68.03   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.016 · Rüzgâr 0.045, Şimşek 0.029, Gökay 0.019, Ayaz 0.016
+68.05   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.016 · Rüzgâr 0.046, Şimşek 0.029, Gökay 0.019, Ayaz 0.016
+68.07   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.016 · Rüzgâr 0.046, Şimşek 0.029, Gökay 0.019, Ayaz 0.016
+68.08   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.016 · Rüzgâr 0.047, Şimşek 0.03, Gökay 0.019, Ayaz 0.017
+68.10   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.016 · Rüzgâr 0.047, Şimşek 0.03, Gökay 0.019, Ayaz 0.017
+68.12   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.016 · Rüzgâr 0.047, Şimşek 0.031, Gökay 0.019, Ayaz 0.017
+68.13   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.047, Şimşek 0.031, Gökay 0.018, Ayaz 0.017
+68.15   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.047, Şimşek 0.032, Gökay 0.018, Ayaz 0.017
+68.17   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.047, Şimşek 0.032, Gökay 0.018, Ayaz 0.017
+68.18   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.033, Gökay 0.018, Ayaz 0.017
+68.20   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.033, Gökay 0.018, Ayaz 0.018
+68.22   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.034, Gökay 0.018, Ayaz 0.018
+68.23   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.034, Gökay 0.018, Ayaz 0.018
+68.25   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.035, Gökay 0.018, Ayaz 0.018
+68.27   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.035, Gökay 0.018, Ayaz 0.018
+68.28   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.036, Ayaz 0.018, Gökay 0.018
+68.30   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.036, Ayaz 0.018, Gökay 0.017
+68.32   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.037, Ayaz 0.018, Gökay 0.017
+68.33   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.037, Ayaz 0.018, Gökay 0.017
+68.35   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.038, Ayaz 0.018, Gökay 0.017
+68.37   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.038, Ayaz 0.017, Gökay 0.017
+68.38   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.039, Ayaz 0.017, Gökay 0.016
+68.40   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.039, Ayaz 0.017, Gökay 0.016
+68.42   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.04, Ayaz 0.017, Gökay 0.016
+68.43   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.041, Ayaz 0.017, Gökay 0.016
+68.45   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.041, Ayaz 0.017, Gökay 0.016
+68.47   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.042, Ayaz 0.017
+68.48   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.042, Ayaz 0.018
+68.50   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.043, Ayaz 0.018
+68.52   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.044, Ayaz 0.018
+68.53   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.044, Ayaz 0.018
+68.55   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.048, Şimşek 0.045, Ayaz 0.018
+68.57   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.047, Şimşek 0.045, Ayaz 0.018
+68.58   Deniz→Rüzgâr | Mert→Şimşek         eşik 0.017 · Rüzgâr 0.047, Şimşek 0.046, Ayaz 0.018
+68.60 * Deniz→Şimşek | Mert→Ayaz           eşik 0.007 · Şimşek 0.021, Ayaz 0.018, Rüzgâr 0.015
+68.62 * Deniz→Rüzgâr | Mert→Şimşek         eşik 0.016 · Rüzgâr 0.047, Şimşek 0.047
+68.63 * Deniz→Şimşek | Mert→Rüzgâr         eşik 0.017 · Şimşek 0.048, Rüzgâr 0.047
+68.65   Deniz→Şimşek | Mert→Rüzgâr         eşik 0.017 · Şimşek 0.048, Rüzgâr 0.047
+68.67   Deniz→Şimşek | Mert→Rüzgâr         eşik 0.017 · Şimşek 0.048, Rüzgâr 0.047, Ayaz 0.019
+68.68 * Mert→Şimşek                        eşik 0.017 · Şimşek 0.048, Rüzgâr 0.047, Ayaz 0.019
+68.70   Mert→Şimşek                        eşik 0.017 · Şimşek 0.048, Rüzgâr 0.047, Ayaz 0.019
+68.72   Mert→Şimşek                        eşik 0.017 · Şimşek 0.048, Rüzgâr 0.047
+68.73   Mert→Şimşek                        eşik 0.017 · Şimşek 0.047, Rüzgâr 0.047
+68.75 * Mert→Rüzgâr                        eşik 0.017 · Rüzgâr 0.048, Şimşek 0.047
+68.77   Mert→Rüzgâr                        eşik 0.017 · Rüzgâr 0.048, Şimşek 0.047
+68.78   Mert→Rüzgâr                        eşik 0.017 · Rüzgâr 0.049, Şimşek 0.046
+68.80   Mert→Rüzgâr                        eşik 0.017 · Rüzgâr 0.049, Şimşek 0.046
+68.82   Mert→Rüzgâr                        eşik 0.017 · Rüzgâr 0.05, Şimşek 0.045
+68.83   Mert→Rüzgâr                        eşik 0.018 · Rüzgâr 0.05, Şimşek 0.045
+68.85   Mert→Rüzgâr                        eşik 0.018 · Rüzgâr 0.051, Şimşek 0.044
+68.87   Mert→Rüzgâr                        eşik 0.018 · Rüzgâr 0.051, Şimşek 0.044
+68.88   Mert→Rüzgâr                        eşik 0.018 · Rüzgâr 0.052, Şimşek 0.043
+68.90   Mert→Rüzgâr                        eşik 0.018 · Rüzgâr 0.053, Şimşek 0.043
+68.92   Mert→Rüzgâr                        eşik 0.019 · Rüzgâr 0.053, Şimşek 0.042
+68.93   Mert→Rüzgâr                        eşik 0.019 · Rüzgâr 0.054, Şimşek 0.042
+68.95   Mert→Rüzgâr                        eşik 0.019 · Rüzgâr 0.055, Şimşek 0.041
+68.97   Mert→Rüzgâr                        eşik 0.019 · Rüzgâr 0.056, Şimşek 0.04
+68.98   Mert→Rüzgâr                        eşik 0.02 · Rüzgâr 0.056, Şimşek 0.04
+69.00   Mert→Rüzgâr                        eşik 0.02 · Rüzgâr 0.057, Şimşek 0.039
+69.02   Mert→Rüzgâr                        eşik 0.02 · Rüzgâr 0.057, Şimşek 0.039
+69.03   Mert→Rüzgâr                        eşik 0.02 · Rüzgâr 0.057, Şimşek 0.038
+69.05   Mert→Rüzgâr                        eşik 0.02 · Rüzgâr 0.058, Şimşek 0.038
+69.07   Mert→Rüzgâr                        eşik 0.02 · Rüzgâr 0.058, Şimşek 0.037
+69.08   Mert→Rüzgâr                        eşik 0.02 · Rüzgâr 0.058, Şimşek 0.037
+69.10   Mert→Rüzgâr                        eşik 0.02 · Rüzgâr 0.058
+69.12   Mert→Rüzgâr                        eşik 0.02 · Rüzgâr 0.057
+69.13   Mert→Rüzgâr                        eşik 0.02 · Rüzgâr 0.057
+69.15   Mert→Rüzgâr                        eşik 0.02 · Rüzgâr 0.057
+69.17   Mert→Rüzgâr                        eşik 0.02 · Rüzgâr 0.057
+69.18 * Deniz→Rüzgâr | Mert→alan           eşik 0.018 · Rüzgâr 0.052
+69.20 * Deniz→alan | Mert→alan             eşik 0 · 
+69.22   Deniz→alan | Mert→alan             eşik 0 · 
+69.23   Deniz→alan | Mert→alan             eşik 0 · 
+69.25   Deniz→alan | Mert→alan             eşik 0 · 
+69.27   Deniz→alan | Mert→alan             eşik 0 · 
+69.28   Deniz→alan | Mert→alan             eşik 0 · 
+69.30   Deniz→alan | Mert→alan             eşik 0 · 
+69.32   Deniz→alan | Mert→alan             eşik 0 · 
+69.33   Deniz→alan | Mert→alan             eşik 0 · 
+69.35 * Deniz→Rüzgâr | Mert→alan           eşik 0.02 · Rüzgâr 0.056
+69.37   Deniz→Rüzgâr | Mert→alan           eşik 0.02 · Rüzgâr 0.056
+69.38   Deniz→Rüzgâr | Mert→alan           eşik 0.02 · Rüzgâr 0.056
+69.40   Deniz→Rüzgâr | Mert→alan           eşik 0.019 · Rüzgâr 0.055
+69.42   Deniz→Rüzgâr | Mert→alan           eşik 0.019 · Rüzgâr 0.055
+69.43   Deniz→Rüzgâr | Mert→alan           eşik 0.019 · Rüzgâr 0.054
+69.45 * Deniz→alan | Mert→alan             eşik 0 · 
+69.47   Deniz→alan | Mert→alan             eşik 0 · 
+69.48   Deniz→alan | Mert→alan             eşik 0 · 
+69.50   Deniz→alan | Mert→alan             eşik 0 · 
+69.52   Deniz→alan | Mert→alan             eşik 0 · 
+69.53   Deniz→alan | Mert→alan             eşik 0 · 
+69.55   Deniz→alan | Mert→alan             eşik 0 · 
+69.57   Deniz→alan | Mert→alan             eşik 0 · 
+69.58   Deniz→alan | Mert→alan             eşik 0 · 
+69.60   Deniz→alan | Mert→alan             eşik 0 · 
+69.62   Deniz→alan | Mert→alan             eşik 0 · 
+69.63   Deniz→alan | Mert→alan             eşik 0 · 
+69.65   Deniz→alan | Mert→alan             eşik 0 · 
+69.67   Deniz→alan | Mert→alan             eşik 0 · 
+69.68   Deniz→alan | Mert→alan             eşik 0 · 
+69.70   Deniz→alan | Mert→alan             eşik 0 · 
+69.72   Deniz→alan | Mert→alan             eşik 0 · 
+69.73   Deniz→alan | Mert→alan             eşik 0 · 
+69.75   Deniz→alan | Mert→alan             eşik 0 · 
+69.77   Deniz→alan | Mert→alan             eşik 0 · 
+69.78 *                                    eşik 0 · 
+69.80                                      eşik 0 · 
+69.82 * Mert→alan                          eşik 0 · 
+69.83   Mert→alan                          eşik 0 · 
+69.85   Mert→alan                          eşik 0 · 
+69.87   Mert→alan                          eşik 0 · 
+69.88   Mert→alan                          eşik 0 · 
+69.90   Mert→alan                          eşik 0 · 
+69.92   Mert→alan                          eşik 0 · 
+69.93   Mert→alan                          eşik 0 · 
+69.95   Mert→alan                          eşik 0 · 
+69.97   Mert→alan                          eşik 0 · 
+69.98   Mert→alan                          eşik 0 · 
+70.00   Mert→alan                          eşik 0 · 
+70.02   Mert→alan                          eşik 0 · 
+70.03   Mert→alan                          eşik 0 · 
+70.05   Mert→alan                          eşik 0 · 
+70.07   Mert→alan                          eşik 0 · 
+70.08   Mert→alan                          eşik 0 · 
+70.10   Mert→alan                          eşik 0 · 
+70.12   Mert→alan                          eşik 0 · 
+70.13   Mert→alan                          eşik 0 · 
+70.15   Mert→alan                          eşik 0 · 
+70.17   Mert→alan                          eşik 0 · 
+70.18   Mert→alan                          eşik 0 · 
+70.20   Mert→alan                          eşik 0 · 
+70.22   Mert→alan                          eşik 0 · 
+70.23   Mert→alan                          eşik 0 · 
+70.25   Mert→alan                          eşik 0 · 
+70.27   Mert→alan                          eşik 0 · 
+70.28   Mert→alan                          eşik 0 · 
+70.30   Mert→alan                          eşik 0 · 
+70.32   Mert→alan                          eşik 0 · 
+70.33   Mert→alan                          eşik 0 · 
+70.35   Mert→alan                          eşik 0 · 
+70.37   Mert→alan                          eşik 0 · 
+70.38   Mert→alan                          eşik 0 · 
+70.40   Mert→alan                          eşik 0 · 
+70.42   Mert→alan                          eşik 0 · 
+70.43   Mert→alan                          eşik 0 · 
+70.45   Mert→alan                          eşik 0 · 
+70.47   Mert→alan                          eşik 0 · 
+70.48   Mert→alan                          eşik 0 · 
+70.50   Mert→alan                          eşik 0 · 
+70.52   Mert→alan                          eşik 0 · 
+70.53   Mert→alan                          eşik 0 · 
+70.55   Mert→alan                          eşik 0 · 
+70.57   Mert→alan                          eşik 0 · 
+70.58   Mert→alan                          eşik 0 · 
+70.60   Mert→alan                          eşik 0 · 
+70.62 * Mert→Rüzgâr                        eşik 0.038 · Rüzgâr 0.108
+70.63   Mert→Rüzgâr                        eşik 0.038 · Rüzgâr 0.109
+70.65   Mert→Rüzgâr                        eşik 0.039 · Rüzgâr 0.111
+70.67   Mert→Rüzgâr                        eşik 0.039 · Rüzgâr 0.112
+70.68   Mert→Rüzgâr                        eşik 0.039 · Rüzgâr 0.113
+70.70   Mert→Rüzgâr                        eşik 0.04 · Rüzgâr 0.114
+70.72   Mert→Rüzgâr                        eşik 0.04 · Rüzgâr 0.114
+70.73   Mert→Rüzgâr                        eşik 0.04 · Rüzgâr 0.114
+70.75   Mert→Rüzgâr                        eşik 0.04 · Rüzgâr 0.114
+70.77   Mert→Rüzgâr                        eşik 0.04 · Rüzgâr 0.114
+70.78   Mert→Rüzgâr                        eşik 0.04 · Rüzgâr 0.114
+70.80   Mert→Rüzgâr                        eşik 0.04 · Rüzgâr 0.113
+70.82   Mert→Rüzgâr                        eşik 0.04 · Rüzgâr 0.113
+70.83   Mert→Rüzgâr                        eşik 0.039 · Rüzgâr 0.112
+70.85   Mert→Rüzgâr                        eşik 0.039 · Rüzgâr 0.112
+70.87   Mert→Rüzgâr                        eşik 0.039 · Rüzgâr 0.112
+70.88   Mert→Rüzgâr                        eşik 0.039 · Rüzgâr 0.111
+70.90   Mert→Rüzgâr                        eşik 0.039 · Rüzgâr 0.111
+70.92 * Deniz→Rüzgâr | Mert→alan           eşik 0.012 · Rüzgâr 0.033
+70.93   Deniz→Rüzgâr | Mert→alan           eşik 0.012 · Rüzgâr 0.033
+70.95   Deniz→Rüzgâr | Mert→alan           eşik 0.012 · Rüzgâr 0.033
+70.97   Deniz→Rüzgâr | Mert→alan           eşik 0.012 · Rüzgâr 0.033
+70.98   Deniz→Rüzgâr | Mert→alan           eşik 0.012 · Rüzgâr 0.033
+71.00   Deniz→Rüzgâr | Mert→alan           eşik 0.012 · Rüzgâr 0.034
+71.02   Deniz→Rüzgâr | Mert→alan           eşik 0.012 · Rüzgâr 0.034
+71.03   Deniz→Rüzgâr | Mert→alan           eşik 0.012 · Rüzgâr 0.034
+71.05   Deniz→Rüzgâr | Mert→alan           eşik 0.012 · Rüzgâr 0.034
+71.07   Deniz→Rüzgâr | Mert→alan           eşik 0.012 · Rüzgâr 0.035
+71.08   Deniz→Rüzgâr | Mert→alan           eşik 0.012 · Rüzgâr 0.035
+71.10 * Deniz→alan | Mert→alan             eşik 0 · 
+71.12   Deniz→alan | Mert→alan             eşik 0 · 
+71.13   Deniz→alan | Mert→alan             eşik 0 · 
+71.15   Deniz→alan | Mert→alan             eşik 0 · 
+71.17 * Mert→alan                          eşik 0 · 
+71.18   Mert→alan                          eşik 0 · 
+71.20   Mert→alan                          eşik 0 · 
+71.22   Mert→alan                          eşik 0 · 
+71.23   Mert→alan                          eşik 0 · 
+71.25   Mert→alan                          eşik 0 · 
+71.27   Mert→alan                          eşik 0 · 
+71.28   Mert→alan                          eşik 0 · 
+71.30   Mert→alan                          eşik 0 · 
+71.32   Mert→alan                          eşik 0 · 
+71.33   Mert→alan                          eşik 0 · 
+71.35   Mert→alan                          eşik 0 · 
+71.37   Mert→alan                          eşik 0 · 
+71.38   Mert→alan                          eşik 0 · 
+71.40   Mert→alan                          eşik 0 · 
+71.42   Mert→alan                          eşik 0 · 
+71.43   Mert→alan                          eşik 0 · 
+71.45   Mert→alan                          eşik 0 · 
+71.47   Mert→alan                          eşik 0 · 
+71.48   Mert→alan                          eşik 0 · 
+71.50   Mert→alan                          eşik 0 · 
+71.52   Mert→alan                          eşik 0 · 
+71.53   Mert→alan                          eşik 0 · 
+71.55   Mert→alan                          eşik 0 · 
+71.57 * Deniz→Rüzgâr | Mert→alan           eşik 0.018 · Rüzgâr 0.05
+71.58 * Deniz→alan | Mert→alan             eşik 0 · 
+71.60   Deniz→alan | Mert→alan             eşik 0 · 
+71.62   Deniz→alan | Mert→alan             eşik 0 · 
+71.63   Deniz→alan | Mert→alan             eşik 0 · 
+71.65   Deniz→alan | Mert→alan             eşik 0 · 
+71.67   Deniz→alan | Mert→alan             eşik 0 · 
+71.68   Deniz→alan | Mert→alan             eşik 0 · 
+71.70   Deniz→alan | Mert→alan             eşik 0 · 
+71.72   Deniz→alan | Mert→alan             eşik 0 · 
+71.73   Deniz→alan | Mert→alan             eşik 0 · 
+71.75   Deniz→alan | Mert→alan             eşik 0 · 
+71.77   Deniz→alan | Mert→alan             eşik 0 · 
+71.78   Deniz→alan | Mert→alan             eşik 0 · 
+71.80   Deniz→alan | Mert→alan             eşik 0 · 
+71.82   Deniz→alan | Mert→alan             eşik 0 · 
+71.83   Deniz→alan | Mert→alan             eşik 0 · 
+71.85   Deniz→alan | Mert→alan             eşik 0 · 
+71.87   Deniz→alan | Mert→alan             eşik 0 · 
+71.88   Deniz→alan | Mert→alan             eşik 0 · 
+71.90   Deniz→alan | Mert→alan             eşik 0 · 
+71.92   Deniz→alan | Mert→alan             eşik 0 · 
+71.93   Deniz→alan | Mert→alan             eşik 0 · 
+71.95   Deniz→alan | Mert→alan             eşik 0 · 
+71.97   Deniz→alan | Mert→alan             eşik 0 · 
+71.98   Deniz→alan | Mert→alan             eşik 0 · 
+72.00   Deniz→alan | Mert→alan             eşik 0 · 
+72.02   Deniz→alan | Mert→alan             eşik 0 · 
+72.03   Deniz→alan | Mert→alan             eşik 0 · 
+72.05   Deniz→alan | Mert→alan             eşik 0 · 
+72.07   Deniz→alan | Mert→alan             eşik 0 · 
+72.08   Deniz→alan | Mert→alan             eşik 0 · 
+72.10   Deniz→alan | Mert→alan             eşik 0 · 
+72.12   Deniz→alan | Mert→alan             eşik 0 · 
+72.13   Deniz→alan | Mert→alan             eşik 0 · 
+72.15   Deniz→alan | Mert→alan             eşik 0 · 
+72.17   Deniz→alan | Mert→alan             eşik 0 · 
+72.18   Deniz→alan | Mert→alan             eşik 0 · 
+72.20   Deniz→alan | Mert→alan             eşik 0 · 
+72.22   Deniz→alan | Mert→alan             eşik 0 · 
+72.23   Deniz→alan | Mert→alan             eşik 0 · 
+72.25   Deniz→alan | Mert→alan             eşik 0 · 
+72.27   Deniz→alan | Mert→alan             eşik 0 · 
+72.28   Deniz→alan | Mert→alan             eşik 0 · 
+72.30   Deniz→alan | Mert→alan             eşik 0 · 
+72.32   Deniz→alan | Mert→alan             eşik 0 · 
+72.33   Deniz→alan | Mert→alan             eşik 0 · 
+72.35 * Deniz→Şimşek | Mert→alan           eşik 0.022 · Şimşek 0.061
+72.37   Deniz→Şimşek | Mert→alan           eşik 0.022 · Şimşek 0.063
+72.38   Deniz→Şimşek | Mert→alan           eşik 0.022 · Şimşek 0.064
+72.40   Deniz→Şimşek | Mert→alan           eşik 0.023 · Şimşek 0.065
+72.42   Deniz→Şimşek | Mert→alan           eşik 0.023 · Şimşek 0.067
+72.43   Deniz→Şimşek | Mert→alan           eşik 0.024 · Şimşek 0.068
+72.45   Deniz→Şimşek | Mert→alan           eşik 0.024 · Şimşek 0.069
+72.47   Deniz→Şimşek | Mert→alan           eşik 0.025 · Şimşek 0.071
+72.48   Deniz→Şimşek | Mert→alan           eşik 0.025 · Şimşek 0.072
+72.50   Deniz→Şimşek | Mert→alan           eşik 0.026 · Şimşek 0.074
+72.52   Deniz→Şimşek | Mert→alan           eşik 0.026 · Şimşek 0.075
+72.53   Deniz→Şimşek | Mert→alan           eşik 0.027 · Şimşek 0.077
+72.55   Deniz→Şimşek | Mert→alan           eşik 0.027 · Şimşek 0.078
+72.57   Deniz→Şimşek | Mert→alan           eşik 0.028 · Şimşek 0.08
+72.58   Deniz→Şimşek | Mert→alan           eşik 0.028 · Şimşek 0.081
+72.60   Deniz→Şimşek | Mert→alan           eşik 0.029 · Şimşek 0.083
+72.62   Deniz→Şimşek | Mert→alan           eşik 0.03 · Şimşek 0.085
+72.63   Deniz→Şimşek | Mert→alan           eşik 0.03 · Şimşek 0.086
+72.65   Deniz→Şimşek | Mert→alan           eşik 0.031 · Şimşek 0.088
+72.67   Deniz→Şimşek | Mert→alan           eşik 0.031 · Şimşek 0.09
+72.68   Deniz→Şimşek | Mert→alan           eşik 0.032 · Şimşek 0.092
+72.70   Deniz→Şimşek | Mert→alan           eşik 0.033 · Şimşek 0.094
+72.72   Deniz→Şimşek | Mert→alan           eşik 0.033 · Şimşek 0.096
+72.73   Deniz→Şimşek | Mert→alan           eşik 0.034 · Şimşek 0.098
+72.75   Deniz→Şimşek | Mert→alan           eşik 0.035 · Şimşek 0.1
+72.77   Deniz→Şimşek | Mert→alan           eşik 0.036 · Şimşek 0.102
+72.78   Deniz→Şimşek | Mert→alan           eşik 0.036 · Şimşek 0.104
+72.80   Deniz→Şimşek | Mert→alan           eşik 0.072 · Şimşek 0.206
+72.82   Deniz→Şimşek | Mert→alan           eşik 0.074 · Şimşek 0.212
+72.83   Deniz→Şimşek | Mert→alan           eşik 0.077 · Şimşek 0.22
+72.85   Deniz→Şimşek | Mert→alan           eşik 0.079 · Şimşek 0.226
+72.87   Deniz→Şimşek | Mert→alan           eşik 0.082 · Şimşek 0.235
+72.88   Deniz→Şimşek | Mert→alan           eşik 0.085 · Şimşek 0.242
+72.90   Deniz→Şimşek | Mert→alan           eşik 0.088 · Şimşek 0.251
+72.92   Deniz→Şimşek | Mert→alan           eşik 0.092 · Şimşek 0.262
+72.93   Deniz→Şimşek | Mert→alan           eşik 0.095 · Şimşek 0.271
+72.95   Deniz→Şimşek | Mert→alan           eşik 0.099 · Şimşek 0.283
+72.97   Deniz→Şimşek | Mert→alan           eşik 0.102 · Şimşek 0.292
+72.98   Deniz→Şimşek | Mert→alan           eşik 0.104 · Şimşek 0.299
+73.00   Deniz→Şimşek | Mert→alan           eşik 0.106 · Şimşek 0.302
+73.12   Deniz→Şimşek | Mert→alan           eşik 0.172 · Şimşek 0.491
+73.13   Deniz→Şimşek | Mert→alan           eşik 0.174 · Şimşek 0.498
+73.15   Deniz→Şimşek | Mert→alan           eşik 0.177 · Şimşek 0.506
+73.17   Deniz→Şimşek | Mert→alan           eşik 0.18 · Şimşek 0.514
+73.18   Deniz→Şimşek | Mert→alan           eşik 0.183 · Şimşek 0.522
+73.20   Deniz→Şimşek | Mert→alan           eşik 0.185 · Şimşek 0.53
+73.22   Deniz→Şimşek | Mert→alan           eşik 0.188 · Şimşek 0.538
+73.23   Deniz→Şimşek | Mert→alan           eşik 0.191 · Şimşek 0.546
+73.25   Deniz→Şimşek | Mert→alan           eşik 0.194 · Şimşek 0.554

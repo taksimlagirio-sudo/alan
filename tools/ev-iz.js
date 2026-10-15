@@ -1,0 +1,9 @@
+// Ev (takım şekli) izi: maçı birebir yeniden oynatır; her tikte bir takımın saha oyuncularının evi (slotBase), hedefi ve konumu.
+// Kullanım: node tools/ev-iz.js <motor> <senaryo> <takım> <çıktı.json>
+const { kur } = require('./kurulum'), fs = require('fs'); const [dir, sS, tS, out] = process.argv.slice(2), T = +tS;
+const { m, adim, g } = kur(dir, +sS, 0, { 'shape.js': [["for (const p of ps) if (!chase.has(p) && p !== h) base.set(p, p.role === 'Bekçi' ? bekci(p, E, m) : slotBase(m, p, E, p.team === att));", "for (const p of ps) if (!chase.has(p) && p !== h) base.set(p, p.role === 'Bekçi' ? bekci(p, E, m) : slotBase(m, p, E, p.team === att)); if (self.__ev && !m._lite) self.__ev(m, att, base, E);"]] });
+const ids = m.ps.filter(p => p.team === T && p.role !== 'Bekçi').map(p => p.id), L = m.len || 7200; const R = { ids, ad: ids.map(id => m.ps.find(p => p.id === id).name), att: new Int8Array(L + 2), ev: new Int16Array((L + 2) * ids.length * 2).fill(-32768), E: new Int16Array((L + 2) * 2) };
+let cur = null; g.__ev = (mm, att, base, E) => { if (mm !== m) return; cur = { att, base, E }; };
+while (!m.over && m.tick < L) { cur = null; adim(); const t = m.tick; if (!cur) continue; R.att[t] = cur.att; R.E[t * 2] = Math.round(cur.E.x * 100); R.E[t * 2 + 1] = Math.round(cur.E.y * 100);
+  ids.forEach((id, j) => { const p = m.ps.find(q => q.id === id), b = cur.base.get(p); if (b) { R.ev[(t * ids.length + j) * 2] = Math.round(b.x * 100); R.ev[(t * ids.length + j) * 2 + 1] = Math.round(b.y * 100); } }); }
+const b64 = a => Buffer.from(a.buffer).toString('base64'); fs.writeFileSync(out, JSON.stringify({ ids: R.ids, ad: R.ad, att: b64(R.att), ev: b64(R.ev), E: b64(R.E) })); console.log('bitti', m.tick, m.score);
