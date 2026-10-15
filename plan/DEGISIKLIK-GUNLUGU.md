@@ -2,6 +2,14 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Hücum: kontra ve riskli oyun (beş kural) — ölçülmedi
+Kaynak: 01:14–01:16 Fırtına kontrası (Yıldırım keser, Volkan geri Alp'e, Alp→Baran→Alp; Kartal ve Volkan koşarken).
+1. `ALAN_KONTRA_SURE_ESKI`: kontra (m.gc) rakibin dağınıklığını topa göre değil en öndeki oyuncumuza göre ölçer (rakibin kaç saha oyuncusu onunla kendi kalesi arasında, eşik 4); en çok 240 tik. Önce: tek geri pas kontrayı kalıcı bitiriyordu.
+2. `ALAN_KONTRA_TEMPO_ESKI`: kontrada tempo ödülü kısa geri/yan pasa verilmez; öne (6+ br) pasa verilir (D.cevTempo × 0,5 × ilerleme/20 × P). Not: cevTempo küçük (0,025), etkisi küçük.
+3. `ALAN_RISK_KAZANC_ESKI`: ileri pasın (6+ br, pozitif değerli) değeri × (1 + (risk − 0,5) × 0,8). Risk 0,8 → ×1,24; kontrada risk 1 → ×1,4.
+4. `ALAN_DAGINIK_ESKI`: V (yer değeri) × rakip dağınıklığı: noktayla rakip kalesi arasında 0 saha oyuncusu ×1,6 · 1 ×1,3 · 2 ×1,1. Kayıp tarafı (Vo) da aynı ölçüyle.
+5. `ALAN_KOSUCU_PAS_ESKI`: buluşma pası (zip66'da herkese kapatılmıştı) görevi "…koşu…" olan arkadaşa açık: koşucunun varacağı noktaya önüne pas.
+
 ## 16 Ekim 2026 · Savunma: tehlike ölçüsü · `ALAN_TEHLIKE_ESKI` — ölçülmedi
 - Rakibin tehlikesi = gittiği yer (1 sn sonraki konumunun kaleye yakınlık/merkez tehlikesi) × topun ona ulaşması (topa uzaklık 15 br üstünde azalır, en az ×0,45; pas yolunun anlık açıklığına bakılmaz) × arkasında boşluk (kale tarafında 10 br yanında savunmacı yoksa ×1,3) × özellikleri (Gönderme ve Hız, ×0,7–1,4).
 - Kullanıldığı yerler: arkadakilerin adam seçimi, bölgede tehlikeli rakip çekimi, ortak atama (kapatma).
