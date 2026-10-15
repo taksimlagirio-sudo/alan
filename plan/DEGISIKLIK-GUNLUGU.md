@@ -2,6 +2,11 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Pas: koşunun önüne · `ALAN_ONUNE_KOSU_ESKI` — ölçülmedi
+- Buluşma pası kaleye doğru koşan (ileri hız > 0,08) her arkadaşa da düşünülür (önce yalnız görevi "…koşu…" olana).
+- "Önüne" (hat arama, pas çizgisine dik ±3 br) pası koşan alıcıda, topun varış süresince (L / 1,1 tik) alıcının gideceği yol kadar (en çok 20 br) ileri kaydırılır. (01:06 Efe → Yıldırım: top koşunun arkasına düştü, Deniz araya girdi; karar kartında 0,202 · %99.)
+- Not: aynı anda Efe'nin kararında "tut 0,5 sn bekle" 0,162, üç "sür" 0,069 (aynı değer) — sürmenin değeri ayrıca incelenecek.
+
 ## 16 Ekim 2026 · Kapatma bölgede kalır · `ALAN_KAPATMA_BOLGE_ESKI` — ölçülmedi
 - Arkadakiler (süpürücüler, sweep) ortak atamada kapatmaya aday değil; kapatma bağlılığında (top birindeyken ve havadayken) da kalmazlar. Diğerleri kapatmaya ancak kapatma noktası (pas yolu noktası) kendi bölgesinin içindeyse (evden S.zoneR + Yeralma × S.zoneOk) gider. Markaj talimatı ve pres ayrı. (00:01 Alp, en arkadan 32 br öne Cansu'nun pas yoluna çıkıyordu; Ece ve Kaan arkada boş.)
 - Karar kartı: görev kartında top sahibinin son kararı (en iyi 4 seçenek, değer, ihtimal) (main `fe5839f`).
