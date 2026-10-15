@@ -7,7 +7,7 @@ function olc(d) {
   const A = { mac: 0, dk: 0, tik: 0, hs: 0, say: 0, gon: 0, gonSay: 0, pas: 0, pasTut: 0, kesme: 0, disari: 0,
     kov: 0, kovBiz: 0, sayYer: 0, yakinDirek: 0, dar: 0, darSay: 0, darYakin: 0, dirN: 0, dirUz: 0, uzGen: 0, uzGenSay: 0, yakGen: 0, yakGenSay: 0,
     kazBos: 0, kazDur: 0, verN: 0, verGeri: 0, baskiN: 0, tutSec: 0, tutKay: 0,
-    savT: 0, bosVar: 0, iki4: 0, kaz3: 0, kaz3gon: 0, git: 0, kontraSay: 0, hwN: 0, hwKay: 0, hwGer: 0, temVar: 0, temN: 0, temTut: 0, temKuyu: 0, temKuyuSay: 0, saySay: 0, sayDeg: 0, cift: 0, ciftArka: 0, holdT: 0, presYok: 0, hucDur: 0, uzunDur: 0, durN: 0 };
+    savT: 0, bosVar: 0, iki4: 0, kaz3: 0, kaz3gon: 0, git: 0, kontraSay: 0, hwN: 0, hwKay: 0, hwGer: 0, temVar: 0, onN: 0, onYakin: 0, onUz: 0, kosAl: 0, kosDevam: 0, kosDur: 0, ilkK: 0, ilkKN: 0, ilkOT: 0, tasT: 0, tasKos: 0, temN: 0, temTut: 0, temKuyu: 0, temKuyuSay: 0, saySay: 0, sayDeg: 0, cift: 0, ciftArka: 0, holdT: 0, presYok: 0, hucDur: 0, uzunDur: 0, durN: 0 };
   for (const f of fs.readdirSync(d).filter(f => f.endsWith('.json.gz'))) {
     const k = oku(d + '/' + f), W = k.saha.W, H = k.saha.H, N = k.oyuncular.length, L = k.LEN, tm = i => k.oyuncular[i].takim;
     const X = (t, i) => k.P.x[t * N + i] / 100, Y = (t, i) => k.P.y[t * N + i] / 100, J = (t, i) => k.gorevler[k.P.job[t * N + i]], ileri = (t, x) => t === 0 ? x : W - x;
@@ -36,6 +36,13 @@ function olc(d) {
       if ((sy - H / 2) * (ey - H / 2) > 0 && Math.abs(ey - H / 2) > Math.abs(by - H / 2) * ((sy - H / 2) * (by - H / 2) > 0 ? 1 : -1)) { A.yakinDirek++; if (a >= 60) A.darYakin++; }
     });
     if (k.tem) { A.temVar++; for (const e of k.tem) { if (!e.gon) continue; A.temN++; if (e.ovx == null) { A.temTut++; continue; } const gx = e.bek === 0 ? 0 : W, tt = Math.abs(e.ovx) > 1e-6 ? (gx - e.ox) / e.ovx : -1; if (tt > 0 && Math.abs(e.oy + e.ovy * tt - H / 2) <= 6) { A.temKuyu++; if (k.olay.some(o => o.tur === 'sayi' && o.t > e.t && o.t <= e.t + 60)) A.temKuyuSay++; } } }
+    { const hz = (t, i) => Math.hypot(k.P.vx[t * N + i], k.P.vy[t * N + i]) / 1000;
+      for (const p of k.pas) { if (p.tur !== 'önüne' || p.alici == null || !p.to) continue; let u = p.t + 1; while (u < L && k.T.hold[u] === 255) u++; if (u >= L - 40 || k.T.hold[u] !== p.alici) continue; const h = p.alici;
+        A.onN++; const dd = Math.hypot(k.T.bx[u] / 100 - p.to[0] / 100, k.T.by[u] / 100 - p.to[1] / 100); A.onUz += dd; if (dd <= 3) A.onYakin++;
+        if (hz(Math.max(0, u - 3), h) > .15) { A.kosAl++; let dur = false; for (let w = u; w < u + 20 && k.T.hold[w] === h; w++) if (hz(w, h) < .05) { dur = true; break; } if (dur) A.kosDur++; if (hz(u + 10, h) > .15 && hz(u + 30, h) > .12) A.kosDevam++;
+          const dks = k.dk ? k.dk.find(x => x >= u) : (k.karar.find(x => x.kim === h && x.t >= u) || {}).t; const ot = k.ot ? k.ot.find(([x, i]) => i === h && x >= u - 2 && x <= u + 2) : null;
+          if (ot) A.ilkOT++; else if (dks != null && dks < u + 60) { A.ilkK += dks - u; A.ilkKN++; } } }
+      for (let t = 0; t < L; t++) { const h = k.T.hold[t]; if (h === 255 || k.oyuncular[h].rol === 'Bekçi') continue; A.tasT++; if (hz(t, h) > .15) A.tasKos++; } }
     // Bekçi pas kovalaması (rakibin göndermesine gidiş hariç) ve sonucu
     for (const bi of [0, 1].map(bekci)) { const bt = tm(bi); let t = 0;
       while (t < L) { if (J(t, bi) !== 'kovala') { t++; continue; } const t0 = t; while (t < L && J(t, bi) === 'kovala') t++; if (t - t0 < 6) continue;
@@ -77,6 +84,8 @@ function olc(d) {
     '  bunlarda iki kişi "arkada" / dk': [A.ciftArka / A.dk, -1], 'Taşıyıcıya baskı yok (rakip yarısı) %': [p(A.presYok, A.holdT), -1], 'Topsuz rakipte 4 br içinde 2 savunmacı (bütün saha) / dk': [A.iki4 / A.dk, -1],
     'Top kazanınca 3 sn içinde gönderme %': [p(A.kaz3gon, A.kaz3), 1], 'Top kazanınca 5 sn içinde sayı / dk': [A.kontraSay / A.dk, 0], 'Geçiş "git" tik / dk': [A.git / A.dk, 1],
     'Baskı altında "tut": akıl kayıp % (n)': [p(A.hwKay, A.hwN), 0, A.hwN || null], 'Baskı altında "tut": gerçek kayıp % (aynı anlar)': [p(A.hwGer, A.hwN), 0],
+    'Önüne pas: hedefin ±3 içinde alınan %': [p(A.onYakin, A.onN), 1], 'Önüne pas: alış–hedef uzaklık': [A.onUz / A.onN, -1], 'Koşarak alıp koşmaya devam eden %': [p(A.kosDevam, A.kosAl), 1], 'Koşarak alıp ilk 20 tikte duran %': [p(A.kosDur, A.kosAl), -1],
+    'Koşarak alınca ilk karara kadar (tik; tek dokunuş hariç)': [A.ilkKN ? A.ilkK / A.ilkKN : null, -1], 'Koşarak alınca tek dokunuş kararı %': [A.ilkOT ? p(A.ilkOT, A.kosAl) : null, 0], 'Taşıyıcı topla koşuyor %': [p(A.tasKos, A.tasT), 1],
     'Her an duran hücumcu': [A.hucDur / A.durN, -1], 'Uzun tutuşta 1 sn+ duran hücumcu': [A.uzunDur / A.durN, -1] } };
 }
 
