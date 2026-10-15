@@ -2,6 +2,9 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Savunma: adamı olmayan arkadaki · `ALAN_ARKA_ALAN_ESKI` — ölçülmedi
+- "arkada · alan" artık topun 3 br önüne değil, top ile kale ortası arasındaki çizgide, en derindeki rakibin 2 br gerisine gider (ikinci boştaki 4 br daha geride; kaleden en az 6 br). (00:09 Deniz, Volkan yanındayken Kartal'a 40 br koşuyordu.)
+
 ## 16 Ekim 2026 · Savunma: kapatma = pas yolu · `ALAN_PAS_YOLU_ESKI` — ölçülmedi
 - Kapatmaya giden, topla rakip arasındaki çizgide rakibe yakın durur (yolun üçte biri, en az 3 br). Önceden rakibin kale tarafında duruyordu: markajdan farkı yoktu, arkadakiyle aynı yeri tutuyordu (00:05 Yıldırım ve Baran ikisi de Kaan'ın arkasında).
 - Sayfa: yükleme ekranında hesaplanan maç saati; işçi hata verirse mesaj (main `cd326ff`).
