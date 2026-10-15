@@ -1,5 +1,24 @@
 # ALAN v5 · Motor değişiklik günlüğü
 
+> **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
+
+## 15 Ekim 2026 · Canlı sayfa: başlama payı %30 (main `ec4dc5c`)
+- Maç, oynanacak devrenin kalanının %30'u hesaplanınca başlar (önce %20); takılınca da aynı kural. Sebep: tarayıcıda hesap izlemeden yavaş kalabiliyor (bu konteynerde zip78 ~11 tik/sn, izleme 30 tik/sn).
+
+## 15 Ekim 2026 · zip78 · Kale önünde boş top · `self.ALAN_KALE_KOVALA_ESKI` (main `d0b1110`)
+- Top kendi kalesine 25 birimden yakın ve boştayken, rakibin ilk varışından en çok 4 tik sonra varabilecek her saha savunmacısı topa koşar; aynı durumda takım topu almadan hücum şekline geçmez.
+- 4 maç: seken topu savunma %14 → %32; gönderme / maç 32 → 22; gönderme başına sayı %15 → %23.
+
+## 15 Ekim 2026 · zip76 · Kaleci yeteneğe bağlı · `self.ALAN_KALECI_ESKI` (main `0e05745`)
+- Elleri Alan hakimiyeti'yle güçlenir (×(1 + (H − 10) × 0,05)); tutamadığını rakipten uzağa çeler (17 yön, kale önü cezalı); çelerken topu iter (en az 0,8 + (H − 10) × 0,04). Gönderme tablosu yeniden üretildi (sürüm aynı).
+
+## 15 Ekim 2026 · zip75 · Bölgede ve kapatmada bağlılık · `self.ALAN_BOLGE_BAGLI_ESKI` (main `efaae71`)
+- Bölge savunmacısı tuttuğu rakibi yarıçapın 1,5 katında kaldıkça tutar; arkadakinin rakibi topun 4 birim önüne geçene kadar listede kalır; kapatmaya giden rakip tehlikeli kaldıkça işinde kalır (pas havadayken de); top el değiştirince hafıza sıfırlanır.
+
+## 15 Ekim 2026 · zip74 · Kafa = maç, şekil onayı, adama bağlılık (main `bfc0866`)
+- `decide.js` `ucusMac`: gönderme denemesi maçın kopyasında maçın kendi adımıyla (`ALAN_KAFA_ESKI`; paslar için `ALAN_KAFA_PAS`, kapalı).
+- `shape.js`: şekil "topu kim alacak" tahmini 10 tik aynı kalınca değişir (`ALAN_SEKIL_ONAY_ESKI`); arkadaki tuttuğu adamı tehlikeliler arasında kaldıkça bırakmaz (`ALAN_ADAM_BAGLI_ESKI`).
+
 ## 15 Ekim 2026 · zip69 · B: Top gelmeden karar · `self.ALAN_ONCEDEN_KARAR_ESKI`
 - **Kural** (`match.js step` başı):
   - Pas havadayken (gönderme değil) alıcı, Çekirdeği karşılayacağı noktada olacakmış gibi aynı akılla (`D.decide`) bir sonraki hamlesini seçer.
