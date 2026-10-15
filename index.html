@@ -72,6 +72,10 @@ button{font:inherit;color:inherit}
         <span style="font-size:28px;font-weight:800">Henüz maç yok</span>
         <span style="opacity:.7">Taktiğini kur ve "Maça çık"a bas.</span>
         <button onClick="{{ taktigeGit }}" style="padding:12px 20px;border-radius:12px;border:0;background:var(--gold);color:#0E0D09;font-weight:800;cursor:pointer">Taktik ekranı →</button>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+          <input ref="{{ tohumRef }}" type="text" pattern="[0-9]*" placeholder="Tohum" style="width:120px;background:transparent;border:1px solid rgba(var(--ink-rgb),.25);border-radius:12px;padding:11px 12px;font-family:'JetBrains Mono',monospace;font-size:15px;text-align:center">
+          <button onClick="{{ tohumlaOyna }}" style="padding:12px 18px;border-radius:12px;border:1px solid var(--gold);background:transparent;color:var(--gold);font-weight:700;cursor:pointer">Tohumla oyna</button>
+        </div>
       </div>
     </sc-if>
   </div>
@@ -115,11 +119,12 @@ button{font:inherit;color:inherit}
 <script type="text/x-dc" data-dc-script>
 const TEMA = { gece: { bg: '#0E0D09', panel: '#16150F', ink: '#F6F3EC', inkRgb: '246,243,236', onink: '#0E0D09', gold: '#FFD25A' }, gunduz: { bg: '#F6F7F9', panel: '#FFFFFF', ink: '#12141A', inkRgb: '18,20,26', onink: '#F6F7F9', gold: '#946600' } };
 class Component extends DCLogic {
+  tohumRef = React.createRef();
   state = { ekran: localStorage.getItem('alan-oyun-ekran') || 'kadro', tema: localStorage.getItem('alan-oyun-tema') || 'gece', mac: 0, son: null, sec: 'ece' };
   componentDidMount() { this.onMsg = e => { const d = e.data; if (!d || typeof d !== 'object') return; if (d.tip === 'alan-git') this.git(d.ekran, d.ekran === 'mac'); if (d.tip === 'alan-mac-son') this.setState({ son: d }, () => this.git('sonuc')); }; addEventListener('message', this.onMsg); if (!window.ALAN_KADRO) { const t = setInterval(() => { if (window.ALAN_KADRO) { clearInterval(t); this.forceUpdate(); } }, 60); } }
   componentWillUnmount() { removeEventListener('message', this.onMsg); }
   // ekranlar: kadro, taktik (Taktik sayfası), mac (Canlı sayfası, maç sürerken sekme değişse de arka planda yaşar), sonuc. yeniMac: Canlı yeniden yüklenir, son kurulumla başlar
-  git(e, yeni) { localStorage.setItem('alan-oyun-ekran', e === 'mac' && !this.state.mac && !yeni ? 'kadro' : e); this.setState(s => ({ ekran: e, mac: yeni ? s.mac + 1 : s.mac, son: yeni ? null : s.son })); }
+  git(e, yeni, tohum) { localStorage.setItem('alan-oyun-ekran', e === 'mac' && !this.state.mac && !yeni ? 'kadro' : e); this.setState(s => ({ ekran: e, mac: yeni ? s.mac + 1 : s.mac, tohum: yeni ? (tohum || '') : s.tohum, son: yeni ? null : s.son })); }
   renderVals() {
     const S = this.state, K = window.ALAN_KADRO, v = TEMA[S.tema], OZ = K ? K.OZ : [], ADL = { okuma: 'Okuma', aktarim: 'Aktarım', tutus: 'Tutuş', kesme: 'Kesme', yogunluk: 'Yoğunluk', hiz: 'Hız', ceviklik: 'Çeviklik', cesaret: 'Cesaret', surme: 'Sürme' };
     const renk = x => x >= 15 ? '#2FB37A' : x >= 12 ? v.gold : x >= 9 ? 'rgba(' + v.inkRgb + ',.55)' : '#E0531F', deger = (p, k) => p.a[k] ?? 10, ort = p => Math.round(OZ.reduce((a, [k]) => a + deger(p, k), 0) / Math.max(1, OZ.length));
@@ -129,7 +134,7 @@ class Component extends DCLogic {
     return {
       v, temaTxt: S.tema === 'gece' ? '☾ Gece' : '☀ Gündüz', temaDegis: () => { const t = S.tema === 'gece' ? 'gunduz' : 'gece'; localStorage.setItem('alan-oyun-tema', t); this.setState({ tema: t }); for (const fr of document.querySelectorAll('iframe')) try { fr.contentWindow.dispatchEvent(new StorageEvent('storage', { key: 'alan-oyun-tema' })); } catch (e) {} /* aynı sekmedeki sayfalara da haber ver */ },
       sekmeler: sek, kadroAcik: S.ekran === 'kadro', sonucAcik: S.ekran === 'sonuc' && !!d, taktikGoster: S.ekran === 'taktik' ? 'block' : 'none', macGoster: S.ekran === 'mac' || (S.ekran === 'sonuc' && !d) ? 'block' : 'none',
-      macVar: S.mac > 0, macYok: S.mac === 0, macSrc: 'canli.html?basla=1&kabuk=1&k=' + S.mac,
+      macVar: S.mac > 0, macYok: S.mac === 0, macSrc: 'canli.html?basla=1&kabuk=1&k=' + S.mac + (S.tohum ? '&tohum=' + S.tohum : ''), tohumRef: this.tohumRef, tohumlaOyna: () => { const v = parseInt(String((this.tohumRef.current && this.tohumRef.current.value) || '').replace(/\D/g, ''), 10); if (v > 0) this.git('mac', true, v); },
       taktigeGit: () => this.git('taktik'), yeniMac: () => this.git('mac', true),
       kadroOzet: `${kad.length} oyuncu · kartı seç, taktikte diz`,
       kadro: kad.map(p => ({ ad: p.ad, tip: p.tip.toUpperCase(), harf: p.ad[0], ort: ort(p), b: p === sp ? v.gold : 'rgba(' + v.inkRgb + ',.1)', sec: () => this.setState({ sec: p.id }), bar: OZ.map(([k]) => ({ h: Math.round(deger(p, k) / 20 * 100) + '%', c: renk(deger(p, k)) })) })),
