@@ -66,7 +66,7 @@
         if (best) { p._rcvB = b; p._rcvAbs = m.tick + best.t; p._rcvX = best.x; p._rcvY = best.y; } // seçilen karşılama anı sonradan ileri kaydırılmaz: alıcı Çekirdekten kaçmaz, ona gelir
       }
       if (!best) for (let i = 0; i < pts.length; i += 2) { const q = pts[i]; if (nb && inK(q)) continue; const tr = rc + Math.max(0, Math.hypot(q.x - p.x, q.y - p.y) - 1.4) / v; if (tr <= i) { best = { t: i, x: q.x, y: q.y }; break; } }
-      if (!best) { let q = pts[pts.length - 1]; if (nb && inK(q)) { for (let i = pts.length - 1; i >= 0; i--) if (!inK(pts[i])) { q = pts[i]; break; } } best = { t: Math.max(pts.length, rc + Math.hypot(q.x - p.x, q.y - p.y) / v), x: q.x, y: q.y }; }
+      if (!best) { let q = pts[pts.length - 1] || { x: m.ball.x, y: m.ball.y }; /* yol boşsa (Çekirdek duruyor ya da Kuyu'da başlıyor) topun kendi yeri: worker'ın çökmesini önler */ if (nb && inK(q)) { for (let i = pts.length - 1; i >= 0; i--) if (!inK(pts[i])) { q = pts[i]; break; } } best = { t: Math.max(pts.length, rc + Math.hypot(q.x - p.x, q.y - p.y) / v), x: q.x, y: q.y }; }
       best.est = best.t * (1 + hsh(p.id, m.fl ? m.fl.t0 || 0 : 0, 3) * (20 - ok(p, 'gorus')) * .04); out.set(p, best);
     }
     let first = null; for (const [p, r] of out) if (!first || r.t < out.get(first).t) first = p;

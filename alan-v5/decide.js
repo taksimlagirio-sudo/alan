@@ -71,14 +71,14 @@
       if (p.role === 'Bekçi' && !(window.AlanShape && window.AlanShape.S.bekSerbest) && Math.hypot(p.x - (p.team === 0 ? 0 : GW), p.y - GCY) > 12) continue; /* v5 · Bekçi serbest: karar da onu yarışta görür */
       const rc = lane && lane.loose ? Math.max(0, 6 - (self.ALAN_OZ(p, 'tepki')) * .25) : Math.max(0, 14 - (self.ALAN_OZ(p, 'tepki')) * .5 - (t0 || 0) + (lane ? lane.lag : 0) + (D._jitS != null ? ((Math.sin(p.id * 12.9898 + D._jitS * 78.233) * 43758.5453 % 1 + 1) % 1 - .5) * D.belirsiz : 0)), v = sp(p), px = p.x, py = p.y; let g = null; /* hız: oyuncunun konumu döngü dışında bir kez okunur */
       for (let i = Math.ceil(rc / 2) * 2; i < pts.length; i += 2) { const q = pts[i], ax = Math.abs(q.x - px), ay = Math.abs(q.y - py); if (rc + ((ax > ay ? ax : ay) * .999999 - 1.4) / v > i + 1e-6) continue; /* hız: tepki süresinden önceki anlar ve x ya da y farkı tek başına yetişmeye engel olan noktalar zaten tutmaz (sonuç aynı) */ const tr = rc + Math.max(0, Math.hypot(q.x - px, q.y - py) - 1.4) / v; if (tr <= i) { g = { t: i, x: q.x, y: q.y, rc }; break; } }
-      if (!g) { const q = pts[pts.length - 1]; g = { t: Math.max(pts.length, rc + Math.hypot(q.x - p.x, q.y - p.y) / v), x: q.x, y: q.y, rc }; }
+      if (!g) { const q = pts[pts.length - 1]; if (!q) continue; /* yol boş */ g = { t: Math.max(pts.length, rc + Math.hypot(q.x - p.x, q.y - p.y) / v), x: q.x, y: q.y, rc }; }
       arr.push([p, g, g.t < pts.length]);
     }
     const out = new Map(); for (const tm of [0, 1]) { const mine = arr.filter(([p]) => p.team === tm); if (!mine.length) continue; const best = Math.min(...mine.map(([, g]) => g.t)); for (const [p, g, hit] of mine) if (g.t <= best + (20 - (self.ALAN_OZ(p, 'gorus'))) * .6 + 1 || (lane && hit)) out.set(p, g); }
     return out;
   }
   // Alıcı tepkisiz (pası bekliyor): yörüngede en erken yetişebildiği nokta
-  function recvPoint(pts, p) { const v = (.17 + (p.a.hiz ?? 10) * .006) * 1.25; for (let i = 0; i < pts.length; i += 2) { const q = pts[i]; if (Math.max(0, Math.hypot(q.x - p.x, q.y - p.y) - 1.4) / v <= i) return { x: q.x, y: q.y }; } const q = pts[pts.length - 1]; return { x: q.x, y: q.y }; }
+  function recvPoint(pts, p) { const v = (.17 + (p.a.hiz ?? 10) * .006) * 1.25; for (let i = 0; i < pts.length; i += 2) { const q = pts[i]; if (Math.max(0, Math.hypot(q.x - p.x, q.y - p.y) - 1.4) / v <= i) return { x: q.x, y: q.y }; } const q = pts[pts.length - 1]; return q ? { x: q.x, y: q.y } : { x: p.x, y: p.y }; }
   // Tek hayali yörünge; rakip gövdesine çarpınca beklenen değer: tutar / delip geçer (yörünge sürer) / seker
   // Kötü karşılamadan sonra Çekirdek dibe düşer: kim daha yakınsa o kapar (sabit bir oran değil, o anki kalabalık)
   function looseWin(seen, h, x, y) { let A = .2, Dn = .2; for (const p of seen) { if (p === h || p.role === 'Bekçi') continue; const w = Math.exp(-Math.hypot(p.x - x, p.y - y) / 2); if (p.team === h.team) A += w; else Dn += w; } return A / (A + Dn); }
