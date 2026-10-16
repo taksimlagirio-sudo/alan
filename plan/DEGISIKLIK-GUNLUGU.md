@@ -2,6 +2,11 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Karşılama önce orta sahaların; arkadakiler sıra kurar — ölçülmedi
+- `ALAN_ORTA_KARSILA_ESKI`: önü boş taşıyıcıyı arkadakiler ancak taşıyıcı kaleye 40 br'den yakınsa ya da hiçbir arkada olmayan savunmacı taşıyıcının kale tarafına (3 br) onlardan önce yetişemiyorsa karşılar (karşılayan zaten tek kişi). (00:02 Tuna kanatta, orta çizgi ötesinde; Baran karşılamaya çıkıyordu.)
+- `ALAN_ARKA_DIZI_ESKI`: adamı olmayan arkadakiler topa (buluşma noktasına) yakınlığa göre sıralanır: ilki top–kale ortası çizgisinde, sonuncusu kale ortasının önünde (aynı derinlik), diğerleri eşit aralıkla arada. Tek başınaysa ikisinin karışımı: top kaleye 30 br'den yakınsa %20, 70 br'den uzaksa %60 ortaya. (00:01 Alp ve Baran ikisi de kanattaki Tuna'nın buluşma noktasına kayıyordu; ortada Kaan ve Ece.)
+- Süreç notu: kurallar tek karelere göre yazıldı, yan etkiler (santra) gözden kaçtı. Arka hat için kuralların bütünü bir sonraki adımda tek belgede gözden geçirilecek.
+
 ## 16 Ekim 2026 · Arkadakiler orta sahaya çıkmaz · `ALAN_ARKA_SINIR_ESKI` — ölçülmedi
 - Taşıyıcıyı karşılama yalnız taşıyıcı kaleye yarım sahadan (GW/2) yakınken.
 - Adamı olmayan arkadakinin kaleye uzaklığı dizilişteki yerininkini (base) geçemez. (00:00 santrada Alp "karşıla · Ece" 32 br, Baran "arkada · alan" 28 br orta noktaya koşuyordu.)
