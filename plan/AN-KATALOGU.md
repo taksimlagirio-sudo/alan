@@ -72,7 +72,7 @@ Tartı olasılık değil, **olasılık × bize zararı** (varış yerinin hücum
 - Sebep 2 (C-d): kale önünde alınan pasın değeri, kalecinin alıcıya göre yerleşmiş olduğunu varsayan tablodan geliyordu. Düzeltme: alıcının ilk dokunuşta göndermesi kafada, kaleci pas süresince kayabildiği kadar (`ALAN_TEK_DOKUNUS_ESKI`).
 - Sebep 3 (kullanıcı: "kaleci anlık değişimlerde aşırı hızlı hareket etmesin"): Bekçi kale ağzı boyunca koşu hızının %50–65'iyle kayar (Çeviklik), öne/geri tam hız (`ALAN_BEKCI_KAYMA_ESKI`).
 - Sonuç: 01:07 Efe önüne → Volkan (1.397), Volkan gönderiyor. 02:40 Efe önüne → Volkan (0.821, ilk dokunuş değeri 0.667), Volkan sürüp Yıldırım'a veriyor, Yıldırım tek dokunuşla gol.
-- Açık: kafadaki savunma cevabı (respond) en yakın iki savunmacıyı alıcının tam önüne, kusursuz kesen yere koyuyor — kullanıcıyla konuşuldu, sırada.
+- Kafadaki savunma cevabı (respond, yalnız pas alıcısı; `ALAN_CEVAP_ESKI`): kale tarafındaki savunmacı yolu kapatır, değilse geldiği yönden 1,6 br'ye yaklaşır; dönüş bedeli (AlanShape.gec); daha tehlikeli adamı tutan bırakmaz; iki kişi varış süresine göre. Sürme/bekleme cevabına uygulanmadı (denendi: tut/sür 1'in üstüne çıkıyordu). Sonuç: 02:40 Efe → Volkan önüne (1.231), Volkan gönderiyor; 01:07 Efe → Volkan (1.397), Volkan tek dokunuşla Efe'ye geri; Rüzgâr → Şimşek önüne 0.694.
 
 ## İlke D · Koşucunun önüne ara pas: koşunun yönünde, kaleye doğru boşluğa
 Pas hedefleri bugün üç kaynaktan: arkadaşın ayağı, "boşluğa pas" taraması (arkadaş savunmadan önce varmalı), buluşma noktası (yalnız görevi "koşu" olana). Koşan arkadaşın **önüne, kaleye doğru** atılan ara pas sistematik olarak ya üretilmiyor ya çok düşük değerleniyor.
