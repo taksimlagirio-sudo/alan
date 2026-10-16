@@ -23,6 +23,13 @@ Pas hedefleri bugün üç kaynaktan: arkadaşın ayağı, "boşluğa pas" tarama
 - **D1 · Rüzgâr–Şimşek (Liman–Demir Blok, 03:50, motor 82a0ff0, `a-52-0-6951-kontra`).** Kullanıcı: "Şimşek gayet müsait pozisyondayken önüne ara pası hiç düşünmüyor bile, en sonunda atağın tehlikesini yiyor." Döküm (tik 6903, 19 seçenek): Şimşek (37.9, 46.0) kaleye doğru koşuyor (hız −0.32, −0.17). Ona pas adayları var ama hedefleri koşunun **yanında ya da gerisinde**: önüne → (36.1, 51.7) 0.089, pas → ayağa 0.010; koşunun önünde, kaleye doğru (≈ 28–30, 42) hiç aday yok. Seçilen sür 0.284. Görevi o anda "boşluk" (6916'da "kontra koşusu") olduğu için buluşma pası da üretilmiyor.
 - Bağlı eski şikâyetler: Yıldırım'ın arkasına düşen pas; Volkan–Kartal kale ağzı pası (`ALAN_AGIZ_PAS_ESKI` yamasıyla kapatılmıştı); "Koşucunun arkasına pas" Anlar türü (9 maçta 23 kez).
 
+## İlke E · Topsuz destek: top sahibinin düellosundan uzaklaşıp açı ve zaman yarat
+Topsuz arkadaş, top sahibiyle savunmacının mücadelesine fazla yakın durmamalı: pası aldığı an savunmacı ona hemen gelebiliyor. Biraz (çok değil) açılırsa: pası aldığında savunmacının üstüne gelmesi zaman alır; o sürede ya top sahibine geri verip onu boşta bırakır (ver-kaç), ya da kaleyi daha iyi açıdan görüp gönderir.
+Ölçü: alıcının yeri, "pası aldığında en yakın savunmacının ona varma süresi" ve "oradan kaleye açı / geri pas yolu" ile seçilmeli; topa yakınlık değil. (Motorda: shape.js "3 · Hücum: boşluk arama".)
+
+- **E1 · Şimşek (D1 ile aynı an, `a-52-0-6951-kontra`).** Kullanıcı: "Şimşek de biraz genişleyebilir, çünkü savunmacı–Rüzgâr arasındaki mücadeleye fazla yakın; Rüzgâr ona pas attığı an savunmacı hemen ona kolayca gelebilir. Biraz genişlese, pas aldığı an savunmacı üzerine geldiğinde vakti olur ve tekrar Rüzgâr'a pas çıkarıp onu uygun pozisyonda bırakabilir, ya da kaleyi görme açısı çok daha iyi olur ve şut çekebilir."
+- D ile bağlantı: D pası atanın tarafı (önüne pas hedefi), E alacak olanın tarafı (nerede durduğu). Aynı anda ikisi de eksik.
+
 ## Daha önce konuşulup aynı ilkelere bağlananlar (16 Ekim, ekran görüntüleri)
 - Volkan önü boş sürerken Deniz yavaşlatmalıydı (sahte pres, yolu kapatma) → A'nın "yardım yoksa uzaktan yavaşlat" hâli.
 - Kaan ve Mert ikisi de Volkan'a, Yıldırım boş → A (ikinci presçi pas yoluna).
