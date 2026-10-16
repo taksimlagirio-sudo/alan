@@ -2,6 +2,13 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Havadaki topta plan yenileme (main e33e2fb) ve paralel kafa (main 66de97a)
+- `ALAN_UCAN_PLAN_ESKI`: top havadayken koşu planı, topu alacak oyuncu ya da alınacak nokta (8 br) değişince yeniden tartılır (909623 00:11: Kaan 90 tik eski planla ileri koştu).
+- Paralel kafa (maç birebir aynı): kafadaki gönderme denemelerinin zarları maçtaki sırayla önceden çekilir (kuyruk, `ALAN_KUYRUK_ESKI`), oyunları yardımcı işçilerde (SharedArrayBuffer, `paralel.js`, `yardimci-isci.js`, `ALAN_PAR_ESKI`). `_headers` ile canli sayfası çapraz köken yalıtımlı; yalıtım yoksa tek çekirdek.
+- `ALAN_GEC_ESKI`: dönme süresi önbelleği anahtarına hız (fren sınırından beri önbellek hesap sırasına bağlıydı).
+- Ölçüm: kale önü yoğun pencerede node 40 → 25 sn (3 yardımcı, bu makine ~2 etkin çekirdek); Chromium'da maçın ilk 600 tiki 54 → 49 sn (gönderme denemesi az). Tam maç ölçülmedi. Profil: zamanın çoğu kafadaki denemeler; paslar ve yalancı hareket dünyaları henüz tek çekirdek.
+- Denenip bırakılan: B (kurtarma değeri) bu anda tetiklenmedi (keepP 1,0); asıl sorun ev bağının değer biriminde olmaması. Kısa diziliş (ön çizgi topun en çok 60 br önünde) tek başına etkisiz, siteye alınmadı.
+
 ## 16 Ekim 2026 · Duvar çalımı ve gerçekçi momentum (main 5c5b3bc) — sahnelerde denendi, maçta ölçülmedi
 - Kenardan çalım hiç aday üretmiyordu: tek sabit dönüş noktasında duvara giden yol rakibin gövdesinden geçiyordu. Birkaç dönüş noktası + geniş koşul (`ALAN_CALIM_GENIS_ESKI`), yumuşak "ölü top" vuruşu (`ALAN_CALIM_OLU_ESKI`).
 - Kafadaki hesap düzeltmeleri: Çekirdek gövdenin kenarından çıkar (`ALAN_CALIM_CEK_ESKI`); gövde kontrolü gerçek top yolunda, rakibin o tikteki yerine göre, çarpma payı 1,35 (`ALAN_CALIM_YOL_ESKI`, uzanan rakip için `ALAN_CALIM_ADT_ESKI`); yolda kesmede rakibin momentumu (`ALAN_CALIM_DON_ESKI`, `ALAN_CALIM_HIZ_ESKI`); taşıyıcı topa top oradayken varmalı (`ALAN_CALIM_YETIS_ESKI`); rakip gövdesiyle geçiş noktasını keserse dolanma gecikmesi (`ALAN_CALIM_KAPI_ESKI`); dolanma açıklığı 3 → 2,2 br (`ALAN_CALIM_DAR_ESKI`).
