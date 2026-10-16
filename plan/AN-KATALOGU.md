@@ -62,6 +62,11 @@ Tartı olasılık değil, **olasılık × bize zararı** (varış yerinin hücum
 - k-ruzgar-deniz 6903: üstünlük 1 (Rüzgâr + Şimşek'e karşı Deniz). Bekleme 0.309 → 0.204, sür 0.204 (eşit; sür önde). Oyun: Rüzgâr sürüyor, 6923'te önüne → Şimşek, Şimşek alıyor ve Deniz'i geçiyor ("Çekirdeği çekti, Deniz boşa uzandı").
 - Sırada (kullanıcı istedi): fake'in tutma ihtimali (herkes Okuma 20 iken %84, iki kişi birden aldanıyor) — kalibrasyon.
 
+### Fake (main, `ALAN_FAKE_UC_ESKI`)
+- Aldanma ihtimali savunmacı başına: max(.08, min(.9, .5 + (beceri − Okuma) × .04)) × inanılırlık (eşit 20'lerde %50 × c). Gövde fake'inde 6 br içindeki her savunmacı ayrı zar atar.
+- Düzeltildi: fake'in değeri "en az biri aldanır" ihtimaliyle "hepsi aldandı" dünyasından alınıyordu; artık hepsi / bir kısmı (iki dünyanın ortası) / kimse, her biri kendi ihtimaliyle. k-ruzgar-deniz 6903: bekleme (sonrasında çalım planı) 0.204 → 0.110; sür 0.204 seçiliyor; oyun aynı (Rüzgâr → Şimşek önüne, Şimşek Deniz'i geçip gönderiyor).
+- **Ertelendi (kullanıcı):** aldanma oranının kendisi. "Çok duruma, pozisyona bağlı; gerçekten akıllı yapmamız lazım." Eşit kalitede sabit %50 yerine durumdan (açı, hız, savunmacının dengesi, fake'in o anki mantıklılığı, mesafe…) türetilmeli.
+
 ## İlke D · Koşucunun önüne ara pas: koşunun yönünde, kaleye doğru boşluğa
 Pas hedefleri bugün üç kaynaktan: arkadaşın ayağı, "boşluğa pas" taraması (arkadaş savunmadan önce varmalı), buluşma noktası (yalnız görevi "koşu" olana). Koşan arkadaşın **önüne, kaleye doğru** atılan ara pas sistematik olarak ya üretilmiyor ya çok düşük değerleniyor.
 
