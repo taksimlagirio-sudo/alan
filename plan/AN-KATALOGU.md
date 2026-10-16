@@ -58,6 +58,11 @@ Pas hedefleri bugün üç kaynaktan: arkadaşın ayağı, "boşluğa pas" tarama
 Topsuz arkadaş, top sahibiyle savunmacının mücadelesine fazla yakın durmamalı: pası aldığı an savunmacı ona hemen gelebiliyor. Biraz (çok değil) açılırsa: pası aldığında savunmacının üstüne gelmesi zaman alır; o sürede ya top sahibine geri verip onu boşta bırakır (ver-kaç), ya da kaleyi daha iyi açıdan görüp gönderir.
 Ölçü: alıcının yeri, "pası aldığında en yakın savunmacının ona varma süresi" ve "oradan kaleye açı / geri pas yolu" ile seçilmeli; topa yakınlık değil. (Motorda: shape.js "3 · Hücum: boşluk arama".)
 
+### E 1. adım (main, `ALAN_DESTEK_TUT_ESKI`, `ALAN_IKILEM_ESKI`) ve sonucu
+- Yer tartısında (shape.js teamV) alıcı seçeneği artık pası orada alınca tutma ihtimali × max(yer değeri, önündeki boşluk); savunmanın cevabı takıma karşı tartılır (beni kapatan savunmacı taşıyıcıyı bırakırsa taşıyıcı serbestler; değerim = takımın en iyisinin, beni saymayan savunmaya göre artışı).
+- Bulgu: Şimşek'in yer seçiminde takım değeri bütün adaylarda 0 çıkıyordu (her noktayı yetişebilen bir savunmacı kapatıyor sayılıyordu); yeri yalnız "evden uzaklaşma" bağı belirliyordu.
+- Sonuç bu anda: değişmedi. Mert Şimşek'i 3 br'den izliyor; Şimşek nereye giderse Mert onu kapatıp Rüzgâr'ı Deniz'e bırakabiliyor, yani Şimşek'in hiçbir yeri takıma bir şey katmıyor. Bu anın sonucu artık Deniz'e (A3) bağlı. Değişikliğin öteki anlarda etkisi kullanıcının kontrolünde.
+
 - **E1 · Şimşek (D1 ile aynı an, `a-52-0-6951-kontra`).** Kullanıcı: "Şimşek de biraz genişleyebilir, çünkü savunmacı–Rüzgâr arasındaki mücadeleye fazla yakın; Rüzgâr ona pas attığı an savunmacı hemen ona kolayca gelebilir. Biraz genişlese, pas aldığı an savunmacı üzerine geldiğinde vakti olur ve tekrar Rüzgâr'a pas çıkarıp onu uygun pozisyonda bırakabilir, ya da kaleyi görme açısı çok daha iyi olur ve şut çekebilir."
 - D ile bağlantı: D pası atanın tarafı (önüne pas hedefi), E alacak olanın tarafı (nerede durduğu). Aynı anda ikisi de eksik.
 
