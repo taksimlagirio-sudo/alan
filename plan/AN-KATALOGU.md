@@ -39,6 +39,11 @@ Tartı olasılık değil, **olasılık × bize zararı** (varış yerinin hücum
 - Değişiklik: her önüne pasın sert türü (varış ≥ `arriveFirm` 0.8) de aday; buluşma pası adayı görev yazısına değil koşu yönüne/hedefine bakar.
 - Sonuç (aynı an, yeni motor, 6869): önüne → Şimşek (36.5, 43.1) yavaş %0,4 tutuyor, sert %99,4 tutuyor. Ama değeri 0.046, sür 0.330 ("sonra: fake" planından). Pas artık mümkün; seçilmemesi C (sürmenin iyimserliği) ve alınan yerin değeri meselesi.
 
+### C ölçümü 2 · Rüzgâr 6869 (main 2fc7a9f; araç: tools/anlar/c-olc2.js, sonra hesabını açan hata ayıklama kancasıyla)
+- Seçilen sür 0.330. "Sonra" hesabı olmadan: tut 0.231 · sür 0.194 · … · önüne → Şimşek (sert, %99 tutuyor) 0.085.
+- 0.330'un kaynağı: 40 tik sürüp kopyada (31.2, 28.7)'ye varınca oradaki en iyi hamle **fake 0.363**; oradaki sür 0.187. İnanılırlığı %0'a yakın bir fake'in, fake'siz en iyi hamleden yüksek çıkması iyimserlik.
+- Bulgular: **C-a** asimetri: sürme önündeki boşluğu (`runOn`) sayıyor, koşarak önüne pas alan alıcı saymıyor (`recvVal` yalnız V × tutma). **C-b** ikinci dünya iyimserliği: "sür sonra" ve "fake" başka bir dünyada yeniden verilen kararın en iyisini alıyor, sür-sonra yalnız yukarı düzeltiyor; birçok gürültülü tahminin en büyüğü sistematik olarak yüksek. **C-c** kontrada tut 0.231 sürmeden yüksek (kullanıcı: "topu tut asla yüksek değerli çıkmamalı").
+
 ## İlke D · Koşucunun önüne ara pas: koşunun yönünde, kaleye doğru boşluğa
 Pas hedefleri bugün üç kaynaktan: arkadaşın ayağı, "boşluğa pas" taraması (arkadaş savunmadan önce varmalı), buluşma noktası (yalnız görevi "koşu" olana). Koşan arkadaşın **önüne, kaleye doğru** atılan ara pas sistematik olarak ya üretilmiyor ya çok düşük değerleniyor.
 
