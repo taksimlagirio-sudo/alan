@@ -239,7 +239,7 @@
   function move(m) {
     for (const p of m.ps) {
       const dx = p.tx - p.x, dy = p.ty - p.y, L = Math.hypot(dx, dy), v = spd(p) * (p.sprint ? 1.25 : 1) * (p === m.holder ? topHiz(m, p) : 1) , want = L < .3 ? 0 : Math.min(v, L * .25);
-      const wx = L ? dx / L * want : 0, wy = L ? dy / L * want : 0; ivme(p, wx, wy, v); p.x = cl(p.x + p.vx, .8, W - .8); p.y = cl(p.y + p.vy, .8, H - .8);
+      let wx = L ? dx / L * want : 0, wy = L ? dy / L * want : 0; if (p.role === 'Bekçi' && !self.ALAN_BEKCI_KAYMA_ESKI) { const gx = p.team === 0 ? 0 : W, rx = p.x - gx, ry = p.y - H / 2, rl = Math.hypot(rx, ry); if (rl > .5) { const ux = rx / rl, uy = ry / rl, wr = wx * ux + wy * uy, tx = wx - wr * ux, ty = wy - wr * uy, tl = Math.hypot(tx, ty), kc = Math.max(.4, Math.min(.8, .5 + (((p.a && p.a.ceviklik) ?? 10) - 10) * .015)) * v; if (tl > kc) { wx = wr * ux + tx / tl * kc; wy = wr * uy + ty / tl * kc; } } } /* v5 · Bekçi yana kayarken (kale ağzı boyunca) koşu hızının ancak %50–65'iyle gider (Çeviklik); öne çıkıp geri dönmek tam hızla. Top bir anda yana geçince kaleci ışınlanır gibi yerleşmiyordu… artık yerleşemeyebilir. Deney: self.ALAN_BEKCI_KAYMA_ESKI */ ivme(p, wx, wy, v); p.x = cl(p.x + p.vx, .8, W - .8); p.y = cl(p.y + p.vy, .8, H - .8);
       if (p.role !== 'Bekçi') outOfKuyu(p, true);
     }
     { const b = m.ball, K2 = C(); if (b && !m.holder && !b.done) K2.govdeIt(b, m.ps, p => (p === b.from && (b.t || 0) < 4) || (p.role === 'Bekçi' && Math.hypot(p.x - (p.team === 0 ? 0 : W), p.y - GCY) < K2.KR), BODY_R); }
