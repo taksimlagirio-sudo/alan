@@ -2,6 +2,13 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Anlar ekranı (motor davranışı değişmedi)
+- Sitede `anlar.html`: farklı tohumlarla oynanmış maçlardan, konuşulan sorunların görüldüğü anlar (11 tür: top uzaktayken pres, önü boş sürüş · kimse yavaşlatmıyor, iki kişi topta · alıcı boş, baskısız topta yüksek hat, harcanan kontra, önü boşken tut, arkadaki orta sahada, boş topa boşuna koşu, koşucunun arkasına pas, eksi değerli seçim, pivot geride). Her türün yanında "maçta" sıklığı: motor değişince yeniden taranıp karşılaştırılır.
+- Bir ana dokununca `canli.html?an=ID`: maçın o anki tam kopyası işçiye `tip: 'an'` ile gider, `grafOku` ile kurulur, **bugünkü motorla** oynar (motor değişmediyse asıl maçla birebir aynı; denendi). Taktik değişikliği an içinde de çalışır.
+- İlk set: 3 maç (Liman – Fırtına / Demir Blok / Saat Kulesi, tohum 41, 52, 63; main 6ad507e motoru), 41 an. Kalan 6 maç taranıyor.
+- Araçlar: `tools/anlar/` (BENIOKU.md).
+  *Yer:* `anlar.html`, `anlar/`, `canli.html` anYukle/anBasla, `alan-v5/mac-isci.js` grafOku + 'an'.
+
 ## 16 Ekim 2026 · Kendine pas düzeltmesi; buluşma noktasına pres — ölçülmedi
 - `ALAN_KENDINE_PRES_ESKI` daraltıldı: kendine pas ancak top atanın 3 br yakınındayken top sahibi sayılır. (00:05 Tuna topu 15 br önüne itti; Volkan topun olmadığı yerde Tuna'ya basmaya devam etti, topu geç fark etti. Önceki sürümün hatası.)
 - `ALAN_BULUSMA_PRES_ESKI`: rakip pası (kendine pas dahil) havadayken ve kimse topa alıcıdan önce varamıyorken (kovalayan yok), buluşma noktasına en çabuk varacak savunmacı (arkada, önde ve markajcı olmayan) oraya koşar. Görev "pres · buluşma". Savunma adımlarının sonunda uygulanır.
