@@ -26,6 +26,11 @@ Tartı olasılık değil, **olasılık × bize zararı** (varış yerinin hücum
 - **A3 · Deniz, Rüzgâr–Şimşek'e karşı (D1/E1 ile aynı an, `a-52-0-6951-kontra`).** Deniz son adam; karşısında top sürülen Rüzgâr ve yanında koşan Şimşek (2'ye 1'e yakın). Kullanıcı: "Deniz de tabii ki bu duruma göre pozisyon almalı, gerekirse tercih yapmalı; hem Şimşek'i düşünmeli hem Rüzgâr'ın kaleye doğru sürme ve kaleyi görme–şut atma açısını."
   A'nın genel hâli: savunmacının yeri tek bir tehdide göre değil, birden fazla seçeneğin (sürüp kaleye gitmek, gönderme açısı, Şimşek'e pas) olasılık × zararına göre seçilir; hepsini kapatamıyorsa en zararlısını kapatıp ötekini geciktirir (tercih). Önceki Volkan–Deniz anı ("önü boşken yavaşlat") da bunun tek tehditli hâli.
 
+### A 1. adım (main, `ALAN_TEHLIKE_YONU_ESKI`)
+- match.js: top sahibinin kararındaki seçenekler (yer + değer) `m._sec`'e. shape.js `tehlike()`: her seçenek seçilme olasılığı (değerden softmax, τ 0.04) × zarar (değer − beklemenin değeri) ile tartılır, yakın yönler (< 0.45 rad) birleşir.
+- İlk presçi kale tarafı yerine en tehlikeli yönün tarafına geçer (görev "pres · kale tarafına" ya da pas yoluysa "pres · yolu kapat"). İkinci presçi topun dibine değil, kapanmamış en tehlikeli yolun üçte birine (2.5–8 br; "pres · ikinci yolu kes"). Jokey ("geri geri", "ikisini kapat") kendi kalesi yönünde değil tehlikelerin tartılı yönünde durur.
+- Kontrol (a-129-2-3473, 260 tik): top sahipliği tiklerinin 94/114'ünde tehlike okunuyor; yeni görevler görülüyor (kale tarafına 48, ikinci yolu kes 20, yolu kapat 9). Anlar motor değişikliklerinden sonra erken ayrılıyor (Rüzgâr–Deniz ve Yelkovan–Tuna pozisyonları bu sürümde oluşmuyor); kontrol kullanıcıda.
+
 ## İlke C · Değer: çok boş bir arkadaşa pas, sürmekten belirgin değerli
 - **C1 · Deniz (A1 ile aynı an).** Sürme değeri, "sürdükten sonraki en iyi hamle"den geliyor (`ALAN_SUR_SONRA_ESKI`); sürünce pasın hâlâ açık kalacağı varsayılıyor olabilir. Doğrulanmadı.
 

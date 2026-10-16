@@ -1,0 +1,5 @@
+const fs = require('fs'), [dir, anF, t1s] = process.argv.slice(2); const { M, kurMac } = require('./yukle')(dir); const { oku } = require('./graf');
+const A = JSON.parse(fs.readFileSync(anF)); const m0 = kurMac(A.kurulum.yeni), m = oku(A.kopya, () => M.kopya(m0.r)); let son = m.events[0]; const nm = n => m.ps.find(p => p.name === n);
+while (m.tick < +t1s) { M.step(m); if (m.tick % 6 === 0) { const T = nm('Tuna'), K = nm('Kaan'); console.log(m.tick, 'top:', m.holder ? m.holder.name : '-', ['Yelkovan', 'Kadran', 'Çark'].map(n => { const p = nm(n); return `${n} [${p.job}] Tuna'ya ${Math.hypot(p.x - T.x, p.y - T.y).toFixed(1)} · hedef (${(p.tx ?? 0).toFixed(0)},${(p.ty ?? 0).toFixed(0)})`; }).join(' | '), `· Tuna (${T.x.toFixed(0)},${T.y.toFixed(0)}) Kaan (${K.x.toFixed(0)},${K.y.toFixed(0)})`); }
+  if (m.events[0] !== son) { let k = 0; while (k < m.events.length && m.events[k] !== son) k++; for (let j = k - 1; j >= 0; j--) console.log('   OLAY', m.tick, m.events[j].text); son = m.events[0]; } }
+process.exit(0);
