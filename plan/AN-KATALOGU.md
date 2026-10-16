@@ -29,6 +29,11 @@ Tartı olasılık değil, **olasılık × bize zararı** (varış yerinin hücum
 ## İlke C · Değer: çok boş bir arkadaşa pas, sürmekten belirgin değerli
 - **C1 · Deniz (A1 ile aynı an).** Sürme değeri, "sürdükten sonraki en iyi hamle"den geliyor (`ALAN_SUR_SONRA_ESKI`); sürünce pasın hâlâ açık kalacağı varsayılıyor olabilir. Doğrulanmadı.
 
+### C ölçümü 1 · Rüzgâr 6903 (`a-52-0-6951-kontra`, motor 82a0ff0; araç: tools/anlar/c-olc.js)
+- Pas → Şimşek ayağına: tutma %96 ama değer 0.010. Konum değeri düşük değil (V 0.124; Rüzgâr'ın kendi yeri 0.137), düşüren şu: Mert 5 br yanında, Şimşek pası alınca topu tutma ihtimali 0.64. Motorun mantığı tutarlı; çözüm C değil **E** (Şimşek açılsa bu ihtimal ve değer artar).
+- Koşusunun önüne pas (31.9, 46): kafada %99,6 kayıp. Pas hızı 0.31 br/tik (oyuncu koşusu 0.29; `D.arrive` 0.3 ayağa pasın varış hızı) → 9 br'yi ~45 tikte gidiyor. Düz yetişme hesabında Şimşek top yoluna 18. tikte, Deniz 32., Mert 36. tikte yetişiyor; yani Şimşek topa koşsa alır. Kayıp büyük ihtimalle: pas çok yavaş + alıcı topa değil hedef noktaya koşuyor (doğrulanmadı). Çözüm **D**: önüne pasın sert türü (bugün sert tür yalnız ayağa pasta) ve alıcının topla buluşması.
+- Sürme 0.284: "3–4 br sür, sonra önüne → Şimşek" planının değeri; sürme-sonrası hesabı yalnız yukarı düzeltiyor (`v2 > o.v` ise). Çözüm **C**: plan değeri bekleme/sürme riskiyle birlikte, iki yönlü.
+
 ## İlke D · Koşucunun önüne ara pas: koşunun yönünde, kaleye doğru boşluğa
 Pas hedefleri bugün üç kaynaktan: arkadaşın ayağı, "boşluğa pas" taraması (arkadaş savunmadan önce varmalı), buluşma noktası (yalnız görevi "koşu" olana). Koşan arkadaşın **önüne, kaleye doğru** atılan ara pas sistematik olarak ya üretilmiyor ya çok düşük değerleniyor.
 
