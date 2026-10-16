@@ -2,6 +2,14 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Savurma, kanca, boşluğa nişan, Bekçi'yi gören değer (main 4ab0811) — maçlar değişti
+- Savurma (`TASARIM-savurma.md`, `ALAN_SAVURMA_ESKI`): pas ve şutta Çekirdek gövdenin etrafında döner (α Güç'e bağlı), top bırakma anının teğetiyle çıkar; isabet bırakma zamanlamasından. Yolu rakip gövdesinden geçen savurma seçilmez, çarpan savurma bozulur (`ALAN_SAVUR_ENGEL_ESKI`). Tek dokunuşta kanca (`ALAN_KANCA_ESKI`). Şut hedefi: Bekçi'nin yetişemeyeceği en geniş iki boşluk (`ALAN_SUT_HEDEF_ESKI`). Dağınıklık değeri olasılık biriminde, 1'i geçmez (`ALAN_DAGINIK_TAVAN_ESKI`; önce karşı karşıya tutmak 1,59 çıkıyordu).
+- Şut tablosu savurmayla, maçtaki gönderme yoluyla yeniden ölçüldü (`ALAN_SHT_SAVUR`, 1120 hücre, seçenek başına 24 deneme; `ALAN_SHT_SAVUR_ESKI`). Eski tablo basit taklitle ölçülmüştü, Kuyu önünü hep 1 sayıyordu; yenisi Kuyu kenarında ~0,4–0,7.
+- Konum değeri Bekçi'nin gerçek yerine bakar: ağızda kalan en geniş boşluk tablodaki Bekçi'ye göre oranlanır, yalnız düşürür (`ALAN_V_BEKCI_ESKI`). Tutma ihtimali Bekçi'yi de sayar (maçta Bekçi ikiliye girer; `ALAN_KEEP_BEKCI_ESKI`). Karşı karşıya: Bekçi 2 br öndeyken 'tut' 0,99 → 0,37.
+- Kafadaki gönderme kopyasında taşıyıcı vuruşa kilitli, karar vermez (`m._ucus`); savurma bozulursa deneme biter, top çarpan rakiple paylaşılmış sayılır. Önce kopyada kararlar iç içe açılıyordu (58 kat, karar başına dakikalar) ve ikiliyi okuyan taşıyıcı kopyada hata veriyordu (kuyruk bozuk → maç paralelsiz yeniden).
+- Ölçüm: karşı karşıya sahnesi (Tuna–Tufan, değer düzeltmelerinden önce) eski motor 0/36, yeni 10 br karşıdan 4/4, 15 br 7/12. Değer düzeltmelerinden sonra sahne yeniden ölçülmedi. Sıfırdan maçın ilk 900 tiki node'da 96 → 73 sn, gönderme 1 → 3. Tek çekirdek ve 3 yardımcı 240 tik birebir aynı, kafada hata yok.
+  *Araçlar:* scratch `kk-sahne.js` (karşı karşıya), `kk-iz.js` (tik izi), `kk-sure2.js` (tek karar, konum ortamdan), `kk-tablo2.js` (tablo üretimi).
+
 ## 16 Ekim 2026 · Ayrı tohum + tam paralel (main 96555dd) — maçlar bir kez değişti
 - Kafadaki her deneme ve yalancı hareketin her dünyası ortak zardan tek tohum çeker, kalan zarını kendi tohumundan alır (`ALAN_ALT_TOHUM_ESKI`). Görevler bağımsız: yardımcı işçilerde ya da aynı çekirdekte birebir aynı sonuç.
 - Hesabın ~%87'si paralele açık (909623 · tik 4770 kopyası). Ölçüm: Chromium, maçın ilk 600 tiki 54,7 → 36,8 sn (4 sanal çekirdekli, ~2 etkin çekirdek). Tavan tahmini: 4 çekirdekte ~2,9×, 8'de ~4×.
