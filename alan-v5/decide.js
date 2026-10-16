@@ -447,5 +447,5 @@ function V0(src, team, x, y, ch) { return false ? Math.max(shotQ(src, team, x, y
     if (!res) res = b.done && String(b.done).startsWith('kuyu') ? (((b.done === 'kuyu-sag') === (h.team === 0)) ? 'kuyu' : 'kendi-kuyu') : 'loose';
     return { res, b };
   }
-  window.AlanDecide = { gonEk, pasEk, fakeP, fakeT, fakeHedef, fakeIlgili, laneOk, shotCell, SHT_SURUM,  coreSide, trapped, D, Vend, space, front, SHT, shotCell, otFactor, decideOT, shotQ, freeAt, pressAt, recvCh, zoneR, DU, predictWorld, secondStep, duelP, commitThr, V, chargeRate, keepP, chasePlan, threat, oppAt, holdVal, imagine, launchFor, bankFor, applyError, options, decide, realize };
+  window.AlanDecide = { runOn, gonEk, pasEk, fakeP, fakeT, fakeHedef, fakeIlgili, laneOk, shotCell, SHT_SURUM,  coreSide, trapped, D, Vend, space, front, SHT, shotCell, otFactor, decideOT, shotQ, freeAt, pressAt, recvCh, zoneR, DU, predictWorld, secondStep, duelP, commitThr, V, chargeRate, keepP, chasePlan, threat, oppAt, holdVal, imagine, launchFor, bankFor, applyError, options, decide, realize };
 })();
