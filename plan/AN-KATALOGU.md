@@ -44,6 +44,10 @@ Tartı olasılık değil, **olasılık × bize zararı** (varış yerinin hücum
 - 0.330'un kaynağı: 40 tik sürüp kopyada (31.2, 28.7)'ye varınca oradaki en iyi hamle **fake 0.363**; oradaki sür 0.187. İnanılırlığı %0'a yakın bir fake'in, fake'siz en iyi hamleden yüksek çıkması iyimserlik.
 - Bulgular: **C-a** asimetri: sürme önündeki boşluğu (`runOn`) sayıyor, koşarak önüne pas alan alıcı saymıyor (`recvVal` yalnız V × tutma). **C-b** ikinci dünya iyimserliği: "sür sonra" ve "fake" başka bir dünyada yeniden verilen kararın en iyisini alıyor, sür-sonra yalnız yukarı düzeltiyor; birçok gürültülü tahminin en büyüğü sistematik olarak yüksek. **C-c** kontrada tut 0.231 sürmeden yüksek (kullanıcı: "topu tut asla yüksek değerli çıkmamalı").
 
+### C 1. adım (main, `ALAN_ALICI_BOSLUK_ESKI`, `ALAN_SONRA_YARI_ESKI`) ve sonucu
+- Alıcı da önündeki boşlukla (`runOn`) tartılır; sür-sonra değeri yarı ağırlıkla ve iki yönlü (kopyada kayıpsa düşer); fake'in aldanılmayan dünyası şimdiki en iyiyi geçemez.
+- Aynı an (yeni motor): Rüzgâr 6883 sür 0.430 (sonra: sür), 40 tikte kaleye yaklaşıp 6928'de güçlü gönderiyor (değer 0.826), Aras tutuyor. Sürmenin yüksek değeri artık gerçek: Deniz onu kapatmadığı için gerçekten gönderme yerine varıyor → **A3**. Şimşek'e pas yine düşük (P 0.99'da değer −0.03…0.09): Mert dibinde, alınca tutma ihtimali düşük → **E**. Bu anın istenen hâli A ve E'ye bağlı.
+
 ## İlke D · Koşucunun önüne ara pas: koşunun yönünde, kaleye doğru boşluğa
 Pas hedefleri bugün üç kaynaktan: arkadaşın ayağı, "boşluğa pas" taraması (arkadaş savunmadan önce varmalı), buluşma noktası (yalnız görevi "koşu" olana). Koşan arkadaşın **önüne, kaleye doğru** atılan ara pas sistematik olarak ya üretilmiyor ya çok düşük değerleniyor.
 
