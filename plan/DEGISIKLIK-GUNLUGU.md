@@ -2,6 +2,14 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Sürme ve kontra koşucuları — ölçülmedi
+- `ALAN_SUR_SONRA_ESKI`: en umutlu iki "sür" maçın kopyasında (holdWorld, hedefe sürerek) oynatılır; varınca en iyi hamlenin değeri (beklemeyle aynı ölçü, tempo bedelinin yarısı) alınır, daha iyiyse sürmenin değeri olur. Önce sürme yalnız 6 br ötedeki yer değeriyle tartılıyordu (Efe: bekle 0,162 · sür ×3 0,069).
+- `ALAN_UZUN_SUR_ESKI`: önü açıksa (yolun 5 br yakınında rakip saha oyuncusu yok) 12 ve 20 br sürme, düz ve ±23°.
+- `ALAN_KOSUCU_SABIT_ESKI`: kontra koşucuları (m.gc.on) kontra boyunca korunur; top onları geçse de listeden çıkmaz.
+- `ALAN_KONTRA_GUVENCE_ESKI`: kontrada güvence en çok 1; takım riski 0,7 üstündeyse 0. Önce rakibin yukarıda kalan her oyuncusuna bir güvence (00:05 Efe kontrada "güvence"ye 24 br geri koştu).
+- `ALAN_ICERI_KOSU_ESKI`: kontra koşusu adayları iç şeritler (kale ortasından 8 br içi); kanat şeridi ancak içeride koşan bir arkadaş varsa (00:04 Efe çapraz taç çizgisine koşuyordu).
+- Hız: her kararda iki ek kopya + iki ek karar; hesap yavaşlayabilir.
+
 ## 16 Ekim 2026 · Pas: koşunun önüne · `ALAN_ONUNE_KOSU_ESKI` — ölçülmedi
 - Buluşma pası kaleye doğru koşan (ileri hız > 0,08) her arkadaşa da düşünülür (önce yalnız görevi "…koşu…" olana).
 - "Önüne" (hat arama, pas çizgisine dik ±3 br) pası koşan alıcıda, topun varış süresince (L / 1,1 tik) alıcının gideceği yol kadar (en çok 20 br) ileri kaydırılır. (01:06 Efe → Yıldırım: top koşunun arkasına düştü, Deniz araya girdi; karar kartında 0,202 · %99.)
