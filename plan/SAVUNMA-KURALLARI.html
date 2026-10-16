@@ -1,0 +1,236 @@
+<title>ALAN Savunma Kuralları</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Düzen: tek sütun okuma metni; kurallar gerçek çalışma sırasıyla numaralı; sonda karar bekleyen sorular. Renkler ALAN sitesinden. */
+:root {
+  --bg: #F6F7F9; --panel: #FFFFFF; --ink: #12141A; --soft: #4A4F5C; --line: rgba(18,20,26,.12);
+  --gold: #946600; --blue: #2B47D6; --orange: #C2440F; --chip: rgba(18,20,26,.06);
+  --display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0E0D09; --panel: #16150F; --ink: #F6F3EC; --soft: #B9B4A8; --line: rgba(246,243,236,.13);
+  --gold: #FFD25A; --blue: #8EA2FF; --orange: #FF8A5C; --chip: rgba(246,243,236,.07); color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0E0D09; --panel: #16150F; --ink: #F6F3EC; --soft: #B9B4A8; --line: rgba(246,243,236,.13);
+  --gold: #FFD25A; --blue: #8EA2FF; --orange: #FF8A5C; --chip: rgba(246,243,236,.07); color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font-family: var(--display); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 760px; margin: 0 auto; padding-block: 36px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 40px; }
+header { display: flex; flex-direction: column; gap: 12px; }
+.mark { font-family: var(--mono); font-size: 12px; letter-spacing: .16em; font-weight: 600; border: 1.5px solid var(--ink); padding: 5px 8px; align-self: flex-start; }
+h1 { font-size: clamp(30px, 6vw, 44px); font-weight: 800; line-height: 1.08; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+.meta { font-family: var(--mono); font-size: 12px; color: var(--soft); }
+p { margin: 0; max-width: 65ch; }
+.lead { font-size: 17px; color: var(--soft); }
+h2 { font-size: 24px; font-weight: 800; margin: 0; text-wrap: balance; }
+.eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; color: var(--gold); text-transform: uppercase; }
+section { display: flex; flex-direction: column; gap: 16px; }
+.terms { display: grid; grid-template-columns: minmax(110px, 160px) 1fr; gap: 10px 18px; border-top: 1px solid var(--line); padding-top: 14px; }
+.terms dt { font-weight: 700; }
+.terms dd { margin: 0; color: var(--soft); min-width: 0; }
+.order { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; counter-reset: s; }
+.order li { counter-increment: s; display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: baseline; }
+.order li::before { content: counter(s); font-family: var(--mono); font-size: 13px; color: var(--gold); font-weight: 600; }
+.step { display: flex; flex-direction: column; gap: 12px; padding-top: 22px; border-top: 1px solid var(--line); }
+.step h3 { margin: 0; font-size: 20px; font-weight: 800; display: flex; gap: 12px; align-items: baseline; }
+.step h3 .n { font-family: var(--mono); font-size: 14px; color: var(--gold); font-weight: 600; min-width: 22px; }
+ul.rules { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; max-width: 68ch; }
+ul.rules li { padding-left: 2px; }
+code, .flag { font-family: var(--mono); font-size: 12.5px; }
+.flag { color: var(--soft); background: var(--chip); border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+.job { font-family: var(--mono); font-size: 13px; color: var(--gold); white-space: nowrap; }
+.src { font-size: 14px; color: var(--soft); }
+.issues { display: flex; flex-direction: column; gap: 14px; }
+.issue { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; }
+.issue h4 { margin: 0; font-size: 17px; font-weight: 800; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.tag { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.tag.k { color: var(--orange); } .tag.s { color: var(--blue); } .tag.t { color: var(--soft); }
+.issue p { color: var(--soft); }
+.issue .oneri { color: var(--ink); }
+.issue .oneri b { color: var(--gold); font-weight: 700; }
+footer { font-size: 14px; color: var(--soft); border-top: 1px solid var(--line); padding-top: 16px; }
+@media (max-width: 520px) { .terms { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="mark">ALAN</span>
+    <h1>Savunma kuralları</h1>
+    <span class="meta">motor · main 50dcc6d · 16 Ekim 2026</span>
+    <p class="lead">Motorun savunmada uyguladığı kuralların bütünü. Kodda her karede bu sırayla çalışırlar; bir adım, öncekinin bıraktığı oyuncularla ilgilenir. Her kural kendi bayrağıyla tek başına kapatılabilir. Sondaki bölüm, kuralların birbirleriyle çeliştiği ya da senin kararına kalan yerler.</p>
+  </header>
+
+  <section>
+    <span class="eyebrow">Ortak ölçüler</span>
+    <h2>Kuralların kullandığı dört ölçü</h2>
+    <dl class="terms">
+      <dt>Derinlik</dt><dd>Kale ortasına uzaklık. "Daha derinde" = kaleye daha yakın. Köşedeki bir rakibin derinliği de böyle ölçülür. <span class="flag">ALAN_KALE_AGZI_ESKI</span></dd>
+      <dt>Kale tarafı</dt><dd>Bir oyuncudan kale ortasına doğru olan taraf. "Rakibin kale tarafında durmak" = rakiple kale ağzı arasında durmak.</dd>
+      <dt>Tehlike</dt><dd>Rakibin 1 saniye sonra varacağı yerin kaleye yakınlığı × topun ona ulaşma kolaylığı (topa 15 br'den uzaksa azalır, en az %45) × arkasında boşluk (kale tarafında savunmacı yoksa ×1,3) × Gönderme ve Hız (×0,7–1,4). Pas yolunun o an açık olup olmadığına bakılmaz. <span class="flag">ALAN_TEHLIKE_ESKI</span></dd>
+      <dt>Bölge</dt><dd>Oyuncunun dizilişteki yerinin çevresi. Yarıçap 7 + Yer alma × 0,5 br; Yer alma 10 olan oyuncu için 12 br. Tehlikeli bir rakip için 9 br'ye kadar genişler.</dd>
+    </dl>
+  </section>
+
+  <section>
+    <span class="eyebrow">Sıra</span>
+    <h2>Her karede kararların sırası</h2>
+    <ol class="order">
+      <li>Boş top: kim topa koşar</li>
+      <li>Roller: kim arkada, kim önde, kim bölgede</li>
+      <li>Pres: top sahibine kim basar (en çok 2 kişi)</li>
+      <li>Arkadakiler: kimi tutar, kim karşılar, boştakiler nerede durur</li>
+      <li>Markaj talimatlı oyuncular</li>
+      <li>Bölge oyuncuları</li>
+      <li>Geri koşu (top yeni kaybedildiyse)</li>
+      <li>Alan paylaşımı (iki kişi aynı yerde durmasın)</li>
+      <li>Kapatma (boş kalan tehlikeli rakibin pas yolu)</li>
+    </ol>
+  </section>
+
+  <section>
+    <span class="eyebrow">Kurallar</span>
+    <h2>Adım adım</h2>
+
+    <div class="step">
+      <h3><span class="n">1</span>Boş top</h3>
+      <ul class="rules">
+        <li>Top boşta ya da rakibin pası havadaysa, takımda topa ilk varacak oyuncu koşar. Görüş'e göre küçük bir pay var; birbirine çok yakın iki kişi birlikte koşabilir. <span class="job">kovala</span></li>
+        <li>Rakip topa 0,2 saniyeden (6 tik) daha önce varacaksa koşulmaz; oyuncu kendi işine devam eder. <span class="flag">ALAN_BOS_TOP_ESKI</span></li>
+        <li>Kendi kale önümüzde (kaleye 25 br) boş top: rakipten en çok 4 tik sonra varabilecek herkes koşar. <span class="flag">ALAN_KALE_KOVALA_ESKI</span></li>
+        <li>Bekçi yalnız kendi alanındaki topa ya da rakipten belirgin önce varacağı topa çıkar.</li>
+        <li>Koşan oyuncu bu karede başka görev almaz; aşağıdaki adımlar onu atlar.</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">2</span>Roller</h3>
+      <ul class="rules">
+        <li><b>Arkadakiler:</b> savunma dizilişinin en gerideki hattı. 2-2-2'de iki kişi. Sayıyı ve kişileri diziliş belirler, rol etiketi değil.</li>
+        <li><b>Öndekiler:</b> taktikteki "önde kalan" sayısı kadar en öndeki oyuncu. Rakibin en öndeki oyuncusunun 3 br önünde bekler, savunmaya dönmez. <span class="job">önde bekle</span></li>
+        <li><b>Bölge oyuncuları:</b> geri kalan herkes.</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">3</span>Pres</h3>
+      <ul class="rules">
+        <li>Top sahibine en çok 2 kişi basar. Aday: öndekiler dışında herkes, arkadakiler dahil.</li>
+        <li>Her adayın değeri: top sahibine onun bir sonraki hamlesinden önce varma ihtimali × top sahibinin tehlikesi − arkasında bıraktığı rakibin bedeli. Takımın pres şiddeti ve oyuncunun pres talimatı bu dengeyi değiştirir.</li>
+        <li>Blok: top sahibi takımın blok hattını geçince basılır. Hattın gerisinde yalnız çok iyi bir fırsatta ya da top uzun tutulunca.</li>
+        <li>Karşı pres: top kaybedilince yakındaki en çok 3 kişi menajerin belirlediği süre boyunca basar.</li>
+        <li><b>İlk presçi</b> kale tarafında değilse topa girmez, önce kale tarafına geçer; rakibin üstünden değil yanından dolaşır. <span class="job">pres · kale tarafına</span> Rakip kaleye ondan hızlı gidiyorsa yanında, iç tarafta koşar. <span class="job">pres · yanında</span> Topa ancak kale tarafındayken girer: doğrudan, dolaşarak ya da aldatarak. <span class="flag">ALAN_KALE_TARAFI_ESKI</span></li>
+        <li>"Kenara sıkıştır" sisteminde ilk presçi top sahibini dışarı iter. <span class="job">kenara itiyor</span></li>
+        <li><b>İkinci presçi</b> top sahibinin en tehlikeli çıkışını dibinden kapatır.</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">4</span>Arkadakiler</h3>
+      <ul class="rules">
+        <li><b>Kimi tutarlar:</b> topun gerisindeki, yani daha derindeki rakipler. Şunlar hariç:
+          <ul class="rules">
+            <li>top sahibi,</li>
+            <li>bir markajcının adamı,</li>
+            <li>önde bir arkadaşın kale tarafından zaten tuttuğu rakip <span class="flag">ALAN_ONDE_TUTULAN_ESKI</span>,</li>
+            <li>en tehlikelinin %35'inden az tehlikeli olanlar.</li>
+          </ul></li>
+        <li><b>Önü boş top sahibi:</b> top sahibinin kale tarafında, 6 br içinde arkada olmayan bir savunmacı yoksa top sahibi listenin başına eklenir. Bunun için ayrıca ya kaleye 40 br'den yakın olmalı, ya da hiçbir orta saha oyuncusu onun kale tarafına arkadakilerden önce yetişememeli. <span class="flag">ALAN_TASIYICI_KARSILA_ESKI</span> <span class="flag">ALAN_ORTA_KARSILA_ESKI</span></li>
+        <li><b>Eşleşme:</b> kim kime gider, en geç varanın da en erken varacağı şekilde seçilir; gerekirse adam devredilir. Eski eşleşme %15'ten fazla yavaş değilse sürer. <span class="flag">ALAN_HIZLI_ESLES_ESKI</span></li>
+        <li><b>Adamı varsa:</b> adamının 3 br kale tarafında durur; Yer alma bu mesafeyi biraz büyütür. Pas havadaysa ve adamı alıcıysa, buluşma noktasının kale tarafına gider. <span class="job">arkada · X</span> <span class="flag">ALAN_BULUSMA_ESKI</span></li>
+        <li><b>Top sahibini karşılıyorsa:</b> top sahibinin kale tarafı (%70) ile ondan yakındaki en tehlikeli rakibe giden pas yolu (%30) arasında durur. <span class="job">karşıla · X</span></li>
+        <li><b>Adamı yoksa sıra kurar:</b> topa en yakın olan top ile kale ortası arasındaki çizgide, en uzaktaki kale ortasının önünde durur, varsa diğerleri aralarında. Tek başınaysa ikisinin karışımı: top uzaktayken ortaya, kaleye yaklaştıkça topun çizgisine yakın. <span class="job">arkada · alan</span> <span class="flag">ALAN_ARKA_DIZI_ESKI</span></li>
+        <li><b>Derinlik sınırları:</b> en derindeki rakibin 2 br gerisinde, topun en az 3 br gerisinde, dizilişteki yerinden öne geçmeden, kaleye 6 br'den yakın olmadan. <span class="flag">ALAN_ARKA_SINIR_ESKI</span></li>
+        <li>Kapatmaya gönderilmezler (9. adım).</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">5</span>Markaj talimatlı oyuncular</h3>
+      <ul class="rules">
+        <li>Menajer bir oyuncuya "adam" talimatı verdiyse, oyuncu adamını sahanın her yerinde izler; adamıyla top arasında, kale tarafında durur. <span class="job">markaj · X</span></li>
+        <li>Diğer kurallar onu adamından ayırmaz. Adamı topu alırsa basar.</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">6</span>Bölge oyuncuları</h3>
+      <ul class="rules">
+        <li>Rakipler en tehlikeliden başlayarak dağıtılır: her biri, bölgesine düştüğü en yakın bölge oyuncusuna verilir. Tehlikeli rakip bölgenin biraz dışından da çeker.</li>
+        <li>Bağlılık: tuttuğu rakip bölge yarıçapının 1,5 katı içinde kaldıkça onu tutmaya devam eder. <span class="flag">ALAN_BOLGE_BAGLI_ESKI</span></li>
+        <li>Adamı varsa yerinden adamına doğru kayar: adamıyla top arasındaki noktaya yolun yaklaşık %75'i kadar. <span class="job">bölge · X</span> Adamı yoksa yerinden top–kale çizgisine %30 kayar. <span class="job">bölge</span></li>
+        <li>Top kaleye yaklaşınca (yaklaşık 26 br) adamıyla kale arasına çekilir.</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">7</span>Geri koşu</h3>
+      <ul class="rules">
+        <li>Top 2 saniyeden kısa süre önce kaybedildiyse, topun önünde kalan bölge oyuncusu topun hizasına değil kendi bölgesinin hizasına koşar. <span class="job">geri koşu</span></li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">8</span>Alan paylaşımı</h3>
+      <ul class="rules">
+        <li>İki savunmacının hedefi 4,5 br'den yakınsa, daha az önemli işi olan açık tarafa kayar. Markajcı kaydırılmaz.</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">9</span>Kapatma</h3>
+      <ul class="rules">
+        <li>Top rakipteyken, tehlikeli bir rakip (en tehlikelinin %30'u ve üstü) kimse tarafından kapatılmıyorsa, işi gereksiz görünen bir savunmacı gönderilir. "Gereksiz" sayılanlar: kovalayan, geri koşan, başkasıyla aynı yeri tutan, top sahibinin dibinde fazla kalan ve adamsız bölge oyuncusu.</li>
+        <li>Gönderilen, topla o rakip arasındaki pas yolunda, rakibe yakın durur: yolun üçte biri, en az 3 br. <span class="job">kapatma · X</span> <span class="flag">ALAN_PAS_YOLU_ESKI</span></li>
+        <li>Sınırlar: arkadakiler gitmez; kapatma noktası oyuncunun bölgesinin içinde olmalı <span class="flag">ALAN_KAPATMA_BOLGE_ESKI</span>; arkasında boş bir rakip bırakmamalı <span class="flag">ALAN_ARKA_BOS_ESKI</span>.</li>
+        <li>Bağlılık: rakip tehlikeli kaldıkça kapatmada kalır, pas havadayken de.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Çelişkiler ve sorular</span>
+    <h2>Senin kararını bekleyenler</h2>
+    <p class="src">Etiketler: <b>çelişki</b> = iki kural ya da bir kural ile senin ilken birbirine aykırı; <b>sadeleştirme</b> = gereksiz ya da dağınık; <b>soru</b> = karar sende.</p>
+    <div class="issues">
+      <div class="issue">
+        <h4><span class="tag k">çelişki</span>Arkadakiler hâlâ orta sahada prese ve boş topa çıkabiliyor</h4>
+        <p>İlken "savunma bölgesindeki oyuncu orta sahaya çıkmaz". Ama pres adayları arasında arkadakiler de var; onları yalnız arkada bıraktıkları adamın bedeli frenliyor. Boş topa da takımdan ilk kim varacaksa o koşuyor; o kişi arkadaki olabilir.</p>
+        <p class="oneri"><b>Önerim:</b> Arkadakiler prese ve boş topa yalnız kendi bölgelerinin içinde ya da top son bölgedeyse çıkar.</p>
+      </div>
+      <div class="issue">
+        <h4><span class="tag k">çelişki</span>Üç farklı tehlike ölçüsü kullanılıyor</h4>
+        <p>Arkadakiler yeni ölçüyü kullanıyor: gittiği yer, topa uzaklık, arkasında boşluk, özellikler. Bölge oyuncularının rakip dağıtımı ve ikinci presçi eski, yalnız konuma bakan ölçüyü kullanıyor. Pres bedeli ise hâlâ "pas yolu o an açık mı" çarpanını kullanıyor. Senin kaldırmamı istediğin çarpan buydu.</p>
+        <p class="oneri"><b>Önerim:</b> Savunmanın her yerinde tek ölçü: yukarıdaki "tehlike".</p>
+      </div>
+      <div class="issue">
+        <h4><span class="tag s">sadeleştirme</span>"Arkada boş bırakma" artık büyük ölçüde gereksiz</h4>
+        <p>Bu kural Alp'in kapatmaya çıkıp Kaan'ı bırakması için yazıldı. Artık arkadakiler hiç kapatmaya gitmiyor. Ayrıca kural yalnız derinliğe bakıyor: sahanın öbür yanındaki bir savunmacıyı da "arkasında biri var" sayıyor.</p>
+        <p class="oneri"><b>Önerim:</b> Kaldırmak.</p>
+      </div>
+      <div class="issue">
+        <h4><span class="tag s">sadeleştirme</span>Kapatmaya kimin gideceği karışık</h4>
+        <p>"İşi gereksiz" sayılan beş ayrı durum var. Kovalayan oyuncunun bu listede olması, Alp'in boş topa koşup sonra kapatmaya çıkmasının kaynağıydı.</p>
+        <p class="oneri"><b>Önerim:</b> Kapatmaya yalnız adamsız bölge oyuncusu ve başkasıyla aynı yeri tutan ikinci kişi gitsin.</p>
+      </div>
+      <div class="issue">
+        <h4><span class="tag s">sadeleştirme</span>"Önceki işte kalma" üç ayrı yerde, üç ayrı ölçüyle</h4>
+        <p>Bölge oyuncusu rakibi yarıçapın 1,5 katına kadar tutuyor; kapatmadaki rakip tehlikeli kaldıkça kapatmada kalıyor; arkadakiler yeni eşleşme %15 daha hızlı değilse eskisinde kalıyor.</p>
+        <p class="oneri"><b>Önerim:</b> Tek ilke: yeni iş eskisinden belirgin daha iyi değilse oyuncu eski işinde kalır. Ölçü her yerde aynı.</p>
+      </div>
+      <div class="issue">
+        <h4><span class="tag t">soru</span>Arkada kaç kişi kalmalı?</h4>
+        <p>Bugün sayıyı diziliş belirliyor: 2-2-2'de her zaman 2. Rakip önde tek forvet bıraksa da iki kişi arkada kalıyor; biri adamsız olunca "sıra" kuruyor.</p>
+        <p class="oneri"><b>Soru:</b> Arkadaki sayısı rakibin önde bıraktığı oyuncu sayısına göre değişsin mi, örneğin "rakibin önde bıraktığı sayı + 1, en çok dizilişteki kadar"? Fazla kalan arkadaki orta sahaya katılır.</p>
+      </div>
+      <div class="issue">
+        <h4><span class="tag t">soru</span>Geri koşan oyuncunun hedefi</h4>
+        <p>Top kaybedilince bölge oyuncuları kendi bölgelerinin hizasına koşuyor. Kontrada asıl tehlike çoğu zaman topun hemen önündeki koşucu; geri koşan biri ona yakın geçse de onu almıyor.</p>
+        <p class="oneri"><b>Soru:</b> Geri koşan, yolu üzerindeki koşan bir rakibi devralsın mı?</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Bu belge kodun bugünkü halinden yazıldı ve ölçüm içermez. Bir maddeye "doğru / yanlış / şöyle olsun" demen yeterli; kodu bu belgeye göre tek seferde düzenlerim, belgeyi de güncel tutarım.</footer>
+</div>
