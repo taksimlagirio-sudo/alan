@@ -25,7 +25,7 @@
     const tq = (m.tac0 && m.tac0[g.team]) || m.tac[g.team] || {}, kural = GECIS_VARS(tq), dir = dirOf(g.team), on = m.ps.filter(q => q.team === g.team && q.role !== 'Bekçi' && q !== h && (q.x - E.x) * dir > 0), n = on.length;
     g.biz = n; g.rakip = geri; g.git = kural === 'her' || (kural === 'esit' && n >= geri) || (kural === 'ustun' && n > geri);
     if (g.git && g.kendi && h) { const d = m.ps.filter(q => q.team === g.team && q.role !== 'Bekçi' && q !== h && !on.includes(q)).sort((u, v) => Math.hypot(u.x - h.x, u.y - h.y) - Math.hypot(v.x - h.x, v.y - h.y))[0]; if (d) on.push(d); }
-    g.on = g.git ? on.map(q => q.id) : []; m.gecis = true; }
+    g.on = g.git ? (self.ALAN_KOSUCU_SABIT_ESKI ? on.map(q => q.id) : [...new Set([...(g.on || []).filter(id => !h || id !== h.id), ...on.map(q => q.id)])]) : []; /* v5 · koşucu kontra boyunca koşucu kalır: top onu geçse de listeden çıkmaz (önce topun gerisine düşen koşucu güvenceye dönüyordu). Deney: self.ALAN_KOSUCU_SABIT_ESKI */ m.gecis = true; }
   const tq0 = (m, t) => (m.tac0 && m.tac0[t]) || m.tac[t] || {};
   const inWin = (m, t) => !!(m.gc && m.gc.team === t && m.gc.git);
   function kpAkt(m, t) { const k = m.kp; if (!k) return null; const h = m.holder, b = m.ball, bt = h ? h.team : b ? b.team : null; if (m.tick >= k.bitis || bt === k.team) { m.kp = null; return null; } /* zip43 hatası: çağıranın takımına bakıyordu, topu tutan takım için çağrılınca karşı pres siliniyordu */ return k.team === t ? k.ids : null; } /* top geri kazanılınca ya da süre dolunca biter */
