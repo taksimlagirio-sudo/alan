@@ -57,6 +57,11 @@ Tartı olasılık değil, **olasılık × bize zararı** (varış yerinin hücum
 - Bekleme (0,5 sn) değeri = bekledikten sonraki en iyi hamle, tam ağırlıkla alınıyordu → yarı ağırlık, iki yönlü (sürme-sonrası ile aynı kural). 0.508 → 0.309; sür 0.204, yine bekleme seçiliyor.
 - Kaynak: 30 tik bekleyince Mert dibine geliyor; o dünyada en iyi hamle **gövde fake'i 0.534** (sür 0.006). Maçta da tam bu oluyor: 6926 Rüzgâr yan gidiş gösteriyor, Mert ve Ece aldanıyor, Deniz'i geçiyor, Şimşek'e önüne pas. Yani "bekle, rakibi üstüne çek, çalımla geç" planı bu anda gerçekten işliyor. Açık soru (kullanıcıya): kontrada bu plan kabul mü, yoksa fake'in tutma ihtimali (herkes Okuma 20 iken %84 inanılırlık) mı fazla?
 
+### C-c 2. adım (main, `ALAN_KONTRA_BEKLE_ESKI`) · kullanıcı: "kontrada beklemenin bedelini ağırlaştır"
+- Motorun geçiş penceresi (inWin) bu anda kapalıydı; etikete bağlı kalmamak için durumdan ölçülür: **üstünlük** = topun yanında/önündeki hücumcu (15 br içinde, en çok 5 br geride; taşıyıcı dahil) − topun önündeki savunmacı (30 br). Üstünken (ya da geçiş penceresinde) her 0,5 sn bekleme 0.06 + üstünlük başına 0.15; ayrıca beklerken kale tarafına geçen her savunmacı 0.08.
+- k-ruzgar-deniz 6903: üstünlük 1 (Rüzgâr + Şimşek'e karşı Deniz). Bekleme 0.309 → 0.204, sür 0.204 (eşit; sür önde). Oyun: Rüzgâr sürüyor, 6923'te önüne → Şimşek, Şimşek alıyor ve Deniz'i geçiyor ("Çekirdeği çekti, Deniz boşa uzandı").
+- Sırada (kullanıcı istedi): fake'in tutma ihtimali (herkes Okuma 20 iken %84, iki kişi birden aldanıyor) — kalibrasyon.
+
 ## İlke D · Koşucunun önüne ara pas: koşunun yönünde, kaleye doğru boşluğa
 Pas hedefleri bugün üç kaynaktan: arkadaşın ayağı, "boşluğa pas" taraması (arkadaş savunmadan önce varmalı), buluşma noktası (yalnız görevi "koşu" olana). Koşan arkadaşın **önüne, kaleye doğru** atılan ara pas sistematik olarak ya üretilmiyor ya çok düşük değerleniyor.
 
