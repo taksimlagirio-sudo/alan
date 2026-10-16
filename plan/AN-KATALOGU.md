@@ -53,6 +53,10 @@ Tartı olasılık değil, **olasılık × bize zararı** (varış yerinin hücum
 - Alıcı da önündeki boşlukla (`runOn`) tartılır; sür-sonra değeri yarı ağırlıkla ve iki yönlü (kopyada kayıpsa düşer); fake'in aldanılmayan dünyası şimdiki en iyiyi geçemez.
 - Aynı an (yeni motor): Rüzgâr 6883 sür 0.430 (sonra: sür), 40 tikte kaleye yaklaşıp 6928'de güçlü gönderiyor (değer 0.826), Aras tutuyor. Sürmenin yüksek değeri artık gerçek: Deniz onu kapatmadığı için gerçekten gönderme yerine varıyor → **A3**. Şimşek'e pas yine düşük (P 0.99'da değer −0.03…0.09): Mert dibinde, alınca tutma ihtimali düşük → **E**. Bu anın istenen hâli A ve E'ye bağlı.
 
+### C-c (main, `ALAN_BEKLE_YARI_ESKI`) · katalog anı k-ruzgar-deniz, 6903
+- Bekleme (0,5 sn) değeri = bekledikten sonraki en iyi hamle, tam ağırlıkla alınıyordu → yarı ağırlık, iki yönlü (sürme-sonrası ile aynı kural). 0.508 → 0.309; sür 0.204, yine bekleme seçiliyor.
+- Kaynak: 30 tik bekleyince Mert dibine geliyor; o dünyada en iyi hamle **gövde fake'i 0.534** (sür 0.006). Maçta da tam bu oluyor: 6926 Rüzgâr yan gidiş gösteriyor, Mert ve Ece aldanıyor, Deniz'i geçiyor, Şimşek'e önüne pas. Yani "bekle, rakibi üstüne çek, çalımla geç" planı bu anda gerçekten işliyor. Açık soru (kullanıcıya): kontrada bu plan kabul mü, yoksa fake'in tutma ihtimali (herkes Okuma 20 iken %84 inanılırlık) mı fazla?
+
 ## İlke D · Koşucunun önüne ara pas: koşunun yönünde, kaleye doğru boşluğa
 Pas hedefleri bugün üç kaynaktan: arkadaşın ayağı, "boşluğa pas" taraması (arkadaş savunmadan önce varmalı), buluşma noktası (yalnız görevi "koşu" olana). Koşan arkadaşın **önüne, kaleye doğru** atılan ara pas sistematik olarak ya üretilmiyor ya çok düşük değerleniyor.
 
