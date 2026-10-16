@@ -2,6 +2,11 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Kendine pasta pres; kale ağzı pası — ölçülmedi
+- `ALAN_KENDINE_PRES_ESKI`: kendine pas (önüne / duvardan) havadayken savunma (shape) topu atanı top sahibi sayar; pres, arkadakiler ve kapatma bozulmaz. (00:48 Kaan, Volkan topu önüne itince presi bırakıp bölgesine döndü.)
+- `ALAN_AGIZ_PAS_ESKI`: kaleye 40 br'den yakın her arkadaş için onunla kale ortası arasındaki 4, 8, 12 br noktaları "önüne" pas adayı (boşluk taramasının "alıcı herkesten önce varmalı" elemesi olmadan). (00:51 Yıldırım'ın Kartal'a pası köşeye gitti; kale ağzı hiç aday değildi.)
+- Teşhis notu: kurulan sahnede gönderme 1,00 çıktı ama kopyada şut gerçekten gol oluyordu (kaleci şut çizgisinde değildi); gönderme hesabında hata kanıtı yok, dokunulmadı. "Önüne pas yalnız kaleye doğru" önerisi kullanıcı tarafından reddedildi (yanlış öneriydi).
+
 ## 16 Ekim 2026 · Karşılama önce orta sahaların; arkadakiler sıra kurar — ölçülmedi
 - `ALAN_ORTA_KARSILA_ESKI`: önü boş taşıyıcıyı arkadakiler ancak taşıyıcı kaleye 40 br'den yakınsa ya da hiçbir arkada olmayan savunmacı taşıyıcının kale tarafına (3 br) onlardan önce yetişemiyorsa karşılar (karşılayan zaten tek kişi). (00:02 Tuna kanatta, orta çizgi ötesinde; Baran karşılamaya çıkıyordu.)
 - `ALAN_ARKA_DIZI_ESKI`: adamı olmayan arkadakiler topa (buluşma noktasına) yakınlığa göre sıralanır: ilki top–kale ortası çizgisinde, sonuncusu kale ortasının önünde (aynı derinlik), diğerleri eşit aralıkla arada. Tek başınaysa ikisinin karışımı: top kaleye 30 br'den yakınsa %20, 70 br'den uzaksa %60 ortaya. (00:01 Alp ve Baran ikisi de kanattaki Tuna'nın buluşma noktasına kayıyordu; ortada Kaan ve Ece.)
