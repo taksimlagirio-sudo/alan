@@ -1,0 +1,10 @@
+const fs = require('fs'), [dir, kp] = process.argv.slice(2); const { M, kurMac } = require('./yukle')(dir); const { oku } = require('./graf'); const K = require('../alp-kayit.json');
+const m0 = kurMac(K.yeni), m = oku(JSON.parse(fs.readFileSync(kp)), () => M.kopya(m0.r)); for (const k of Object.keys(m0)) if (!(k in m)) m[k] = m0[k]; const AD = self.AlanDecide, D = AD.D, C = self.AlanCore;
+while (m.tick < 4812) M.step(m); const h = m.ps.find(p => p.name === 'Efe'), V = m.ps.find(p => p.name === 'Volkan'); let s = 5; const rnd = () => (s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296;
+const sut = (sh, src, x, y) => { const gx = 0, ty = 30 + C.MOUTH * D.aimPow, dx = gx - x, dy = ty - y, l = Math.hypot(dx, dy), v0 = D.shotV * C.chgMul(.6); D._gon = true; const ot0 = D._ot; D._ot = AD.gonEk(sh, src, 'güçlü'); const im = AD.imagine(sh, src, { x, y, vx: dx / l * v0, vy: dy / l * v0, ch: .6 }, rnd, 4); D._gon = false; D._ot = ot0; return im; };
+D._mac = m; D._tick = m.tick;
+console.log('Efe kendi yerinden (gerçek dizi):', JSON.stringify(sut(h, m.ps, h.x, h.y)));
+const kop = m.ps.map(p => ({ ...p })), hk = kop[m.ps.indexOf(h)]; console.log('Efe kendi yerinden (kopya dizi):', JSON.stringify(sut(hk, kop, h.x, h.y)));
+const vS = { ...V, x: 15.5, y: 38.3, vx: 0, vy: 0 }, kop2 = m.ps.map(p => p === V ? vS : ({ ...p })); console.log('Volkan (15.5,38.3) kopya:', JSON.stringify(sut(vS, kop2, 15.5, 38.3)));
+const bk = m.ps.find(p => p.team === 0 && p.role === 'Bekçi'); console.log('kaleci', bk.name, bk.x.toFixed(1), bk.y.toFixed(1));
+process.exit(0);

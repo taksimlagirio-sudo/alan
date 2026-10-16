@@ -1,0 +1,11 @@
+// 909623: Efe'nin önüne pasları. Kararda bütün önüne → Volkan adayları (hedef, sert mi, varış hızı, kafadaki sonuç), sonra topun ve Volkan'ın gerçek yolu
+const fs = require('fs'), [dir] = process.argv.slice(2); const { M, kurMac } = require('./yukle')(dir); const { yaz } = require('./graf'); const K = require('../alp-kayit.json');
+const m = kurMac(K.yeni), AD = self.AlanDecide, D0 = AD.decide, f3 = v => (+v).toFixed(3); const hedefler = [2000, 4790]; let izle = 0;
+AD.decide = function (h, src, ch, ...r) { const res = D0.call(this, h, src, ch, ...r); if (h.name === 'Efe' && !AD.D._inLook && !AD.D._noHold && !AD.D._noFake && hedefler.some(t => m.tick >= t && m.tick <= t + 40)) { const V = src.find(p => p.name === 'Volkan');
+    console.log(`\n### ${m.tick} (${(m.tick / 30 | 0)} sn) Efe (${h.x.toFixed(1)},${h.y.toFixed(1)}) hız (${(h.vx || 0).toFixed(2)},${(h.vy || 0).toFixed(2)}) · Volkan (${V.x.toFixed(1)},${V.y.toFixed(1)}) hız (${(V.vx || 0).toFixed(2)},${(V.vy || 0).toFixed(2)})`);
+    for (const o of res.opts.slice(0, 12)) console.log(`   ${(o.kind + (o.firm ? '(sert)' : '') + (o.q ? '→' + o.q.name : '')).padEnd(24)} v ${f3(o.v)} ${o.to ? `hedef (${o.to.x.toFixed(1)},${o.to.y.toFixed(1)})` : ''} ${o.arrive != null ? 'varış ' + o.arrive : ''} ${o.launch ? 'atış hızı ' + Math.hypot(o.launch.vx, o.launch.vy).toFixed(2) : ''} ${o.det && o.det.end ? `kafada bitiş (${o.det.end.x.toFixed(1)},${o.det.end.y.toFixed(1)}) P ${f3(o.det.P)}` : ''}`);
+    izle = m.tick + 70; } return res; };
+let son = null; while (m.tick < 4870) { M.step(m); if (izle && m.tick <= izle && m.tick % 4 === 0) { const V = m.ps.find(p => p.name === 'Volkan'), b = m.ball; console.log(`   ${m.tick} top ${m.holder ? 'sahibi ' + m.holder.name : b ? `(${b.x.toFixed(1)},${b.y.toFixed(1)}) hız ${Math.hypot(b.vx, b.vy).toFixed(2)}` : '-'} · Volkan (${V.x.toFixed(1)},${V.y.toFixed(1)}) [${V.job}] hedef (${(V.tx ?? 0).toFixed(1)},${(V.ty ?? 0).toFixed(1)})`); }
+  if (m.events[0] !== son) { if (izle && m.tick <= izle) { let k = 0; while (k < m.events.length && m.events[k] !== son) k++; for (let j = k - 1; j >= 0; j--) console.log('   OLAY', m.tick, m.events[j].text); } son = m.events[0]; }
+  if (m.tick === 1980 || m.tick === 4770) fs.writeFileSync('/tmp/efe-kp-' + m.tick + '.json', JSON.stringify(yaz(m))); }
+process.exit(0);

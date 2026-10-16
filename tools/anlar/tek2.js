@@ -1,0 +1,4 @@
+const fs = require('fs'), [dir, kp] = process.argv.slice(2); globalThis.__tekLog = []; const { M, kurMac } = require('./yukle')(dir); const { oku } = require('./graf'); const K = require('../alp-kayit.json');
+const m0 = kurMac(K.yeni), m = oku(JSON.parse(fs.readFileSync(kp)), () => M.kopya(m0.r)); for (const k of Object.keys(m0)) if (!(k in m)) m[k] = m0[k]; const AD = self.AlanDecide, D0 = AD.decide;
+AD.decide = function (h, ...r) { const top = AD.D._inLook || AD.D._noHold || AD.D._noFake; if (!top && h.name === 'Efe') __tekLog.length = 0; const res = D0.call(this, h, ...r); if (!top && h.name === 'Efe' && m.tick >= 4812) { console.log('tik', m.tick); for (const x of __tekLog) console.log(JSON.stringify(x)); process.exit(0); } return res; };
+while (m.tick < 4830) M.step(m); process.exit(0);

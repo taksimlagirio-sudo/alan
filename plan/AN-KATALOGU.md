@@ -67,6 +67,13 @@ Tartı olasılık değil, **olasılık × bize zararı** (varış yerinin hücum
 - Düzeltildi: fake'in değeri "en az biri aldanır" ihtimaliyle "hepsi aldandı" dünyasından alınıyordu; artık hepsi / bir kısmı (iki dünyanın ortası) / kimse, her biri kendi ihtimaliyle. k-ruzgar-deniz 6903: bekleme (sonrasında çalım planı) 0.204 → 0.110; sür 0.204 seçiliyor; oyun aynı (Rüzgâr → Şimşek önüne, Şimşek Deniz'i geçip gönderiyor).
 - **Ertelendi (kullanıcı):** aldanma oranının kendisi. "Çok duruma, pozisyona bağlı; gerçekten akıllı yapmamız lazım." Eşit kalitede sabit %50 yerine durumdan (açı, hız, savunmacının dengesi, fake'in o anki mantıklılığı, mesafe…) türetilmeli.
 
+### D/C-d · Efe → Volkan (909623, alp-kayit kurulumu; 01:07 ve 02:40) · kullanıcı: "arkadaşının önüne müsait bir açıdan gol atsın diye bırakan Efe iki topta da çok kötü pas attı"
+- Sebep 1 (D yan etkisi): sabit "sert" önüne pas (varış 0.8) hedefi 15 br geçip köşeye gidiyordu; değer nişan noktasında hesaplandığı için 1.077 çıkıyordu. Düzeltme: pas şiddeti buluşmadan (alıcının varış anı, ±%15; `ALAN_SIDDET_ESKI`), değer alış yerinde (`ALAN_ALIS_YERI_ESKI`).
+- Sebep 2 (C-d): kale önünde alınan pasın değeri, kalecinin alıcıya göre yerleşmiş olduğunu varsayan tablodan geliyordu. Düzeltme: alıcının ilk dokunuşta göndermesi kafada, kaleci pas süresince kayabildiği kadar (`ALAN_TEK_DOKUNUS_ESKI`).
+- Sebep 3 (kullanıcı: "kaleci anlık değişimlerde aşırı hızlı hareket etmesin"): Bekçi kale ağzı boyunca koşu hızının %50–65'iyle kayar (Çeviklik), öne/geri tam hız (`ALAN_BEKCI_KAYMA_ESKI`).
+- Sonuç: 01:07 Efe önüne → Volkan (1.397), Volkan gönderiyor. 02:40 Efe önüne → Volkan (0.821, ilk dokunuş değeri 0.667), Volkan sürüp Yıldırım'a veriyor, Yıldırım tek dokunuşla gol.
+- Açık: kafadaki savunma cevabı (respond) en yakın iki savunmacıyı alıcının tam önüne, kusursuz kesen yere koyuyor — kullanıcıyla konuşuldu, sırada.
+
 ## İlke D · Koşucunun önüne ara pas: koşunun yönünde, kaleye doğru boşluğa
 Pas hedefleri bugün üç kaynaktan: arkadaşın ayağı, "boşluğa pas" taraması (arkadaş savunmadan önce varmalı), buluşma noktası (yalnız görevi "koşu" olana). Koşan arkadaşın **önüne, kaleye doğru** atılan ara pas sistematik olarak ya üretilmiyor ya çok düşük değerleniyor.
 
