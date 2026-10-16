@@ -14,6 +14,9 @@ Tartı olasılık değil, **olasılık × bize zararı** (varış yerinin hücum
 - **A1 · Deniz–Ece (Liman–Demir Blok, 01:40, motor 6ad507e, eski an a-52-0-2845-kontra; yeni motorda yok, ekran görüntüsünden).** Şimşek ve Gökay ikisi de Deniz'in üstüne düz koşuyor. Kullanıcı: "biri baskı yaparken diğeri sağ köşede durup pas açısını kapatarak baskı yapmalı." Ayrıca Deniz'in kararı: sür 0.198 / pas → Ece 0.192, oysa Ece çok boş; pas belirgin daha değerli olmalı (bkz. İlke C).
 - **A2 · Yelkovan–Tuna (Liman–Saat Kulesi, 01:55, motor 82a0ff0, `a-129-2-3473-iki-topta`).** Yelkovan Tuna'ya arkasından baskıya gidiyor. Kullanıcı: "prese gitmesi sorun değil ancak arkasındaki Kaan'ı da düşünerek, ayrıca Tuna'nın kaleye bakış açısını da sınırlamaya çalışarak durmalı."
 
+- **A3 · Deniz, Rüzgâr–Şimşek'e karşı (D1/E1 ile aynı an, `a-52-0-6951-kontra`).** Deniz son adam; karşısında top sürülen Rüzgâr ve yanında koşan Şimşek (2'ye 1'e yakın). Kullanıcı: "Deniz de tabii ki bu duruma göre pozisyon almalı, gerekirse tercih yapmalı; hem Şimşek'i düşünmeli hem Rüzgâr'ın kaleye doğru sürme ve kaleyi görme–şut atma açısını."
+  A'nın genel hâli: savunmacının yeri tek bir tehdide göre değil, birden fazla seçeneğin (sürüp kaleye gitmek, gönderme açısı, Şimşek'e pas) olasılık × zararına göre seçilir; hepsini kapatamıyorsa en zararlısını kapatıp ötekini geciktirir (tercih). Önceki Volkan–Deniz anı ("önü boşken yavaşlat") da bunun tek tehditli hâli.
+
 ## İlke C · Değer: çok boş bir arkadaşa pas, sürmekten belirgin değerli
 - **C1 · Deniz (A1 ile aynı an).** Sürme değeri, "sürdükten sonraki en iyi hamle"den geliyor (`ALAN_SUR_SONRA_ESKI`); sürünce pasın hâlâ açık kalacağı varsayılıyor olabilir. Doğrulanmadı.
 
