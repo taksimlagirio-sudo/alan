@@ -3,6 +3,10 @@
 Kullanıcının maçta gördüğü sorunlu anlar. Amaç tek tek yama değil: anlar biriktikçe ortak ilkeleri bulup toplu çözüm üretmek.
 Her an: kimlik (Anlar ekranı `a-…` ya da tohum + saat), kullanıcının sözü, hangi ilkeye bağlandığı. Motor sürümü yazılır; o sürümden eski anlar yeni motorda başka oynar.
 
+## Genel kural · Kararlar görev yazısını koşul olarak okumaz
+Görev ataması kalır (savunmada kim kime basar, kim markaj, kim arkada: bunu atmak savunmayı dağıtır) ve görev kartındaki yazı kalır. Ama hiçbir karar görev **yazısına** bakmaz ("görevi 'koşu' içeriyorsa…"); sahada görünen duruma bakar (hız, yön, konum, kimi tuttuğu). Örnek: Şimşek kaleye koşarken görevi "boşluk" yazdığı için buluşma pası üretilmedi (D1).
+Bugün motorda görev yazısını okuyan ~17 yer var (match.js 8, shape.js 8, decide.js 1). İlkeler çözülürken bu kurala göre temizlenir. Kullanıcıyla 16 Ekim'de kararlaştırıldı.
+
 ## İlke A · Baskının yönü: presçi, top sahibinin en tehlikeli seçeneklerini gövdesiyle kapatarak yaklaşır
 Topa düz koşmak yerine, top sahibiyle onun en tehlikeli seçenekleri (kale, en boş arkadaş) arasına doğru yaklaşmak. İkinci presçi topa değil, kalan en tehlikeli pas yoluna.
 Tartı olasılık değil, **olasılık × bize zararı** (varış yerinin hücum değeri − şimdiki değer; negatifse 0). Kullanıcı: "taşıyıcı arkaya pası da ihtimal olarak görüyorsa sorun yaratmaz mı" — geri pas olası ama zararsız; presçi onu bilerek açık bırakır, top sahibini geriye zorlar. Bu yüzden A, C'ye (değerlerin doğruluğu) bağlı.
