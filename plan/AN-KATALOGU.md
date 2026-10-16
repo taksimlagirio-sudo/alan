@@ -5,6 +5,7 @@ Her an: kimlik (Anlar ekranı `a-…` ya da tohum + saat), kullanıcının söz�
 
 ## İlke A · Baskının yönü: presçi, top sahibinin en tehlikeli seçeneklerini gövdesiyle kapatarak yaklaşır
 Topa düz koşmak yerine, top sahibiyle onun en tehlikeli seçenekleri (kale, en boş arkadaş) arasına doğru yaklaşmak. İkinci presçi topa değil, kalan en tehlikeli pas yoluna.
+Tartı olasılık değil, **olasılık × bize zararı** (varış yerinin hücum değeri − şimdiki değer; negatifse 0). Kullanıcı: "taşıyıcı arkaya pası da ihtimal olarak görüyorsa sorun yaratmaz mı" — geri pas olası ama zararsız; presçi onu bilerek açık bırakır, top sahibini geriye zorlar. Bu yüzden A, C'ye (değerlerin doğruluğu) bağlı.
 
 - **A1 · Deniz–Ece (Liman–Demir Blok, 01:40, motor 6ad507e, eski an a-52-0-2845-kontra; yeni motorda yok, ekran görüntüsünden).** Şimşek ve Gökay ikisi de Deniz'in üstüne düz koşuyor. Kullanıcı: "biri baskı yaparken diğeri sağ köşede durup pas açısını kapatarak baskı yapmalı." Ayrıca Deniz'in kararı: sür 0.198 / pas → Ece 0.192, oysa Ece çok boş; pas belirgin daha değerli olmalı (bkz. İlke C).
 - **A2 · Yelkovan–Tuna (Liman–Saat Kulesi, 01:55, motor 82a0ff0, `a-129-2-3473-iki-topta`).** Yelkovan Tuna'ya arkasından baskıya gidiyor. Kullanıcı: "prese gitmesi sorun değil ancak arkasındaki Kaan'ı da düşünerek, ayrıca Tuna'nın kaleye bakış açısını da sınırlamaya çalışarak durmalı."
