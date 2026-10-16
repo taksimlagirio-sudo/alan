@@ -34,6 +34,11 @@ Tartı olasılık değil, **olasılık × bize zararı** (varış yerinin hücum
 - Koşusunun önüne pas (31.9, 46): kafada %99,6 kayıp. Pas hızı 0.31 br/tik (oyuncu koşusu 0.29; `D.arrive` 0.3 ayağa pasın varış hızı) → 9 br'yi ~45 tikte gidiyor. Düz yetişme hesabında Şimşek top yoluna 18. tikte, Deniz 32., Mert 36. tikte yetişiyor; yani Şimşek topa koşsa alır. Kayıp büyük ihtimalle: pas çok yavaş + alıcı topa değil hedef noktaya koşuyor (doğrulanmadı). Çözüm **D**: önüne pasın sert türü (bugün sert tür yalnız ayağa pasta) ve alıcının topla buluşması.
 - Sürme 0.284: "3–4 br sür, sonra önüne → Şimşek" planının değeri; sürme-sonrası hesabı yalnız yukarı düzeltiyor (`v2 > o.v` ise). Çözüm **C**: plan değeri bekleme/sürme riskiyle birlikte, iki yönlü.
 
+### D ölçümü ve 1. adım (main, `ALAN_SERT_ONUNE_ESKI`)
+- Rüzgâr 6903, önüne → Şimşek (31.9, 46) kafada: hız 0.31 → %0; 0.46 → %98; 0.62 → %99. Rakip çıkarma: araya giren Deniz (Deniz yokken yavaş pas %87). Sebep: buluşma noktası topun hızlı (1,1 br/tik) gideceği varsayımıyla bulunuyor, pas ise ayağa pasın varış hızıyla (0.3) yavaş atılıyordu.
+- Değişiklik: her önüne pasın sert türü (varış ≥ `arriveFirm` 0.8) de aday; buluşma pası adayı görev yazısına değil koşu yönüne/hedefine bakar.
+- Sonuç (aynı an, yeni motor, 6869): önüne → Şimşek (36.5, 43.1) yavaş %0,4 tutuyor, sert %99,4 tutuyor. Ama değeri 0.046, sür 0.330 ("sonra: fake" planından). Pas artık mümkün; seçilmemesi C (sürmenin iyimserliği) ve alınan yerin değeri meselesi.
+
 ## İlke D · Koşucunun önüne ara pas: koşunun yönünde, kaleye doğru boşluğa
 Pas hedefleri bugün üç kaynaktan: arkadaşın ayağı, "boşluğa pas" taraması (arkadaş savunmadan önce varmalı), buluşma noktası (yalnız görevi "koşu" olana). Koşan arkadaşın **önüne, kaleye doğru** atılan ara pas sistematik olarak ya üretilmiyor ya çok düşük değerleniyor.
 
