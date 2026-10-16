@@ -3,6 +3,15 @@
 Kullanıcının maçta gördüğü sorunlu anlar. Amaç tek tek yama değil: anlar biriktikçe ortak ilkeleri bulup toplu çözüm üretmek.
 Her an: kimlik (Anlar ekranı `a-…` ya da tohum + saat), kullanıcının sözü, hangi ilkeye bağlandığı. Motor sürümü yazılır; o sürümden eski anlar yeni motorda başka oynar.
 
+## Plan · A, C, D, E birlikte (16 Ekim, kullanıcıyla)
+Ortak çekirdek: "top sahibinin her seçeneği ne kadar değerli, ne kadar olası". Hücum bununla seçer, savunma aynı listeye olasılık × zarar ile bakar. Sıra:
+1. **C** · değerler: sürme neden pastan değerli çıkıyor (sürme-sonrası hesabı savunmanın kapanmasını sayıyor mu); boş arkadaşa pas, alıcının alacağı zamanı ve açıyı sayıyor mu. Önce ölç, göster; değişiklik onayla.
+2. **D** · önüne pas adayları: koşan herkese (hızından, görev yazısından değil) koşusunun önüne, kaleye doğru. Buluşma ve kale ağzı yamaları bunun içinde erir.
+3. **E** · topsuz destek: alıcının yeri C'deki ölçüyle (savunmacının varma süresi, kaleye açı, geri pas yolu).
+4. **A** · savunma: presçi en zararlı seçenekleri kapatarak yaklaşır, ikinci adam kalan en zararlı yola, son adam tercih yapar. Kapatma, karşılama, buluşma presi gibi parça kurallar bunun içinde erir.
+Değilen yerlerde görev yazısı koşulları temizlenir. Her adım bayraklı.
+**Sınama:** tarama yok. Her adımdan sonra sınama anı `a-52-0-6951-kontra` (ve kataloğun öteki anları) için seçenek dökümü önce/sonra; kullanıcı sitede anlarla kontrol eder.
+
 ## Genel kural · Kararlar görev yazısını koşul olarak okumaz
 Görev ataması kalır (savunmada kim kime basar, kim markaj, kim arkada: bunu atmak savunmayı dağıtır) ve görev kartındaki yazı kalır. Ama hiçbir karar görev **yazısına** bakmaz ("görevi 'koşu' içeriyorsa…"); sahada görünen duruma bakar (hız, yön, konum, kimi tuttuğu). Örnek: Şimşek kaleye koşarken görevi "boşluk" yazdığı için buluşma pası üretilmedi (D1).
 Bugün motorda görev yazısını okuyan ~17 yer var (match.js 8, shape.js 8, decide.js 1). İlkeler çözülürken bu kurala göre temizlenir. Kullanıcıyla 16 Ekim'de kararlaştırıldı.
