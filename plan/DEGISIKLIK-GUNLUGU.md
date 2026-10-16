@@ -2,6 +2,11 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Ayrı tohum + tam paralel (main 96555dd) — maçlar bir kez değişti
+- Kafadaki her deneme ve yalancı hareketin her dünyası ortak zardan tek tohum çeker, kalan zarını kendi tohumundan alır (`ALAN_ALT_TOHUM_ESKI`). Görevler bağımsız: yardımcı işçilerde ya da aynı çekirdekte birebir aynı sonuç.
+- Hesabın ~%87'si paralele açık (909623 · tik 4770 kopyası). Ölçüm: Chromium, maçın ilk 600 tiki 54,7 → 36,8 sn (4 sanal çekirdekli, ~2 etkin çekirdek). Tavan tahmini: 4 çekirdekte ~2,9×, 8'de ~4×.
+- Bir kerelik: eski tohumlar başka maç oynar. Belirlenimcilik korunur.
+
 ## 16 Ekim 2026 · Havadaki topta plan yenileme (main e33e2fb) ve paralel kafa (main 66de97a)
 - `ALAN_UCAN_PLAN_ESKI`: top havadayken koşu planı, topu alacak oyuncu ya da alınacak nokta (8 br) değişince yeniden tartılır (909623 00:11: Kaan 90 tik eski planla ileri koştu).
 - Paralel kafa (maç birebir aynı): kafadaki gönderme denemelerinin zarları maçtaki sırayla önceden çekilir (kuyruk, `ALAN_KUYRUK_ESKI`), oyunları yardımcı işçilerde (SharedArrayBuffer, `paralel.js`, `yardimci-isci.js`, `ALAN_PAR_ESKI`). `_headers` ile canli sayfası çapraz köken yalıtımlı; yalıtım yoksa tek çekirdek.
