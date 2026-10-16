@@ -1,0 +1,7 @@
+# v5 · paralel kafa: maç sayfası ve motor dosyaları çapraz köken yalıtımlı (SharedArrayBuffer için). Yalıtım yoksa motor tek çekirdekle aynı maçı hesaplar.
+/canli*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+/alan-v5/*
+  Cross-Origin-Embedder-Policy: require-corp
+  Cross-Origin-Resource-Policy: same-origin
