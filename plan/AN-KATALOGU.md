@@ -13,6 +13,12 @@ Tartı olasılık değil, **olasılık × bize zararı** (varış yerinin hücum
 ## İlke C · Değer: çok boş bir arkadaşa pas, sürmekten belirgin değerli
 - **C1 · Deniz (A1 ile aynı an).** Sürme değeri, "sürdükten sonraki en iyi hamle"den geliyor (`ALAN_SUR_SONRA_ESKI`); sürünce pasın hâlâ açık kalacağı varsayılıyor olabilir. Doğrulanmadı.
 
+## İlke D · Koşucunun önüne ara pas: koşunun yönünde, kaleye doğru boşluğa
+Pas hedefleri bugün üç kaynaktan: arkadaşın ayağı, "boşluğa pas" taraması (arkadaş savunmadan önce varmalı), buluşma noktası (yalnız görevi "koşu" olana). Koşan arkadaşın **önüne, kaleye doğru** atılan ara pas sistematik olarak ya üretilmiyor ya çok düşük değerleniyor.
+
+- **D1 · Rüzgâr–Şimşek (Liman–Demir Blok, 03:50, motor 82a0ff0, `a-52-0-6951-kontra`).** Kullanıcı: "Şimşek gayet müsait pozisyondayken önüne ara pası hiç düşünmüyor bile, en sonunda atağın tehlikesini yiyor." Döküm (tik 6903, 19 seçenek): Şimşek (37.9, 46.0) kaleye doğru koşuyor (hız −0.32, −0.17). Ona pas adayları var ama hedefleri koşunun **yanında ya da gerisinde**: önüne → (36.1, 51.7) 0.089, pas → ayağa 0.010; koşunun önünde, kaleye doğru (≈ 28–30, 42) hiç aday yok. Seçilen sür 0.284. Görevi o anda "boşluk" (6916'da "kontra koşusu") olduğu için buluşma pası da üretilmiyor.
+- Bağlı eski şikâyetler: Yıldırım'ın arkasına düşen pas; Volkan–Kartal kale ağzı pası (`ALAN_AGIZ_PAS_ESKI` yamasıyla kapatılmıştı); "Koşucunun arkasına pas" Anlar türü (9 maçta 23 kez).
+
 ## Daha önce konuşulup aynı ilkelere bağlananlar (16 Ekim, ekran görüntüleri)
 - Volkan önü boş sürerken Deniz yavaşlatmalıydı (sahte pres, yolu kapatma) → A'nın "yardım yoksa uzaktan yavaşlat" hâli.
 - Kaan ve Mert ikisi de Volkan'a, Yıldırım boş → A (ikinci presçi pas yoluna).
