@@ -2,6 +2,11 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Kendine pas düzeltmesi; buluşma noktasına pres — ölçülmedi
+- `ALAN_KENDINE_PRES_ESKI` daraltıldı: kendine pas ancak top atanın 3 br yakınındayken top sahibi sayılır. (00:05 Tuna topu 15 br önüne itti; Volkan topun olmadığı yerde Tuna'ya basmaya devam etti, topu geç fark etti. Önceki sürümün hatası.)
+- `ALAN_BULUSMA_PRES_ESKI`: rakip pası (kendine pas dahil) havadayken ve kimse topa alıcıdan önce varamıyorken (kovalayan yok), buluşma noktasına en çabuk varacak savunmacı (arkada, önde ve markajcı olmayan) oraya koşar. Görev "pres · buluşma". Savunma adımlarının sonunda uygulanır.
+- Not: ilk yazımda bu kural presçi listesine ekleniyordu ve top sahibi yokken hata verip hesabı durduruyordu; siteye gitmeden kontrol çalışmasında yakalandı.
+
 ## 16 Ekim 2026 · Kendine pasta pres; kale ağzı pası — ölçülmedi
 - `ALAN_KENDINE_PRES_ESKI`: kendine pas (önüne / duvardan) havadayken savunma (shape) topu atanı top sahibi sayar; pres, arkadakiler ve kapatma bozulmaz. (00:48 Kaan, Volkan topu önüne itince presi bırakıp bölgesine döndü.)
 - `ALAN_AGIZ_PAS_ESKI`: kaleye 40 br'den yakın her arkadaş için onunla kale ortası arasındaki 4, 8, 12 br noktaları "önüne" pas adayı (boşluk taramasının "alıcı herkesten önce varmalı" elemesi olmadan). (00:51 Yıldırım'ın Kartal'a pası köşeye gitti; kale ağzı hiç aday değildi.)
