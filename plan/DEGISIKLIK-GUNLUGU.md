@@ -2,6 +2,15 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Duvar çalımı ve gerçekçi momentum (main 5c5b3bc) — sahnelerde denendi, maçta ölçülmedi
+- Kenardan çalım hiç aday üretmiyordu: tek sabit dönüş noktasında duvara giden yol rakibin gövdesinden geçiyordu. Birkaç dönüş noktası + geniş koşul (`ALAN_CALIM_GENIS_ESKI`), yumuşak "ölü top" vuruşu (`ALAN_CALIM_OLU_ESKI`).
+- Kafadaki hesap düzeltmeleri: Çekirdek gövdenin kenarından çıkar (`ALAN_CALIM_CEK_ESKI`); gövde kontrolü gerçek top yolunda, rakibin o tikteki yerine göre, çarpma payı 1,35 (`ALAN_CALIM_YOL_ESKI`, uzanan rakip için `ALAN_CALIM_ADT_ESKI`); yolda kesmede rakibin momentumu (`ALAN_CALIM_DON_ESKI`, `ALAN_CALIM_HIZ_ESKI`); taşıyıcı topa top oradayken varmalı (`ALAN_CALIM_YETIS_ESKI`); rakip gövdesiyle geçiş noktasını keserse dolanma gecikmesi (`ALAN_CALIM_KAPI_ESKI`); dolanma açıklığı 3 → 2,2 br (`ALAN_CALIM_DAR_ESKI`).
+- Momentum (`ALAN_FREN_ESKI`): fren en çok ≈ 7 m/sn², koşarken yana dönüş ≈ 8 m/sn² (1 br ≈ 0,42 m varsayımıyla); tam hızdan durma 0,2 → 0,67 sn. Hızlanma aynı. Herkesi etkiler.
+- Alıcı deparı (`ALAN_ALICI_DEPAR_ESKI`): kendi pasının alıcısı Çekirdeği alana kadar depar atar (topu almaya hazırlanırken depar düşüyor, yuvarlanan topa yetişemiyordu). Herkesi etkiler.
+- Duvarı arama (`ALAN_DUVAR_SUR_ESKI`): önde yakın rakip ve yakın duvar varken duvar tarafına sürme seçeneği; sür-sonra hesabında her zaman tartılır.
+- Sahneler (909623 · tik 4770 kopyası, Tuna–Kartal): Kartal koşarak (5/3,5 br) ve uzanmışken (4/4 br) temiz çalım; top Kartal tarafındayken çalım seçilmiyor (doğru). Duvara sürme yakın rakipte kayıp görülüyor, sonrasında çalım değil pas planlanıyor.
+  *Araçlar:* scratch `sahne-calim-dbg.js` (sahne kurucu; ADN=uzanma, KV=rakip hızı, ZORLA=çalımı zorla).
+
 ## 16 Ekim 2026 · Belirlenimcilik: her cihazda aynı maç (oyun mantığı değişmedi)
 - `sabit-mat.js` (işçilerde ilk yüklenen): exp, log, pow, sin, cos, atan, atan2, acos, tanh, hypot yalnız + − × ÷ ve √ ile (fdlibm algoritmaları). Safari/iPad (JavaScriptCore) ile V8 (Chrome, node) bu fonksiyonlarda çağrıların %3–33'ünde son basamakta ayrışıyordu; motor farkı birkaç saniyede büyütüyor, aynı tohum iki cihazda iki ayrı maç oluyordu. Sınama: aynı maç node ve bun'da (JavaScriptCore) 600 tik bit bit aynı; V8'de alınan kopya JSC'de 200 tik aynı. Doğruluk 1–2 son basamak. Deney: `ALAN_MAT_ESKI`.
 - `match.js`: `D._tick`/`D._mac` tikin başında (`ALAN_TIK_BASI_ESKI`). Alıcının önceden kararı önceki tikin alan önbelleğini (eski konumlar) okuyordu; maç kopyasından kurulan maç ~33 tik sonra ayrılıyordu. Düzeltmeyle 150 tik aynı.
