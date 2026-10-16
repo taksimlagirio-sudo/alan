@@ -2,6 +2,10 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Önü boş taşıyıcıyı arkadakiler karşılar · `ALAN_TASIYICI_KARSILA_ESKI` — ölçülmedi
+- Taşıyıcının kale tarafında 6 br içinde arkadaki olmayan savunmacı yoksa taşıyıcı arkadakilerin tutacağı rakiplerin başına eklenir; hızlı eşleşme kimin kime gideceğini seçer (adam devri). Karşılayanın hedefi: taşıyıcının kale tarafı (%70) + ondan en tehlikeli yakın (30 br) rakibe pas yolunun %35 noktası (%30). Görev "karşıla · X". (00:52 Ece'nin önü boş, Efe arkadan; Alp Kaan'ı bırakmıyor, uzaktaki Baran Ece'ye koşuyordu.)
+- Not: kontra koşucusunun sabit kalması (`ALAN_KOSUCU_SABIT_ESKI`) kullanıcıya katı geldi; şimdilik kalıyor, sorun görülürse "topun 12 br gerisi + önü açık" koşuluna dönülecek.
+
 ## 16 Ekim 2026 · Sürme ve kontra koşucuları — ölçülmedi
 - `ALAN_SUR_SONRA_ESKI`: en umutlu iki "sür" maçın kopyasında (holdWorld, hedefe sürerek) oynatılır; varınca en iyi hamlenin değeri (beklemeyle aynı ölçü, tempo bedelinin yarısı) alınır, daha iyiyse sürmenin değeri olur. Önce sürme yalnız 6 br ötedeki yer değeriyle tartılıyordu (Efe: bekle 0,162 · sür ×3 0,069).
 - `ALAN_UZUN_SUR_ESKI`: önü açıksa (yolun 5 br yakınında rakip saha oyuncusu yok) 12 ve 20 br sürme, düz ve ±23°.
