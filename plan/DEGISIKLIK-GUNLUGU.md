@@ -2,6 +2,10 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Arkadakiler orta sahaya çıkmaz · `ALAN_ARKA_SINIR_ESKI` — ölçülmedi
+- Taşıyıcıyı karşılama yalnız taşıyıcı kaleye yarım sahadan (GW/2) yakınken.
+- Adamı olmayan arkadakinin kaleye uzaklığı dizilişteki yerininkini (base) geçemez. (00:00 santrada Alp "karşıla · Ece" 32 br, Baran "arkada · alan" 28 br orta noktaya koşuyordu.)
+
 ## 16 Ekim 2026 · Önü boş taşıyıcıyı arkadakiler karşılar · `ALAN_TASIYICI_KARSILA_ESKI` — ölçülmedi
 - Taşıyıcının kale tarafında 6 br içinde arkadaki olmayan savunmacı yoksa taşıyıcı arkadakilerin tutacağı rakiplerin başına eklenir; hızlı eşleşme kimin kime gideceğini seçer (adam devri). Karşılayanın hedefi: taşıyıcının kale tarafı (%70) + ondan en tehlikeli yakın (30 br) rakibe pas yolunun %35 noktası (%30). Görev "karşıla · X". (00:52 Ece'nin önü boş, Efe arkadan; Alp Kaan'ı bırakmıyor, uzaktaki Baran Ece'ye koşuyordu.)
 - Not: kontra koşucusunun sabit kalması (`ALAN_KOSUCU_SABIT_ESKI`) kullanıcıya katı geldi; şimdilik kalıyor, sorun görülürse "topun 12 br gerisi + önü açık" koşuluna dönülecek.
