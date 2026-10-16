@@ -232,6 +232,21 @@ Kullanıcının yönü: Oyun hem bilgisayarda hem mobilde, offline ve online; ay
 - **Ayrı kariyer yolu:** scout → transfer yöneticisi → direktör → menajer.
 - **Zamanlama:** Kritik kitle gerektirir; önce yapay zekâ çalışanlar, oyuncu sayısı arttıkça insanlara açılır.
 
+**Kulüp sahibi (kullanıcı kararları, 16 Ekim 2026):** Kalıcı sahip; seçilip giden başkan değil. Taktikle uğraşmaz: menajeri bulur, kulübün parasını yönetir, transferleri menajerle konuşur. Maçları izlemek isteğe bağlı (izleyen daha iyi karar verir).
+- **Roller ayrı:** Bir kişi aynı kulüpte hem sahip hem menajer olamaz. Sahip gerçek kişi değilse her zaman yapay zekâdır; menajer için de aynısı. Sıra: sahip → menajer → scout / transfer yöneticisi.
+- **İki tek oyunculu mod:** Menajer kariyeri (sahip yapay zekâ) ve sahip modu (menajerler yapay zekâ). Sahip modu taktikle uğraşmak istemeyen oyuncuya açık.
+- **Önce yapay zekâ sahip:** Menajer kariyerinde menajeri işe alan, hedef koyan, kovan biri zaten gerekli ("teklifler itibara göre gelir"). Önce o kurulur, sonra koltuk insanlara açılır (scout ile aynı yol).
+- **Sahibin işi menajerin gizli kalitesini okumak:** Scout oyuncunun gizli değerini, sahip menajerin gizli kalitesini gözlemle tahmin eder (maç izleme, beklentiyi aşma kaydı). Şart: yapay zekâ menajerler gerçekten farklı kalitede ve farklı tarzda oynamalı; hepsi aynıysa seçecek bir şey kalmaz.
+- **Sahibin kararları:**
+  - *Menajer:* menajer piyasasından seçim, sözleşme, sezon hedefi, kovma. Kovmanın bedeli var (tazminat); yoksa her kötü haftada kovulur.
+  - *Para:* ligin maaş tavanı içinde bütçeyi böler: maaş, transfer kasası, altyapı. Altyapının yönünü seçer (kulübün kimliği; uzun vadeli izi).
+  - *Transfer:* çerçeveyi sahip koyar (bütçe, satılmaz listesi, en düşük satış fiyatı). Transferi sahip de menajer de önerebilir; gerçekleşmesi için **ikisinin onayı** gerekir. Sahip menajere oyuncu dayatamaz: kaybın sebebi menajerin kararı olmalı.
+- **Sahibin itibarı ölçülür:** Kulüp değerinin değişimi, menajer değiştirme sıklığı, koyduğu hedeflerin gerçekçiliği. "Sabırsız sahip" olarak tanınan kulübe iyi menajer gelmek istemez (kendiliğinden fren).
+- **Para gücü yok:** Sahip cebinden para koyamaz; yalnız kulübün oyun içi parasını yönetir, maaş tavanı herkes için aynı. Bir kişi tek kulübün sahibi olabilir; bağlantılı hesaplar arasındaki transferler işaretlenir.
+- **Kulübe sahip olma:** Birden çok yol sunulur (örnek: alt ligde sıfırdan kurmak, var olan kulübü satın almak). Ayrıntı sonra.
+- **Seçimli başkan yok:** Başkanın kulüpten kulübe gitmesi garip; insanlara açılmaz. (Belki ileride: yapay zekâ başkanlı "taraftar kulüpleri" dünyaya renk olarak; şimdilik yok.)
+- **Önkoşullar:** ekonomi (gelir, maaş tavanı), hafif mod, farklı kalitede yapay zekâ menajerler.
+
 **Performans ve ekonomi:** Başarı "ne kadar kazandın" ile değil "elindekiyle beklenenden ne kadar fazlasını yaptın" ile ölçülür (ayın menajeri, ödüller, gelir).
 - Her maç için **beklenen sonuç**: sonuçlarla güncellenen takım puanı (Elo gibi) + kadro gücü (özellik ölçümünden). Beklenti piyasa değerinden değil **sahaya çıkan kadronun gerçek gücünden** hesaplanır (kadroyu zayıf gösterip ödül toplamaya karşı).
 - Gelir: **sabit taban** (lig payı, taraftar) + **performans primi** (beklentiyi aşma). Kazanamayan kulübün bütçesi zorlanır, oyuncu satmak gerekebilir.
@@ -240,7 +255,7 @@ Kullanıcının yönü: Oyun hem bilgisayarda hem mobilde, offline ve online; ay
 
 **Gerçek para (kullanıcı kararları):** Reklam hiçbir yerde yok, mobilde de. Güç satılmaz (para ile oyuncu, bütçe, özellik yok): online rekabette taktik yerine cüzdan kazanırdı. Analiz araçları satılmaz. Gelir modeli sonra konuşulacak.
 
-**İleride, fikir aşamasında:** Başkanlık sistemi (kulübün sahibi ya da seçilmiş başkanı: bütçe, menajer ve çalışan atama), taraftarlar (kulübe bağlılık; gelire, atmosfere, başkanlık seçimine etkisi). Tasarımı sonra; ilke: her biri gerçek bir karar ve ödünleşim yaratsın, süs olmasın.
+**İleride, fikir aşamasında:** Taraftarlar (kulübe bağlılık; gelire, atmosfere, sahibin itibarına etkisi). Kulüp sahibi yukarıda. Tasarımı sonra; ilke: her biri gerçek bir karar ve ödünleşim yaratsın, süs olmasın.
 
 **Motor bağları (şimdiden önemli olanlar):**
 - **Özellik ölçümü** → oyuncunun değeri, maaşı, gelişim önceliği (keyfi değil, sahadaki etkiden).
