@@ -2,6 +2,11 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 16 Ekim 2026 · Belirlenimcilik: her cihazda aynı maç (oyun mantığı değişmedi)
+- `sabit-mat.js` (işçilerde ilk yüklenen): exp, log, pow, sin, cos, atan, atan2, acos, tanh, hypot yalnız + − × ÷ ve √ ile (fdlibm algoritmaları). Safari/iPad (JavaScriptCore) ile V8 (Chrome, node) bu fonksiyonlarda çağrıların %3–33'ünde son basamakta ayrışıyordu; motor farkı birkaç saniyede büyütüyor, aynı tohum iki cihazda iki ayrı maç oluyordu. Sınama: aynı maç node ve bun'da (JavaScriptCore) 600 tik bit bit aynı; V8'de alınan kopya JSC'de 200 tik aynı. Doğruluk 1–2 son basamak. Deney: `ALAN_MAT_ESKI`.
+- `match.js`: `D._tick`/`D._mac` tikin başında (`ALAN_TIK_BASI_ESKI`). Alıcının önceden kararı önceki tikin alan önbelleğini (eski konumlar) okuyordu; maç kopyasından kurulan maç ~33 tik sonra ayrılıyordu. Düzeltmeyle 150 tik aynı.
+- Sonuç: eski tohumlar artık başka maç oynatır (rakamlar son basamakta değişti). Anlar yeni motorla yeniden tarandı: 9 maç, 67 an.
+
 ## 16 Ekim 2026 · Anlar ekranı (motor davranışı değişmedi)
 - Sitede `anlar.html`: farklı tohumlarla oynanmış maçlardan, konuşulan sorunların görüldüğü anlar (11 tür: top uzaktayken pres, önü boş sürüş · kimse yavaşlatmıyor, iki kişi topta · alıcı boş, baskısız topta yüksek hat, harcanan kontra, önü boşken tut, arkadaki orta sahada, boş topa boşuna koşu, koşucunun arkasına pas, eksi değerli seçim, pivot geride). Her türün yanında "maçta" sıklığı: motor değişince yeniden taranıp karşılaştırılır.
 - Bir ana dokununca `canli.html?an=ID`: maçın o anki tam kopyası işçiye `tip: 'an'` ile gider, `grafOku` ile kurulur, **bugünkü motorla** oynar (motor değişmediyse asıl maçla birebir aynı; denendi). Taktik değişikliği an içinde de çalışır.
