@@ -1,7 +1,7 @@
 // v5 · Paralel kafa: bağımsız görevler (kafadaki gönderme denemeleri, yalancı hareket dünyalarındaki kararlar) yardımcı işçilerde oynanır. Her görev kendi tohumuyla oynar (decide.js altZar, gorevYap): aynı çekirdekte ya da yardımcıda sonuç birebir aynı.
 // Ana işçi görevleri paylaşılan sayaçtan (SharedArrayBuffer) dağıtır, kendisi de görev alır, hepsi bitene kadar Atomics.wait ile bekler. Yardımcı takılırsa ya da hata verirse paralel kapanır, kalan görevler ana işçide oynanır.
 (function () {
-  const GEN = 0, NEXT = 1, DONE = 2, FIN = 3, SLOT = 5, TUR = ['pas', 'önüne', 'aşırt', 'kenardan', 'gönder', 'sür', 'tut', 'çalım', 'fake'];
+  const GEN = 0, NEXT = 1, DONE = 2, FIN = 3, SLOT = 5, TUR = ['pas', 'önüne', 'kenardan', 'gönder', 'sür', 'tut', 'çalım', 'fake'];
   const temizD = d => { const o = {}; for (const k in d) { const v = d[k]; if (k === '_mac') o[k] = v ? 1 : 0; else if (typeof v !== 'function') o[k] = v; } return o; };
   const dizi = (sab, kap) => [new Int32Array(sab, 0, 4), new Int32Array(sab, 16, kap), new Float64Array(sab, 16 + kap * 4, kap * SLOT)]; /* kap çift: Float64 hizalı */
   function yukle(j) { const o = { tip: j.tip, src: j.src, hI: j.src.indexOf(j.h), tohum: j.tohum, d: temizD(j.d) };
