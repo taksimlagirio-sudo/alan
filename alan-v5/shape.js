@@ -294,7 +294,7 @@
     m.E = E; m.att = att;
   }
   // Hat açık mı (gövde ve zaman): Çekirdek A'dan B'ye v hızla giderken, bir rakip tepki süresinden sonra koşup hatta yetişebilir mi? Alanların kaba toplamı değil, gerçek yetişme.
-  function laneOpen(w, att, A, B, v) { v = v || 1; const L = Math.hypot(B.x - A.x, B.y - A.y) || 1, ux = (B.x - A.x) / L, uy = (B.y - A.y) / L; let open = 1; for (const o of w) { if (o.team === att || o.role === 'Bekçi') continue; const al = (o.x - A.x) * ux + (o.y - A.y) * uy; if (al <= 0 || al >= L + 1) continue; const pe = Math.abs(-(o.x - A.x) * uy + (o.y - A.y) * ux), tb = al / v, R = 1.6 + Math.max(0, tb - (14 - (self.ALAN_OZ(o, 'tepki')) * .5)) * (.17 + (o.a.hiz ?? 10) * .006) * 1.25; open *= 1 - 1 / (1 + Math.exp((pe - R) / .5)); } return open; }
+  function laneOpen(w, att, A, B, v) { const UC = !v && !self.ALAN_UCUS_ESKI && Dd().ucusT ? Dd() : null; v = v || 1; const L = Math.hypot(B.x - A.x, B.y - A.y) || 1, ux = (B.x - A.x) / L, uy = (B.y - A.y) / L; let open = 1; for (const o of w) { if (o.team === att || o.role === 'Bekçi') continue; const al = (o.x - A.x) * ux + (o.y - A.y) * uy; if (al <= 0 || al >= L + 1) continue; const pe = Math.abs(-(o.x - A.x) * uy + (o.y - A.y) * ux), tb = UC ? UC.ucusT(L, UC.D.arrive, al) : al / v, R = 1.6 + Math.max(0, tb - (14 - (self.ALAN_OZ(o, 'tepki')) * .5)) * (.17 + (o.a.hiz ?? 10) * .006) * 1.25; open *= 1 - 1 / (1 + Math.exp((pe - R) / .5)); } return open; }
   // Takım değeri: Çekirdek E'de. Seçenekler: taşıyıcı tutar ya da önü açıksa sürer; ya da bir arkadaşa verir.
   // Her seçeneğin değeri taşıyıcının kullandığı aynı değer (V: buradan topla oynamanın değeri, gönderme ihtimali dahil) × hattın açık olma ihtimali (gerçek yetişme).
   function teamBest(w2, att, E, mates, ch) {
