@@ -2,6 +2,12 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 17 Ekim 2026 · Formül sistemi: iç içe karar kalktı (main 81e1d9f) — maçlar değişti
+- Menajerin onayıyla: aldatmanın iki dünyasında (hepsi aldandı / kimse aldanmadı), beklemeden ve sürmeden sonra tam bir ikinci karar verilmiyor (hesabın ~%85'iydi). Yerine `sonraDeger`: buradan sonra yapılabilecek en iyi hamle, kararın kendi ölçüleriyle — gönderme (shotQ; kaçarsa top rakibin kale önünde), her arkadaşa pas (laneOk × alıcının değeri, recvVal ile aynı), önüne pas (arkadaşın 8 br önü, hücum ve koşu yönü; arkadaş ve top savunmadan önce varır mı, space'teki yarış), beş yöne sürme (8 br, düz 14 br; kararın sürme dünyası sonDunya gibi: iki savunmacı cevap, gerisi yerleşir; varılan yerin değeri ya da önündeki boşluk — boşluk değeri Vend yalnız dizinin sonunda; Bekçi'yle ikili). Deney: `self.ALAN_SONRA_FORMUL_ESKI`.
+- Kararın kendi hesabı değişmedi: Bekçi'yle ikili tek fonksiyona (`bekDuelP`), risk tek fonksiyona (`riskOf`) alındı, aynı işlemler.
+- İlk denemede sürme Vend'le (boşluk dahil) tartıldı: beklemeden sonrası 0,86'ya çıktı; kararın ölçüsüne dönüldü (0,29–0,6, eski iç içe kararda 0,47–0,6). Formülde aşırtma ve kenardan pas yok.
+- Hız: 300 tik 3085 22 → 3 sn, 909623 18 → 4 sn (ilk sistemle 48 sn). Kısa çökme denemesi (3 maç, 300 tik) hatasız; tek çekirdek ile 3 yardımcı aynı (kp-336, 300 tik). Paralel yardımcılara artık iş düşmüyor.
+
 ## 17 Ekim 2026 · Formül sistemi: kafada oynatma kalktı (main 8deca33) — maçlar değişti
 - Menajerin isteği: kafada dünya oynatma (uçuş, bekleme, sürme kopyaları) makul değil ve bir gün bırakılacak; tablo da istenmiyor. Eski hali koru, hepsini formüle al. Eski sistem `kafa-oyunu` dalında (a1befbd) ve `self.ALAN_FORMUL_ESKI = true` ile geri gelir.
 - Pas/şut uçuşu (`imagine` → `ucusFormul`): topun yolu fizikle (predict, duvar/direk dönüşleri). Nişan hatası üçgen dağılım, üç noktalı ortalama. Her tik, her aday (rakipler + alıcı) için yol parçasına en yakın uzaklık (maçın temas kuralı, uzaklaşan topa awayK, menzil en az 1,15). Varış: tepki + dönüş (gecOf) + koşu; olasılık sigmoidle. Bekçi: dalış menzili (yolun yaşıyla) + uzun uçuşta kayma (koşu hızının %40–80'i), temas yumuşaklığı 0,12. Dokunuş: tutma (ctrlP), delip geçme (thruP; gövdeye, 1,0 br altına çarpan top geçmez), oyuncu kendi delinen payına bir daha dokunmaz. Savurma süresince kaptırma (keepP).
