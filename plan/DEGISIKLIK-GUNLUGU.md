@@ -2,6 +2,11 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 17 Ekim 2026 · Presçi kale tarafında kalır (main) — maçlar değişti
+- Menajerin gözlemi (01:39, Baran–Ece): presçi topa basarken adamının önünü açıyor. Sahnede: kale tarafında başlayan presçi, arkadaki Çekirdeğe ulaşmak için taşıyıcının etrafında dolaşıyor (7° → 89°), yanda uzanıp geçiliyor. Pres planının "yan" hedefi ve dolanma noktası (her tik presçinin 90° önü) kale tarafı koşulunu kendisi bozuyordu.
+- `ALAN_PRES_KALE_SINIR_ESKI`: ilk presçinin hedefi ve dolanma noktası, tehlike yönüne (İlke A; çoğu zaman kale) göre en az 1,2 br önde kalacak açıyla sınırlanır; Çekirdek arkadaysa kale tarafında bekler ("pres · kale tarafında bekliyor").
+- Ölçüm: temiz sahnede kale tarafı payı −3,4 → en az +1,4 br, taşıyıcı geçemedi. Maçta (60 sn) olay az, fark görülemedi. Menajerin maçı kurulamadı: varsayılan kurulumla 909623 devre arası 3–1 (onunki 1–0); taktik/kadro ayarları farklı. *Araçlar:* scratch `kk-baran-sahne.js`, `kk-kale-tarafi.js`, `tarayici-kur.js` (tarayıcıdan maç kurulumunu yakalar), `kk-an-bul2.js` (o kurulumla oynatır).
+
 ## 17 Ekim 2026 · Bütün site çapraz köken yalıtımlı (main 266daef, maç değişmez)
 - Maç ekranı kabuğun (index.html) içinde çerçeveyle açılıyor; yalıtım en üstteki sayfadan gelir. `_headers` yalnız `/canli*` için olduğundan kabuktan açılan maç tek çekirdekte kalıyordu (iPad göstergesi "1 çekirdek"; paralelin "hissedilmemesi" büyük ihtimalle bundandı). Şimdi tek kural `/*`: COOP same-origin, COEP require-corp, CORP same-origin.
 - Chromium'da kabuk → Tohumla oyna: çerçeve yalıtımlı, gösterge "4 çekirdek", hata yok. *Araçlar:* scratch `sunucu-yalitim.js`, `tarayici-kabuk.js`.
