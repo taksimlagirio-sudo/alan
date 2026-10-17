@@ -2,6 +2,11 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 17 Ekim 2026 · Maç ekranı: tik tik izleme, İnceleme, Maç dosyası (main 62fcb86, maç değişmez)
+- Oynat düğmesinin yanında «  ‹  ›  » (1 sn / 1 tik geri-ileri; durdurur).
+- İnceleme: sahada bütün oyuncuların hedefleri (takım renginde kesikli çizgi); yan panelde o tikte her oyuncunun görevi, açıklaması, hedefine uzaklığı; top sahibinin son kararı ve tarttığı seçenekler. Satıra dokununca kart açılır. Top sahibi dışındakilerin "düşüncesi" bugün yalnız görev ve hedef (kayıtta karar ayrıntısı yok).
+- Maç dosyası: `kayitMac` (kurulum, taktik değişiklikleri) + izlenen an; iPad'de paylaşma menüsü. Menajerin maçını birebir kurmak için (varsayılan kurulum menajerin maçını vermiyordu).
+
 ## 17 Ekim 2026 · Presçi kale tarafında kalır (main) — maçlar değişti
 - Menajerin gözlemi (01:39, Baran–Ece): presçi topa basarken adamının önünü açıyor. Sahnede: kale tarafında başlayan presçi, arkadaki Çekirdeğe ulaşmak için taşıyıcının etrafında dolaşıyor (7° → 89°), yanda uzanıp geçiliyor. Pres planının "yan" hedefi ve dolanma noktası (her tik presçinin 90° önü) kale tarafı koşulunu kendisi bozuyordu.
 - `ALAN_PRES_KALE_SINIR_ESKI`: ilk presçinin hedefi ve dolanma noktası, tehlike yönüne (İlke A; çoğu zaman kale) göre en az 1,2 br önde kalacak açıyla sınırlanır; Çekirdek arkadaysa kale tarafında bekler ("pres · kale tarafında bekliyor").
