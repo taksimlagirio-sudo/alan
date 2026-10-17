@@ -2,6 +2,11 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 17 Ekim 2026 · Savunmada tek tartı (main) — maçlar değişti
+- Menajerin maç dosyası (909623, kendi kurulumu) ile tik 46 birebir kuruldu: pas havada kenardaki Tuna'ya; Alp "arkada · Tuna" 33 br çapraz, Kartal buluşmaya, Baran öne; Ece ve Kaan kaleye koşarken boş. Neden: arkadakilerin seçimi "önde tutulan" rakibi orta sahaların önceki tikteki işinden okuyordu (aynı tikte başka işe geçmişlerdi); ortak atama (en tehlikeli boş kalmaz dahil) top havadayken çalışmıyordu.
+- `ALAN_SAVUNMA_TEK_ESKI`: kim kimi tutar tek tartıda, her tik: her rakip için iş (derin → okunan yerinin kale tarafı; değil → pas yolu; alıcı → buluşma), tehlikeye göre sırayla en çabuk varacak boştaki savunmacıya (arkadakiler öndeki işe +45 tik bedel, orta sahalar derine +6, önceki işinde ×0,6); en tehlikelinin %30'u altına adam yok. Eski arkadaki seçimi, bölge eşleşmesi, ortak atama, havada kapatma ve buluşma presi tek tartı açıkken devre dışı; pres, karşılama, önde bekle, markaj, arkada alan, bölge, Kuyu tarafı kuralları sürer.
+- Menajerin isteğiyle davranış sınaması yapılmadı (maç maç kendisi bakacak); tek çekirdek ile 3 yardımcı aynı, kafada hata yok. Tik 46'da: Volkan "arkada · Kaan", Yıldırım "arkada · Ece", Efe buluşma, Alp ve Baran arkada alan.
+
 ## 17 Ekim 2026 · Savunma: koşuyu okuma, en tehlikeli rakip boş kalmaz (main) — maçlar değişti
 - Menajerin gözlemi (İnceleme modu, başlama vuruşu): savunanların hepsinin hedefi topun çevresi, koşucuları kimse tutmuyor, en arkadakiler öne çıkıyor. Ölçüm: savunmacılar koşan rakibin şimdiki yerine gidiyordu; derin rakip seçimi topun gerisinden koşanları saymıyordu; en tehlikeli rakip için yalnız 'işi gereksiz' ve bölgesindeki savunmacı aranıyordu.
 - `ALAN_KOSU_OKU_ESKI`: rakibin okunan yeri = yer + hız × (4 + Görüş − 6) tik (2–18). Arkadakilerin derinliği, derin rakip seçimi, arkada adam tutma, bölge/markaj hedefi ve pas yolu kapatma bununla. Okuması düşük takım (Fırtına notu: "Okuma düşük, boşluğa zayıf") yine zayıf kalır.
