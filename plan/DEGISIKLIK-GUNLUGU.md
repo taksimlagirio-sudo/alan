@@ -2,6 +2,9 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 17 Ekim 2026 · Aşırtma koddan çıktı (main ea7ea34) — davranış aynı
+- Menajerin isteği: oyunda aşırtma yok, adı da kalmasın. Seçenek hiçbir yerde üretilmiyordu; kalan kontroller (decide.js: kaba eleme, pas türü, tercih, risk kazancı, aile sayımı), maçtaki sayaç (`m.st.lob`) ve olay metni, paralel tür listesindeki adı (`TUR`) kaldırıldı. Maç birebir aynı (kp-336, 300 tik); eski sistemde (`ALAN_FORMUL_ESKI`) tek çekirdek ile 3 yardımcı aynı (1042 paralel iş).
+
 ## 17 Ekim 2026 · Formül sistemi: iç içe karar kalktı (main af13ad7) — maçlar değişti
 - Menajerin onayıyla: aldatmanın iki dünyasında (hepsi aldandı / kimse aldanmadı), beklemeden ve sürmeden sonra tam bir ikinci karar verilmiyor (hesabın ~%85'iydi). Yerine `sonraDeger`: buradan sonra yapılabilecek en iyi hamle, kararın kendi ölçüleriyle — gönderme (shotQ; kaçarsa top rakibin kale önünde), her arkadaşa pas (laneOk × alıcının değeri, recvVal ile aynı), önüne pas (arkadaşın 8 br önü, hücum ve koşu yönü; arkadaş ve top savunmadan önce varır mı, space'teki yarış), beş yöne sürme (8 br, düz 14 br; kararın sürme dünyası sonDunya gibi: iki savunmacı cevap, gerisi yerleşir; varılan yerin değeri ya da önündeki boşluk — boşluk değeri Vend yalnız dizinin sonunda; Bekçi'yle ikili). Deney: `self.ALAN_SONRA_FORMUL_ESKI`.
 - Kararın kendi hesabı değişmedi: Bekçi'yle ikili tek fonksiyona (`bekDuelP`), risk tek fonksiyona (`riskOf`) alındı, aynı işlemler.
