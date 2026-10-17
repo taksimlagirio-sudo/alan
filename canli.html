@@ -37,6 +37,7 @@ button,select,input{font:inherit;color:inherit}
       <button onClick="{{ tohumlaOyna }}" style="background:transparent;border:1px solid var(--gold);color:var(--gold);border-radius:999px;padding:9px 14px;cursor:pointer;font-size:14px">Tohumla oyna</button>
       <sc-if value="{{ tohumNot }}" hint-placeholder-val="{{ false }}"><span style="align-self:center;font-size:12px;opacity:.7;max-width:260px">{{ tohumNot }}</span></sc-if>
       <button onClick="{{ kayit }}" style="background:{{ kayitBg }};border:1px solid rgba(var(--ink-rgb),.25);border-radius:999px;padding:9px 14px;cursor:pointer;font-size:14px">{{ kayitTxt }}</button>
+      <button onClick="{{ macDosya }}" title="Maçın kurulumu ve taktik değişiklikleri: aynı maç her yerde birebir yeniden oynatılabilir" style="background:transparent;border:1px solid rgba(var(--ink-rgb),.25);border-radius:999px;padding:9px 14px;cursor:pointer;font-size:14px">Maç dosyası</button>
       <sc-if value="{{ kayitUrl }}" hint-placeholder-val="{{ false }}">
         <a href="{{ kayitUrl }}" download="{{ kayitAd }}" style="display:flex;align-items:center;color:var(--gold);border:1px solid var(--gold);border-radius:999px;padding:9px 14px;text-decoration:none;font-size:14px">Kaydı indir</a>
       </sc-if>
@@ -156,6 +157,13 @@ button,select,input{font:inherit;color:inherit}
 
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;background:var(--panel);border:1px solid rgba(var(--ink-rgb),.1);border-radius:16px;padding:10px 12px">
         <button onClick="{{ oynat }}" style="width:44px;height:44px;border-radius:50%;background:#F6F3EC;color:#0E0D09;border:0;cursor:pointer;font-size:16px;font-weight:800;flex:none">{{ oynatTxt }}</button>
+        <div style="display:flex;gap:4px;flex:none">
+          <button onClick="{{ adimGeri1 }}" title="1 sn geri" style="background:transparent;border:1px solid rgba(var(--ink-rgb),.25);border-radius:999px;min-width:38px;height:38px;padding:0 10px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700">«</button>
+          <button onClick="{{ adimGeri }}" title="1 tik geri" style="background:transparent;border:1px solid rgba(var(--ink-rgb),.25);border-radius:999px;min-width:38px;height:38px;padding:0 10px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700">‹</button>
+          <button onClick="{{ adimIleri }}" title="1 tik ileri" style="background:transparent;border:1px solid rgba(var(--ink-rgb),.25);border-radius:999px;min-width:38px;height:38px;padding:0 10px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700">›</button>
+          <button onClick="{{ adimIleri1 }}" title="1 sn ileri" style="background:transparent;border:1px solid rgba(var(--ink-rgb),.25);border-radius:999px;min-width:38px;height:38px;padding:0 10px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700">»</button>
+        </div>
+        <button onClick="{{ incelemeDegis }}" title="Her oyuncunun o anki görevi, hedefi ve top sahibinin kararı" style="flex:none;height:38px;padding:0 14px;border-radius:999px;background:{{ incBg }};color:{{ incFg }};border:1px solid rgba(var(--ink-rgb),.25);cursor:pointer;font-size:13px;font-weight:700">İnceleme</button>
         <div onClick="{{ ara }}" ref="{{ zamanRef }}" style="position:relative;flex:1 1 180px;min-width:140px;height:28px;cursor:pointer">
           <div style="position:absolute;left:0;right:0;top:11px;height:6px;border-radius:3px;background:rgba(var(--ink-rgb),.1)"></div>
           <div style="position:absolute;left:0;top:11px;height:6px;border-radius:3px;width:{{ hazirPct }};background:rgba(var(--ink-rgb),.28)"></div>
@@ -174,6 +182,37 @@ button,select,input{font:inherit;color:inherit}
     </section>
 
     <aside style="display:flex;flex-direction:column;gap:14px;min-width:0;flex:1 1 min(300px,100%)">
+      <sc-if value="{{ inceleme }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--panel);border:1px solid rgba(var(--ink-rgb),.1);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;opacity:.6">İNCELEME</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px">{{ incBaslik }}</span></div>
+          <sc-if value="{{ incKararVar }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:10px;background:rgba(255,210,90,.1);border:1px solid rgba(255,210,90,.35)">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;opacity:.7">{{ incKararBaslik }}</span>
+              <sc-for list="{{ incKarar }}" as="k" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;gap:10px;font-family:'JetBrains Mono',monospace;font-size:12px;opacity:{{ k.op }}"><span>{{ k.ad }}</span><span>{{ k.deg }}</span></div></sc-for>
+            </div>
+          </sc-if>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;opacity:.55;margin-top:4px">{{ incAd0 }}</span>
+          <sc-for list="{{ incBiz }}" as="r" hint-placeholder-count="7">
+            <div onClick="{{ r.sec }}" style="display:grid;grid-template-columns:5px minmax(0,1fr);gap:8px;padding:5px 6px;border-radius:8px;cursor:pointer;background:{{ r.bg }}">
+              <span style="background:{{ r.renk }};border-radius:3px"></span>
+              <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+                <div style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap"><span style="font-weight:700;font-size:13px">{{ r.ad }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#C9A21E">{{ r.kod }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;opacity:.55">{{ r.hedef }}</span></div>
+                <span style="font-size:12px;line-height:1.3;opacity:.8">{{ r.acik }}</span>
+              </div>
+            </div>
+          </sc-for>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;opacity:.55;margin-top:6px">{{ incAd1 }}</span>
+          <sc-for list="{{ incRakip }}" as="r" hint-placeholder-count="7">
+            <div onClick="{{ r.sec }}" style="display:grid;grid-template-columns:5px minmax(0,1fr);gap:8px;padding:5px 6px;border-radius:8px;cursor:pointer;background:{{ r.bg }}">
+              <span style="background:{{ r.renk }};border-radius:3px"></span>
+              <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+                <div style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap"><span style="font-weight:700;font-size:13px">{{ r.ad }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#C9A21E">{{ r.kod }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;opacity:.55">{{ r.hedef }}</span></div>
+                <span style="font-size:12px;line-height:1.3;opacity:.8">{{ r.acik }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
       <div style="background:var(--panel);border:1px solid rgba(var(--ink-rgb),.1);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:12px">
         <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;opacity:.6">MAÇ</span>
         <sc-for list="{{ istat }}" as="s" hint-placeholder-count="5">
@@ -241,6 +280,10 @@ class Component extends DCLogic {
     const req = kap && (kap.requestFullscreen || kap.webkitRequestFullscreen); if (req) { try { const r = req.call(kap); if (r && r.then) { r.then(() => this.setState({ tam: true, tamGercek: true })).catch(() => this.setState({ tam: true, tamGercek: false })); return; } this.setState({ tam: true, tamGercek: true }); return; } catch (e) {} } this.setState({ tam: true, tamGercek: false }); }
   componentWillUnmount() { if (this._fsDin) document.removeEventListener('fullscreenchange', this._fsDin); cancelAnimationFrame(this.raf); if (this.wk) this.wk.terminate(); removeEventListener('message', this.onMsg); if (this.mr && this.mr.state !== 'inactive') this.mr.stop(); }
   // Maç kaydı: sekmenin görüntüsünü (yayın kamerası, skor, efektler ve ses dahil) kaydeder. Tarayıcı izin ister; "bu sekme"yi seçmek yeterli. Desteklenmezse saha tuvalini (üstten görünüm) kaydeder.
+  /* v5 · maç dosyası: kurulum (tohum, taktik, diziliş, kadro, roller) ve maç içindeki taktik değişiklikleri. Maç belirlenimli: bu dosyayla maç her yerde tik tik birebir yeniden oynatılır (inceleme için). iPad'de paylaşma menüsü, yoksa indirme */
+  async macDosyaVer() { const r = this.kayitMac; if (!r || !r.yeni) { this.setState({ tohumNot: 'Önce bir maç başlat.' }); return; } const ad = `ALAN-mac-${r.yeni.tohum}-${String(r.tarih || '').slice(0, 16).replace(/[:T]/g, '-')}.json`, blob = new Blob([JSON.stringify({ ...r, sayfa: location.pathname, izlenen: this.t != null ? { kare: Math.floor(this.t), saat: typeof mmss === 'function' ? mmss(Math.floor(this.t)) : null } : null })], { type: 'application/json' });
+    try { const f = new File([blob], ad, { type: 'application/json' }); if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: ad }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+    const u = URL.createObjectURL(blob), a = document.createElement('a'); a.href = u; a.download = ad; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 5000); }
   async kayitDegis() { if (this.mr && this.mr.state === 'recording') { this.mr.stop(); return; }
     let st = null; try { if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) st = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 30 }, audio: true, preferCurrentTab: true, selfBrowserSurface: 'include' }); } catch (e) { st = null; }
     if (!st) { const cv = this.cvRef.current; if (!cv || !cv.captureStream) { alert('Bu tarayıcı kaydı desteklemiyor.'); return; } st = cv.captureStream(30); }
@@ -285,7 +328,7 @@ class Component extends DCLogic {
       this.giris = null; if (!this.acildi && this.t === 0 && this.kareler[0] && this.ps) { const f0 = this.kareler[0], g = Float32Array.from(f0); if (!this.girisT0) this.girisT0 = now; const tk = (now - this.girisT0) / 1000 * 30, /* yürüyüş maçtaki gerçek hızla: 1× = saniyede 30 tik, oyuncu kendi Hız'ıyla yürür */ N = this.ps.length, ez = u => u < .5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
         for (let k = 0; k < N; k++) { const P = this.ps[k], tm = P.team, sira = k % 7, sx = W / 2 + (tm ? 2.5 : -2.5) + (sira - 3) * .6, sy = H + 3 + sira * .4, dx = f0[2 * k] - sx, dy = f0[2 * k + 1] - sy, L = Math.hypot(dx, dy) || 1, v = .17 + ((P.a && P.a.hiz) ?? 10) * .006, yol = Math.max(0, Math.min(L, v * (tk - sira * 12 - tm * 6))), u = yol / L; g[2 * k] = sx + dx * u; g[2 * k + 1] = sy + dy * u; }
         g[30] = -1; g[28] = W / 2; g[29] = H / 2; g[34] = -1; this.giris = g; }
-      this.ciz(); this.fakeCiz(); this.gorevCiz(); this.dokunSes(Math.floor(this.t)); this.gol(Math.floor(this.t)); this.k = (this.k || 0) + 1; if (this.k % 6 === 0) this.setState({ n: this.k }); this.raf = requestAnimationFrame(f); }; this.raf = requestAnimationFrame(f); }
+      this.ciz(); this.fakeCiz(); this.incelemeCiz(); this.gorevCiz(); this.dokunSes(Math.floor(this.t)); this.gol(Math.floor(this.t)); this.k = (this.k || 0) + 1; if (this.k % 6 === 0) this.setState({ n: this.k }); this.raf = requestAnimationFrame(f); }; this.raf = requestAnimationFrame(f); }
   // Fake: gösterilen niyetin soluk hayalet izi (gönderme/pas: hat ve hayalet Çekirdek, gövde: kısa ok) ve aldananların kesikli halkası
   // Fake (yayın dili): çizgi ve yazı yok. Gösterilen niyet, Çekirdeğin o yöne kısa bir altın "hayaleti" olarak (gövde fake'inde taşıyıcının takım renginde kısa bir gölgesi) belirip söner;
   // aldananların altında takım renginde yumuşak bir ışıma kısa bir an parlar. Hepsi sahadaki iz ve ışıma diliyle aynı (lighter, glow), fake bitince söner.
@@ -381,6 +424,10 @@ class Component extends DCLogic {
   dokun(e) { const f = this.kareler[Math.floor(this.t)], cv = this.cvRef.current; if (!f || !this.ps || !cv || this.giris) return; let en = -1, ed = 1e9; for (let k = 0; k < this.ps.length; k++) { const [sx, sy] = this.ekrana(f[2 * k], f[2 * k + 1]), dd = Math.hypot(sx - e.clientX, sy - e.clientY); if (dd < ed) { ed = dd; en = k; } }
     const sinir = Math.max(28, cv.clientWidth / W * 3.2); this.secili = ed <= sinir && en !== this.secili ? en : -1; this.setState({ secN: (this.state.secN || 0) + 1 }); }
   gorev(f, k) { if (!f || f.length < 84 || !this.ps || k < 0) return null; const j = this.isler[f[42 + 3 * k]] ?? '', tx = f[43 + 3 * k], ty = f[44 + 3 * k], ad = (/ · ([^·]+?)(?: · tepki)?$/.exec(j) || [])[1], bagli = ad ? this.ps.findIndex(p => p.name === ad && p.team !== this.ps[k].team) : -1; return { j, tx, ty, bagli }; }
+  adim(n) { if (!this.acildi || !this.kareler.length) return; const v = Math.max(this.anMod ? this.anMod.t0 : 0, Math.min(this.kareler.length - 1, Math.floor(this.t) + n)); if (!this.kareler[v]) return; this.t = v; this.golSon = v; this.devreGecti = v >= (this.len >> 1); this.setState({ calis: false, devre: false }); this.forceUpdate(); } /* v5 · tik tik izleme: durdurur, n tik ileri/geri (30 = 1 sn) */
+  incelemeCiz() { const cv = this.cvRef.current; if (!cv || this.giris || !this.state.inceleme || !this.ps) return; const f = this.kareler[Math.floor(this.t)]; if (!f || f.length < 84) return; const x = cv.getContext('2d'), s = cv.width / W, hi = f[30], RN = ['#7F95FF', '#FF8A5C']; x.save();
+    for (let k = 0; k < this.ps.length; k++) { if (k === hi || k === this.secili) continue; const G = this.gorev(f, k); if (!G || isNaN(G.tx)) continue; const px = f[2 * k] * s, py = f[2 * k + 1] * s, tx = G.tx * s, ty = G.ty * s; if (Math.hypot(tx - px, ty - py) < .8 * s) continue; x.strokeStyle = RN[this.ps[k].team]; x.globalAlpha = .55; x.lineWidth = s * .12; x.setLineDash([s * .45, s * .35]); x.beginPath(); x.moveTo(px, py); x.lineTo(tx, ty); x.stroke(); x.setLineDash([]); x.globalAlpha = .7; x.beginPath(); x.arc(tx, ty, .55 * s, 0, 7); x.stroke(); }
+    x.restore(); } /* v5 · inceleme: bütün oyuncuların hedefleri (takım renginde kesikli çizgi); seçili oyuncunun ayrıntısı gorevCiz'de */
   gorevCiz() { const cv = this.cvRef.current, k = this.secili; if (!cv || this.giris || k == null || k < 0) return; const f = this.kareler[Math.floor(this.t)], G = this.gorev(f, k); if (!G) return; const x = cv.getContext('2d'), s = cv.width / W, px = f[2 * k] * s, py = f[2 * k + 1] * s, C = '#FFFFFF';
     x.save(); x.strokeStyle = C; x.lineWidth = s * .16; x.globalAlpha = .95; x.beginPath(); x.arc(px, py, 1.8 * s, 0, 7); x.stroke();
     if (G.bagli >= 0) { const bx = f[2 * G.bagli] * s, by = f[2 * G.bagli + 1] * s; x.globalAlpha = .7; x.setLineDash([s * .3, s * .3]); x.beginPath(); x.arc(bx, by, 1.8 * s, 0, 7); x.stroke(); x.setLineDash([]); }
@@ -440,6 +487,12 @@ class Component extends DCLogic {
         const top = (o, c) => Object.entries(o).sort((x, y) => y[1] - x[1]).map(([k, v]) => `${k} ${v}`).join(' · ') || c, hT = say.slice(0, 4).reduce((x, y) => x + y, 0) || 1, sT = say.slice(4).reduce((x, y) => x + y, 0) || 1, eb = (lo) => { let bi = lo; for (let j = lo; j < lo + 4; j++) if (say[j] > say[bi]) bi = j; return bi; }, hb = eb(0), sb = eb(4);
         return [{ k: 'Hücumda en çok', v: `${EVA[hb]} (%${Math.round(say[hb] / hT * 100)})` }, { k: 'Savunmada en çok', v: `${EVA[sb]} (%${Math.round(say[sb] / sT * 100)})` }, { k: 'Gollerin geldiği evre', v: top(gol, 'gol yok') }, { k: 'Yenen gollerde biz', v: top(yen, 'gol yenmedi') }, { k: 'Top kazanma', v: kz ? `${kz} · %${Math.round(kzOn / kz * 100)}'i rakip yarısında` : 'yok' }]; })(),
       ...(() => { const K = gp && this.kararlar ? this.kararlar.filter(k => k.ad === gp.name && k.tick <= t && t - k.tick < 120).pop() : null; return { kararVar: !!K, kararBaslik: K ? `SON KARAR · ${mmss(K.tick)} · seçenekler (değer · ihtimal)` : '', kararList: K ? K.aday.map((a, i) => ({ ad: (i === 0 ? '✓ ' : '  ') + a.kind, deg: `${a.v.toFixed(3)}${a.p ? ' · %' + Math.round(a.p * 100) : ''}`, renk: i === 0 ? '#FFD25A' : 'rgba(246,243,236,.75)' })) : [] }; })(),
+      ...(() => { const on = !!Sx.inceleme && !!f && !!ps; if (!on) return { inceleme: false, incBg: 'transparent', incFg: 'inherit', incKararVar: false, incKarar: [], incBiz: [], incRakip: [], incBaslik: '', incKararBaslik: '', incAd0: '', incAd1: '' };
+        const satir = k => { const P = ps[k], G = this.gorev(f, k), top = k === hi; return { ad: P.name + (P.role === 'Bekçi' ? ' · Bekçi' : rl(P.team, P.i) ? ' · ' + rl(P.team, P.i) : ''), renk: RN[P.team], kod: top ? 'topta' : (G && G.j) || '—', acik: G ? gorevAcik(G.j, top) : '', hedef: G && !top && !isNaN(G.tx) ? `hedefine ${Math.hypot(G.tx - f[2 * k], G.ty - f[2 * k + 1]).toFixed(0)} br` : top ? `şarj %${Math.round(f[31] * 100)}` : '', bg: k === gk ? 'rgba(255,210,90,.16)' : top ? 'rgba(255,210,90,.07)' : 'transparent', sec: () => { this.secili = k === this.secili ? -1 : k; this.forceUpdate(); } }; };
+        const ix = tm => ps.map((P, k) => [P, k]).filter(([P]) => P.team === tm).map(([, k]) => k), K = h && this.kararlar ? this.kararlar.filter(k => k.ad === h.name && k.tick <= t && t - k.tick < 120).pop() : null;
+        return { inceleme: true, incBg: '#FFD25A', incFg: '#0E0D09', incBaslik: `${mmss(t)} · tik ${t}`, incAd0: (ad[0] || '').toUpperCase(), incAd1: (ad[1] || '').toUpperCase(), incBiz: ix(0).map(satir), incRakip: ix(1).map(satir),
+          incKararVar: !!K, incKararBaslik: K ? `${h.name.toUpperCase()} · SON KARAR ${mmss(K.tick)} · seçenek · değer` : '', incKarar: K ? K.aday.map((a, i) => ({ ad: (i === 0 ? '✓ ' : '  ') + a.kind, deg: `${a.v.toFixed(3)}${a.p ? ' · %' + Math.round(a.p * 100) : ''}`, op: i === 0 ? 1 : .7 })) : [] }; })(), /* v5 · inceleme: o tikte her oyuncunun görevi, açıklaması, hedefine uzaklığı; top sahibinin son kararı ve tarttığı seçenekler. Satıra dokununca sahadaki kartı açılır */
+      adimGeri1: () => this.adim(-30), adimGeri: () => this.adim(-1), adimIleri: () => this.adim(1), adimIleri1: () => this.adim(30), incelemeDegis: () => this.setState({ inceleme: !Sx.inceleme }),
       gorevVar: !!gp, gorevUst: Sx.tam ? '64px' : 'clamp(6px,2vw,14px)', gorevSol: gp && f[2 * gk] < W / 2 ? 'auto' : 'clamp(6px,2vw,14px)', gorevSag: gp && f[2 * gk] < W / 2 ? 'clamp(6px,2vw,14px)' : 'auto', /* kart, seçilen oyuncunun karşı yarısında: oyuncuyu örtmez */ gorevRenk: gp ? RN[gp.team] : 'var(--ink)', gorevAd: gp ? gp.name : '', gorevRol: gp ? (gp.role === 'Bekçi' ? 'Bekçi' : rl(gp.team, gp.i) || '') : '', gorevKod: G ? (gk === hi ? 'topta' : G.j || '—') : '', gorevAcik: G ? gorevAcik(G.j, gk === hi) : '', gorevHedef: G && !isNaN(G.tx) && gk !== hi ? `hedefine ${Math.hypot(G.tx - f[2 * gk], G.ty - f[2 * gk + 1]).toFixed(0)} br` : '',
       topSahibi: !!h, tsAd: h ? h.name : '', tsAlt: h ? (h.role === 'Bekçi' ? 'Bekçi' : `şarj %${Math.round(f[31] * 100)}`) : '', tsRenk: h ? RN[h.team] : 'var(--ink)',
       bitti: !this.anMod && !Sx.kapi && this.acildi && !this.hesapta && this.kareler.length > 60 && t >= this.kareler.length - 1, sonSkor: f ? `${f[32]} – ${f[33]}` : '0 – 0', bizAdB: (c ? c.ad[0] : 'Liman').toUpperCase(), rakipAdB: (c ? c.ad[1] : '').toUpperCase(), sonuc: (() => { const bt = !Sx.kapi && this.acildi && !this.hesapta && this.kareler.length > 60 && t >= this.kareler.length - 1; if (bt && f && new URLSearchParams(location.search).has('kabuk') && this._sonGen !== this.gen) { this._sonGen = this.gen; this.istat(this.kareler.length - 1); const S = this.st; window.parent.postMessage({ tip: 'alan-mac-son', ad: c ? c.ad : ['Liman', 'Rakip'], skor: [f[32], f[33]], st: { hold: S.hold, pass: S.pass, ok: S.ok, kaz: S.kaz, gon: S.gon }, goller: this.olaylar.filter(o => o.type === 'sayi').map(o => ({ dk: mmss(o.tick), team: o.team, text: o.text })) }, '*'); } return f ? (f[32] > f[33] ? 'Kazandın' : f[32] < f[33] ? 'Kaybettin' : 'Berabere') : ''; })(), yeniMac: () => this.yeniMac(), /* kabuk içindeyse maç sonu kabuğa bildirilir */
@@ -456,7 +509,7 @@ class Component extends DCLogic {
       istat: ist,
       akis: gor.slice(-40).reverse().map(o => ({ t: mmss(o.tick), text: o.text, c: o.type === 'sayi' ? '#FFD25A' : RN[o.team] || 'rgba(var(--ink-rgb),.4)', w: o.type === 'sayi' ? 700 : 400 })),
       kadrolar: [0, 1].map(tm => ({ ad: ad[tm].toUpperCase(), c: RN[tm], ps: ps ? ps.filter(p => p.team === tm).map(p => ({ ad: p.name, r: rl(tm, p.i), w: h === p ? 700 : 400 })) : [] })),
-      kayit: () => this.kayitDegis(), kayitTxt: Sx.kayitOn ? `● Kaydı durdur · ${Math.floor((Date.now() - (Sx.kayitT0 || Date.now())) / 1000)} sn` : 'Maçı kaydet', kayitBg: Sx.kayitOn ? '#C8321E' : 'transparent', kayitUrl: Sx.kayitUrl || null, kayitAd: Sx.kayitAd || 'ALAN-mac.webm',
+      kayit: () => this.kayitDegis(), macDosya: () => this.macDosyaVer(), kayitTxt: Sx.kayitOn ? `● Kaydı durdur · ${Math.floor((Date.now() - (Sx.kayitT0 || Date.now())) / 1000)} sn` : 'Maçı kaydet', kayitBg: Sx.kayitOn ? '#C8321E' : 'transparent', kayitUrl: Sx.kayitUrl || null, kayitAd: Sx.kayitAd || 'ALAN-mac.webm',
       sesTxt: Sx.ses ? 'Ses açık' : 'Ses kapalı', sesDegis: () => { const v = !Sx.ses; localStorage.setItem('alan-ses', v ? '1' : '0'); this.setState({ ses: v }); },
       taktikAcik: Sx.taktik, taktikRef: el => { if (el && !el.dataset.yuk && el.dataset.src) { el.dataset.yuk = 1; el.src = el.dataset.src; } }, /* src şablon dolmadan istek atmasın diye ref ile */ taktikSrc: `taktik.html?mac=1&skor=${encodeURIComponent(f ? f[32] + ' – ' + f[33] : '0 – 0')}&dk=${mmss(t)}`, taktikAc: () => this.setState({ taktik: true, calis: false }), taktikKapat: () => this.setState({ taktik: false })
     }; }
