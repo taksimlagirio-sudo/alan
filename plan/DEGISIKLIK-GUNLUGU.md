@@ -2,6 +2,12 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 17 Ekim 2026 · Karma bırakma (main 6e55ff6) — maçlar değişti
+- Saf teğet savurmada dönüş çok fazlaydı (pas başına ortanca ~195°, şut ~2 tur; Çekirdek öndeyken ileri pas 270°). Bırakma hızı artık teğet (ω × 1,15) ile gövdeden itişin bileşkesi; itiş en çok Güç 10'da 1,0, Güç 20'de 1,3. Dönüş ivmesi 0,45–0,70. Geri çekme en çok 135° (`TASARIM-savurma.md` güncellemesi). Deney: `ALAN_SAVUR_ITME_ESKI`.
+- İsabet: dönüşün payı zamanlamadan (ω × τ), itişin payı eski nişan hatasından.
+- Maçın ilk 900 tiki, ortanca dönüş: kısa pas 10–20°, orta 13–44°, uzun 101–128° (geri çekmeyle toplam ~175°), şut 226–300°; Çekirdek öndeyken pas 10–16°.
+- Şut tablosu yeniden ölçüldü (`ALAN_SHT_KARMA`, v5-20). Tek çekirdek ile 3 yardımcı 240 tik aynı, kafada hata yok. Aynı koşulda (makine yüklüyken) 900 tik sitedeki sürüme göre ~%20 yavaş, gönderme 3 → 5.
+
 ## 16 Ekim 2026 · Savurma, kanca, boşluğa nişan, Bekçi'yi gören değer (main 4ab0811) — maçlar değişti
 - Savurma (`TASARIM-savurma.md`, `ALAN_SAVURMA_ESKI`): pas ve şutta Çekirdek gövdenin etrafında döner (α Güç'e bağlı), top bırakma anının teğetiyle çıkar; isabet bırakma zamanlamasından. Yolu rakip gövdesinden geçen savurma seçilmez, çarpan savurma bozulur (`ALAN_SAVUR_ENGEL_ESKI`). Tek dokunuşta kanca (`ALAN_KANCA_ESKI`). Şut hedefi: Bekçi'nin yetişemeyeceği en geniş iki boşluk (`ALAN_SUT_HEDEF_ESKI`). Dağınıklık değeri olasılık biriminde, 1'i geçmez (`ALAN_DAGINIK_TAVAN_ESKI`; önce karşı karşıya tutmak 1,59 çıkıyordu).
 - Şut tablosu savurmayla, maçtaki gönderme yoluyla yeniden ölçüldü (`ALAN_SHT_SAVUR`, 1120 hücre, seçenek başına 24 deneme; `ALAN_SHT_SAVUR_ESKI`). Eski tablo basit taklitle ölçülmüştü, Kuyu önünü hep 1 sayıyordu; yenisi Kuyu kenarında ~0,4–0,7.
