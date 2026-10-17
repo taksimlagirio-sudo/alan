@@ -2,6 +2,12 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 17 Ekim 2026 · Plase yalnız itişle (main, karma bırakmanın ardından) — maçlar değişti
+- Plase yalnız itişle: hızı itişin sınırında (Güç 10'da 1,0, 20'de 1,3), açı hatası yalnız nişan hatası (`ALAN_PLASE_ITME_ESKI`). Önce plase dönüşle 2,2 hızında, itiş payı %0 vuruluyordu.
+- Savurma planı, aynı sürede bitebilen planlardan daha çok iteni seçer (`ALAN_ITME_ONCELIK_ESKI`).
+- Şut tablosu `ALAN_SHT_PLASE` (v5-21): Kuyu kenarında plase ~1, 15 br ~0,5. Tek çekirdek ile 3 yardımcı 240 tik aynı, kafada hata yok.
+- Ölçüm: maçın ilk 60 sn'sinde tek dokunuş yalnız 1 kez (ön hareket önerisi menajere sunuldu).
+
 ## 17 Ekim 2026 · Karma bırakma (main 6e55ff6) — maçlar değişti
 - Saf teğet savurmada dönüş çok fazlaydı (pas başına ortanca ~195°, şut ~2 tur; Çekirdek öndeyken ileri pas 270°). Bırakma hızı artık teğet (ω × 1,15) ile gövdeden itişin bileşkesi; itiş en çok Güç 10'da 1,0, Güç 20'de 1,3. Dönüş ivmesi 0,45–0,70. Geri çekme en çok 135° (`TASARIM-savurma.md` güncellemesi). Deney: `ALAN_SAVUR_ITME_ESKI`.
 - İsabet: dönüşün payı zamanlamadan (ω × τ), itişin payı eski nişan hatasından.
