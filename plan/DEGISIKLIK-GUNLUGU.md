@@ -2,6 +2,14 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 17 Ekim 2026 · Ön hareket, geliş hızı, değer tavanı, Kuyu'suz boşluk (main) — maçlar değişti
+- Ön hareket (`ALAN_ON_HAREKET_ESKI`): alıcı, önceden kararındaki en iyi vuruş en iyi seçeneğe tek dokunuş payı (0,02) kadar yakınsa ona hazırlanır. Yerleşme: Çekirdeğin değeceği yer, topun geldiği yana bakan yarıda bırakma noktasına en yakın yer (decide.js `onPlan`). Ön savurma: dönüş top gelmeden başlar, değme anında bırakma hızındadır; kanca hız sınırı yok. İyi okuyan alıcı önceden kararını erken verir (Görüş 20 → 5 tik).
+- Geliş hızı (`ALAN_GELEN_HIZ_ESKI`): top tutulunca hızı sıfırlanıyor, alış onu sonra okuyordu. Tek dokunuşun hata çarpanı (otFactor) hiç işlemiyordu (eski motorda da), kanca gelen hızı kullanamıyordu. Şimdi çarpan ortanca ~1,25–1,35.
+- Değer tavanı (`ALAN_TERCIH_TAVAN_ESKI`): taktik tercih payları (kanat, istek, pas/sürme, sabır, tempo, kontra tempo), zamanın değeri ve risk çarpanı olasılık biriminde; olumlu pay (1 − v) ile ölçeklenir. Önce ileri pas 1,02'ye çıkıp Pk 1,00 şutu geçiyordu (Tuna şut gösterip pas verdi).
+- Kuyu'suz boşluk (`ALAN_RUNON_KUYU_ESKI`): alıcının önündeki boşluk tartısı (runOn) Kuyu içini saymaz; önce kale önüne her pas ~0,98.
+- Ölçüm (maçın ilk 60 sn'si): ön hareketle 15 hazırlık, 11'i alışta geçerli; tek dokunuş 7 (5'i tuttu), ön hareketsiz 2 (ikisi kayıp). Maçlar ilk farktan sonra ayrışır, örnek küçük. İlk vuruş sahnesi (kanattan Tuna'ya) düzeltmelerden sonra çoğunlukla Bekçi'nin pası kesmesiyle bitti; ilk vuruşla gol görülmedi. Tek çekirdek ile 3 yardımcı aynı.
+  *Araçlar:* scratch `kk-on.js` (tek dokunuş sayımı), `kk-ilk.js` (ilk vuruş sahnesi), `kk-on-an2.js` (alıştaki seçenekler), `/tmp/on-dbg-kur.sh` (ölçüm kopyası).
+
 ## 17 Ekim 2026 · Plase yalnız itişle (main, karma bırakmanın ardından) — maçlar değişti
 - Plase yalnız itişle: hızı itişin sınırında (Güç 10'da 1,0, 20'de 1,3), açı hatası yalnız nişan hatası (`ALAN_PLASE_ITME_ESKI`). Önce plase dönüşle 2,2 hızında, itiş payı %0 vuruluyordu.
 - Savurma planı, aynı sürede bitebilen planlardan daha çok iteni seçer (`ALAN_ITME_ONCELIK_ESKI`).
