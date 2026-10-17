@@ -2,6 +2,13 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 17 Ekim 2026 · Savunma: koşuyu okuma, en tehlikeli rakip boş kalmaz (main) — maçlar değişti
+- Menajerin gözlemi (İnceleme modu, başlama vuruşu): savunanların hepsinin hedefi topun çevresi, koşucuları kimse tutmuyor, en arkadakiler öne çıkıyor. Ölçüm: savunmacılar koşan rakibin şimdiki yerine gidiyordu; derin rakip seçimi topun gerisinden koşanları saymıyordu; en tehlikeli rakip için yalnız 'işi gereksiz' ve bölgesindeki savunmacı aranıyordu.
+- `ALAN_KOSU_OKU_ESKI`: rakibin okunan yeri = yer + hız × (4 + Görüş − 6) tik (2–18). Arkadakilerin derinliği, derin rakip seçimi, arkada adam tutma, bölge/markaj hedefi ve pas yolu kapatma bununla. Okuması düşük takım (Fırtına notu: "Okuma düşük, boşluğa zayıf") yine zayıf kalır.
+- `ALAN_TEHLIKE_BOS_ESKI`: en tehlikeli rakip atanmamışsa işi belirgin az tehlikeli (%80 altı) olan, en çabuk varacak savunmacı ona gider (derindeyse kale tarafına, değilse pas yoluna); bağlılıkla (rakip en tehlikelilerin %80'i içinde kaldıkça).
+- Ölçüm (ilk 60 sn, varsayılan kurulum 909623; eski · yalnız okuma · ikisi): kale tarafında 8 br içinde kimse yok %8,7 · %9,1 · %2,5; atama yok %13,9 · %21,7 · %8,2; geçilme 6 · 2 · 2; adam değişimi 31 · 29 · 32. *Araçlar:* scratch `kk-savunma.js`, `kk-hat.js`, `kk-baslama.js`.
+- Not: "Adam adama" sistemi yapay zekâ takımlarında markaj ataması (markRef) kurmuyor; adam adama da bölge gibi oynuyor. Ayrı bakılacak.
+
 ## 17 Ekim 2026 · Maç ekranı: tik tik izleme, İnceleme, Maç dosyası (main 62fcb86, maç değişmez)
 - Oynat düğmesinin yanında «  ‹  ›  » (1 sn / 1 tik geri-ileri; durdurur).
 - İnceleme: sahada bütün oyuncuların hedefleri (takım renginde kesikli çizgi); yan panelde o tikte her oyuncunun görevi, açıklaması, hedefine uzaklığı; top sahibinin son kararı ve tarttığı seçenekler. Satıra dokununca kart açılır. Top sahibi dışındakilerin "düşüncesi" bugün yalnız görev ve hedef (kayıtta karar ayrıntısı yok).
