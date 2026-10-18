@@ -172,11 +172,10 @@ button,select,input{font:inherit;color:inherit}
             <span title="{{ i.t }}" style="position:absolute;left:{{ i.x }};top:4px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:{{ i.c }};border:2px solid #0E0D09"></span>
           </sc-for>
         </div>
-        <div style="display:flex;gap:2px;flex:none;padding:3px;border-radius:999px;background:rgba(var(--ink-rgb),.07)">
-          <sc-for list="{{ hizlar }}" as="h" hint-placeholder-count="4">
-            <button onClick="{{ h.sec }}" style="background:{{ h.bg }};color:{{ h.fg }};border:0;border-radius:999px;padding:6px 11px;min-height:32px;cursor:pointer;font-weight:700;font-family:'JetBrains Mono',monospace;font-size:12px">{{ h.ad }}</button>
-          </sc-for>
-        </div>
+        <label title="Oynatma hızı (0–4×)" style="display:flex;align-items:center;gap:8px;flex:none;padding:0 12px;min-height:38px;border-radius:999px;background:rgba(var(--ink-rgb),.07);cursor:pointer">
+          <input type="range" min="0" max="4" step="0.05" value="{{ hizX }}" onChange="{{ hizSec }}" aria-label="Oynatma hızı" style="width:150px;accent-color:#FFD25A;cursor:pointer;margin:0">
+          <span style="font-weight:700;font-family:'JetBrains Mono',monospace;font-size:12px;min-width:46px;text-align:right">{{ hizYazi }}</span>
+        </label>
         <button onClick="{{ tamEkranDegis }}" title="Tam ekran" style="flex:none;height:38px;padding:0 14px;border-radius:999px;background:transparent;border:1px solid rgba(var(--ink-rgb),.25);cursor:pointer;font-size:13px">⛶ Tam ekran</button>
       </div>
     </section>
@@ -265,7 +264,7 @@ const gorevAcik = (j, top) => { if (top) return 'Top onda.'; const tp = / · tep
     'omuz veriyor': 'Omuz omuza mücadele.', 'uzanıyor': 'Topa uzanıyor.', 'geri geri': 'Geri geri çekiliyor.', 'ikisini kapat': 'İki rakibin arasında, ikisini kapatıyor.', 'Bekçi': 'Kaleci; kalesinde.', 'Bekçi · dönüş': 'Kaleci; kalesine dönüyor.' }[g];
   let t = A || (/^arkada · /.test(g) ? `En arkada; tuttuğu: ${a}.` : /^bölge · /.test(g) ? `Bölgesini tutuyor; bölgesindeki rakip: ${a}.` : /^karşıla · /.test(g) ? `Top sahibini karşılıyor (${a}): önünü ve pas açısını kapatıyor.` : /^kapatma · /.test(g) ? `Pas yolunu kapatıyor; kapattığı: ${a}.` : /^(markaj|atama) · /.test(g) ? `Adam adama; tuttuğu: ${a}.` : /^boşluk doldurma · /.test(g) ? `Boşalan yeri dolduruyor; yerine geçtiği: ${a}.` : /koşu/.test(g) ? 'Derine koşu yapıyor.' : /^fake/.test(g) ? 'Aldatma hareketi.' : /^çalım/.test(g) ? 'Çalım atıyor.' : g ? '' : 'Belirli bir görevi yok; yerine dönüyor.');
   return tp ? t + ' (Tepki süresinde: yeni duruma henüz dönmedi.)' : t; };
-const SPD = [['0,25×', .125], ['0,5×', .25], ['1×', .5], ['1,5×', .75], ['2×', 1], ['4×', 2]]; let W = 100, H = 50; /* saha ölçüsü motordan (self.ALAN_SAHA), motor yüklenince okunur */ const mmss = t => { const s = Math.floor(t / 30); /* standart hız: motorun 30 tiki = 1 maç saniyesi (eski 0,5×) */ return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+let W = 100, H = 50; /* saha ölçüsü motordan (self.ALAN_SAHA), motor yüklenince okunur */ const mmss = t => { const s = Math.floor(t / 30); /* standart hız: motorun 30 tiki = 1 maç saniyesi (eski 0,5×) */ return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
 class Component extends DCLogic {
   state = { n: 0, calis: false, hiz: .5, taktik: false, ses: localStorage.getItem('alan-ses') !== '0' };
   cvRef = React.createRef(); kapRef = React.createRef(); tohumRef = React.createRef(); zamanRef = React.createRef();
@@ -505,7 +504,7 @@ class Component extends DCLogic {
       ara: e => { const r = this.zamanRef.current.getBoundingClientRect(), v = a0 + Math.floor((e.clientX - r.left) / r.width * aL); if (this.kareler[v]) { this.t = v; this.golSon = v; this.devreGecti = v >= (len >> 1); if (Sx.devre) this.setState({ devre: false }); this.forceUpdate(); } },
       hazirPct: (Math.max(0, this.kareler.length - a0) / aL * 100).toFixed(1) + '%', izlePct: ((t - a0) / aL * 100).toFixed(1) + '%',
       isaretler: gor.filter(o => o.type === 'sayi').map(o => ({ x: (o.tick / len * 100).toFixed(1) + '%', c: RN[o.team] || 'var(--ink)', t: `${mmss(o.tick)} ${o.text}` })),
-      hizlar: SPD.map(([a2, v]) => ({ ad: a2, bg: Sx.hiz === v ? 'var(--ink)' : 'transparent', fg: Sx.hiz === v ? 'var(--bg)' : 'var(--ink)', sec: () => this.setState({ hiz: v }) })),
+      hizX: Sx.hiz * 2, hizYazi: String(Math.round(Sx.hiz * 200) / 100).replace('.', ',') + '×', hizSec: e => this.setState({ hiz: Math.max(0, Math.min(4, +e.target.value || 0)) / 2 }), /* oynatma hızı çubukla 0–4× (1× = saniyede 30 tik; içeride hiz = × / 2) */
       istat: ist,
       akis: gor.slice(-40).reverse().map(o => ({ t: mmss(o.tick), text: o.text, c: o.type === 'sayi' ? '#FFD25A' : RN[o.team] || 'rgba(var(--ink-rgb),.4)', w: o.type === 'sayi' ? 700 : 400 })),
       kadrolar: [0, 1].map(tm => ({ ad: ad[tm].toUpperCase(), c: RN[tm], ps: ps ? ps.filter(p => p.team === tm).map(p => ({ ad: p.name, r: rl(tm, p.i), w: h === p ? 700 : 400 })) : [] })),
