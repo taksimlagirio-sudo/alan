@@ -2,6 +2,15 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Hareketli Bekçi yöne göre geç tepki verir; uzak köşe şut adayı; kafada yolun yaşı (main, 6b0b502)
+- Menajer (722701 02:57, Kaan): "Mesele asla hiçbir şutun girmemesi … sert bir şutun tam köşeye girebilmesi lazım … kaleci hareket halindeyken gücünün azalması gerekiyor … açıyı daraltsa bile anlık tepki süresinde yavaşlama olmalı."
+- Bulgular. Uzak köşe (34,1) hiç tartılmıyordu: sutHedef tek boşlukta erken dönüyordu, kaba eleme de aynı köşeye iki şutla dört yeri dolduruyordu. Yakın köşeye sert şut, gövdenin kenarından çıkıp Tufan'ın gövdesine gidiyordu. Kafada yolun yaşı maçtan bir tik öndeydi.
+- `ALAN_BEKCI_HAREKET_ESKI`: core bekHar = koşu hızı oranı × (1 − cos)/2. Cos, Bekçi'nin hızı ile topun yoluna doğru olan yön arasında. Tepki + bekHarT (4) × ceza, dalış × (1 − bekHarD (0,25) × ceza). Maçta top çıktıktan sonra bu kadar tik eski hedefine gider. Formülde aynı süre koşusunu sürdürür, yana kayış dönüşten (gec) sonra başlar, uzaklaşan topa menzil varacağı yerden. sutKapali ve açı boşlukları şut yönüne göre. İlk deneme (8 tik, %50, yönsüz): 3 maçta 34 şut 22 gol; yönlü ve 4 / %25: 35 şut 17 gol.
+- `ALAN_SUT_NISAN_ESKI`: şut bırakma noktasından hedefe nişanlanır. `ALAN_SUT_KOSE_ESKI`: iki köşe her zaman aday, yakın hedefler birleşir, her hedefin en iyi şutu kafada. `ALAN_YAS_ESLE_ESKI`: formülde yeni topun ilk adımında yolun yaşı 0.
+- Sahne 722701 t5323 Kaan: uzak köşeye sert şut kafada 0,83, maçta 12/12; yakın köşe kafada 0,06, maçta 0/12; plase kafada 0, maçta 0/12.
+- Üç maç (722701, 433811, 909623; 5400 tik, kaba): şut 27 → 35, gol 5 → 17 (%19 → %49), kafadaki toplam 6,2 → 21,1 (kafa önce de sonra da %20 iyimser). Kaçan iki emin şut bıçak sırtı: Bekçi'nin donmadan sonraki koşusu kafada kaba.
+- Bayraklar eski → f5394d5 birebir (üç maç, 2400 tik).
+
 ## 18 Ekim 2026 · Risk talimatı sürme ve beklemeyi de caydırır (main)
 - Menajer, geri pas üzerine görüş istedi; görüş: sıkışınca geri çevirmek (sabır 1) kendi başına saçma değil, saçma olan yolu olmayan pas ve sekme değeriydi; ama düzeltmeden sonra Ece %49 tutan sürmeyi (0,220) %96'lık Tuna pasına (0,212) yeğliyordu. Menajer: "Yap, sürme ve beklemeye de uygula."
 - `ALAN_RISK_SUR_TUT_ESKI`: risk caydırma (P0 = 0,85 − 0,6 × risk) sür ve tut seçeneklerinde de, det.P (keepP, sürmenin/beklemenin sonuna kadar) ile.
