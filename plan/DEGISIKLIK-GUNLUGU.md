@@ -2,6 +2,9 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Maç ekranı: oynatma hızı çubukla (main 7899281)
+- Menajerin isteği: hız 0–4 arası istenen değere. canli.html'de altı düğme (0,25×, 0,5×, 1×, 1,5×, 2×, 4×) yerine kaydırma çubuğu (0–4×, 0,05 adım) ve yanında seçilen hız; 0× oynatmayı durdurur. 1× önceki gibi saniyede 30 tik (içeride hiz = × / 2). Tarayıcıda (390 px) denendi: 1×'le başlıyor, 2,75× / 0× / 1,5× seçiliyor, taşma yok, hata yok; yardımcısız maç işçisi tarayıcıda maçı hesaplıyor.
+
 ## 18 Ekim 2026 · Paralel yardımcılar kaldırıldı (main 97b005b) — formül sisteminde davranış aynı
 - Menajerin isteği. Formül sisteminde yardımcı işçilere iş düşmüyordu (kafada gönderme ve aldatma dünyası görevleri yok). mac-isci.js yardımcı açmıyor, açılmalarını (en çok 1,5 sn) beklemiyor; kuyruk bozulunca paralelsiz baştan hesap kuralı da gitti. `paralel.js`, `yardimci-isci.js` silindi; kuyruk görevleri (yalnız eski sistemde, `ALAN_FORMUL_ESKI`) aynı işçide sırayla. `_headers` (yalnız SharedArrayBuffer için bütün siteye konan çapraz köken yalıtımı) silindi. Maç ekranındaki hesap yazısından 'N çekirdek' çıktı. Laboratuvarın kendi işçileri (`lab-isci.js`, maç başına) yerinde.
 - Deneme: maç işçisi node'da işçi gibi (kur + yeni maç) 15 sn'de 1440 tik, hata yok; 909623 300 tik hatasız. Eski sistem artık tek çekirdekte (300 tik kp-336: 3 yardımcıyla 39 sn, tek çekirdekte 52 sn).
