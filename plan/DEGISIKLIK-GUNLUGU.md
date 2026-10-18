@@ -2,6 +2,12 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Sekmeyle dönen top alıcının değeriyle tartılmaz (main, ff694e3)
+- Menajer (662562 00:39, aynı maç, 52cbbc6): "Ece neden Deniz'e atar, o pas nasıl geçer gözükür?"
+- t1188 Ece (101,22) önüne → Deniz (85,33) seçildi: 0,787, %88. Yol 2 br yanındaki Bulut'un (96,27) üstünden. Formül: Bulut i=4'te topa değer (f 0,996), kontrol ihtimali %5,6 (cap 1,41, göreli hız 1,70; maçta da %5 — Bulut o %5'i tuttu), %88'lik sekme payı bize, yeri (99,6, 20,8) Ece'nin dibi. Önüne pas alış yerinde (ALIS_YERI: endM) tartıldığı için Deniz o noktada topu almış gibi değer aldı (zincir, kale önü) → 0,79. 'tut' aynı yerde 0,20.
+- `ALAN_SEKME_DEGER_ESKI`: ucusFormul P'yi ayırır: Ps (rakipten sekip ya da sahipsiz kalıp bize dönen pay; savurmada kaptırılan topun bize kalan payı da) ve yeri endS; doğrudan alış P − Ps ve yeri endD. Pas, önüne, kenardan (arkadaşa, kendine): doğrudan pay recvVal (alıcı, endD), sekme payı V(sonDunya(endS, tf), endS, şarj 0,3). Risk caydırma doğrudan payla. Karar kartında doğrudan alma ihtimali. Kafa ↔ gerçek kaydı toplam P (bizde kalma) ile.
+- Sahne: Ece sürüyor (0,220; Tuna'ya %96 pas 0,212). 662562 t622 / t722 ve 909623 t110 değişmedi. Bayrak eski → 7fd680d birebir (909623, 433811; 1500 tik). Uzun ölçüm yok.
+
 ## 18 Ekim 2026 · Risk talimatı düşük ihtimalli pası caydırır; sonrasında pas yolunda Bekçi (main, 7fd680d)
 - Menajer: "Risk talimatı düşük olasılıklı pasları caydırsın, yap." Ölçüm başlarken durdurdu ("dur dur"), 662562'yi gönderdi (52cbbc6 ile oynanmış, akış birebir): "Arkadaşına verse bomboş kaleye atacak, ona vermiyor, sonra saçma sapan bir pas atıyor … bu sefer diğeri yukarı saçma sapan bir şut çekiyor."
 - 662562 00:20–00:24 (Demir Blok hücumu, Aras kalesinin kenarında): t601 Rüzgâr (22,17) sür 0,98 > pas → Şimşek 0,80 (%99); t612 pas aldatması; t622 sür 0,951 > pas → Şimşek 0,928; t634–645 Şimşek'e pas %0 (yol Aras'ın üstünde), Rüzgâr duvardan Gökay'a; t722 Şimşek (9,40) kenardan → Ayaz %40 (0,35) > önüne → Rüzgâr %95 (0,24) ("yukarı şut" denen bu).
