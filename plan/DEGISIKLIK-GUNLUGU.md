@@ -2,6 +2,16 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Kanatta boş Tuna: pas vermiyor, saçma duvar pası, markajcı süpürücü (main, 011e480)
+- Menajer (7452, 498cf41 ile oynandı, 02:37–02:41): Tuna sağ kanatta bomboş, açı var, Deniz inatla vermiyor; sonra üst duvardan Tuna'ya sektiriyor, Rüzgâr kesiyor. "Tuna'nın neden boş olduğu da defans açısından problem."
+- Vermemesi: (1) Ön eleme arkadaş başına tek seçenek tutuyordu; kaba ölçü hızı görmüyor, Tuna için kaleye yakın 'önüne' yumuşak türü kalıyor (%42–67), ayağına pas ve sert türler eleniyordu. Elemeden geçince sert önüne pas %99 tutuyor. (2) Beklemenin değeri 0,143: "bekledikten sonra kenardan pas" 0,198 %100. sonraDeger'in kaba kenardan tahmini menzilsiz (88 br) ve alıcıyı savunmacılar yerinde dururken tartıyordu (yalnız Bekçi kayıyor); 70 br'lik Deniz → alt duvar → Kaan 0,137 %100.
+- Duvar pası: formül %84 diyordu; değer Tuna'nın durduğu yerde (97,56) tartılıyordu ama top Tuna'ya hiç varmıyor, payın çoğu Gökay'dan seken topu Ece'nin alması (sekYaris). Maçta Gökay dokunup yavaşlatınca Liman savunmaya döndü (Ece 'markaj · Ayaz'), top Rüzgâr'a yuvarlandı.
+- `ALAN_ADAY_TUR_ESKI`: her arkadaşa her türün (yumuşak/sert ayrı) en iyisi kafada denenir. `ALAN_KENAR_ALIS_ESKI`: kenardan pas alış yerinde tartılır. `ALAN_SONRA_KENAR_ESKI`: sonra tahmininde kenardan pas menzili. `ALAN_SONRA_SAVUNMA_ESKI`: sonra tahmininde alıcı respond dünyasında (uçuş süresi, kenardan için iki bacak).
+- Aynı sahne (4795'ten sonra yeni kurallar): duvar pası 0,007'ye düşüyor, bekleme 0,143 → 0,066, Tuna'nın önüne sert pas 0,063 (beklemeyle başa baş; Sabır 1 beklemeye +0,02 veriyor). Deniz Ece'ye veriyor, top Tuna'ya ulaşıyor, 02:45 Tuna'nın şutu (Kaya tuttu); kayıp yok.
+- Tuna boş: Ayaz 'Markajcı', adamı Tuna (maç başından), ama 3-2-1'in arka üçünde süpürücü. Oyuncu döngüsünde süpürücü dalı markaj dalından önce 'continue' ediyor: Ayaz arkada alan tutuyor; tek tartı (UA) da Tuna'yı 'markajcısı var' diye iş listesine almıyor. Liman topa sahipken Ayaz Tuna'ya 8 br'den yakın: %2. `ALAN_MARKAJ_SUPURUCU_ESKI`: arka hattaki markajcı (taşıyıcıyı karşılamıyorsa) adamını takip eder → %41.
+- Bayraklar eski → 805dab3 birebir (7452 ve 433811, 1500 tik). Hesap süresi 14,0 → 14,4 sn / 1500 tik. Üç ilk yarı yeni motorla: çökme yok, aşan pas 0. Uzun ölçüm yok.
+- Açık kalan: kendi yarı sahamızdan hücum üçte birine konum değeri neredeyse düz (V(60,30) 0,078; Tuna'nın alış yeri (80,55) savunma kaydıktan sonra 0,083). Kanattaki boş adama pas bu yüzden beklemeyle başa baş.
+
 ## 18 Ekim 2026 · Hedefini aşan önüne pas atılmaz (main)
 - Menajer: "mesele önüne atmasının değerli olması değil, önüne pasın bu kadar aptalca atılması." Haklı: zaman bedeli (4058e98) yalnız değeri düşürüyordu; asıl hata pasın hızı.
 - 433811 00:13: Cansu'nun Deniz'e ara pasının iki türü vardı. Yumuşak (0,83): top hedefe 66 tikte, Deniz 59 tikte; yolda buluşuyorlar. Sert (1,23, varış 0,8): top hedefe 39 tikte, Deniz 59 tikte; top 20 tik önce geçip 38 br ötede, kendi köşemizde alınıyor. Sert tür alıcının varışına bakılmadan üretiliyor, formül de köşedeki alışı geçerli pas sayıyordu.
