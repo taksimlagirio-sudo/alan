@@ -2,6 +2,13 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Risk talimatı sürme ve beklemeyi de caydırır (main)
+- Menajer, geri pas üzerine görüş istedi; görüş: sıkışınca geri çevirmek (sabır 1) kendi başına saçma değil, saçma olan yolu olmayan pas ve sekme değeriydi; ama düzeltmeden sonra Ece %49 tutan sürmeyi (0,220) %96'lık Tuna pasına (0,212) yeğliyordu. Menajer: "Yap, sürme ve beklemeye de uygula."
+- `ALAN_RISK_SUR_TUT_ESKI`: risk caydırma (P0 = 0,85 − 0,6 × risk) sür ve tut seçeneklerinde de, det.P (keepP, sürmenin/beklemenin sonuna kadar) ile.
+- Sahne: 662562 t1188 Ece pas → Tuna %96 (0,212). t622, t722, 909623 t110 değişmedi.
+- 662562 ilk yarı (tek maç, kaba): Liman ort. tutma 0,40 → 0,50 sn, sür %41 → %27, bekle %14 → %21, pas %39 → %38, tutan pas 30/32 → 33/34, şut 1 → 2; Demir Blok sür %64 → %45, pas %20 → %34, gönder %1 → %7, ort. tutma 0,90 → 0,56 sn.
+- Bayrak eski → da23eb4 birebir (909623, 433811; 1500 tik).
+
 ## 18 Ekim 2026 · Rakibe çarpan pas başarısız sayılır (main)
 - Menajer: "Şu birine çarpar da bize seker sistemleri aşırı aptalca, ayrıca o pozisyondan oraya dönmek de aşırı değersiz olmalı."
 - `ALAN_SEKME_KAYIP_ESKI`: ucusFormul sekme payından rakibin dokunup sektirdiği kısmı ayırır (Psek, temas yeri endSek). Pas, önüne, kenardan (arkadaşa, kendine) değerinde Psek'in değeri yok; temas yerinde lossAt bedeli düşülür. Kimsenin dokunmadığı, sahipsiz kalıp yarışla kazanılan top (boşluğa ara pas) sahipsiz top değeriyle (ff694e3) kalır. Risk caydırma ve kart zaten doğrudan alışla.
