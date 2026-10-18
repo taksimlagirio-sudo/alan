@@ -1,5 +1,0 @@
-# v5 · paralel kafa: bütün site çapraz köken yalıtımlı (SharedArrayBuffer için). Yalıtım en üstteki sayfadan gelir: maç ekranı kabuğun (index.html) içinde çerçeveyle açıldığından kabuk ve içine yüklenen her sayfa da bu başlıkları taşır. Önce yalnız /canli* yalıtımlıydı; kabuktan açılan maç tek çekirdekte kalıyordu. Tek kural: aynı başlık iki kuraldan gelirse birleşip bozulabilir. Yalıtım yoksa motor tek çekirdekle aynı maçı hesaplar.
-/*
-  Cross-Origin-Opener-Policy: same-origin
-  Cross-Origin-Embedder-Policy: require-corp
-  Cross-Origin-Resource-Policy: same-origin
