@@ -2,6 +2,12 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Hedefini aşan önüne pas atılmaz (main)
+- Menajer: "mesele önüne atmasının değerli olması değil, önüne pasın bu kadar aptalca atılması." Haklı: zaman bedeli (4058e98) yalnız değeri düşürüyordu; asıl hata pasın hızı.
+- 433811 00:13: Cansu'nun Deniz'e ara pasının iki türü vardı. Yumuşak (0,83): top hedefe 66 tikte, Deniz 59 tikte; yolda buluşuyorlar. Sert (1,23, varış 0,8): top hedefe 39 tikte, Deniz 59 tikte; top 20 tik önce geçip 38 br ötede, kendi köşemizde alınıyor. Sert tür alıcının varışına bakılmadan üretiliyor, formül de köşedeki alışı geçerli pas sayıyordu.
+- `ALAN_ASAN_PAS_ESKI`: alıcı topu nişan alınan yerin (top yolunda) `D.asanPay` = 3 br'den fazla ötesinde alacaksa o seçenek yok. Aynı sahnede sert tür düşüyor, Cansu topu tutuyor.
+- Yayındaki motorla (498cf41) 433811 ve 619497 ilk yarılarında seçilen 94 önüne pasın 9'u hedefini aştı: Ece → Deniz 36 br, Cansu → Deniz 38 br (ikisi de kendi köşemize), diğerleri 6–10 br. Yeni kuralla 0. Bayrak eski → 4058e98 birebir (iki maç, 1500 tik). Uzun ölçüm yok.
+
 ## 18 Ekim 2026 · Yavaş şuta "kesin gol" sanma, hedefini aşıp köşeye giden pas (main, 4058e98)
 - Menajer (433811; maç f539df2 ile oynandı, 498cf41'den 4 dk önce açılmış): 02:20 Rüzgâr kale önünde bomboşken topu tek dokunuşla 0,77 hızla Aras'ın kucağına gönderiyor; 00:13 Cansu (49,6) "önüne → Deniz" pasını veriyor, top Deniz'i geçip kendi köşemize gidiyor.
 - Rüzgâr: iki hata üst üste. (1) Tek dokunuşun hız sınırı (gelen top 0,41 → en çok ~0,78) formülde yoktu, 3,15 hızla tartılıyordu (498cf41'de düzeldi). (2) O düzeltmeyle de formül 0,78 hızlı şuta %92 gol diyordu: şut formülünde Bekçi yana kayarken yürür sayılıyordu (hız ×1), maçta ise kovalarken koşuyor (×1,25; bekKay de böyle). Maçta aynı sahnede şut y 26'dan direk dibine 34,5'e kadar her hedefe zorlandı: hepsini Aras tuttu.
