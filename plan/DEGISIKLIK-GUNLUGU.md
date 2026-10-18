@@ -2,6 +2,13 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Tek dokunuş kenardan pasın hızı (main, 4273257)
+- Menajer (909623, 00:04–00:08): "Hala ciddi problemler var." Deniz'in tek dokunuş kenardan pası Kaan'a gitmeden Bulut'un önünde duruyor, Bulut kesiyor.
+- Sebep: maç (c49aa41) tek dokunuşta her vuruşun hızını gelen topla sınırlıyor (savurBasla, kanca: u×(1−0,35·min(1, A/π))+0,4). Kafadaki formül bu sınırı pasa, önüne pasa ve göndermeye uyguluyordu (`ALAN_KANCA_HIZ_ESKI`), kenardan pasa uygulamıyordu. t201 Deniz: kenardan→Kaan kafada 2,83 hız, %82, değer 0,422 (kontrol edip atsa aynı pas 0,095–0,098, %46–56); maçta 0,82 hızla çıktı (gelen top 0,65), duvara varamadan yavaşladı, t241 Bulut (74,43) aldı.
+- `ALAN_KANCA_KENAR_ESKI`: tek dokunuşta (ön hareket yoksa) kenardan pasın, arkadaşa ve kendine, hızı aynı kanca sınırıyla; değer o hızla tartılır.
+- Sahne (190'da çevirme): tek dokunuşun en iyisi pas→Mert 0,082 (seçilmedi); Deniz kontrol ediyor, t207 kontrollü kenardan pas Kaan'a, 00:09'da top Tuna'da, top bizde.
+- Bayrak eski → 42757c5 birebir (909623, 433811). Uzun ölçüm yapılmadı.
+
 ## 18 Ekim 2026 · Amaçlı bekleme: rakibi üstüne çekmek, koşuyu görmek (main)
 - Menajer: "Mesele oyuncu üzerine çekmek veya koşu görmek için beklemiyor oluşları zaten."
 - Sebep: beklemenin sonrası kaba sonraDeger tahminiyle ve yarım ağırlıkla (İlke C-c: kaba tahmin sistematik iyimserdi). Bekledikten sonra koşucuya ya da boşalan arkadaşa açılacak pas ne kadar iyi olursa olsun bekleme şimdiki pasa yeniliyordu.
