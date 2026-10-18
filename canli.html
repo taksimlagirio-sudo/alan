@@ -295,6 +295,7 @@ const gorevAcik = (j, top) => { if (top) return 'Top onda.'; const tp = / · tep
 /* v5 · seçeneğin amacı (motorun amaç katmanından): ileri (kaç rakip geride kalır), açma (pas seçeneği yaratır/kaybeder), bekleme (sonra ne yapacak) */
 const amacYazi = a => { const s = [], m = a.am; if (m) { if (m.il > .003) s.push(m.gec > 0 ? `ileri · ${m.gec} rakip geride kalır` : 'ileri'); else if (m.il < -.003) s.push('geri çevirir'); const d = (m.n1 ?? 0) - (m.n0 ?? 0); if (m.ac > .002 && d > .2) s.push(`pas seçeneği açar (${(m.n0 ?? 0).toFixed(1)} → ${(m.n1 ?? 0).toFixed(1)})`); else if (m.ac < -.002 && d < -.2) s.push(`pas seçeneği azalır (${(m.n0 ?? 0).toFixed(1)} → ${(m.n1 ?? 0).toFixed(1)})`); }
   if (/^tut/.test(a.kind) && a.hw) s.push(a.hw.kayip ? 'beklerse kaybeder' : a.neden === 'çek' ? `rakibi üstüne çekiyor; boşalacak: ${a.bak}` : a.neden === 'koşu' ? `${a.bak} koşusunu bitirince verecek` : `bekleyip ${a.hw.sonra || 'karar'}${a.cek != null ? (a.cek >= 2 ? ' · rakibi üstüne çeker' : ' · rakip gelmiyor') : ''}`);
+  if (a.rc) s.push(`risk talimatı caydırıyor (ihtimal düşük, −${String(a.rc).replace('.', ',')})`);
   if (a.devam) s.unshift('sürmeye devam (karar verdi; başka seçenek belirgin iyi değil)');
   return s.length ? '↳ ' + s.join(' · ') : ''; };
 let W = 100, H = 50; /* saha ölçüsü motordan (self.ALAN_SAHA), motor yüklenince okunur */ const mmss = t => { const s = Math.floor(t / 30); /* standart hız: motorun 30 tiki = 1 maç saniyesi (eski 0,5×) */ return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
