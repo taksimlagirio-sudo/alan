@@ -2,6 +2,14 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Yavaş şuta "kesin gol" sanma, hedefini aşıp köşeye giden pas (main, 4058e98)
+- Menajer (433811; maç f539df2 ile oynandı, 498cf41'den 4 dk önce açılmış): 02:20 Rüzgâr kale önünde bomboşken topu tek dokunuşla 0,77 hızla Aras'ın kucağına gönderiyor; 00:13 Cansu (49,6) "önüne → Deniz" pasını veriyor, top Deniz'i geçip kendi köşemize gidiyor.
+- Rüzgâr: iki hata üst üste. (1) Tek dokunuşun hız sınırı (gelen top 0,41 → en çok ~0,78) formülde yoktu, 3,15 hızla tartılıyordu (498cf41'de düzeldi). (2) O düzeltmeyle de formül 0,78 hızlı şuta %92 gol diyordu: şut formülünde Bekçi yana kayarken yürür sayılıyordu (hız ×1), maçta ise kovalarken koşuyor (×1,25; bekKay de böyle). Maçta aynı sahnede şut y 26'dan direk dibine 34,5'e kadar her hedefe zorlandı: hepsini Aras tuttu.
+- `ALAN_BEKCI_KAYIS_ESKI`: ucusFormul ve sutKapali'de Bekçi'nin kayışı koşu hızıyla. Aynı sahne (4185'ten sonra yeni kurallar): Rüzgâr tek dokunuşta vurmuyor, topu alıp sürüyor, 02:22'de sert vuruyor (3,14) ve gol.
+- Cansu: formül pasın (0,9, 58,3)'te 124 tikte alınacağını biliyordu; kendi yarı sahada konum değerleri düz (köşe 0,061, orta 0,064) ve kesilme payı sıfırdı, beklemek 0,5 sn için ~0,01–0,02 bedel öderken 2,5 sn fazla süren pas bedelsizdi: 0,077 ile en iyi.
+- `ALAN_ASIM_ZAMAN_ESKI`: önüne pas nişan alınan yerden sonra alınacaksa aradaki süre beklemenin bedeliyle (tempo × bekTempo / sn, tutma ihtimaliyle) düşülür. Aynı sahnede köşe pası listeden düşüyor, Cansu Mert'e veriyor.
+- Bayraklar eski → önceki sürüm birebir (433811 ve 619497, 1500 tik). Uzun ölçüm yok.
+
 ## 18 Ekim 2026 · Tek dokunuşta kendi etrafında dönme (main)
 - Menajer (909623, 00:11): Tuna kendi etrafında dönüyor. Tek dokunuş güçlü şutun savurması: top gövdenin etrafında 593–646° (1,6 tur) döndü, sonra 0,62 hızla bırakıldı. Tek dokunuşun hızı gelen topla sınırlı (gelen 0,35 → en çok ~0,62; kanca kuralı, savurBasla), ama savurma tam hızlı vuruşa (3,26) göre planlanıyor, sınırdan sonra yeniden planlanmıyordu. Karar formülü de bu sınırı bilmiyordu: şutu tam hızla tartıp (girme %13,7) seçiyordu.
 - `ALAN_KANCA_HIZ_ESKI`: sınır uygulanınca savurma o hıza göre yeniden planlanır (gerekmiyorsa hemen itişle çıkar); formül tek dokunuş pasını, göndermesini ve alıcının tek dokunuş şutunu bu sınırlı hızla tartar.
