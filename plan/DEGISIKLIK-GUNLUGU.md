@@ -2,6 +2,12 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Bekçi'nin çelme yönünü pasçı ve şutçu bilemez (main 0b54e86) — maçlar değişti
+- Menajer: seken topu düşünerek şut çekmek saçma; şutçu Bekçi'nin topu nereye çeleceğini bilemez. Formülün sekme yarışı (sekYaris) Bekçi'nin maçta seçeceği yönü (14 br ileride hücumcuya en uzak nokta) biliyormuş gibi sayıyordu. Kenardan şutta Bekçi topu şutçunun tarafına çeliyor, formül sekmeyi %99,5 bizim görüyor, gol ihtimali 0 olan şut 0,80 değerle seçiliyordu (Tuna, 618499 t2252; P %96'lık pas 0,40).
+- `ALAN_BEK_YON_ESKI`: Bekçi'nin sekmesinin payı, çelebileceği yönlerin (kalesinden dışarı −60°, −30°, 0°, 30°, 60°) ortalaması. Aynı anda şut 0,22'ye iniyor, Tuna Kaan'a pası seçiyor. Saha oyuncusunun sekmesi değişmedi (gövdeden yansıma ve hücum yönüne çevirme).
+- Bulgu (dokunulmadı): maçta Bekçi çelme yönünü yalnız 14 br ilerideki noktaya bakarak seçiyor, topun sonra yuvarlanacağı yolu görmüyor; aynı şut 200 kez oynatılınca seken top %73 hücumcuda kalıyor.
+- 24 maç (3 kurulum × 8 tohum, 4500 tik; önce · sonra): şut 236 · 199, gol 24 · 21, Bekçi'nin tuttuğu şut 90 · 57; pas başarısı %87,2 · %86,8; pas kaybı 257 · 263; toplam top kaybı 437 · 442 (ikinci 12 maçta %87,1 · %87,9, ilk 12'de %87,3 · %85,7: fark gürültü içinde). %80–95 bandı iki sürümde de beklenen %89, gerçek ~%80 (duran bulgu). Kısa çökme denemesi ve maç işçisi hatasız.
+
 ## 18 Ekim 2026 · 618499'un ilk 40 saniyesi (main 5370bb5) — maçlar değişti
 - Menajerin maç dosyası (618499, iki takım da 20'lik): ilk 40 saniyede peş peşe saçma kayıplar. Maç tik tik izlendi (scratch `/tmp/kk-top-yakin.js`, `kk-poz.js`, `kk-ufd2.js`: formülün aday başına yakalama payları, `kk-rv.js`: alıcı değerinin parçaları, `kk-fk.js`: fake'in iki dünyası, `kk-mc.js`: aynı andan 200 farklı zarla oynatma). Beş kök:
 - `ALAN_BEKCI_FISKE_ESKI`: Bekçi kendi Kuyu alanında fiske yapıyordu; %2'lik kaçan fiske kendi kalesine yuvarlandı (0-1). Bekçi artık fiske yapmaz.
