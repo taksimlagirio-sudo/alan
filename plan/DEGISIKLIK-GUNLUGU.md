@@ -2,6 +2,24 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Rakibe çarpan pas başarısız sayılır (main)
+- Menajer: "Şu birine çarpar da bize seker sistemleri aşırı aptalca, ayrıca o pozisyondan oraya dönmek de aşırı değersiz olmalı."
+- `ALAN_SEKME_KAYIP_ESKI`: ucusFormul sekme payından rakibin dokunup sektirdiği kısmı ayırır (Psek, temas yeri endSek). Pas, önüne, kenardan (arkadaşa, kendine) değerinde Psek'in değeri yok; temas yerinde lossAt bedeli düşülür. Kimsenin dokunmadığı, sahipsiz kalıp yarışla kazanılan top (boşluğa ara pas) sahipsiz top değeriyle (ff694e3) kalır. Risk caydırma ve kart zaten doğrudan alışla.
+- Sahne: 662562 t1188 önüne → Deniz −0,689 (doğrudan ~%0: risk −0,70), önüne → Mert −0,755; Ece sürüyor (0,220). t622, t722, 909623 t110 değişmedi. Bayrak eski → ff694e3 birebir (909623, 433811; 1500 tik). Uzun ölçüm yok.
+
+## 18 Ekim 2026 · Sekmeyle dönen top alıcının değeriyle tartılmaz (main, ff694e3)
+- Menajer (662562 00:39, aynı maç, 52cbbc6): "Ece neden Deniz'e atar, o pas nasıl geçer gözükür?"
+- t1188 Ece (101,22) önüne → Deniz (85,33) seçildi: 0,787, %88. Yol 2 br yanındaki Bulut'un (96,27) üstünden. Formül: Bulut i=4'te topa değer (f 0,996), kontrol ihtimali %5,6 (cap 1,41, göreli hız 1,70; maçta da %5 — Bulut o %5'i tuttu), %88'lik sekme payı bize, yeri (99,6, 20,8) Ece'nin dibi. Önüne pas alış yerinde (ALIS_YERI: endM) tartıldığı için Deniz o noktada topu almış gibi değer aldı (zincir, kale önü) → 0,79. 'tut' aynı yerde 0,20.
+- `ALAN_SEKME_DEGER_ESKI`: ucusFormul P'yi ayırır: Ps (rakipten sekip ya da sahipsiz kalıp bize dönen pay; savurmada kaptırılan topun bize kalan payı da) ve yeri endS; doğrudan alış P − Ps ve yeri endD. Pas, önüne, kenardan (arkadaşa, kendine): doğrudan pay recvVal (alıcı, endD), sekme payı V(sonDunya(endS, tf), endS, şarj 0,3). Risk caydırma doğrudan payla. Karar kartında doğrudan alma ihtimali. Kafa ↔ gerçek kaydı toplam P (bizde kalma) ile.
+- Sahne: Ece sürüyor (0,220; Tuna'ya %96 pas 0,212). 662562 t622 / t722 ve 909623 t110 değişmedi. Bayrak eski → 7fd680d birebir (909623, 433811; 1500 tik). Uzun ölçüm yok.
+
+## 18 Ekim 2026 · Risk talimatı düşük ihtimalli pası caydırır; sonrasında pas yolunda Bekçi (main, 7fd680d)
+- Menajer: "Risk talimatı düşük olasılıklı pasları caydırsın, yap." Ölçüm başlarken durdurdu ("dur dur"), 662562'yi gönderdi (52cbbc6 ile oynanmış, akış birebir): "Arkadaşına verse bomboş kaleye atacak, ona vermiyor, sonra saçma sapan bir pas atıyor … bu sefer diğeri yukarı saçma sapan bir şut çekiyor."
+- 662562 00:20–00:24 (Demir Blok hücumu, Aras kalesinin kenarında): t601 Rüzgâr (22,17) sür 0,98 > pas → Şimşek 0,80 (%99); t612 pas aldatması; t622 sür 0,951 > pas → Şimşek 0,928; t634–645 Şimşek'e pas %0 (yol Aras'ın üstünde), Rüzgâr duvardan Gökay'a; t722 Şimşek (9,40) kenardan → Ayaz %40 (0,35) > önüne → Rüzgâr %95 (0,24) ("yukarı şut" denen bu).
+- Sürmenin şişkinliği: değeri sonraDeger'in "sonra önüne → Şimşek"inden; sonraDeger pas yollarını laneOk ile tartıyor, laneOk Bekçi'yi saymıyor. Gerçek pas hesabı (uçuş formülü) sayıyor: aynı pas şimdi %7–11. → `ALAN_SONRA_BEKCI_YOL_ESKI`: sonraDeger'de pas, önüne, kenardan (iki bacak) ve kenardan kendine pas yolunda, kale önünden (Kuyu + 6 br) geçen pası Bekçi keser: R = bekBody + min(bekDive, (t − tepki) × dalış hızı) + (t − tepki − 2) × koşu × 0,6, yolun Bekçi'ye uzaklığına sgm(/0,3). t622: sür 0,921 < pas → Şimşek 0,928.
+- `ALAN_RISK_CAYDIR_ESKI`: P0 = 0,85 − 0,6 × risk (takım; oyuncunun risk talimatı ya da eğilimi ±0,3); pas, önüne, kenardan, çalımda P0'ın altındaki her puan değerden düşülür (riskCay 1; 0,6 ile 662562 t722 dönmedi). Önce risk yalnız kaybın bedelini ölçekliyordu (1,4 − 0,8 × risk), rakip yarıda kayıp ucuz olduğundan %29'luk pas seçilebiliyordu. Karar kartında "risk talimatı caydırıyor (−x)". Sahneler: 909623 t110 Kaan kenardan → Cansu %29 (0,217) → pas → Ece %99; 662562 t722 Şimşek → önüne → Rüzgâr %95.
+- Uzun ölçüm yapılmadı (menajer durdurdu). Bayraklar eski → 52cbbc6 birebir (909623, 433811; 1500 tik).
+
 ## 18 Ekim 2026 · Sekmeli pasta kafa ile maç; şut denememe (main, 52cbbc6)
 - Menajer (909623 01:15–01:25, ekran görüntüleri): "Hem şut çekmeyi doğru düzgün denemiyorlar hem de aptal saptal kenardan pas veriyorlar." Cansu kenardan → Kaan (%79, Gökay kesti), Tuna kenardan → Ece (%45 seçildi, önüne → Cansu %88 varken).
 - Sahne birebir üretilemedi: iPad'deki maç 00:08'e kadar c49aa41 ile aynı, 01:09'dan sonra hiçbir sürümle (c49aa41, 42757c5, 4273257, 26cf90d, fc88857) tutmuyor. Büyük ihtimalle Safari (JavaScriptCore) ile node (V8) matematik işlevlerinde son basamakta ayrışıyor, fark birikiyor. Aynı türden sahnelerle genel incelendi.
