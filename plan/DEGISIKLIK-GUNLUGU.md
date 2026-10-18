@@ -2,6 +2,10 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Paralel yardımcılar kaldırıldı (main 97b005b) — formül sisteminde davranış aynı
+- Menajerin isteği. Formül sisteminde yardımcı işçilere iş düşmüyordu (kafada gönderme ve aldatma dünyası görevleri yok). mac-isci.js yardımcı açmıyor, açılmalarını (en çok 1,5 sn) beklemiyor; kuyruk bozulunca paralelsiz baştan hesap kuralı da gitti. `paralel.js`, `yardimci-isci.js` silindi; kuyruk görevleri (yalnız eski sistemde, `ALAN_FORMUL_ESKI`) aynı işçide sırayla. `_headers` (yalnız SharedArrayBuffer için bütün siteye konan çapraz köken yalıtımı) silindi. Maç ekranındaki hesap yazısından 'N çekirdek' çıktı. Laboratuvarın kendi işçileri (`lab-isci.js`, maç başına) yerinde.
+- Deneme: maç işçisi node'da işçi gibi (kur + yeni maç) 15 sn'de 1440 tik, hata yok; 909623 300 tik hatasız. Eski sistem artık tek çekirdekte (300 tik kp-336: 3 yardımcıyla 39 sn, tek çekirdekte 52 sn).
+
 ## 17 Ekim 2026 · Aşırtma koddan çıktı (main ea7ea34) — davranış aynı
 - Menajerin isteği: oyunda aşırtma yok, adı da kalmasın. Seçenek hiçbir yerde üretilmiyordu; kalan kontroller (decide.js: kaba eleme, pas türü, tercih, risk kazancı, aile sayımı), maçtaki sayaç (`m.st.lob`) ve olay metni, paralel tür listesindeki adı (`TUR`) kaldırıldı. Maç birebir aynı (kp-336, 300 tik); eski sistemde (`ALAN_FORMUL_ESKI`) tek çekirdek ile 3 yardımcı aynı (1042 paralel iş).
 
