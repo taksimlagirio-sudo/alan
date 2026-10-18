@@ -2,6 +2,11 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Rakibe çarpan pas başarısız sayılır (main)
+- Menajer: "Şu birine çarpar da bize seker sistemleri aşırı aptalca, ayrıca o pozisyondan oraya dönmek de aşırı değersiz olmalı."
+- `ALAN_SEKME_KAYIP_ESKI`: ucusFormul sekme payından rakibin dokunup sektirdiği kısmı ayırır (Psek, temas yeri endSek). Pas, önüne, kenardan (arkadaşa, kendine) değerinde Psek'in değeri yok; temas yerinde lossAt bedeli düşülür. Kimsenin dokunmadığı, sahipsiz kalıp yarışla kazanılan top (boşluğa ara pas) sahipsiz top değeriyle (ff694e3) kalır. Risk caydırma ve kart zaten doğrudan alışla.
+- Sahne: 662562 t1188 önüne → Deniz −0,689 (doğrudan ~%0: risk −0,70), önüne → Mert −0,755; Ece sürüyor (0,220). t622, t722, 909623 t110 değişmedi. Bayrak eski → ff694e3 birebir (909623, 433811; 1500 tik). Uzun ölçüm yok.
+
 ## 18 Ekim 2026 · Sekmeyle dönen top alıcının değeriyle tartılmaz (main, ff694e3)
 - Menajer (662562 00:39, aynı maç, 52cbbc6): "Ece neden Deniz'e atar, o pas nasıl geçer gözükür?"
 - t1188 Ece (101,22) önüne → Deniz (85,33) seçildi: 0,787, %88. Yol 2 br yanındaki Bulut'un (96,27) üstünden. Formül: Bulut i=4'te topa değer (f 0,996), kontrol ihtimali %5,6 (cap 1,41, göreli hız 1,70; maçta da %5 — Bulut o %5'i tuttu), %88'lik sekme payı bize, yeri (99,6, 20,8) Ece'nin dibi. Önüne pas alış yerinde (ALIS_YERI: endM) tartıldığı için Deniz o noktada topu almış gibi değer aldı (zincir, kale önü) → 0,79. 'tut' aynı yerde 0,20.
