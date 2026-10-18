@@ -2,6 +2,15 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Kombinasyon koşuları: üçüncü adam, ver-kaç, bindirme, "Bindirir" talimatı (main, afc9e8e)
+- Menajer: "Üçüncü adam koşusu da lazım, bindirme sistemi vs." Ölçmeden.
+- Durum: pas havadayken topsuz oyuncular yerini zaten alıcının buluşma noktasına göre tartıyordu (shape E = fr.first'in buluşma noktası) ve zincir (predictWorld) koşan arkadaşı hedefine doğru ilerletiyordu; eksik olan koşu adaylarıydı (savunmanın arkasına koşu yalnız belli rollerde, bağ uzağa koşuyu eziyordu) ve bindirme hiç yoktu.
+- `ALAN_UCUNCU_ESKI`: pas B'ye havadayken B'nin buluşma noktasından kaleye doğru (±30°, ±60°) 10/16/22 br noktalar aday (oyuncunun şimdiki yerinden ileri); amaç payı S.ucK (0,05) × B'den yol açıklığı, varış B'nin alışından en çok 20 tik sonra değilse 0. Pası veren için 'ver-kaç'. Bağ vacL ile gevşer.
+- `ALAN_BINDIRME_ESKI`: çıkış noktası taşıyıcı ya da pas ona giderken buluşma noktası. Dış (çizgi tarafı, çizgiden 2 br içeride en çok 7 br) ve iç (7 br içeri), 10/16 br ileride. Pay S.bindK (0,08) varılacak yerde 8 br'de rakip yokken × (yanında 10 br'de ≤1 savunmacı 1, 2 savunmacı 0,5). Kendiliğinden: kanattaki (orta çizgiden 8 br+) taşıyıcının 3–25 br gerisinde, 22 br yanında, kendi kalesinden 35 br ileride. Talimatlı (tl.huc.bindir = numara): koşul yok (−5…40 br, 25 br ileride), pay ×1,5, üç savunmacıda bile 0,25, bağ ×0,5.
+- Taktik ekranı: 'Bindirir' satırı (kendiliğinden → 1…6 numaraya), motor TLV.huc.bindir = null.
+- 7452 ilk yarı: kanatçılar topu yalnız 41 tik tutuyordu (taşıyıcıya bağlı bindirme 2 kez tetiklendi, ikisinde seçildi) → tetik pası havadayken de. Sonra: talimatsız 135, talimatlı (Mert → 6, Ece → 4) 158 oyuncu-tik bindirme; üçüncü adam ~350, ver-kaç ~130 oyuncu-tik; bu görevdeyken pas alan 2–4.
+- Bayraklar eski → 5f99f69 birebir (7452, 619497; 1500 tik). Taktik ve maç sayfası yerel tarayıcıda hatasız; 'Bindirir' satırı görünüyor. Uzun ölçüm yok.
+
 ## 18 Ekim 2026 · Amaç katmanı: her hamlenin bir amacı, sabır beklemek değil (main, 5f99f69)
 - Menajer: "Sabırlı oynamak beklemek demek değil; riskli dikine pası azaltmak, rakibi pasla açmak, oyunu genişletmek, pas imkânı yaratmak. Oyuncular bir amaçla mı yapıyor?" Ölçmeden, hepsini ekle; maça bakıp karar verecek.
 - Durum (iki ilk yarı, 011e480): en iyi iki seçenek arasındaki fark kendi yarı sahada kararların %72–74'ünde, ortada %53–63'ünde taktik eğiliminden (±0,02) küçük; %25–32'si 0,005'ten küçük. Konum değeri ilk üçte ikide düz (0,06–0,08). Sabır = bekleme +0,02 (+ riskli ileriye eksi, baskıda geri pasa artı); tempo = kısa yan/geri pasa sabit artı.
