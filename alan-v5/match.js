@@ -70,7 +70,7 @@
   // Hücum: Kurucu (topun gerisinde kalır, oyunu kurar) · Kanat (çizgide, geniş) · Koşucu (son çizginin arkasına koşar) · Pivot (Kuyu önünde, ortada) · Serbest
   // Savunma: Süpürücü (en arkada) · Presçi (ilk basan) · Markajcı (belli bir rakibi takip) · Önde (kontra için ileride bekler) · Bölge
   // v5 · rolsüz sistem (Aşama 1): davranışı oyuncu başına TALİMAT belirler, başarıyı özellik. Talimatlar evreye bağlı (şimdilik 'huc' = top bizde, 'sav' = top rakipte); verilmeyen değer üst seviyeden gelir (oyuncu → takım evresi → varsayılan). Paketler (Kurucu, Markajcı…) yalnız başlangıç önerisi: talimat değerleri üretir, motor paket adına bakmaz.
-  const TLV = { huc: { kosu: .5, istek: .5, destek: .5, risk: .5, ritim: .5, tempo: .5, gonder: .5, serbest: .5, doldur: null }, sav: { adam: 0, kimi: null, pres: .5 } };
+  const TLV = { huc: { kosu: .5, istek: .5, destek: .5, risk: .5, ritim: .5, tempo: .5, gonder: .5, serbest: .5, doldur: null, bindir: null }, sav: { adam: 0, kimi: null, pres: .5 } };
   const PAKET = { h: { Kurucu: { destek: .2, serbest: 0, kosu: .3 }, Kanat: { serbest: .21 }, Koşucu: { kosu: 1, serbest: .76 }, Pivot: { serbest: .21 }, Serbest: {} }, s: { Süpürücü: {}, Markajcı: { adam: 1 }, Presçi: { pres: 1 }, Önde: {}, Bölge: {} } };
   // v5 · Evreler (yalnız bilgi): top bizde geçiş (m.gc git) · kurma (kendi Kuyu'muza uzaklık < 35) · ilerleme · son; top rakipte geçiş (karşı pres) · kurma · orta · son. Ayar taşımaz.
   const EVRE = { huc: ['gecis', 'kurma', 'ilerleme', 'son'], sav: ['gecis', 'kurma', 'orta', 'son'] }, EVKOD = ['huc.gecis', 'huc.kurma', 'huc.ilerleme', 'huc.son', 'sav.gecis', 'sav.kurma', 'sav.orta', 'sav.son', 'huc.hizli'];
