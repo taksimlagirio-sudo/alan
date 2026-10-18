@@ -2,6 +2,9 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Kadro denemesi: Liman 20, rakipler 10
+- Menajerin isteği. kadro.js'teki geçici deneme: Liman'ın bütün oyuncularının bütün özellikleri 20 (Alan gücü ve Soğukkanlılık 10, önceki gibi); üç rakibin (Demir Blok, Fırtına, Saat Kulesi) bütün oyuncularının bütün özellikleri 10 (Bekçi özellikleri dahil; taraf aynı). Anahtarlar `HEPSI_20`, `RAKIP_10`; asıl değerler silinmedi. Maç sayfası kadroyu Taktik ekranının kaydettiği kopyadan okur: Taktik'ten bir kez 'Maça çık' gerekir. 20'ye 10 maç (1800 tik) ve maç işçisi hatasız.
+
 ## 18 Ekim 2026 · Uzun pas: alıcı payla buluşur; zincir hızlandı (main 682efe3) — maçlar değişti
 - Menajer: önceki sürümde toplam top kaybı nasıl arttı? Pas pas etiketli ölçüm (scratch `/tmp/kk-pas-etiket.js`: her pasın karar etiketleri ve sonucu; aynı 12 maç): zincirle, boşlukla ve yeni sert pasla seçilen 42 pas 0 kayıp. Artış sıradan paslardan: maç başına 7,8 → 11,3 (12 maçın 9'unda), 35 br'den uzun paslarda 18 → 41 (formül 28 bekliyordu). Tek tek kapatma: yeni diziliş kapalı 104, zincir kapalı 111, ön elemede boşluk kapalı 138 (hepsi açık 135, önce 94). Kök: savunma artık alıcıya çökmediği için pas daha çekici; bu, uçuş formülünün uzun yavaş paslardaki eski iyimserliğini açığa çıkardı. Örnek (Kartal → Volkan, P %97): top Volkan'ın 1,8 br yanından geçti, uzaklaşan topa menzil kısa olduğu için dokunamadı, 60 tik kovaladı, yolun sonunda Mert kesti. Formül bir tik geç kalan alıcıya %30, kıl payı yetişene %50–80 veriyordu; maçtaki alıcı da tam zamanında varmayı hedefliyordu.
 - `ALAN_ALICI_PAY_ESKI`: pasın alıcısı buluşma noktasına `rcvBuf` (3 tik) önce varıp yolun üstünde bekler (top ona gelir, tam menzille alır); payla nokta yoksa eski kural. Uçuş formülünde arkadaş da aynı payla alır, uzaklaşan topa kısalan menzil ona uygulanmaz.
