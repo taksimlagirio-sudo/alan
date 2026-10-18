@@ -2,6 +2,15 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · "Kesin" sanılan paslar (main ac51228) — maçlar değişti
+- Menajerin isteği. Araç: scratch `/tmp/kk-kesin.js` (karar anına dönüp seçilen seçeneğin formül kaydı: kim ne kadar yakalar, en iyi payı; maçta alıcının işi ve hedefi tik tik; kesenin yeri). Dört kök bulundu:
+- `ALAN_CIKIS_ESKI`: maçta her vuruş savurmadan geçer, formül yalnız göndermede sayıyordu. Kenardan/kendine pasta gecikme ve savurmada kaptırma yoktu; top bütün paslarda oyuncunun şimdiki yanından çıkıyordu (bırakma açısı değil: dibindeki presçi 10 tik uzak sanılıyordu). Artık savurma planı her vuruşta, top bırakma açısından (taşıyıcı savururken yarı hızla yürür) çıkar; pasın planı karardan (`D._savCa`).
+- `ALAN_MENZIL_PLAN_ESKI`: maçın alıcı ve kovalama planı sabit 1,4 br menzille; temas kuralında arkadaşın menzili Uzanma'yla (20'de 2,0), rakibinki topun yaşıyla büyür. Formül gerçek menzili saydığından alıcıyı topa 0,1–1 tik önce yetişir görüyor, maçtaki alıcı 'yetişemem' deyip 15–40 br ileri koşuyordu. Planda gerçek menzil.
+- `ALAN_ATAN_BEKLE_ESKI`: kendine pasta 'ilk yetişilen nokta' atanın ayağının dibi çıkıyordu; atan topa ilk 8 tik dokunamaz, 8 tik bekliyordu. Atanın planından o süre çıkarıldı (formül de öyle sayıyor).
+- `ALAN_TEK_VARIS_ESKI`: formülde varış belirsizliği tik başına bağımsız zar gibi toplanıyordu; her tik 0,6 tik geç kalan alıcı, top yavaşlayınca birkaç tikte %97 alıyordu (yüksek bantlar iyimser, düşükler karamsar). Artık oyuncu başına tek belirsizlik: o ana kadar almış olma ihtimali sgm(en iyi pay / τ), tik başına yakalama bunun artışı. Şut karşılaştırması değişmedi.
+- Denenip bırakılan: varış belirsizliğini süreyle büyütmek (τ + κ·t, κ 0,04/0,08): pas %84 → %81, 'kesin' bant değişmedi.
+- 12 maç (önceki · şimdi): pas başarısı %83,1 · %85,4; pas kaybı 171 · 149; 'kesin' (≥%95) %91 · %95; %80–95 bandı beklenen/gerçek %89/%80 · %90/%86; önüne %88/%82 · %89/%88; kenardan %89/%82 · %77/%77; ayağa %94/%92 · %94/%92; toplam top kaybı (pas + fiske + ikili) 302 · 263 (ilk sürümde 388). Kısa çökme denemesi ve maç işçisi hatasız.
+
 ## 18 Ekim 2026 · Alıcı ve pas kuralları: kısa yolda atalet, ilk noktada buluşma, tek alıcı, arkadaş pası bırakır (main 84ce4fe) — maçlar değişti
 - Menajer: denenip yüklenmeyen dört düzeltme neden yapılmıyor. Dördü birlikte pası kötüleştiriyordu (%83 → %79) ve arkadaşın gövdesine çarpan kayıpları artırıyordu (10 → 23); örnekler: top arkadaşın gövdesinden sekiyor (temas kuralı ona dokundurmuyor ama gövdesi durduruyor), sekme `defl` olunca arkadaş hazırlıksız dokunuyor (%2–3 tutma), top rakibe. Kök: arkadaş topu bırakıyor ama yolundan çekilmiyordu.
 - `ALAN_ARKADAS_GOVDE_ESKI`: alıcısı belli, sekmemiş pası alıcı dışındaki arkadaşın gövdesi durdurmaz (govde ve govdeIt; temas kuralıyla aynı koşul). Şut etkilenmez. Formüle arkadaş gövdesi eklemek (denenen) gereksiz kaldı.
