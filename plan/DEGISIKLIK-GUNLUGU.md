@@ -2,6 +2,20 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Savurma yolu kapalı kenardan pas (main, fc88857)
+- Kafa ↔ gerçek'in ilk taramasında bulundu. Kenardan pasın savurma yolu iki yönde de rakip gövdesiyle kapalıyken kafa pası mümkün sanıyordu: kenardan üreteci savurPlan'ı hiç sormuyordu (pas ve göndermede `if (!sv) o.v = null` vardı). Maç vuruşu başlatamıyor (savurBasla: decT = 1), oyuncu her tik aynı pası seçip 5–7 tik donuyordu (909623 00:57 Kaan → Ece, 619 01:12 Şimşek t2159–2165).
+- `ALAN_KENAR_YOL_ESKI`: arkadaşa ve kendine kenardan pasta savurma planı yoksa aday değil (kancaK içinde, tek dokunuşta da).
+- Üç ilk yarıda (909623, 433811, 619497 kurulumları, 2700 tik) "savurmanın yolu kapalı" 14 + 13 + 20 = 47'den 0'a indi (commit mesajında yanlışlıkla 57 yazıyor). Bayrak eski → 26cf90d birebir (909623, 433811; 1500 tik).
+- Taramanın gösterdiği, düzeltilmeyen: kenardan pas kafada iyimser (kafa %61–76 → gerçek %36–53, üç maçta da); 619'da Mert'in sürmesi kafada %100 tutacakken Ayaz aldı (01:29).
+
+## 18 Ekim 2026 · Kafa ↔ gerçek: sapma dedektörü (main, 26cf90d)
+- Menajer: "Kafada olanla gerçekleşenin birbirinden farklı olduğu durumları gösteren bir şey yapamaz mıyız? Detection mekanizması olsun diye."
+- match.js: top sahibinin her hamlesinde (karar ve tek dokunuş) kafadaki beklenti kaydedilir: hız (o.launch), savurma süresi (o.savT), tutma ihtimali (det.P), gol ihtimali (det.Pk), alış yeri (det.endM / hedef), alış süresi (o.tf; decide.js'te pas, önüne, kenardan için yazıldı). Vuruş çıkınca (launch) çıkan hız; sonuç: topu alan (take), gol, santra, sonraki karar. kafaSapma: a3 kural (hız %20 ve 0,3'ten çok; vuruş çıkmadı / çıkmadan alındı), a2 sürpriz (pasta %80+, sürme-beklemede %85+ bizde sanılıp giden top; vuruş 8 tikten çok gecikti), a1 ayrıntı (alış yeri 8 br / zamanı 1 sn sapması, %30 altı sanılıp alınan pas, gönderme gol ihtimali). Eşikler M.KS.
+- Kayıt yalnız M.kafaAc(m) ile açılan maçta, sayılamaz alanda (m._kafa): kopya almıyor, kafadaki kopyalar kaydetmiyor. Kayıt açıkken 909623 ve 433811 4273257 ile birebir (1500 tik).
+- mac-isci.js: kayıtlar kare mesajında (kafa); taktik değişince yeniden oynatılan kısmın kayıtları gönderilmez, sayfa snapT'den sonra biteni siler.
+- canli.html: KAFA ↔ GERÇEK paneli (AKIŞ'ın altında): süzgeç (Önemli · Kural · Sürpriz · Hepsi), satır: saat, tür etiketi, oyuncu · hamle, sapma ve kafadaki değer · ihtimal; dokununca karar anına gider, oyuncuyu seçer (karar kartı açılır). Zaman çizgisinde a ≥ 2 sapmalar ince çizgi. Kalibrasyon: tür başına kafadaki ortalama ihtimal → gerçekte top bizde kalma oranı (pas, önüne, kenardan, kendine, tek dokunuş; göndermede beklenen gol → gol).
+- Doğrulama: ALAN_KANCA_KENAR_ESKI ile 909623'te eski hız hatasını yakalıyor ("hız kafada 2,95, çıkan 1,28", Kaan, t141). İlk tarama: hız sapması yok; 47 "savurmanın yolu kapalı" (→ fc88857); kenardan pas kalibrasyonu iyimser.
+
 ## 18 Ekim 2026 · Tek dokunuş kenardan pasın hızı (main, 4273257)
 - Menajer (909623, 00:04–00:08): "Hala ciddi problemler var." Deniz'in tek dokunuş kenardan pası Kaan'a gitmeden Bulut'un önünde duruyor, Bulut kesiyor.
 - Sebep: maç (c49aa41) tek dokunuşta her vuruşun hızını gelen topla sınırlıyor (savurBasla, kanca: u×(1−0,35·min(1, A/π))+0,4). Kafadaki formül bu sınırı pasa, önüne pasa ve göndermeye uyguluyordu (`ALAN_KANCA_HIZ_ESKI`), kenardan pasa uygulamıyordu. t201 Deniz: kenardan→Kaan kafada 2,83 hız, %82, değer 0,422 (kontrol edip atsa aynı pas 0,095–0,098, %46–56); maçta 0,82 hızla çıktı (gelen top 0,65), duvara varamadan yavaşladı, t241 Bulut (74,43) aldı.
