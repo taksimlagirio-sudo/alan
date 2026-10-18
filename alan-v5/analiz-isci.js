@@ -2,7 +2,7 @@
 importScripts('mac-isci.js');
 self.onmessage = e => { const d = e.data, df = d.savunan ?? 1, at = 1 - df; try {
   kur = d.yeni; len = d.yeni.len; gecmis = (d.degisiklik || []).map(c => ({ tick: c.snapT, t: c.t, tac: c.tac, diz: c.diz, roller: c.roller || null })).sort((a, b) => a.tick - b.tick);
-  m = M.createMatch(kur.tohum, { tac: kur.tac, len, diz: kur.diz }); if (kur.oz === 'rastgele') rastgele(m); kurUygula(m, kur);
+  m = M.createMatch(kur.tohum, { tac: kur.tac, len, diz: kur.diz, devre: kur.devre ?? false }); /* maç işçisiyle aynı: devresi yazılmamış eski kayıt devresiz */ if (kur.oz === 'rastgele') rastgele(m); kurUygula(m, kur);
   const R = { bek: { n: 0, yakin: 0, n15: 0, dmin: [], skor: {} }, sav: { n: 0, goalSide: 0, presJob: 0, presAyar: 0, ustUste: 0, bosTehlike: 0, presMax: 0, presDag: {} }, olay: [], seg: [] };
   const SW = self.ALAN_SAHA.W, SC = self.ALAN_SAHA.CY, gx = df === 0 ? 0 : SW, hyp = Math.hypot; let ci = 0, segK = null;
   while (!m.over && m.tick < len) { while (ci < gecmis.length && gecmis[ci].tick <= m.tick) uygula(m, gecmis[ci++]); M.step(m);
