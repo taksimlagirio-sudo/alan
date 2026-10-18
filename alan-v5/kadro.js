@@ -45,8 +45,9 @@ for (const p of KADRO) cev(p.a || p); for (const r of RAKIP) for (const o of r.o
 // eski 8'li değerlerden yeni anahtarlara (planın 3. bölümü): Okuma → Tepki, Görüş, Yer alma; Aktarım → Pas, Gönderme; Tutuş → Kontrol, Yükleme; Yoğunluk → Güç, Uzanma; Soğukkanlılık ve Alan gücü 10; Bekçi: Refleks (Okuma+Tutuş)/2, Yerleşim Okuma, Alan hakimiyeti Tutuş. Cesaret kalktı
 const yeni = (o, taraf) => { const ok = o.okuma ?? 10, ak = o.aktarim ?? 10, tu = o.tutus ?? 10, yo = o.yogunluk ?? 10; Object.assign(o, { tepki: ok, gorus: ok, yeralma: ok, pas: ak, gonderme: ak, kontrol: tu, yukleme: tu, guc: yo, uzanma: yo, sogukkanlilik: 10, alan: 10, refleks: Math.round((ok + tu) / 2), yerlesim: ok, hakimiyet: tu, taraf: o.taraf || taraf || 'sag' }); for (const x of ['okuma', 'aktarim', 'tutus', 'yogunluk', 'cesaret']) delete o[x]; };
 for (const p of KADRO) yeni(p.a, TARAF[p.id]); for (const r of RAKIP) for (const o of r.oyuncular) yeni(o[1]);
-// GEÇİCİ DENEME: bütün oyuncuların bütün özellikleri 20 (iki takım). Eski hâle dönmek için HEPSI_20 = false yapın; asıl değerler silinmedi.
-const HEPSI_20 = true;
-if (HEPSI_20) { const yirmi = o => { for (const [key] of OZ.concat(OZ_BEKCI)) if (key !== 'alan' && key !== 'sogukkanlilik') o[key] = 20; }; /* yeni iki özellik (Alan gücü, Soğukkanlılık) 10'da kalır: oyun bugünkü gibi oynasın */ for (const p of KADRO) yirmi(p.a || p); for (const r of RAKIP) for (const o of r.oyuncular) yirmi(o[1]); }
+// GEÇİCİ DENEME: Liman'ın bütün oyuncularının bütün özellikleri 20; rakiplerin (bütün takımlar) bütün özellikleri 10. Eski hâle dönmek için HEPSI_20 = false (Liman asıl değerlerine), RAKIP_10 = false (rakipler de 20, ikisi açıksa) yapın; asıl değerler silinmedi.
+const HEPSI_20 = true, RAKIP_10 = true;
+if (HEPSI_20) { const yirmi = o => { for (const [key] of OZ.concat(OZ_BEKCI)) if (key !== 'alan' && key !== 'sogukkanlilik') o[key] = 20; }; /* yeni iki özellik (Alan gücü, Soğukkanlılık) 10'da kalır: oyun bugünkü gibi oynasın */ for (const p of KADRO) yirmi(p.a || p); if (!RAKIP_10) for (const r of RAKIP) for (const o of r.oyuncular) yirmi(o[1]); }
+if (RAKIP_10) { const on = o => { for (const [key] of OZ.concat(OZ_BEKCI)) o[key] = 10; }; for (const r of RAKIP) for (const o of r.oyuncular) on(o[1]); }
 window.ALAN_KADRO = { OZ, OZG, OZB, OZ_BEKCI, KADRO, RAKIP };
 })();
