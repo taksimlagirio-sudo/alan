@@ -108,6 +108,7 @@
     if (sh.ball !== m.ball || (m.ball && (m.ball.defl || 0) !== sh.defl)) { sh.ball = m.ball; sh.ballT = m.tick; sh.defl = m.ball ? m.ball.defl || 0 : 0; }
     const since = m.tick - sh.gain;
     for (const p of ps) { if (p.team === att) p.tutQ = null; p.sprint = false; p.press = p.lock > m.tick && !p.noTouch; p.job = p.noTouch ? 'geçildi' : ''; }
+    if (!self.ALAN_KENDINE_KOS_ESKI && h && !m.holder && m.ball && m.fl && m.fl.q === h) { const f0 = flightRead(m), r0 = f0 && f0.arr.get(h); if (r0) { h.tx = r0.x; h.ty = r0.y; h.sprint = true; h.job = 'alıcı'; h.chB = m.ball; } } /* v5 · kendine pasta atan topa hemen koşar: top dibindeyken savunma onu top sahibi saymayı sürdürür (pres bozulmaz) ama kendisi de top sahibi sayılıp eski hedefinde bekliyordu; top 3 br'yi geçene kadar (4–6 tik) koşmuyor, dibindeki rakip topu alıyordu (kenardan kendine pasın %30'u kayıp). Maçın alıcı kuralıyla buluşma noktasına. Deney: self.ALAN_KENDINE_KOS_ESKI */
     // 1 · Uçan / boştaki Çekirdek: tepki süresinden sonra "ilk ben varırım" diye düşünen gider; bariz değilse ikinci de gider
     const chase = new Set();
     if (fr) for (const t of [0, 1]) {
