@@ -2,6 +2,14 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Amaçlı bekleme: rakibi üstüne çekmek, koşuyu görmek (main)
+- Menajer: "Mesele oyuncu üzerine çekmek veya koşu görmek için beklemiyor oluşları zaten."
+- Sebep: beklemenin sonrası kaba sonraDeger tahminiyle ve yarım ağırlıkla (İlke C-c: kaba tahmin sistematik iyimserdi). Bekledikten sonra koşucuya ya da boşalan arkadaşa açılacak pas ne kadar iyi olursa olsun bekleme şimdiki pasa yeniliyordu.
+- `ALAN_BEKLE_GERCEK_ESKI`: düz bekleme ve 30 tiklik beklemede sonrası iç içe decide (D._noHold, D._noFake) ile W2'de (sonDunya 'drive': rakip tepki, arkadaşlar hedefine), tam ağırlık; 60 tiklik bekleme kaba tahminle. Amaç etiketi: b2'nin alıcısının en yakın savunmacısı ≥2 br uzaklaşmış ve bir rakip taşıyıcıya ≥3 br yaklaşmışsa 'çek', alıcı ≥4 br (≥2 br ileri) ilerlemişse 'koşu'; o.why ve det.lookTo; maç akışında olay.
+- Hesap süresi (433811, 1500 tik, tek süreç): c49aa41 19,3 sn; tüm beklemelerde gerçek hesap 37,2; yalnız düz 21,5 (amaçlı bekleme 6–10/yarı, bekle %11); düz + 30 tik 28,9 (seçilen).
+- Üç ilk yarı: 12–19 amaçlı bekleme/yarı/maç ("Tuna rakibi üstüne çekiyor · Cansu açılacak", "Mert bekliyor · Kaan koşusunu bitirince verecek"); Liman ort. tutma 0,47 sn · bekle %26 · sür %24 · pas %45. 7452 sahnesi: Deniz Tuna'nın önüne pas 0,099 > bekleme 0,075 (sonra pas 0,082).
+- Bayrak eski → c49aa41 birebir (7452, 619497; 1500 tik). Ekran: beklemenin amacı karar listesinde.
+
 ## 18 Ekim 2026 · Topu tutmuyor, sürmüyor (main, c49aa41)
 - Menajer: "Şimdi de topu hiç tutmaz ve sürmez oldular, her saniye pas veriyorlar."
 - Üç ilk yarı (7452, 433811, 619497), Liman: 805dab3 ort. tutma 0,65 sn · bekle %25 · sür %34 · pas %31; afc9e8e 0,37 · 4 · 31 · 58. İlk kararda pas max(sür, tut)'u %36 → %68 geçiyor (medyan fark −0,018 → +0,058). Gruplar (üç maç): Tuna düzeltmeleri eski → pas %41 (tek tek hiçbiri yetmiyor: şişkin 'sonra' tahminleri toplu kalktı); amaç grubu eski → bekle %12 (sabır ödülü); kombinasyon koşuları etkisiz.
