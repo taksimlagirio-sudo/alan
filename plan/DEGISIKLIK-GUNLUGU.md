@@ -2,6 +2,13 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Sonsuz stoper paslaşması, saçma şutlar (main, kod taramasından sonra)
+- Menajerin iki maçı. 619497 (bütün takımlar 20): Deniz ile Mert ilk 37 sn'de ~40 kez birbirine pas verdi. Kendi yarımızda bütün seçeneklerin değeri 0,067–0,072 arası; taktiğin sabrı (1) her ileri hamleye −0,02, her geri pasa +0,02 veriyordu, önü 35 br boş, rakipsizken bile. `ALAN_SABIR_RISK_ESKI`: sabır ileri hamleyi riskiyle (tutma ihtimali %80'de tam, %100'de hiç), geri pası taşıyıcıdaki baskıyla cezalandırır/ödüllendirir. Aynı sahnede paslaşma kalktı, Liman 18. sn'de şut buldu.
+- 909623 (rakipler 10): Tuna köşeden (109, 54), en yakın rakip 17 br uzaktayken tek dokunuşla vurdu: girme %13,5, değer 0,62. Formül Bekçi çelince topun %53 bizde kalacağını ve bunun yerini Bekçi'nin dokunduğu nokta (Kuyu'nun içi, değeri 1,0) sayıyordu. `ALAN_SEKME_YERI_ESKI`: seken top, onu alacak oyuncunun aldığı yerde. `ALAN_BEK_YON_AGIRLIK_ESKI`: Bekçi'nin çelme yönleri eşit değil, Bekçi'nin kendi tercihiyle (rakipten uzak; core contact kuralı) yumuşak tartılır. `ALAN_SEKME_BEKCI_ESKI`: göndermeden sonra topu aldığımız yerin değeri Bekçi o noktaya göre yerleşmişken (önce şutçuya göre durduğu yerde: girme ihtimali 0 olan şut, seken topun 'açık açıdan şut' değeriyle seçiliyordu).
+- `ALAN_FISKE_TEPKI_ESKI`: fiske eşiği Tepki/10 ile çarpılmaz (Tepki 20 olan oyuncu rakip yetişemeyecekken de fiske atıyordu).
+- Uzun ölçüm yapılmadı (menajerin isteği). Bayraklar eski → yayındaki sürüm birebir (1500 tik). İki sahnede ilk dakikadaki seçilen şutlar: eskide %13'lük şutlar 0,6–0,8 değerle, yenide değerleri ihtimaliyle orantılı.
+- Kod taramasının ikinci turu (40 düzeltme) yayında değil: `tur2-bekliyor` dalında. 24 maçlık ölçümde toplam top kaybı aynı, pas kaybı 241 → 260, formül 0,8–0,95 bandında iyimser (%89 bekleyip %82); iki değişiklik (karşılama yerinde kontrol, savurmada koşu yok) belirgin kötüydü.
+
 ## 18 Ekim 2026 · Kod taraması: 17 mantık hatası (main 67cbff1) — maçlar değişti
 - Menajer: koddan maç oynatmadan mantıksız şeyleri tara; sonra "hepsini düzelt". Beş parçalı okuma, iddialar kodda tek tek doğrulandı. Elenen ikisi: Bekçi'nin her yerde dalış menzili (menajer kararı, DESIGN-NOT-bekci-temas.md) ve eski kafa oyunundaki (simOne) alıcı farkı (ölü kod).
 - Zaman birimi (`ALAN_SANIYE_ESKI`): motor 30 tik = 1 sn, birkaç yer 60 sayıyordu. Karşı pres '2 sn' 4 sn sürüyordu, 'son 30 sn' koşulu 60 sn kala başlıyordu, kontra en çok 8 sn sürüyordu; YZ uyumu ve olay saati de.
