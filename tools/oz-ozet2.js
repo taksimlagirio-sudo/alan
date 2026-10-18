@@ -19,5 +19,5 @@ for (const s of S) console.log(`| ${AD[s.oz] || s.oz} | ${s.v} | ${s.n} | ${pm(s
 console.log('\n| Özellik | gol farkı / puan | şut farkı / puan | 4 → 10 → 16 tek yönlü mü |'); console.log('|---|---|---|---|');
 const T = S.find(s => s.oz === 'taban'); const egim = [];
 for (const oz of sira) { const a = S.find(s => s.oz === oz && s.v === 16), b = S.find(s => s.oz === oz && s.v === 4); if (!a || !b) continue; const e = (a.gf[0] - b.gf[0]) / 12, se = Math.hypot(a.gf[1], b.gf[1]) / 12, es = (a.sut[0] - b.sut[0]) / 12, ses = Math.hypot(a.sut[1], b.sut[1]) / 12;
-  const t0 = T ? T.gf[0] : 0, yon = (t0 - b.gf[0]) * (a.gf[0] - t0) >= 0 ? 'evet' : 'hayır'; egim.push([oz, e]); console.log(`| ${AD[oz]} | ${pm([e, se], 3)} | ${pm([es, ses], 2)} | ${yon} |`); }
+  const t0 = 0 /* taban simetrik: iki takım aynı, beklenen fark 0 */, yon = (t0 - b.gf[0]) * (a.gf[0] - t0) >= 0 ? 'evet' : 'hayır'; egim.push([oz, e]); console.log(`| ${AD[oz]} | ${pm([e, se], 3)} | ${pm([es, ses], 2)} | ${yon} |`); }
 console.log('\n`*`: fark standart hatanın iki katından büyük. Farklar A − rakip; A, tek özelliği değiştirilen takım.');
