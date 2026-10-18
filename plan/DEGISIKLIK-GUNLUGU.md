@@ -2,6 +2,14 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Topu tutmuyor, sürmüyor (main, c49aa41)
+- Menajer: "Şimdi de topu hiç tutmaz ve sürmez oldular, her saniye pas veriyorlar."
+- Üç ilk yarı (7452, 433811, 619497), Liman: 805dab3 ort. tutma 0,65 sn · bekle %25 · sür %34 · pas %31; afc9e8e 0,37 · 4 · 31 · 58. İlk kararda pas max(sür, tut)'u %36 → %68 geçiyor (medyan fark −0,018 → +0,058). Gruplar (üç maç): Tuna düzeltmeleri eski → pas %41 (tek tek hiçbiri yetmiyor: şişkin 'sonra' tahminleri toplu kalktı); amaç grubu eski → bekle %12 (sabır ödülü); kombinasyon koşuları etkisiz.
+- 433811 t55 Deniz: ham bekleme 0,066, bekleme bloğundan sonra −0,030; bekledikten sonra (pas) 0,09 ama üstünlük bedeli: ust 2 (topun 15 br'sinde hücumcu − topun önündeki 30 br'de savunmacı; alçak blok 30 br ötede, sayılmıyor) → .06×0,5 + .15×2×0,5 = 0,18. Kural eskiden de vardı; şişkin sonra tahminleri örtüyordu.
+- `ALAN_UST_BLOK_ESKI`: üstünlükte topla kale arasındaki bütün savunmacılar. `ALAN_SONRA_SAVUNMA_DUZ_ESKI`: sonra tahmininde tepki yalnız kenardan pasta (düz pasta da uygulamak için bayrak). `ALAN_SUR_KARAR_ESKI`: sürme kararı (match.js h._surK; hedef 2,5 br, süre mesafe/0,25+6 tik, rakip 3,5 br ya da başlangıçtan 2 br yakın, D.surKarar 0,025; gönder serbest). `ALAN_AMAC_BEKLE_ESKI`: beklemenin açması (o.hw varsa) ve sürmenin açması predictWorld'de (arkadaşlar koşusunu sürdürmüş). `ALAN_AMAC_GERI_ESKI`: geride/yanda boştaki arkadaş 0,4 ağırlıkla seçenek.
+- Sonra (üç ilk yarı): Liman ort. tutma 0,46 sn · bekle %3 · sür %37 · pas %56; ilk kararda pas önde %46–60 (medyan +0,008). Bekleme düşük kalıyor (sabrın bekleme ödülü bilerek kaldırıldı). 7452 sahnesi: Deniz'in en iyisi Tuna'nın önüne pas 0,099 (Mert 0,064, sür 0,059), sonra Ece; Tuna kanattan sürüyor.
+- Bayraklar eski → afc9e8e birebir (7452, 433811; 1500 tik). Ekran: sürdürülen sürme başta, 'sürmeye devam'.
+
 ## 18 Ekim 2026 · Kombinasyon koşuları: üçüncü adam, ver-kaç, bindirme, "Bindirir" talimatı (main, afc9e8e)
 - Menajer: "Üçüncü adam koşusu da lazım, bindirme sistemi vs." Ölçmeden.
 - Durum: pas havadayken topsuz oyuncular yerini zaten alıcının buluşma noktasına göre tartıyordu (shape E = fr.first'in buluşma noktası) ve zincir (predictWorld) koşan arkadaşı hedefine doğru ilerletiyordu; eksik olan koşu adaylarıydı (savunmanın arkasına koşu yalnız belli rollerde, bağ uzağa koşuyu eziyordu) ve bindirme hiç yoktu.
