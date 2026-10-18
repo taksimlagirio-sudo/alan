@@ -2,6 +2,11 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Tek dokunuşta kendi etrafında dönme (main)
+- Menajer (909623, 00:11): Tuna kendi etrafında dönüyor. Tek dokunuş güçlü şutun savurması: top gövdenin etrafında 593–646° (1,6 tur) döndü, sonra 0,62 hızla bırakıldı. Tek dokunuşun hızı gelen topla sınırlı (gelen 0,35 → en çok ~0,62; kanca kuralı, savurBasla), ama savurma tam hızlı vuruşa (3,26) göre planlanıyor, sınırdan sonra yeniden planlanmıyordu. Karar formülü de bu sınırı bilmiyordu: şutu tam hızla tartıp (girme %13,7) seçiyordu.
+- `ALAN_KANCA_HIZ_ESKI`: sınır uygulanınca savurma o hıza göre yeniden planlanır (gerekmiyorsa hemen itişle çıkar); formül tek dokunuş pasını, göndermesini ve alıcının tek dokunuş şutunu bu sınırlı hızla tartar.
+- Aynı sahnede (önceki adımlar birebir, 342. tikten sonra bayrak açık): Tuna tek dokunuşla Kaan'ın önüne pas veriyor, savurma 45°. Bayraklar eski → önceki sürüm birebir (1500 tik). Uzun ölçüm yok.
+
 ## 18 Ekim 2026 · Sonsuz stoper paslaşması, saçma şutlar (main, kod taramasından sonra)
 - Menajerin iki maçı. 619497 (bütün takımlar 20): Deniz ile Mert ilk 37 sn'de ~40 kez birbirine pas verdi. Kendi yarımızda bütün seçeneklerin değeri 0,067–0,072 arası; taktiğin sabrı (1) her ileri hamleye −0,02, her geri pasa +0,02 veriyordu, önü 35 br boş, rakipsizken bile. `ALAN_SABIR_RISK_ESKI`: sabır ileri hamleyi riskiyle (tutma ihtimali %80'de tam, %100'de hiç), geri pası taşıyıcıdaki baskıyla cezalandırır/ödüllendirir. Aynı sahnede paslaşma kalktı, Liman 18. sn'de şut buldu.
 - 909623 (rakipler 10): Tuna köşeden (109, 54), en yakın rakip 17 br uzaktayken tek dokunuşla vurdu: girme %13,5, değer 0,62. Formül Bekçi çelince topun %53 bizde kalacağını ve bunun yerini Bekçi'nin dokunduğu nokta (Kuyu'nun içi, değeri 1,0) sayıyordu. `ALAN_SEKME_YERI_ESKI`: seken top, onu alacak oyuncunun aldığı yerde. `ALAN_BEK_YON_AGIRLIK_ESKI`: Bekçi'nin çelme yönleri eşit değil, Bekçi'nin kendi tercihiyle (rakipten uzak; core contact kuralı) yumuşak tartılır. `ALAN_SEKME_BEKCI_ESKI`: göndermeden sonra topu aldığımız yerin değeri Bekçi o noktaya göre yerleşmişken (önce şutçuya göre durduğu yerde: girme ihtimali 0 olan şut, seken topun 'açık açıdan şut' değeriyle seçiliyordu).
