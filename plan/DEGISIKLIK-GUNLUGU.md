@@ -2,6 +2,10 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 18 Ekim 2026 · Kayıt noktası: `iyi-nokta` (6b0b502)
+- Menajer: "Şu an oyun hiç fena olmayan bir noktada, lütfen burayı kaydedelim."
+- `iyi-nokta` dalı = main 6b0b502 (hareketli Bekçi, köşe şutu, yolun yaşı; risk talimatı pas/sür/tut; sekme düzeltmeleri; kafa ↔ gerçek dedektörü). Geri dönmek için: `git checkout iyi-nokta` ya da o daldan site. Yerelde etiket `v5-iyi-nokta` (etiket gönderimi ortamda kapalı; `v5-kafa-oyunu` gibi uzakta dal olarak).
+
 ## 18 Ekim 2026 · Hareketli Bekçi yöne göre geç tepki verir; uzak köşe şut adayı; kafada yolun yaşı (main, 6b0b502)
 - Menajer (722701 02:57, Kaan): "Mesele asla hiçbir şutun girmemesi … sert bir şutun tam köşeye girebilmesi lazım … kaleci hareket halindeyken gücünün azalması gerekiyor … açıyı daraltsa bile anlık tepki süresinde yavaşlama olmalı."
 - Bulgular. Uzak köşe (34,1) hiç tartılmıyordu: sutHedef tek boşlukta erken dönüyordu, kaba eleme de aynı köşeye iki şutla dört yeri dolduruyordu. Yakın köşeye sert şut, gövdenin kenarından çıkıp Tufan'ın gövdesine gidiyordu. Kafada yolun yaşı maçtan bir tik öndeydi.
