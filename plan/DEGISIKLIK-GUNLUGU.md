@@ -2,6 +2,11 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Kafa adam devrini bilir (main)
+- Menajer: "Kafa da adam devrini bilsin."
+- `ALAN_ADAM_DEVIR_KAFA_ESKI`: predictWorld'e devir haritası: topa basanlar (resp: respond'un seçtikleri; yoksa en yakın iki), adamı açık kalanlar; markRef'i topun yeni sahibi olup topa basmayan markajcı en yakın açık adamın kale tarafına (1,6 br). sonDunya ve sürme sonrası dünyada respond kümesi geçirilir.
+- Pas kalibrasyonu 4 maçta değişmedi (kafa / gerçek birkaç puan içinde). Bayrak eski → 452ddb9 birebir.
+
 ## 19 Ekim 2026 · Adam devri ve yakın markaj (main)
 - Menajer (255860 01:23, ekran): "Burada Rüzgâr arkada nasıl bu kadar boş?" Liman'ın bütün rolleri adam adama (tl.sav.adam 1). Maç 2c18ed4 ile; bende 01:23 birebir çıkmadı (iPad), mekanizma aynı: t2490'da Deniz'in adamı Rüzgâr, Deniz pres yapıyor.
 - Bulgu 1: tek tartı (UA) tutulan = bütün adamcıların markRef'i, pres yapanınki de; adamı topla olan markajcı havuz dışında. `ALAN_ADAM_DEVIR_ESKI`: meşgul (pres, karşıla, önde) markajcının adamı tutulmuş sayılmaz; markRef === h olan markajcı havuza girer.
