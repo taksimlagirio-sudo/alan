@@ -2,6 +2,11 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Enerji 3: alanın etkin kullanımı (main)
+- `ALAN_ALAN_SECIM_ESKI`: pasif alan kalkar; top havadayken oyuncu alanını hızlandır / yavaşlat / bırak arasında seçer (şut, kendi pası, rakip pası, boş top kuralları). Üst üste binen alanlar azalan getiriyle, ters yönler düello; şarj yavaşlatanı deler; bedel enerji (paylaşılır). Bekçi'nin alanı Alan hakimiyeti'nden. Kafa vuruş öncesinde beklenen seçimi kullanır.
+- 4 maç: dört kullanım her maçta görülüyor; pas isabeti, kesilen pas, şut pasif alanla aynı düzeyde. Tek maçta birebir.
+- Henüz yok: taşıyıcının kendi sürüşünde kısa hızlandırma (patlama).
+
 ## 19 Ekim 2026 · Enerji 2: şarj kararı (main)
 - `ALAN_SARJ_KARAR_ESKI`: taşıyıcı 'şimdi şarj et' kararını verir (topu alınca ve her kararda): kazanç = şut ihtimali (kaleye uzaklıktan) × şarjın şut değerine katkısı; bedel = harcanacak enerji. Şarj taşıyıcının barından akar (Yükleme verimi).
 - Bulgu: şarj bugün şut değerini az etkiliyor; asıl işi 3. aşamada (şarj alanı deler).
