@@ -2,6 +2,15 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Geçiş savunması: dengesizken adam bırakılır, topla kale arasına geri koşulur (main, 3fa2e07)
+- Menajer: "Şu an en büyük problem geçiş savunmasında gibi … adam markajını değil de alanı ve geriyi savunmanın daha önemli olduğunun pek farkında değil gibiler. Olabildiğince oyalamak asıl hedef geçişte, ve hızlıca geriye dönmek … rakibin geçişe çıkan 2 oyuncusu varsa, orta sahaları bekliyorsa bizim orta sahalar da bekliyor."
+- Bulgu (geçiş dedektörü, /tmp/kk/gecis-bul.js): 722701 t2294'te Kartal topla kaleye 50 br'den 22'ye indi; kale tarafında kimse yokken altı markajcı topun gerisindeki adamlarını tuttu. Bölge takımında orta sahalar "bölge" işinde topun 30 br önünde kaldı (t1803). Geri koşu kuralı yalnız işi olmayana ve top kaybından sonraki 4 sn'ye uygulanıyordu; tek tartı topun gerisindeki rakiplere kapatma işi veriyordu, markajcılar havuz dışındaydı.
+- `ALAN_GECIS_SAV_ESKI`: top kalemize 64 br'den yakın ve kale tarafındaki savunmacı sayısı < önündeki hücumcu sayısı + 1 (top sahibi dahil) ise dengesiz; ≥ +2 olunca dengeli (arada önceki hâl). Dengesizken hedefi topun önünde kalan (markaj, bölge, kapatma, adamının kale tarafı) topla kale arasına geri koşar (geri koşu · kale: topun %35 gerisi, kendi bölgesinin eni). Hedefi kale tarafında olup kendisi önde kalan (presçi, karşılayan dahil) koşarak döner (· geri). Presçi, karşılayan, buluşma, kovala, önde bekleyen kendi işinde. Ekranda açıklamaları.
+- Sahneler: t2290 eskide gol, yenide 4,7 sn'de top savunmada. t1800 yenide 4,5 sn'de altı savunmacı kale tarafında.
+- Üç maç (5400 tik, kaba): geçişte 2 sn sonra kale tarafı ortalaması 2,2–3,2 → 3,7–4,3; şut 35 → 22, gol 17 → 11.
+- Oyalama: presçi zaten kale tarafına geçiyor ("pres · kale tarafına"); ama koşan top sahibinin önüne kimse geçemiyorsa oyalayan da yok (t2290'da 5 sn boyunca kale tarafında kimse yoktu). Ayrıca bakılmadı.
+- Bayrak eski → 6b0b502 birebir (üç maç, 2400 tik).
+
 ## 18 Ekim 2026 · Kayıt noktası: `iyi-nokta` (6b0b502)
 - Menajer: "Şu an oyun hiç fena olmayan bir noktada, lütfen burayı kaydedelim."
 - `iyi-nokta` dalı = main 6b0b502 (hareketli Bekçi, köşe şutu, yolun yaşı; risk talimatı pas/sür/tut; sekme düzeltmeleri; kafa ↔ gerçek dedektörü). Geri dönmek için: `git checkout iyi-nokta` ya da o daldan site. Yerelde etiket `v5-iyi-nokta` (etiket gönderimi ortamda kapalı; `v5-kafa-oyunu` gibi uzakta dal olarak).
