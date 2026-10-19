@@ -2,6 +2,12 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Boş topun beklenen sahibi (main)
+- Menajer: "Sadece Kaan'a vermek saçma, takım genelinde olmalı; diğer takım da topun kendisinde olacağının, Alp'in topu nerede alacağının farkında olmalı."
+- `ALAN_BEKLENEN_SAHIP_ESKI`: kalesine 25 br yakın boş topta şekil değişimini durduran kural, kazanan belirgin önceyse (12+ tik) uygulanmaz; iki takım şimdiden kazanacak takıma göre dizilir.
+- Sahne: tik 3200'den Liman bütünüyle savunmada (Kaan–Volkan, Tuna–Yıldırım, Cansu–Kartal, Deniz–Efe, Ece Alp'e basıyor); Fırtına çıkış için açılıyor.
+- Tek maçta birebir; genel ölçüm yapılmadı.
+
 ## 19 Ekim 2026 · Rakip boş topu alırken bas ve pas yollarını kes (main)
 - Menajer (Sahne Masası, 577951 01:46): Ece topa sırtını dönüyor; "Kaan da Alp'in pas açılarını kapatabilir, orta sahadaki arkadaşlarının önünde durabilir."
 - `ALAN_BOS_BAS_ESKI` (5689d0a): rakip kendi kalesine 35 br içinde boş topu bizden önce alacaksa takımın topa en erken varanı yine gider, alırken basar.
