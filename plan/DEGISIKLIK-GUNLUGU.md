@@ -2,6 +2,12 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Kaybedilen pas (main)
+- Menajer: "Pas isabetsiz, uzağına düşüyor; başka oyuncu yakın ama illa pas atılan alacağı için kimse karışmıyor."
+- `ALAN_ISABETSIZ_ESKI`: alıcı rakipten önce yetişemeyecekse ve bir arkadaş açık ara önce yetişiyorsa (ya da vuruş 6 br'den çok sapmışsa) pas arkadaşa da açılır: dokunabilir, koşar, yoldan çekilmez.
+- İlk yapay sahneyle bulundu ve doğrulandı (Kaan → Tuna 16° sapma, Ece alıyor). Gerçek maçlarda seyrek. Tek maçta birebir.
+- Yapay sahne aracı: maç kurulumu + elle dizilen oyuncular ve top (sapma açısı dahil), sonrasını motor oynar.
+
 ## 19 Ekim 2026 · Bekçi yalnız savunmacının yetişemeyeceği topa (main)
 - Menajer (218269 0:23): "Aras'ın burada çıkmasına ne gerek var?" Deniz topa aynı anda varıyordu.
 - `ALAN_BEKCI_CIK_ESKI` altında: Bekçi ancak takımında açık ara (4 tik) ilk o varacaksa çıkar.
