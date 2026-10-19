@@ -2,7 +2,7 @@
 (function () {
 /* v5 · özellik standardı (15 saha + 3 Bekçi + Taraf). Her özellik tek iş; bağlama tablosu alan-v5/OZELLIKLER.md. Veri aşağıda eski 8'li biçimde yazılı, dosyanın sonunda yeni anahtarlara çevrilir */
 const OZG = [
-  { ad: 'Fiziksel', k: [['hiz', 'Hız'], ['ceviklik', 'Çeviklik'], ['guc', 'Güç'], ['uzanma', 'Uzanma'], ['alan', 'Alan gücü']] },
+  { ad: 'Fiziksel', k: [['hiz', 'Hız'], ['ceviklik', 'Çeviklik'], ['guc', 'Güç'], ['uzanma', 'Uzanma'], ['alan', 'Alan gücü'], ['enerji', 'Enerji']] },
   { ad: 'Topla', k: [['kontrol', 'Kontrol'], ['surme', 'Sürme'], ['pas', 'Pas'], ['gonderme', 'Gönderme'], ['yukleme', 'Yükleme']] },
   { ad: 'Zihinsel', k: [['tepki', 'Tepki'], ['gorus', 'Görüş'], ['yeralma', 'Yer alma'], ['sogukkanlilik', 'Soğukkanlılık']] },
   { ad: 'Savunma', k: [['kesme', 'Kesme']] }];
@@ -43,11 +43,11 @@ const RAKIP = [
 const cev = o => { if (o.ceviklik == null) o.ceviklik = Math.max(6, Math.min(16, Math.round(((o.surme ?? 10) + 20 - (o.yogunluk ?? 10)) / 2 + ((o.hiz ?? 10) > 12 ? -1 : 0)))); };
 for (const p of KADRO) cev(p.a || p); for (const r of RAKIP) for (const o of r.oyuncular) cev(o[1]);
 // eski 8'li değerlerden yeni anahtarlara (planın 3. bölümü): Okuma → Tepki, Görüş, Yer alma; Aktarım → Pas, Gönderme; Tutuş → Kontrol, Yükleme; Yoğunluk → Güç, Uzanma; Soğukkanlılık ve Alan gücü 10; Bekçi: Refleks (Okuma+Tutuş)/2, Yerleşim Okuma, Alan hakimiyeti Tutuş. Cesaret kalktı
-const yeni = (o, taraf) => { const ok = o.okuma ?? 10, ak = o.aktarim ?? 10, tu = o.tutus ?? 10, yo = o.yogunluk ?? 10; Object.assign(o, { tepki: ok, gorus: ok, yeralma: ok, pas: ak, gonderme: ak, kontrol: tu, yukleme: tu, guc: yo, uzanma: yo, sogukkanlilik: 10, alan: 10, refleks: Math.round((ok + tu) / 2), yerlesim: ok, hakimiyet: tu, taraf: o.taraf || taraf || 'sag' }); for (const x of ['okuma', 'aktarim', 'tutus', 'yogunluk', 'cesaret']) delete o[x]; };
+const yeni = (o, taraf) => { const ok = o.okuma ?? 10, ak = o.aktarim ?? 10, tu = o.tutus ?? 10, yo = o.yogunluk ?? 10; Object.assign(o, { tepki: ok, gorus: ok, yeralma: ok, pas: ak, gonderme: ak, kontrol: tu, yukleme: tu, guc: yo, uzanma: yo, sogukkanlilik: 10, alan: 10, enerji: o.enerji ?? 10, refleks: Math.round((ok + tu) / 2), yerlesim: ok, hakimiyet: tu, taraf: o.taraf || taraf || 'sag' }); for (const x of ['okuma', 'aktarim', 'tutus', 'yogunluk', 'cesaret']) delete o[x]; };
 for (const p of KADRO) yeni(p.a, TARAF[p.id]); for (const r of RAKIP) for (const o of r.oyuncular) yeni(o[1]);
 // GEÇİCİ DENEME: bütün takımların (Liman ve bütün rakipler) bütün özellikleri 20 (Alan gücü ve Soğukkanlılık 10). Eski hâle dönmek için HEPSI_20 = false (herkes asıl değerlerine); RAKIP_10 = true rakipleri 10 yapar. Asıl değerler silinmedi.
 const HEPSI_20 = true, RAKIP_10 = false;
-if (HEPSI_20) { const yirmi = o => { for (const [key] of OZ.concat(OZ_BEKCI)) if (key !== 'alan' && key !== 'sogukkanlilik') o[key] = 20; }; /* yeni iki özellik (Alan gücü, Soğukkanlılık) 10'da kalır: oyun bugünkü gibi oynasın */ for (const p of KADRO) yirmi(p.a || p); if (!RAKIP_10) for (const r of RAKIP) for (const o of r.oyuncular) yirmi(o[1]); }
+if (HEPSI_20) { const yirmi = o => { for (const [key] of OZ.concat(OZ_BEKCI)) if (key !== 'alan' && key !== 'sogukkanlilik' && key !== 'enerji') o[key] = 20; }; /* yeni özellikler (Alan gücü, Soğukkanlılık, Enerji) 10'da kalır: oyun bugünkü gibi oynasın */ for (const p of KADRO) yirmi(p.a || p); if (!RAKIP_10) for (const r of RAKIP) for (const o of r.oyuncular) yirmi(o[1]); }
 if (RAKIP_10) { const on = o => { for (const [key] of OZ.concat(OZ_BEKCI)) o[key] = 10; }; for (const r of RAKIP) for (const o of r.oyuncular) on(o[1]); }
 window.ALAN_KADRO = { OZ, OZG, OZB, OZ_BEKCI, KADRO, RAKIP };
 })();
