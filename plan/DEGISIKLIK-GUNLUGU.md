@@ -2,6 +2,179 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · İç omuz (main)
+- Menajer (218269 0:31): "Alp Ece ile kenar arasına daha yakın; marke ederken dahi Ece'ye göre kaleye hiza olarak daha yakın durmalı." Sonra: "Kenar kaçışını önemsememek mantıklı mı, başka pozisyonları bozmaz mı?" Kural yalnız dışa kaçışa daraltıldı.
+- `ALAN_IC_OMUZ_ESKI`: arkadaki adamın koşusunu kaleye doğru ve içeri doğru okur; dışa kaçışı okumaz (kaleye 25 br içinde yarısını).
+- 6 an: dış tarafta durma belirgin azaldı, kale tarafı mesafesi aynı, eşleşme değişimi toplamda aynı. Tek maçta birebir.
+
+## 19 Ekim 2026 · Şut menzilinde şut çizgisi (main)
+- Menajer (Sahne Masası, 218269 0:06 ve 0:32): "Alp hem Kaan'ın hem Ece'nin golünde kaleyle açılarını hiç doğru şekilde kapatmaya çalışmıyor; illa başarması gerekmez ama doğrusunu denemesi gerekir."
+- `ALAN_KALE_ACI_ESKI`:
+  - Kaleye 35 br içinde ilk presçi şut çizgisinin 1,5 br içine girer.
+  - İlk presçi kale tarafındaki noktaya en çabuk varacak olandır.
+  - Rakip topa önce varacaksa kovalayan ve buluşmaya giden rakibin alacağı yerin kale tarafına koşar.
+- Sahne: Ece'nin golünde Alp çizgide; Kaan'ınkinde çizgiye giriyor, yetişemiyor. Tek maçta birebir.
+- Sahne Masası: şu anki kurallarla 7 an daha (iki kurulumun ilk yarıları).
+
+## 19 Ekim 2026 · Arkadaki blok çizgisinden öne çıkmaz (main)
+- Menajer: "Cansu ve Deniz'in rakibi karşılamak adına rakip yarı sahaya geçmesi ne kadar mantıklı? Arkada alan bırakıyorlar."
+- `ALAN_ARKA_BLOK_ESKI`: 'arkada · X' hedefi dizilişteki yerinden (blok yüksekliği) öne çıkmaz; rakip çizgiyi geçene kadar kale ile arasındaki çizgide, kendi hizasında bekler.
+- Sahne: Liman alçak bloğa dönüyor, öndekiler basıyor; top 1:49'da geri kazanıldı. Tek maçta birebir.
+
+## 19 Ekim 2026 · Boş topun beklenen sahibi (main)
+- Menajer: "Sadece Kaan'a vermek saçma, takım genelinde olmalı; diğer takım da topun kendisinde olacağının, Alp'in topu nerede alacağının farkında olmalı."
+- `ALAN_BEKLENEN_SAHIP_ESKI`: kalesine 25 br yakın boş topta şekil değişimini durduran kural, kazanan belirgin önceyse (12+ tik) uygulanmaz; iki takım şimdiden kazanacak takıma göre dizilir.
+- Sahne: tik 3200'den Liman bütünüyle savunmada (Kaan–Volkan, Tuna–Yıldırım, Cansu–Kartal, Deniz–Efe, Ece Alp'e basıyor); Fırtına çıkış için açılıyor.
+- Tek maçta birebir; genel ölçüm yapılmadı.
+
+## 19 Ekim 2026 · Rakip boş topu alırken bas ve pas yollarını kes (main)
+- Menajer (Sahne Masası, 577951 01:46): Ece topa sırtını dönüyor; "Kaan da Alp'in pas açılarını kapatabilir, orta sahadaki arkadaşlarının önünde durabilir."
+- `ALAN_BOS_BAS_ESKI` (5689d0a): rakip kendi kalesine 35 br içinde boş topu bizden önce alacaksa takımın topa en erken varanı yine gider, alırken basar.
+- `ALAN_BOS_KES_ESKI`: rakip boş topu 6+ tik önce alacaksa topu kovalamayan hücumcular onun alacağı noktadan arkadaşlarına giden pas yollarına (%60, alıcı tarafı) yerleşir; en yakın yol, 20 br sınırı.
+- Sahne: Ece Alp'in 2 br arkasında; Kaan 'yol kes · Volkan'; Alp topu Baran'a çıkardı.
+- İkisi de tek maçta birebir; genel maç ölçümü yapılmadı.
+
+## 19 Ekim 2026 · Kaçan pas gövdeden geçmez; geçişte topa çık; sapan şutta sekme yok (main)
+- 218269 02:14 (menajer: "top resmen içinden geçiyor"): arkadaşın kaçırdığı top oyuncunun öbür tarafına konuyordu, karşıdan gelen pas gövdenin içinden geçti. `ALAN_KACIR_ICINDEN_ESKI`: top değdiği tarafta kalır, gövde çarpışması dolaştırır (a55a626).
+- 577951 (menajer: "gol sorun değil, mesele çok müsait olması"): geçişte top sahibine kimse çıkmıyordu.
+  - Yerleşirken (YR) buluşma işi atlanıyordu.
+  - Pres "bir sonraki hamlesinden önce varamam" diye çıkmıyordu.
+  - `ALAN_TOPA_CIK_ESKI`: en çabuk varan kale taraflı savunmacı çıkar, oyalar; gs.oy ortak oyalama hâli.
+  - 4 maç: boş alış %38 → %30, şut 19 → 26 (gürültülü).
+- `ALAN_SEKME_SAPAN_ESKI`: sapan şutta kale önü sekme koşusu yok (Ece).
+- Arka çizgi düzeltmesinin müsaitlik ölçümü (eski → yeni): boş alış %49 → %38, boş şut 9/21 → 2/19.
+- Sahne Masası (yapıt): maç dosyasındaki an motorda yeniden oynatılır, kurallar yan yana.
+
+## 19 Ekim 2026 · Arkadaki savunmacı kale ağzına çökmez (main)
+- Menajer (577951 01:44 ekranları): "Burada savunma dağıtımında problem var."
+- Motorda yeniden üretildi:
+  - Liman kontrada; Fırtına'da Kartal ('arkada · Kaan') kale ağzında, Alp ve Baran ('arkada · alan') kaleci alanının kenarında.
+  - Efe, Yıldırım, Volkan 'geri koşu · kale' ile x≈104'te.
+  - Kaan ceza sahası önünde en yakın savunmacıdan 6,5 br uzakta aldı, vurdu (2-2).
+- Neden: tek tartıda (UA) arkadaki hedefi = rakibin 18 tik sonraki yeri + 2,5 br + açık topta koşu hızı × 30 tik, yani koşan forvetin 14–16 br gerisi.
+- `ALAN_ARKA_YAKIN_ESKI`: yakin(): arkadaki hedef adamından en çok 4 + kaleye uzaklığının %15'i geride.
+  - Tek tartıda ve süpürücü dalında.
+  - Adamı olmayan arkadakiler için en derin rakibin okunan yeri de aynı payla.
+- Sahne (3100'den yeni kural): Kartal Kaan'ın 4–5 br kale tarafında, pas gelince buluşmaya çıkıyor; Alp ve Baran ceza sahası önünde. Kaan 29 br'den vurup yine attı (uzak şut ayrı konu).
+- 4 maç × 2 dk:
+  - kale ağzında savunmacı 0,44 → 0,20
+  - en derin hücumcuya en yakın savunmacı 4,0 → 4,0
+  - taşıyıcıya 3,0 → 3,6
+  - gol 4 → 6, şut 21 → 19 (gürültülü)
+- Bayrak eski → 045e0e5 birebir.
+
+## 19 Ekim 2026 · Koşu yarışı ve gecikmeli hız okuma varsayılan kapalı (main)
+- 1747335'in maç ölçümü (3 maç, hepsi açık) kötü çıktı: savunma arkasına varış 41 → 22, arkada durma %4,7 → %3,1, güvence işi iki katı.
+- Eleme: koşu yarışı açıkken koşucu kazanamayacağını görüp koşmuyor; gecikmeli hız okuma iki karşılaştırmada da varışı azalttı.
+- İkisi artık açılırsa çalışır: `ALAN_KOSU_YARIS_YENI`, `ALAN_OKU_GECIK_YENI`. Kurtulmada markajcının gecikmesi, hız anlık okununca algı gecikmesinin yarısı.
+- Son hâl (hatlar arası + kurtulma + kafa), 4 maç × 2 dk, eski → yeni:
+  - hatlar arası %6,7 → %8,0
+  - savunma arkasında %5,1 → %4,5
+  - varış 55 → 39
+  - koşu yarışı kazanılan %14 → %19
+  - güvence %10 → %14,5
+  - gol 4 → 4, şut 22 → 21
+  - Yeni işler: hatlar arası %0,8–1,6; kör taraf %0,3 (bir maçta); gel-dön hiç seçilmedi.
+- Açık: hatlar arası arkaya koşuyla yarışıyor (forvet arkaya koşmak yerine kısa geliyor); güvence artışının nedeni bilinmiyor.
+
+## 19 Ekim 2026 · Topsuz hareket: hatlar arası, markajdan kurtulma, koşu yarışı (main, 1747335)
+- Menajer: "Oyuncular markajdan kaçmaya, savunma arkasına veya hatlar arasına girmeye çalışıyor mu?" → "Üçünü de yap, kafa da bilsin."
+- Ölçüm (önce):
+  - Rakip yarısında topsuz hücumcular zamanın %78–83'ünde orta hattın önünde, %5–10'unda hatlar arasında, %3–6'sında savunma arkasında.
+  - Arkaya koşu planlarının yalnız %3–7'si savunma arkasına varıyor (çizgiye ~16–19 br uzaktan başlıyor).
+  - Koşu sürerken taşıyıcıda koşucuya pas seçeneği hemen her zaman var, ama değeri seçilenin %0–6'sı: koşucu yarışı %79 kaybediyor (5–8 tik geride).
+  - Neden: koşu tartısında savunmacının tepkisi pası okuma gecikmesiydi (9–15 tik); maçta savunmacı koşuyu algı gecikmesiyle (~6 tik) izliyor.
+- `ALAN_KOSU_YARIS_ESKI`: runV ve teamV'de savunmacının tepkisi algı gecikmesi (10 − Tepki×0,4).
+- `ALAN_OKU_GECIK_ESKI`: savunmacı rakibin hızını da yeri gibi gecikmeli görür (seen'e gvx/gvy, OKU ileri bunu kullanır). Önce hız anlıktı: hiçbir dönüş markajcıyı şaşırtamıyordu.
+- `ALAN_HAT_ARASI_ESKI`: savunma hattı (en derin iki) ile orta hat (sonraki iki) arasında 6 br'den fazla derinlik varsa, aranın %40 ve %70'inde topun gördüğü açık şeritler (pas yolu ≥ %40, 4 br'de savunmacı yok); en iyi üçü aday, bağ gevşer. İlk sürüm (savunmacıların yan aralıkları) hep kapalı yol veriyordu.
+- `ALAN_KURTUL_ESKI`: 6 br içinde markajcısı olana:
+  - gel-dön: bir yana çaprazlama topa gelir, öbür yandan markajcının arkasına döner (p._kv ara nokta)
+  - kör taraf: markajcının toptan uzak omzunun arkası
+  - teamV'de markajcı algı gecikmesi ve dönüş kaybıyla cevap verir
+  - Ön tartımda markajcı ara noktanın kale tarafında sayılır
+  - Kısa denemede gel-dön ön elemeyi hiç geçemedi, çünkü pas yolu çoğu zaman başka savunmacılarla da kapalıydı. Formül işe yaradığı anda seçer.
+- `ALAN_KURTUL_KAFA_ESKI`:
+  - predictWorld'de arkadaş ara noktadan sonra hedefine döner; markajcı dönüşü algı gecikmesiyle fark eder
+  - Buluşma pası gel-dön yolunda aranır
+- Bayraklar eski → d8bd047 birebir (üç maç, 2400 tik). Maç etkisi ölçümü (skor, şut, hatlar arası payı, varış) sürüyor.
+
+## 19 Ekim 2026 · Kafa adam devrini bilir (main)
+- Menajer: "Kafa da adam devrini bilsin."
+- `ALAN_ADAM_DEVIR_KAFA_ESKI`: predictWorld'e devir haritası: topa basanlar (resp: respond'un seçtikleri; yoksa en yakın iki), adamı açık kalanlar; markRef'i topun yeni sahibi olup topa basmayan markajcı en yakın açık adamın kale tarafına (1,6 br). sonDunya ve sürme sonrası dünyada respond kümesi geçirilir.
+- Pas kalibrasyonu 4 maçta değişmedi (kafa / gerçek birkaç puan içinde). Bayrak eski → 452ddb9 birebir.
+
+## 19 Ekim 2026 · Adam devri ve yakın markaj (main)
+- Menajer (255860 01:23, ekran): "Burada Rüzgâr arkada nasıl bu kadar boş?" Liman'ın bütün rolleri adam adama (tl.sav.adam 1). Maç 2c18ed4 ile; bende 01:23 birebir çıkmadı (iPad), mekanizma aynı: t2490'da Deniz'in adamı Rüzgâr, Deniz pres yapıyor.
+- Bulgu 1: tek tartı (UA) tutulan = bütün adamcıların markRef'i, pres yapanınki de; adamı topla olan markajcı havuz dışında. `ALAN_ADAM_DEVIR_ESKI`: meşgul (pres, karşıla, önde) markajcının adamı tutulmuş sayılmaz; markRef === h olan markajcı havuza girer.
+- Bulgu 2: kapatHat markajcıyı toptan adama pas yolunun %55–86'sına koyabiliyordu (t2548 Deniz Rüzgâr'dan 20 br). `ALAN_MARKAJ_YAKIN_ESKI`: aday noktalar adamdan en çok 4 + 0,15 × kaleye uzaklık.
+- Ölçüm aracı /tmp/kk/bos-derin.js. 4 maç: adam adama takımda boş derin 735 → 492 tik (bölüm 57 → 56), bölge takımında 1350 → 1059.
+- İki bayrak eski → 2c18ed4 birebir (üç maç, 2400 tik).
+
+## 19 Ekim 2026 · Top oyuncuların içinden geçmez; kafa arkadaşa çarpmayı bilir (main, 2c18ed4)
+- Menajer: "Toplar hâlâ oyuncuların içerisinden geçebiliyor, bu normal mi?" Sonra: "Kafa da arkadaşa çarpmayı bilsin."
+- Bulgu (/tmp/kk/govde-gec.js): iki bilinçli kural. Delip geçme: sert top rakibin tam ortasından %55'e kadar geçiyordu; kafa geçmez sayıyordu. Arkadaş: alıcısı belli pasta alıcı dışındaki arkadaş saydamdı (arkGecir; önce gövdesi pası durdurup rakibe sektiriyordu).
+- `ALAN_GOVDE_DELME_ESKI`: core contact'ta thru yalnız yolun gövdeye en yakın uzaklığı ≥ 1 ise; sonra _gec (6 tik gövde yok sayma) kurulmaz.
+- `ALAN_YOL_VER_ESKI`: shape'te pas/şut yolunun 2 br yakınındaki ya da top yanına varınca yola girecek arkadaş (alıcı, vuran, Bekçi dışında), yolun 2,2 br dışına çıkar (yol ver). arkGecir kapanır, arkadaş gövdesi seker.
+- `ALAN_ARKADAS_CARP_ESKI`: ucusFormul'de yoldaki arkadaşın top varınca yeri (yan hızı + 0,02 br/tik² kaçış; Bekçi çekilmez) yoldaysa gövde (gvNow yolu, sekme yarışı); arkadaşa çarpan top d1'e (kayıp) yazılmaz. 722701 t1737 Efe (yolun 1,08 br yanından koşarak yola girdi) ve t920 Kaan (2,4 br'den 0,29 hızla) örnekleri.
+- 4 maç: gövdeden geçiş maç başına 2–5 → 0–1 (kalan: aynı tik başka temas, vuranın dibi). Arkadaşa çarpan pas 6 → 1. Şut 33 → 44, gol 11 → 10. Pas kalibrasyonu kafa %94–95 / gerçek %90–98.
+- Üç bayrak eski → e6ebe8a birebir (üç maç, 2400 tik).
+
+## 19 Ekim 2026 · Kafa = maç: Bekçi kayışı, dönüş, pres şiddeti, sürmede Çekirdek (main, e6ebe8a)
+- Menajer: 265001 dedektör listesi (a4b94b8 ile; 00:01 ve 00:06 birebir yeniden üretildi, sonrası iPad hesap farkıyla ayrışıyor). Sürerken %100 sanılıp kaptırılan üç top, %81 ve %98 sanılan iki şut, %86–87 sanılıp kesilen iki pas, yer/zaman sapmaları.
+- 00:06 Kaan şutu: kafada %81, maçta 0/16 (Tufan tuttu). Bekçi neredeyse duruyor (bekHar 0,14); kafa yine tam koşan modeli uyguluyordu (kayış savurma + donma + dönüş kadar gecikiyordu). `ALAN_KAYIS_HARMAN_ESKI`: koşan model cezayla kademeli (0,5'te tam). Şimdi %2,5.
+- Sürmede kayıp (kendi oynatmamda 01:06 Kaan, aynı tür): topu geri koşarken alıp ileri sürmek, dönerken rakibe kaymak. `ALAN_KEEP_DONUS_ESKI`: keepP'de dönüş süresi (donS) boyunca rakip vO + taşıyıcının ona kayışı / 2 hızıyla yaklaşır.
+- `ALAN_KEEP_SIDDET_ESKI`: keepP ikili eşiğinde rakibin pres şiddeti (maçtaki gibi).
+- `ALAN_KEEP_YON_ESKI`: keepP'de ikili, rakip yetiştiğinde Çekirdeğin olacağı açıyla. Maçın kuralı: gidiş yönü, yakın rakipten en çok 0,7 rad çevrik, dönme hızı Turn.omega. İlk deneme Çekirdeği anında dönmüş sayıyordu, 4 maçta 27 emin kayıp çıktı (433811 t395 Gökay: Çekirdek dönerken Kaan'ın önünden geçti); dönme hızıyla düzeldi.
+- Araçlar: /tmp/kk/sur-kal.js (sürme kalibrasyonu), sut-dene/sut-tik savurma > 3 tik düzeltmesi.
+- Sürme (4 maç): kayıp 6 → 6 (yönsüz 10), kafa %96–99 / gerçek %99. Şut (4 maç): kafa 20,6 / gerçek 12 → 17,3 / 11; hâlâ iyimser, ayrıca bakılacak.
+- Dört bayrak eski → a4b94b8 birebir (üç maç, 2400 tik).
+
+## 19 Ekim 2026 · Top kaybında önce alana yerleş; kafa presçinin oyaladığını bilir (main, a4b94b8)
+- Menajer: "Kafayı da hizala, presçinin dalmadığını bilsin. Ayrıca hâlâ top rakibe geçtiğinde temel hedefleri markaj oluyor gibi oyuncuların, oysa direkt alan savunmasına geçmeleri lazım, adam adama savunma seçilmiş olsa bile; mantıken önce geriye yerleşmek gerekir … arkayı boş bırakamaz."
+- `ALAN_OYALA_KAFA_ESKI`: keepP'de commitThr'ye maçtaki oyalama eki (oyalaEk: D._mac.sh.gs; son adam +0,25, arkasında arkadaşı varken +0,1; top 26 br'den uzak).
+- `ALAN_YERLES_ESKI`: top el değiştirince (sh.gain) savunma "yerleşiyor" (sh.yr). Yerleşirken adam adama askıda (adamT): mark haritası, süpürücü markajı, tek tartı havuzu, geri koşu dışlaması. Tek tartıda kapatma işi (topun gerisindeki rakibe pas yolu) verilmez. Geçiş savunmasının geçersiz kılması gevşek payla (topun 3 br önüne kadar; top 64 br'den yakınken). Yerleşme biter: presçi ve önde bekleyen dışında herkes (biri eksik olabilir) topun en çok 3 br önünde ve dizilişteki yerine 8 br'den yakın, ya da 6 sn.
+- Ölçüm aracı: /tmp/kk/kayip-dal.js (her top kaybında iki dal, 8 sn). 63 kayıpta: rakibin en yakın ort. 42,6 / 45,3 / 46,8 → 46,5 / 47,5 / 49,2; şut 10 → 6, gol 5 → 2; 2 sn sonra kale tarafı 2,9–3,2 → 3,2–3,7; geri alınan 27 → 28. Kafa bayrağının dalları: fark küçük.
+- Üç maç (5400 tik): şut 21 → 24, gol 8 → 10; kafadaki toplam 15,3 (gürültü: 24 şut).
+- İki bayrak eski → 3f237b8 birebir (üç maç, 2400 tik).
+
+## 19 Ekim 2026 · Oyalama: geçişte presçi topa dalmaz, açıyı kapatıp geri geri çekilir (main, 3f237b8)
+- Menajer: "Mesele presçinin üzerine gitmemesi zaten, arkadaşları gelene kadar açısını kapatıp ilerleyişini engellemesi?"
+- Bulgu: presçi kale tarafına geçince 4 br'ye girip doğrudan topa yürüyordu (ya da çalım gösterip dalıyordu). Son adamken %50 kazanma tahminiyle ikiliye giriyordu (commitThr thrLast).
+- `ALAN_OYALA_ESKI`: geçiş savunması dengesizken ve top kaleye 26 br'den uzakken presçi (k = 0), top sahibinin 10 tik sonraki yerinin en tehlikeli seçeneği yönünde 3,2 br önünde durur (pres · oyala). İkili eşiği son adam +0,25, arkada arkadaşı varken +0,1 (DU.oyala, oyalaC, oyalaR, oyalaD). Dengelenince ya da 26 br içinde normal pres.
+- Sahne 722701 t1800 (geçiş savunması açık): eskide Deniz 3. sn'de geçiliyor; yenide geri geri çekiliyor, Kaan 2. sn'de geliyor, rakip topu geri çeviriyor.
+- Üç maç (5400 tik, kaba): şut 22 → 21, gol 11 → 8; geçişte 2 sn sonra kale tarafı 3,5–4,4. Geçiş savunması öncesinden (6b0b502) beri: şut 35 → 21, gol 17 → 8.
+- Kafa, top sahibinin hamlelerinde presçinin artık dalmadığını bilmiyor (duel/keepP eski davranışla); ayrıca bakılmadı.
+- Bayrak eski → 3fa2e07 birebir (üç maç, 2400 tik).
+
+## 19 Ekim 2026 · Geçiş savunması: dengesizken adam bırakılır, topla kale arasına geri koşulur (main, 3fa2e07)
+- Menajer: "Şu an en büyük problem geçiş savunmasında gibi … adam markajını değil de alanı ve geriyi savunmanın daha önemli olduğunun pek farkında değil gibiler. Olabildiğince oyalamak asıl hedef geçişte, ve hızlıca geriye dönmek … rakibin geçişe çıkan 2 oyuncusu varsa, orta sahaları bekliyorsa bizim orta sahalar da bekliyor."
+- Bulgu (geçiş dedektörü, /tmp/kk/gecis-bul.js): 722701 t2294'te Kartal topla kaleye 50 br'den 22'ye indi; kale tarafında kimse yokken altı markajcı topun gerisindeki adamlarını tuttu. Bölge takımında orta sahalar "bölge" işinde topun 30 br önünde kaldı (t1803). Geri koşu kuralı yalnız işi olmayana ve top kaybından sonraki 4 sn'ye uygulanıyordu; tek tartı topun gerisindeki rakiplere kapatma işi veriyordu, markajcılar havuz dışındaydı.
+- `ALAN_GECIS_SAV_ESKI`: top kalemize 64 br'den yakın ve kale tarafındaki savunmacı sayısı < önündeki hücumcu sayısı + 1 (top sahibi dahil) ise dengesiz; ≥ +2 olunca dengeli (arada önceki hâl). Dengesizken hedefi topun önünde kalan (markaj, bölge, kapatma, adamının kale tarafı) topla kale arasına geri koşar (geri koşu · kale: topun %35 gerisi, kendi bölgesinin eni). Hedefi kale tarafında olup kendisi önde kalan (presçi, karşılayan dahil) koşarak döner (· geri). Presçi, karşılayan, buluşma, kovala, önde bekleyen kendi işinde. Ekranda açıklamaları.
+- Sahneler: t2290 eskide gol, yenide 4,7 sn'de top savunmada. t1800 yenide 4,5 sn'de altı savunmacı kale tarafında.
+- Üç maç (5400 tik, kaba): geçişte 2 sn sonra kale tarafı ortalaması 2,2–3,2 → 3,7–4,3; şut 35 → 22, gol 17 → 11.
+- Oyalama: presçi zaten kale tarafına geçiyor ("pres · kale tarafına"); ama koşan top sahibinin önüne kimse geçemiyorsa oyalayan da yok (t2290'da 5 sn boyunca kale tarafında kimse yoktu). Ayrıca bakılmadı.
+- Bayrak eski → 6b0b502 birebir (üç maç, 2400 tik).
+
+## 18 Ekim 2026 · Kayıt noktası: `iyi-nokta` (6b0b502)
+- Menajer: "Şu an oyun hiç fena olmayan bir noktada, lütfen burayı kaydedelim."
+- `iyi-nokta` dalı = main 6b0b502 (hareketli Bekçi, köşe şutu, yolun yaşı; risk talimatı pas/sür/tut; sekme düzeltmeleri; kafa ↔ gerçek dedektörü). Geri dönmek için: `git checkout iyi-nokta` ya da o daldan site. Yerelde etiket `v5-iyi-nokta` (etiket gönderimi ortamda kapalı; `v5-kafa-oyunu` gibi uzakta dal olarak).
+
+## 18 Ekim 2026 · Hareketli Bekçi yöne göre geç tepki verir; uzak köşe şut adayı; kafada yolun yaşı (main, 6b0b502)
+- Menajer (722701 02:57, Kaan): "Mesele asla hiçbir şutun girmemesi … sert bir şutun tam köşeye girebilmesi lazım … kaleci hareket halindeyken gücünün azalması gerekiyor … açıyı daraltsa bile anlık tepki süresinde yavaşlama olmalı."
+- Bulgular. Uzak köşe (34,1) hiç tartılmıyordu: sutHedef tek boşlukta erken dönüyordu, kaba eleme de aynı köşeye iki şutla dört yeri dolduruyordu. Yakın köşeye sert şut, gövdenin kenarından çıkıp Tufan'ın gövdesine gidiyordu. Kafada yolun yaşı maçtan bir tik öndeydi.
+- `ALAN_BEKCI_HAREKET_ESKI`: core bekHar = koşu hızı oranı × (1 − cos)/2. Cos, Bekçi'nin hızı ile topun yoluna doğru olan yön arasında. Tepki + bekHarT (4) × ceza, dalış × (1 − bekHarD (0,25) × ceza). Maçta top çıktıktan sonra bu kadar tik eski hedefine gider. Formülde aynı süre koşusunu sürdürür, yana kayış dönüşten (gec) sonra başlar, uzaklaşan topa menzil varacağı yerden. sutKapali ve açı boşlukları şut yönüne göre. İlk deneme (8 tik, %50, yönsüz): 3 maçta 34 şut 22 gol; yönlü ve 4 / %25: 35 şut 17 gol.
+- `ALAN_SUT_NISAN_ESKI`: şut bırakma noktasından hedefe nişanlanır. `ALAN_SUT_KOSE_ESKI`: iki köşe her zaman aday, yakın hedefler birleşir, her hedefin en iyi şutu kafada. `ALAN_YAS_ESLE_ESKI`: formülde yeni topun ilk adımında yolun yaşı 0.
+- Sahne 722701 t5323 Kaan: uzak köşeye sert şut kafada 0,83, maçta 12/12; yakın köşe kafada 0,06, maçta 0/12; plase kafada 0, maçta 0/12.
+- Üç maç (722701, 433811, 909623; 5400 tik, kaba): şut 27 → 35, gol 5 → 17 (%19 → %49), kafadaki toplam 6,2 → 21,1 (kafa önce de sonra da %20 iyimser). Kaçan iki emin şut bıçak sırtı: Bekçi'nin donmadan sonraki koşusu kafada kaba.
+- Bayraklar eski → f5394d5 birebir (üç maç, 2400 tik).
+
+## 18 Ekim 2026 · Risk talimatı sürme ve beklemeyi de caydırır (main)
+- Menajer, geri pas üzerine görüş istedi; görüş: sıkışınca geri çevirmek (sabır 1) kendi başına saçma değil, saçma olan yolu olmayan pas ve sekme değeriydi; ama düzeltmeden sonra Ece %49 tutan sürmeyi (0,220) %96'lık Tuna pasına (0,212) yeğliyordu. Menajer: "Yap, sürme ve beklemeye de uygula."
+- `ALAN_RISK_SUR_TUT_ESKI`: risk caydırma (P0 = 0,85 − 0,6 × risk) sür ve tut seçeneklerinde de, det.P (keepP, sürmenin/beklemenin sonuna kadar) ile.
+- Sahne: 662562 t1188 Ece pas → Tuna %96 (0,212). t622, t722, 909623 t110 değişmedi.
+- 662562 ilk yarı (tek maç, kaba): Liman ort. tutma 0,40 → 0,50 sn, sür %41 → %27, bekle %14 → %21, pas %39 → %38, tutan pas 30/32 → 33/34, şut 1 → 2; Demir Blok sür %64 → %45, pas %20 → %34, gönder %1 → %7, ort. tutma 0,90 → 0,56 sn.
+- Bayrak eski → da23eb4 birebir (909623, 433811; 1500 tik).
+
 ## 18 Ekim 2026 · Rakibe çarpan pas başarısız sayılır (main)
 - Menajer: "Şu birine çarpar da bize seker sistemleri aşırı aptalca, ayrıca o pozisyondan oraya dönmek de aşırı değersiz olmalı."
 - `ALAN_SEKME_KAYIP_ESKI`: ucusFormul sekme payından rakibin dokunup sektirdiği kısmı ayırır (Psek, temas yeri endSek). Pas, önüne, kenardan (arkadaşa, kendine) değerinde Psek'in değeri yok; temas yerinde lossAt bedeli düşülür. Kimsenin dokunmadığı, sahipsiz kalıp yarışla kazanılan top (boşluğa ara pas) sahipsiz top değeriyle (ff694e3) kalır. Risk caydırma ve kart zaten doğrudan alışla.
