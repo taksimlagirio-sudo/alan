@@ -2,6 +2,13 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Adam devri ve yakın markaj (main)
+- Menajer (255860 01:23, ekran): "Burada Rüzgâr arkada nasıl bu kadar boş?" Liman'ın bütün rolleri adam adama (tl.sav.adam 1). Maç 2c18ed4 ile; bende 01:23 birebir çıkmadı (iPad), mekanizma aynı: t2490'da Deniz'in adamı Rüzgâr, Deniz pres yapıyor.
+- Bulgu 1: tek tartı (UA) tutulan = bütün adamcıların markRef'i, pres yapanınki de; adamı topla olan markajcı havuz dışında. `ALAN_ADAM_DEVIR_ESKI`: meşgul (pres, karşıla, önde) markajcının adamı tutulmuş sayılmaz; markRef === h olan markajcı havuza girer.
+- Bulgu 2: kapatHat markajcıyı toptan adama pas yolunun %55–86'sına koyabiliyordu (t2548 Deniz Rüzgâr'dan 20 br). `ALAN_MARKAJ_YAKIN_ESKI`: aday noktalar adamdan en çok 4 + 0,15 × kaleye uzaklık.
+- Ölçüm aracı /tmp/kk/bos-derin.js. 4 maç: adam adama takımda boş derin 735 → 492 tik (bölüm 57 → 56), bölge takımında 1350 → 1059.
+- İki bayrak eski → 2c18ed4 birebir (üç maç, 2400 tik).
+
 ## 19 Ekim 2026 · Top oyuncuların içinden geçmez; kafa arkadaşa çarpmayı bilir (main, 2c18ed4)
 - Menajer: "Toplar hâlâ oyuncuların içerisinden geçebiliyor, bu normal mi?" Sonra: "Kafa da arkadaşa çarpmayı bilsin."
 - Bulgu (/tmp/kk/govde-gec.js): iki bilinçli kural. Delip geçme: sert top rakibin tam ortasından %55'e kadar geçiyordu; kafa geçmez sayıyordu. Arkadaş: alıcısı belli pasta alıcı dışındaki arkadaş saydamdı (arkGecir; önce gövdesi pası durdurup rakibe sektiriyordu).
