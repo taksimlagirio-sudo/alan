@@ -2,6 +2,17 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Kaçan pas gövdeden geçmez; geçişte topa çık; sapan şutta sekme yok (main)
+- 218269 02:14 (menajer: "top resmen içinden geçiyor"): arkadaşın kaçırdığı top oyuncunun öbür tarafına konuyordu, karşıdan gelen pas gövdenin içinden geçti. `ALAN_KACIR_ICINDEN_ESKI`: top değdiği tarafta kalır, gövde çarpışması dolaştırır (a55a626).
+- 577951 (menajer: "gol sorun değil, mesele çok müsait olması"): geçişte top sahibine kimse çıkmıyordu.
+  - Yerleşirken (YR) buluşma işi atlanıyordu.
+  - Pres "bir sonraki hamlesinden önce varamam" diye çıkmıyordu.
+  - `ALAN_TOPA_CIK_ESKI`: en çabuk varan kale taraflı savunmacı çıkar, oyalar; gs.oy ortak oyalama hâli.
+  - 4 maç: boş alış %38 → %30, şut 19 → 26 (gürültülü).
+- `ALAN_SEKME_SAPAN_ESKI`: sapan şutta kale önü sekme koşusu yok (Ece).
+- Arka çizgi düzeltmesinin müsaitlik ölçümü (eski → yeni): boş alış %49 → %38, boş şut 9/21 → 2/19.
+- Sahne Masası (yapıt): maç dosyasındaki an motorda yeniden oynatılır, kurallar yan yana.
+
 ## 19 Ekim 2026 · Arkadaki savunmacı kale ağzına çökmez (main)
 - Menajer (577951 01:44 ekranları): "Burada savunma dağıtımında problem var."
 - Motorda yeniden üretildi:
