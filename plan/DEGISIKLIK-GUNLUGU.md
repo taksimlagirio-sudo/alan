@@ -2,6 +2,20 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Koşu yarışı ve gecikmeli hız okuma varsayılan kapalı (main)
+- 1747335'in maç ölçümü (3 maç, hepsi açık) kötü çıktı: savunma arkasına varış 41 → 22, arkada durma %4,7 → %3,1, güvence işi iki katı.
+- Eleme: koşu yarışı açıkken koşucu kazanamayacağını görüp koşmuyor; gecikmeli hız okuma iki karşılaştırmada da varışı azalttı.
+- İkisi artık açılırsa çalışır: `ALAN_KOSU_YARIS_YENI`, `ALAN_OKU_GECIK_YENI`. Kurtulmada markajcının gecikmesi, hız anlık okununca algı gecikmesinin yarısı.
+- Son hâl (hatlar arası + kurtulma + kafa), 4 maç × 2 dk, eski → yeni:
+  - hatlar arası %6,7 → %8,0
+  - savunma arkasında %5,1 → %4,5
+  - varış 55 → 39
+  - koşu yarışı kazanılan %14 → %19
+  - güvence %10 → %14,5
+  - gol 4 → 4, şut 22 → 21
+  - Yeni işler: hatlar arası %0,8–1,6; kör taraf %0,3 (bir maçta); gel-dön hiç seçilmedi.
+- Açık: hatlar arası arkaya koşuyla yarışıyor (forvet arkaya koşmak yerine kısa geliyor); güvence artışının nedeni bilinmiyor.
+
 ## 19 Ekim 2026 · Topsuz hareket: hatlar arası, markajdan kurtulma, koşu yarışı (main, 1747335)
 - Menajer: "Oyuncular markajdan kaçmaya, savunma arkasına veya hatlar arasına girmeye çalışıyor mu?" → "Üçünü de yap, kafa da bilsin."
 - Ölçüm (önce):
