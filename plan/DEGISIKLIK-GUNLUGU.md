@@ -2,6 +2,14 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Top kaybında önce alana yerleş; kafa presçinin oyaladığını bilir (main, a4b94b8)
+- Menajer: "Kafayı da hizala, presçinin dalmadığını bilsin. Ayrıca hâlâ top rakibe geçtiğinde temel hedefleri markaj oluyor gibi oyuncuların, oysa direkt alan savunmasına geçmeleri lazım, adam adama savunma seçilmiş olsa bile; mantıken önce geriye yerleşmek gerekir … arkayı boş bırakamaz."
+- `ALAN_OYALA_KAFA_ESKI`: keepP'de commitThr'ye maçtaki oyalama eki (oyalaEk: D._mac.sh.gs; son adam +0,25, arkasında arkadaşı varken +0,1; top 26 br'den uzak).
+- `ALAN_YERLES_ESKI`: top el değiştirince (sh.gain) savunma "yerleşiyor" (sh.yr). Yerleşirken adam adama askıda (adamT): mark haritası, süpürücü markajı, tek tartı havuzu, geri koşu dışlaması. Tek tartıda kapatma işi (topun gerisindeki rakibe pas yolu) verilmez. Geçiş savunmasının geçersiz kılması gevşek payla (topun 3 br önüne kadar; top 64 br'den yakınken). Yerleşme biter: presçi ve önde bekleyen dışında herkes (biri eksik olabilir) topun en çok 3 br önünde ve dizilişteki yerine 8 br'den yakın, ya da 6 sn.
+- Ölçüm aracı: /tmp/kk/kayip-dal.js (her top kaybında iki dal, 8 sn). 63 kayıpta: rakibin en yakın ort. 42,6 / 45,3 / 46,8 → 46,5 / 47,5 / 49,2; şut 10 → 6, gol 5 → 2; 2 sn sonra kale tarafı 2,9–3,2 → 3,2–3,7; geri alınan 27 → 28. Kafa bayrağının dalları: fark küçük.
+- Üç maç (5400 tik): şut 21 → 24, gol 8 → 10; kafadaki toplam 15,3 (gürültü: 24 şut).
+- İki bayrak eski → 3f237b8 birebir (üç maç, 2400 tik).
+
 ## 19 Ekim 2026 · Oyalama: geçişte presçi topa dalmaz, açıyı kapatıp geri geri çekilir (main, 3f237b8)
 - Menajer: "Mesele presçinin üzerine gitmemesi zaten, arkadaşları gelene kadar açısını kapatıp ilerleyişini engellemesi?"
 - Bulgu: presçi kale tarafına geçince 4 br'ye girip doğrudan topa yürüyordu (ya da çalım gösterip dalıyordu). Son adamken %50 kazanma tahminiyle ikiliye giriyordu (commitThr thrLast).
