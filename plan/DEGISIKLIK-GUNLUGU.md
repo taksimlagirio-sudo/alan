@@ -2,6 +2,10 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Bekçi yalnız savunmacının yetişemeyeceği topa (main)
+- Menajer (218269 0:23): "Aras'ın burada çıkmasına ne gerek var?" Deniz topa aynı anda varıyordu.
+- `ALAN_BEKCI_CIK_ESKI` altında: Bekçi ancak takımında açık ara (4 tik) ilk o varacaksa çıkar.
+
 ## 19 Ekim 2026 · Bekçi'nin çıkış adımı (main)
 - Menajer: önüne atılan topa çıkan Bekçi'nin yetişebilmesi.
 - `ALAN_BEKCI_ADIM_ESKI`: Bekçi topa Refleks'le tepki verir (saha oyuncusu gecikmesi yerine); ilk adımı (fren, yön değiştirme) iki kat sert; Bekçi çıkınca yakındaki savunmacı topa gitmeyi bırakmaz.
