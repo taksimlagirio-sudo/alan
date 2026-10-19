@@ -2,6 +2,15 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Oyalama: geçişte presçi topa dalmaz, açıyı kapatıp geri geri çekilir (main, 3f237b8)
+- Menajer: "Mesele presçinin üzerine gitmemesi zaten, arkadaşları gelene kadar açısını kapatıp ilerleyişini engellemesi?"
+- Bulgu: presçi kale tarafına geçince 4 br'ye girip doğrudan topa yürüyordu (ya da çalım gösterip dalıyordu). Son adamken %50 kazanma tahminiyle ikiliye giriyordu (commitThr thrLast).
+- `ALAN_OYALA_ESKI`: geçiş savunması dengesizken ve top kaleye 26 br'den uzakken presçi (k = 0), top sahibinin 10 tik sonraki yerinin en tehlikeli seçeneği yönünde 3,2 br önünde durur (pres · oyala). İkili eşiği son adam +0,25, arkada arkadaşı varken +0,1 (DU.oyala, oyalaC, oyalaR, oyalaD). Dengelenince ya da 26 br içinde normal pres.
+- Sahne 722701 t1800 (geçiş savunması açık): eskide Deniz 3. sn'de geçiliyor; yenide geri geri çekiliyor, Kaan 2. sn'de geliyor, rakip topu geri çeviriyor.
+- Üç maç (5400 tik, kaba): şut 22 → 21, gol 11 → 8; geçişte 2 sn sonra kale tarafı 3,5–4,4. Geçiş savunması öncesinden (6b0b502) beri: şut 35 → 21, gol 17 → 8.
+- Kafa, top sahibinin hamlelerinde presçinin artık dalmadığını bilmiyor (duel/keepP eski davranışla); ayrıca bakılmadı.
+- Bayrak eski → 3fa2e07 birebir (üç maç, 2400 tik).
+
 ## 19 Ekim 2026 · Geçiş savunması: dengesizken adam bırakılır, topla kale arasına geri koşulur (main, 3fa2e07)
 - Menajer: "Şu an en büyük problem geçiş savunmasında gibi … adam markajını değil de alanı ve geriyi savunmanın daha önemli olduğunun pek farkında değil gibiler. Olabildiğince oyalamak asıl hedef geçişte, ve hızlıca geriye dönmek … rakibin geçişe çıkan 2 oyuncusu varsa, orta sahaları bekliyorsa bizim orta sahalar da bekliyor."
 - Bulgu (geçiş dedektörü, /tmp/kk/gecis-bul.js): 722701 t2294'te Kartal topla kaleye 50 br'den 22'ye indi; kale tarafında kimse yokken altı markajcı topun gerisindeki adamlarını tuttu. Bölge takımında orta sahalar "bölge" işinde topun 30 br önünde kaldı (t1803). Geri koşu kuralı yalnız işi olmayana ve top kaybından sonraki 4 sn'ye uygulanıyordu; tek tartı topun gerisindeki rakiplere kapatma işi veriyordu, markajcılar havuz dışındaydı.
