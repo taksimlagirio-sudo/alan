@@ -2,6 +2,12 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Enerji 1: oyuncu barı (main)
+- Menajer: TASARIM-enerji-ve-alan.md uygulansın. Kararlar: bar yeni özellik Enerji'den; şarj aktarımı bir karar olacak (2. aşama).
+- `ALAN_ENERJI_ESKI`: sprint, ivmelenme ve ikili harcar; yavaşlayınca dolar; bar düşükken sprint ve hız düşer, boşken ikiliye girilmez. Bütün hız hesapları ALAN_HZ'den (kafa bilir). Acil olmayan yer değiştirmede sprint atılmaz.
+- 218269: bar zamanın %21'inde boş, %24'ünde dolu. Tek maçta birebir.
+- Sırada: şarj kararı, alanın etkin kullanımı, talimatlar, canlı ekran, kabul ölçümü.
+
 ## 19 Ekim 2026 · Oyun hızı 0,9 (main)
 - Menajer: "Şu anki 0,9× yeni 1× olsun, süre gerçek kalsın."
 - `ALAN_TPS` = 27 (önce 30): 1× saniyede 27 tik; maç 300 sn = 8100 tik. Saat, olay zamanları, saniyeli talimatlar ve sitedeki oynatma bundan. Fizik ve karar formülü tik başına aynı.
