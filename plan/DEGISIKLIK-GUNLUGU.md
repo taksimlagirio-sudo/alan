@@ -2,6 +2,10 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Oyun hızı 0,9 (main)
+- Menajer: "Şu anki 0,9× yeni 1× olsun, süre gerçek kalsın."
+- `ALAN_TPS` = 27 (önce 30): 1× saniyede 27 tik; maç 300 sn = 8100 tik. Saat, olay zamanları, saniyeli talimatlar ve sitedeki oynatma bundan. Fizik ve karar formülü tik başına aynı.
+
 ## 19 Ekim 2026 · Maç 5 dakika (main)
 - Menajer: "Oyun süresi toplam 5 dk, 2,5 + 2,5 dk devreler."
 - `ALAN_MAC_LEN` 5400 → 9000 tik (300 sn); devre arası 150. sn. Eski kayıtlar kendi süreleriyle. Lab yarım maç ölçümü 2700 tikte kaldı.
