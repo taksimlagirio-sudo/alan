@@ -2,6 +2,10 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Maç 5 dakika (main)
+- Menajer: "Oyun süresi toplam 5 dk, 2,5 + 2,5 dk devreler."
+- `ALAN_MAC_LEN` 5400 → 9000 tik (300 sn); devre arası 150. sn. Eski kayıtlar kendi süreleriyle. Lab yarım maç ölçümü 2700 tikte kaldı.
+
 ## 19 Ekim 2026 · Santra Bekçi'den (main)
 - Menajer: "Santralar Bekçi'den başlasın, takımlar topun kimde olduğuna göre dizilişlerine uygun başlasın."
 - `ALAN_SANTRA_BEKCI_ESKI`: top başlayan takımın Bekçisinde (Kuyu içinde); herkes maçtaki yerleşimle (slotBase) topun Bekçide olduğu ana göre: başlayan hücum, öbürü savunma dizilişinde. Maç başı, devre, gol sonrası. Tek maçta birebir.
