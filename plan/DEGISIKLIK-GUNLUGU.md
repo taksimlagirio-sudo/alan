@@ -2,6 +2,15 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Top oyuncuların içinden geçmez; kafa arkadaşa çarpmayı bilir (main, 2c18ed4)
+- Menajer: "Toplar hâlâ oyuncuların içerisinden geçebiliyor, bu normal mi?" Sonra: "Kafa da arkadaşa çarpmayı bilsin."
+- Bulgu (/tmp/kk/govde-gec.js): iki bilinçli kural. Delip geçme: sert top rakibin tam ortasından %55'e kadar geçiyordu; kafa geçmez sayıyordu. Arkadaş: alıcısı belli pasta alıcı dışındaki arkadaş saydamdı (arkGecir; önce gövdesi pası durdurup rakibe sektiriyordu).
+- `ALAN_GOVDE_DELME_ESKI`: core contact'ta thru yalnız yolun gövdeye en yakın uzaklığı ≥ 1 ise; sonra _gec (6 tik gövde yok sayma) kurulmaz.
+- `ALAN_YOL_VER_ESKI`: shape'te pas/şut yolunun 2 br yakınındaki ya da top yanına varınca yola girecek arkadaş (alıcı, vuran, Bekçi dışında), yolun 2,2 br dışına çıkar (yol ver). arkGecir kapanır, arkadaş gövdesi seker.
+- `ALAN_ARKADAS_CARP_ESKI`: ucusFormul'de yoldaki arkadaşın top varınca yeri (yan hızı + 0,02 br/tik² kaçış; Bekçi çekilmez) yoldaysa gövde (gvNow yolu, sekme yarışı); arkadaşa çarpan top d1'e (kayıp) yazılmaz. 722701 t1737 Efe (yolun 1,08 br yanından koşarak yola girdi) ve t920 Kaan (2,4 br'den 0,29 hızla) örnekleri.
+- 4 maç: gövdeden geçiş maç başına 2–5 → 0–1 (kalan: aynı tik başka temas, vuranın dibi). Arkadaşa çarpan pas 6 → 1. Şut 33 → 44, gol 11 → 10. Pas kalibrasyonu kafa %94–95 / gerçek %90–98.
+- Üç bayrak eski → e6ebe8a birebir (üç maç, 2400 tik).
+
 ## 19 Ekim 2026 · Kafa = maç: Bekçi kayışı, dönüş, pres şiddeti, sürmede Çekirdek (main, e6ebe8a)
 - Menajer: 265001 dedektör listesi (a4b94b8 ile; 00:01 ve 00:06 birebir yeniden üretildi, sonrası iPad hesap farkıyla ayrışıyor). Sürerken %100 sanılıp kaptırılan üç top, %81 ve %98 sanılan iki şut, %86–87 sanılıp kesilen iki pas, yer/zaman sapmaları.
 - 00:06 Kaan şutu: kafada %81, maçta 0/16 (Tufan tuttu). Bekçi neredeyse duruyor (bekHar 0,14); kafa yine tam koşan modeli uyguluyordu (kayış savurma + donma + dönüş kadar gecikiyordu). `ALAN_KAYIS_HARMAN_ESKI`: koşan model cezayla kademeli (0,5'te tam). Şimdi %2,5.
