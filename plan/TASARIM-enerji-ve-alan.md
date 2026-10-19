@@ -32,7 +32,9 @@ Dolma çok hızlıysa sistem bir şey değiştirmez; çok yavaşsa yorgunluğa d
 
 Bugün alan pasiftir: rakibin topunu yavaşlatır, takım arkadaşının pasını hızlandırır (`match.js` p.R / p.D, `ownFlow`). Öneri: **oyuncu o an hangisi avantajlıysa onu seçer.** Seçim, alanından geçen her Çekirdek için geçerlidir; topu kimin vurduğu fark etmez.
 
-Üç durum: **hızlandır**, **yavaşlat**, **kapalı** (pasif taban, küçük).
+İki durum: **hızlandır** ya da **yavaşlat**. **Pasif etki tamamen kalkar** (kullanıcı kararı): oyuncu alanını kullanmadıkça alan Çekirdeğe hiçbir şey yapmaz.
+
+**Menajere talimat bırakılmaz** (kullanıcı kararı). Alanı ne zaman, hangi yönde kullanacağı tamamen motorun ve oyuncunun işidir: oyuncunun zekâsı (Tepki, Görüş) ve özellikleri (Alan gücü, enerji) belirler. Menajer yalnız sonucunu görür ve kadrosunu buna göre kurar.
 
 Örnek kullanımlar:
 
@@ -51,6 +53,12 @@ Kurallar:
 - **Çekişme.** Bir Çekirdek iki alandan aynı anda geçiyorsa (hücumcu hızlandırıyor, savunmacı yavaşlatıyor) sonuç ikisinin Alan gücü × harcanan enerjisiyle belirlenir. Sahada görünür bir mini düello olur.
 - **Sınır.** Hız değişiminin bir üst sınırı ve kısa bir bekleme süresi olur; yoksa top kontrolü kaosa döner.
 - **Bekçi.** Kuyu alanındaki Bekçi'nin alanı ayrıdır (Alan hakimiyeti). Şutu yavaşlatma ya da sektirme onun işi olabilir; bugün etkisiz çıkan Alan hakimiyeti'ne iş çıkar.
+- **Aynı takımdan birden çok alan üst üste biner** (kullanıcı fikri). Çekirdek aynı anda birkaç takım arkadaşının alanından geçerse etkiler toplanır ve harcanan enerji paylaşılır: her biri daha az harcar, toplam etki daha büyük olur. Sonuç: **kompakt oyunun gücü.**
+  - **Savunmada:** sık bir blok, içinden geçen pası birkaç alanla birden yavaşlatır; dar alanda araya girmek kolaylaşır.
+  - **Hücumda:** yakın üçgenlerde kısa paslar birkaç alanla hızlanır; kombinasyon oyunu presi kırar.
+  - **Bedeli:** kompakt takım sahanın başka yerini boş bırakır. Taraf değiştiren uzun pas, alanların olmadığı boşluktan geçer. Genişlik ve taraf değiştirme anlam kazanır (`TASARIM-tarz-dongusu.md`: kompakt blok ↔ geniş oyun).
+  - **Sınır:** üst üste binen etki azalan getiriyle toplanır (ör. ikinci alan yarım, üçüncü çeyrek) ve hız değişiminin üst sınırı geçerlidir; yoksa sık blok aşılmaz bir duvara döner.
+  - Rakip alanlar da aynı yerdeyse çekişme her iki tarafın toplamıyla belirlenir: kalabalık bölgede sayıca üstün olan kazanır.
 - **Görünürlük.** Alanın rengi seçimi gösterir: hızlandıran bir renk, yavaşlatan başka bir renk, kapalı soluk. Menajer kimin ne yaptığını sahadan okur.
 
 ## Çekirdek ile enerjinin bağı
@@ -65,6 +73,7 @@ Kurallar:
 | sorun (ölçüm) | enerjiyle |
 |---|---|
 | Yüksek presin bedeli yok | Pres dalga dalga gelir. Bastıktan sonraki birkaç saniye presçinin barı boştur; presi kıran takım boşluğu o anda bulur. |
+| Kompakt ve geniş oyun arasında fark yok | Üst üste binen alanlar kompakt oyuna güç verir; taraf değiştiren pas bunun panzehiri olur. |
 | Hız baskın (puan başına 2,5 kat) | En yüksek hız kısa patlamalarla. Hız bir patlama gücü olur, sürekli üstünlük değil. |
 | Topa sahip olmak kısır | Topu hızla dolaştırmak savunmayı kaydırır, barlarını düşük tutar. O anda taraf değiştirmek koridoru açar (atak içinde yıpratma). |
 | Yükleme, Alan hakimiyeti etkisiz | Şarj aktarım verimi; Bekçi'nin alanı. |
@@ -73,7 +82,6 @@ Kurallar:
 
 - **Enerji kullanımı:** "hep kullan" / "dengeli" / "kritik anlara sakla" (takım ya da oyuncu).
 - **Pres:** "dalga" (bas, toparlan) / "sürekli" (bar düşükken de bas, daha az etkili).
-- **Alan:** "hücumda hızlandır" / "savunmada yavaşlat" / "oyuncu karar versin".
 
 ## Özellikler
 
@@ -106,5 +114,6 @@ Hepsi "yükseldikçe kötüleşmez" kuralına uyar.
 
 - Dayanıklılık yeni özellik mi, yoksa Güç'ten mi türesin?
 - Şarj aktarımı otomatik mi (topu tutan hep aktarır), yoksa bir karar mı ("şimdi şarj et")?
-- Alanın pasif tabanı tamamen kalksın mı, küçülsün mü?
+- Enerji talimatları (enerji kullanımı, pres dalgası) da alan gibi tamamen motora mı bırakılsın?
+- Üst üste binen alanların azalan getirisi ne olsun (yarım, çeyrek mi)?
 - Rakibin barı görünür mü (menajere ve oyuncuya)?
