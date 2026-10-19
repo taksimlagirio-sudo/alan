@@ -2,6 +2,27 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Topsuz hareket: hatlar arası, markajdan kurtulma, koşu yarışı (main, 1747335)
+- Menajer: "Oyuncular markajdan kaçmaya, savunma arkasına veya hatlar arasına girmeye çalışıyor mu?" → "Üçünü de yap, kafa da bilsin."
+- Ölçüm (önce):
+  - Rakip yarısında topsuz hücumcular zamanın %78–83'ünde orta hattın önünde, %5–10'unda hatlar arasında, %3–6'sında savunma arkasında.
+  - Arkaya koşu planlarının yalnız %3–7'si savunma arkasına varıyor (çizgiye ~16–19 br uzaktan başlıyor).
+  - Koşu sürerken taşıyıcıda koşucuya pas seçeneği hemen her zaman var, ama değeri seçilenin %0–6'sı: koşucu yarışı %79 kaybediyor (5–8 tik geride).
+  - Neden: koşu tartısında savunmacının tepkisi pası okuma gecikmesiydi (9–15 tik); maçta savunmacı koşuyu algı gecikmesiyle (~6 tik) izliyor.
+- `ALAN_KOSU_YARIS_ESKI`: runV ve teamV'de savunmacının tepkisi algı gecikmesi (10 − Tepki×0,4).
+- `ALAN_OKU_GECIK_ESKI`: savunmacı rakibin hızını da yeri gibi gecikmeli görür (seen'e gvx/gvy, OKU ileri bunu kullanır). Önce hız anlıktı: hiçbir dönüş markajcıyı şaşırtamıyordu.
+- `ALAN_HAT_ARASI_ESKI`: savunma hattı (en derin iki) ile orta hat (sonraki iki) arasında 6 br'den fazla derinlik varsa, aranın %40 ve %70'inde topun gördüğü açık şeritler (pas yolu ≥ %40, 4 br'de savunmacı yok); en iyi üçü aday, bağ gevşer. İlk sürüm (savunmacıların yan aralıkları) hep kapalı yol veriyordu.
+- `ALAN_KURTUL_ESKI`: 6 br içinde markajcısı olana:
+  - gel-dön: bir yana çaprazlama topa gelir, öbür yandan markajcının arkasına döner (p._kv ara nokta)
+  - kör taraf: markajcının toptan uzak omzunun arkası
+  - teamV'de markajcı algı gecikmesi ve dönüş kaybıyla cevap verir
+  - Ön tartımda markajcı ara noktanın kale tarafında sayılır
+  - Kısa denemede gel-dön ön elemeyi hiç geçemedi, çünkü pas yolu çoğu zaman başka savunmacılarla da kapalıydı. Formül işe yaradığı anda seçer.
+- `ALAN_KURTUL_KAFA_ESKI`:
+  - predictWorld'de arkadaş ara noktadan sonra hedefine döner; markajcı dönüşü algı gecikmesiyle fark eder
+  - Buluşma pası gel-dön yolunda aranır
+- Bayraklar eski → d8bd047 birebir (üç maç, 2400 tik). Maç etkisi ölçümü (skor, şut, hatlar arası payı, varış) sürüyor.
+
 ## 19 Ekim 2026 · Kafa adam devrini bilir (main)
 - Menajer: "Kafa da adam devrini bilsin."
 - `ALAN_ADAM_DEVIR_KAFA_ESKI`: predictWorld'e devir haritası: topa basanlar (resp: respond'un seçtikleri; yoksa en yakın iki), adamı açık kalanlar; markRef'i topun yeni sahibi olup topa basmayan markajcı en yakın açık adamın kale tarafına (1,6 br). sonDunya ve sürme sonrası dünyada respond kümesi geçirilir.
