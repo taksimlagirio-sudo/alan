@@ -2,6 +2,10 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Santra Bekçi'den (main)
+- Menajer: "Santralar Bekçi'den başlasın, takımlar topun kimde olduğuna göre dizilişlerine uygun başlasın."
+- `ALAN_SANTRA_BEKCI_ESKI`: top başlayan takımın Bekçisinde (Kuyu içinde); herkes maçtaki yerleşimle (slotBase) topun Bekçide olduğu ana göre: başlayan hücum, öbürü savunma dizilişinde. Maç başı, devre, gol sonrası. Tek maçta birebir.
+
 ## 19 Ekim 2026 · Kaybedilen pas (main)
 - Menajer: "Pas isabetsiz, uzağına düşüyor; başka oyuncu yakın ama illa pas atılan alacağı için kimse karışmıyor."
 - `ALAN_ISABETSIZ_ESKI`: alıcı rakipten önce yetişemeyecekse ve bir arkadaş açık ara önce yetişiyorsa (ya da vuruş 6 br'den çok sapmışsa) pas arkadaşa da açılır: dokunabilir, koşar, yoldan çekilmez.
