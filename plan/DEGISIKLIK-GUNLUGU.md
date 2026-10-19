@@ -2,6 +2,14 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Bekçi aktif (main)
+- Menajer: "Bekçi'ye pas bir seçenek olmalı, ileri açılmayı düşünebilmeli, rakibin önüne atılan topa yetişebilecekse açılmalı."
+- `ALAN_BEKCI_CIK_ESKI`: rakibin önüne atılan pasa (buluşma kaleye 22 br içinde) rakiple aynı anda varabiliyorsa çıkar.
+- `ALAN_BEKCI_PAS_ESKI`: geri pas seçeneği (kendi yarı sahasından, en çok 40 br).
+- `ALAN_BEKCI_ILERI_ESKI`: top uzaktayken savunma hattının 5 br gerisine kadar açılır (süpürücü).
+- `ALAN_BEKCI_DONUS_ESKI`: çok açılmış Bekçi dönüşte orada takılı kalmaz.
+- 6 maç: Bekçi'nin kaleye uzaklığı 8,7 → 14–21 br; geri pas 0 → 0–11/maç; çıkış 0 → 6 (Bekçi kendisi hiç almadı). Tek maçta birebir.
+
 ## 19 Ekim 2026 · İç omuz (main)
 - Menajer (218269 0:31): "Alp Ece ile kenar arasına daha yakın; marke ederken dahi Ece'ye göre kaleye hiza olarak daha yakın durmalı." Sonra: "Kenar kaçışını önemsememek mantıklı mı, başka pozisyonları bozmaz mı?" Kural yalnız dışa kaçışa daraltıldı.
 - `ALAN_IC_OMUZ_ESKI`: arkadaki adamın koşusunu kaleye doğru ve içeri doğru okur; dışa kaçışı okumaz (kaleye 25 br içinde yarısını).
