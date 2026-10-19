@@ -2,6 +2,15 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Şut menzilinde şut çizgisi (main)
+- Menajer (Sahne Masası, 218269 0:06 ve 0:32): "Alp hem Kaan'ın hem Ece'nin golünde kaleyle açılarını hiç doğru şekilde kapatmaya çalışmıyor; illa başarması gerekmez ama doğrusunu denemesi gerekir."
+- `ALAN_KALE_ACI_ESKI`:
+  - Kaleye 35 br içinde ilk presçi şut çizgisinin 1,5 br içine girer.
+  - İlk presçi kale tarafındaki noktaya en çabuk varacak olandır.
+  - Rakip topa önce varacaksa kovalayan ve buluşmaya giden rakibin alacağı yerin kale tarafına koşar.
+- Sahne: Ece'nin golünde Alp çizgide; Kaan'ınkinde çizgiye giriyor, yetişemiyor. Tek maçta birebir.
+- Sahne Masası: şu anki kurallarla 7 an daha (iki kurulumun ilk yarıları).
+
 ## 19 Ekim 2026 · Arkadaki blok çizgisinden öne çıkmaz (main)
 - Menajer: "Cansu ve Deniz'in rakibi karşılamak adına rakip yarı sahaya geçmesi ne kadar mantıklı? Arkada alan bırakıyorlar."
 - `ALAN_ARKA_BLOK_ESKI`: 'arkada · X' hedefi dizilişteki yerinden (blok yüksekliği) öne çıkmaz; rakip çizgiyi geçene kadar kale ile arasındaki çizgide, kendi hizasında bekler.
