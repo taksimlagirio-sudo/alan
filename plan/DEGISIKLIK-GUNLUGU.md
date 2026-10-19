@@ -2,6 +2,16 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Kafa = maç: Bekçi kayışı, dönüş, pres şiddeti, sürmede Çekirdek (main, e6ebe8a)
+- Menajer: 265001 dedektör listesi (a4b94b8 ile; 00:01 ve 00:06 birebir yeniden üretildi, sonrası iPad hesap farkıyla ayrışıyor). Sürerken %100 sanılıp kaptırılan üç top, %81 ve %98 sanılan iki şut, %86–87 sanılıp kesilen iki pas, yer/zaman sapmaları.
+- 00:06 Kaan şutu: kafada %81, maçta 0/16 (Tufan tuttu). Bekçi neredeyse duruyor (bekHar 0,14); kafa yine tam koşan modeli uyguluyordu (kayış savurma + donma + dönüş kadar gecikiyordu). `ALAN_KAYIS_HARMAN_ESKI`: koşan model cezayla kademeli (0,5'te tam). Şimdi %2,5.
+- Sürmede kayıp (kendi oynatmamda 01:06 Kaan, aynı tür): topu geri koşarken alıp ileri sürmek, dönerken rakibe kaymak. `ALAN_KEEP_DONUS_ESKI`: keepP'de dönüş süresi (donS) boyunca rakip vO + taşıyıcının ona kayışı / 2 hızıyla yaklaşır.
+- `ALAN_KEEP_SIDDET_ESKI`: keepP ikili eşiğinde rakibin pres şiddeti (maçtaki gibi).
+- `ALAN_KEEP_YON_ESKI`: keepP'de ikili, rakip yetiştiğinde Çekirdeğin olacağı açıyla. Maçın kuralı: gidiş yönü, yakın rakipten en çok 0,7 rad çevrik, dönme hızı Turn.omega. İlk deneme Çekirdeği anında dönmüş sayıyordu, 4 maçta 27 emin kayıp çıktı (433811 t395 Gökay: Çekirdek dönerken Kaan'ın önünden geçti); dönme hızıyla düzeldi.
+- Araçlar: /tmp/kk/sur-kal.js (sürme kalibrasyonu), sut-dene/sut-tik savurma > 3 tik düzeltmesi.
+- Sürme (4 maç): kayıp 6 → 6 (yönsüz 10), kafa %96–99 / gerçek %99. Şut (4 maç): kafa 20,6 / gerçek 12 → 17,3 / 11; hâlâ iyimser, ayrıca bakılacak.
+- Dört bayrak eski → a4b94b8 birebir (üç maç, 2400 tik).
+
 ## 19 Ekim 2026 · Top kaybında önce alana yerleş; kafa presçinin oyaladığını bilir (main, a4b94b8)
 - Menajer: "Kafayı da hizala, presçinin dalmadığını bilsin. Ayrıca hâlâ top rakibe geçtiğinde temel hedefleri markaj oluyor gibi oyuncuların, oysa direkt alan savunmasına geçmeleri lazım, adam adama savunma seçilmiş olsa bile; mantıken önce geriye yerleşmek gerekir … arkayı boş bırakamaz."
 - `ALAN_OYALA_KAFA_ESKI`: keepP'de commitThr'ye maçtaki oyalama eki (oyalaEk: D._mac.sh.gs; son adam +0,25, arkasında arkadaşı varken +0,1; top 26 br'den uzak).
