@@ -2,7 +2,7 @@
   const { W: GW, H: GH, CY: GCY, KX: GKX, KY: GKY } = self.ALAN_SAHA, GW8 = GW === 100 ? 99.2 : GW - .8, GH8 = GH === 50 ? 49.2 : GH - .8; /* duvar payı .8 (100 × 50'de sabit sayının kendisi: bit bit aynı) */ /* saha ölçüsü tek kaynaktan (core.js); sınıflar: alan-v5/SAHA-SABITLERI.md */
   // Katman 3 · Taşıyıcının kararı: her seçeneği kafada yeni fizikle simüle eder, Okuma'ya göre kusurlu görür.
   const C = () => window.AlanCore, NOF = [];
-  const DU = { base: .3, skill: .03, cage: .14, side: .16, core0: .6, coreV: 3, trap: .6, trap0: .15, trapR: 4.5, trapA: .8, thrCover: .3, thrLast: .5, stun: 22, stunOk: .5, engage: 2.4, cd: 14, shieldK: .6, openK: .15, fakeT: 9 };
+  const DU = { base: .3, skill: .03, cage: .14, side: .16, core0: .6, coreV: 3, trap: .6, trap0: .15, trapR: 4.5, trapA: .8, thrCover: .3, thrLast: .5, stun: 22, stunOk: .5, engage: 2.4, cd: 14, shieldK: .6, openK: .15, fakeT: 9, oyala: .25, oyalaC: .1, oyalaR: 26, oyalaD: 3.2 };
   const D = {
     simMax: 180, errOk: .05, errPos: 3,  // algı hatası: rakipler (20-Okuma)×errOk×errPos birim sapmayla görülür
     aimErr: .035, v0Err: .04,            // Aktarım hatası: açı ve hız
