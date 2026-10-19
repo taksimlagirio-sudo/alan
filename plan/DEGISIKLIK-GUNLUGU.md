@@ -2,6 +2,11 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · İç omuz (main)
+- Menajer (218269 0:31): "Alp Ece ile kenar arasına daha yakın; marke ederken dahi Ece'ye göre kaleye hiza olarak daha yakın durmalı." Sonra: "Kenar kaçışını önemsememek mantıklı mı, başka pozisyonları bozmaz mı?" Kural yalnız dışa kaçışa daraltıldı.
+- `ALAN_IC_OMUZ_ESKI`: arkadaki adamın koşusunu kaleye doğru ve içeri doğru okur; dışa kaçışı okumaz (kaleye 25 br içinde yarısını).
+- 6 an: dış tarafta durma belirgin azaldı, kale tarafı mesafesi aynı, eşleşme değişimi toplamda aynı. Tek maçta birebir.
+
 ## 19 Ekim 2026 · Şut menzilinde şut çizgisi (main)
 - Menajer (Sahne Masası, 218269 0:06 ve 0:32): "Alp hem Kaan'ın hem Ece'nin golünde kaleyle açılarını hiç doğru şekilde kapatmaya çalışmıyor; illa başarması gerekmez ama doğrusunu denemesi gerekir."
 - `ALAN_KALE_ACI_ESKI`:
