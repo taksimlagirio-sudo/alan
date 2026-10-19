@@ -80,6 +80,8 @@ Kurallar:
 
 ## Talimatlar (menajer)
 
+Alan menajere bırakılmaz; **enerji yönetimi bırakılır** (kullanıcı kararı: enerjinin nerede harcanacağı menajerlik işi).
+
 - **Enerji kullanımı:** "hep kullan" / "dengeli" / "kritik anlara sakla" (takım ya da oyuncu).
 - **Pres:** "dalga" (bas, toparlan) / "sürekli" (bar düşükken de bas, daha az etkili).
 
@@ -94,6 +96,19 @@ Kurallar:
 | Tepki, Görüş | Alanı zamanında ve doğru seçmek |
 
 Hepsi "yükseldikçe kötüleşmez" kuralına uyar.
+
+## Risk: Kuyu önüne dizilen blok geçilmez olmasın
+
+Üst üste binen alanlar en çok, Kuyu önüne dizilmiş sık bir blokta toplanır. Derin blok güçlü olmalı (zayıf takımın şansı), ama geçilmez olmamalı. Panzehirler:
+
+1. **Şarj alanı deler.** Alanın Çekirdeğe etkisi, Çekirdeğin şarjı arttıkça azalır. Hücumcu enerjisini Çekirdeğe yükleyip sık bloğu delmeye çalışır; savunma enerjisini alana harcayıp durdurmaya çalışır. Kuyu önü bir **enerji düellosu** olur: hücumun şarjı ile savunmanın toplam alanı.
+2. **Alan kullanmak dolumu durdurur.** Bekleyen ama alanını kullanan savunmacının barı dolmaz. Topu sürekli dolaştıran hücum, savunmayı her pasta alan kullanmaya zorlar. Uzun kuşatma bloğun barlarını eritir; bir an gelir alan yetmez (atak içinde yıpratma).
+3. **Alanın olmadığı yoldan oynamak.** Alan yalnız içinden geçen Çekirdeği etkiler. Kenardan sektirme (motorda var), bloğun yanından dolaşan pas ve geniş açıdan şut alanları atlar. Genişlik ve kenar oyunu derin bloğun panzehiri olur.
+4. **Azalan getiri ve üst sınır.** Üçüncü, dördüncü alan çok az ekler; hız değişiminin sınırı aşılmaz.
+5. **Taraf değiştirme.** Blok kayarken alanlar dağılır; o anda açılan koridordan geçilir (`TASARIM-tarz-dongusu.md`, kayma gecikmesi).
+6. **Bedeli kendi hücumu.** Bütün takım Kuyu önündeyse topu kazanınca kimse ileride değildir; derin blok gol yemez ama atamaz da.
+
+Kabul ölçütü: Kuyu önü bloğu, topa sahip ve geniş oynayan takıma karşı belirgin kaybetmeli; direkt oyuna karşı iyi olmalı (tarz döngüsü).
 
 ## Motorda dikkat (Claude Code için)
 
@@ -114,6 +129,5 @@ Hepsi "yükseldikçe kötüleşmez" kuralına uyar.
 
 - Dayanıklılık yeni özellik mi, yoksa Güç'ten mi türesin?
 - Şarj aktarımı otomatik mi (topu tutan hep aktarır), yoksa bir karar mı ("şimdi şarj et")?
-- Enerji talimatları (enerji kullanımı, pres dalgası) da alan gibi tamamen motora mı bırakılsın?
 - Üst üste binen alanların azalan getirisi ne olsun (yarım, çeyrek mi)?
 - Rakibin barı görünür mü (menajere ve oyuncuya)?
