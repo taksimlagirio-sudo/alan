@@ -2,6 +2,13 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Rakip boş topu alırken bas ve pas yollarını kes (main)
+- Menajer (Sahne Masası, 577951 01:46): Ece topa sırtını dönüyor; "Kaan da Alp'in pas açılarını kapatabilir, orta sahadaki arkadaşlarının önünde durabilir."
+- `ALAN_BOS_BAS_ESKI` (5689d0a): rakip kendi kalesine 35 br içinde boş topu bizden önce alacaksa takımın topa en erken varanı yine gider, alırken basar.
+- `ALAN_BOS_KES_ESKI`: rakip boş topu 6+ tik önce alacaksa topu kovalamayan hücumcular onun alacağı noktadan arkadaşlarına giden pas yollarına (%60, alıcı tarafı) yerleşir; en yakın yol, 20 br sınırı.
+- Sahne: Ece Alp'in 2 br arkasında; Kaan 'yol kes · Volkan'; Alp topu Baran'a çıkardı.
+- İkisi de tek maçta birebir; genel maç ölçümü yapılmadı.
+
 ## 19 Ekim 2026 · Kaçan pas gövdeden geçmez; geçişte topa çık; sapan şutta sekme yok (main)
 - 218269 02:14 (menajer: "top resmen içinden geçiyor"): arkadaşın kaçırdığı top oyuncunun öbür tarafına konuyordu, karşıdan gelen pas gövdenin içinden geçti. `ALAN_KACIR_ICINDEN_ESKI`: top değdiği tarafta kalır, gövde çarpışması dolaştırır (a55a626).
 - 577951 (menajer: "gol sorun değil, mesele çok müsait olması"): geçişte top sahibine kimse çıkmıyordu.
