@@ -2,6 +2,24 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Arkadaki savunmacı kale ağzına çökmez (main)
+- Menajer (577951 01:44 ekranları): "Burada savunma dağıtımında problem var."
+- Motorda yeniden üretildi:
+  - Liman kontrada; Fırtına'da Kartal ('arkada · Kaan') kale ağzında, Alp ve Baran ('arkada · alan') kaleci alanının kenarında.
+  - Efe, Yıldırım, Volkan 'geri koşu · kale' ile x≈104'te.
+  - Kaan ceza sahası önünde en yakın savunmacıdan 6,5 br uzakta aldı, vurdu (2-2).
+- Neden: tek tartıda (UA) arkadaki hedefi = rakibin 18 tik sonraki yeri + 2,5 br + açık topta koşu hızı × 30 tik, yani koşan forvetin 14–16 br gerisi.
+- `ALAN_ARKA_YAKIN_ESKI`: yakin(): arkadaki hedef adamından en çok 4 + kaleye uzaklığının %15'i geride.
+  - Tek tartıda ve süpürücü dalında.
+  - Adamı olmayan arkadakiler için en derin rakibin okunan yeri de aynı payla.
+- Sahne (3100'den yeni kural): Kartal Kaan'ın 4–5 br kale tarafında, pas gelince buluşmaya çıkıyor; Alp ve Baran ceza sahası önünde. Kaan 29 br'den vurup yine attı (uzak şut ayrı konu).
+- 4 maç × 2 dk:
+  - kale ağzında savunmacı 0,44 → 0,20
+  - en derin hücumcuya en yakın savunmacı 4,0 → 4,0
+  - taşıyıcıya 3,0 → 3,6
+  - gol 4 → 6, şut 21 → 19 (gürültülü)
+- Bayrak eski → 045e0e5 birebir.
+
 ## 19 Ekim 2026 · Koşu yarışı ve gecikmeli hız okuma varsayılan kapalı (main)
 - 1747335'in maç ölçümü (3 maç, hepsi açık) kötü çıktı: savunma arkasına varış 41 → 22, arkada durma %4,7 → %3,1, güvence işi iki katı.
 - Eleme: koşu yarışı açıkken koşucu kazanamayacağını görüp koşmuyor; gecikmeli hız okuma iki karşılaştırmada da varışı azalttı.
