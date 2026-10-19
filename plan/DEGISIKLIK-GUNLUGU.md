@@ -2,6 +2,11 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Enerji 2: şarj kararı (main)
+- `ALAN_SARJ_KARAR_ESKI`: taşıyıcı 'şimdi şarj et' kararını verir (topu alınca ve her kararda): kazanç = şut ihtimali (kaleye uzaklıktan) × şarjın şut değerine katkısı; bedel = harcanacak enerji. Şarj taşıyıcının barından akar (Yükleme verimi).
+- Bulgu: şarj bugün şut değerini az etkiliyor; asıl işi 3. aşamada (şarj alanı deler).
+- Şarj eden taşıyıcı: kendi yarı %0, orta %6–24, rakip önü %62–85. Tek maçta birebir.
+
 ## 19 Ekim 2026 · Enerji 1: oyuncu barı (main)
 - Menajer: TASARIM-enerji-ve-alan.md uygulansın. Kararlar: bar yeni özellik Enerji'den; şarj aktarımı bir karar olacak (2. aşama).
 - `ALAN_ENERJI_ESKI`: sprint, ivmelenme ve ikili harcar; yavaşlayınca dolar; bar düşükken sprint ve hız düşer, boşken ikiliye girilmez. Bütün hız hesapları ALAN_HZ'den (kafa bilir). Acil olmayan yer değiştirmede sprint atılmaz.
