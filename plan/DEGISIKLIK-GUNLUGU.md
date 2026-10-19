@@ -2,6 +2,11 @@
 
 > **15 Ekim 2026'dan itibaren motoru Claude Code yönetir** (bkz. `CALISMA-DUZENI.md`). Aşağıdaki girdiler zip71'den sonrası; ayrıntı ve ölçümler `DESIGN-NOT-zip78-sitede.md`'de.
 
+## 19 Ekim 2026 · Arkadaki blok çizgisinden öne çıkmaz (main)
+- Menajer: "Cansu ve Deniz'in rakibi karşılamak adına rakip yarı sahaya geçmesi ne kadar mantıklı? Arkada alan bırakıyorlar."
+- `ALAN_ARKA_BLOK_ESKI`: 'arkada · X' hedefi dizilişteki yerinden (blok yüksekliği) öne çıkmaz; rakip çizgiyi geçene kadar kale ile arasındaki çizgide, kendi hizasında bekler.
+- Sahne: Liman alçak bloğa dönüyor, öndekiler basıyor; top 1:49'da geri kazanıldı. Tek maçta birebir.
+
 ## 19 Ekim 2026 · Boş topun beklenen sahibi (main)
 - Menajer: "Sadece Kaan'a vermek saçma, takım genelinde olmalı; diğer takım da topun kendisinde olacağının, Alp'in topu nerede alacağının farkında olmalı."
 - `ALAN_BEKLENEN_SAHIP_ESKI`: kalesine 25 br yakın boş topta şekil değişimini durduran kural, kazanan belirgin önceyse (12+ tik) uygulanmaz; iki takım şimdiden kazanacak takıma göre dizilir.
