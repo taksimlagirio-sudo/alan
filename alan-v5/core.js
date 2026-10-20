@@ -38,6 +38,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
     e0: 1,
     tekS: .5,       // v5 · tek enerji: uçuştaki kayıplar şarj biriminde (eski e0 = 1 ölçeğinin yarısı; şarj 0,5 eskisi gibi uçar)
     tekGain: .025,  // v5 · tek enerji: takım arkadaşının hızlandıran alanından geçerken şarj kazancı (birim × alan gücü)
+    tekDrag: .6,    // v5 · tek enerji: rakip alanının yavaşlatması (oppDrag) bu kadarı: şarj uçuşta azaldığı için direnç artıyordu, Çekirdek fazla yavaşlıyordu (goller azaldı)
     tekTaban: .2    // v5 · tek enerji: şarjsız vuruşun da en az bu kadar enerjisi var (vuruşun kendisi)
   };
   const tekS0 = () => P.tekS; /* temas kodunda P yerel bir ihtimal: fizik parametresi buradan */
@@ -81,7 +82,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
     // Saha iki boyutlu: yükseklik yok. Çekirdek hep yerde, hep alanların içinden geçer; her oyuncu her an ona dokunabilir.
     const k = K(src, b.x, b.y, b.team), sp0 = hyp(b.vx, b.vy), res = 1 - p.pierce * b.ch;
     let drag = p.fric;
-    if (k < 0) drag += -k * p.oppDrag * res; else drag *= 1 - p.ownFlow * k;
+    if (k < 0) drag += -k * p.oppDrag * res * (tekU() ? (p.tekDrag ?? P.tekDrag) : 1); else drag *= 1 - p.ownFlow * k;
     const TU = tekU(); if (b.alive) { b.e -= (sp0 * p.attn + (k < 0 ? -k * sp0 * p.drain * res : 0)) * (TU ? (p.tekS ?? P.tekS) : 1); if (TU && k > 0) b.e = Math.min(1, b.e + k * sp0 * (p.tekGain ?? P.tekGain)); if (b.e <= 0) { b.e = 0; b.alive = false; b.dead = 0; ev(b, 'son', 'Çekirdek söndü · boşta'); } if (TU) b.ch = b.alive ? b.e : 0; }
     else { b.dead++; drag += Math.min(p.deadMax, p.deadRamp * b.dead); }
     const f = 1 - drag; b.vx *= f; b.vy *= f;
@@ -106,7 +107,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
     for (let t = 0; t < maxT; t++) {
       const k = K(src, x, y, team), sp0 = hyp(vx, vy), res = 1 - p.pierce * ch;
       let drag = p.fric;
-      if (k < 0) drag += -k * p.oppDrag * res; else drag *= 1 - p.ownFlow * k;
+      if (k < 0) drag += -k * p.oppDrag * res * (tekU() ? (p.tekDrag ?? P.tekDrag) : 1); else drag *= 1 - p.ownFlow * k;
       if (alive) { e -= (sp0 * p.attn + (k < 0 ? -k * sp0 * p.drain * res : 0)) * (TU ? (p.tekS ?? P.tekS) : 1); if (TU && k > 0) e = Math.min(1, e + k * sp0 * (p.tekGain ?? P.tekGain)); if (e <= 0) { e = 0; alive = false; dead = 0; } if (TU) ch = alive ? e : 0; }
       else { dead++; drag += Math.min(p.deadMax, p.deadRamp * dead); }
       const f = 1 - drag; vx *= f; vy *= f;
@@ -137,7 +138,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
     for (let i = 0; i < n && !done; i++) {
       const k = K(src, x, y, team), sp0 = hyp(vx, vy), res = 1 - p.pierce * ch;
       let drag = p.fric;
-      if (k < 0) drag += -k * p.oppDrag * res; else drag *= 1 - p.ownFlow * k;
+      if (k < 0) drag += -k * p.oppDrag * res * (tekU() ? (p.tekDrag ?? P.tekDrag) : 1); else drag *= 1 - p.ownFlow * k;
       if (alive) { e -= (sp0 * p.attn + (k < 0 ? -k * sp0 * p.drain * res : 0)) * (TU ? (p.tekS ?? P.tekS) : 1); if (TU && k > 0) e = Math.min(1, e + k * sp0 * (p.tekGain ?? P.tekGain)); if (e <= 0) { e = 0; alive = false; dead = 0; b.log.push({ t, k: 'son', txt: 'Çekirdek söndü · boşta' }); } if (TU) ch = alive ? e : 0; }
       else { dead++; drag += Math.min(p.deadMax, p.deadRamp * dead); }
       const f = 1 - drag; vx *= f; vy *= f;
