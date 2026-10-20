@@ -68,6 +68,26 @@ Kurallar:
 - Paslaşmak şarjı taşır: pasla gelen şarj, verenin harcadığı enerjidir. "Kısa paslarla şarjı topla" ile "tek oyuncuda bekleyip şarj et" farklı tercihler olur.
 - Takım arkadaşının barı pas seçiminde bir ölçüt olur: barı dolu olana ver.
 
+### Çekirdeğin tek enerjisi (kullanıcı kararı, 20 Ekim 2026)
+
+Çekirdeğin enerjisi ile oyuncunun enerjisi **aynı şeydir**: oyuncu enerji üretir, Çekirdeğe aktarır, Çekirdek uçarken harcar, kalanı bir sonraki oyuncuya geçer.
+
+Bugün motorda (main 58dd0d2) Çekirdeğin üzerinde iki ayrı sayı var:
+- **Şarj** (`m.ch`): oyuncunun barından gelir (Yükleme verimi), vuruş hızını (`chgMul`) ve rakip alanını delmeyi (`pierce × ch`) belirler. Tasarıma uygun.
+- **Uçuş enerjisi** (`b.e`): her vuruşta sabit `P.e0` ile başlar (`core.js` `makeBall`). Yolda (`attn`), rakip alanında (`drain`), duvarda ve direkte (`wallLoss`), sekmede (`deflE`) azalır; sıfırlanınca Çekirdek "söner". **Şarjla da oyuncunun barıyla da bağı yok.**
+
+İkisi tek sayı olmalı:
+1. **Vuruşta:** Çekirdeğin enerjisi şarjdan gelir. Çok şarjlı pas ya da şut daha uzağa gider, alanlara daha iyi direnir, sekince sönmez; az şarjlı pas kısa sürede söner.
+2. **Uçuşta:** enerji bugünkü gibi harcanır (yol, rakip alanı, duvar, sekme).
+3. **Alışta:** alıcı topu aldığında **kalan enerji Çekirdekte kalır**, şarj oradan devam eder. Pasla taşınan şarj gerçekten verenin harcadığı enerjidir.
+4. **Söndüğünde:** boşta kalan Çekirdeği alan oyuncu sıfırdan (ya da çok azdan) şarj etmeye başlar.
+
+Sonuçları:
+- Kısa, temiz, takım arkadaşlarının alanından geçen paslar enerjiyi taşır. Uzun, rakip alanından ve kenardan geçen pas enerjiyi harcar. "Enerjiyi takımda dolaştır" ile "tek oyuncuda bekleyip şarj et" gerçek bir tercih olur.
+- Derin bloğun alanları şarjı tüketir; kuşatma sonunda Çekirdek zayıf gelir, hücum yeniden şarj etmek zorunda kalır (Kuyu önü düellosu).
+- Ölçek dikkat: bugünkü `e0` ve harcama katsayıları sabit başlangıca göre ayarlı. Şarja bağlanınca az şarjlı pasın hiç ulaşamaması gibi uç durumlar ölçülmeli. Gerekirse şarjsız vuruşa bir taban enerji kalır.
+- Görünümde (canlı ekran) Çekirdeğin tek bir halkası olur: şarj ile uçuş enerjisi aynı halka.
+
 ## Ölçümdeki sorunlara etkisi
 
 | sorun (ölçüm) | enerjiyle |
