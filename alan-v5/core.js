@@ -36,9 +36,10 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
     rest: .72,      // kenar sekmesinde kalan hız oranı
     wallLoss: .08,  // kenara çarpınca kaybedilen enerji
     e0: 1,
-    tekS: .5,       // v5 · tek enerji: uçuştaki kayıplar şarj biriminde (eski e0 = 1 ölçeğinin yarısı; şarj 0,5 eskisi gibi uçar)
+    tekS: .35,      // v5 · tek enerji: uçuştaki kayıplar şarj biriminde (eski e0 = 1 ölçeğinin %35i; önce .5: toplar sık sönüyor, şarj eriyordu)
     tekGain: .025,  // v5 · tek enerji: takım arkadaşının hızlandıran alanından geçerken şarj kazancı (birim × alan gücü)
-    tekDrag: .6,    // v5 · tek enerji: rakip alanının yavaşlatması (oppDrag) bu kadarı: şarj uçuşta azaldığı için direnç artıyordu, Çekirdek fazla yavaşlıyordu (goller azaldı)
+    tekDrain: .6,   // v5 · tek enerji: rakip alanının şarjı eritmesi (drain) bu kadarı
+    tekDrag: .35,    // v5 · tek enerji: rakip alanının yavaşlatması (oppDrag) bu kadarı: şarj uçuşta azaldığı için direnç artıyordu, Çekirdek fazla yavaşlıyordu (goller azaldı)
     tekTaban: .2    // v5 · tek enerji: şarjsız vuruşun da en az bu kadar enerjisi var (vuruşun kendisi)
   };
   const tekS0 = () => P.tekS; /* temas kodunda P yerel bir ihtimal: fizik parametresi buradan */
@@ -72,7 +73,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
     let bt = 2, bx = 0, by = 0; for (const px of [.5, W - .5]) for (const py of [H / 2 - MOUTH, H / 2 + MOUTH]) { const fx = x - px, fy = y - py, c0 = fx * fx + fy * fy - DIREK * DIREK; if (c0 <= 0) continue; const bb = fx * vx + fy * vy; if (bb >= 0) continue; const disc = bb * bb - L2 * c0; if (disc < 0) continue; const t = (-bb - Math.sqrt(disc)) / L2; if (t < 0 || t > 1 || t >= bt) continue; bt = t; bx = px; by = py; }
     if (bt > 1 || bt > tw) return null; const cx = x + vx * bt, cy = y + vy * bt; let nnx = cx - bx, nny = cy - by; const nl = hyp(nnx, nny) || 1; nnx /= nl; nny /= nl; const vn = vx * nnx + vy * nny;
     return [bx + nnx * (DIREK + 1e-3), by + nny * (DIREK + 1e-3), (vx - 2 * vn * nnx) * p.rest, (vy - 2 * vn * nny) * p.rest]; }
-  function chgMul(ch, p) { p = p || P; return 1 - p.chgV / 2 + p.chgV * ch; }
+  function chgMul(ch, p) { p = p || P; return tekU() ? .75 + .7 * ch : 1 - p.chgV / 2 + p.chgV * ch; } /* v5 · tek enerji: şarj uçuşta azaldığı ve alışta bedava şarj kalktığı için tipik şarj düştü; vuruş gücünün tabanı yükseldi (0 → 0,75, 0,5 → 1,1, 1 → 1,45; önce 0,55 / 1 / 1,45) */
   // v5 · Çekirdek sahanın dışında olamaz: duvar çizgisinin (0,5) arkasına konan Çekirdek (çizgideki taşıyıcının gövdesinin duvar yanı, gövdeden sekme, gövdenin itmesi) çizgiye geri alınır. Kuyu denetimi Çekirdeğin içeriden geldiğini varsayar; arkadan gelen Çekirdek ağızdan geçmiş sayılıyordu (zip51, Kartal 0–1)
   function sahaIci(b) { const e = 1e-3; if (b.x < .5 + e) b.x = .5 + e; else if (b.x > W - .5 - e) b.x = W - .5 - e; if (b.y < .5 + e) b.y = .5 + e; else if (b.y > H - .5 - e) b.y = H - .5 - e; return b; }
   function makeBall(o) { if (tekU() && o && o.e == null) { const c0 = Math.max(P.tekTaban, o.ch ?? .5); o = { ...o, e: c0, ch: c0 }; } return sahaIci(Object.assign({ x: W / 2, y: H / 2, vx: 0, vy: 0, e: P.e0, ch: .5, team: 0, alive: true, dead: 0, t: 0, dist: 0, walls: 0, done: null, log: [] }, o)); }
@@ -83,7 +84,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
     const k = K(src, b.x, b.y, b.team), sp0 = hyp(b.vx, b.vy), res = 1 - p.pierce * b.ch;
     let drag = p.fric;
     if (k < 0) drag += -k * p.oppDrag * res * (tekU() ? (p.tekDrag ?? P.tekDrag) : 1); else drag *= 1 - p.ownFlow * k;
-    const TU = tekU(); if (b.alive) { b.e -= (sp0 * p.attn + (k < 0 ? -k * sp0 * p.drain * res : 0)) * (TU ? (p.tekS ?? P.tekS) : 1); if (TU && k > 0) b.e = Math.min(1, b.e + k * sp0 * (p.tekGain ?? P.tekGain)); if (b.e <= 0) { b.e = 0; b.alive = false; b.dead = 0; ev(b, 'son', 'Çekirdek söndü · boşta'); } if (TU) b.ch = b.alive ? b.e : 0; }
+    const TU = tekU(); if (b.alive) { b.e -= (sp0 * p.attn + (k < 0 ? -k * sp0 * p.drain * res * (TU ? (p.tekDrain ?? P.tekDrain) : 1) : 0)) * (TU ? (p.tekS ?? P.tekS) : 1); if (TU && k > 0) b.e = Math.min(1, b.e + k * sp0 * (p.tekGain ?? P.tekGain)); if (b.e <= 0) { b.e = 0; b.alive = false; b.dead = 0; ev(b, 'son', 'Çekirdek söndü · boşta'); } if (TU) b.ch = b.alive ? b.e : 0; }
     else { b.dead++; drag += Math.min(p.deadMax, p.deadRamp * b.dead); }
     const f = 1 - drag; b.vx *= f; b.vy *= f;
     const s1 = hyp(b.vx, b.vy); if (s1 > 0) { const r = Math.max(0, s1 - p.roll) / s1; b.vx *= r; b.vy *= r; }
@@ -108,7 +109,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
       const k = K(src, x, y, team), sp0 = hyp(vx, vy), res = 1 - p.pierce * ch;
       let drag = p.fric;
       if (k < 0) drag += -k * p.oppDrag * res * (tekU() ? (p.tekDrag ?? P.tekDrag) : 1); else drag *= 1 - p.ownFlow * k;
-      if (alive) { e -= (sp0 * p.attn + (k < 0 ? -k * sp0 * p.drain * res : 0)) * (TU ? (p.tekS ?? P.tekS) : 1); if (TU && k > 0) e = Math.min(1, e + k * sp0 * (p.tekGain ?? P.tekGain)); if (e <= 0) { e = 0; alive = false; dead = 0; } if (TU) ch = alive ? e : 0; }
+      if (alive) { e -= (sp0 * p.attn + (k < 0 ? -k * sp0 * p.drain * res * (TU ? (p.tekDrain ?? P.tekDrain) : 1) : 0)) * (TU ? (p.tekS ?? P.tekS) : 1); if (TU && k > 0) e = Math.min(1, e + k * sp0 * (p.tekGain ?? P.tekGain)); if (e <= 0) { e = 0; alive = false; dead = 0; } if (TU) ch = alive ? e : 0; }
       else { dead++; drag += Math.min(p.deadMax, p.deadRamp * dead); }
       const f = 1 - drag; vx *= f; vy *= f;
       const s1 = hyp(vx, vy); if (s1 > 0) { const r = Math.max(0, s1 - p.roll) / s1; vx *= r; vy *= r; }
@@ -139,7 +140,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
       const k = K(src, x, y, team), sp0 = hyp(vx, vy), res = 1 - p.pierce * ch;
       let drag = p.fric;
       if (k < 0) drag += -k * p.oppDrag * res * (tekU() ? (p.tekDrag ?? P.tekDrag) : 1); else drag *= 1 - p.ownFlow * k;
-      if (alive) { e -= (sp0 * p.attn + (k < 0 ? -k * sp0 * p.drain * res : 0)) * (TU ? (p.tekS ?? P.tekS) : 1); if (TU && k > 0) e = Math.min(1, e + k * sp0 * (p.tekGain ?? P.tekGain)); if (e <= 0) { e = 0; alive = false; dead = 0; b.log.push({ t, k: 'son', txt: 'Çekirdek söndü · boşta' }); } if (TU) ch = alive ? e : 0; }
+      if (alive) { e -= (sp0 * p.attn + (k < 0 ? -k * sp0 * p.drain * res * (TU ? (p.tekDrain ?? P.tekDrain) : 1) : 0)) * (TU ? (p.tekS ?? P.tekS) : 1); if (TU && k > 0) e = Math.min(1, e + k * sp0 * (p.tekGain ?? P.tekGain)); if (e <= 0) { e = 0; alive = false; dead = 0; b.log.push({ t, k: 'son', txt: 'Çekirdek söndü · boşta' }); } if (TU) ch = alive ? e : 0; }
       else { dead++; drag += Math.min(p.deadMax, p.deadRamp * dead); }
       const f = 1 - drag; vx *= f; vy *= f;
       const s1 = hyp(vx, vy); if (s1 > 0) { const r = Math.max(0, s1 - p.roll) / s1; vx *= r; vy *= r; }
