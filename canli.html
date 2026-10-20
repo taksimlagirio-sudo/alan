@@ -588,7 +588,7 @@ class Component extends DCLogic {
     const gor = this.olaylar.filter(o => o.tick <= t), RN = ['#3D5BF0', '#E0531F'];
     const yuk = !this.acildi, hz = Math.min(1, (this.kareler.length - t) / Math.max(1, .1 * ((this.anMod ? this.anMod.t1 : this.devreGecti || t >= (len >> 1) ? len : len >> 1) - t))), a0 = this.anMod ? this.anMod.t0 : 0, aL = this.anMod ? this.anMod.t1 - this.anMod.t0 : len; /* an: çubuk yalnız anın penceresi */ /* çubuk başlama koşuluyla aynı ölçüde (%30) dolar */
     const gk = this.secili ?? -1, G = ps && f && gk >= 0 ? this.gorev(f, gk) : null, gp = G ? ps[gk] : null; /* görev göstergesi */
-    const roller = (c && c.roller) || [null, null], rl = (tm, i) => { const r = roller[tm] && roller[tm][i - 1]; return i === 0 ? 'B' : r ? r.h : ''; };
+    const roller = (c && c.roller) || [null, null], rl = (tm, i) => { const r = roller[tm] && roller[tm][i - 1]; return i === 0 ? 'B' : ''; }; /* roller kalktı: listede yalnız Bekçi işareti */
     return {
       ad0: ad[0], ad1: ad[1], harf0: ad[0][0], harf1: ad[1][0], skor: f ? `${f[32]} – ${f[33]}` : '0 – 0', saat: mmss(t), hesap: this.hesapYazi || '', durum: yuk ? 'HAZIRLANIYOR' : Sx.calis ? 'CANLI' : 'DURAKLATILDI', durumRenk: yuk ? '#FFD25A' : Sx.calis ? '#FF6B5B' : 'rgba(var(--ink-rgb),.6)',
       ...(() => { const ff = this.kareler[Math.floor(this.t)], ps = this.ps; if (!ff || !ps || this.giris) return { cekGoster: false, cekRenk: 'transparent', cekSarj: '', cekPct: '0%', cekDurum: '' }; const hi = ff[30], h = hi >= 0 ? ps[hi] : null, ch = ff[31] || 0, uc = hi < 0 && !isNaN(ff[28]), as = this.alanSay || [0, 0], sj = ff.length >= 113 && ff[112];
