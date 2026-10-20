@@ -210,6 +210,55 @@ Saha oyuncuları zamanın %52–59'unda sprintte (main 58dd0d2): sprintin bedeli
 
 Her tarzın **enerji profili** ölçülür: barın ortalaması, dibe vurma sıklığı, harcamanın türlere göre dağılımı (sprint, ivme, ikili, alan, şarj). Tarzların profilleri ayrışıyorsa ilke çalışıyor demektir. Hiçbir tarzda bir harcama türü bedelsiz kalmamalı.
 
+## Enerjiyi oyunun parçası yapmak: kafa ve menajer (20 Ekim 2026)
+
+Bugün enerji bir ceza: harcanır, oyuncu yavaşlar. Kafa yalnız anlık etkiyi görüyor (yorgun oyuncu şu an yavaş). Sonrasını görmüyor: "şimdi dinlenirse birazdan hızlı olur", "rakip şimdi kayarsa birazdan yorulur", "kontra için şarj lazım". Enerjinin oyunun parçası olması için bunlar kafaya girmeli, ama menajerin işini elinden almadan.
+
+### İlke (kullanıcı kararı): kafa kuralı bilir, stratejiyi menajerden alır
+
+- **Kafa bilir (kural bilgisi):** sprintin, ivmenin, ikilinin, kaymanın, şarjın bedeli; yorgun oyuncunun yavaşladığı; şarjın pası ne kadar uzağa taşıdığı; sabrın ve tempo farkının enerjiye ne yaptığı. Bunları bilmeyen oyuncu saçma görünür (yetişemeyeceği topa sprint, sönecek pas).
+- **Menajer seçer (strateji):** rakibi yormaya ne kadar önem verileceği, takımın ne zaman dinleneceği, şarjın kontra için mi biriktirileceği, presin dalga mı sürekli mi olacağı, sabırlı mı direkt mi oynanacağı. Kafa bu ağırlıkları kendisi seçmez, talimattan okur. **Talimatsız takım nötr oynar:** enerjiyi ne özellikle korur ne özellikle kullanır, rakibi yormayı hedeflemez.
+- **Oyuncu kusursuz değil:** enerji tahminleri oyuncunun okumasıyla (Görüş) hatalı. Kafa birkaç saniyelik ufku görür; maçın geri kalanını (ikinci yarıya saklamak) menajer düşünür.
+- **Maç içi yönetim:** menajer barları ekranda görür, taktiği maç içinde değiştirir (rakip yorulduysa presi artır, kendi takımın yorulduysa tempoyu düşür). Enerji, menajere maç boyunca okunacak ve tepki verilecek bir durum verir.
+- **Değer birimi (kullanıcı kararı): mekanikten başla.** Bar farkı → hız farkı (ALAN_HZ, ALAN_SPR) → topa ve pas yoluna varış farkı → değer. Ölçüm gelince katsayılar düzeltilir.
+
+### Sabırlı ile direkt oyun
+
+Sabır ve tempo talimatları zaten var; enerjiyle gerçek bir seçim olurlar:
+
+| | sabırlı, sakin, an kovalayan | tempolu, hızlı, direkt |
+|---|---|---|
+| Kendi takımı | Az sprint, top dolaşırken barlar dolar | Çok sprint, barlar çabuk düşer |
+| Rakip | Her taraf değişiminde kayar, yorulur; ama blok yerleşir | Yerleşemeden yakalanır; az kayar, az yorulur |
+| Çekirdek | Tutup dolaştırırken şarj birikir | Şarj az, uzun pas sönebilir |
+| Eksisi | Yerleşik blok, Kuyu önü alanları her pasta şarjı eritir | Top kaybında takım yorgun ve dağınık yakalanır |
+
+Kafanın bunu bilmesi gereken yer: sabırlı takım "şimdi atmayayım, rakip biraz daha kaysın, şarj biraz daha dolsun" diye bekleyebilmeli (beklemenin enerji ve şarj getirisi değere girer); direkt takım "rakip yerleşmeden, şarj az da olsa şimdi" diyebilmeli (yerleşmemiş savunmanın değeri, bekleyince kaybolur). Hangisinin ağır basacağı talimattan.
+
+### Kafanın öğreneceği mekanikler
+
+1. **Enerji muhasebesi (temel):** her seçenek için o süre içinde kimin ne kadar harcayacağının tahmini. Kafa seçeneğin sonunda savunmanın nereye kayacağını zaten hesaplıyor (sonDunya, respond); kayma mesafesi × sprint ve ivme bedeli = rakibin harcaması. Kendi takımı için de aynı (koşu mesafesi, sprint gerekip gerekmediği).
+2. **Takım arkadaşını dinlendirmek:** sprint gerektirmeyen pas, top dolaştırma, tutma barları doldurur. Değeri: birazdan o oyuncu daha hızlı (koşu, savunmaya dönüş). Bar dolumu → gelecekteki hız → değer.
+3. **Rakibe enerji harcatmak:** taraf değiştirme, uzun dolaşım, presi kırmak savunmayı uzun mesafe kaydırır. Rakibin tahmini harcaması → birazdan daha yavaş savunma → değer. "Topa sahip olmanın yıpratması" kural olmadan buradan çıkar.
+4. **Kontra için şarj deposu:** top el değişince şarj kapanın olur.
+   - Şarjlı topu kesmek hazır bir kontra demek: kesmenin değerine Çekirdekteki şarj girer.
+   - Kontra uzun pas ister, uzun pas şarj ister: kafa "bu şarjla kaç br'lik pas sönmeden gider" sorusunu kontra için uzun mesafeyle sorar (bugün tekF tipik 18 br).
+   - Ters yönü: şarjı yüksek topu kaybetmenin bedeli büyük; riskli pas topu rakibe dolu verebilir.
+5. **Savunma kararlarında bar farkı:** yorgun taşıyıcıya pres, dengesi ve barı düşük oyuncuya ikili daha değerli; kendi barı az olan savunmacı ikiliye girmek yerine oyalar.
+6. **Talimatlar ağırlıkları değiştirir:** enerji kullanımı (koru / dengeli / harca), pres (dalga / sürekli), geri koşu (her topta / ekonomik), arkaya koşu (sık / seçici), sabır ve tempo, kontra. Aynı akıl farklı disiplinlerle oynar.
+7. **Görünürlük:** kararın amacı ekranda: "dinlendiriyor", "harcatıyor", "şarj biriktiriyor", "an kovalıyor", "yerleşmeden". Maçta kafanın bunu gerçekten düşünüp düşünmediği görülür.
+
+### Sıra
+
+1. Enerji muhasebesi (kafa harcamayı tahmin eder; Görüş'le hatalı)
+2. Dinlendirme ve harcatma değerleri, **talimatlarla birlikte** (talimatsız nötr)
+3. Sabırlı / direkt: beklemenin ve yerleşmemiş savunmanın değeri
+4. Şarj deposu ve kontra
+5. Savunma kararlarında bar farkı
+6. Ekranda amaç yazıları
+
+Her adım ayrı bayrakla, kafa ve maç aynı kuralla. Doğrulama: aynı takım farklı talimatlarla farklı enerji profili ve farklı sonuç üretmeli; talimatsız takım hiçbir stratejiyi kendiliğinden seçmemeli.
+
 ## Ölçümdeki sorunlara etkisi
 
 | sorun (ölçüm) | enerjiyle |

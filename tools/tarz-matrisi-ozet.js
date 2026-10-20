@@ -1,0 +1,6 @@
+// Tarz matrisi özeti: tarz-matrisi.js çıktısını (jsonl) tarz çiftine göre toplar. Her tarz için ortalama enerji profili ve sonuç.
+const fs = require('fs'), L = fs.readFileSync(process.argv[2], 'utf8').trim().split('\n').filter(Boolean).map(s => JSON.parse(s));
+const ort = (a, f) => a.reduce((s, x) => s + f(x), 0) / (a.length || 1), y = v => (Math.round(v * 100) / 100).toFixed(2), yz = v => Math.round(v * 100) + '%';
+const cift = new Map(); for (const r of L) { const k = r.A + ' — ' + r.B; if (!cift.has(k)) cift.set(k, []); cift.get(k).push(r); }
+for (const [k, R] of cift) { console.log(`\n${k}  (${R.length} maç)`); console.log('tarz        bar   dip  sprint  sahip  gol   şut  ikili(kaz)  kazanma | harcama/oyuncu-dk: sprint ivme sürme fake ikili alan şarj · dolum');
+  for (const [ad, s] of [[R[0].A, 'a'], [R[0].B, 'b']]) { const g = f => ort(R, r => f(r[s])); console.log(`${ad.padEnd(10)} ${y(g(x => x.bar))} ${yz(g(x => x.dip)).padStart(4)} ${yz(g(x => x.sprint)).padStart(6)} ${yz(g(x => x.sahip)).padStart(6)} ${y(g(x => x.skor)).padStart(5)} ${y(g(x => x.sut)).padStart(5)} ${y(g(x => x.ikili)).padStart(6)}(${y(g(x => x.ikiliK))}) ${y(g(x => x.kazanma)).padStart(6)} | ${['sprint', 'ivme', 'surme', 'fake', 'ikili', 'alan', 'sarj'].map(h => y(g(x => x.harcama_dk[h] || 0))).join(' ')} · ${y(g(x => x.harcama_dk.dol))}`); } }
