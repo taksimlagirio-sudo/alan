@@ -88,6 +88,78 @@ Sonuçları:
 - Ölçek dikkat: bugünkü `e0` ve harcama katsayıları sabit başlangıca göre ayarlı. Şarja bağlanınca az şarjlı pasın hiç ulaşamaması gibi uç durumlar ölçülmeli. Gerekirse şarjsız vuruşa bir taban enerji kalır.
 - Görünümde (canlı ekran) Çekirdeğin tek bir halkası olur: şarj ile uçuş enerjisi aynı halka.
 
+## Sprint ve harcama çeşitleri (20 Ekim 2026)
+
+Bugün (main 58dd0d2) sprint açık-kapalı: temel hız ya da 1,25 katı; hangi işte sprint atılacağı sabit bir listeden (`ACIL`). Ölçüm (pres – topa sahip, 90 sn): saha oyuncuları zamanın **%52–59'unda sprintte**. Harcama yolları beş: sprint, ivme, ikili, alan, şarj.
+
+### Sprinti ayrıştırmak
+1. **Tempo kademeleri:** yürüyüş, tempo, sprint, patlama.
+   - **Patlama:** ilk 1–2 saniyenin sert ivmesi; çok pahalı, kısa. **Çeviklik** ucuzlatır.
+   - **Uzun sprint:** en yüksek hızı korumak; süre uzadıkça bedeli artar. **Hız** en yüksek hızı, **Enerji** sürdürmeyi belirler.
+   - Hız tek başına üstünlük olmaktan çıkar: "patlayıcı ama çabuk biten" ile "dayanıklı ama ağır kalkan" oyuncu ayrışır.
+2. **Sprint değerle seçilir, listeyle değil:** "sprint atarsam yarışı kazanıyor muyum, kazanmazsam ne kaybederim, enerji bedeli ne?" Yarış zaten kaybedilecekse ya da sprintsiz de yetişilecekse atılmaz. Hedef: sprint payı %15–25.
+3. **Göreve göre sprint şekli:**
+
+   | görev | şekil |
+   |---|---|
+   | Pres | Uzaktan sprint, yaklaşınca fren (frenin de bedeli var) |
+   | Arkaya koşu | Geç başla, pas anında patla; erken başlayan boşa yanar |
+   | Geri koşu | Uzun sprint, en pahalısı: top kaybının gerçek bedeli |
+   | Topla sürme | Ayrı bedel; Sürme ucuzlatır |
+
+### Harcama çeşitleri ve verim özellikleri
+
+| harcama | verimi belirleyen |
+|---|---|
+| Tempo ve sprint | Hız (en yüksek hız), Enerji (süre) |
+| İvme, fren, yön değiştirme | Çeviklik |
+| Geri geri savunma (jokey) | Çeviklik (normal koşudan pahalı) |
+| İkili, gövdeyle koruma | Güç |
+| Uzanma ve kayma hamlesi | Uzanma, Kesme |
+| Çalım ve fake (sert yön değişimi) | Kontrol, Çeviklik |
+| Topla sürme | Sürme |
+| Şarj aktarımı | Yükleme (var) |
+| Alan kullanımı | Alan gücü (var) |
+| Bekçi'nin dalışı ve çıkışı | Refleks, Yerleşim |
+
+**Toparlanma çeşitleri:** dururken hızlı, yürürken yavaş; top oyun dışındayken; **takım topa sahipken arkada beklemek** de toparlanmadır (topa sahip olmanın bir getirisi: kendi takımını dinlendirmek).
+
+**Menajer talimatları:** geri koşu "her topta sprint / ekonomik"; arkaya koşu "sık / seçici"; pres "dalga / sürekli". Talimat, enerjinin sprint kararındaki ağırlığını değiştirir.
+
+**Başlangıç:** az ve anlamlı türlerle (tempo kademeleri, fren, uzanma hamlesi); her biri değer birimiyle yazılır, kafadaki maç da bilir.
+
+## İkili mücadele ve enerji (20 Ekim 2026)
+
+Bugün: savunmacı kazanma ihtimali eşiği aşınca girer (`duelP`, `commitThr`), iki hamle var (omuz: Güç farkı; uzanma), sonuç tek zar, girmek bardan sabit 0,08 götürür, bar 0,1'in altındaysa girilmez. Enerji sonucu etkilemiyor.
+
+**İlke (kullanıcı kararı): top kapmak yalnız enerjiye bağlı olmaz.** Sonucu önce **beceri ve durum** belirler; enerji bunlardan biri, sınırlı bir çarpandır.
+- **Beceri:** Güç, Uzanma, Kesme (savunmacı); Kontrol, Çeviklik, Sürme (taşıyıcı); Tepki (girme zamanlaması).
+- **Durum:** yaklaşma açısı (kale tarafından mı, arkadan mı), taşıyıcının yönü ve hızı, gövdenin Çekirdekle arasında olup olmadığı, momentum, yanında ikinci bir presçi.
+- **Enerji:** iki tarafın barı arasındaki fark ihtimali **sınırlı bir payla** kaydırır (ör. en çok ±%15–20). Barı boş ama doğru açıdan, doğru anda giren becerikli savunmacı yine kazanabilir; barı dolu ama yanlış açıdan dalan kaybeder.
+- **Şans:** küçük bir pay kalır.
+
+Öneriler:
+1. **İki taraf da harcar.** Savunmacı girmek için, taşıyıcı gövdeyle korumak için.
+2. **Kısa çekişme:** ikili birkaç tik sürer, her tik iki taraf da harcar; Güç harcamanın verimidir. Çekişmenin sonucu beceri ve duruma göre ağırlıklı ilerler, bar biten taraf o anki dengesini kaybeder (sonucu tek başına belirlemez).
+3. **Hamleye göre bedel:**
+
+   | hamle | bedel ve risk | özellik |
+   |---|---|---|
+   | Omuz | Orta, kaybedince hafif sarsılma | Güç |
+   | Uzanıp dürtmek | Az bedel, az etki; bar düşükken de yapılabilir | Uzanma |
+   | Kayma | Büyük; kaçırınca uzun süre oyun dışı ve bar boşalır | Kesme, Uzanma |
+   | Jokey (oyalamak) | Sürekli küçük bedel, zaman kazandırır | Çeviklik, Tepki |
+   | Gövdeyle koruma (taşıyıcı) | Sürekli bedel | Güç |
+   | Çalım, patlama (taşıyıcı) | Ani büyük bedel | Kontrol, Çeviklik, Sürme |
+
+4. **Alan ikiliye girer:** temas anında taşıyıcı alanıyla Çekirdeği yanında tutar, savunmacı alanıyla yavaşlatıp koparmaya çalışır (alan düellosu ayakta).
+5. **Kaybetmenin bedeli:** kaybeden savunmacı bugünkü sarsılmanın üstüne enerji de kaybeder; kazanan ivmesini korur.
+6. **Çift baskı:** ikinci presçi ihtimali yükseltir, ikisi de harcar; ikisinin barı birden boşalırsa arkada boşluk (pres dalgasıyla bağ).
+7. **Karar değerle:** girme eşiğine kendi barım, rakibin barı ve kaybedersem açılacak boşluk eklenir; barı az olan çoğu zaman jokeye geçer.
+8. **Menajer:** "ikiliye gir / oyala" talimatı enerjiyle gerçek bir seçim olur (çok top kazanıp çabuk tükenmek ya da enerjiyi korumak).
+
+Dikkat: kafadaki maç aynı kuralı bilmeli; ölçülecekler ikili sayısı, kazanma oranının **beceri farkına** ve **enerji farkına** göre ayrı ayrı değişimi (enerjinin payı becerininkini geçmemeli), Güç ve Uzanma'nın etkisi.
+
 ## Ölçümdeki sorunlara etkisi
 
 | sorun (ölçüm) | enerjiyle |
