@@ -1,0 +1,1 @@
+[{"x0":24,"al":31,"alX":39,"son":"10 sn şutsuz"},{"x0":36,"son":"pas kesildi"},{"x0":5,"al":41,"alX":5,"son":"10 sn şutsuz"},{"x0":37,"son":"pas kesildi"},{"x0":17,"son":"pas kesildi"},{"x0":50,"son":"başkası aldı"},{"x0":63,"al":96,"alX":72,"son":"süre"}]
