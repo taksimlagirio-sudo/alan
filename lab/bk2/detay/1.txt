@@ -1,0 +1,1 @@
+[{"x0":16,"al":15,"alX":28,"son":"kayıp"},{"x0":73,"al":35,"alX":99,"son":"şut"},{"x0":21,"al":80,"alX":50,"son":"10 sn şutsuz"},{"x0":6,"son":"pas kesildi"}]

@@ -70,7 +70,35 @@ Gol farkları (A − Dikine): Blok 1 önde −0,30, Blok hepsi geride −0,35, K
 - Kontrada tek forvetin **sürüp şut** seçeneği: 1'e 1 ve 1'e 2'de kafa şut ihtimalini daha cesur tartmalı, ya da forvet topu tutup faul ya da destek almalı (top tutma değeri).
 - Dikine'nin panzehiri için: derin bloğun **Dikine'nin uzak şutlarına** karşı bir avantajı olmalı. Önceki ölçümde derin bloğun kaybı uzak şutlardan geliyordu.
 
+## Ek · Hızlı forvet (Hız 16)
+
+> Veriler: `lab/bk2/`. Aynı motor (d72cef5), aynı 20 tohum, aynı rakip. Tek fark: A'nın en öndeki oyuncusunun Hız'ı 16 (öbürleri 10). `ONDE_OZ=hiz:16`.
+> Kontrol kolu: aynı hızlı oyuncu, ama önde beklemiyor, blokta savunuyor (Blok, hepsi geride).
+
+| A (rakip Dikine) | G-B-M | gol A / D | şut A / D | xG A / D | xG farkı | geçiş şutu A / D | ilk pas öndekine |
+|---|---|---|---|---|---|---|---|
+| Blok, 1 önde, **hızlı forvet** | 8-5-7 | 1,45 / 1,15 | 5,7 / 7,8 | 2,34 / 3,51 | −1,17 ±0,35 \* | 0,8 / 0,8 | %57 |
+| Blok, hepsi geride, **hızlı forvet** | 7-8-5 | 0,80 / 0,75 | 5,3 / 5,5 | 2,18 / 2,06 | +0,11 ±0,34 | 0,5 / 0,9 | %38 |
+
+Gol farkları (A − Dikine): önde bekleyen +0,30 ±0,35, blokta +0,05 ±0,28.
+
+Aynı tohumlarda Hız 10'a göre değişim (eşli karşılaştırma):
+
+| | gol farkı | xG farkı | atılan gol | yenen gol |
+|---|---|---|---|---|
+| Önde bekleyen hızlı | +0,60 ±0,50 | −0,08 ±0,36 | **+0,60 ±0,37** | 0,00 ±0,36 |
+| Blokta hızlı | +0,40 ±0,41 | **+0,96 ±0,54** | +0,20 ±0,29 | −0,20 ±0,28 |
+
+Önde bekleyene giden pas (8 maç, 29 pas): **şut 6** (Hız 10'da 32 pasta 2), 10 sn şutsuz 11, kesildi 7, kayıp 4, başkası aldı 1. Topu daha ileride alıyor: x 65 (Hız 10'da 55).
+
+### Okuma
+
+- **Hızlı forvet önde beklemeyi işe yarar hale getiriyor:** atılan gol 0,85'ten 1,45'e çıkıyor, ona giden pasın şuta dönme payı %6'dan %21'e çıkıyor. Yenen gol değişmiyor. Bu kurulumla A, Dikine'ye karşı ilk kez gol farkında artıda (+0,30), ama 20 maçta kesin değil.
+- **xG başka şey söylüyor:** önde bekleyen düzende Dikine'nin xG'si yüksek kalıyor (3,51), ama bu golle karşılanmıyor (1,15). Hızlı forvetin şutları gerçekleşen golde xG'nin üstünde. 20 maçta ikisi de gürültülü.
+- **Aynı hızlı oyuncu blokta da çok değerli:** hepsi geride düzende xG farkı −0,85'ten +0,11'e çıkıyor. Hızlı oyuncu savunmada boşluğu kapatıyor, top kazanınca da çıkış veriyor.
+- Yani Hız'ın değeri iki rolde de büyük. Hangisinin daha iyi olduğu bu ölçümde ayrışmıyor: önde bekleyen daha çok gol atıyor (1,45'e 0,80) ama daha çok pozisyon veriyor; blokta oynayan maçı dengeliyor.
+- Özellik ölçümleriyle aynı sonuç: **Hız hâlâ en etkili özellik.** Tek bir oyuncunun Hız'ı 10'dan 16'ya çıkınca Dikine'ye karşı kayıp ortadan kalkıyor.
+
 ## Açık
 
-- Ölçüm aynı oyuncularla (herkes 10). Hızlı bir forvetle (Hız 16) önde bekleme farklı sonuç verebilir; ayrıca denenebilir.
 - 20 maçta gol farkları anlamlı değil. Kesin söz için 40+ maç gerekir.

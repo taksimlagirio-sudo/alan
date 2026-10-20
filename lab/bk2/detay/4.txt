@@ -1,0 +1,1 @@
+[{"x0":15,"son":"pas kesildi"},{"x0":10,"al":52,"alX":42,"son":"10 sn şutsuz"}]

@@ -1,7 +1,7 @@
 // Blok + kontra ölçümü: derin blok, bir oyuncu önde bekler (savunmaya gelmez) — Dikine'ye karşı. enerji-olc.js'in düzeni.
 // Önde bekleyen: motorun kendi ayarı tac.onde = 1 (shape.js: savunma dizilişinin en öndeki oyuncusu 'önde bekle', rakibin son adamının 3 br önünde; pres ve geri koşuya katılmaz).
 // Ek ölçüler: geçiş şutu (topu kazandıktan sonra 6 sn içinde), en öndekinin (savunma dizilişinde en ileri slot; B_onde'de önde bekleyen) ortalama yeri (top rakipteyken, f 0–100), top kazanılınca ilk pasın ona gitme payı.
-// Kullanım: node tools/blok-olc.js <motor> <a> <b> <tohum> [tik=9000]
+// Kullanım: [ONDE_OZ=hiz:16] node tools/blok-olc.js <motor> <a> <b> <tohum> [tik=9000]
 const fs = require('fs'), path = require('path'); const { V, VD, AYAR } = require('./taktik-ayar'); const [dir, aAd, bAd, sS, lS] = process.argv.slice(2), seed = +sS, LEN = +lS || 9000;
 const EK = {
   B_onde: { blok: 'Düşük', pres: 0, siddet: .3, tempo: .9, risk: .8, gecisH: 'her', kpYer: 'hic', sabir: .2, pasSurme: .3, _diz: { sav: '3-2-1', huc: '1-2-3' }, onde: 1 },
@@ -18,6 +18,7 @@ for (const t of [0, 1]) M.dizUygula(m, t, K[t].diz);
 const onde = [null, null];
 for (const t of [0, 1]) { const ps = m.ps.filter(p => p.team === t && p.role !== 'Bekçi'), o = ps.reduce((a, b) => b.slot.d > a.slot.d ? b : a); onde[t] = o; 
 }
+if (process.env.ONDE_OZ) { const [k, v] = process.env.ONDE_OZ.split(':'); onde[A].a[k] = +v; } /* A'nın en öndeki oyuncusuna tek özellik (ör. ONDE_OZ=hiz:16) */
 const R = [0, 1].map(() => ({ en: 0, n: 0, dip: 0, xg: 0, sh: 0, gecis: 0, gecisXg: 0, ondeF: 0, ondeN: 0, ilk: 0, ilkOnde: 0 }));
 const DT = []; let fl0 = m.fl, onceki = null, win = [-1e9, -1e9], ilkBek = [false, false];
 while (!m.over && m.tick < LEN) { const h0 = m.holder; M.step(m); const h = m.holder;

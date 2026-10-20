@@ -1,0 +1,1 @@
+[{"x0":5,"al":60,"alX":61,"son":"10 sn şutsuz"},{"x0":3,"al":75,"alX":69,"son":"10 sn şutsuz"},{"x0":6,"al":47,"alX":65,"son":"10 sn şutsuz"}]
