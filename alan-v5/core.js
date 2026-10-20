@@ -68,6 +68,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
   // v5 · Direk: Kuyu ağzının iki ucunda yuvarlak engel, merkezi duvar çizgisinde (x = 0,5 | W − 0,5; y = orta ± MOUTH). Bu tikteki yol (x,y)→(x+vx,y+vy) direğe duvar çizgisinden önce değerse
   // Çekirdek değdiği noktada durur ve duvar sekmesinin kuralıyla seker (hız yüzeye göre yansır, rest ile azalır, enerji wallLoss kadar düşer). Dar açıdan ağzın kenarını sıyıran yol önce direğe değer: açı eşiği yok, geometri.
   // Dönüş: null ya da [x, y, vx, vy]. Üç adım fonksiyonu (stepBall, rollTo, predict) aynı fonksiyonu çağırır.
+  // v5 · sönmüş Çekirdek de ağızdan geçince Kuyu'ya girer (sayı). Önce yalnız canlı Çekirdek giriyordu, sönmüşü ağzın içinden görünmez bir duvar gibi geri sekiyordu. Deney: self.ALAN_OLU_GOL_ESKI
   function direk(x, y, vx, vy, p) { if (DIREK <= 0) return null; const nx = x + vx; if (x > DIREK + 4 && nx > DIREK + 4 && x < W - DIREK - 4 && nx < W - DIREK - 4) return null; const L2 = vx * vx + vy * vy; if (L2 < 1e-12) return null;
     let tw = 2; if (nx <= .5 && Math.abs(vx) > 1e-9) tw = (.5 - x) / vx; else if (nx >= W - .5 && Math.abs(vx) > 1e-9) tw = (W - .5 - x) / vx;
     let bt = 2, bx = 0, by = 0; for (const px of [.5, W - .5]) for (const py of [H / 2 - MOUTH, H / 2 + MOUTH]) { const fx = x - px, fy = y - py, c0 = fx * fx + fy * fy - DIREK * DIREK; if (c0 <= 0) continue; const bb = fx * vx + fy * vy; if (bb >= 0) continue; const disc = bb * bb - L2 * c0; if (disc < 0) continue; const t = (-bb - Math.sqrt(disc)) / L2; if (t < 0 || t > 1 || t >= bt) continue; bt = t; bx = px; by = py; }
@@ -93,7 +94,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
     for (const ex of [0, W]) {
       const hit = ex === 0 ? nx <= .5 : nx >= W - .5; if (!hit) continue;
       const wx = ex === 0 ? .5 : W - .5, tt = Math.abs(b.vx) > 1e-9 ? (wx - b.x) / b.vx : 0, yy = b.y + b.vy * Math.max(0, Math.min(1, tt));
-      if (b.alive && Math.abs(yy - H / 2) <= MOUTH) { b.x = wx; b.y = yy; b.done = ex === 0 ? 'kuyu-sol' : 'kuyu-sag'; ev(b, 'kuyu', `KUYU · ${ex === 0 ? 'sol' : 'sağ'} Kuyu'ya girdi`); return b; }
+      if ((b.alive || !self.ALAN_OLU_GOL_ESKI) && Math.abs(yy - H / 2) <= MOUTH) { b.x = wx; b.y = yy; b.done = ex === 0 ? 'kuyu-sol' : 'kuyu-sag'; ev(b, 'kuyu', `KUYU · ${ex === 0 ? 'sol' : 'sağ'} Kuyu'ya girdi`); return b; }
       nx = ex === 0 ? 1 - nx : 2 * W - 1 - nx; b.vx = -b.vx * p.rest; b.vy *= p.rest; b.walls++; if (b.alive) b.e = Math.max(0, b.e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); ev(b, 'kenar', `Kenardan sekti (${ex === 0 ? 'sol' : 'sağ'} uç, Kuyu'nun dışı)`);
     }
     if (ny < .5 || ny > H - .5) { ny = ny < .5 ? 1 - ny : 2 * H - 1 - ny; b.vy = -b.vy * p.rest; b.vx *= p.rest; b.walls++; if (b.alive) b.e = Math.max(0, b.e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); ev(b, 'kenar', `Kenardan sekti (${ny < H / 2 ? 'üst' : 'alt'})`); }
@@ -116,10 +117,10 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
       let nx = x + vx, ny = y + vy, done = false;
       const dk = direk(x, y, vx, vy, p); if (dk) { nx = dk[0]; ny = dk[1]; vx = dk[2]; vy = dk[3]; if (alive) e = Math.max(0, e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); } else {
       if (nx <= .5) { const wx = .5, tt = Math.abs(vx) > 1e-9 ? (wx - x) / vx : 0, yy = y + vy * Math.max(0, Math.min(1, tt));
-        if (alive && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = true; }
+        if ((alive || !self.ALAN_OLU_GOL_ESKI) && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = true; }
         else { nx = 1 - nx; vx = -vx * p.rest; vy *= p.rest; if (alive) e = Math.max(0, e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); } }
       if (!done && nx >= W - .5) { const wx = W - .5, tt = Math.abs(vx) > 1e-9 ? (wx - x) / vx : 0, yy = y + vy * Math.max(0, Math.min(1, tt));
-        if (alive && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = true; }
+        if ((alive || !self.ALAN_OLU_GOL_ESKI) && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = true; }
         else { nx = 2 * W - 1 - nx; vx = -vx * p.rest; vy *= p.rest; if (alive) e = Math.max(0, e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); } } }
       if (!done) {
         if (ny < .5 || ny > H - .5) { ny = ny < .5 ? 1 - ny : 2 * H - 1 - ny; vy = -vy * p.rest; vx *= p.rest; if (alive) e = Math.max(0, e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); }
@@ -147,10 +148,10 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
       let nx = x + vx, ny = y + vy;
       const dk = direk(x, y, vx, vy, p); if (dk) { nx = dk[0]; ny = dk[1]; vx = dk[2]; vy = dk[3]; walls++; b.direk = (b.direk || 0) + 1; if (alive) e = Math.max(0, e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); b.log.push({ t, k: 'direk', txt: 'Direkten sekti' }); } else {
       if (nx <= .5) { const wx = .5, tt = Math.abs(vx) > 1e-9 ? (wx - x) / vx : 0, yy = y + vy * Math.max(0, Math.min(1, tt));
-        if (alive && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = 'kuyu-sol'; b.log.push({ t, k: 'kuyu', txt: `KUYU · sol Kuyu'ya girdi` }); }
+        if ((alive || !self.ALAN_OLU_GOL_ESKI) && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = 'kuyu-sol'; b.log.push({ t, k: 'kuyu', txt: `KUYU · sol Kuyu'ya girdi` }); }
         else { nx = 1 - nx; vx = -vx * p.rest; vy *= p.rest; walls++; if (alive) e = Math.max(0, e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); b.log.push({ t, k: 'kenar', txt: `Kenardan sekti (sol uç, Kuyu'nun dışı)` }); } }
       if (!done && nx >= W - .5) { const wx = W - .5, tt = Math.abs(vx) > 1e-9 ? (wx - x) / vx : 0, yy = y + vy * Math.max(0, Math.min(1, tt));
-        if (alive && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = 'kuyu-sag'; b.log.push({ t, k: 'kuyu', txt: `KUYU · sağ Kuyu'ya girdi` }); }
+        if ((alive || !self.ALAN_OLU_GOL_ESKI) && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = 'kuyu-sag'; b.log.push({ t, k: 'kuyu', txt: `KUYU · sağ Kuyu'ya girdi` }); }
         else { nx = 2 * W - 1 - nx; vx = -vx * p.rest; vy *= p.rest; walls++; if (alive) e = Math.max(0, e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); b.log.push({ t, k: 'kenar', txt: `Kenardan sekti (sağ uç, Kuyu'nun dışı)` }); } } }
       if (!done) {
         if (ny < .5 || ny > H - .5) { ny = ny < .5 ? 1 - ny : 2 * H - 1 - ny; vy = -vy * p.rest; vx *= p.rest; walls++; if (alive) e = Math.max(0, e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); b.log.push({ t, k: 'kenar', txt: `Kenardan sekti (${ny < H / 2 ? 'üst' : 'alt'})` }); }
