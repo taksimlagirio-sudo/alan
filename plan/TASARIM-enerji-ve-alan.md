@@ -19,7 +19,7 @@ Plandaki "kondisyon olmayacak" kararıyla çelişmez (o madde buna göre güncel
 |---|---|
 | Sprint, sert ivmelenme ve yön değişimi | Yürümek, yerinde durmak |
 | Pres atağı, ikili mücadele | Top oyun dışındayken |
-| Alanı etkin kullanmak (aşağıda) | (Belki) takım arkadaşının yanında, kendi bloğunun içinde durmak |
+| Alanı etkin kullanmak (aşağıda) | |
 | Çekirdeğe şarj aktarmak | |
 
 Ayarlanacak iki sayı ölçümle oturur:
@@ -122,7 +122,7 @@ Bugün (main 58dd0d2) sprint açık-kapalı: temel hız ya da 1,25 katı; hangi 
 | Alan kullanımı | Alan gücü (var) |
 | Bekçi'nin dalışı ve çıkışı | Refleks, Yerleşim |
 
-**Toparlanma çeşitleri:** dururken hızlı, yürürken yavaş; top oyun dışındayken; **takım topa sahipken arkada beklemek** de toparlanmadır (topa sahip olmanın bir getirisi: kendi takımını dinlendirmek).
+**Toparlanma:** yalnız bedene bağlı (aşağıda "Enerjinin dinamiği"). Takımı topa sahipken arkada bekleyen oyuncunun barının dolması bir kural değil, az koşmasının sonucudur.
 
 **Menajer talimatları:** geri koşu "her topta sprint / ekonomik"; arkaya koşu "sık / seçici"; pres "dalga / sürekli". Talimat, enerjinin sprint kararındaki ağırlığını değiştirir.
 
@@ -160,6 +160,56 @@ Bugün: savunmacı kazanma ihtimali eşiği aşınca girer (`duelP`, `commitThr`
 
 Dikkat: kafadaki maç aynı kuralı bilmeli; ölçülecekler ikili sayısı, kazanma oranının **beceri farkına** ve **enerji farkına** göre ayrı ayrı değişimi (enerjinin payı becerininkini geçmemeli), Güç ve Uzanma'nın etkisi.
 
+## Enerjinin dinamiği (20 Ekim 2026)
+
+### İlke (kullanıcı kararı)
+
+**Enerji yalnız oyuncunun kendi bedenine bakar.** Dolum ve harcama için taktiğe ya da sahadaki duruma bağlı kural yazılmaz ("topa sahipken hızlı dolar", "kompakt blokta dinlenir", "baskı altında yavaş dolar" gibi kurallar yok). Her taktiğin artısı ve eksisi **mekanikten kendiliğinden çıkar.**
+
+Amaç: taktiksel durumları çeşitlendirmek ve "her durumda işe yarayan" hatalı taktiklerin önünü kesmek. Bir taktik bedelsiz çalışıyorsa onu yasaklayan bir kural eklenmez; o taktiğin **hangi harcamayı bedelsiz bıraktığı** bulunur ve o harcama bedellendirilir.
+
+### Beden kuralları
+
+- **Harcatan:** oyuncunun ne yaptığı. Hız, ivme, fren ve dönüş, temas (ikili, gövdeyle koruma), alan kullanımı, şarj.
+- **Dolduran:** yapmadığı. Yavaş hareket ya da durmak.
+- **İki depo:**
+  - **Patlama deposu:** küçük, saniyeler içinde dolar. İlk 1–2 saniyenin sert ivmesi buradan.
+  - **Ana bar:** büyük, daha yavaş dolar. Uzun sprint ve sürekli işler buradan.
+- **Nefes gecikmesi:** harcamadan hemen sonra dolum başlamaz; kısa bir bekleme.
+- **Dipten dönüş yavaş:** bar çok düşükken dolum yavaşlar, üst yarıda hızlı. Barı tamamen boşaltmak pahalıdır.
+- **Kısa süreli yük:** son 10–15 saniyede art arda yapılan sprintler bir sonrakini pahalılaştırır; birkaç saniyede silinir, maç boyunca birikmez (yorgunluk değil).
+
+### Özellikler: üç katman
+
+| katman | özellik |
+|---|---|
+| Kapasite (barın büyüklüğü) | **Dayanıklılık** (yeni) |
+| Dolum (hız, nefes gecikmesi, dipten dönüş) | **Toparlanma** (yeni) |
+| Harcamanın verimi | Her işin kendi özelliği (yukarıdaki tablo: Çeviklik, Güç, Sürme, Yükleme, Alan gücü…) |
+
+Bugünkü tek "Enerji" özelliği (kapasite ve dolumu birlikte büyütüyor: harcama ÷ S, dolum × S²) ikiye ayrılır. Ortaya çıkan oyuncu tipleri:
+- Kapasitesi büyük, toparlanması yavaş: uzun koşar, bir kez boşalırsa uzun süre toparlanamaz.
+- Kapasitesi küçük, toparlanması hızlı: kısa patlar, çabuk döner; pres dalgasına uygun.
+
+### Taktiğin artısı ve eksisi buradan çıkar (kural değil, sonuç)
+
+| taktik | mekanikten çıkan |
+|---|---|
+| Pres | Çok sprint ve fren: bar düşer; pres kırılınca presçiler boştadır |
+| Kompakt blok | Kayarken az mesafe: az harcar |
+| Geniş oyun, taraf değiştirme | Savunma her çevirmede uzun mesafe kayar: barlar düşer (topa sahip olmanın yıpratması) |
+| Topa sahip, yavaş dolaşım | Oyuncular az koşar: barlar dolar |
+| Kontra | Kısa sürede uzun sprintler: patlama deposu ve ana bar birlikte boşalır; başarısız kontradan dönüş yavaş |
+| Kuyu önü bloğu | Her pasta alan kullanılır: top dolaştıkça barlar erir |
+
+### Bugünkü açık (ölçüm)
+
+Saha oyuncuları zamanın %52–59'unda sprintte (main 58dd0d2): sprintin bedeli dolumla hemen kapanıyor. Enerji 10'da tam sprint dolu barı ~6 sn'de bitiriyor; durarak boş bar ~2,3 sn'de, yürüyerek ~6 sn'de doluyor. Çözüm sprinti yasaklamak değil: nefes gecikmesi, dipten dönüş ve kısa süreli yükle sprintin bedeli doğal olarak büyür.
+
+### Doğrulama
+
+Her tarzın **enerji profili** ölçülür: barın ortalaması, dibe vurma sıklığı, harcamanın türlere göre dağılımı (sprint, ivme, ikili, alan, şarj). Tarzların profilleri ayrışıyorsa ilke çalışıyor demektir. Hiçbir tarzda bir harcama türü bedelsiz kalmamalı.
+
 ## Ölçümdeki sorunlara etkisi
 
 | sorun (ölçüm) | enerjiyle |
@@ -181,7 +231,8 @@ Alan menajere bırakılmaz; **enerji yönetimi bırakılır** (kullanıcı karar
 
 | özellik | enerjideki işi |
 |---|---|
-| **Dayanıklılık** (yeni) | Barın büyüklüğü ve dolma hızı |
+| **Dayanıklılık** (yeni) | Barın büyüklüğü (kapasite) |
+| **Toparlanma** (yeni) | Barın dolma hızı, nefes gecikmesi, dipten dönüş |
 | Yükleme | Enerjiyi Çekirdeğe aktarma verimi |
 | Alan gücü | Harcanan enerji başına alan etkisi |
 | Alan hakimiyeti (Bekçi) | Kuyu alanında şutu yavaşlatma ve sektirme |
@@ -219,7 +270,7 @@ Kabul ölçütü: Kuyu önü bloğu, topa sahip ve geniş oynayan takıma karş�
 
 ## Açık sorular
 
-- Dayanıklılık yeni özellik mi, yoksa Güç'ten mi türesin?
+- Patlama deposunu Çeviklik mi belirlesin, yoksa ayrı bir özellik mi?
 - Şarj aktarımı otomatik mi (topu tutan hep aktarır), yoksa bir karar mı ("şimdi şarj et")?
 - Üst üste binen alanların azalan getirisi ne olsun (yarım, çeyrek mi)?
 - Rakibin barı görünür mü (menajere ve oyuncuya)?
