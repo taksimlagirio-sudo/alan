@@ -35,8 +35,13 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
     deadMax: .06,   // sönme freninin tavanı
     rest: .72,      // kenar sekmesinde kalan hız oranı
     wallLoss: .08,  // kenara çarpınca kaybedilen enerji
-    e0: 1
+    e0: 1,
+    tekS: .5,       // v5 · tek enerji: uçuştaki kayıplar şarj biriminde (eski e0 = 1 ölçeğinin yarısı; şarj 0,5 eskisi gibi uçar)
+    tekGain: .025,  // v5 · tek enerji: takım arkadaşının hızlandıran alanından geçerken şarj kazancı (birim × alan gücü)
+    tekTaban: .2    // v5 · tek enerji: şarjsız vuruşun da en az bu kadar enerjisi var (vuruşun kendisi)
   };
+  const tekS0 = () => P.tekS; /* temas kodunda P yerel bir ihtimal: fizik parametresi buradan */
+  const tekU = () => !self.ALAN_TEK_ENERJI_ESKI && !self.ALAN_ENERJI_ESKI; /* v5 · Çekirdeğin tek enerjisi (enerji planı, 20 Ekim 2026): şarj ile uçuş enerjisi aynı sayı. Vuruşta şarjdan (en az tekTaban) başlar; yol, rakip alanı (yavaşlatan), duvar, direk ve sekme şarjdan düşer; takım arkadaşının hızlandıran alanı şarj ekler; sıfırlanınca söner. Kalan şarj alıcıya geçer. Deney: self.ALAN_TEK_ENERJI_ESKI */
   function infl(p, x, y) {
     const dx = x - p.x, dy = y - p.y, R = p.R || 8; if (dx * dx + dy * dy > R * R * 9) return 0; let q;
     if (p.cone) { const al = dx * p.fx + dy * p.fy, pe = -dx * p.fy + dy * p.fx, a = al > 0 ? al / (R * 1.4) : al / (R * .6); q = a * a + (pe / R) ** 2; }
@@ -69,7 +74,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
   function chgMul(ch, p) { p = p || P; return 1 - p.chgV / 2 + p.chgV * ch; }
   // v5 · Çekirdek sahanın dışında olamaz: duvar çizgisinin (0,5) arkasına konan Çekirdek (çizgideki taşıyıcının gövdesinin duvar yanı, gövdeden sekme, gövdenin itmesi) çizgiye geri alınır. Kuyu denetimi Çekirdeğin içeriden geldiğini varsayar; arkadan gelen Çekirdek ağızdan geçmiş sayılıyordu (zip51, Kartal 0–1)
   function sahaIci(b) { const e = 1e-3; if (b.x < .5 + e) b.x = .5 + e; else if (b.x > W - .5 - e) b.x = W - .5 - e; if (b.y < .5 + e) b.y = .5 + e; else if (b.y > H - .5 - e) b.y = H - .5 - e; return b; }
-  function makeBall(o) { return sahaIci(Object.assign({ x: W / 2, y: H / 2, vx: 0, vy: 0, e: P.e0, ch: .5, team: 0, alive: true, dead: 0, t: 0, dist: 0, walls: 0, done: null, log: [] }, o)); }
+  function makeBall(o) { if (tekU() && o && o.e == null) { const c0 = Math.max(P.tekTaban, o.ch ?? .5); o = { ...o, e: c0, ch: c0 }; } return sahaIci(Object.assign({ x: W / 2, y: H / 2, vx: 0, vy: 0, e: P.e0, ch: .5, team: 0, alive: true, dead: 0, t: 0, dist: 0, walls: 0, done: null, log: [] }, o)); }
   function ev(b, k, txt) { b.log.push({ t: b.t, k, txt }); }
   function stepBall(b, src, p) {
     p = p || P; if (b.done) return b;
@@ -77,19 +82,19 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
     const k = K(src, b.x, b.y, b.team), sp0 = hyp(b.vx, b.vy), res = 1 - p.pierce * b.ch;
     let drag = p.fric;
     if (k < 0) drag += -k * p.oppDrag * res; else drag *= 1 - p.ownFlow * k;
-    if (b.alive) { b.e -= sp0 * p.attn + (k < 0 ? -k * sp0 * p.drain * res : 0); if (b.e <= 0) { b.e = 0; b.alive = false; b.dead = 0; ev(b, 'son', 'Çekirdek söndü · boşta'); } }
+    const TU = tekU(); if (b.alive) { b.e -= (sp0 * p.attn + (k < 0 ? -k * sp0 * p.drain * res : 0)) * (TU ? (p.tekS ?? P.tekS) : 1); if (TU && k > 0) b.e = Math.min(1, b.e + k * sp0 * (p.tekGain ?? P.tekGain)); if (b.e <= 0) { b.e = 0; b.alive = false; b.dead = 0; ev(b, 'son', 'Çekirdek söndü · boşta'); } if (TU) b.ch = b.alive ? b.e : 0; }
     else { b.dead++; drag += Math.min(p.deadMax, p.deadRamp * b.dead); }
     const f = 1 - drag; b.vx *= f; b.vy *= f;
     const s1 = hyp(b.vx, b.vy); if (s1 > 0) { const r = Math.max(0, s1 - p.roll) / s1; b.vx *= r; b.vy *= r; }
     let nx = b.x + b.vx, ny = b.y + b.vy;
-    const dk = direk(b.x, b.y, b.vx, b.vy, p); if (dk) { nx = dk[0]; ny = dk[1]; b.vx = dk[2]; b.vy = dk[3]; b.walls++; b.direk = (b.direk || 0) + 1; if (b.alive) b.e = Math.max(0, b.e - p.wallLoss); ev(b, 'direk', 'Direkten sekti'); } else
+    const dk = direk(b.x, b.y, b.vx, b.vy, p); if (dk) { nx = dk[0]; ny = dk[1]; b.vx = dk[2]; b.vy = dk[3]; b.walls++; b.direk = (b.direk || 0) + 1; if (b.alive) b.e = Math.max(0, b.e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); ev(b, 'direk', 'Direkten sekti'); } else
     for (const ex of [0, W]) {
       const hit = ex === 0 ? nx <= .5 : nx >= W - .5; if (!hit) continue;
       const wx = ex === 0 ? .5 : W - .5, tt = Math.abs(b.vx) > 1e-9 ? (wx - b.x) / b.vx : 0, yy = b.y + b.vy * Math.max(0, Math.min(1, tt));
       if (b.alive && Math.abs(yy - H / 2) <= MOUTH) { b.x = wx; b.y = yy; b.done = ex === 0 ? 'kuyu-sol' : 'kuyu-sag'; ev(b, 'kuyu', `KUYU · ${ex === 0 ? 'sol' : 'sağ'} Kuyu'ya girdi`); return b; }
-      nx = ex === 0 ? 1 - nx : 2 * W - 1 - nx; b.vx = -b.vx * p.rest; b.vy *= p.rest; b.walls++; if (b.alive) b.e = Math.max(0, b.e - p.wallLoss); ev(b, 'kenar', `Kenardan sekti (${ex === 0 ? 'sol' : 'sağ'} uç, Kuyu'nun dışı)`);
+      nx = ex === 0 ? 1 - nx : 2 * W - 1 - nx; b.vx = -b.vx * p.rest; b.vy *= p.rest; b.walls++; if (b.alive) b.e = Math.max(0, b.e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); ev(b, 'kenar', `Kenardan sekti (${ex === 0 ? 'sol' : 'sağ'} uç, Kuyu'nun dışı)`);
     }
-    if (ny < .5 || ny > H - .5) { ny = ny < .5 ? 1 - ny : 2 * H - 1 - ny; b.vy = -b.vy * p.rest; b.vx *= p.rest; b.walls++; if (b.alive) b.e = Math.max(0, b.e - p.wallLoss); ev(b, 'kenar', `Kenardan sekti (${ny < H / 2 ? 'üst' : 'alt'})`); }
+    if (ny < .5 || ny > H - .5) { ny = ny < .5 ? 1 - ny : 2 * H - 1 - ny; b.vy = -b.vy * p.rest; b.vx *= p.rest; b.walls++; if (b.alive) b.e = Math.max(0, b.e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); ev(b, 'kenar', `Kenardan sekti (${ny < H / 2 ? 'üst' : 'alt'})`); }
     b.dist += hyp(nx - b.x, ny - b.y); b.x = nx; b.y = ny; b.t++; if (b.walls !== b._w0 || (b.defl || 0) !== b._d0) { b.tp = 0; b._w0 = b.walls; b._d0 = b.defl || 0; } else b.tp = (b.tp ?? b.t - 1) + 1; /* yolun yaşı: duvara çarpınca ya da sekince sıfırlanır */
     if (hyp(b.vx, b.vy) < .015) { b.vx = 0; b.vy = 0; b.done = 'durdu'; ev(b, 'dur', b.alive ? 'Durdu' : 'Sönmüş hâlde durdu'); }
     return b;
@@ -97,25 +102,25 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
   // Hız arama için aynı fizik adımı, nesnesiz: stepBall'un birebir aynı işlemleri aynı sırayla, yerel değişkenlerle (kayıt ve mesafe sayacı tutulmaz, sonucu etkilemezler).
   // Çekirdek (hx,hy)'den L uzaklığa vardığında hızını döndürür; varamazsa -1. Pas hızı aramasında binlerce kez çağrılır.
   function rollTo(x, y, vx, vy, team, ch, src, hx, hy, L, maxT) {
-    const p = P; let e = p.e0, alive = true, dead = 0;
+    const p = P, TU = tekU(); let e = TU ? Math.max((p.tekTaban ?? P.tekTaban), ch) : p.e0, alive = true, dead = 0; if (TU) ch = e;
     for (let t = 0; t < maxT; t++) {
       const k = K(src, x, y, team), sp0 = hyp(vx, vy), res = 1 - p.pierce * ch;
       let drag = p.fric;
       if (k < 0) drag += -k * p.oppDrag * res; else drag *= 1 - p.ownFlow * k;
-      if (alive) { e -= sp0 * p.attn + (k < 0 ? -k * sp0 * p.drain * res : 0); if (e <= 0) { e = 0; alive = false; dead = 0; } }
+      if (alive) { e -= (sp0 * p.attn + (k < 0 ? -k * sp0 * p.drain * res : 0)) * (TU ? (p.tekS ?? P.tekS) : 1); if (TU && k > 0) e = Math.min(1, e + k * sp0 * (p.tekGain ?? P.tekGain)); if (e <= 0) { e = 0; alive = false; dead = 0; } if (TU) ch = alive ? e : 0; }
       else { dead++; drag += Math.min(p.deadMax, p.deadRamp * dead); }
       const f = 1 - drag; vx *= f; vy *= f;
       const s1 = hyp(vx, vy); if (s1 > 0) { const r = Math.max(0, s1 - p.roll) / s1; vx *= r; vy *= r; }
       let nx = x + vx, ny = y + vy, done = false;
-      const dk = direk(x, y, vx, vy, p); if (dk) { nx = dk[0]; ny = dk[1]; vx = dk[2]; vy = dk[3]; if (alive) e = Math.max(0, e - p.wallLoss); } else {
+      const dk = direk(x, y, vx, vy, p); if (dk) { nx = dk[0]; ny = dk[1]; vx = dk[2]; vy = dk[3]; if (alive) e = Math.max(0, e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); } else {
       if (nx <= .5) { const wx = .5, tt = Math.abs(vx) > 1e-9 ? (wx - x) / vx : 0, yy = y + vy * Math.max(0, Math.min(1, tt));
         if (alive && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = true; }
-        else { nx = 1 - nx; vx = -vx * p.rest; vy *= p.rest; if (alive) e = Math.max(0, e - p.wallLoss); } }
+        else { nx = 1 - nx; vx = -vx * p.rest; vy *= p.rest; if (alive) e = Math.max(0, e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); } }
       if (!done && nx >= W - .5) { const wx = W - .5, tt = Math.abs(vx) > 1e-9 ? (wx - x) / vx : 0, yy = y + vy * Math.max(0, Math.min(1, tt));
         if (alive && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = true; }
-        else { nx = 2 * W - 1 - nx; vx = -vx * p.rest; vy *= p.rest; if (alive) e = Math.max(0, e - p.wallLoss); } } }
+        else { nx = 2 * W - 1 - nx; vx = -vx * p.rest; vy *= p.rest; if (alive) e = Math.max(0, e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); } } }
       if (!done) {
-        if (ny < .5 || ny > H - .5) { ny = ny < .5 ? 1 - ny : 2 * H - 1 - ny; vy = -vy * p.rest; vx *= p.rest; if (alive) e = Math.max(0, e - p.wallLoss); }
+        if (ny < .5 || ny > H - .5) { ny = ny < .5 ? 1 - ny : 2 * H - 1 - ny; vy = -vy * p.rest; vx *= p.rest; if (alive) e = Math.max(0, e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); }
         x = nx; y = ny;
         if (hyp(vx, vy) < .015) { vx = 0; vy = 0; done = true; }
       }
@@ -127,32 +132,32 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
   function clone(b) { return Object.assign({}, b, { log: [] }); }
   // Yörünge tahmini: stepBall'un birebir aynı işlemleri yerel değişkenlerle (rollTo ile aynı gövde); sonunda Çekirdeğin son durumu ve olay kaydı kopyaya yazılır.
   function predict(b0, src, p, maxT) {
-    src = pack(src); p = p || P; const b = clone(b0), pts = [{ x: b.x, y: b.y }], n = maxT || 900, team = b.team, ch = b.ch;
+    src = pack(src); p = p || P; const b = clone(b0), pts = [{ x: b.x, y: b.y }], n = maxT || 900, team = b.team, TU = tekU(); let ch = b.ch;
     let x = b.x, y = b.y, vx = b.vx, vy = b.vy, e = b.e, alive = b.alive, dead = b.dead, t = b.t, dist = b.dist, walls = b.walls, done = b.done;
     for (let i = 0; i < n && !done; i++) {
       const k = K(src, x, y, team), sp0 = hyp(vx, vy), res = 1 - p.pierce * ch;
       let drag = p.fric;
       if (k < 0) drag += -k * p.oppDrag * res; else drag *= 1 - p.ownFlow * k;
-      if (alive) { e -= sp0 * p.attn + (k < 0 ? -k * sp0 * p.drain * res : 0); if (e <= 0) { e = 0; alive = false; dead = 0; b.log.push({ t, k: 'son', txt: 'Çekirdek söndü · boşta' }); } }
+      if (alive) { e -= (sp0 * p.attn + (k < 0 ? -k * sp0 * p.drain * res : 0)) * (TU ? (p.tekS ?? P.tekS) : 1); if (TU && k > 0) e = Math.min(1, e + k * sp0 * (p.tekGain ?? P.tekGain)); if (e <= 0) { e = 0; alive = false; dead = 0; b.log.push({ t, k: 'son', txt: 'Çekirdek söndü · boşta' }); } if (TU) ch = alive ? e : 0; }
       else { dead++; drag += Math.min(p.deadMax, p.deadRamp * dead); }
       const f = 1 - drag; vx *= f; vy *= f;
       const s1 = hyp(vx, vy); if (s1 > 0) { const r = Math.max(0, s1 - p.roll) / s1; vx *= r; vy *= r; }
       let nx = x + vx, ny = y + vy;
-      const dk = direk(x, y, vx, vy, p); if (dk) { nx = dk[0]; ny = dk[1]; vx = dk[2]; vy = dk[3]; walls++; b.direk = (b.direk || 0) + 1; if (alive) e = Math.max(0, e - p.wallLoss); b.log.push({ t, k: 'direk', txt: 'Direkten sekti' }); } else {
+      const dk = direk(x, y, vx, vy, p); if (dk) { nx = dk[0]; ny = dk[1]; vx = dk[2]; vy = dk[3]; walls++; b.direk = (b.direk || 0) + 1; if (alive) e = Math.max(0, e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); b.log.push({ t, k: 'direk', txt: 'Direkten sekti' }); } else {
       if (nx <= .5) { const wx = .5, tt = Math.abs(vx) > 1e-9 ? (wx - x) / vx : 0, yy = y + vy * Math.max(0, Math.min(1, tt));
         if (alive && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = 'kuyu-sol'; b.log.push({ t, k: 'kuyu', txt: `KUYU · sol Kuyu'ya girdi` }); }
-        else { nx = 1 - nx; vx = -vx * p.rest; vy *= p.rest; walls++; if (alive) e = Math.max(0, e - p.wallLoss); b.log.push({ t, k: 'kenar', txt: `Kenardan sekti (sol uç, Kuyu'nun dışı)` }); } }
+        else { nx = 1 - nx; vx = -vx * p.rest; vy *= p.rest; walls++; if (alive) e = Math.max(0, e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); b.log.push({ t, k: 'kenar', txt: `Kenardan sekti (sol uç, Kuyu'nun dışı)` }); } }
       if (!done && nx >= W - .5) { const wx = W - .5, tt = Math.abs(vx) > 1e-9 ? (wx - x) / vx : 0, yy = y + vy * Math.max(0, Math.min(1, tt));
         if (alive && Math.abs(yy - H / 2) <= MOUTH) { x = wx; y = yy; done = 'kuyu-sag'; b.log.push({ t, k: 'kuyu', txt: `KUYU · sağ Kuyu'ya girdi` }); }
-        else { nx = 2 * W - 1 - nx; vx = -vx * p.rest; vy *= p.rest; walls++; if (alive) e = Math.max(0, e - p.wallLoss); b.log.push({ t, k: 'kenar', txt: `Kenardan sekti (sağ uç, Kuyu'nun dışı)` }); } } }
+        else { nx = 2 * W - 1 - nx; vx = -vx * p.rest; vy *= p.rest; walls++; if (alive) e = Math.max(0, e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); b.log.push({ t, k: 'kenar', txt: `Kenardan sekti (sağ uç, Kuyu'nun dışı)` }); } } }
       if (!done) {
-        if (ny < .5 || ny > H - .5) { ny = ny < .5 ? 1 - ny : 2 * H - 1 - ny; vy = -vy * p.rest; vx *= p.rest; walls++; if (alive) e = Math.max(0, e - p.wallLoss); b.log.push({ t, k: 'kenar', txt: `Kenardan sekti (${ny < H / 2 ? 'üst' : 'alt'})` }); }
+        if (ny < .5 || ny > H - .5) { ny = ny < .5 ? 1 - ny : 2 * H - 1 - ny; vy = -vy * p.rest; vx *= p.rest; walls++; if (alive) e = Math.max(0, e - p.wallLoss * (tekU() ? (p.tekS ?? P.tekS) : 1)); b.log.push({ t, k: 'kenar', txt: `Kenardan sekti (${ny < H / 2 ? 'üst' : 'alt'})` }); }
         dist += hyp(nx - x, ny - y); x = nx; y = ny; t++;
         if (hyp(vx, vy) < .015) { vx = 0; vy = 0; done = 'durdu'; b.log.push({ t, k: 'dur', txt: alive ? 'Durdu' : 'Sönmüş hâlde durdu' }); }
       }
       pts.push({ x, y, e, sp: hyp(vx, vy) });
     }
-    b.x = x; b.y = y; b.vx = vx; b.vy = vy; b.e = e; b.alive = alive; b.dead = dead; b.t = t; b.dist = dist; b.walls = walls; b.done = done;
+    if (TU) b.ch = ch; b.x = x; b.y = y; b.vx = vx; b.vy = vy; b.e = e; b.alive = alive; b.dead = dead; b.t = t; b.dist = dist; b.walls = walls; b.done = done;
     return { pts, end: b };
   }
   // Hedefe pas: hedef noktaya `arrive` hızıyla ulaşan başlangıç hızını bul (alanlar dahil, düz hat varsayımı).
@@ -220,7 +225,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
     else { const tt = sl > 0 ? Math.max(0, Math.min(1, ((best.x - ox) * sx + (best.y - oy) * sy) / sl)) : 1, cx = ox + sx * tt, cy = oy + sy * tt; let nx = cx - best.x, ny = cy - best.y, nl = hyp(nx, ny); if (nl < 1e-3) { nx = -T.vrx; ny = -T.vry; nl = hyp(nx, ny) || 1; } nx /= nl; ny /= nl;
       const left = Math.max(0, T.vr - Math.max(0, capE)), ux = T.vrx / (T.vr || 1), uy = T.vry / (T.vr || 1), dn = ux * nx + uy * ny; let ox2 = ux, oy2 = uy; if (dn < 0 && !(mateT && self.ALAN_KACIR)) { ox2 = ux - (1 + q.rest2) * dn * nx; oy2 = uy - (1 + q.rest2) * dn * ny; } /* arkadaşın kontrol edemediği Çekirdek gövdeden sekmez: söndürülemeyen hız gelişi yönünde sürer (top ayaktan kaçar), oyuncu onu Tutuş'u kadar hedefine çevirir */ const ol = hyp(ox2, oy2) || 1; ox2 /= ol; oy2 /= ol;
       const bkP = best.role === 'Bekçi' && !mateT, gxA = best.team === 0 ? GW : 0; let bkx = null, bky = null; if (bkP && !self.ALAN_KALECI_ESKI) { const own = best.team === 0 ? 0 : GW, out = own === 0 ? 1 : -1, Lp = Math.max(3, Math.min(14, Math.max(left, .8 + (T.sk - 10) * .04) * 15)); let bs = -1e9; for (let a = -80; a <= 80; a += 10) { const r = a * Math.PI / 180, dx = Math.cos(r) * out, dy = Math.sin(r), px = Math.max(1, Math.min(GW - 1, best.x + dx * Lp)), py = Math.max(1, Math.min(GH - 1, best.y + dy * Lp)); let od = 12; for (const o of src) { if (o.team === best.team || o.noTouch) continue; od = Math.min(od, hyp(o.x - px, o.y - py)); } const sc = od - (Math.abs(px - own) < 22 && Math.abs(py - GCY) < 12 ? 6 : 0) - (self.ALAN_CELME_YON_ESKI ? 0 : .01 * Math.acos(Math.max(-1, Math.min(1, dx * ox2 + dy * oy2)))); if (sc > bs) { bs = sc; bkx = dx; bky = dy; } } } /* v5 · eşit yönlerden topun kendi sekme yönüne en yakını (en az çevirdiği): önce eşitlikte döngüdeki ilk yön (−80°) seçiliyor, çelme hep y = 0 kenarına gidiyordu. Deney: self.ALAN_CELME_YON_ESKI */ /* v5 · kaleci çelmeyi rakipten uzağa yöneltir: kalesinden dışarı 17 yön (−80°…+80°) dener, topun düşeceği noktaya en yakın rakibin uzaklığı (en çok 12) − kale önü cezası (6); en iyi yön hedeflenir. Ne kadar çevirebildiği ve isabeti Hakimiyet'le (st, ns) */ const ix = mateT && best.tx != null ? best.tx - best.x : bkP ? (bkx != null ? bkx : (gxA - best.x) * .35) : gxA - best.x, iy = mateT && best.ty != null ? best.ty - best.y : bkP ? (bky != null ? bky : (best.y >= GCY ? 1 : -1) * 25) : GCY - best.y, il = hyp(ix, iy) || 1, st = Math.min(1, q.steer * (bkP ? q.bekSteer : 1) * (bkP && !self.ALAN_BEK_CELME_ESKI ? 1 : Math.max(0, Math.min(1, capE / T.vr))) * (.5 + (T.sk - 10) * .04)) /* v5 · zip62: Bekçi'nin çelme payı kapasite oranından bağımsız, yalnız Alan hakimiyeti'ne bağlı. Kapasite tutar mı'yı, Hakimiyet nereye çeler'i belirler; önce güçlü ve yakın şutta en az çeliyordu, kalan hız Kuyu'ya gidiyordu (Kuyu'ya seken 12 temasın 10'u sayı). Deney: self.ALAN_BEK_CELME_ESKI = true */, /* Bekçi tutamadığını yana çeler */ jx = ox2 * (1 - st) + ix / il * st, jy = oy2 * (1 - st) + iy / il * st, jl = hyp(jx, jy) || 1, ns = (rnd() - .5) * (20 - T.sk) * .04, cs = Math.cos(ns), sn = Math.sin(ns), fx = jx / jl, fy = jy / jl;
-      const leftB = bkP && !self.ALAN_KALECI_ESKI ? Math.max(left, .8 + (T.sk - 10) * .04) : left; /* v5 · kaleci çelerken topu eliyle iter: en az 0,8 + (Hakimiyet − 10) × 0,04 hız (yumuşak çelme kale dibine düşmesin) */ b.vx = (best.vx || 0) + (fx * cs - fy * sn) * leftB; b.vy = (best.vy || 0) + (fx * sn + fy * cs) * leftB; if (mateT && self.ALAN_KACIR && self.ALAN_KACIR_ICINDEN_ESKI) { b.x = best.x + fx * (q.reach + .05); b.y = best.y + fy * (q.reach + .05); } else { /* v5 · arkadaşın kaçırdığı top da değdiği tarafta kalır, kalan hızıyla sürer; gövdeye doğru gidiyorsa gövde çarpışması (dokunan oyuncudan kayar) onu yanından dolaştırır. Önce top kaçış yönünde, oyuncunun öbür tarafına konuyordu: tam karşıdan gelen pas tek tikte gövdenin içinden arkasına geçiyordu (218269 02:14, Mert → Ece). Deney: self.ALAN_KACIR_ICINDEN_ESKI */ b.x = best.x + nx * (q.reach + .05); b.y = best.y + ny * (q.reach + .05); } sahaIci(b); } if (b.alive) b.e = Math.max(0, b.e - q.deflE); b.defl = (b.defl || 0) + 1; ev(b, 'sek', `${best.name || (best.team === b.team ? 'Arkadaş' : 'Rakip')} dokundu, sekti (tutma ihtimali %${Math.round(P * 100)})`);
+      const leftB = bkP && !self.ALAN_KALECI_ESKI ? Math.max(left, .8 + (T.sk - 10) * .04) : left; /* v5 · kaleci çelerken topu eliyle iter: en az 0,8 + (Hakimiyet − 10) × 0,04 hız (yumuşak çelme kale dibine düşmesin) */ b.vx = (best.vx || 0) + (fx * cs - fy * sn) * leftB; b.vy = (best.vy || 0) + (fx * sn + fy * cs) * leftB; if (mateT && self.ALAN_KACIR && self.ALAN_KACIR_ICINDEN_ESKI) { b.x = best.x + fx * (q.reach + .05); b.y = best.y + fy * (q.reach + .05); } else { /* v5 · arkadaşın kaçırdığı top da değdiği tarafta kalır, kalan hızıyla sürer; gövdeye doğru gidiyorsa gövde çarpışması (dokunan oyuncudan kayar) onu yanından dolaştırır. Önce top kaçış yönünde, oyuncunun öbür tarafına konuyordu: tam karşıdan gelen pas tek tikte gövdenin içinden arkasına geçiyordu (218269 02:14, Mert → Ece). Deney: self.ALAN_KACIR_ICINDEN_ESKI */ b.x = best.x + nx * (q.reach + .05); b.y = best.y + ny * (q.reach + .05); } sahaIci(b); } if (b.alive) b.e = Math.max(0, b.e - (tekU() ? (q.deflE ?? Q.deflE) * tekS0() : q.deflE)); if (tekU()) b.ch = b.e; /* tek enerji: maçın temas parametrelerinde deflE yoksa çekirdeğinki (eskiden e NaN oluyordu, uçuş enerjisi kullanılmadığı için görünmüyordu) */ /* sekme hasarı şarjdan */ b.defl = (b.defl || 0) + 1; ev(b, 'sek', `${best.name || (best.team === b.team ? 'Arkadaş' : 'Rakip')} dokundu, sekti (tutma ihtimali %${Math.round(P * 100)})`);
     return { p: best, took: false, P, thru };
   }
   function thruP(b, p, q) { q = q || Q; if (p.team === b.team) return 0; const sp = hyp(b.vx, b.vy); return Math.max(0, Math.min(q.thruMax * (p.role === 'Bekçi' ? q.bekThru : 1), (sp - q.thruV) * q.thruK - (((p.a && p.a.kesme) ?? 10) - 10) * .02)); }
@@ -256,7 +261,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
     choose(p, a0, a1, opps, rnd) { const ok = self.ALAN_OKC(p, 'kontrol'), err = Math.max(0, 16 - ok) * .2, lam = Math.max(.3, Math.min(1.1, .3 + (ok - 5) * .08)), sd = Turn.shortDir(a0, a1), seen = opps.map(o => ({ ...o, x: o.x + (rnd() - .5) * err, y: o.y + (rnd() - .5) * err })), C = [{ mode: 'dolaş', dir: sd }, { mode: 'dolaş', dir: -sd }, { mode: 'fiske', dir: sd }, { mode: 'fiske', dir: -sd }];
       for (const c of C) { const s = Turn.simulate(p, a0, a1, c, seen, null); c.keep = s.keep; c.cost = (s.t ?? 200) * TQ.timeK + lam * (1 - s.keep) + (rnd() - .5) * Math.max(0, 16 - ok) * .02; }
       return C.sort((x, y) => x.cost - y.cost)[0]; } };
-  window.AlanCore = { hyp, pack, rollTo, oppReach, Turn, touchCap, bekRe, bekHar, W, H, KR, MOUTH, DIREK, direk, sahaIci, P, Q, bekR, infl, K, makeGrid, gridS, chgMul, makeBall, stepBall, predict, solveLaunch, ctrlP, contact, stepAll, thruP };
+  window.AlanCore = { tekU, hyp, pack, rollTo, oppReach, Turn, touchCap, bekRe, bekHar, W, H, KR, MOUTH, DIREK, direk, sahaIci, P, Q, bekR, infl, K, makeGrid, gridS, chgMul, makeBall, stepBall, predict, solveLaunch, ctrlP, contact, stepAll, thruP };
 })();
 
 // v5 · Çekirdek gövdelerin içinden geçemez (süpürmeli çarpışma): bu tikteki yol (x0,y0)→(b.x,b.y) boyunca ilk değdiği gövdede durur.
