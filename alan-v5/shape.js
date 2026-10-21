@@ -45,7 +45,7 @@
   function seen(m, p) {
     if (m._sn && m._snT === m.tick && m._sn.has(p)) return m._sn.get(p); if (m._snT !== m.tick) { m._sn = new Map(); m._snT = m.tick; }
     // gecikmeli algı: rakibi birkaç tik önceki hâliyle görür, o anki hızıyla ileri taşır. Ani yön değişimini geç fark eder (Okuma gecikmeyi kısaltır).
-    const e = (20 - ok(p, 'gorus')) * S.errPos, dl = Math.max(1, Math.round(self.ALAN_TEPKI(p, 'algi'))), la = dl + (ok(p, 'gorus') - 6) * S.look, b = Math.floor(m.tick / 20), out = [];
+    const e = (20 - (self.ALAN_YET.acik(5) ? self.ALAN_Y(p, 'algiHata') : ok(p, 'gorus'))) * S.errPos, /* v5 · yetenek Aşama 5: algı hatası Vizyon 60, Okuma 40 (kafayla aynı) */ dl = Math.max(1, Math.round(self.ALAN_TEPKI(p, 'algi'))), la = dl + (ok(p, 'gorus') - 6) * S.look, b = Math.floor(m.tick / 20), out = [];
     for (const q of m.ps) if (q.team !== p.team) { const hh = q.hist && q.hist.length ? q.hist[Math.max(0, q.hist.length - 1 - dl)] : { x: q.x, y: q.y, vx: q.vx || 0, vy: q.vy || 0 }; out.push({ a: q.a, x: hh.x + hh.vx * la + hsh(p.id, q.id, b) * 2 * e, y: hh.y + hh.vy * la + hsh(q.id, p.id, b + 7) * 2 * e, R: q.R, D: q.D, team: q.team, role: q.role, press: q.press, ref: q, gvx: hh.vx, gvy: hh.vy }); }
     m._sn.set(p, out); return out;
   }
@@ -76,7 +76,7 @@
       }
       if (!best) { const G = self.ALAN_KOVALA_ATALET_ESKI ? null : gecTab(p); for (let i = 0; i < pts.length; i += 2) { if (i < iMin) continue; const q = pts[i]; if (nb && inK(q)) continue; const dr = Math.hypot(q.x - p.x, q.y - p.y) - (MPL() ? (p.team === b.team ? menzilP(p) : menzilO(p, (b.tp ?? b.t ?? 0) + i)) : 1.4), tr = rc + Math.max(0, dr) / v + (G ? gecOf(G, q.x, q.y, dr) : 0); if (tr <= i) { best = { t: i, x: q.x, y: q.y }; break; } } } /* v5 · topa yarış ataletle (gec): topa ters koşan oyuncu yüzü dönük olandan geç varır; kim kovalar, kim vazgeçer, takım hangi şekle geçer bundan. Deney: self.ALAN_KOVALA_ATALET_ESKI */
       if (!best) { let q = pts[pts.length - 1] || { x: m.ball.x, y: m.ball.y }; /* yol boşsa (Çekirdek duruyor ya da Kuyu'da başlıyor) topun kendi yeri: worker'ın çökmesini önler */ if (nb && inK(q)) { for (let i = pts.length - 1; i >= 0; i--) if (!inK(pts[i])) { q = pts[i]; break; } } best = { t: Math.max(pts.length, rc + Math.hypot(q.x - p.x, q.y - p.y) / v), x: q.x, y: q.y }; }
-      best.est = best.t * (1 + hsh(p.id, m.fl ? m.fl.t0 || 0 : 0, 3) * (20 - ok(p, 'gorus')) * .04); out.set(p, best);
+      best.est = best.t * (1 + hsh(p.id, m.fl ? m.fl.t0 || 0 : 0, 3) * (20 - (self.ALAN_YET.acik(5) ? self.ALAN_Y(p, 'algiHata') : ok(p, 'gorus'))) * .04); out.set(p, best);
     }
     let first = null; for (const [p, r] of out) if (!first || r.t < out.get(first).t) first = p;
     return { arr: out, first, pts };
@@ -150,7 +150,7 @@
     press.forEach((p, k) => {
       if (!(p.lock > m.tick)) { p.lock = m.tick + S.lock; p.lockAt = m.tick + k * .01; } p.press = true; p.sprint = true; p.job = 'pres';
       const sn = seen(m, p);
-      if (k === 0) { const DD = window.AlanDecide, cs = DD.coreSide(h), B = C().Q.body, co = { x: h.x + cs.ux * B, y: h.y + cs.uy * B }, d0 = Math.hypot(p.x - h.x, p.y - h.y), trap = dtac.sistem === 'Kenara sıkıştır', okp = self.ALAN_OZ(p, 'gorus');
+      if (k === 0) { const DD = window.AlanDecide, cs = DD.coreSide(h), B = C().Q.body, co = { x: h.x + cs.ux * B, y: h.y + cs.uy * B }, d0 = Math.hypot(p.x - h.x, p.y - h.y), trap = dtac.sistem === 'Kenara sıkıştır', okp = self.ALAN_YET.acik(5) ? self.ALAN_Y(p, 'presFake') : self.ALAN_OZ(p, 'gorus'); /* v5 · yetenek Aşama 5: presçinin fake'i Aldatma 60, Savunmada yer alma 40 */
         if (!trap && !self.ALAN_KALE_TARAFI_ESKI) { const ox = ownX(dt), lx = h.x + (h.vx || 0) * 10, ly = h.y + (h.vy || 0) * 10, T1 = !self.ALAN_KALE_ACI_ESKI && Math.hypot(h.x - ox, h.y - GCY) < 35 * GKX ? { an: Math.atan2(GCY - ly, ox - lx), sut: 1 } : TH && TH[0], g = T1 ? { x: lx + Math.cos(T1.an) * 2, y: ly + Math.sin(T1.an) * 2 } : gside({ x: lx, y: ly }, dt, 2), kt = T1 ? (p.x - h.x) * Math.cos(T1.an) + (p.y - h.y) * Math.sin(T1.an) > 1 && (!T1.sut || Math.abs(-(p.x - h.x) * Math.sin(T1.an) + (p.y - h.y) * Math.cos(T1.an)) < 1.5) : /* v5 · kaleye 35 br içinde presçinin kapatacağı yol şut çizgisidir; 'kale tarafında' sayılmak için o çizginin 1,5 br içinde olmalı, değilse önce çizgiye girer. Önce kaleye taşıyıcıdan yakın olmak yetiyordu: Alp çizginin 3,5 br yanından topa dalıyor, şut yolu açık kalıyordu (218269 0:06, Kaan). Deney: self.ALAN_KALE_ACI_ESKI */ Math.hypot(p.x - ox, p.y - GCY) < Math.hypot(h.x - ox, h.y - GCY) - .5; /* v5 · İlke A: presçi kale tarafına değil, top sahibinin en tehlikeli seçeneğinin tarafına geçer (çoğu zaman yine kale; boş bir arkadaşa pas daha tehlikeliyse o yol). Geri pas açık kalır */
           if (!kt && !(d0 < 1.6 && !C().Turn.shielded(h, p, co.x, co.y))) { const hv = Math.hypot(h.vx || 0, h.vy || 0), hk = ((h.vx || 0) * (ox - h.x) + (h.vy || 0) * (GCY - h.y)) / (Math.hypot(ox - h.x, GCY - h.y) || 1);
             if (hk > vSp(p) * .9) { const ux = ox - lx, uy = GCY - ly, ul = Math.hypot(ux, uy) || 1, sx = -uy / ul, sy = ux / ul, sg = (p.x - lx) * sx + (p.y - ly) * sy >= 0 ? 1 : -1; p.tx = lx + sx * sg * 1.8 + ux / ul * .6; p.ty = ly + sy * sg * 1.8 + uy / ul * .6; p.job = 'pres · yanında'; return; }
