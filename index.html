@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>/* telefonda telefon görünümü; masaüstü görünümü için adrese ?masaustu ekle (bir kez eklemek yeter, hatırlanır) */ (function () { try { var q = new URLSearchParams(location.search); if (q.has("masaustu")) localStorage.setItem("alan-masaustu", "1"); if (q.has("telefon")) localStorage.removeItem("alan-masaustu"); if (localStorage.getItem("alan-masaustu") !== "1" && Math.min(screen.width, screen.height) < 700 && matchMedia("(pointer: coarse)").matches) location.replace("telefon-oyun.html"); } catch (e) {} })();</script>
 <script src="./support.js"></script>
 </head>
 <body>
