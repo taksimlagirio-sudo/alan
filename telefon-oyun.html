@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;height:100%;background:#0E0D09;color:#F6F3EC;font-family:'Bricolage Grotesque',sans-serif;-webkit-font-smoothing:antialiased;overscroll-behavior:none;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+a{color:#FFD25A}a:hover{color:#FFF2C4}
+button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
+</style>
+<script src="alan-v5/kadro.js"></script>
+<script>window.AlanYeEk = a => { const U = 'aeıioöuü'; let v = 'e'; for (let i = a.length - 1; i >= 0; i--) { const ch = a[i].toLocaleLowerCase('tr'); if (U.includes(ch)) { v = ch; break; } } return a + '’' + (U.includes(a.slice(-1).toLocaleLowerCase('tr')) ? 'y' : '') + ('aıou'.includes(v) ? 'a' : 'e'); }; window.AlanDersOzet = d => d.tur === 'takim' ? 'Takım · ' + ({ blok: 'savunma bloğu', pres: 'pres yerleşimi', kurulum: 'oyun kurulumu', gecis: 'geçiş' })[d.alt] : d.tur === 'konum' ? 'yer al' : d.tur === 'pres' ? 'bas' : d.tur === 'pas' ? (d.pas && d.pas.kime ? window.AlanYeEk(d.pas.kime) + ' pas' : 'koşana pas') + (d.pas ? ({ onune: ' · koşusunun önüne', arka: ' · savunmanın arkasına' })[Array.isArray(d.pas.nereye) ? 'onune' : d.pas.nereye] || '' : '') + (d.pas && d.pas.yol === 'kenardan' ? ' · kenardan' : '') : ({ tut: 'tut', sur: 'sür', gonder: 'gönder' })[d.karar] || d.tur;</script>
+<script src="alan-v5/core.js"></script>
+</helmet>
+<div style="position:fixed;inset:0;background:#0E0D09;display:flex;justify-content:center">
+<div style="position:relative;width:100%;max-width:{{ kapW }};height:100%;overflow:hidden;background:#0E0D09">
+
+<sc-if value="{{ ekRakip }}" hint-placeholder-val="{{ true }}">
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="position:relative;flex:1;min-height:0;background:#17202A;background-image:radial-gradient(ellipse at 50% 40%, rgba(120,150,170,.28) 0, rgba(0,0,0,.35) 75%)">
+      <div style="position:absolute;inset:8px;border:1.5px solid rgba(246,243,236,.4);border-radius:6px"></div>
+      <div style="position:absolute;left:8px;right:8px;top:50%;height:1.5px;background:rgba(246,243,236,.25)"></div>
+      <div style="position:absolute;left:50%;top:0;width:30%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle, #000 0, #000 52%, rgba(255,210,90,.45) 57%, rgba(255,210,90,0) 72%)"></div>
+      <sc-for list="{{ rakipDots }}" as="o" hint-placeholder-count="7">
+        <span style="position:absolute;left:{{ o.l }};top:{{ o.t }};width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #fff 0, #FF7A45 30%, #9C3510 100%);box-shadow:{{ o.sh }}"></span>
+      </sc-for>
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(14,13,9,.0) 45%, #0E0D09 100%)"></div>
+      <button onClick="{{ rakipOnce }}" style="position:absolute;left:12px;top:42%;width:48px;height:48px;border-radius:50%;border:1px solid rgba(246,243,236,.25);background:rgba(11,10,7,.7);font-size:22px;cursor:pointer">‹</button>
+      <button onClick="{{ rakipSonra }}" style="position:absolute;right:12px;top:42%;width:48px;height:48px;border-radius:50%;border:1px solid rgba(246,243,236,.25);background:rgba(11,10,7,.7);font-size:22px;cursor:pointer">›</button>
+      <div style="position:absolute;left:20px;right:20px;bottom:14px;display:flex;flex-direction:column;gap:4px">
+        <span style="font:600 11px 'JetBrains Mono',monospace;letter-spacing:.14em;color:#FF8A5C">SIRADAKİ RAKİP · {{ rakipNo }}</span>
+        <span style="font-size:clamp(48px,15vw,68px);font-weight:800;letter-spacing:-.04em;line-height:.95">{{ rakipAd }}</span>
+        <span style="font:500 13px 'JetBrains Mono',monospace;color:rgba(246,243,236,.65)">{{ rakipTarz }}</span>
+      </div>
+    </div>
+    <div style="flex:none;display:flex;flex-direction:column;gap:12px;padding:14px 16px max(18px, env(safe-area-inset-bottom))">
+      <button onClick="{{ notSonra }}" style="display:flex;flex-direction:column;gap:8px;text-align:left;background:#16150F;border:1px solid rgba(246,243,236,.12);border-radius:20px;padding:14px 16px;cursor:pointer;min-height:104px">
+        <span style="display:flex;justify-content:space-between;font:700 11px 'JetBrains Mono',monospace;color:#FFD25A"><span>GÖZLEMCİ · {{ notNo }}</span><span style="opacity:.6;color:#F6F3EC">dokun: sıradaki</span></span>
+        <span style="font-size:17px;font-weight:700;line-height:1.3;text-wrap:pretty">{{ notTxt }}</span>
+      </button>
+      <button onClick="{{ planaGec }}" style="height:58px;border:0;border-radius:18px;background:#FFD25A;color:#0E0D09;font-size:18px;font-weight:800;cursor:pointer">Nasıl oynayalım?</button>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ ekPlan }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;gap:14px;padding:max(16px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom));overflow:auto">
+    <div style="display:flex;align-items:flex-start;gap:10px">
+      <button onClick="{{ rakibeDon }}" style="width:40px;height:40px;flex:none;border-radius:50%;border:1px solid rgba(246,243,236,.22);background:transparent;font-size:18px;cursor:pointer">‹</button>
+      <div style="display:flex;flex-direction:column;gap:3px"><span style="font:600 11px 'JetBrains Mono',monospace;letter-spacing:.14em;color:#FF8A5C">{{ rakipAdB }}'YA KARŞI</span><span style="font-size:28px;font-weight:800;letter-spacing:-.02em;line-height:1.05">Nasıl oynayalım?</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <sc-for list="{{ planlar }}" as="p" hint-placeholder-count="4">
+        <button onClick="{{ p.sec }}" style="display:flex;flex-direction:column;padding:0;text-align:left;border-radius:20px;overflow:hidden;background:#16150F;border:2px solid {{ p.k }};cursor:pointer">
+          <div style="position:relative;width:100%;aspect-ratio:1/1.05;background:#17202A">
+            <div style="position:absolute;inset:5px;border:1px solid rgba(246,243,236,.35);border-radius:4px"></div>
+            <div style="position:absolute;left:0;right:0;top:0;height:{{ p.presT }};background:rgba(224,83,31,.14)"></div>
+            <div style="position:absolute;left:0;right:0;top:{{ p.presT }};height:2px;background:#FFD25A;box-shadow:0 0 8px rgba(255,210,90,.6)"></div>
+            <sc-for list="{{ p.dots }}" as="o" hint-placeholder-count="7"><span style="position:absolute;left:{{ o.l }};top:{{ o.t }};width:13px;height:13px;margin:-6.5px 0 0 -6.5px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #fff 0, #6F8CFF 30%, #1A2A99 100%)"></span></sc-for>
+            <sc-if value="{{ p.oneri }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:8px;top:8px;font:700 9.5px 'JetBrains Mono',monospace;letter-spacing:.08em;background:#FFD25A;color:#0E0D09;padding:3px 7px;border-radius:5px">RAKİBE GÖRE</span></sc-if>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:3px;padding:10px 12px 12px"><span style="font-size:16px;font-weight:800">{{ p.ad }}</span><span style="font-size:12px;line-height:1.35;opacity:.65">{{ p.alt }}</span></div>
+        </button>
+      </sc-for>
+    </div>
+    <button onClick="{{ kendimKur }}" style="display:flex;align-items:center;gap:12px;border-radius:18px;border:1px dashed rgba(246,243,236,.3);background:transparent;padding:14px 16px;text-align:left;cursor:pointer"><span style="display:flex;flex-direction:column;gap:2px;flex:1"><span style="font-size:16px;font-weight:800">Kendim kurayım</span><span style="font-size:12.5px;opacity:.6">Üç soru, sonra tahta</span></span><span style="font-size:20px;color:#FFD25A">›</span></button>
+    <div style="flex:1"></div>
+    <button onClick="{{ planDevam }}" style="height:58px;flex:none;border:0;border-radius:18px;background:#FFD25A;color:#0E0D09;font-size:17px;font-weight:800;cursor:pointer">{{ planDevamTxt }}</button>
+  </div>
+</sc-if>
+
+<sc-if value="{{ ekSoru }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="position:relative;flex:none;height:44%;background:#17202A;overflow:hidden">
+      <div style="position:absolute;inset:6px;border:1.5px solid rgba(246,243,236,.4);border-radius:5px"></div>
+      <sc-if value="{{ presVar }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:0;right:0;top:0;height:{{ presT }};background:rgba(224,83,31,.14);transition:height .35s"></div>
+        <div style="position:absolute;left:0;right:0;top:{{ presT }};height:2px;background:#FFD25A;box-shadow:0 0 10px rgba(255,210,90,.7);transition:top .35s"></div>
+      </sc-if>
+      <sc-for list="{{ golgeler }}" as="o" hint-placeholder-count="0"><span style="position:absolute;left:{{ o.l }};top:{{ o.t }};width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;border:2px solid #FF7A45;box-sizing:border-box;transition:left .35s,top .35s"></span></sc-for>
+      <sc-for list="{{ tahtaPs }}" as="p" hint-placeholder-count="7"><span style="position:absolute;left:{{ p.l }};top:{{ p.t }};width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #fff 0, #6F8CFF 30%, #1A2A99 100%);box-shadow:0 3px 8px rgba(0,0,0,.5);transition:left .35s,top .35s"></span></sc-for>
+      <div style="position:absolute;left:0;right:0;bottom:0;height:40%;background:linear-gradient(180deg, rgba(14,13,9,0) 0, #0E0D09 100%)"></div>
+      <div style="position:absolute;left:16px;right:16px;top:max(14px, env(safe-area-inset-top));display:flex;gap:6px"><sc-for list="{{ soruBar }}" as="b" hint-placeholder-count="3"><span style="flex:1;height:4px;border-radius:2px;background:{{ b }}"></span></sc-for></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:12px;padding:0 16px max(18px, env(safe-area-inset-bottom));min-height:0">
+      <div style="display:flex;flex-direction:column;gap:4px"><span style="font:600 11px 'JetBrains Mono',monospace;letter-spacing:.14em;color:rgba(246,243,236,.55)">{{ soruEt }}</span><span style="font-size:24px;font-weight:800;letter-spacing:-.01em;line-height:1.1">{{ soruTxt }}</span></div>
+      <sc-for list="{{ soruOps }}" as="s" hint-placeholder-count="3">
+        <button onClick="{{ s.sec }}" style="display:flex;align-items:center;gap:14px;padding:13px 14px;border-radius:18px;background:{{ s.bg }};border:2px solid {{ s.k }};text-align:left;cursor:pointer">
+          <span style="display:flex;flex-direction:column;gap:2px;flex:1"><span style="font-size:16px;font-weight:800">{{ s.ad }}</span><span style="font-size:12.5px;opacity:.65">{{ s.alt }}</span></span>
+          <span style="width:22px;height:22px;flex:none;border-radius:50%;border:2px solid {{ s.k }};background:{{ s.nokta }};box-sizing:border-box"></span>
+        </button>
+      </sc-for>
+      <div style="flex:1"></div>
+      <div style="display:flex;gap:10px"><button onClick="{{ soruGeri }}" style="height:56px;width:56px;border-radius:16px;border:1px solid rgba(246,243,236,.25);background:transparent;font-size:20px;cursor:pointer">‹</button><button onClick="{{ soruIleri }}" style="height:56px;flex:1;border:0;border-radius:16px;background:{{ soruIleriBg }};color:#0E0D09;font-size:17px;font-weight:800;cursor:pointer">{{ soruIleriTxt }}</button></div>
+    </div>
+  </div>
+</sc-if>
+
+
+<sc-if value="{{ ekRakipY }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;padding:12px 14px">
+    <div style="position:relative;border-radius:22px;overflow:hidden;background:#17202A;background-image:radial-gradient(ellipse at 50% 45%, rgba(120,150,170,.26) 0, rgba(0,0,0,.3) 75%)">
+      <div style="position:absolute;inset:6px;border:1.5px solid rgba(246,243,236,.4);border-radius:5px"></div>
+      <div style="position:absolute;left:50%;top:6px;bottom:6px;width:1.5px;background:rgba(246,243,236,.22)"></div>
+      <div style="position:absolute;left:100%;top:50%;width:16%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle, #000 0, #000 52%, rgba(255,210,90,.45) 57%, rgba(255,210,90,0) 72%);pointer-events:none"></div>
+      <sc-for list="{{ rakipDots }}" as="o" hint-placeholder-count="7"><span style="position:absolute;left:{{ o.l }};top:{{ o.t }};width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #fff 0, #FF7A45 30%, #9C3510 100%);box-shadow:{{ o.sh }}"></span></sc-for>
+      <span style="position:absolute;left:12px;top:12px;font:700 10px 'JetBrains Mono',monospace;letter-spacing:.12em;background:rgba(11,10,7,.85);color:#FF8A5C;padding:4px 8px;border-radius:6px">SIRADAKİ RAKİP · {{ rakipNo }}</span>
+      <div style="position:absolute;left:12px;bottom:12px;display:flex;gap:8px"><button onClick="{{ rakipOnce }}" style="width:44px;height:44px;border-radius:50%;border:1px solid rgba(246,243,236,.25);background:rgba(11,10,7,.75);font-size:20px;cursor:pointer">‹</button><button onClick="{{ rakipSonra }}" style="width:44px;height:44px;border-radius:50%;border:1px solid rgba(246,243,236,.25);background:rgba(11,10,7,.75);font-size:20px;cursor:pointer">›</button></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0">
+      <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:46px;font-weight:800;letter-spacing:-.04em;line-height:.95">{{ rakipAd }}</span><span style="font:500 12px 'JetBrains Mono',monospace;color:rgba(246,243,236,.65)">{{ rakipTarz }}</span></div>
+      <button onClick="{{ notSonra }}" style="flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;text-align:left;background:#16150F;border:1px solid rgba(246,243,236,.12);border-radius:18px;padding:12px 14px;cursor:pointer;overflow:hidden">
+        <span style="display:flex;justify-content:space-between;font:700 10.5px 'JetBrains Mono',monospace;color:#FFD25A"><span>GÖZLEMCİ · {{ notNo }}</span><span style="opacity:.6;color:#F6F3EC">dokun</span></span>
+        <span style="font-size:15.5px;font-weight:700;line-height:1.3;text-wrap:pretty">{{ notTxt }}</span>
+      </button>
+      <button onClick="{{ planaGec }}" style="height:52px;flex:none;border:0;border-radius:16px;background:#FFD25A;color:#0E0D09;font-size:17px;font-weight:800;cursor:pointer">Nasıl oynayalım?</button>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ ekPlanY }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;gap:10px;padding:10px 14px 12px">
+    <div style="flex:none;display:flex;align-items:center;gap:10px">
+      <button onClick="{{ rakibeDon }}" style="width:40px;height:40px;flex:none;border-radius:50%;border:1px solid rgba(246,243,236,.22);background:transparent;font-size:18px;cursor:pointer">‹</button>
+      <div style="display:flex;flex-direction:column;gap:1px;flex:1;min-width:0"><span style="font:600 10px 'JetBrains Mono',monospace;letter-spacing:.14em;color:#FF8A5C">{{ rakipAdB }}'YA KARŞI</span><span style="font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.05">Nasıl oynayalım?</span></div>
+      <button onClick="{{ kendimKur }}" style="height:44px;padding:0 14px;border-radius:14px;border:1px dashed rgba(246,243,236,.3);background:transparent;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap">Kendim kurayım</button>
+      <button onClick="{{ planDevam }}" style="height:44px;padding:0 16px;border:0;border-radius:14px;background:#FFD25A;color:#0E0D09;font-size:15px;font-weight:800;cursor:pointer;white-space:nowrap">{{ planDevamTxt }}</button>
+    </div>
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px">
+      <sc-for list="{{ planlar }}" as="p" hint-placeholder-count="4">
+        <button onClick="{{ p.sec }}" style="display:flex;flex-direction:column;padding:0;min-height:0;text-align:left;border-radius:18px;overflow:hidden;background:#16150F;border:2px solid {{ p.k }};cursor:pointer">
+          <div style="position:relative;width:100%;flex:1;min-height:0;background:#17202A;background-image:radial-gradient(ellipse at 50% 45%, rgba(120,150,170,.26) 0, rgba(0,0,0,.3) 75%)">
+            <div style="position:absolute;inset:4px;border:1px solid rgba(246,243,236,.35);border-radius:3px"></div>
+            <div style="position:absolute;left:{{ p.presX }};right:0;top:0;bottom:0;background:rgba(224,83,31,.14)"></div>
+            <div style="position:absolute;left:{{ p.presX }};top:0;bottom:0;width:2px;background:#FFD25A;box-shadow:0 0 8px rgba(255,210,90,.6)"></div>
+            <sc-for list="{{ p.dots }}" as="o" hint-placeholder-count="7"><span style="position:absolute;left:{{ o.l }};top:{{ o.t }};width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #fff 0, #6F8CFF 30%, #1A2A99 100%)"></span></sc-for>
+            <sc-if value="{{ p.oneri }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:6px;top:6px;font:700 8.5px 'JetBrains Mono',monospace;letter-spacing:.08em;background:#FFD25A;color:#0E0D09;padding:3px 6px;border-radius:4px">RAKİBE GÖRE</span></sc-if>
+          </div>
+          <div style="flex:none;display:flex;flex-direction:column;gap:2px;padding:8px 10px 10px"><span style="font-size:15px;font-weight:800">{{ p.ad }}</span><span style="font-size:11.5px;line-height:1.3;opacity:.65">{{ p.alt }}</span></div>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ ekSoruY }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;padding:12px 14px">
+    <div style="position:relative;border-radius:22px;overflow:hidden;background:#17202A;background-image:radial-gradient(ellipse at 50% 45%, rgba(120,150,170,.26) 0, rgba(0,0,0,.3) 75%)">
+      <div style="position:absolute;inset:6px;border:1.5px solid rgba(246,243,236,.4);border-radius:5px"></div>
+      <div style="position:absolute;left:50%;top:6px;bottom:6px;width:1.5px;background:rgba(246,243,236,.22)"></div>
+      <sc-if value="{{ presVar }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:{{ pr.aL }};top:{{ pr.aT }};width:{{ pr.aW }};height:{{ pr.aH }};background:rgba(224,83,31,.14)"></div>
+        <div style="position:absolute;left:{{ pr.cL }};top:{{ pr.cT }};width:{{ pr.cW }};height:{{ pr.cH }};background:#FFD25A;box-shadow:0 0 10px rgba(255,210,90,.7)"></div>
+      </sc-if>
+      <sc-for list="{{ golgeler }}" as="o" hint-placeholder-count="0"><span style="position:absolute;left:{{ o.l }};top:{{ o.t }};width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;border:2px solid #FF7A45;box-sizing:border-box;transition:left .35s,top .35s"></span></sc-for>
+      <sc-for list="{{ tahtaPs }}" as="p" hint-placeholder-count="7"><span style="position:absolute;left:{{ p.l }};top:{{ p.t }};width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #fff 0, #6F8CFF 30%, #1A2A99 100%);box-shadow:0 3px 8px rgba(0,0,0,.5);transition:left .35s,top .35s"></span></sc-for>
+      <div style="position:absolute;left:12px;right:12px;top:12px;display:flex;gap:6px"><sc-for list="{{ soruBar }}" as="b" hint-placeholder-count="3"><span style="flex:1;height:4px;border-radius:2px;background:{{ b }}"></span></sc-for></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;min-height:0;min-width:0">
+      <div style="display:flex;flex-direction:column;gap:2px"><span style="font:600 10px 'JetBrains Mono',monospace;letter-spacing:.14em;color:rgba(246,243,236,.55)">{{ soruEt }}</span><span style="font-size:20px;font-weight:800;line-height:1.1">{{ soruTxt }}</span></div>
+      <sc-for list="{{ soruOps }}" as="s" hint-placeholder-count="3">
+        <button onClick="{{ s.sec }}" style="display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:14px;background:{{ s.bg }};border:2px solid {{ s.k }};text-align:left;cursor:pointer">
+          <span style="display:flex;flex-direction:column;gap:1px;flex:1;min-width:0"><span style="font-size:14.5px;font-weight:800">{{ s.ad }}</span><span style="font-size:11.5px;opacity:.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.alt }}</span></span>
+          <span style="width:20px;height:20px;flex:none;border-radius:50%;border:2px solid {{ s.k }};background:{{ s.nokta }};box-sizing:border-box"></span>
+        </button>
+      </sc-for>
+      <div style="flex:1"></div>
+      <div style="display:flex;gap:8px"><button onClick="{{ soruGeri }}" style="height:46px;width:46px;border-radius:14px;border:1px solid rgba(246,243,236,.25);background:transparent;font-size:18px;cursor:pointer">‹</button><button onClick="{{ soruIleri }}" style="height:46px;flex:1;border:0;border-radius:14px;background:{{ soruIleriBg }};color:#0E0D09;font-size:15px;font-weight:800;cursor:pointer">{{ soruIleriTxt }}</button></div>
+    </div>
+  </div>
+</sc-if>
+<sc-if value="{{ ekTahta }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0">
+    <div style="position:absolute;left:{{ ly.tbL }};right:{{ ly.tbR }};top:{{ ly.tbT }};width:{{ ly.tbW }};display:flex;flex-wrap:wrap;align-items:center;gap:8px;z-index:3">
+      <button onClick="{{ planaDon }}" style="padding:9px 13px;border-radius:999px;background:#16150F;border:1px solid {{ planChipK }};font-size:13px;font-weight:700;display:flex;gap:7px;align-items:center;cursor:pointer;white-space:nowrap"><span style="width:7px;height:7px;border-radius:50%;background:{{ planChipD }};border:1.5px solid #FFD25A;box-sizing:border-box"></span>{{ planChip }}</button>
+      <button onClick="{{ dersAc }}" style="display:{{ dersGoster }};padding:9px 12px;border-radius:999px;background:#16150F;border:1px solid {{ dersK }};color:{{ dersC }};font-size:13px;font-weight:700;gap:6px;align-items:center;cursor:pointer;white-space:nowrap">Ders<span style="font:700 11px 'JetBrains Mono',monospace">{{ dersN }}</span></button>
+      <span style="flex:1"></span>
+      <div style="display:flex;padding:3px;border-radius:999px;background:#16150F;border:1px solid rgba(246,243,236,.18)">
+        <sc-for list="{{ gorler }}" as="g" hint-placeholder-count="2"><button onClick="{{ g.sec }}" style="padding:7px 12px;border-radius:999px;border:0;background:{{ g.bg }};color:{{ g.fg }};font-size:13px;font-weight:700;cursor:pointer">{{ g.ad }}</button></sc-for>
+      </div>
+    </div>
+    <div ref="{{ tahtaRef }}" onPointerMove="{{ pMove }}" onPointerUp="{{ pUp }}" onPointerCancel="{{ pUp }}" style="position:absolute;left:{{ ly.bL }};right:{{ ly.bR }};top:{{ ly.bT }};bottom:{{ ly.bB }};border-radius:22px;overflow:hidden;background:#17202A;background-image:radial-gradient(ellipse at 50% 45%, rgba(120,150,170,.26) 0, rgba(0,0,0,.3) 75%);touch-action:none">
+      <div style="position:absolute;inset:6px;border:1.5px solid rgba(246,243,236,.45);border-radius:5px;pointer-events:none"></div>
+      <div style="position:absolute;left:{{ ly.mL }};top:{{ ly.mT }};width:{{ ly.mW }};height:{{ ly.mH }};background:rgba(246,243,236,.25);pointer-events:none"></div>
+      <div style="position:absolute;left:{{ ly.k1L }};top:{{ ly.k1T }};width:{{ ly.kW }};aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle, #000 0, #000 52%, rgba(255,210,90,.45) 57%, rgba(255,210,90,0) 72%);pointer-events:none"></div>
+      <div style="position:absolute;left:{{ ly.k2L }};top:{{ ly.k2T }};width:{{ ly.kW }};aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle, #000 0, #000 52%, rgba(255,210,90,.45) 57%, rgba(255,210,90,0) 72%);pointer-events:none"></div>
+      <span style="position:absolute;left:{{ ly.kuL }};top:{{ ly.kuT }};transform:{{ ly.kuTr }};font:600 10px 'JetBrains Mono',monospace;letter-spacing:.12em;opacity:.7;pointer-events:none;white-space:nowrap">{{ rakipAdB }} KUYUSU {{ ly.ok }}</span>
+      <div style="position:absolute;left:{{ bant.l }};top:{{ bant.t }};width:{{ bant.w }};height:{{ bant.h }};box-sizing:border-box;background:rgba(255,210,90,.06);border-style:dashed;border-color:rgba(255,210,90,.28);border-width:{{ bant.bw }};pointer-events:none"></div>
+      <span style="position:absolute;left:{{ topDot.l }};top:{{ topDot.t }};width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:radial-gradient(circle, rgba(255,240,190,1) 0, rgba(255,210,90,.55) 32%, rgba(255,210,90,0) 70%);pointer-events:none"></span>
+      <span style="position:absolute;left:{{ topDot.l }};top:{{ topDot.t }};width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#FFFFFF;pointer-events:none"></span>
+      <div style="position:absolute;left:{{ ly.dL }};top:{{ ly.dT }};transform:{{ ly.dTr }};display:flex;flex-direction:{{ ly.dDir }};gap:6px;z-index:3">
+        <sc-for list="{{ durBtn }}" as="d" hint-placeholder-count="3"><button onClick="{{ d.sec }}" style="position:relative;width:48px;height:48px;border-radius:14px;border:1.5px solid {{ d.k }};background:{{ d.bg }};color:{{ d.fg }};font:700 9px/1.15 'JetBrains Mono',monospace;letter-spacing:.04em;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.45)"><span style="width:7px;height:7px;border-radius:50%;background:{{ d.nokta }}"></span>{{ d.ad }}<sc-if value="{{ d.el }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;right:-4px;top:-4px;width:12px;height:12px;border-radius:50%;background:#6F8CFF;box-shadow:0 0 0 2px #0E0D09"></span></sc-if></button></sc-for>
+      </div>
+      <span style="position:absolute;left:10px;bottom:10px;font:700 9.5px 'JetBrains Mono',monospace;letter-spacing:.12em;background:rgba(11,10,7,.85);color:#FFD25A;padding:4px 8px;border-radius:6px;pointer-events:none">{{ durusEt }}</span>
+      
+      <sc-if value="{{ presVar }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:{{ pr.aL }};top:{{ pr.aT }};width:{{ pr.aW }};height:{{ pr.aH }};background:rgba(224,83,31,.13);pointer-events:none"></div>
+        <div onPointerDown="{{ presDown }}" style="position:absolute;left:{{ pr.hL }};top:{{ pr.hT }};width:{{ pr.hW }};height:{{ pr.hH }};margin:{{ pr.hM }};display:flex;align-items:center;justify-content:center;touch-action:none;cursor:{{ pr.cur }};z-index:2">
+          <div style="position:absolute;left:{{ pr.lL }};top:{{ pr.lT }};width:{{ pr.lW }};height:{{ pr.lH }};background:#FFD25A;box-shadow:0 0 10px rgba(255,210,90,.7)"></div>
+          <span style="position:relative;transform:rotate({{ pr.rot }});width:60px;height:26px;border-radius:13px;background:#FFD25A;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;box-shadow:0 4px 12px rgba(0,0,0,.5)"><span style="width:24px;height:2px;background:#0E0D09;border-radius:1px"></span><span style="width:24px;height:2px;background:#0E0D09;border-radius:1px"></span></span>
+          <span style="position:absolute;left:{{ pr.etL }};right:{{ pr.etR }};top:{{ pr.etT }};font:700 10.5px 'JetBrains Mono',monospace;background:rgba(11,10,7,.88);color:#FFD25A;padding:3px 8px;border-radius:999px;white-space:nowrap">pres hattı · {{ presAd }}</span>
+        </div>
+      </sc-if>
+      <sc-for list="{{ golgeler }}" as="o" hint-placeholder-count="0"><span style="position:absolute;left:{{ o.l }};top:{{ o.t }};width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;border:2px solid #FF7A45;background:rgba(224,83,31,.18);box-sizing:border-box;pointer-events:none"></span></sc-for>
+      <sc-for list="{{ tahtaPs }}" as="p" hint-placeholder-count="7">
+        <div onPointerDown="{{ p.down }}" style="position:absolute;left:{{ p.l }};top:{{ p.t }};width:64px;height:64px;margin:-32px 0 0 -32px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;touch-action:none;cursor:grab;z-index:1">
+          <span style="width:38px;height:38px;border-radius:50%;background:{{ p.bg }};box-shadow:{{ p.ring }};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">{{ p.no }}</span>
+          <span style="font:700 10px/1 'JetBrains Mono',monospace;letter-spacing:.05em;background:{{ p.etBg }};color:{{ p.etFg }};padding:3px 5px;border-radius:5px;white-space:nowrap">{{ p.ad }}</span>
+        </div>
+      </sc-for>
+      <sc-if value="{{ ipucuDik }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;background:rgba(14,13,9,.35);z-index:4;pointer-events:none">
+          <div style="position:absolute;left:12px;top:calc({{ presT }} + 28px);display:flex;align-items:center;gap:8px;background:#F6F3EC;color:#0E0D09;border-radius:14px;padding:8px 12px;box-shadow:0 8px 20px rgba(0,0,0,.5);max-width:220px"><span style="width:20px;height:20px;flex:none;border-radius:50%;background:#0E0D09;color:#FFD25A;display:flex;align-items:center;justify-content:center;font:700 11px 'JetBrains Mono',monospace">1</span><span style="font-size:13px;font-weight:600;line-height:1.3">Çizgiyi kaydır: baskı nereden başlar</span></div>
+          <span style="position:absolute;left:{{ ip2.l }};top:{{ ip2.t }};width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;border:2px dashed #FFD25A;box-shadow:0 0 18px rgba(255,210,90,.5)"></span>
+          <div style="position:absolute;left:{{ ip2.bl }};right:{{ ip2.br }};top:{{ ip2.bt }};display:flex;align-items:center;gap:8px;background:#F6F3EC;color:#0E0D09;border-radius:14px;padding:8px 12px;box-shadow:0 8px 20px rgba(0,0,0,.5);max-width:230px"><span style="width:20px;height:20px;flex:none;border-radius:50%;background:#0E0D09;color:#FFD25A;display:flex;align-items:center;justify-content:center;font:700 11px 'JetBrains Mono',monospace">2</span><span style="font-size:13px;font-weight:600;line-height:1.3">Dokun: ne yapsın. Sürükle: yalnız bu duruş değişir (sağdaki üç düğme)</span></div>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="position:absolute;left:{{ ly.alL }};right:{{ ly.alR }};bottom:{{ ly.alB }};width:{{ ly.alW }};padding:{{ ly.alP }};box-sizing:border-box;display:flex;flex-direction:column;gap:10px">
+      <sc-if value="{{ degisAra }}" hint-placeholder-val="{{ false }}"><span style="align-self:center;font-size:13px;font-weight:700;color:#0E0D09;background:#FFD25A;padding:6px 12px;border-radius:999px">{{ degisAd }} kimin yerine? Sahada dokun</span></sc-if>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="display:flex;gap:8px;flex:1;min-width:0;overflow-x:auto;padding:3px;border-radius:16px;border:{{ benchK }}">
+          <sc-for list="{{ bench }}" as="y" hint-placeholder-count="5"><button onClick="{{ y.sec }}" style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:none;background:transparent;border:0;padding:0;cursor:pointer"><span style="width:36px;height:36px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #fff 0, #6F8CFF 30%, #1A2A99 100%);opacity:.85;box-shadow:{{ y.ring }}"></span><span style="font:600 9.5px 'JetBrains Mono',monospace;opacity:.75">{{ y.ad }}</span></button></sc-for>
+        </div>
+        <button onClick="{{ padAc }}" style="height:54px;flex:none;padding:0 14px;border-radius:16px;background:#16150F;border:1px solid rgba(255,210,90,.5);display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:1px;cursor:pointer;max-width:150px"><span style="font:600 9.5px 'JetBrains Mono',monospace;letter-spacing:.1em;color:#FFD25A">TARZ ›</span><span style="font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:122px">{{ tarzKisa }}</span></button>
+      </div>
+      <button onClick="{{ macaCik }}" style="height:56px;border:0;border-radius:18px;background:#FFD25A;color:#0E0D09;font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer">{{ macaCikTxt }}<span style="display:inline-block;margin-left:10px;width:0;height:0;border-left:9px solid currentColor;border-top:6px solid transparent;border-bottom:6px solid transparent"></span></button>
+    </div>
+
+    <sc-if value="{{ ipucu }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:{{ ly.ipL }};right:{{ ly.ipR }};bottom:{{ ly.ipB }};display:flex;justify-content:space-between;align-items:center;gap:10px;z-index:5">
+        <div style="display:flex;align-items:center;gap:8px;background:#F6F3EC;color:#0E0D09;border-radius:14px;padding:8px 12px;box-shadow:0 8px 20px rgba(0,0,0,.5)"><span style="width:20px;height:20px;flex:none;border-radius:50%;background:#0E0D09;color:#FFD25A;display:flex;align-items:center;justify-content:center;font:700 11px 'JetBrains Mono',monospace">3</span><span style="font-size:13px;font-weight:600">Yedeğe dokun: değişiklik</span></div>
+        <button onClick="{{ ipucuKapat }}" style="height:40px;padding:0 16px;border-radius:999px;border:0;background:#FFD25A;color:#0E0D09;font-weight:800;cursor:pointer">Anladım</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ geriVar }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:{{ ly.gL }};right:{{ ly.gR }};top:{{ ly.gT }};z-index:6;display:flex;align-items:center;gap:10px;background:rgba(22,21,15,.94);border:1px solid rgba(246,243,236,.16);border-radius:16px;box-shadow:0 10px 28px rgba(0,0,0,.55);padding:8px 8px 8px 14px;pointer-events:auto">
+        <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+          <span style="font-size:14px;font-weight:800;line-height:1.2">{{ geri.baslik }}</span>
+          <sc-for list="{{ geri.satir }}" as="r" hint-placeholder-count="0"><span style="display:flex;gap:6px;font-size:12px;line-height:1.3;opacity:.85"><span style="color:{{ r.c }};font-weight:800;width:8px;flex:none">{{ r.i }}</span><span>{{ r.t }}</span></span></sc-for>
+        </div>
+        <button onClick="{{ geriAl }}" style="height:36px;flex:none;padding:0 12px;border-radius:12px;border:1px solid rgba(246,243,236,.22);background:transparent;font-size:13px;font-weight:700;cursor:pointer">Geri al</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ kartVar }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ kartKapat }}" style="position:absolute;inset:0;background:rgba(14,13,9,.5);z-index:7"></div>
+      <div style="position:absolute;left:{{ sh.l }};right:0;bottom:0;top:{{ sh.t }};width:{{ sh.w }};z-index:8;max-height:{{ sh.mh }};overflow:auto;background:#16150F;border-radius:{{ sh.r }};border-top:1px solid rgba(246,243,236,.16);box-shadow:0 -16px 40px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:13px;padding:8px 18px max(20px, env(safe-area-inset-bottom))">
+        <span style="align-self:center;width:38px;height:5px;border-radius:3px;background:rgba(246,243,236,.25)"></span>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="width:44px;height:44px;flex:none;border-radius:50%;background:radial-gradient(circle at 35% 30%, #fff 0, #6F8CFF 30%, #1A2A99 100%);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px">{{ kart.no }}</span>
+          <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0"><span style="font-size:22px;font-weight:800">{{ kart.ad }}</span><span style="font:500 11px 'JetBrains Mono',monospace;color:rgba(246,243,236,.6)">{{ kart.alt }}</span></div>
+          <button onClick="{{ kartKapat }}" style="width:38px;height:38px;flex:none;border-radius:50%;border:1px solid rgba(246,243,236,.25);background:transparent;font-size:15px;cursor:pointer">✕</button>
+        </div>
+        <span style="font:600 11px 'JetBrains Mono',monospace;color:rgba(246,243,236,.7)">{{ kart.oz }}</span>
+        <sc-for list="{{ kart.satir }}" as="u" hint-placeholder-count="0">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <span style="display:flex;justify-content:space-between;font-size:13px"><span style="opacity:.75">{{ u.ad }}</span><span style="font:600 10px 'JetBrains Mono',monospace;letter-spacing:.1em;color:{{ u.ec }}">{{ u.ev }}</span></span>
+            <div style="display:flex;gap:4px;padding:3px;border-radius:14px;background:rgba(246,243,236,.06)">
+              <sc-for list="{{ u.ops }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.sec }}" style="flex:1;height:42px;border-radius:11px;border:0;background:{{ o.bg }};color:{{ o.fg }};font-size:14px;font-weight:{{ o.w }};cursor:pointer">{{ o.ad }}</button></sc-for>
+            </div>
+          </div>
+        </sc-for>
+        <div style="display:flex;flex-direction:column;gap:8px;padding-top:4px;border-top:1px solid rgba(246,243,236,.08)">
+          <span style="font:600 10px 'JetBrains Mono',monospace;letter-spacing:.12em;color:rgba(246,243,236,.55);padding-top:8px">YERİNE GİRSİN</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ kart.yedek }}" as="y" hint-placeholder-count="0"><button onClick="{{ y.sec }}" style="padding:8px 12px;border-radius:999px;border:1px solid rgba(246,243,236,.22);background:transparent;font-size:13px;font-weight:600;cursor:pointer">{{ y.ad }}</button></sc-for></div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ dersSh }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ dersKapat }}" style="position:absolute;inset:0;background:rgba(14,13,9,.5);z-index:7"></div>
+      <div style="position:absolute;left:{{ sh.l }};right:0;bottom:0;top:{{ sh.t }};width:{{ sh.w }};z-index:8;max-height:{{ sh.mh }};overflow:auto;background:#16150F;border-radius:{{ sh.r }};border-top:1px solid rgba(246,243,236,.16);box-shadow:0 -16px 40px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:12px;padding:8px 18px max(20px, env(safe-area-inset-bottom))">
+        <span style="align-self:center;width:38px;height:5px;border-radius:3px;background:rgba(246,243,236,.25)"></span>
+        <div style="display:flex;flex-direction:column;gap:3px"><span style="font:600 10px 'JetBrains Mono',monospace;letter-spacing:.14em;color:#FFD25A">TOPLANTIDAN</span><span style="font-size:22px;font-weight:800">Dersler</span><span style="font-size:13px;opacity:.65;line-height:1.4">Toplantıda verilen dersler maça taktik gibi girer. Benzer an gelince oyuncu öğrendiğini dener; uyguladıkça kökleşir.</span></div>
+        <sc-for list="{{ dersler }}" as="d" hint-placeholder-count="0">
+          <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid rgba(246,243,236,.08)">
+            <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:15px;font-weight:800">{{ d.kim }}</span><span style="font-size:13px;opacity:.7">{{ d.ne }}</span></div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span style="font:700 12px 'JetBrains Mono',monospace;color:#FFD25A">{{ d.kok }}</span><span style="width:60px;height:4px;border-radius:2px;background:rgba(246,243,236,.12);position:relative;overflow:hidden"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ d.kok }};background:#FFD25A"></span></span></div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ dersYok }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;opacity:.6;padding:6px 0;line-height:1.4">Henüz ders yok. Maçtan sonra toplantıda tekrarı durdur, oyuncuya dokun, ne yapması gerektiğini göster.</span></sc-if>
+        <a href="ALAN Toplanti v2.dc.html" style="height:50px;border-radius:14px;border:1px solid rgba(255,210,90,.6);color:#FFD25A;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;text-decoration:none">Toplantıyı aç</a>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ pad }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ padKapat }}" style="position:absolute;inset:0;background:rgba(14,13,9,.5);z-index:7"></div>
+      <div style="position:absolute;left:{{ sh.l }};right:0;bottom:0;top:{{ sh.t }};width:{{ sh.w }};z-index:8;max-height:{{ sh.mh }};overflow:auto;background:#16150F;border-radius:{{ sh.r }};border-top:1px solid rgba(246,243,236,.16);box-shadow:0 -16px 40px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:12px;padding:8px 18px max(20px, env(safe-area-inset-bottom))">
+        <span style="align-self:center;width:38px;height:5px;border-radius:3px;background:rgba(246,243,236,.25)"></span>
+        <div style="display:flex;flex-direction:column;gap:2px"><span style="font:600 10px 'JetBrains Mono',monospace;letter-spacing:.14em;color:rgba(246,243,236,.55)">TOPLA · NOKTAYI SÜRÜKLE</span><span style="font-size:22px;font-weight:800;line-height:1.15;text-wrap:pretty">{{ tarz }}</span></div>
+        <div ref="{{ padRef }}" onPointerDown="{{ padDown }}" onPointerMove="{{ padMove }}" onPointerUp="{{ padUp }}" onPointerCancel="{{ padUp }}" style="position:relative;width:100%;aspect-ratio:1.25;max-height:36vh;border-radius:20px;background:#0E0D09;border:1px solid rgba(246,243,236,.12);overflow:hidden;touch-action:none">
+          <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(246,243,236,.12)"></div>
+          <div style="position:absolute;top:50%;left:0;right:0;height:1px;background:rgba(246,243,236,.12)"></div>
+          <span style="position:absolute;left:12px;top:10px;font-size:13px;font-weight:700;opacity:.55">Sabırlı<br>delici</span>
+          <span style="position:absolute;right:12px;top:10px;font-size:13px;font-weight:700;text-align:right;opacity:.55">Hızlı<br>delici</span>
+          <span style="position:absolute;left:12px;bottom:10px;font-size:13px;font-weight:700;opacity:.55">Topu tutan</span>
+          <span style="position:absolute;right:12px;bottom:10px;font-size:13px;font-weight:700;text-align:right;opacity:.55">Hızlı,<br>güvenli</span>
+          <span style="position:absolute;left:50%;bottom:6px;transform:translateX(-50%);font:600 9.5px 'JetBrains Mono',monospace;letter-spacing:.1em;opacity:.5">TEMPO →</span>
+          <span style="position:absolute;left:50%;top:6px;transform:translateX(-50%);font:600 9.5px 'JetBrains Mono',monospace;letter-spacing:.1em;opacity:.5">↑ RİSK</span>
+          <span style="position:absolute;left:{{ padX }};top:{{ padY }};width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:radial-gradient(circle, #FFF6DA 0, #FFD25A 45%, rgba(255,210,90,0) 72%);pointer-events:none"></span>
+          <span style="position:absolute;left:{{ padX }};top:{{ padY }};width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:#FFFFFF;box-shadow:0 0 0 3px #0E0D09;pointer-events:none"></span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span style="display:flex;justify-content:space-between;font-size:15px"><span>Pres şiddeti</span><span style="font:600 12px 'JetBrains Mono',monospace;color:#FFD25A">{{ siddetAd }}</span></span>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px"><sc-for list="{{ siddetKd }}" as="q" hint-placeholder-count="5"><button onClick="{{ q.sec }}" style="height:30px;border:0;border-radius:8px;background:{{ q.bg }};cursor:pointer"></button></sc-for></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;padding-top:12px;border-top:1px solid rgba(246,243,236,.08)">
+          <span style="font:600 10px 'JetBrains Mono',monospace;letter-spacing:.14em;color:rgba(246,243,236,.55)">GEÇİŞ · DOKUN, DEĞİŞSİN</span>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:14px"><span style="font-weight:800;color:#FFD25A;width:86px;flex:none">Kazanınca</span><button onClick="{{ gH.sec }}" style="height:36px;padding:0 12px;border-radius:11px;border:1px solid rgba(255,210,90,.5);background:rgba(255,210,90,.08);font-size:13.5px;font-weight:700;cursor:pointer">{{ gH.ad }}</button><span style="opacity:.6;font-size:13px">{{ gH.son }}</span></div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:14px"><span style="font-weight:800;color:#8EA2FF;width:86px;flex:none">Kaybedince</span><button onClick="{{ kY.sec }}" style="height:36px;padding:0 12px;border-radius:11px;border:1px solid rgba(142,162,255,.5);background:rgba(142,162,255,.08);font-size:13.5px;font-weight:700;cursor:pointer">{{ kY.ad }}</button><sc-if value="{{ kpVar }}" hint-placeholder-val="{{ true }}"><button onClick="{{ kS.sec }}" style="height:36px;padding:0 10px;border-radius:11px;border:1px solid rgba(142,162,255,.5);background:rgba(142,162,255,.08);font:700 13px 'JetBrains Mono',monospace;cursor:pointer">{{ kS.ad }}</button></sc-if><span style="opacity:.6;font-size:13px">{{ kY.son }}</span></div>
+        </div>
+        <sc-for list="{{ bedel }}" as="b" hint-placeholder-count="1"><span style="display:flex;gap:8px;font-size:13.5px;line-height:1.4;color:#FF8A5C"><span>▲</span><span>{{ b }}</span></span></sc-for>
+        <button onClick="{{ padKapat }}" style="height:52px;border:0;border-radius:16px;background:#F6F3EC;color:#0E0D09;font-size:16px;font-weight:800;cursor:pointer">Tamam</button>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+<sc-if value="{{ ekMac }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;background:#0C0C0A">
+    <canvas ref="{{ cvRef }}" style="position:absolute;left:0;right:0;top:0;bottom:{{ cvAlt }};width:100%;height:calc(100% - {{ cvAlt }});display:block"></canvas>
+    <div style="position:absolute;left:{{ skorL }};right:{{ skorR }};top:max(10px, env(safe-area-inset-top));display:flex;justify-content:{{ skorJ }};pointer-events:none">
+      <div style="display:flex;align-items:stretch;border-radius:13px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.55)"><span style="background:#3D5BF0;padding:8px 11px;font-weight:800;font-size:15px">LİM</span><span style="background:#F6F3EC;color:#0E0D09;padding:8px 13px;font:600 19px/1.1 'JetBrains Mono',monospace">{{ skor }}</span><span style="background:#E0531F;padding:8px 11px;font-weight:800;font-size:15px">{{ rakipKisa }}</span><span style="background:rgba(11,10,7,.92);padding:8px 11px;font:600 13px/1.6 'JetBrains Mono',monospace;color:#FFD25A;display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:{{ canliRenk }}"></span>{{ saat }}</span></div>
+    </div>
+    <sc-if value="{{ evVar }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:12px;top:calc(max(10px, env(safe-area-inset-top)) + 50px);display:flex;align-items:center;gap:7px;background:rgba(11,10,7,.82);border-radius:10px;padding:6px 10px;pointer-events:none"><span style="width:7px;height:7px;border-radius:50%;background:#3D5BF0"></span><span style="font-weight:700;font-size:13px">{{ evBiz }}</span></div></sc-if>
+    <sc-if value="{{ tsVar }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:12px;bottom:calc({{ cvAlt }} + 10px);display:flex;align-items:center;gap:8px;background:rgba(11,10,7,.85);border-radius:10px;overflow:hidden;padding:6px 12px 6px 0;pointer-events:none"><span style="width:5px;align-self:stretch;background:{{ tsRenk }}"></span><span style="font-weight:700;font-size:14px">{{ tsAd }}</span><span style="font:500 11px 'JetBrains Mono',monospace;opacity:.75">{{ tsAlt }}</span></div></sc-if>
+
+    <div style="position:absolute;left:0;right:0;bottom:0;height:{{ cvAlt }};padding:12px 16px max(16px, env(safe-area-inset-bottom));box-sizing:border-box;display:{{ altGoster }};flex-direction:column;gap:10px;background:#0E0D09">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding-right:96px"><span style="font:600 10px 'JetBrains Mono',monospace;letter-spacing:.14em;color:rgba(246,243,236,.55);flex:none">{{ sonOlayT }}</span><span style="font-size:13.5px;font-weight:600;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ sonOlayC }}">{{ sonOlay }}</span></div>
+      <div onClick="{{ ara }}" ref="{{ zamanRef }}" style="position:relative;height:22px;margin-right:96px;cursor:pointer">
+        <div style="position:absolute;left:0;right:0;top:9px;height:4px;border-radius:2px;background:rgba(246,243,236,.1)"></div>
+        <div style="position:absolute;left:0;top:9px;width:{{ hazirPct }};height:4px;border-radius:2px;background:rgba(246,243,236,.25)"></div>
+        <div style="position:absolute;left:0;top:9px;width:{{ izlePct }};height:4px;border-radius:2px;background:#FFD25A"></div>
+        <div style="position:absolute;left:50%;top:5px;width:2px;height:12px;background:rgba(246,243,236,.4)"></div>
+        <sc-for list="{{ isaretler }}" as="i" hint-placeholder-count="0"><span style="position:absolute;left:{{ i.x }};top:{{ i.y }};width:{{ i.s }};height:{{ i.s }};margin-left:{{ i.m }};border-radius:50%;background:{{ i.c }};box-shadow:0 0 0 2px #0E0D09"></span></sc-for>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button onClick="{{ oynat }}" style="width:46px;height:46px;flex:none;border-radius:50%;border:0;background:#F6F3EC;color:#0E0D09;display:flex;align-items:center;justify-content:center;cursor:pointer"><sc-if value="{{ calisiyor }}" hint-placeholder-val="{{ false }}"><span style="display:flex;gap:4px"><span style="width:4px;height:14px;background:#0E0D09;border-radius:1px"></span><span style="width:4px;height:14px;background:#0E0D09;border-radius:1px"></span></span></sc-if><sc-if value="{{ durdu }}" hint-placeholder-val="{{ true }}"><span style="width:0;height:0;margin-left:3px;border-left:13px solid #0E0D09;border-top:8px solid transparent;border-bottom:8px solid transparent"></span></sc-if></button>
+        <div style="display:flex;padding:3px;border-radius:999px;background:rgba(246,243,236,.08)"><sc-for list="{{ hizlar }}" as="h" hint-placeholder-count="3"><button onClick="{{ h.sec }}" style="padding:8px 11px;border:0;border-radius:999px;background:{{ h.bg }};color:{{ h.fg }};font:700 12px 'JetBrains Mono',monospace;cursor:pointer">{{ h.ad }}</button></sc-for></div>
+      </div>
+    </div>
+
+    <div style="position:absolute;right:{{ bagirR }};bottom:{{ bagirB }};display:{{ fabGoster }};gap:10px;align-items:center;z-index:3">
+      <sc-if value="{{ yatay }}" hint-placeholder-val="{{ false }}"><button onClick="{{ oynat }}" style="width:52px;height:52px;border-radius:50%;border:0;background:rgba(246,243,236,.92);color:#0E0D09;display:flex;align-items:center;justify-content:center;cursor:pointer"><sc-if value="{{ calisiyor }}" hint-placeholder-val="{{ false }}"><span style="display:flex;gap:4px"><span style="width:4px;height:14px;background:#0E0D09;border-radius:1px"></span><span style="width:4px;height:14px;background:#0E0D09;border-radius:1px"></span></span></sc-if><sc-if value="{{ durdu }}" hint-placeholder-val="{{ true }}"><span style="width:0;height:0;margin-left:3px;border-left:13px solid #0E0D09;border-top:8px solid transparent;border-bottom:8px solid transparent"></span></sc-if></button></sc-if>
+      <button onClick="{{ carkAc }}" style="width:80px;height:80px;border-radius:50%;border:0;background:#FFD25A;color:#0E0D09;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 0 8px rgba(255,210,90,.15),0 12px 30px rgba(0,0,0,.6);cursor:pointer"><span style="font-weight:800;font-size:16px">Bağır</span><span style="font:600 9px 'JetBrains Mono',monospace;opacity:.7">taktik</span></button>
+    </div>
+
+    <sc-if value="{{ cark }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ carkKapat }}" style="position:absolute;inset:0;z-index:9;background:radial-gradient(circle at 85% 85%, rgba(14,13,9,.35) 0, rgba(14,13,9,.88) 55%)"></div>
+      <div style="position:absolute;right:16px;bottom:max(18px, env(safe-area-inset-bottom));z-index:10;display:flex;flex-direction:column;align-items:flex-end;gap:10px;width:min(330px, calc(100% - 32px))">
+        <span style="font:600 11px 'JetBrains Mono',monospace;letter-spacing:.14em;color:{{ carkEtR }}">{{ carkEt }}</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%">
+          <sc-for list="{{ bagirlar }}" as="b" hint-placeholder-count="4"><button onClick="{{ b.sec }}" style="display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-height:76px;padding:12px 14px;border-radius:18px;border:1px solid rgba(246,243,236,.18);background:#16150F;text-align:left;cursor:pointer"><span style="font-size:17px;font-weight:800">{{ b.ad }}</span><span style="font:500 10.5px/1.35 'JetBrains Mono',monospace;opacity:.65">{{ b.alt }}</span></button></sc-for>
+        </div>
+        <div style="display:flex;gap:8px;width:100%"><button onClick="{{ tamTaktik }}" style="flex:1;height:50px;border-radius:16px;border:1px solid rgba(246,243,236,.25);background:transparent;font-size:14px;font-weight:700;cursor:pointer">Tam taktik</button><button onClick="{{ carkKapat }}" style="width:50px;height:50px;border-radius:50%;border:0;background:#FFD25A;color:#0E0D09;font-size:16px;font-weight:800;cursor:pointer">✕</button></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ toastVar }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:50%;top:calc(max(10px, env(safe-area-inset-top)) + 52px);transform:translateX(-50%);z-index:8;background:#FFD25A;color:#0E0D09;border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:800;white-space:nowrap;box-shadow:0 8px 20px rgba(0,0,0,.5)">{{ toast }}</div></sc-if>
+
+    <sc-if value="{{ golVar }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:7;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 30%, rgba(0,0,0,.6) 100%)">
+        <span style="font:800 clamp(52px,16vw,120px)/1 'Bricolage Grotesque',sans-serif;color:#FFF6DA;letter-spacing:.02em;text-shadow:0 0 28px rgba(255,210,90,.55),0 4px 0 rgba(0,0,0,.35)">GOOOL!</span>
+        <div style="display:flex;align-items:stretch;box-shadow:0 12px 34px rgba(0,0,0,.55)"><span style="width:6px;background:{{ gol.c }}"></span><div style="background:rgba(11,10,7,.92);padding:9px 16px;display:flex;flex-direction:column;gap:2px"><span style="font:600 11px 'JetBrains Mono',monospace;letter-spacing:.16em;color:#FFD25A">GOL · {{ gol.dk }}</span><span style="font-weight:800;font-size:21px">{{ gol.ad }}</span></div><div style="background:#F6F3EC;color:#0E0D09;padding:8px 16px;display:flex;align-items:center;font:600 28px 'JetBrains Mono',monospace">{{ skor }}</div></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ yukVar }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(14,13,9,.78);padding:20px;text-align:center">
+        <span style="font-size:20px;font-weight:800">{{ yukBaslik }}</span>
+        <div style="width:min(70%,300px);height:6px;border-radius:3px;overflow:hidden;background:rgba(246,243,236,.15)"><div style="width:{{ yukPct }};height:100%;border-radius:3px;background:#FFD25A"></div></div>
+        <span style="font:500 11px 'JetBrains Mono',monospace;opacity:.6">{{ yukAlt }}</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ devre }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:11;background:#0E0D09;overflow:auto;display:flex;flex-direction:column;gap:16px;padding:max(16px, env(safe-area-inset-top)) 18px max(18px, env(safe-area-inset-bottom))">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:600 11px 'JetBrains Mono',monospace;letter-spacing:.16em;color:rgba(246,243,236,.55)">DEVRE ARASI</span><span style="font:600 24px 'JetBrains Mono',monospace">{{ skor }}</span></div>
+        <span style="font-size:32px;font-weight:800;letter-spacing:-.02em;line-height:1.05;text-wrap:pretty">{{ devreCumle }}</span>
+        <div style="display:flex;flex-direction:column;gap:12px;background:#16150F;border:1px solid rgba(246,243,236,.1);border-radius:20px;padding:14px 16px">
+          <sc-for list="{{ ist }}" as="s" hint-placeholder-count="4"><div style="display:flex;flex-direction:column;gap:5px"><div style="display:grid;grid-template-columns:48px 1fr 48px;font:600 14px 'JetBrains Mono',monospace"><span>{{ s.a }}</span><span style="text-align:center;font:400 13px 'Bricolage Grotesque',sans-serif;opacity:.7">{{ s.k }}</span><span style="text-align:right">{{ s.b }}</span></div><div style="display:flex;height:6px;gap:3px"><span style="flex:{{ s.fa }};background:#3D5BF0;border-radius:3px"></span><span style="flex:{{ s.fb }};background:#E0531F;border-radius:3px"></span></div></div></sc-for>
+        </div>
+        <sc-if value="{{ dersCanliVar }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;border-radius:16px;background:rgba(255,210,90,.07);border:1px solid rgba(255,210,90,.35);padding:12px 14px"><span style="font:700 10px 'JetBrains Mono',monospace;letter-spacing:.1em;color:#0E0D09;background:#FFD25A;padding:3px 6px;border-radius:4px">DERS</span><span style="font-size:14px;font-weight:600">{{ dersCanli }}</span></div></sc-if>
+        <span style="font:600 11px 'JetBrains Mono',monospace;letter-spacing:.14em;color:rgba(246,243,236,.55)">YARDIMCININ ÖNERİSİ</span>
+        <sc-for list="{{ oneriler }}" as="o" hint-placeholder-count="2">
+          <button onClick="{{ o.sec }}" style="display:flex;align-items:center;gap:12px;border-radius:16px;border:{{ o.k }};background:{{ o.bg }};padding:12px 14px;text-align:left;cursor:pointer"><span style="display:flex;flex-direction:column;gap:2px;flex:1"><span style="font-weight:800;font-size:15px">{{ o.ad }}</span><span style="font-size:12.5px;opacity:.65">{{ o.neden }}</span></span><span style="width:46px;height:28px;flex:none;border-radius:999px;background:{{ o.zemin }};position:relative"><span style="position:absolute;left:{{ o.x }};top:3px;width:22px;height:22px;border-radius:50%;background:{{ o.top }}"></span></span></button>
+        </sc-for>
+        <div style="flex:1"></div>
+        <div style="display:flex;gap:10px"><button onClick="{{ tamTaktik }}" style="height:56px;flex:1;border-radius:16px;border:1px solid rgba(246,243,236,.25);background:transparent;font-size:15px;font-weight:600;cursor:pointer">Tam taktik</button><button onClick="{{ ikinciYari }}" style="height:56px;flex:1.6;border:0;border-radius:16px;background:#FFD25A;color:#0E0D09;font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer">İkinci yarı<span style="display:inline-block;margin-left:10px;width:0;height:0;border-left:9px solid currentColor;border-top:6px solid transparent;border-bottom:6px solid transparent"></span></button></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ bitti }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:11;background:#0E0D09;overflow:auto;display:flex;flex-direction:column;gap:16px;padding:max(16px, env(safe-area-inset-top)) 18px max(18px, env(safe-area-inset-bottom))">
+        <div style="border-radius:26px;overflow:hidden;background:#16150F;border:1px solid rgba(246,243,236,.12);display:flex;flex-direction:column;gap:8px;padding:20px 18px">
+          <span style="font:600 11px 'JetBrains Mono',monospace;letter-spacing:.14em;color:rgba(246,243,236,.6)">LİMAN · {{ rakipAdB }} · MAÇ SONU</span>
+          <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap"><span style="font:600 76px/1 'JetBrains Mono',monospace;letter-spacing:-.04em">{{ skorSikisik }}</span><span style="font-size:26px;font-weight:800;color:#FFD25A">{{ sonuc }}</span></div>
+          <span style="font-size:15px;line-height:1.4;opacity:.8;text-wrap:pretty">{{ sonCumle }}</span>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;padding-top:4px"><sc-for list="{{ golcu }}" as="g" hint-placeholder-count="0"><span style="display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(246,243,236,.07);font-size:12.5px"><span style="width:6px;height:6px;border-radius:50%;background:{{ g.c }}"></span>{{ g.ad }}<span style="font-family:'JetBrains Mono',monospace;opacity:.55">{{ g.dk }}</span></span></sc-for></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;background:#16150F;border:1px solid rgba(246,243,236,.1);border-radius:20px;padding:14px 16px">
+          <sc-for list="{{ ist }}" as="s" hint-placeholder-count="4"><div style="display:flex;flex-direction:column;gap:5px"><div style="display:grid;grid-template-columns:48px 1fr 48px;font:600 14px 'JetBrains Mono',monospace"><span>{{ s.a }}</span><span style="text-align:center;font:400 13px 'Bricolage Grotesque',sans-serif;opacity:.7">{{ s.k }}</span><span style="text-align:right">{{ s.b }}</span></div><div style="display:flex;height:6px;gap:3px"><span style="flex:{{ s.fa }};background:#3D5BF0;border-radius:3px"></span><span style="flex:{{ s.fb }};background:#E0531F;border-radius:3px"></span></div></div></sc-for>
+        </div>
+        <sc-if value="{{ dersRaporVar }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:8px;border-radius:20px;background:rgba(255,210,90,.07);border:1px solid rgba(255,210,90,.35);padding:14px 16px">
+            <span style="font:600 11px 'JetBrains Mono',monospace;letter-spacing:.14em;color:#FFD25A">DERSLER</span>
+            <sc-for list="{{ dersRapor }}" as="r" hint-placeholder-count="0"><div style="display:grid;grid-template-columns:1fr auto;gap:10px;font-size:13.5px;line-height:1.35"><span><b>{{ r.kim }}</b> · {{ r.ne }}</span><span style="font:600 11.5px 'JetBrains Mono',monospace;text-align:right;opacity:.8">{{ r.oran }}<br>{{ r.kok }}</span></div></sc-for>
+          </div>
+        </sc-if>
+        <div style="flex:1"></div>
+        <a href="ALAN Toplanti v2.dc.html" style="display:{{ dersGoster }};height:52px;flex:none;border-radius:16px;background:#F6F3EC;color:#0E0D09;align-items:center;justify-content:center;font-size:16px;font-weight:800;text-decoration:none">Toplantıda tekrarı izle</a>
+        <div style="display:flex;gap:10px"><button onClick="{{ taktigeDon }}" style="height:56px;flex:1;border-radius:16px;border:1px solid rgba(246,243,236,.25);background:transparent;font-size:15px;font-weight:600;cursor:pointer">Taktiği değiştir</button><button onClick="{{ rovans }}" style="height:56px;flex:1.4;border:0;border-radius:16px;background:#FFD25A;color:#0E0D09;font-size:17px;font-weight:800;cursor:pointer">Rövanş</button></div>
+        <button onClick="{{ rakibeDon }}" style="height:44px;border:0;background:transparent;font-size:14px;opacity:.7;cursor:pointer">Başka rakip</button>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const SL = str => { const rows = String(str).split('-').map(Number).filter(n => n > 0), R = rows.length, LS = { 1: [0], 2: [-.5, .5], 3: [-.8, 0, .8], 4: [-.9, -.3, .3, .9], 5: [-.9, -.45, 0, .45, .9] }, out = []; rows.forEach((n, k) => { const d = R > 1 ? .2 + .6 * k / (R - 1) : .45; for (const l of (LS[n] || LS[3])) out.push({ d, l }); }); return out.slice(0, 6); };
+const cl = (v, a, b) => Math.max(a, Math.min(b, v)), r2 = v => Math.round(v * 100) / 100, k3 = (v, a) => v < .34 ? a[0] : v < .67 ? a[1] : a[2], pc = v => v.toFixed(2) + '%';
+const BLOKX = { 'Düşük': 22, 'Orta': 34, 'Yüksek': 50 }, GENX = { 'Dar': 28, 'Normal': 38, 'Geniş': 46 };
+const durSav = (s, bd, blok) => { const back = cl(Math.min(BLOKX[blok] || 34, bd - 6), 8, 62); return { f: cl(back + (s.d - .2) / .6 * 22, 2, 98), y: cl(25 + s.l * 13, 2, 48) }; };
+const durHuc = (s, bd, risk, gen, last) => { const back = cl(bd - 18 - (1 - risk) * 8, 10, 62), front = Math.min(94, Math.max(back + 24, last + 1)); return { f: cl(back + (s.d - .2) / .6 * (front - back), 2, 98), y: cl(25 + s.l * (GENX[gen] || 38) / 2, 2, 48) }; };
+const TLD = { huc: { kosu: .5, istek: .5, destek: .5, risk: .5, ritim: .5, tempo: .5, gonder: .5, serbest: .5, doldur: null }, sav: { adam: 0, kimi: null, pres: .5 } }, PKT = { huc: { Kurucu: { destek: .2, serbest: 0, kosu: .3 }, Kanat: { serbest: .21 }, Koşucu: { kosu: 1, serbest: .76 }, Pivot: { serbest: .21 } }, sav: { Markajcı: { adam: 1 }, Presçi: { pres: 1 } } };
+const tlv = (pp, r, ev, k) => { const o = pp.t && pp.t[ev]; if (o && o[k] !== undefined) return o[k]; const pk = PKT[ev][r ? (ev === 'huc' ? r.h : r.s) : ''] || {}; return pk[k] !== undefined ? pk[k] : TLD[ev][k]; };
+const genOl = (sh, g) => g ? sh.map(s => ({ ...s, l: cl(s.l * g, -1, 1) })) : sh;
+const PLANLAR = [
+  { id: 'bas', ad: 'Önde bas', alt: 'Topu onların yarısında kazan', S: { sav: '2-2-2', huc: '2-2-2', blok: .9, siddet: .8, tempo: .6, risk: .55, sabir: .4, pasBoy: .5, gecisH: 'esit', kpYer: 'her' } },
+  { id: 'kontra', ad: 'Kontra', alt: 'Geride bekle, kazanınca koş', S: { sav: '3-2-1', huc: '2-2-2', blok: .1, siddet: .35, tempo: .7, risk: .8, sabir: .3, pasBoy: .75, gecisH: 'her', kpYer: 'hic' } },
+  { id: 'tut', ad: 'Topu tut', alt: 'Sabırlı paslarla aç', S: { sav: '2-3-1', huc: '2-1-3', blok: .5, siddet: .5, tempo: .2, risk: .25, sabir: .8, pasBoy: .3, gecisH: 'hic', kpYer: 'rakip' } },
+  { id: 'kanat', ad: 'Kanatlardan', alt: 'Geniş aç, çizgiye in', S: { sav: '2-2-2', huc: '2-1-3', blok: .5, siddet: .5, tempo: .55, risk: .5, sabir: .5, pasBoy: .55, gecisH: 'ustun', kpYer: 'rakip', gen: 1.3 } }];
+const ONERI = ['tut', 'kontra', 'bas']; /* gözlemci notlarından: Demir Blok sabırlı pasla açılır · Fırtına'nın arkası açık · Saat Kulesi'ni yüksek pres zorlar */
+const planS = p => ({ D: D0(), sav: SL(p.S.sav), huc: genOl(SL(p.S.huc), p.S.gen), blok: p.S.blok, siddet: p.S.siddet, tempo: p.S.tempo, risk: p.S.risk, sabir: p.S.sabir, pasBoy: p.S.pasBoy ?? .5, sut: .5, gecisH: p.S.gecisH, kpYer: p.S.kpYer, kpSure: 2 });
+const SORULAR = [
+  { et: 'TOP ONLARDAYKEN', s: 'Onları nerede karşılayalım?', gor: 'sav', ops: [{ ad: 'Onların yarısında', alt: 'Hemen bas · arkan açılır', set: { blok: .9, siddet: .75, kpYer: 'her' } }, { ad: 'Orta sahada', alt: 'Dengeli · en az risk', set: { blok: .5, siddet: .5, kpYer: 'rakip' } }, { ad: 'Kuyumuzun önünde', alt: 'Kapan · kontraya hazır', set: { blok: .1, siddet: .35, kpYer: 'hic', sav: '3-2-1' } }] },
+  { et: 'TOPU KAZANINCA', s: 'Top bizde, ilk iş ne?', gor: 'huc', ops: [{ ad: 'Hemen ileri', alt: 'Rakip yerleşmeden · kayıp artar', set: { gecisH: 'her', risk: .7 } }, { ad: 'Sayıca üstünsek', alt: 'Fırsat varsa git, yoksa yerleş', set: { gecisH: 'ustun' } }, { ad: 'Yerleş', alt: 'Topu sakla, şekli kur', set: { gecisH: 'hic', risk: .35 } }] },
+  { et: 'TOP BİZDEYKEN', s: 'Nasıl ilerleyelim?', gor: 'huc', ops: [{ ad: 'Kısa paslarla', alt: 'Sabırlı · rakibi üstüne çek', set: { tempo: .3, risk: .3, sabir: .75, pasBoy: .3, huc: '2-2-2' } }, { ad: 'Kanatlardan', alt: 'Geniş aç, çizgiye in', set: { tempo: .55, risk: .5, sabir: .5, pasBoy: .55, huc: '2-1-3', gen: 1.3 } }, { ad: 'Arkaya, hızlı', alt: 'Çabuk ve dikine · daha çok kayıp', set: { tempo: .75, risk: .8, sabir: .25, pasBoy: .8, huc: '2-1-3' } }] }];
+const BAGIR = [{ id: 'bas', ad: 'Öne bas', alt: 'pres hattı + · sert', d: { blok: .25, siddet: .2 } }, { id: 'tut', ad: 'Topu tut', alt: 'tempo − · güvenli', d: { tempo: -.25, risk: -.2, sabir: .2 } }, { id: 'arka', ad: 'Arkaya oyna', alt: 'risk + · dikine', d: { risk: .25, tempo: .15, pasBoy: .2 } }, { id: 'geri', ad: 'Geri çekil', alt: 'pres hattı − · temkinli', d: { blok: -.25, siddet: -.2 } }];
+const EVA = ['Kazanınca · geçiş', 'Oyun kurma', 'İlerleme', 'Son bölge', 'Kaybedince · geçiş', 'Rakip kuruyor', 'Orta saha', 'Kuyu önü'], EVK = ['kazanınca', 'oyun kurma', 'ilerleme', 'son bölge', 'kaybedince', 'rakip kuruyor', 'orta saha', 'Kuyu önü'];
+const SPD = [['1×', .5], ['2×', 1], ['4×', 2]], KEY = 'alan-mobil-v2';
+/* yeni taktik sistemi (masaüstü ALAN v5 Taktik ile aynı): iki mod × üç duruş; elle konan oyuncu yalnız o duruşta; geçiş kuralı; moda göre talimat; dersler */
+const DUR_A = [20, 50, 80], DUR_AD = ['Kendi bölgemiz', 'Orta', 'Son bölge'], DUR_UZ = ['TOP KENDİ BÖLGEMİZDE', 'TOP ORTADA', 'TOP SON BÖLGEDE'], DUR_KISA = ['KENDİ', 'ORTA', 'SON'], BANT = [[0, 35], [35, 65], [65, 100]];
+const GH = ['ustun', 'esit', 'her', 'hic'], GHAD = ['Önde sayıca üstünsek', 'Eşitsek de', 'Her zaman', 'Hiçbir zaman'], KY = ['rakip', 'her', 'hic'], KYAD = ['Rakip yarısında', 'Her yerde', 'Hiçbir yerde'];
+const GOR = { huc: ['kosu', 'istek', 'destek', 'serbest', 'doldur', 'risk'], sav: ['adam', 'kimi', 'pres'] };
+const TAL = { huc: [['serbest', 'Serbestlik', [[.1, 'Dar'], [.5, 'Orta'], [.9, 'Geniş']]], ['kosu', 'Koşu', [[0, 'Az'], [.5, 'Orta'], [1, 'Çok']]], ['istek', 'Topu nerede ister', [[0, 'Ayağına'], [.5, 'Karışık'], [1, 'Boşluğa']]], ['destek', 'Destek', [[.2, 'Yakın'], [.5, 'Orta'], [.8, 'Uzak']]]], sav: [['adam', 'Savunma', [[0, 'Alan tutar'], [1, 'Adam tutar']]], ['pres', 'Kişisel pres', [[.2, 'Temkinli'], [.5, 'Takımın'], [.9, 'Sert']]]] };
+BAGIR.push({ id: 'cik', ad: 'Hemen çık', alt: 'kazanınca: her zaman', g: { gecisH: 'her' } }, { id: 'kp', ad: 'Kaybedince bas', alt: 'karşı pres: her yerde', g: { kpYer: 'her' } });
+const DERS_MOTOR = false; /* bu klasörün motoru (son sürüm) ders.js taşımıyor; dersler ALAN-ders'teki eski motorda. Motora taşınınca true */
+const D0 = () => ({ huc: [null, null, null], sav: [null, null, null] });
+const mmss = t => { const s = Math.floor(t / 30); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+class Component extends DCLogic {
+  state = (() => { const v = { ekran: 'rakip', dk: 1, rakip: 1, plan: null, degisti: false, soruI: 0, cevap: [null, null, null], gor: 'sav', sel: null, pad: false, geri: null, ipucu: false, swap: null, notI: 0, dizilim: ['aras', 'deniz', 'mert', 'ece', 'cansu', 'kaan', 'tuna'], S: planS(PLANLAR[0]), P: {}, hiz: .5, calis: false };
+    try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.S && s.S.sav && s.S.sav.length === 6) return { ...v, rakip: s.rakip ?? 1, plan: s.plan ?? null, degisti: !!s.degisti, dizilim: s.dizilim || v.dizilim, S: { ...v.S, ...s.S }, P: s.P || {} }; } catch (e) {} return v; })();
+  tahtaRef = React.createRef(); padRef = React.createRef(); cvRef = React.createRef(); zamanRef = React.createRef();
+  kareler = []; olaylar = []; ps = null; t = 0; gen = 0; hesapta = false; acildi = false; len = 7200; W = 120; H = 60;
+  componentDidMount() { const go = () => { if (!window.ALAN_KADRO || !window.AlanCore) return setTimeout(go, 50); if (window.ALAN_SAHA) { this.W = window.ALAN_SAHA.W; this.H = window.ALAN_SAHA.H; } if (window.ALAN_MAC_LEN) this.len = window.ALAN_MAC_LEN;  this.forceUpdate(); }; go();
+    this.onRs = () => this.forceUpdate(); addEventListener('resize', this.onRs); this.loop(); }
+  componentDidUpdate(_, ps) { const S = this.state, bit = !!(this.acildi && !this.hesapta && this.kareler.length > 60 && Math.floor(this.t) >= this.kareler.length - 1); const k = S.ekran === 'mac' ? (S.devre ? 'devre' : bit ? 'son' : 'mac') : S.ekran; if (k !== this._ekBildir) { this._ekBildir = k; try { window.parent.postMessage({ tip: 'alan-ekran', ekran: k }, '*'); } catch (e) {} } } /* telefon çerçevesi maçta yataya döner */
+  componentWillUnmount() { removeEventListener('resize', this.onRs); cancelAnimationFrame(this.raf); if (this.wk) this.wk.terminate(); }
+  kaydet() { const { rakip, plan, degisti, dizilim, S, P } = this.state; try { localStorage.setItem(KEY, JSON.stringify({ rakip, plan, degisti, dizilim, S, P })); } catch (e) {} }
+  set(p, cb) { this.setState(p, () => { this.kaydet(); cb && cb(); }); }
+  R() { return window.ALAN_KADRO.RAKIP[this.state.rakip]; }
+  tac(S) { const w = sh => Math.max(...sh.map(s => s.l)) - Math.min(...sh.map(s => s.l)), wh = w(S.huc);
+    return { tuzak: null, sistem: 'Alan', pres: 1, siddet: r2(S.siddet), blok: k3(S.blok, ['Düşük', 'Orta', 'Yüksek']), genislik: wh < 1.1 ? 'Dar' : wh < 1.55 ? 'Normal' : 'Geniş', savGen: +w(S.sav).toFixed(2), tempo: r2(S.tempo), risk: r2(S.risk), gecisH: S.gecisH, kpYer: S.kpYer, kpSure: S.kpSure, pasBoy: r2(S.pasBoy ?? .5), sabir: r2(S.sabir), sut: r2(S.sut), tetik: ['Geri pas', 'Kanatta'], durus: this.durusOut(S) }; }
+  durusOut(S) { const o = {}; let v = false; for (const g of ['huc', 'sav']) { const D = (S.D && S.D[g]) || []; o[g] = [0, 1, 2].map(k => { const x = D[k]; if (!x || !x.some(Boolean)) return null; v = true; return x.map(q => q ? { f: r2(q.f), y: r2(q.y) } : null); }); } return v ? o : undefined; } /* masaüstüyle aynı biçim: duruş başına 6 oyuncu, {f, y} saha koordinatı */
+  sonHat(R) { const rs = SL(R.diz.sav), mn = Math.min(...rs.map(q => q.d)); return 100 - durSav({ d: mn, l: 0 }, 50, R.tac.blok).f; }
+  pos(S, g, k = 1) { const T = this.tac(S), R = this.R(), bd = DUR_A[k], ed = (S.D && S.D[g] && S.D[g][k]) || []; let last = 100; if (g === 'huc') { const rs = SL(R.diz.sav), mn = Math.min(...rs.map(q => q.d)); last = 100 - durSav({ d: mn, l: 0 }, 100 - bd, R.tac.blok).f; } return S[g].map((s, i) => { const d0 = g === 'sav' ? durSav(s, bd, T.blok) : durHuc(s, bd, T.risk, T.genislik, last), e = ed[i]; return e ? { f: e.f, y: e.y, el: true } : { ...d0, el: false }; }); }
+  golge(S, g, k = 1) { const T = this.tac(S), R = this.R(), bd = DUR_A[k]; if (g === 'sav') { const mn = Math.min(...S.sav.map(q => q.d)), last = 100 - durSav({ d: mn, l: 0 }, bd, T.blok).f; return SL(R.diz.huc).map(s => durHuc(s, 100 - bd, R.tac.risk ?? .5, R.tac.genislik, last)).map(q => ({ f: 100 - q.f, y: 50 - q.y })); } return SL(R.diz.sav).map(s => durSav(s, 100 - bd, R.tac.blok)).map(q => ({ f: 100 - q.f, y: 50 - q.y })); }
+  fromPos(g, i, f, y) { const S = this.state.S, T = this.tac(S), sh = S[g].map(s => ({ ...s })); if (g === 'sav') { const back = cl(Math.min(BLOKX[T.blok] || 34, 44), 8, 62); const l = (y - 25) / 13, d = .2 + (f - back) / 22 * .6; sh[i] = { d: r2(cl(d, 0, 1)), l: r2(cl(l, -1, 1)) }; return { sh, y: Math.abs(l) > 1 ? r2(y) : null, df: d < 0 || d > 1 ? r2(f - durSav(sh[i], 50, T.blok).f) : null }; } else { const back = cl(32 - (1 - T.risk) * 8, 10, 62), front = Math.min(94, Math.max(back + 24, this.sonHat(this.R()) + 1)); sh[i] = { d: r2(cl(.2 + (f - back) / (front - back) * .6, 0, 1)), l: r2(cl((y - 25) / ((GENX[T.genislik] || 38) / 2), -1, 1)) }; const l = (y - 25) / ((GENX[T.genislik] || 38) / 2), d = .2 + (f - back) / (front - back) * .6; return { sh, y: Math.abs(l) > 1 ? r2(y) : null, df: d < 0 || d > 1 ? r2(f - durHuc(sh[i], 50, T.risk, T.genislik, this.sonHat(this.R())).f) : null }; } }
+  pl(id) { return { ...(this.state.P[id] || {}) }; }
+  roles(S0) { const S = S0 || this.state.S, sv = S.sav, hu = S.huc, dMin = Math.min(...hu.map(s => s.d)), sMin = Math.min(...sv.map(s => s.d));
+    return [0, 1, 2, 3, 4, 5].map(i => { const h = hu[i], s = sv[i]; return { h: h.d <= dMin + .02 && h.d < .4 ? 'Kurucu' : Math.abs(h.l) > .68 && h.d > .4 ? 'Kanat' : h.d > .72 && Math.abs(h.l) < .35 ? 'Pivot' : 'Serbest', s: s.d <= sMin + .02 && s.d < .3 ? 'Süpürücü' : s.d > .82 ? 'Önde' : 'Bölge' }; }); }
+  roller() { const rol = this.roles(); return rol.map((r, i) => { const pp = this.pl(this.state.dizilim[i + 1]), tl = { huc: {}, sav: {} }; for (const ev of ['huc', 'sav']) for (const k in TLD[ev]) tl[ev][k] = GOR[ev].includes(k) ? tlv(pp, r, ev, k) : TLD[ev][k]; /* ekranda olmayan talimat varsayılanla */ return { h: r.h, s: r.s, eg: { ps: .5, rk: tl.huc.risk }, tl }; }); }
+  tarzOf(S) { const kz = { hic: 0, ustun: .5, esit: .75, her: 1 }[S.gecisH] ?? .5, ky = { hic: 0, rakip: .6, her: 1 }[S.kpYer] ?? .6, w = Math.max(...S.huc.map(s => s.l)) - Math.min(...S.huc.map(s => s.l));
+    const ax = { Baskı: S.siddet * .4 + S.blok * .4 + ky * .2, Dikine: S.risk * .5 + kz * .3 + S.tempo * .2, Sabır: (1 - S.tempo) * .45 + (1 - S.risk) * .3 + S.sabir * .25, Genişlik: cl(w / 1.9, 0, 1) };
+    const ph = { Baskı: ['önde basan', 'geride bekleyen'], Dikine: ['dikine giden', null], Sabır: ['topu döndüren', null], Genişlik: ['sahayı genişleten', 'içeriden oynayan'] };
+    const ent = Object.entries(ax).sort((a, b) => b[1] - a[1]), hi = ent.filter(([, v]) => v >= .58).slice(0, 2).map(([k]) => ph[k][0]), lo = ent.slice().reverse().find(([k, v]) => v <= .38 && ph[k][1]), parts = hi.concat(lo ? [ph[lo[0]][1]] : []);
+    const ad = parts.length ? parts.join(', ').replace(/^./, c => c.toUpperCase()) : 'Dengeli', kisa = parts.length ? parts[0].replace(/^./, c => c.toUpperCase()) : 'Dengeli';
+    const nArk = S.sav.filter(q => q.d <= .25).length, b = []; if (S.blok > .6 && nArk <= 1) b.push(`Blok önde, en geride ${nArk} kişi: arkası uzun topa açık.`); if (S.tempo > .65 && S.risk > .6) b.push('Hızlı ve riskli: daha çok pozisyon, daha çok top kaybı.'); if (S.tempo < .35 && S.risk < .4) b.push('Yavaş ve güvenli: az kayıp, ama rakip bloğu yerleşir.'); if (kz > .66 && nArk === 0) b.push('Kazanınca herkes çıkıyor: top kaybında geri dönüş uzun.'); if (!b.length) b.push('Belirgin bir zaaf yok; belirgin bir silah da yok.');
+    return { ad, kisa, bedel: b.slice(0, 2) }; }
+  planUygula(p) { this.set({ S: planS(p), P: {}, plan: p.id, degisti: false }); }
+  soruUygula(o) { const S = { ...this.state.S }; for (const k of ['blok', 'siddet', 'tempo', 'risk', 'sabir', 'gecisH', 'kpYer']) if (o.set[k] !== undefined) S[k] = o.set[k]; if (o.set.sav) { S.sav = SL(o.set.sav); S.D = { ...(S.D || D0()), sav: [null, null, null] }; } if (o.set.huc) { S.huc = genOl(SL(o.set.huc), o.set.gen); S.D = { ...(S.D || D0()), huc: [null, null, null] }; } return S; }
+  // tahta: dokun = kart, sürükle = yer. Pres hattı tutamaçtan
+  pDown(i, e) { this.drag = { i, x0: e.clientX, y0: e.clientY, moved: false, once: JSON.stringify(this.state.S) }; const el = this.tahtaRef.current; if (el && el.setPointerCapture) try { el.setPointerCapture(e.pointerId); } catch (x) {} e.preventDefault(); }
+  presDown = e => { e.stopPropagation(); this.drag = { pres: true, moved: true, once: JSON.stringify(this.state.S), b0: k3(this.state.S.blok, ['Düşük', 'Orta', 'Yüksek']) }; const el = this.tahtaRef.current; if (el && el.setPointerCapture) try { el.setPointerCapture(e.pointerId); } catch (x) {} };
+  pMove = e => { const d = this.drag, el = this.tahtaRef.current; if (!d || !el) return; const R = el.getBoundingClientRect(), f = this.yat ? cl((e.clientX - R.left) / R.width * 100, 2, 98) : cl((1 - (e.clientY - R.top) / R.height) * 100, 2, 98), y = this.yat ? cl((e.clientY - R.top) / R.height * 50, 2, 48) : cl((e.clientX - R.left) / R.width * 50, 2, 48);
+    if (d.pres) { this.setState({ S: { ...this.state.S, blok: r2(cl((f - 18) / 44, 0, 1)) } }); return; }
+    if (!d.moved && Math.hypot(e.clientX - d.x0, e.clientY - d.y0) < 7) return; d.moved = true; if (d.i === 0) return; const g = this.state.gor, k = this.state.dk, S0 = this.state.S, D = { ...D0(), ...(S0.D || {}) }, dg = D[g].slice(), x = (dg[k] || [null, null, null, null, null, null]).slice(); x[d.i - 1] = { f: r2(f), y: r2(y) }; dg[k] = x; this.setState({ S: { ...S0, D: { ...D, [g]: dg } }, ipucu: false }); }; /* yalnız seçili duruş değişir */
+  pUp = () => { const d = this.drag; if (!d) return; this.drag = null; const S = this.state;
+    if (!d.moved) { if (S.swap) { this.degistirOyuncu(d.i, S.swap); return; } this.setState({ sel: d.i, ipucu: false }); return; }
+    if (d.pres) { const b = k3(S.S.blok, ['Düşük', 'Orta', 'Yüksek']), M = { Yüksek: ['Pres hattı önde', ['+', "Ölçüm: topun %41'i rakip yarısında kazanılır"], ['−', 'Arkada boşluk: yenen sayı yaklaşık 3 katı']], Orta: ['Pres hattı ortada', ['+', 'Dengeli: arkan da önün de kapalı'], ['−', 'Rakip ilk pası rahat yapar']], 'Düşük': ['Pres hattı geride', ['+', 'Ölçüm: az sayı yenir (~0,7)'], ['−', 'Top kendi yarında kazanılır, hücum uzun yoldan']] }[b];
+      if (b === d.b0) { this.set({ degisti: true }); return; } /* kademe değişmediyse söylenecek yeni bir şey yok */
+      this.set({ degisti: true, geri: { once: d.once, baslik: M[0], satir: [M[1], M[2]], bitis: performance.now() + 4500 } }); return; }
+    if (d.i === 0) return; const ad = window.ALAN_KADRO.KADRO.find(k => k.id === S.dizilim[d.i]).ad; this.set({ degisti: true, geri: { once: d.once, baslik: `${ad} · ${DUR_AD[S.dk].toLowerCase()} duruşu`, satir: [['·', 'Öbür iki duruşta yeri değişmedi']], bitis: performance.now() + 2600 } }); };
+  degistirOyuncu(i, id) { const d = this.state.dizilim.slice(), j = d.indexOf(id); if (j >= 0) d[j] = d[i]; d[i] = id; this.set({ dizilim: d, swap: null, sel: null }); }
+  padSet(e) { const el = this.padRef.current; if (!el) return; const R = el.getBoundingClientRect(), x = cl((e.clientX - R.left) / R.width, 0, 1), y = cl((e.clientY - R.top) / R.height, 0, 1); this.setState({ S: { ...this.state.S, tempo: r2(x), risk: r2(1 - y) } }); }
+  dersOku() { if (!DERS_MOTOR) return []; try { return (JSON.parse(localStorage.getItem('alan-dersler-v2') || '[]') || []).filter(d => (d.takim ?? 0) === 0); } catch (e) { return []; } }
+  dersAyar() { try { return JSON.parse(localStorage.getItem('alan-ders-ayar2') || 'null') || undefined; } catch (e) { return undefined; } }
+  kayitYaz(yeniMi) { try { localStorage.setItem('alan-v5-son-mac', JSON.stringify(this.kayitMac)); let L = []; try { L = JSON.parse(localStorage.getItem('alan-v5-maclar') || '[]'); } catch (e) {} if (yeniMi || !L.length) L.push(this.kayitMac); else L[L.length - 1] = this.kayitMac; localStorage.setItem('alan-v5-maclar', JSON.stringify(L.slice(-5))); } catch (e) {} } /* Toplantı son maçı buradan açar */
+  dersBitti(say) { const th = this.kayitMac.yeni.tohum; let L = []; try { L = JSON.parse(localStorage.getItem('alan-dersler-v2') || '[]'); } catch (e) {} /* Canlı ile aynı: kökleşme maç başına bir kez */
+    L = L.map(d => { const c = say[d.id]; if (!c || (d.gecmis || []).some(g => g.mac === th)) return d; let k = d.kok ?? .3; const hz = cl(.08 + .015 * ((d.gorus ?? 10) - 10), .04, .2); for (let i = 0; i < c.uyg; i++) k += hz * (1 - k); k = Math.round(k * 1000) / 1000; return { ...d, kok: k, gecmis: [...(d.gecmis || []), { mac: th, rakip: this.kayitMac.ad[1], gel: c.gel, uyg: c.uyg, deg: c.deg, once: d.kok, sonra: k }] }; });
+    try { localStorage.setItem('alan-dersler-v2', JSON.stringify(L)); } catch (e) {} this.kayitMac.dersSay = say; this.kayitYaz(false); const gir = this.kayitMac.yeni.dersler || [];
+    this.dersRaporL = gir.map(d0 => { const d = L.find(x => x.id === d0.id) || d0, c = say[d.id], g = (d.gecmis || []).find(x => x.mac === th); return { kim: d.tur === 'takim' ? 'Takım' : d.oyuncu, ne: window.AlanDersOzet(d), oran: c ? c.gel + ' anın ' + c.uyg + '’inde' : 'durum gelmedi', kok: g ? '%' + Math.round(g.once * 100) + ' → %' + Math.round(g.sonra * 100) : '' }; }); this.forceUpdate(); }
+  // maç
+  basla() { const K = window.ALAN_KADRO, R = this.R(), S = this.state, T = this.tac(S.S), roller = this.roller(), biz = S.dizilim.map(id => { const p = K.KADRO.find(k => k.id === id); return { ad: p.ad, a: p.a }; }), rk = R.oyuncular.map(([ad, a]) => ({ ad, a })), diz = { sav: S.S.sav, huc: S.S.huc };
+    try { localStorage.setItem('alan-v5-menajer', JSON.stringify({ ad: ['Liman', R.ad], tac: [T, R.tac], diz: [{ sav: '2-2-2', huc: '2-2-2' }, R.diz], dizArr: [diz, null], oyuncular: [biz, rk], roller: [roller, R.roller] })); } catch (e) {}
+    if (this.wk) this.wk.terminate(); this.wk = new Worker('alan-v5/mac-isci.js'); this.wk.postMessage({ tip: 'kur', NW: 1 }); this.wk.onmessage = e => this.al(e.data);
+    this.kareler = []; this.olaylar = []; this.ps = null; this.t = 0; this.acildi = false; this.hesapta = true; this.devreGecti = false; this.yariHazir = false; this.golSon = 0; this.st = { k: -1, hold: [0, 0], kaz: [0, 0], gon: [0, 0], son: null }; this.gen = 1;
+    this.dersRaporL = null; const Y0 = { tip: 'yeni', gen: 1, tohum: 1 + Math.floor(Math.random() * 1e6), tac: [T, { ...R.tac, yz: true }], diz: [diz, R.diz], len: this.len, devre: true, dur: this.len >> 1, oz: '10', kadro: 1, oyuncular: [biz, rk], roller: [roller, R.roller], ay: {}, dersler: this.dersOku(), dersAyar: this.dersAyar() }; this.kayitMac = { tarih: new Date().toISOString(), ad: ['Liman', R.ad], saha: [this.W, this.H], yeni: Y0, degisiklik: [] }; this.kayitYaz(true); this.wk.postMessage(Y0);
+    this.setState({ ekran: 'mac', calis: false, devre: false, cark: false, sel: null, pad: false, geri: null, oneriSec: [false, false], macIci: false }); }
+  al(d) { if (d.tip === 'hata') { console.error(d.msg); return; } if (d.gen !== this.gen) return; if (d.tip === 'basla') { this.ps = d.ps; return; } if (d.tip !== 'kare') return;
+    for (const [t, f] of d.kare) this.kareler[t] = f; if (d.olay.length) this.olaylar.push(...d.olay); if (d.son) { this.hesapta = false; if (d.dersSay) this.dersBitti(d.dersSay); } if (d.yari) this.yariHazir = true; const HT = this.len >> 1, hedef = this.devreGecti || this.t >= HT ? this.len : HT;
+    if (!this.acildi && (this.kareler.length - this.t >= .2 * (hedef - this.t) || !this.hesapta || (this.yariHazir && this.t < HT))) { this.acildi = true; this.setState({ calis: !this.state.devre }); } }
+  uygulaMac(S2, not) { const snapT = Math.floor(Math.floor(this.t) / 60) * 60; if (!this.wk || !this.kareler[snapT]) return; this.kareler.length = snapT + 1; this.olaylar = this.olaylar.filter(o => o.tick <= snapT); this.t = snapT; this.golSon = snapT; this.st = { k: -1, hold: [0, 0], kaz: [0, 0], gon: [0, 0], son: null }; this.gen++; this.hesapta = true; this.yariHazir = false; this.acildi = false;
+    this.set({ S: S2, degisti: true }, () => { const dm = { tip: 'degistir', gen: this.gen, snapT, t: 0, tac: this.tac(S2), diz: { sav: S2.sav, huc: S2.huc }, roller: this.roller(), ay: {} }; if (this.kayitMac) { this.kayitMac.degisiklik = this.kayitMac.degisiklik.filter(x => x.snapT < snapT); this.kayitMac.degisiklik.push(dm); this.kayitYaz(false); } this.wk.postMessage(dm); });
+    this.setState({ calis: false, cark: false, toast: not, toastT: performance.now() + 2600 }); }
+  bagir(b) { const S = { ...this.state.S }; for (const k in b.d || {}) S[k] = r2(cl(S[k] + b.d[k], 0, 1)); Object.assign(S, b.g || {}); this.uygulaMac(S, `${b.ad} · ${mmss(Math.floor(this.t / 60) * 60)}'ten itibaren`); }
+  istat(upto) { const S = this.st; for (let k = S.k + 1; k <= upto; k++) { const f = this.kareler[k]; if (!f) break; const hi = f[30]; if (hi >= 0) { const tm = hi < 7 ? 0 : 1; S.hold[tm]++; if (S.son && S.son.i !== hi && S.son.tm !== tm) S.kaz[tm]++; S.son = { i: hi, tm }; } S.k = k; }
+    for (const o of this.olaylar) if (!o._g && o.tick <= upto && /gönderdi/.test(o.text || '')) { o._g = 1; const p = this.ps && this.ps.find(q => (o.text || '').startsWith(q.name)); if (p) S.gon[p.team]++; } }
+  loop() { let son = performance.now(); const f = now => { const dt = Math.min(.05, (now - son) / 1000); son = now; const S = this.state;
+      if (S.ekran === 'mac' && S.calis && this.acildi && !S.cark) { const nx = this.t + S.hiz * dt * 60 * (this.yavas && now < this.yavas ? .3 : 1), HT = this.len >> 1;
+        if (!this.devreGecti && this.t < HT && nx >= HT && this.kareler[HT]) { this.t = HT; this.devreGecti = true; if (this.wk) this.wk.postMessage({ tip: 'devam', gen: this.gen }); this.setState({ calis: false, devre: true, oneriSec: [false, false] }); }
+        else if (this.kareler[Math.floor(nx)]) this.t = nx; else if (!this.hesapta) this.setState({ calis: false }); else { this.acildi = false; } }
+      if (S.ekran === 'mac') { this.ciz(); this.golBak(Math.floor(this.t)); }
+      if (S.toast && now > (S.toastT || 0)) this.setState({ toast: null });
+      if (S.geri && S.geri.bitis && now > S.geri.bitis && !this.drag) this.setState({ geri: null });
+      this.k = (this.k || 0) + 1; if (S.ekran === 'mac' && this.k % 6 === 0) this.setState({ n: this.k }); this.raf = requestAnimationFrame(f); }; this.raf = requestAnimationFrame(f); }
+  golBak(t) { if (this.state.calis && t > this.golSon && t - this.golSon < 150) for (const o of this.olaylar) if (o.type === 'sayi' && o.tick > this.golSon && o.tick <= t) { this.yavas = performance.now() + 1400; clearTimeout(this._golT); this.setState({ gol: { ad: (o.text || '').split(' ')[0], c: o.team ? '#E0531F' : '#3D5BF0', dk: mmss(o.tick) } }); this._golT = setTimeout(() => this.setState({ gol: null }), 2800); } this.golSon = t; }
+  ciz() { const cv = this.cvRef.current, C = window.AlanCore; if (!cv || !C || !this.ps) return; const f = this.kareler[Math.floor(this.t)]; if (!f) return; const W = this.W, H = this.H, dpr = Math.min(2.5, window.devicePixelRatio || 1), cw = cv.clientWidth, ch = cv.clientHeight; if (!cw || !ch) return;
+    const PW = Math.round(cw * dpr), PH = Math.round(ch * dpr); if (cv.width !== PW || cv.height !== PH) { cv.width = PW; cv.height = PH; } const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, cw, ch);
+    const dik = ch > cw * 1.1; let fw, fh; if (dik) { fw = Math.min(cw - 12, (ch - 12) / 2); fh = fw * 2; } else { fh = Math.min(ch - 12, (cw - 12) / 2); fw = fh * 2; }
+    const ox = (cw - fw) / 2, oy = (ch - fh) / 2, sc = dik ? fw / H : fw / W, M = dik ? (a, b) => [ox + b / H * fw, oy + fh - a / W * fh] : (a, b) => [ox + a / W * fw, oy + b / H * fh], GOLD = '#FFD25A';
+    x.fillStyle = '#17202A'; x.fillRect(ox, oy, fw, fh); const sp = x.createRadialGradient(ox + fw / 2, oy + fh * .45, 20, ox + fw / 2, oy + fh / 2, Math.max(fw, fh) * .7); sp.addColorStop(0, 'rgba(120,150,170,.28)'); sp.addColorStop(1, 'rgba(0,0,0,.35)'); x.fillStyle = sp; x.fillRect(ox, oy, fw, fh);
+    const pv = this.kareler[Math.max(0, Math.floor(this.t) - 4)] || f, ps = this.ps.map((p, k) => ({ ...p, x: f[2 * k], y: f[2 * k + 1], vx: (f[2 * k] - pv[2 * k]) / 4, vy: (f[2 * k + 1] - pv[2 * k + 1]) / 4 }));
+    const oc = this.oc || (this.oc = document.createElement('canvas')); oc.width = W; oc.height = H; const ocx = oc.getContext('2d'), im = ocx.createImageData(W, H), z = ps.map(p => ({ ...p, vx: 0, vy: 0 }));
+    for (let yy = 0; yy < H; yy++) for (let xx = 0; xx < W; xx++) { const v = C.K(z, xx + .5, yy + .5, 0), a = Math.pow(Math.min(1, Math.abs(v) / .85), 1.15), i = (yy * W + xx) * 4; if (a < .03) continue; const c = v > 0 ? [60, 92, 240] : [245, 108, 42]; im.data[i] = c[0]; im.data[i + 1] = c[1]; im.data[i + 2] = c[2]; im.data[i + 3] = Math.round(a * 100); }
+    ocx.putImageData(im, 0, 0); x.save(); x.globalCompositeOperation = 'lighter'; x.imageSmoothingEnabled = true; x.imageSmoothingQuality = 'high'; if (dik) { x.translate(ox, oy + fh); x.rotate(-Math.PI / 2); x.drawImage(oc, 0, 0, fh, fw); } else x.drawImage(oc, ox, oy, fw, fh); x.restore();
+    x.strokeStyle = 'rgba(246,243,236,.6)'; x.lineWidth = 2; x.strokeRect(ox + 1, oy + 1, fw - 2, fh - 2); x.strokeStyle = 'rgba(246,243,236,.3)'; x.lineWidth = 1.5; x.beginPath(); { const [a1, b1] = M(W / 2, 0), [a2, b2] = M(W / 2, H); x.moveTo(a1, b1); x.lineTo(a2, b2); } x.stroke(); { const [cx, cy] = M(W / 2, H / 2); x.beginPath(); x.arc(cx, cy, 1.4 * sc, 0, 7); x.stroke(); }
+    for (const gx of [0, W]) { const [cx, cy] = M(gx, H / 2), R = C.KR * sc, gr = x.createRadialGradient(cx, cy, R * .2, cx, cy, R * 1.8); gr.addColorStop(0, 'rgba(0,0,0,1)'); gr.addColorStop(.5, 'rgba(0,0,0,.95)'); gr.addColorStop(.56, 'rgba(255,210,90,.5)'); gr.addColorStop(1, 'rgba(255,210,90,0)'); x.save(); x.beginPath(); x.rect(ox, oy, fw, fh); x.clip(); x.fillStyle = gr; x.beginPath(); x.arc(cx, cy, R * 1.8, 0, 7); x.fill();
+      x.shadowColor = GOLD; x.shadowBlur = 20; x.strokeStyle = GOLD; x.lineWidth = Math.max(2, sc * .25); x.beginPath(); x.arc(cx, cy, R, 0, 7); x.stroke(); const [m1x, m1y] = M(gx, H / 2 - C.MOUTH), [m2x, m2y] = M(gx, H / 2 + C.MOUTH); x.lineWidth = Math.max(3, sc * .6); x.strokeStyle = '#FFF2C4'; x.beginPath(); x.moveTo(m1x, m1y); x.lineTo(m2x, m2y); x.stroke(); x.restore(); }
+    const t = Math.floor(this.t), tr = []; for (let i = Math.max(0, t - 40); i <= t; i++) { const g = this.kareler[i]; if (g && !isNaN(g[28])) tr.push(M(g[28], g[29])); }
+    x.lineCap = 'round'; for (let i = 1; i < tr.length; i++) { const q = i / tr.length; x.strokeStyle = GOLD; x.globalAlpha = q * .9; x.lineWidth = 1.5 + q * sc * .7; x.beginPath(); x.moveTo(tr[i - 1][0], tr[i - 1][1]); x.lineTo(tr[i][0], tr[i][1]); x.stroke(); } x.globalAlpha = 1;
+    const hi = f[30], r = Math.max(6.5, 1.2 * sc), fs = Math.max(9, Math.round(sc * .72)), dersAd = new Set(); for (let i = this.olaylar.length - 1; i >= 0; i--) { const o = this.olaylar[i]; if (o.tick > t) continue; if (t - o.tick > 120) break; if (o.type === 'ders') { if (o.ad) dersAd.add(o.ad); for (const a of o.ads || []) dersAd.add(a); } }
+    ps.forEach((p, k) => { const [px, py] = M(p.x, p.y), col = p.team ? '#FF7A45' : '#6F8CFF'; x.fillStyle = 'rgba(0,0,0,.45)'; x.beginPath(); x.ellipse(px, py + r * .5, r * 1.05, r * .55, 0, 0, 7); x.fill();
+      const gr = x.createRadialGradient(px - r * .35, py - r * .4, r * .1, px, py, r); gr.addColorStop(0, '#FFFFFF'); gr.addColorStop(.25, col); gr.addColorStop(1, p.team ? '#9C3510' : '#1A2A99'); x.fillStyle = gr; x.beginPath(); x.arc(px, py, r, 0, 7); x.fill();
+      if (p.role === 'Bekçi') { x.strokeStyle = '#F6F3EC'; x.lineWidth = 1.5; x.beginPath(); x.arc(px, py, r + 2, 0, 7); x.stroke(); }
+      if (k === hi) { x.shadowColor = GOLD; x.shadowBlur = 16; x.strokeStyle = GOLD; x.lineWidth = 2.5; x.beginPath(); x.arc(px, py, r + 4, 0, 7); x.stroke(); x.shadowBlur = 0; }
+      x.fillStyle = '#F6F3EC'; x.font = `700 ${fs}px "JetBrains Mono", monospace`; x.textAlign = 'center'; x.textBaseline = 'bottom'; x.shadowColor = 'rgba(0,0,0,.9)'; x.shadowBlur = 3; x.fillText(p.name.toUpperCase(), px, py - r - 4); x.shadowBlur = 0;
+      if (p.team === 0 && dersAd.has(p.name)) { const tw = fs * 3.6, th = fs * 1.55, ty = py - r - 7 - fs - th; x.fillStyle = GOLD; x.shadowColor = GOLD; x.shadowBlur = 12; x.beginPath(); if (x.roundRect) x.roundRect(px - tw / 2, ty, tw, th, th / 2); else x.rect(px - tw / 2, ty, tw, th); x.fill(); x.shadowBlur = 0; x.fillStyle = '#0E0D09'; x.textBaseline = 'middle'; x.fillText('DERS', px, ty + th / 2 + 1); } });
+    if (!isNaN(f[28])) { const [bx, by] = M(f[28], f[29]), R = (1.2 + 2.2 * f[31]) * sc, gr = x.createRadialGradient(bx, by, 0, bx, by, R); gr.addColorStop(0, 'rgba(255,240,190,1)'); gr.addColorStop(.3, 'rgba(255,210,90,.6)'); gr.addColorStop(1, 'rgba(255,210,90,0)'); x.fillStyle = gr; x.beginPath(); x.arc(bx, by, R, 0, 7); x.fill(); x.fillStyle = '#FFFFFF'; x.beginPath(); x.arc(bx, by, Math.max(3, .42 * sc), 0, 7); x.fill(); } }
+  istDizi() { const S = this.st, sum = (a, b) => a + b || 1, ph = Math.round(S.hold[0] / sum(S.hold[0], S.hold[1]) * 100); return [{ k: 'Topa sahip', a: `%${ph}`, b: `%${100 - ph}`, fa: String(S.hold[0] || 1), fb: String(S.hold[1] || 1) }, { k: 'Gönderme', a: String(S.gon[0]), b: String(S.gon[1]), fa: String(S.gon[0] || .01), fb: String(S.gon[1] || .01) }, { k: 'Top kazanma', a: String(S.kaz[0]), b: String(S.kaz[1]), fa: String(S.kaz[0] || .01), fb: String(S.kaz[1] || .01) }]; }
+  evreGol() { const K = this.kareler, gol = {}, yen = {}; for (let i = 1; i < K.length; i++) { const a = K[i - 1], b = K[i]; if (!a || !b || a.length < 42) continue; if (b[32] > a[32]) gol[EVK[a[40]] || '?'] = (gol[EVK[a[40]] || '?'] || 0) + 1; if (b[33] > a[33]) yen[EVK[a[40]] || '?'] = (yen[EVK[a[40]] || '?'] || 0) + 1; } return { gol, yen }; }
+  renderVals() {
+    const K = window.ALAN_KADRO, S = this.state, ek = S.ekran, yat = innerWidth > innerHeight, yatay = yat && ek === 'mac'; this.yat = yat;
+    const base = { kapW: yat ? '100%' : '480px', ekRakip: ek === 'rakip' && !yat, ekPlan: ek === 'plan' && !yat, ekSoru: ek === 'soru' && !yat, ekRakipY: ek === 'rakip' && yat, ekPlanY: ek === 'plan' && yat, ekSoruY: ek === 'soru' && yat, ekTahta: ek === 'tahta', ekMac: ek === 'mac', tahtaRef: this.tahtaRef, padRef: this.padRef, cvRef: this.cvRef, zamanRef: this.zamanRef, pMove: this.pMove, pUp: this.pUp, presDown: this.presDown };
+    if (!K) return { ...base, ly: {}, sh: {}, pr: {}, dersGoster: 'none', durBtn: [], dersler: [], dersRapor: [], gH: {}, kY: {}, kS: {}, topDot: {}, bant: {}, rakipDots: [], rakipAd: '…', rakipTarz: '', rakipNo: '', notTxt: '', notNo: '', planlar: [], tahtaPs: [], golgeler: [], bench: [], gorler: [], soruOps: [], soruBar: [], ist: [], hizlar: [], isaretler: [], bagirlar: [], oneriler: [], golcu: [], bedel: [], siddetKd: [], kart: { satir: [], yedek: [] }, geri: { satir: [] }, ip2: {}, gol: {} };
+    const R = this.R(), sel = S.sel, rakipAdB = R.ad.toLocaleUpperCase('tr'), P = id => K.KADRO.find(k => k.id === id), tz = this.tarzOf(S.S), onPlan = ONERI[S.rakip], DL = this.dersOku();
+    const BX = yat ? q => ({ l: pc(q.f), t: pc(q.y * 2) }) : q => ({ l: pc(q.y * 2), t: pc(100 - q.f) });
+    const px = 'px', ly = yat ? { tbL: 'auto', tbR: '12px', tbT: '10px', tbW: '272px', bL: '10px', bR: '296px', bT: '10px', bB: '10px', mL: '50%', mT: '6px', mW: '1.5px', mH: 'calc(100% - 12px)', k1L: '100%', k1T: '50%', k2L: '0', k2T: '50%', kW: '13%', kuL: 'calc(100% - 12px)', kuT: '12px', kuTr: 'translateX(-100%)', ok: '→', dL: '50%', dT: 'calc(100% - 58px)', dTr: 'translateX(-50%)', dDir: 'row', alL: 'auto', alR: '12px', alB: '10px', alW: '272px', alP: '0', ipL: '20px', ipR: '306px', ipB: '74px', gL: '20px', gR: '306px', gT: '20px' }
+      : { tbL: '14px', tbR: '14px', tbT: 'max(12px, env(safe-area-inset-top))', tbW: 'auto', bL: '10px', bR: '10px', bT: 'calc(max(12px, env(safe-area-inset-top)) + 50px)', bB: 'calc(max(16px, env(safe-area-inset-bottom)) + 138px)', mL: '6px', mT: '50%', mW: 'calc(100% - 12px)', mH: '1.5px', k1L: '50%', k1T: '0', k2L: '50%', k2T: '100%', kW: '26%', kuL: '50%', kuT: '14px', kuTr: 'translateX(-50%)', ok: '↑', dL: 'calc(100% - 56px)', dT: '50%', dTr: 'translateY(-50%)', dDir: 'column', alL: '0', alR: '0', alB: '0', alW: 'auto', alP: '10px 14px max(16px, env(safe-area-inset-bottom))', ipL: '14px', ipR: '14px', ipB: 'calc(max(16px, env(safe-area-inset-bottom)) + 146px)', gL: '18px', gR: '18px', gT: 'calc(max(12px, env(safe-area-inset-top)) + 58px)' };
+    const sh = yat ? { l: 'auto', t: '0', w: '360px', mh: 'none', r: '26px 0 0 26px' } : { l: '0', t: 'auto', w: 'auto', mh: '82%', r: '26px 26px 0 0' };
+    // rakip
+    const rk = [{ f: 96, y: 25, bk: 1 }].concat(SL(R.diz.sav).map(s => durSav(s, 50, R.tac.blok)).map(q => ({ f: 100 - q.f, y: 50 - q.y }))).map(q => ({ ...BX({ f: 100 - (100 - q.f) * .9, y: q.y }), sh: q.bk ? '0 0 0 2px #F6F3EC' : '0 3px 8px rgba(0,0,0,.55)' }));
+    const nI = S.notI % R.notlar.length;
+    const r0 = { ly, sh, rakipDots: rk, rakipAd: R.ad, rakipAdB, rakipKisa: rakipAdB.slice(0, 3), rakipTarz: R.tarz.toLowerCase() + ' · ' + R.diz.sav + ' · ' + R.tac.blok.toLowerCase() + ' blok', rakipNo: `${S.rakip + 1} / ${K.RAKIP.length}`, notNo: `${nI + 1} / ${R.notlar.length}`, notTxt: R.notlar[nI],
+      rakipOnce: () => this.set({ rakip: (S.rakip + K.RAKIP.length - 1) % K.RAKIP.length, notI: 0 }), rakipSonra: () => this.set({ rakip: (S.rakip + 1) % K.RAKIP.length, notI: 0 }), notSonra: () => this.setState({ notI: S.notI + 1 }), planaGec: () => this.setState({ ekran: 'plan' }), rakibeDon: () => { if (this.wk) { this.wk.terminate(); this.wk = null; } this.setState({ ekran: 'rakip' }); } };
+    // planlar
+    const secPlan = S.plan || onPlan, planlar = PLANLAR.map(p => { const pS = planS(p), T = this.tac(pS); return { ad: p.ad, alt: p.alt, oneri: p.id === onPlan, k: p.id === secPlan ? '#FFD25A' : 'rgba(246,243,236,.1)', presT: pc(100 - (18 + pS.blok * 44)), presX: pc(18 + pS.blok * 44), dots: [{ f: 4, y: 25 }].concat(pS.sav.map(s => durSav(s, 50, T.blok))).map(BX), sec: () => this.setState({ plan: p.id }) }; });
+    const pSec = PLANLAR.find(p => p.id === secPlan);
+    const r1 = { planlar, planDevamTxt: `${pSec.ad} ile devam`, planDevam: () => { this.planUygula(pSec); this.setState({ ekran: 'tahta', gor: 'sav', ipucu: !localStorage.getItem('alan-mobil-ipucu') }); }, kendimKur: () => this.setState({ ekran: 'soru', soruI: 0, cevap: [null, null, null], S: planS(PLANLAR.find(p => p.id === 'tut')) }) };
+    // soru
+    const sq = SORULAR[S.soruI], gorAkt = ek === 'soru' ? sq.gor : S.gor;
+    const r2_ = { soruEt: `${S.soruI + 1} / 3 · ${sq.et}`, soruTxt: sq.s, soruBar: [0, 1, 2].map(i => i <= S.soruI ? '#FFD25A' : 'rgba(246,243,236,.2)'),
+      soruOps: sq.ops.map((o, i) => { const on = S.cevap[S.soruI] === i; return { ad: o.ad, alt: o.alt, bg: on ? 'rgba(255,210,90,.1)' : '#16150F', k: on ? '#FFD25A' : 'rgba(246,243,236,.12)', nokta: on ? '#FFD25A' : 'transparent', sec: () => { const c = S.cevap.slice(); c[S.soruI] = i; this.setState({ cevap: c, S: this.soruUygula(o) }); } }; }),
+      soruGeri: () => S.soruI ? this.setState({ soruI: S.soruI - 1 }) : this.setState({ ekran: 'plan' }), soruIleriTxt: S.soruI < 2 ? 'Sıradaki' : 'Tahtaya geç', soruIleriBg: S.cevap[S.soruI] == null ? 'rgba(255,210,90,.4)' : '#FFD25A',
+      soruIleri: () => { if (S.cevap[S.soruI] == null) return; if (S.soruI < 2) this.setState({ soruI: S.soruI + 1 }); else this.set({ ekran: 'tahta', plan: null, degisti: false, P: {}, gor: 'sav', ipucu: !localStorage.getItem('alan-mobil-ipucu') }); } };
+    // tahta
+    const dkA = ek === 'soru' ? 1 : S.dk, pos = this.pos(S.S, gorAkt, dkA), presF = 18 + S.S.blok * 44, presVar = gorAkt === 'sav';
+    const tahtaPs = [{ f: 4.5, y: 25 }].concat(pos).map((q, i) => { const p = P(S.dizilim[i]); return { ...BX(q), no: i ? String(i) : 'B', ad: p ? p.ad.toLocaleUpperCase('tr') : '', bg: i ? 'radial-gradient(circle at 35% 30%, #fff 0, #6F8CFF 30%, #1A2A99 100%)' : 'radial-gradient(circle at 35% 30%, #fff 0, #4A62D8 30%, #14207A 100%)', ring: i === sel ? '0 0 0 3px #F6F3EC, 0 0 0 7px rgba(246,243,236,.25)' : S.swap ? '0 0 0 2px #FFD25A' : q.el ? '0 0 0 3px #6F8CFF, 0 4px 12px rgba(0,0,0,.5)' : i ? '0 4px 12px rgba(0,0,0,.5)' : '0 0 0 2px #F6F3EC', etBg: p && DL.some(d => d.oyuncu === p.ad) ? '#FFD25A' : 'rgba(11,10,7,.82)', etFg: p && DL.some(d => d.oyuncu === p.ad) ? '#0E0D09' : '#F6F3EC', down: e => this.pDown(i, e) }; });
+    const yedekler = K.KADRO.filter(k => !S.dizilim.includes(k.id)), kaan = tahtaPs[5] || tahtaPs[1], kl = parseFloat(kaan.l);
+    const plAd = S.plan ? PLANLAR.find(p => p.id === S.plan).ad : 'Kendi planın';
+    const cyc = (Lx, cur) => Lx[(Lx.indexOf(cur) + 1) % Lx.length], G = S.S, mC = gorAkt === 'huc' ? '#FFD25A' : '#8EA2FF';
+    const ex = { durBtn: (yat ? [0, 1, 2] : [2, 1, 0]).map(k => { const on = k === S.dk, el = !!(G.D && G.D[gorAkt] && G.D[gorAkt][k] && G.D[gorAkt][k].some(Boolean)); return { ad: DUR_KISA[k], el, k: on ? mC : 'rgba(246,243,236,.18)', bg: on ? 'rgba(14,13,9,.92)' : 'rgba(14,13,9,.7)', fg: on ? '#F6F3EC' : 'rgba(246,243,236,.6)', nokta: on ? '#FFD25A' : 'rgba(246,243,236,.3)', sec: () => this.setState({ dk: k, sel: null }) }; }),
+      topDot: BX({ f: DUR_A[dkA], y: 25 }), bant: yat ? { l: pc(BANT[dkA][0]), t: '0', w: pc(BANT[dkA][1] - BANT[dkA][0]), h: '100%', bw: '0 1px' } : { l: '0', t: pc(100 - BANT[dkA][1]), w: '100%', h: pc(BANT[dkA][1] - BANT[dkA][0]), bw: '1px 0' }, durusEt: DUR_UZ[dkA] + (pos.some(q => q.el) ? ' · ELLE' : ''),
+      gH: { ad: GHAD[GH.indexOf(G.gecisH)] || GHAD[0], son: G.gecisH === 'hic' ? 'yerleş' : 'hızlı hücuma çık', sec: () => this.set({ S: { ...G, gecisH: cyc(GH, G.gecisH) }, degisti: true }) },
+      kY: { ad: KYAD[KY.indexOf(G.kpYer)] || KYAD[0], son: G.kpYer === 'hic' ? 'karşı pres yok' : 'karşı pres', sec: () => this.set({ S: { ...G, kpYer: cyc(KY, G.kpYer) }, degisti: true }) }, kS: { ad: (G.kpSure || 2) + ' sn', sec: () => this.set({ S: { ...G, kpSure: (G.kpSure || 2) % 3 + 1 } }) }, kpVar: G.kpYer !== 'hic',
+      dersGoster: DERS_MOTOR ? 'flex' : 'none', dersN: String(DL.length), dersK: DL.length ? 'rgba(255,210,90,.55)' : 'rgba(246,243,236,.2)', dersC: DL.length ? '#FFD25A' : 'rgba(246,243,236,.7)', dersAc: () => this.setState({ dersSh: true, ipucu: false }), dersKapat: () => this.setState({ dersSh: false }), dersSh: !!S.dersSh && ek === 'tahta', dersYok: !DL.length,
+      dersler: DL.map(d => ({ kim: d.tur === 'takim' ? 'Takım' : d.oyuncu, ne: window.AlanDersOzet ? window.AlanDersOzet(d) : d.tur, kok: Math.round((d.kok ?? .3) * 100) + '%' })) };
+    const pX = pc(presF), pr = yat ? { aL: pX, aT: '0', aW: 'calc(100% - ' + pX + ')', aH: '100%', hL: pX, hT: '0', hW: '44px', hH: '100%', hM: '0 0 0 -22px', cur: 'ew-resize', lL: '21px', lT: '0', lW: '2px', lH: '100%', rot: '90deg', etL: '28px', etR: 'auto', etT: '10px', cL: pX, cT: '0', cW: '2px', cH: '100%' }
+      : { aL: '0', aT: '0', aW: '100%', aH: pc(100 - presF), hL: '0', hT: pc(100 - presF), hW: '100%', hH: '44px', hM: '-22px 0 0 0', cur: 'ns-resize', lL: '0', lT: '21px', lW: '100%', lH: '2px', rot: '0deg', etL: 'auto', etR: '10px', etT: '-4px', cL: '0', cT: pc(100 - presF), cW: '100%', cH: '2px' };
+    const r3 = { ...ex, pr, tahtaPs, golgeler: this.golge(S.S, gorAkt, dkA).map(BX), presVar, presT: pc(100 - presF), presAd: k3(S.S.blok, ['geride', 'ortada', 'önde']),
+      gorler: [['sav', 'Topsuz'], ['huc', 'Topla']].map(([k, ad]) => ({ ad, bg: S.gor === k ? '#F6F3EC' : 'transparent', fg: S.gor === k ? '#0E0D09' : '#F6F3EC', sec: () => this.setState({ gor: k, sel: null }) })),
+      planChip: S.plan && S.degisti ? `${plAd} · değişti` : plAd, planChipK: S.degisti ? 'rgba(246,243,236,.25)' : 'rgba(255,210,90,.5)', planChipD: S.degisti ? 'transparent' : '#FFD25A', planaDon: () => { if (S.macIci) return; this.setState({ ekran: 'plan' }); },
+      bench: yedekler.map(k => ({ ad: k.ad.toLocaleUpperCase('tr'), ring: S.swap === k.id ? '0 0 0 3px #FFD25A' : 'inset 0 0 0 2px rgba(246,243,236,.2)', sec: () => sel != null ? this.degistirOyuncu(sel, k.id) : this.setState({ swap: S.swap === k.id ? null : k.id, ipucu: false }) })),
+      benchK: S.swap ? '2px solid #FFD25A' : '2px solid transparent', degisAra: !!S.swap, degisAd: S.swap ? P(S.swap).ad : '',
+      tarzKisa: tz.kisa, padAc: () => this.setState({ pad: true, ipucu: false }), padKapat: () => this.set({ pad: false, degisti: true }), pad: !!S.pad, tarz: tz.ad, bedel: tz.bedel, padX: pc(S.S.tempo * 100), padY: pc((1 - S.S.risk) * 100),
+      padDown: e => { this._pad = true; const el = this.padRef.current; if (el && el.setPointerCapture) try { el.setPointerCapture(e.pointerId); } catch (x) {} this.padSet(e); }, padMove: e => { if (this._pad) this.padSet(e); }, padUp: () => { this._pad = false; this.kaydet(); },
+      siddetAd: k3(S.S.siddet, ['temkinli', 'orta', 'sert']), siddetKd: [0, .25, .5, .75, 1].map(v => ({ bg: v <= S.S.siddet + .01 ? '#FFD25A' : 'rgba(246,243,236,.12)', sec: () => this.set({ S: { ...S.S, siddet: v } }) })),
+      ipucu: !!S.ipucu && ek === 'tahta', ipucuDik: !!S.ipucu && ek === 'tahta' && !yat, ipucuKapat: () => { try { localStorage.setItem('alan-mobil-ipucu', '1'); } catch (e) {} this.setState({ ipucu: false }); }, ip2: { l: kaan.l, t: kaan.t, bt: parseFloat(kaan.t) > 50 ? `calc(${kaan.t} - 100px)` : `calc(${kaan.t} + 36px)`, bl: kl > 50 ? 'auto' : '12px', br: kl > 50 ? '12px' : 'auto' },
+      geriVar: !!S.geri, geri: S.geri ? { baslik: S.geri.baslik, satir: S.geri.satir.map(([i, t]) => ({ i, t, c: i === '+' ? '#8EA2FF' : i === '−' ? '#FF8A5C' : 'rgba(246,243,236,.5)' })) } : { baslik: '', satir: [] }, geriAl: () => this.set({ S: JSON.parse(S.geri.once), geri: null }), geriTamam: () => this.setState({ geri: null }),
+      macaCikTxt: S.macIci ? 'Uygula, maça dön' : 'Maça çık', macaCik: () => { try { localStorage.setItem('alan-mobil-ipucu', '1'); } catch (e) {} if (S.macIci) { this.setState({ ekran: 'mac', macIci: false, devre: false }); this.uygulaMac(S.S, 'Yeni taktik sahada'); } else this.basla(); } };
+    // oyuncu kartı
+    let kart = { no: '', ad: '', alt: '', oz: '', satir: [], yedek: [] };
+    if (sel != null) { const id = S.dizilim[sel], p = P(id), pp = this.pl(id), r = sel ? this.roles()[sel - 1] : null, a = p.a;
+      const TRI = TAL[S.gor].map(([k, ad, ops]) => [S.gor, k, ad, ops]); /* yalnız seçili modun talimatları */
+      const upT = (ev, k, v) => this.set({ P: { ...S.P, [id]: { ...pp, t: { ...(pp.t || {}), [ev]: { ...((pp.t || {})[ev] || {}), [k]: v } } } }, degisti: true });
+      kart = { no: sel ? String(sel) : 'B', ad: p.ad, alt: sel ? `topla ${r.h.toLowerCase()} · topsuz ${r.s.toLowerCase()} · ${({ sol: 'sol ayak', sag: 'sağ ayak', iki: 'iki ayak' })[a.taraf] || ''}` : 'Bekçi · talimat almaz, alanını kural belirler', oz: sel ? `HIZ ${a.hiz} · PAS ${a.pas} · SÜRME ${a.surme} · KESME ${a.kesme}` : `REFLEKS ${a.refleks} · YERLEŞİM ${a.yerlesim} · HAKİMİYET ${a.hakimiyet}`,
+        satir: !sel ? [] : TRI.map(([ev, k, ad, ops]) => { const v = tlv(pp, r, ev, k), ci = ops.reduce((b, o, j) => Math.abs(o[0] - v) < Math.abs(ops[b][0] - v) ? j : b, 0); return { ad, ev: ev === 'huc' ? 'TOPLA' : 'TOPSUZ', ec: ev === 'huc' ? '#FFD25A' : '#8EA2FF', ops: ops.map(([vv, l], j) => ({ ad: l, bg: j === ci ? '#F6F3EC' : 'transparent', fg: j === ci ? '#0E0D09' : '#F6F3EC', w: j === ci ? 800 : 500, sec: () => upT(ev, k, vv) })) }; }),
+        yedek: K.KADRO.filter(k => (sel === 0) === (k.tip === 'Bekçi') && k.id !== id).map(k => ({ ad: k.ad + (S.dizilim.includes(k.id) ? ' ↔' : ''), sec: () => this.degistirOyuncu(sel, k.id) })) }; }
+    if (sel && S.gor === 'sav') { const id = S.dizilim[sel], pp = this.pl(id), r = this.roles()[sel - 1]; if (tlv(pp, r, 'sav', 'adam') >= .5) { const ki = tlv(pp, r, 'sav', 'kimi'), up = v => this.set({ P: { ...S.P, [id]: { ...pp, t: { ...(pp.t || {}), sav: { ...((pp.t || {}).sav || {}), kimi: v } } } }, degisti: true }); kart.satir.splice(1, 0, { ad: 'Kimi tutar', ev: 'TOPSUZ', ec: '#8EA2FF', ops: [null, 1, 2, 3].map(v => ({ ad: v == null ? 'En yakın' : R.oyuncular[v][0], bg: v === ki ? '#F6F3EC' : 'transparent', fg: v === ki ? '#0E0D09' : '#F6F3EC', w: v === ki ? 800 : 500, sec: () => up(v) })) }); } }
+    const r4 = { kartVar: sel != null && ek === 'tahta', kart, kartKapat: () => this.setState({ sel: null }) };
+    // maç
+    let r5 = { cvAlt: '0px', skor: '0 – 0', saat: '00:00', yatay };
+    if (ek === 'mac') { const t = Math.floor(this.t), f = this.kareler[t], ps = this.ps, len = this.len; if (f) this.istat(t);
+      const gor = this.olaylar.filter(o => o.tick <= t), son = gor.length ? gor[gor.length - 1] : null, hi = f ? f[30] : -1, h = ps && hi >= 0 ? ps[hi] : null, hz = Math.min(1, (this.kareler.length - t) / Math.max(1, .2 * ((this.devreGecti || t >= (len >> 1) ? len : len >> 1) - t)));
+      const bitti = this.acildi && !this.hesapta && this.kareler.length > 60 && t >= this.kareler.length - 1 && !S.devre, sk = f ? [f[32], f[33]] : [0, 0], { gol, yen } = this.evreGol(), top = o => Object.entries(o).sort((a, b) => b[1] - a[1])[0];
+      const yg = top(yen), ag = top(gol), devreCumle = yg ? `Golü ${yg[0]} anında yedin.` : ag ? `Gol ${ag[0]} anından geldi.` : sk[0] === sk[1] ? 'Kimse kapıyı bulamadı.' : '';
+      const s1 = sk[1] > 0 && S.S.blok > .4 ? { ad: 'Pres hattı bir kademe geri', neden: yg ? `Yediğin gol: ${yg[0]}` : 'Arkayı kapat', d: { blok: -.25 } } : { ad: 'Pres hattı bir kademe ileri', neden: 'Topu daha önde kazan', d: { blok: .25 } }, s2 = sk[0] === 0 ? { ad: 'Daha dikine oyna', neden: 'Gol yok: riski artır', d: { risk: .2, tempo: .15, pasBoy: .15 } } : { ad: 'Topu daha çok tut', neden: 'Öndesin ya da eşitsin: kaybı azalt', d: { tempo: -.2, risk: -.15, pasBoy: -.15 } }, os = S.oneriSec || [false, false];
+      const dik = !yatay;
+      r5 = { yatay, cvAlt: dik ? '150px' : '0px', altGoster: dik ? 'flex' : 'none', skorL: dik ? '0' : '62px', skorR: dik ? '0' : 'auto', skorJ: dik ? 'center' : 'flex-start', bagirR: dik ? '16px' : '20px', bagirB: dik ? 'calc(max(16px, env(safe-area-inset-bottom)) + 4px)' : '16px',
+        skor: `${sk[0]} – ${sk[1]}`, skorSikisik: `${sk[0]}–${sk[1]}`, saat: mmss(t), canliRenk: S.calis ? '#FF6B5B' : 'rgba(246,243,236,.4)',
+        evVar: !!(f && f.length > 41 && f[40] >= 0), evBiz: f && f.length > 41 ? EVA[f[40]] || '' : '', tsVar: !!h, tsAd: h ? h.name : '', tsAlt: h ? (h.role === 'Bekçi' ? 'Bekçi' : `şarj %${Math.round(f[31] * 100)}`) : '', tsRenk: h && h.team ? '#E0531F' : '#3D5BF0',
+        sonOlayT: son ? (son.type === 'ders' ? 'DERS · ' : '') + mmss(son.tick) : 'AKIŞ', sonOlayC: son && (son.type === 'ders' || son.type === 'sayi') ? '#FFD25A' : '#F6F3EC', sonOlay: son ? son.text : 'Santra', hazirPct: (this.kareler.length / len * 100).toFixed(1) + '%', izlePct: (t / len * 100).toFixed(1) + '%',
+        isaretler: gor.filter(o => o.type === 'sayi' || o.type === 'ders').map(o => o.type === 'sayi' ? { x: (o.tick / len * 100).toFixed(1) + '%', y: '5px', s: '12px', m: '-6px', c: o.team ? '#E0531F' : '#3D5BF0' } : { x: (o.tick / len * 100).toFixed(1) + '%', y: '0px', s: '6px', m: '-3px', c: '#FFD25A' }),
+        ara: e => { const el = this.zamanRef.current; if (!el) return; const rc = el.getBoundingClientRect(), v = Math.floor((e.clientX - rc.left) / rc.width * len); if (this.kareler[v]) { this.t = v; this.golSon = v; this.st = { k: -1, hold: [0, 0], kaz: [0, 0], gon: [0, 0], son: null }; this.olaylar.forEach(o => { o._g = 0; }); this.devreGecti = v >= (len >> 1); this.forceUpdate(); } },
+        calisiyor: !!S.calis, durdu: !S.calis, oynat: () => { if (this.acildi) this.setState({ calis: !S.calis }); },
+        hizlar: SPD.map(([ad, v]) => ({ ad, bg: S.hiz === v ? '#F6F3EC' : 'transparent', fg: S.hiz === v ? '#0E0D09' : '#F6F3EC', sec: () => this.setState({ hiz: v }) })),
+        fabGoster: S.cark ? 'none' : 'flex', cark: !!S.cark, carkAc: () => this.setState({ cark: true }), carkKapat: () => this.setState({ cark: false }), carkEt: sk[0] < sk[1] ? `${sk[1] - sk[0]} GERİDESİN · SAHAYA NE BAĞIRALIM?` : sk[0] > sk[1] ? `${sk[0] - sk[1]} ÖNDESİN · SAHAYA NE BAĞIRALIM?` : 'BERABERE · SAHAYA NE BAĞIRALIM?', carkEtR: sk[0] < sk[1] ? '#FF8A5C' : '#FFD25A',
+        bagirlar: BAGIR.map(b => ({ ad: b.ad, alt: b.alt, sec: () => this.bagir(b) })), tamTaktik: () => this.setState({ ekran: 'tahta', macIci: true, cark: false, calis: false, gor: 'sav', sel: null }),
+        toastVar: !!S.toast, toast: S.toast || '', golVar: !!S.gol, gol: S.gol || { ad: '', c: '', dk: '' },
+        yukVar: !this.acildi && !S.devre && !bitti, yukBaslik: this.gen > 1 ? 'Yeni taktikle yeniden oynanıyor' : 'Maç hazırlanıyor', yukPct: Math.round(Math.max(0, hz) * 100) + '%', yukAlt: DL.length ? DL.length + ' ders maça girdi · motor sonucu göstermez' : 'motor maçı oynuyor · sonucu göstermez',
+        devre: !!S.devre, devreCumle: devreCumle || 'İlk yarı bitti.', ist: this.istDizi(), dersCanliVar: gor.some(o => o.type === 'ders'), dersCanli: 'İlk yarıda ' + gor.filter(o => o.type === 'ders').length + ' kez ders uygulandı', dersRaporVar: !!(this.dersRaporL && this.dersRaporL.length), dersRapor: this.dersRaporL || [],
+        oneriler: [s1, s2].map((o, i) => ({ ad: o.ad, neden: o.neden, k: os[i] ? '2px solid #FFD25A' : '1px solid rgba(246,243,236,.15)', bg: os[i] ? 'rgba(255,210,90,.08)' : 'transparent', zemin: os[i] ? '#FFD25A' : 'rgba(246,243,236,.15)', top: os[i] ? '#0E0D09' : '#F6F3EC', x: os[i] ? '21px' : '3px', sec: () => { const a = os.slice(); a[i] = !a[i]; this.setState({ oneriSec: a }); } })),
+        ikinciYari: () => { if (os[0] || os[1]) { const S2 = { ...S.S }; [s1, s2].forEach((o, i) => { if (os[i]) for (const k in o.d) S2[k] = r2(cl((S2[k] ?? .5) + o.d[k], 0, 1)); }); this.setState({ devre: false }); this.uygulaMac(S2, 'İkinci yarı yeni ayarla'); } else this.setState({ devre: false, calis: true }); },
+        bitti, sonuc: sk[0] > sk[1] ? 'Kazandın' : sk[0] < sk[1] ? 'Kaybettin' : 'Berabere', sonCumle: ag || yg ? [ag ? `Gollerin çoğu ${ag[0]} anından.` : 'Gol atamadın.', yg ? `Yediklerin ${yg[0]} anında.` : 'Gol yemedin.'].join(' ') : 'Golsüz bir maç.',
+        golcu: this.olaylar.filter(o => o.type === 'sayi').map(o => ({ ad: (o.text || '').split(' ')[0], dk: mmss(o.tick), c: o.team ? '#E0531F' : '#3D5BF0' })),
+        rovans: () => this.basla(), taktigeDon: () => { if (this.wk) { this.wk.terminate(); this.wk = null; } this.setState({ ekran: 'tahta', gor: 'sav', macIci: false }); } }; }
+    return { ...base, ...r0, ...r1, ...r2_, ...r3, ...r4, ...r5 };
+  }
+}
+</script>
+</body>
+</html>
