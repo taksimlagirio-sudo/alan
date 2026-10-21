@@ -1,0 +1,19 @@
+// sut-anatomi.js özeti: Dikine'nin (ya da her tarzın) şutları nereden, nasıl geliyor, savunma nerede, sonucu ne. Kullanım: node tools/sut-anatomi-ozet.js <sonuç klasörü>
+const fs = require('fs'), path = require('path'); const dir = process.argv[2], L = [];
+for (const f of fs.readdirSync(dir)) { if (!f.endsWith('.json')) continue; try { L.push(JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8').trim().split('\n').pop())); } catch (e) {} }
+const AD = { B_onde: 'Blok, 1 önde', B_hepsi: 'Blok, hepsi geride', T_dikine: 'Dikine' }, ad = k => AD[k] || k;
+const pc = (n, d) => d ? (100 * n / d).toFixed(0) + '%' : '–', av = (X, k) => X.length ? (X.reduce((s, x) => s + x[k], 0) / X.length) : NaN;
+const gr = {}; for (const o of L) for (const s of o.S) { const rk = s.tarz === o.a ? o.b : o.a, k = `${s.tarz}|${rk}`; (gr[k] = gr[k] || { n: 0, S: [] }).S.push(s); } for (const o of L) for (const k of [`${o.a}|${o.b}`, `${o.b}|${o.a}`]) { gr[k] = gr[k] || { n: 0, S: [] }; gr[k].n++; }
+console.log(`${L.length} maç\n\n## Genel\n\n| şut atan | rakip | maç başına şut | gol | xG | gol / xG | ort. uzaklık | şarj |\n|---|---|---|---|---|---|---|---|`);
+for (const [k, g] of Object.entries(gr)) { const [a, b] = k.split('|'), X = g.S, gl = X.filter(s => s.son === 'gol').length, xg = X.reduce((s, x) => s + x.pk, 0); console.log(`| ${ad(a)} | ${ad(b)} | ${(X.length / g.n).toFixed(1)} | ${(gl / g.n).toFixed(2)} | ${(xg / g.n).toFixed(2)} | ${(gl / xg).toFixed(2)} | ${av(X, 'uz').toFixed(1)} | ${av(X, 'ch').toFixed(2)} |`); }
+const SON = ['gol', 'Bekçi tuttu', 'durdu', 'savunmacı kesti', 'bizden biri aldı', 'süre'];
+const tablo = (baslik, X, dilim) => { console.log(`\n### ${baslik}\n\n| | şut | pay | ort. xG | gol | gol / xG | ${SON.slice(1).join(' | ')} |\n|---|---|---|---|---|---|${SON.slice(1).map(() => '---').join('|')}|`);
+  for (const [ad2, f] of dilim) { const Y = X.filter(f); if (!Y.length) continue; const gl = Y.filter(s => s.son === 'gol').length, xg = Y.reduce((s, x) => s + x.pk, 0); console.log(`| ${ad2} | ${Y.length} | ${pc(Y.length, X.length)} | ${(xg / Y.length).toFixed(2)} | ${gl} | ${(gl / xg).toFixed(2)} | ${SON.slice(1).map(k => pc(Y.filter(s => s.son === k).length, Y.length)).join(' | ')} |`); } };
+for (const rk of ['B_hepsi', 'B_onde']) { const X = (gr[`T_dikine|${rk}`] || { S: [] }).S; if (!X.length) continue; console.log(`\n## Dikine'nin şutları · rakip ${ad(rk)} (${X.length} şut)`);
+  tablo('Uzaklık', X, [['< 15 br (Kuyu önü)', s => s.uz < 15], ['15–25', s => s.uz >= 15 && s.uz < 25], ['25–35', s => s.uz >= 25 && s.uz < 35], ['≥ 35 (uzak)', s => s.uz >= 35]]);
+  tablo('Şut çizgisini kapatan savunmacı (çizgiye 3 br\'den yakın)', X, [['0', s => s.cizgi === 0], ['1', s => s.cizgi === 1], ['2+', s => s.cizgi >= 2]]);
+  tablo('Topa sahip olma süresi (şuta kadar)', X, [['< 6 sn (geçiş)', s => s.sure < 6], ['6–15 sn', s => s.sure >= 6 && s.sure < 15], ['≥ 15 sn (yerleşik)', s => s.sure >= 15]]);
+  tablo('Şutçu topu nasıl aldı', X, [['pas (ayağa)', s => s.geldi === 'pas'], ['önüne pas', s => s.geldi === 'önüne'], ['kenardan', s => s.geldi === 'kenardan'], ['kapma / sekme', s => s.geldi === 'kapma/sekme'], ['başta', s => s.geldi === 'başta']]);
+  tablo('En yakın savunmacı', X, [['< 3 br', s => s.yakin < 3], ['3–6 br', s => s.yakin >= 3 && s.yakin < 6], ['≥ 6 br (boş)', s => s.yakin >= 6]]);
+  console.log(`\nŞut anında ortalama: kaleyle şutçu arasında ${av(X, 'arada').toFixed(1)} savunmacı, şutçudan kaleye yakın ${av(X, 'savGeri').toFixed(1)} savunmacı, en yakın ${av(X, 'yakin').toFixed(1)} br. Şuttan önce ${av(X, 'pas').toFixed(1)} pas, ${av(X, 'sure').toFixed(1)} sn; şutçu topu ${av(X, 'tutT').toFixed(1)} sn tuttu. Top ${av(X, 'kazX').toFixed(0)} br'de (kendi Kuyu'sundan) kazanılmış.`); }
+console.log('\nxG: motorun şut anındaki gol ihtimali (shotPk). "durdu": Çekirdek yolda söndü.');
