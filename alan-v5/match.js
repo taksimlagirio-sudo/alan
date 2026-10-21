@@ -432,7 +432,7 @@
         if (o.kind === 'sür') { h.driveTo = { x: o.to.x, y: o.to.y }; h.tx = o.to.x; h.ty = o.to.y; h.drive = true; }
         else if (o.kind === 'fake') fakeBasla(m, h, o);
         else if (o.kind === 'tut') { h.driveTo = null; h.tx = h.x; h.ty = h.y; if (o.hold) { m.decT = o.hold; h.holdD = true; } if (o.why === 'çek' && h.lastWhy !== 'çek') ev(m, 'pas', h.team, `${h.name} rakibi üstüne çekiyor${o.det.lookTo ? ' · ' + o.det.lookTo.name + ' açılacak' : ''}`); else if (o.why === 'koşu' && h.lastWhy !== 'koşu' && o.det && o.det.lookTo) ev(m, 'pas', h.team, `${h.name} bekliyor · ${o.det.lookTo.name} koşusunu bitirince verecek`); }
-        else if (!self.ALAN_SAVURMA_ESKI && o.launch) savurBasla(m, h, o); else launch(m, h, o);
+        else if (!self.ALAN_SAVURMA_ESKI && o.launch) savurBasla(m, h, o, 0, o.sYon); else launch(m, h, o); /* v5 · şut seçtiği dönüş yönüyle (SUT_YON) */
         h.lastWhy = o.why || o.kind;
       }
       // sürüş kararı bir sonraki karara kadar sürer (eskiden tek tik sürüp taşıyıcı duruyordu)
