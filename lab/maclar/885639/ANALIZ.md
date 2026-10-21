@@ -1,6 +1,6 @@
 # Maç 885639 · Liman – Kale Duvarı (21 Ekim 2026, 20:32)
 
-> Kullanıcının oynadığı maç. Kayıt `kayit.json`; yeniden oynatma `oynat.js` (mac-isci.js'in 'yeni' yolu). Motor: o saatte yayındaki main 1ab1167 (`d-1ab1167.json`). Bir önceki motor 33c66f8 aynı kayıtla 2–3 veriyor (`d-33c66f8.json`); hangisinin sitede oynandığı kullanıcıya soruldu.
+> Kullanıcının oynadığı maç. Kayıt `kayit.json`; yeniden oynatma `oynat.js` (mac-isci.js'in 'yeni' yolu). Motor: o saatte yayındaki main 1ab1167 (`d-1ab1167.json`). Bir önceki motor 33c66f8 aynı kayıtla 2–3 veriyor (`d-33c66f8.json`). Kullanıcı sitede 5–1 gördüğünü doğruladı.
 
 **Skor 5–1** (devre 2–0). Şut 18–10, xG 11,6–2,5, top %60–40, pas 103 (97 isabetli) – 58 (47).
 
@@ -28,3 +28,17 @@ Yüksek blok, pres şiddeti 1, her yerde 3 sn karşı pres, beş tetik; düşük
 ## Dikkat
 - **xG şişkin:** Liman 11,6 xG'den 5 gol. 30 br'den şutlara 0,8–1,0 xG verilmiş (95 sn Tuna 0,96 → Bekçi tuttu). Şut anatomisi 1'deki bulgu: shotPk uzak şutlarda fazla.
 - Bütün oyuncular 20 (kadro.js HEPSI_20): fark yalnız taktikten.
+
+## Ek · Önceki motorda neden 2–3?
+
+- İki motor arasında tek fark 1ab1167: ayak tercihi kalkar (`core.js`, 1 satır). Bu kurulumda iki takımın tarafları farklı (Liman'da sol ve iki ayaklılar var, Kale Duvarı'nda hepsi sağ).
+- Maçlar **ilk 20,5 sn birebir aynı** (Liman'ın 9. sn golü ikisinde de var). 614. tikte bir Kale Duvarı oyuncusu binde bir br farklı yerde; 10 sn sonra top artık başka oyuncularda. Motor belirlenimci ama kaotik: en küçük fark birkaç saniyede bambaşka bir maç doğurur.
+- Aynı kurulum, 12 farklı tohum, iki motor (`tohum/`):
+
+| motor | G-B-M (Liman) | gol | gol farkı | şut | xG | top |
+|---|---|---|---|---|---|---|
+| 1ab1167 | 6-4-2 | 2,42 – 1,25 | +1,17 ±0,53 | 14,7 – 10,6 | 9,1 – 4,7 | %62 |
+| 33c66f8 | 8-1-3 | 2,75 – 1,67 | +1,08 ±0,51 | 14,8 – 11,2 | 9,5 – 4,7 | %58 |
+
+- **İki motor aynı:** Liman ortalama ~1 gol farkla kazanıyor. 5–1 ile 2–3 arasındaki fark motor değişikliği değil, tek maçın şansı. Aynı kurulum 0–1'den 5–0'a kadar skorlar veriyor.
+- Tasarım notu: tek maçın sonucu çok oynak. Menajer oyununda bu istenebilir, ama oyuncu taktiğinin işe yarayıp yaramadığını tek maçtan okuyamaz; maç sonu ekranında xG ya da "pozisyon üstünlüğü" gibi bir gösterge bunu dengeler (xG'nin kendisi düzeltildikten sonra).

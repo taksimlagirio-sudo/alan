@@ -2,7 +2,7 @@
 const fs = require('fs'), path = require('path'); const [dir, kf] = process.argv.slice(2); globalThis.window = globalThis; globalThis.self = globalThis;
 for (const f of ['sabit-mat.js', 'core.js', 'shot-table.js', 'value-table.js', 'decide.js', 'match.js', 'shape.js']) (0, eval)(fs.readFileSync(path.join(dir, f), 'utf8'));
 const K = JSON.parse(fs.readFileSync(kf, 'utf8')), d = K.yeni, M = globalThis.AlanMatch;
-const m = M.createMatch(d.tohum, { tac: d.tac, len: d.len, diz: d.diz, devre: d.devre ?? false });
+const m = M.createMatch(process.env.TOHUM ? +process.env.TOHUM : d.tohum, { tac: d.tac, len: d.len, diz: d.diz, devre: d.devre ?? false });
 if (d.oyuncular) for (const t of [0, 1]) { const A = d.oyuncular[t]; for (const p of m.ps) { if (p.team !== t) continue; const o = A[p.i]; if (o) { p.name = o.ad; p.a = { ...p.a, ...o.a }; } } }
 if (d.roller) { M.assignRoles(m, d.roller); for (const p of m.ps) { const r = d.roller[p.team] && d.roller[p.team][p.i - 1]; if (r && r.eg) p.eg = r.eg; } }
 if (d.diz) for (const t of [0, 1]) if (d.diz[t]) M.dizUygula(m, t, d.diz[t]); M.kafaAc && M.kafaAc(m);
