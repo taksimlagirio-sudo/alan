@@ -61,7 +61,7 @@ const yeni = (o, taraf) => { const ok = o.okuma ?? 10, ak = o.aktarim ?? 10, tu 
 for (const p of KADRO) yeni(p.a, TARAF[p.id]); for (const r of RAKIP) for (const o of r.oyuncular) yeni(o[1]);
 // GEÇİCİ DENEME: bütün takımların (Liman ve bütün rakipler) bütün özellikleri 20 (Alan gücü ve Soğukkanlılık 10). Eski hâle dönmek için HEPSI_20 = false (herkes asıl değerlerine); RAKIP_10 = true rakipleri 10 yapar. Asıl değerler silinmedi.
 const HEPSI_20 = true, RAKIP_10 = false;
-if (HEPSI_20) { const yirmi = o => { for (const [key] of OZ.concat(OZ_BEKCI)) if (key !== 'alan' && key !== 'sogukkanlilik' && key !== 'enerji') o[key] = 20; }; /* yeni özellikler (Alan gücü, Soğukkanlılık, Enerji) 10'da kalır: oyun bugünkü gibi oynasın */ for (const p of KADRO) yirmi(p.a || p); if (!RAKIP_10) for (const r of RAKIP) for (const o of r.oyuncular) yirmi(o[1]); }
+if (HEPSI_20) { const yirmi = o => { for (const [key] of OZ.concat(OZ_BEKCI)) if (key !== 'alan' && key !== 'sogukkanlilik' && key !== 'enerji') o[key] = 20; o.govde = 20; }; /* v5 · yetenek planının yeni Gövde'si de 20: bileşiklere girince (bacaktan sızma, ikili) oyun 20'lik düzeyde kalsın; yoksa nötr 10 bileşikleri yapay düşürür (21 Ekim 2026) */ /* yeni özellikler (Alan gücü, Soğukkanlılık, Enerji) 10'da kalır: oyun bugünkü gibi oynasın */ for (const p of KADRO) yirmi(p.a || p); if (!RAKIP_10) for (const r of RAKIP) for (const o of r.oyuncular) yirmi(o[1]); }
 if (RAKIP_10) { const on = o => { for (const [key] of OZ.concat(OZ_BEKCI)) o[key] = 10; }; for (const r of RAKIP) for (const o of r.oyuncular) on(o[1]); }
 window.ALAN_KADRO = { OZ, OZG, OZB, OZ_BEKCI, KADRO, RAKIP };
 })();
