@@ -28,10 +28,27 @@
 
 ## Neden (yorum, doğrulanmadı)
 
-- Savunma şekli (`slotBase0`, savunmada en 26 br) top yanına kayıyor (`sh = .4`) ama genişliğe bakmıyor. Kanattaki boş oyuncuya pas gidince blok kayıyor, kayma bedelsiz (tarz döngüsü planındaki "kayma gecikmesi" fikri). Bu yüzden geniş oynamanın getirisi yok.
+- ~~Kanattaki boş oyuncuya pas gidince blok kayıyor, kayma bedelsiz.~~ **Yanlış çıktı, bkz. aşağıdaki kayma ölçümü:** savunma yavaş kayıyor, taraf değiştiren pas alıcıyı boş bırakıyor. Genişliğin getirisizliği kaymadan değil, boş kalan kanat oyuncusunun bundan sonra ne yaptığından gelmeli (ölçülmedi).
 - 7v7 sahada (60 br en) dar oynamak pas mesafelerini kısaltıyor; pas isabeti ve şarj kaybı (tek enerji) kısa pası ödüllendiriyor olabilir.
 
 ## Tasarım için
 
 - Genişliğin anlamlı olması için savunmanın kayması bir bedel taşımalı: kayma gecikmesi (Tepki, Yer alma) ya da geniş duran oyuncuya karşı ayrı bir adam. Bkz. `plan/TASARIM-tarz-dongusu.md` fikir 1.
 - Kanattan Kuyu önüne pasın (orta) değeri ayrıca ölçülmeli: genişliğin futboldaki asıl getirisi bu.
+
+## Ek · Kayma ölçümü (`lab/ky1/`, `tools/kayma-olc.js`, `tools/kayma-ozet.js`)
+
+Soru (kullanıcının): savunma genişliğe kaymaları çok senkronize olduğu için mi uymuyor? 16 maç (Geniş ve Dar, Normal'e karşı), 1931 alınan pas.
+
+| topun yanal yer değişimi | pas | uçuş (sn) | savunmanın kayması: uçuşun ortasında | topu alırken | aynı yöne kayan savunmacı | kayma farkı (sd, br) | alıcıya en yakın savunmacı (br) |
+|---|---|---|---|---|---|---|---|
+| < 5 br | 598 | 1,07 | %4 | %11 | %40 | 2,5 | 7,7 |
+| 5–10 br | 471 | 1,07 | %6 | %12 | %46 | 2,5 | 9,4 |
+| 10–20 br | 508 | 1,27 | %4 | %10 | %53 | 3,0 | 10,0 |
+| ≥ 20 br (taraf değiştirme) | 354 | 1,74 | %2 | %17 | %79 | 3,6 | 11,4 |
+
+- **Hayır, kayma hızlı ya da kusursuz değil, tersine yavaş.** Taraf değiştiren pasta top 20+ br yana gidiyor, savunma alıcı topu alana kadar bunun yalnız %17'si kadar kayıyor (şeklin kuralı %40 ister). Uçuşun ortasında neredeyse hiç kaymamış (%2).
+- Kodda şeklin dayanağı top havadayken varış noktası (`shape.js:110`, `E`); yani kural pas atılır atılmaz kaymayı ister. Ama savunmacıların çoğu o anda şekil yerinde değil, bir işte (adam, bölge, kapatma); şekil kayması onlara pek yansımıyor.
+- **Senkron:** taraf değiştirmede savunmacıların %79'u aynı yöne kayıyor, aralarındaki fark küçük (sd 3,6 br). Birlikte ama az ve geç kayıyorlar.
+- **Taraf değiştirme boşluk açıyor:** alıcıya en yakın savunmacı 11,4 br (kısa paslarda 7,7).
+- Sonuç: genişlik boşluk açıyor; getirisinin olmaması, kanatta boş alınan topun sonrasından geliyor olmalı (Kuyu'dan uzak; orta ya da içeri sürme değeri). Sıradaki ölçüm: taraf değiştiren pastan sonraki 6 sn'de şut ve xG.
