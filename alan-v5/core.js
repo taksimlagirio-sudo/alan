@@ -239,7 +239,7 @@ self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch]
   const wrapA = a => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
   const Turn = { TQ,
     /* v5 · Taraf: oyuncu Çekirdeği taşımayı tercih ettiği yanda (gidiş yönüne göre sol / sağ) daha hızlı döner ve fiske atar, öbür yanda biraz yavaş; iki yanlı ortalama. Puan değil, ödünleşim */
-    taraf(p) { const t = p.a && p.a.taraf; if (!t || t === 'iki' || p.ca == null) return 1; const vx = p.vx || 0, vy = p.vy || 0, sp = hyp(vx, vy); if (sp < .04) return 1; const cr = vx * Math.sin(p.ca) - vy * Math.cos(p.ca), sol = cr < 0; return (t === 'sol') === sol ? TQ.tarafIyi : TQ.tarafKotu; },
+    taraf(p) { const t = p.a && p.a.taraf; if (!self.ALAN_TARAF_ESKI || !t || t === 'iki' || p.ca == null) return 1; /* v5 · ayak tercihi yok: her oyuncu iki yana da aynı döner (menajer kararı, 21 Ekim 2026). Deney: self.ALAN_TARAF_ESKI */ const vx = p.vx || 0, vy = p.vy || 0, sp = hyp(vx, vy); if (sp < .04) return 1; const cr = vx * Math.sin(p.ca) - vy * Math.cos(p.ca), sol = cr < 0; return (t === 'sol') === sol ? TQ.tarafIyi : TQ.tarafKotu; },
     omega(p) { const a = p.a || {}, v = hyp(p.vx || 0, p.vy || 0); return Math.max(.03, (TQ.w0 + ((a.surme ?? 10) - 10) * TQ.wSk) * (1 - TQ.wV * Math.min(1, v / TQ.vRef)) * Turn.taraf(p)); },
     shortDir(a0, a1) { return wrapA(a1 - a0) >= 0 ? 1 : -1; },
     arc(a0, a1, dir) { let d = wrapA(a1 - a0); if (dir > 0 && d < 0) d += 2 * Math.PI; if (dir < 0 && d > 0) d -= 2 * Math.PI; return Math.abs(d); },
