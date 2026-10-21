@@ -20,6 +20,7 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 <script src="alan-v5/saha-ciz.js"></script>
 <script src="alan-v5/analiz-panel.js"></script>
 <script>window.AlanYeEk = a => { const U = 'aeıioöuü'; let v = 'e'; for (let i = a.length - 1; i >= 0; i--) { const ch = a[i].toLocaleLowerCase('tr'); if (U.includes(ch)) { v = ch; break; } } return a + '’' + (U.includes(a.slice(-1).toLocaleLowerCase('tr')) ? 'y' : '') + ('aıou'.includes(v) ? 'a' : 'e'); }; window.AlanDersOzet = d => d.tur === 'takim' ? 'Takım · ' + ({ blok: 'savunma bloğu', pres: 'pres yerleşimi', kurulum: 'oyun kurulumu', gecis: 'geçiş' })[d.alt] : d.tur === 'konum' ? 'yer al' : d.tur === 'pres' ? 'bas' : d.tur === 'pas' ? (d.pas && d.pas.kime ? window.AlanYeEk(d.pas.kime) + ' pas' : 'koşana pas') + (d.pas ? ({ onune: ' · koşusunun önüne', arka: ' · savunmanın arkasına' })[Array.isArray(d.pas.nereye) ? 'onune' : d.pas.nereye] || '' : '') + (d.pas && d.pas.yol === 'kenardan' ? ' · kenardan' : '') : ({ tut: 'tut', sur: 'sür', gonder: 'gönder' })[d.karar] || d.tur;</script>
+<script src="alan-v5/yetenek.js"></script>
 <script src="alan-v5/core.js"></script>
 </helmet>
 <div style="position:fixed;inset:0;background:#0E0D09;display:flex;justify-content:center">
