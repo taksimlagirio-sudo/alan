@@ -282,7 +282,7 @@ const TET = ['Geri pas', 'Kanatta', 'Zayıf kontrol', 'Arkası dönük', 'Uzun p
 const KEY = 'alan-v5-taktik';
 const VARS = () => ({ tab: 'takim', gor: 'huc', sel: null, rakip: 1, dizilim: ['aras', 'deniz', 'mert', 'ece', 'cansu', 'kaan', 'tuna'],
   shape: { sav: SL('2-2-2'), huc: SL('2-1-3') },
-  H: { pasSurme: .5, tempo: .55, risk: .5, sut: .5, sabir: .5, dinlen: 0, yipratma: 0 }, S: { sistem: 'Alan', blok: .5, pres: 1, siddet: .5, tetik: ['Geri pas', 'Kanatta'] },
+  H: { pasSurme: .5, pasBoy: .5, tempo: .55, risk: .5, sut: .5, sabir: .5, dinlen: 0, yipratma: 0 }, S: { sistem: 'Alan', blok: .5, pres: 1, siddet: .5, tetik: ['Geri pas', 'Kanatta'] },
   G: { gecisH: 'ustun', kpYer: 'rakip', kpSure: 2 }, D: { huc: [null, null, null], sav: [null, null, null] }, dk: 1, P: {} });
 /* v5 · topa bağlı plan: üç duruş (top ileri 20 / 50 / 80). Varsayılan duruş motordaki şekil kuralının (shape.js slotBase0) aynısıyla dizilişten ve blok / genişlik / riskten hesaplanır; elle konan duruş {f, y} saha koordinatında (f: kendi Kuyu'dan ileri 0–100, y: 0–50) */
 const DUR_A = [20, 50, 80], DUR_AD = ['Top kendi bölgemizde', 'Top ortada', 'Top son bölgede'], BLOKX = { 'Düşük': 22, 'Orta': 34, 'Yüksek': 50 }, GENX = { 'Dar': 28, 'Normal': 38, 'Geniş': 46 };
@@ -318,7 +318,7 @@ class Component extends DCLogic {
       return { h: ho, s: so, hOto: P.hg === 'Oto', sOto: P.sg === 'Oto' }; }); }
   tac(S0, ham) { const S = S0 || this.state, k3 = (v, a) => v < .34 ? a[0] : v < .67 ? a[1] : a[2], w = Math.max(...S.shape.huc.map(s => s.l)) - Math.min(...S.shape.huc.map(s => s.l));
     const ws = Math.max(...S.shape.sav.map(s => s.l)) - Math.min(...S.shape.sav.map(s => s.l)); /* savunma genişliği: savunma dizilişindeki yanal açılım (tahtadaki yerleşim) */
-    return { tuzak: S.S.sistem === 'Kenara sıkıştır' ? 'kenar' : null, kosul: this.kosulDiz(S), plan: (S.MP && (S.MP.taraf || S.MP.hedef)) ? { taraf: S.MP.taraf || null, hedef: S.MP.hedef || null } : undefined, sistem: S.S.sistem === 'Kenara sıkıştır' ? 'Kenara sıkıştır' : 'Alan', pres: S.S.pres, siddet: r2(S.S.siddet ?? .5), blok: k3(S.S.blok, ['Düşük', 'Orta', 'Yüksek']), genislik: w < 1.1 ? 'Dar' : w < 1.55 ? 'Normal' : 'Geniş', savGen: +ws.toFixed(2), tempo: r2(S.H.tempo), risk: r2(S.H.risk), gecisH: S.G.gecisH, kpYer: S.G.kpYer, kpSure: S.G.kpSure, pasSurme: r2(S.H.pasSurme), sabir: r2(S.H.sabir), sut: r2(S.H.sut), enDinlen: r2(S.H.dinlen ?? 0), enYipratma: r2(S.H.yipratma ?? 0), tetik: S.S.tetik.slice(), durus: ham ? undefined : this.durusOut(S) }; }
+    return { tuzak: S.S.sistem === 'Kenara sıkıştır' ? 'kenar' : null, kosul: this.kosulDiz(S), plan: (S.MP && (S.MP.taraf || S.MP.hedef)) ? { taraf: S.MP.taraf || null, hedef: S.MP.hedef || null } : undefined, sistem: S.S.sistem === 'Kenara sıkıştır' ? 'Kenara sıkıştır' : 'Alan', pres: S.S.pres, siddet: r2(S.S.siddet ?? .5), blok: k3(S.S.blok, ['Düşük', 'Orta', 'Yüksek']), genislik: w < 1.1 ? 'Dar' : w < 1.55 ? 'Normal' : 'Geniş', savGen: +ws.toFixed(2), tempo: r2(S.H.tempo), risk: r2(S.H.risk), gecisH: S.G.gecisH, kpYer: S.G.kpYer, kpSure: S.G.kpSure, pasSurme: r2(S.H.pasSurme), pasBoy: r2(S.H.pasBoy ?? .5), sabir: r2(S.H.sabir), sut: r2(S.H.sut), enDinlen: r2(S.H.dinlen ?? 0), enYipratma: r2(S.H.yipratma ?? 0), tetik: S.S.tetik.slice(), durus: ham ? undefined : this.durusOut(S) }; }
   renderVals() { return this.dikey(this.kademe(this.renderVals0())); }
   // kaydırıcı yerine 5 kademe: her kademe min–max arasındaki bir değeri seçer; seçili kademeye kadar dolu
   // dikey tahta (telefon): kendi Kuyu'n altta. Yatay koordinatlar (x: boy, y: en) dikeye çevrilir
@@ -350,8 +350,8 @@ class Component extends DCLogic {
       Sabır: (1 - H.tempo) * .45 + (1 - H.risk) * .3 + H.sabir * .25,
       Genişlik: cl((Math.max(...S.shape.huc.map(s => s.l)) - Math.min(...S.shape.huc.map(s => s.l))) / 1.9, 0, 1),
       Sıkılık: cl(1 - ((Math.max(...S.shape.sav.map(s => s.d)) - Math.min(...S.shape.sav.map(s => s.d))) * .55 + (Math.max(...S.shape.sav.map(s => s.l)) - Math.min(...S.shape.sav.map(s => s.l))) / 2 * .45), 0, 1),
-      Bireysellik: H.pasSurme * .6 + H.sut * .4 };
-    const ph = { Baskı: ['önde basan', 'geride bekleyen'], Dikine: ['dikine giden', null], Sabır: ['topu döndüren, sabırlı', null], Genişlik: ['sahayı genişleten', 'içeriden oynayan'], Sıkılık: ['sıkı bloklu', 'aralıkları açık'], Bireysellik: ['sürmeye ve bireye dayanan', 'pasla ilerleyen'] };
+      Bireysellik: H.sut };
+    const ph = { Baskı: ['önde basan', 'geride bekleyen'], Dikine: ['dikine giden', null], Sabır: ['topu döndüren, sabırlı', null], Genişlik: ['sahayı genişleten', 'içeriden oynayan'], Sıkılık: ['sıkı bloklu', 'aralıkları açık'], Bireysellik: ['şuta ve bireye dayanan', 'pasla ilerleyen'] };
     const ent = Object.entries(ax).sort((a, b) => b[1] - a[1]), hi = ent.filter(([, v]) => v >= .58).slice(0, 2).map(([k]) => ph[k][0]).filter(Boolean), lo = ent.slice().reverse().find(([k, v]) => v <= .38 && ph[k][1]);
     const parts = hi.concat(lo ? [ph[lo[0]][1]] : []), tarzBaslik = parts.length ? parts.join(', ').replace(/^./, c => c.toUpperCase()) + ' bir takım' : 'Dengeli, her şeyden biraz';
     const bedel = []; const nArk = S.shape.sav.filter(q => q.d <= .25).length; if (D.blok > .6 && nArk <= 1) bedel.push(`Blok önde, en geride ${nArk} kişi: savunmanın arkası uzun topa açık.`); if ((D.siddet ?? .5) > .66 && dSp > .55 && g) bedel.push('Sert pres, hatlar açık: presçilerin arkasında boşluk kalır.'); if (ax.Sıkılık > .62) bedel.push('Savunma sıkı: kanatlar ve uzak direk tarafı boş kalır.');
@@ -366,7 +366,7 @@ class Component extends DCLogic {
     const yz = v => `%${Math.round(v * 100)}`;
     let gruplar = [];
     if (S.tab === 'takim' && g === 'huc') gruplar = [
-      { baslik: 'TOPLA NE YAPILIR', items: [kay(true, 'Pas ↔ Top sürme', H.pasSurme, e => this.up('H', 'pasSurme', +e.target.value), 'önce pas', 'önce sür', H.pasSurme < .4 ? 'pas' : H.pasSurme > .6 ? 'sürme' : 'dengeli'),
+      { baslik: 'TOPLA NE YAPILIR', items: [kay(true, 'Kısa pas ↔ Uzun pas', H.pasBoy ?? .5, e => this.up('H', 'pasBoy', +e.target.value), 'kısa pas', 'uzun pas', (H.pasBoy ?? .5) < .4 ? 'kısa' : (H.pasBoy ?? .5) > .6 ? 'uzun' : 'dengeli'),
         kay(true, 'Top döndürme hızı', H.tempo, e => this.up('H', 'tempo', +e.target.value), 'topu tut, bekle', 'tek-iki dokunuş', yz(H.tempo), { aciklama: 'Taşıyıcının kararı ne kadar çabuk verdiği ve topu ne kadar kısa tuttuğu.' }),
         kay(true, 'İleriyi düşünme', H.risk, e => this.up('H', 'risk', +e.target.value), 'güvenli pas', 'arkaya, çizgiyi kıran', yz(H.risk)),
         kay(true, 'Sabır', H.sabir, e => this.up('H', 'sabir', +e.target.value), 'ilk açığı dene', 'rakibi üstüne çek', yz(H.sabir), { aciklama: 'Açık bir yol bulunana kadar topu dolaştırma isteği.' }),
