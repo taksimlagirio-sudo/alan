@@ -6,6 +6,7 @@ const EK = {
   B_hepsi: { blok: 'Düşük', pres: 0, siddet: .3, tempo: .9, risk: .8, gecisH: 'her', kpYer: 'hic', sabir: .2, pasSurme: .3, _diz: { sav: '3-2-1', huc: '1-2-3' } }
 };
 function rng(sd) { let x = sd >>> 0; return () => { x = (x + 0x6D2B79F5) | 0; let t = Math.imul(x ^ x >>> 15, 1 | x); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+for (const k of (process.env.BAYRAK || "").split(",").filter(Boolean)) globalThis[k] = true; /* deney bayrakları (self.ALAN_..._ESKI) */
 Math.random = rng(seed * 7 + 3); globalThis.window = globalThis; globalThis.self = globalThis;
 for (const f of ['sabit-mat.js', 'core.js', 'shot-table.js', 'value-table.js', 'decide.js', 'match.js', 'shape.js']) (0, eval)(fs.readFileSync(path.join(dir, f), 'utf8') + '\n//# sourceURL=' + f);
 const M = globalThis.AlanMatch, kur = ad => { const { _diz, ...t } = EK[ad] || AYAR[ad]; return { tac: { ...V, tetik: V.tetik.slice(), ...t }, diz: _diz || VD }; };

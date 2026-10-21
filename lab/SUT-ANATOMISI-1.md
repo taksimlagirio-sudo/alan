@@ -124,3 +124,21 @@ xG: motorun şut anındaki gol ihtimali (shotPk). "durdu": Çekirdek yolda sönd
 - **xG düzeltmesi:** shotPk, araya giren savunmacıyı ve şutun yolda sönme ihtimalini (tek enerji) yeterince saymıyor. Gol / xG 0,4–0,5; ölçümler xG'ye yaslandıkça yanlış okunuyor. Kuyu önü şutlarında ise gol / xG 1'in üstünde: tersine, yakın şutlar az değerli sayılıyor.
 - **Şarj hâlâ düşük:** şutlar 0,21–0,25 şarjla çıkıyor (taban 0,2). Enerji ölçümü 1'deki sorun d72cef5'te de sürüyor; şutların 1/5'i yolda sönüyor ("durdu").
 - 12 maçlık örnek: dilim başına şut sayıları küçük. Yön güvenilir, oranlar değil.
+
+## Ek · 50e4b1b'nin etkisi (21 Ekim 2026)
+
+> Motor: main 3d8475b (çökme düzeltmesiyle). Veriler: `lab/an2/`, araç `tools/sut-anatomi-ab.js`. Aynı 12 tohum, iki kol: **yeni** (50e4b1b'nin kuralları açık) ve **eski** (`ALAN_SUT_KAPAT_ESKI`, `ALAN_KENAR_YON_ESKI`). Rakip Dikine. 48 maç.
+
+| kol · blok | gol blok / D | D şut | D xG | çizgide kimse yok | 6 br içinde kimse yok | en yakın (br) | kenardan pasla | yolda söndü |
+|---|---|---|---|---|---|---|---|---|
+| eski · hepsi geride | 1,00 / 1,08 | 5,8 | 2,62 | %17 | %33 | 5,4 | %29 | %19 |
+| yeni · hepsi geride | 0,50 / 1,08 | 6,1 | 2,57 | %16 | %37 | 5,5 | %27 | %33 |
+| eski · 1 önde | 0,92 / 1,17 | 8,7 | 3,93 | %22 | %40 | 5,8 | %20 | %27 |
+| yeni · 1 önde | 0,75 / 0,75 | 8,6 | 3,67 | %20 | %38 | 5,7 | %18 | %29 |
+
+Eşli fark (yeni − eski): hepsi geride yenen gol +0,00 ±0,28, D şut +0,25 ±0,87; 1 önde yenen gol −0,42 ±0,26, D şut −0,08 ±1,30.
+
+- **Şutçu kapatılmıyor, kurallar sahada görünmüyor.** Çizgide kimsenin olmadığı şut, 6 br içinde kimsenin olmadığı şut, en yakın savunmacının uzaklığı ve kenardan pasla gelen şut payı iki kolda aynı.
+- **Kural neredeyse hiç devreye girmiyor.** Kale Duvarı – Dikine, tohum 1, tam maç: Dikine'nin topu kalemize 34 br içinde ayağında tuttuğu 399 tik var, "şutçuya çık" yalnız **6 tikte** tetiklendi. Şutçular topu alıp 4–7 tikte vuruyor.
+- Olası sebepler (koda bakarak, doğrulanmadı): kural yalnız `press` listesi boşken çalışıyor (bir presçi seçilmişse çıkmıyor, ama o presçi çizgiyi kapatmıyor olabilir); ya da adayların bedel süzgeci (`e.c > gainH`) çoğunu eliyor. Ayrıca kural top ayağa geldikten sonra başlıyor; tek dokunuş şutuna yetişemez. Pası okuyup alıcının şut çizgisine önceden girmek gerekir.
+- 1 önde düzeninde yenen gol azalmış görünüyor (−0,42), ama şut ve xG değişmediği için gürültü olabilir.
