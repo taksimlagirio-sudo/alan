@@ -42,3 +42,15 @@ Yüksek blok, pres şiddeti 1, her yerde 3 sn karşı pres, beş tetik; düşük
 
 - **İki motor aynı:** Liman ortalama ~1 gol farkla kazanıyor. 5–1 ile 2–3 arasındaki fark motor değişikliği değil, tek maçın şansı. Aynı kurulum 0–1'den 5–0'a kadar skorlar veriyor.
 - Tasarım notu: tek maçın sonucu çok oynak. Menajer oyununda bu istenebilir, ama oyuncu taktiğinin işe yarayıp yaramadığını tek maçtan okuyamaz; maç sonu ekranında xG ya da "pozisyon üstünlüğü" gibi bir gösterge bunu dengeler (xG'nin kendisi düzeltildikten sonra).
+
+## Ek · Motor bu maçı nasıl belirledi (ALAN'ın kendi mekanikleriyle)
+
+Kaynak: `d-1ab1167-ayrinti.json` (m.st, alan seçimi, şarj, kafa ↔ maç kayıtları).
+
+1. **Şarj (Çekirdeğin enerjisi) maçı belirledi.** Liman şuta 0,70, Kale Duvarı 0,51 şarjla vurdu. Liman şarja 6,4, Kale Duvarı 3,6 enerji harcadı. Taşıyıcının şarj ettiği zaman ikisinde de benzer (%46 / %43), ama Liman topu daha çok tuttu (kafada 114 "tut" kararı, KD 68) ve şarjı şuta taşıdı. Liman'ın 5 golü 23–31 br'den 0,65–0,83 şarjla; KD'nin 10 şutunun 7'sini Bekçi tuttu.
+2. **Duvar (kenardan pas):** iki takım da çok kullandı (22 / 18). Liman'ınki 22'de 2 kez rakibe geçti, KD'ninki 18'de 7 kez: KD'nin kontra çıkışı duvardan ve orada kırıldı.
+3. **Alan neredeyse kullanılmadı:** oyuncu-zamanının %2'sinde hızlandıran, %6'sında yavaşlatan alan açık. Harcamanın ~%9'u alan. Bu maçta alan sonucu belirleyen bir araç değildi.
+4. **İkili yok denecek kadar az:** 3 + 2 ikili, kazanılan yok; top kazanmalar (18 / 13) pres ve pas kesmeyle.
+5. **Kafa ↔ maç:** 480 kararın 41'inde (%8,5) sapma. Çoğu (29) "alıcı topu kafadakinden ~1 sn erken aldı": kafa alıcının topa gelişini yavaş tartıyor. 11'i kayıp: kafa %81–99 "bizde kalır" dedi, rakip aldı. Şutta kafa %82–96 gol bekledi, olmadı: şut değeri kafanın içinde de şişkin, oyuncular bu yüzden uzaktan vuruyor.
+6. **Bekçi oyun kuruyor:** Aras 7 top kazandı (Ok'un uzak şutları), Liman'ın 3 golü onun elinden başladı. KD'de Sur 11 (Liman'ın şutları).
+7. **Önde bekleyen (Ok):** topu en çok tutan (582 tik), en çok kaybeden (9). Kafa ona hep çıkış veriyor; tek başına uzak şuttan başka seçeneği olmuyor.
