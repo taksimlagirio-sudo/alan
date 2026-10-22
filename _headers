@@ -1,0 +1,4 @@
+# v5 · paralel kafa: sayfa çapraz köken yalıtımlı olsun (paylaşımlı bellek, SharedArrayBuffer). Dış kaynaklar CORS'la gelir (unpkg betikleri bütünlük denetimli, Google Fonts crossorigin). Başlık gelmezse motor tek çekirdekte aynı sonucu verir.
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
