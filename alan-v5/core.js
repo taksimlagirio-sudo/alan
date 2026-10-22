@@ -1,6 +1,6 @@
 // Bekçi'nin uzanma payı (dalış) sadece kendi Kuyu'suna bu kadar yakınken geçerli; dışarıda herkes gibi uzanır. 0: her yerde.
 /* Saha ölçüsü: tek kaynak. Varsayılan 120 × 60 (zip47, kullanıcı kararı). Deney için core.js'ten önce self.ALAN_SAHA_BOY = [100, 50] verilir. Geometri sabitleri KX = W / 100, KY = H / 50 ile ölçeklenir; beden ve fizik sabitleri mutlak kalır (alan-v5/SAHA-SABITLERI.md). 100 × 50'de KX = KY = 1: bütün çarpımlar tam, oyun birebir aynı */
-self.ALAN_SAHA = (() => { const b = self.ALAN_SAHA_BOY || [120, 60], W = b[0], H = b[1]; return { W, H, CY: H / 2, KX: W / 100, KY: H / 50 }; })();
+{ const self = globalThis; /* v5 · hız: global nesne yerel sabitten (aynı nesne). İşçide self her okunuşta tarayıcının erişimcisi: bir bayrak okuması self.X ile ~180 ns, yerel sabitten ~7 ns (22 Ekim 2026 ölçümü) */ self.ALAN_SAHA = (() => { const b = self.ALAN_SAHA_BOY || [120, 60], W = b[0], H = b[1]; return { W, H, CY: H / 2, KX: W / 100, KY: H / 50 }; })();
 self.ALAN_BEK_ALAN = 12;
 // Arkadaşın kontrol edemediği Çekirdek: true → gelişi yönünde kaçar (sekmez); false → eski hâl (gövdeden seker).
 self.ALAN_KACIR = true;
@@ -10,8 +10,9 @@ self.ALAN_OZ_ESKI = { tepki: 'okuma', gorus: 'okuma', yeralma: 'okuma', pas: 'ak
 self.ALAN_OZ = function (p, k) { const a = p && p.a; if (!a) return 10; const v = a[k]; if (v != null) return v; const e = self.ALAN_OZ_ESKI[k], w = e && a[e]; return w != null ? w : 10; };
 self.ALAN_OKC_K = { tepki: 'tepki', bekci: 'refleks', kontrol: 'gorus' }; /* eski kanal adı → özellik (ölçüm deneyleri ALAN_OKX ile sürer) */
 self.ALAN_OKC = function (p, ch) { const v = self.ALAN_OZ(p, self.ALAN_OKC_K[ch] || ch), E = self.ALAN_OKX; if (!E) return v; if (E.only) return E.only === ch ? v : E.mid; return E.eq && E.eq.includes(ch) ? E.mid : v; };
-self.ALAN_OKY = function (p, ch, mek) { const v = self.ALAN_Y(p, mek), E = self.ALAN_OKX; if (!E) return v; if (E.only) return E.only === ch ? v : E.mid; return E.eq && E.eq.includes(ch) ? E.mid : v; }; /* v5 · yetenek: kanalın bileşik değeri (ALAN_Y), ölçüm deneyi ALAN_OKX'e ALAN_OKC gibi uyar */
+self.ALAN_OKY = function (p, ch, mek) { const v = self.ALAN_Y(p, mek), E = self.ALAN_OKX; if (!E) return v; if (E.only) return E.only === ch ? v : E.mid; return E.eq && E.eq.includes(ch) ? E.mid : v; }; /* v5 · yetenek: kanalın bileşik değeri (ALAN_Y), ölçüm deneyi ALAN_OKX'e ALAN_OKC gibi uyar */ }
 (function () {
+  const self = globalThis; /* v5 · hız: global nesne yerel sabitten (aynı nesne). İşçide self her okunuşta tarayıcının erişimcisi: bir bayrak okuması self.X ile ~180 ns, yerel sabitten ~7 ns (22 Ekim 2026 ölçümü) */
   const { W: GW, H: GH, CY: GCY } = self.ALAN_SAHA;
   // Math.hypot ile bit bit aynı sonucu veren iki argümanlı sürüm (V8'in kendi algoritması: en büyüğe bölüp karelerin toplamı); yerleşik çağrıdan ~5 kat hızlı.
   const hyp = (x, y) => { x = x < 0 ? -x : x; y = y < 0 ? -y : y; if (x === Infinity || y === Infinity) return Infinity; const m = x > y ? x : y; if (m !== m || x !== x || y !== y) return NaN; if (m === 0) return 0; const r = (m === x ? y : x) / m; return Math.sqrt(1 + r * r) * m; }; /* hız: büyük olan kendisine bölününce tam 1 olur (1·1 = 1); toplam ve sonuç aynı, bir bölme ve bir çarpma eksik */
@@ -278,7 +279,7 @@ self.ALAN_OKY = function (p, ch, mek) { const v = self.ALAN_Y(p, mek), E = self.
 
 // v5 · Çekirdek gövdelerin içinden geçemez (süpürmeli çarpışma): bu tikteki yol (x0,y0)→(b.x,b.y) boyunca ilk değdiği gövdede durur.
 // Kontrol edemediği gövde (az önce dokunan, cds'de) Çekirdeği yanından kaçırır (sekmez, yüzeyden kayar); diğerlerinden seker.
-window.AlanCore.govde = function (b, x0, y0, list, skip, R, E) { const sx = b.x - x0, sy = b.y - y0, L2 = sx * sx + sy * sy; let hit = null, ht = 2;
+{ const self = globalThis; /* v5 · hız: global nesne yerel sabitten (aynı nesne). İşçide self her okunuşta tarayıcının erişimcisi: bir bayrak okuması self.X ile ~180 ns, yerel sabitten ~7 ns (22 Ekim 2026 ölçümü) */ window.AlanCore.govde = function (b, x0, y0, list, skip, R, E) { const sx = b.x - x0, sy = b.y - y0, L2 = sx * sx + sy * sy; let hit = null, ht = 2;
   for (const p of list) { if (skip && skip(p)) continue; const fx = x0 - p.x, fy = y0 - p.y, c0 = fx * fx + fy * fy - R * R; let t;
     if (c0 <= 0) t = 0; else { if (L2 < 1e-9) continue; const bb = fx * sx + fy * sy, disc = bb * bb - L2 * c0; if (disc < 0) continue; t = (-bb - Math.sqrt(disc)) / L2; if (t < 0 || t > 1) continue; }
     if (t < ht) { ht = t; hit = p; } }
@@ -286,4 +287,4 @@ window.AlanCore.govde = function (b, x0, y0, list, skip, R, E) { const sx = b.x 
   b.x = hit.x + nx * R; b.y = hit.y + ny * R; window.AlanCore.sahaIci(b); const pvx = hit.vx || 0, pvy = hit.vy || 0, vn = (b.vx - pvx) * nx + (b.vy - pvy) * ny, kac = b.cds && (self.ALAN_GOVDE_CD_ESKI ? b.cds.has(hit) : (b.cds.get(hit) || 0) > b.t); /* v5 · topu kontrol edemeyen oyuncunun gövdesinden top yalnız dokunuş bekleme süresince kayar (sonra herkes gibi seker); önce o topun ömrü boyunca hiç sekmiyordu. Deney: self.ALAN_GOVDE_CD_ESKI */ /* göreli hız: oyuncu Çekirdeğe yürürse onu iter */
   if (vn < 0) { if (kac) { b.vx -= vn * nx; b.vy -= vn * ny; } else { b.vx -= (1 + E) * vn * nx; b.vy -= (1 + E) * vn * ny; b.defl = true; } } return hit; };
 // oyuncular hareket ettikten sonra: boştaki Çekirdeğin içine giren gövde onu önüne iter (oyuncu topun içinden yürüyemez)
-window.AlanCore.govdeIt = function (b, list, skip, R) { for (const p of list) { if (skip && skip(p)) continue; const dx = b.x - p.x, dy = b.y - p.y, d = Math.hypot(dx, dy); if (d >= R) continue; const vl = Math.hypot(p.vx || 0, p.vy || 0), nx = d > 1e-3 ? dx / d : (vl > 1e-3 ? p.vx / vl : 1), ny = d > 1e-3 ? dy / d : (vl > 1e-3 ? p.vy / vl : 0); b.x = p.x + nx * R; b.y = p.y + ny * R; window.AlanCore.sahaIci(b); const vn = (b.vx - (p.vx || 0)) * nx + (b.vy - (p.vy || 0)) * ny; if (vn < 0) { b.vx -= vn * nx; b.vy -= vn * ny; } } };
+window.AlanCore.govdeIt = function (b, list, skip, R) { for (const p of list) { if (skip && skip(p)) continue; const dx = b.x - p.x, dy = b.y - p.y, d = Math.hypot(dx, dy); if (d >= R) continue; const vl = Math.hypot(p.vx || 0, p.vy || 0), nx = d > 1e-3 ? dx / d : (vl > 1e-3 ? p.vx / vl : 1), ny = d > 1e-3 ? dy / d : (vl > 1e-3 ? p.vy / vl : 0); b.x = p.x + nx * R; b.y = p.y + ny * R; window.AlanCore.sahaIci(b); const vn = (b.vx - (p.vx || 0)) * nx + (b.vy - (p.vy || 0)) * ny; if (vn < 0) { b.vx -= vn * nx; b.vy -= vn * ny; } } }; }

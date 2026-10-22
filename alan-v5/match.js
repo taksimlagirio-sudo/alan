@@ -1,4 +1,5 @@
 (function () {
+  const self = globalThis; /* v5 · hız: global nesne yerel sabitten (aynı nesne). İşçide self her okunuşta tarayıcının erişimcisi: bir bayrak okuması self.X ile ~180 ns, yerel sabitten ~7 ns (22 Ekim 2026 ölçümü) */
   const { W: GW, H: GH, CY: GCY, KX: GKX, KY: GKY } = self.ALAN_SAHA; /* saha ölçüsü tek kaynaktan (core.js); sınıflar: alan-v5/SAHA-SABITLERI.md */
   // Katman 4 (basit) · Yerleşim + maç döngüsü. Talimata sadık, kusursuz değil.
   const C = () => window.AlanCore, Dd = () => window.AlanDecide, W = GW, H = GH;
