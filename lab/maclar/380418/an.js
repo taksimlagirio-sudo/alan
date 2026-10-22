@@ -1,0 +1,15 @@
+// A0. tike kadar oynatır, sonra N tik boyunca profil çıkarır ve taşıyıcının durumunu/kararını yazar.
+const fs = require('fs'), path = require('path'), insp = require('inspector'); const [dir, kf, A0, N] = process.argv.slice(2); globalThis.window = globalThis; globalThis.self = globalThis;
+const yuk = /importScripts\(([^)]*)\)/.exec(fs.readFileSync(path.join(dir, 'mac-isci.js'), 'utf8'))[1].split(',').map(s => s.trim().replace(/['"]/g, ''));
+for (const f of yuk) (0, eval)(fs.readFileSync(path.join(dir, f), 'utf8') + '\n//# sourceURL=' + f);
+const d = JSON.parse(fs.readFileSync(kf, 'utf8')).yeni, M = globalThis.AlanMatch; const m = M.createMatch(d.tohum, { tac: d.tac, len: d.len, diz: d.diz, devre: d.devre ?? false });
+for (const t of [0, 1]) for (const p of m.ps) { if (p.team !== t) continue; const o = d.oyuncular[t][p.i]; if (o) { p.name = o.ad; p.a = { ...p.a, ...o.a }; } }
+M.assignRoles(m, d.roller); for (const p of m.ps) { const r = d.roller[p.team] && d.roller[p.team][p.i - 1]; if (r && r.eg) p.eg = r.eg; } for (const t of [0, 1]) M.dizUygula(m, t, d.diz[t]); M.kafaAc && M.kafaAc(m);
+const T0 = Date.now(); while (m.tick < +A0) M.step(m); console.log('hazırlık', ((Date.now() - T0) / 1000).toFixed(0), 'sn');
+const s = new insp.Session(); s.connect(); s.post('Profiler.enable'); s.post('Profiler.start');
+const ozet = () => { const h = m.holder, b = m.ball, D = m.lastDec; return { tik: m.tick, tasiyan: h ? h.name + (h.role === 'Bekçi' ? ' (Bekçi)' : '') : '-', yer: h ? [+h.x.toFixed(1), +h.y.toFixed(1)] : b ? [+b.x.toFixed(1), +b.y.toFixed(1)] : null, decT: m.decT, ch: +(m.ch ?? 0).toFixed(2), is: h ? h.job : null, karar: D ? { ad: D.name, sec: D.opts && D.opts[0] ? D.opts[0].kind : null, n: D.opts ? D.opts.length : 0 } : null, rakipYakin: h ? +Math.min(...m.ps.filter(q => q.team !== h.team).map(q => Math.hypot(q.x - h.x, q.y - h.y))).toFixed(1) : null }; };
+for (let i = 0; i < +N; i++) { const t = Date.now(); M.step(m); console.log(JSON.stringify({ ms: Date.now() - t, ...ozet() })); }
+s.post('Profiler.stop', (e, r) => { const P = r.profile, byId = {}; for (const n of P.nodes) byId[n.id] = n; const cnt = {}; P.samples.forEach((x, i) => cnt[x] = (cnt[x] || 0) + (P.timeDeltas[i] || 0)); const sf = {}; let tot = 0; for (const [id, t] of Object.entries(cnt)) { const cf = byId[id].callFrame, k = cf.functionName + ' ' + cf.url.split('/').pop() + ':' + cf.lineNumber; sf[k] = (sf[k] || 0) + t; tot += t; }
+  console.log('--- en çok süre (kendi)'); for (const [k, t] of Object.entries(sf).sort((a, b) => b[1] - a[1]).slice(0, 15)) console.log((100 * t / tot).toFixed(1) + '%', k);
+  const parent = {}; for (const n of P.nodes) for (const c of n.children || []) parent[c] = n.id; const incl = {}; for (const [id, t] of Object.entries(cnt)) { let x = +id; const seen = new Set(); while (x != null) { const k = byId[x].callFrame.functionName; if (k && !seen.has(k)) { seen.add(k); incl[k] = (incl[k] || 0) + t; } x = parent[x]; } }
+  console.log('--- kapsayıcı'); for (const [k, t] of Object.entries(incl).sort((a, b) => b[1] - a[1]).slice(0, 25)) console.log((100 * t / tot).toFixed(1) + '%', k); });

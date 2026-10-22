@@ -1,0 +1,59 @@
+hazırlık 973 sn
+{"ms":1026,"tik":4171,"tasiyan":"Aras (Bekçi)","yer":[47.4,25.9],"decT":60,"ch":1,"is":"","karar":{"ad":"Aras","sec":"tut 1 sn bekle","n":4},"rakipYakin":1.7}
+{"ms":1172,"tik":4172,"tasiyan":"Aras (Bekçi)","yer":[47.4,25.9],"decT":60,"ch":1,"is":"","karar":{"ad":"Aras","sec":"tut 1 sn bekle","n":4},"rakipYakin":1.7}
+{"ms":1070,"tik":4173,"tasiyan":"Aras (Bekçi)","yer":[47.4,25.9],"decT":60,"ch":1,"is":"","karar":{"ad":"Aras","sec":"tut 1 sn bekle","n":4},"rakipYakin":1.7}
+{"ms":1122,"tik":4174,"tasiyan":"Aras (Bekçi)","yer":[47.4,25.9],"decT":60,"ch":1,"is":"","karar":{"ad":"Aras","sec":"tut 1 sn bekle","n":4},"rakipYakin":1.7}
+{"ms":1117,"tik":4175,"tasiyan":"Aras (Bekçi)","yer":[47.4,25.9],"decT":60,"ch":1,"is":"","karar":{"ad":"Aras","sec":"tut 1 sn bekle","n":4},"rakipYakin":1.7}
+{"ms":1288,"tik":4176,"tasiyan":"Aras (Bekçi)","yer":[47.4,25.9],"decT":60,"ch":1,"is":"","karar":{"ad":"Aras","sec":"tut 1 sn bekle","n":4},"rakipYakin":1.7}
+{"ms":1112,"tik":4177,"tasiyan":"Aras (Bekçi)","yer":[47.4,25.9],"decT":60,"ch":1,"is":"","karar":{"ad":"Aras","sec":"tut 1 sn bekle","n":4},"rakipYakin":1.7}
+{"ms":1002,"tik":4178,"tasiyan":"Aras (Bekçi)","yer":[47.4,25.9],"decT":60,"ch":1,"is":"","karar":{"ad":"Aras","sec":"tut 1 sn bekle","n":4},"rakipYakin":1.7}
+{"ms":1037,"tik":4179,"tasiyan":"Aras (Bekçi)","yer":[47.4,25.9],"decT":60,"ch":1,"is":"","karar":{"ad":"Aras","sec":"tut 1 sn bekle","n":4},"rakipYakin":1.7}
+{"ms":988,"tik":4180,"tasiyan":"Aras (Bekçi)","yer":[47.4,25.9],"decT":60,"ch":1,"is":"","karar":{"ad":"Aras","sec":"tut 1 sn bekle","n":4},"rakipYakin":1.7}
+{"ms":1241,"tik":4181,"tasiyan":"Aras (Bekçi)","yer":[47.4,25.9],"decT":60,"ch":1,"is":"","karar":{"ad":"Aras","sec":"tut 1 sn bekle","n":4},"rakipYakin":1.7}
+{"ms":1196,"tik":4182,"tasiyan":"Aras (Bekçi)","yer":[47.4,25.9],"decT":60,"ch":1,"is":"","karar":{"ad":"Aras","sec":"tut 1 sn bekle","n":4},"rakipYakin":1.7}
+{"ms":1024,"tik":4183,"tasiyan":"Aras (Bekçi)","yer":[47.4,25.9],"decT":60,"ch":1,"is":"","karar":{"ad":"Aras","sec":"tut 1 sn bekle","n":4},"rakipYakin":1.7}
+{"ms":1194,"tik":4184,"tasiyan":"Aras (Bekçi)","yer":[47.4,25.9],"decT":60,"ch":1,"is":"","karar":{"ad":"Aras","sec":"tut 1 sn bekle","n":4},"rakipYakin":1.7}
+{"ms":1191,"tik":4185,"tasiyan":"Aras (Bekçi)","yer":[47.4,25.9],"decT":60,"ch":1,"is":"","karar":{"ad":"Aras","sec":"tut 1 sn bekle","n":4},"rakipYakin":1.7}
+{"ms":1052,"tik":4186,"tasiyan":"Aras (Bekçi)","yer":[47.4,25.9],"decT":60,"ch":1,"is":"","karar":{"ad":"Aras","sec":"tut 1 sn bekle","n":4},"rakipYakin":1.7}
+--- en çok süre (kendi)
+13.7% yaris decide.js:236
+8.2%  decide.js:525
+7.6% (garbage collector) :-1
+6.6% predict core.js:139
+3.5% gecY shape.js:40
+3.2% KpkSec core.js:61
+3.2% ucusFormul decide.js:260
+2.7% sekYaris decide.js:229
+2.7% ivme match.js:222
+2.4% self.ALAN_Y :117
+2.4% pack core.js:60
+2.3% bosluk decide.js:613
+2.1% stepBall core.js:84
+1.9% reachSpeed :343
+1.6% predictWorld decide.js:522
+--- kapsayıcı
+100.0% (root)
+92.4% traceSync
+92.4% wrapModuleLoad
+92.4% executeUserEntryPoint
+91.0% step
+90.3% decide
+90.3% decide0
+87.1% dalgaKos
+87.1% bir
+56.4% bekTart
+47.5% imagine
+46.4% ucusFormul
+43.6% tart
+38.1% bankTart
+34.6% sekYaris
+31.2% yaris
+22.5% kenarIm
+17.9% sonDunya
+15.7% predictWorld
+14.0% predict
+8.5% sekPay
+8.3% sekV
+7.6% recvVal
+7.6% (garbage collector)
+6.1% K
