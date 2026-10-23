@@ -138,7 +138,7 @@ self.ALAN_OKY = function (p, ch, mek) { const v = self.ALAN_Y(p, mek), E = self.
   function clone(b) { return Object.assign({}, b, { log: [] }); }
   // Yörünge tahmini: stepBall'un birebir aynı işlemleri yerel değişkenlerle (rollTo ile aynı gövde); sonunda Çekirdeğin son durumu ve olay kaydı kopyaya yazılır.
   function predict(b0, src, p, maxT) {
-    src = pack(src); p = p || P; const b = clone(b0), pts = [{ x: b.x, y: b.y }], n = maxT || 900, team = b.team, TU = tekU(); let ch = b.ch;
+    src = pack(src); p = p || P; const b = clone(b0), pts = [{ x: b.x, y: b.y }], n = maxT || 900, team = b.team, TU = tekU(), SPK = !!self.ALAN_YOL_SP_ESKI; let ch = b.ch; /* v5 · hız: yolun noktalarında hız (sp) tutulmaz: hiçbir yer okumuyordu (her tikte bir karekök, bir sayı kutusu). Deney: self.ALAN_YOL_SP_ESKI */
     let x = b.x, y = b.y, vx = b.vx, vy = b.vy, e = b.e, alive = b.alive, dead = b.dead, t = b.t, dist = b.dist, walls = b.walls, done = b.done;
     for (let i = 0; i < n && !done; i++) {
       const k = K(src, x, y, team), sp0 = hyp(vx, vy), res = 1 - p.pierce * ch;
@@ -161,7 +161,7 @@ self.ALAN_OKY = function (p, ch, mek) { const v = self.ALAN_Y(p, mek), E = self.
         dist += hyp(nx - x, ny - y); x = nx; y = ny; t++;
         if (hyp(vx, vy) < .015) { vx = 0; vy = 0; done = 'durdu'; b.log.push({ t, k: 'dur', txt: alive ? 'Durdu' : 'Sönmüş hâlde durdu' }); }
       }
-      pts.push({ x, y, e, sp: hyp(vx, vy) });
+      pts.push(SPK ? { x, y, e, sp: hyp(vx, vy) } : { x, y, e });
     }
     if (TU) b.ch = ch; b.x = x; b.y = y; b.vx = vx; b.vy = vy; b.e = e; b.alive = alive; b.dead = dead; b.t = t; b.dist = dist; b.walls = walls; b.done = done;
     return { pts, end: b };
