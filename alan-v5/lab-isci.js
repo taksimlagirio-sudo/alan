@@ -1,6 +1,7 @@
+const ALAN_SURUM_Q = (v => v ? '?v=' + v[1] : '')(/[?&]v=(\w+)/.exec(self.location && self.location.search || '')); /* v5 · motor sürümü: sayfanın verdiği etiketle yüklenir (önbellekteki eski kopya kullanılmaz) */
 // ALAN Lab işçisi: bir maçı görüntüsüz, baştan sona oynar ve özet istatistiği döndürür.
 self.window = self;
-importScripts('sabit-mat.js', 'yetenek.js', 'paralel.js', 'core.js', 'shot-table.js', 'value-table.js', 'decide.js', 'match.js', 'shape.js');
+importScripts(...['sabit-mat.js', 'yetenek.js', 'paralel.js', 'core.js', 'shot-table.js', 'value-table.js', 'decide.js', 'match.js', 'shape.js'].map(f => f + ALAN_SURUM_Q));
 const M = self.AlanMatch;
 function egUy(m, R) { for (const p of m.ps) { const r = R[p.team] && R[p.team][p.i - 1]; if (r && r.eg) p.eg = r.eg; } }
 function kurUygula(m, d) { if (d.oyuncular) for (const t of [0, 1]) { const A = d.oyuncular[t]; if (!A) continue; for (const p of m.ps) { if (p.team !== t) continue; const o = A[p.i]; if (o) { p.name = o.ad; p.a = { ...p.a, ...o.a }; } } } if (d.roller) { M.assignRoles(m, d.roller); egUy(m, d.roller); } if (d.diz) for (const t of [0, 1]) if (d.diz[t]) M.dizUygula(m, t, d.diz[t]); }
