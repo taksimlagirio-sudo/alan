@@ -5,7 +5,7 @@
 // Kullanım: OZ=hiz:4 node tools/yet3-olc.js <motor> <tohum> [tik=2700]
 const fs = require('fs'), path = require('path'); const { V, VD } = require('./taktik-ayar'); const [dir, sS, lS] = process.argv.slice(2), seed = +sS, LEN = +lS || 2700;
 const yukle = d => { const s = fs.readFileSync(path.join(d, 'mac-isci.js'), 'utf8'), i = /importScripts\(([^;]*)\)/.exec(s)[1], a = /\[([^\]]*)\]/.exec(i); return (a ? a[1] : i).split(',').map(x => x.trim().replace(/['"]/g, '')).filter(x => x.endsWith('.js')); };
-globalThis.window = globalThis; globalThis.self = globalThis;
+globalThis.window = globalThis; globalThis.self = globalThis; for (const kv of (process.env.BAYRAK || "").split(",").filter(Boolean)) { const [k, v] = kv.split("="); globalThis[k] = v === "false" ? false : v === undefined ? true : isNaN(+v) ? v : +v; } /* deney bayrakları: BAYRAK=ALAN_PRENSIP=false,ALAN_X_ESKI */
 for (const f of yukle(dir)) { let s = fs.readFileSync(path.join(dir, f), 'utf8'); if (f === 'match.js') { const a = 'm.decT = Math.round(5 + (1 - m.tac[h.team].tempo) * 8 + m.r() * 3);'; if (s.split(a).length === 2) s = s.replace(a, 'if (globalThis.__KH && !m._lite) globalThis.__KH(m, h, r, o); ' + a); } (0, eval)(s + '\n//# sourceURL=' + f); }
 const M = globalThis.AlanMatch, Y = self.ALAN_YET, OZK = Object.keys(Y.OZ), BEK = new Set(OZK.filter(k => Y.OZ[k][1] === 'bek')), ESKI = ['hiz', 'ceviklik', 'guc', 'uzanma', 'alan', 'kontrol', 'surme', 'pas', 'gonderme', 'yukleme', 'tepki', 'gorus', 'yeralma', 'sogukkanlilik', 'kesme', 'enerji', 'refleks', 'yerlesim', 'hakimiyet'];
 const A = seed % 2, [ozK, ozV] = (process.env.OZ || ':').split(':'), MJ = !!process.env.MARKAJ;

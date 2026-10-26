@@ -150,3 +150,21 @@ Bütün kollar ortalaması, herkes 10, 90 sn:
 
 ## Sınırlar
 Kol başına 6 maç × 90 sn; anlamlılık eşiği iki standart hata, 72 kol × 40 gösterge içinde birkaç "anlamlı" sonuç rastlantı olabilir. Tek taktik, herkes 10.
+
+## Ek · Taban düşüşünün kaynağı (aynı akşam)
+
+> Herkes 10, varsayılan taktik, 3 tohum × 90 sn, motor başına 3 maç (az; yön güvenilir, sayılar kaba). Veriler `lab/yt3/taban-kok`. `tools/yet3-olc.js`'e deney bayrağı desteği eklendi (`BAYRAK=ALAN_PRENSIP=false`).
+
+| motor | şut / maç | pas isabeti | kesilen pas | kafa ↔ maç sapması |
+|---|---|---|---|---|
+| 614496b (23.10 16:30) | 1,7 | %85 | %9 | %14 |
+| 7062915 (24.10 22:21, prensip varsayılandan hemen önce) | 1,3 | %88 | %7 | %13 |
+| **9fa249b (24.10 23:12, "Prensip varsayılan kafa")** | 1,0 | **%53** | **%27** | %15 |
+| 452ee4f (25.10 17:29) | 1,7 | %70 | %22 | %17 |
+| 7c6a3e1 (26.10 11:21) | 1,0 | %70 | %23 | %16 |
+| b121ca4 (bugün) | 0,3 | %71 | %16 | %20 |
+| b121ca4 + eski kafa (`ALAN_PRENSIP = false`) | 0,3 | %81 | %13 | %22 |
+
+- **Pas isabetindeki düşüş prensipli kafayla geldi** (9fa249b, kullanıcı kararıyla varsayılan yapıldı): isabet %88 → %53, kesilen %7 → %27. Sonraki "Prensip:" düzeltmeleri isabeti %70'e çıkardı; bugünkü motorda eski kafa hâlâ %81 veriyor. Prensipli kafa pası daha riskli seçiyor ya da araya girmeyi kötü tartıyor; bugünkü farkın kaynağı ayrıca izlenmeli (kesilen pasların durumu, kafanın pasın kesilme ihtimali tahmini).
+- **Şuttaki düşüş prensipten bağımsız:** eski kafayla da bugün maç başına 0,3. 26.10'daki son değişiklikler (imkân haritası, alıcı ve pas, şut tablosu: "dibinde savunmacı olan şutçuya şut yok") aday; 3 maçla kesin değil.
+- Kafa ↔ maç sapması iki kafada da %20 civarı; günler içinde %13'ten yükselmiş.
