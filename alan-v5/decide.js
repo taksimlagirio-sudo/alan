@@ -149,7 +149,7 @@
     return out;
   }
   // Alıcı tepkisiz (pası bekliyor): yörüngede en erken yetişebildiği nokta
-  function recvPoint(pts, p) { const v = (.17 + self.ALAN_HZ(p) * .006) * self.ALAN_SPR(p); for (let i = 0; i < pts.length; i += 2) { const q = pts[i]; if (Math.max(0, Math.hypot(q.x - p.x, q.y - p.y) - 1.4) / v <= i) return { x: q.x, y: q.y }; } const q = pts[pts.length - 1]; return q ? { x: q.x, y: q.y } : { x: p.x, y: p.y }; }
+  function recvPoint(pts, p) { if (!self.ALAN_RECV_ORTAK_ESKI && window.AlanShape && window.AlanShape.aliciDirenc) { const r = window.AlanShape.aliciDirenc(pts, p, 0, 0, 1.4); if (r) return { x: r.x, y: r.y }; } /* v5 · maçtaki yedek buluşmayla aynı kural (shape aliciDirenc). Deney: self.ALAN_RECV_ORTAK_ESKI */ const v = (.17 + self.ALAN_HZ(p) * .006) * self.ALAN_SPR(p); for (let i = 0; i < pts.length; i += 2) { const q = pts[i]; if (Math.max(0, Math.hypot(q.x - p.x, q.y - p.y) - 1.4) / v <= i) return { x: q.x, y: q.y }; } const q = pts[pts.length - 1]; return q ? { x: q.x, y: q.y } : { x: p.x, y: p.y }; }
   // Tek hayali yörünge; rakip gövdesine çarpınca beklenen değer: tutar / delip geçer (yörünge sürer) / seker
   // Kötü karşılamadan sonra Çekirdek dibe düşer: kim daha yakınsa o kapar (sabit bir oran değil, o anki kalabalık)
   function looseWin(seen, h, x, y) { let A = .2, Dn = .2; for (const p of seen) { if (p === h || p.role === 'Bekçi') continue; const w = Math.exp(-Math.hypot(p.x - x, p.y - y) / 2); if (p.team === h.team) A += w; else Dn += w; } return A / (A + Dn); }
