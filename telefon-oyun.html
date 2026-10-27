@@ -16,13 +16,13 @@ html,body{margin:0;height:100%;background:#0E0D09;color:#F6F3EC;font-family:'Bri
 a{color:#FFD25A}a:hover{color:#FFF2C4}
 button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 </style>
-<script src="alan-v5/kadro.js?v=202610272140"></script>
-<script src="alan-v5/saha-ciz.js?v=202610272140"></script>
-<script src="alan-v5/analiz-panel.js?v=202610272140"></script>
+<script src="alan-v5/kadro.js?v=202610272150"></script>
+<script src="alan-v5/saha-ciz.js?v=202610272150"></script>
+<script src="alan-v5/analiz-panel.js?v=202610272150"></script>
 <script>window.AlanYeEk = a => { const U = 'aeıioöuü'; let v = 'e'; for (let i = a.length - 1; i >= 0; i--) { const ch = a[i].toLocaleLowerCase('tr'); if (U.includes(ch)) { v = ch; break; } } return a + '’' + (U.includes(a.slice(-1).toLocaleLowerCase('tr')) ? 'y' : '') + ('aıou'.includes(v) ? 'a' : 'e'); }; window.AlanDersOzet = d => d.tur === 'takim' ? 'Takım · ' + ({ blok: 'savunma bloğu', pres: 'pres yerleşimi', kurulum: 'oyun kurulumu', gecis: 'geçiş' })[d.alt] : d.tur === 'konum' ? 'yer al' : d.tur === 'pres' ? 'bas' : d.tur === 'pas' ? (d.pas && d.pas.kime ? window.AlanYeEk(d.pas.kime) + ' pas' : 'koşana pas') + (d.pas ? ({ onune: ' · koşusunun önüne', arka: ' · savunmanın arkasına' })[Array.isArray(d.pas.nereye) ? 'onune' : d.pas.nereye] || '' : '') + (d.pas && d.pas.yol === 'kenardan' ? ' · kenardan' : '') : ({ tut: 'tut', sur: 'sür', gonder: 'gönder' })[d.karar] || d.tur;</script>
-<script src="alan-v5/yetenek.js?v=202610272140"></script>
-<script src="alan-v5/core.js?v=202610272140"></script>
-<script>window.ALAN_SURUM = '202610272140'; /* v5 · motor sürümü: işçi ve motor betikleri bu etiketle yüklenir; motor değişince etiket değişir, tarayıcı eski kopyayı kullanamaz */</script>
+<script src="alan-v5/yetenek.js?v=202610272150"></script>
+<script src="alan-v5/core.js?v=202610272150"></script>
+<script>window.ALAN_SURUM = '202610272150'; /* v5 · motor sürümü: işçi ve motor betikleri bu etiketle yüklenir; motor değişince etiket değişir, tarayıcı eski kopyayı kullanamaz */</script>
 <script>/* v5 · paralel kafa: maç işçisinin adresi. Deney: sayfa adresine ?paralel=N (kabuk içindeyse kabuğun adresine: alan…/?paralel=4) ya da localStorage 'alan-paralel' = N (1: kapalı, tek çekirdek; verilmezse işçi kendisi seçer) */ window.isciAdres = function (ek) { var oku = function (w) { try { return new URLSearchParams(w.location.search).get('paralel'); } catch (e) { return null; } }, p = oku(window) || oku(window.top) || ''; if (!p) try { p = localStorage.getItem('alan-paralel') || ''; } catch (e) {} var a = [ek, /^\d+$/.test(p) ? 'paralel=' + p : '', 'v=' + window.ALAN_SURUM].filter(Boolean).join('&'); return 'alan-v5/mac-isci.js' + (a ? '?' + a : ''); };</script>
 </helmet>
 <div style="position:fixed;inset:0;background:#0E0D09;display:flex;justify-content:center">
