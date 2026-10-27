@@ -187,8 +187,9 @@
     if (hit && hit.role === 'Bekçi' && hit.team !== h.team && !self.ALAN_BEK_HAYAL_ESKI && depth < 3) {
       // v5 · Bekçi teması maçtaki kuralın kendisiyle (core.contact): uzanma, tutma zarı, delme, çelme yönü. Eskiden burada ayrı bir tahmin vardı (tut / delip geçer / sekip kime düşer) ve maçtaki Bekçi değiştikçe ondan kopuyordu (gönderme iyimserliği)
       const bK = o => o && !self.ALAN_BAG_KOPYA_ESKI ? (seen.find(z => z.id === o.id && z.team === o.team) || o) : o, b2 = K.makeBall({ x: b.x, y: b.y, vx: b.vx, vy: b.vy, team: b.team, ch: b.ch, from: bK(b.from), recv: bK(b.recv) }); /* v5 · atan ve alıcı bu dünyanın oyuncusu (algı kopyası): önce gerçek maçtaki oyuncuyu gösteriyordu, Bekçi temasında alıcının kopyası 'başka arkadaş' sayılıp atlanıyordu. Deney: self.ALAN_BAG_KOPYA_ESKI */ b2.e = b.e; b2.alive = b.alive; b2.t = b.t; b2.tp = b.tp; b2.gon = b.gon; b2.cds = new Map(b.cds || []);
-      const r0 = K.contact(b2, seen, null, D._imR || Math.random, b.x - b.vx, b.y - b.vy); if (!r0 || r0.took || b2.done) return { m: 0, o: 1, k: 0, x: b.x, y: b.y };
-      const R3 = simOne(K, h, b2, seen, null, depth + 1, null, cache); return { m: R3.m, o: R3.o, k: R3.k, x: b.x, y: b.y };
+      b2._hayal = true; const r0 = K.contact(b2, seen, null, D._imR || Math.random, b.x - b.vx, b.y - b.vy); if (!r0 || r0.took || b2.done) return { m: 0, o: 1, k: 0, x: b.x, y: b.y };
+      const dal = b2._dal, seen2 = dal ? seen.map(p => p === dal.p ? Object.assign(Object.create(p), { x: dal.x, y: dal.y, en: p.en == null ? p.en : Math.max(0, p.en - self.ALAN_EN.dalis * Math.min(1, dal.f)), _dolYok: (D._tick || 0) + Math.round(self.ALAN_EN.dalisDolYok * Math.min(1, dal.f)) }) : p) : seen; /* v5 · kafa dalışı bilir: sekmeden sonrası dalmış (yer değiştirmiş) ve yorulmuş Bekçi'yle (dalış hızı yorgunluğa bağlı) */
+      const R3 = simOne(K, h, b2, seen2, null, depth + 1, null, cache); return { m: R3.m, o: R3.o, k: R3.k, x: b.x, y: b.y };
     }
     if (hit) {
       const P = K.ctrlP(b, hit, seen);
