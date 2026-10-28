@@ -1,0 +1,4 @@
+// Siteyi COOP/COEP başlıklarıyla sunar (paralel kafa için çapraz köken yalıtımı). Kullanım: node sunucu.js <kök> <port>
+const http = require('http'), fs = require('fs'), path = require('path'); const [kok, port] = process.argv.slice(2);
+const tur = { '.html': 'text/html', '.js': 'application/javascript', '.json': 'application/json', '.css': 'text/css' };
+http.createServer((q, r) => { const u = decodeURIComponent(q.url.split('?')[0]); const f = path.join(kok, u === '/' ? 'index.html' : u); fs.readFile(f, (e, d) => { if (e) { r.writeHead(404); r.end(); return; } r.writeHead(200, { 'Content-Type': tur[path.extname(f)] || 'application/octet-stream', 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Embedder-Policy': 'require-corp', 'Cache-Control': 'no-cache' }); r.end(d); }); }).listen(+port);

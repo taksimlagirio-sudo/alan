@@ -1,0 +1,14 @@
+<!doctype html><meta charset="utf-8"><title>paralel test</title><pre id="o"></pre>
+<script>
+const log = (...a) => { const s = a.join(' '); document.getElementById('o').textContent += s + '\n'; console.log('[sayfa] ' + s); };
+log('crossOriginIsolated', self.crossOriginIsolated, 'çekirdek', navigator.hardwareConcurrency);
+const N = +(new URLSearchParams(location.search).get('paralel') || 2), LEN = +(new URLSearchParams(location.search).get('tik') || 9000);
+fetch('kayit.json').then(r => r.json()).then(k => {
+  const w = new Worker('alan-v5/mac-isci.js?paralel=' + N + (new URLSearchParams(location.search).get('ek') || '')); let sonT = performance.now(), sonTik = 0, kare = 0, t0 = performance.now(); window.__durum = { bitti: false, bosluk: [], pd: [], H: [] };
+  w.onmessage = e => { const d = e.data; const now = performance.now();
+    if (d.tip === 'kare') { for (const t of d.iz || []) if (t.indexOf('MUT') >= 0) log('İZ', d.tick, t); else if (t.indexOf('WN') >= 0 || t.indexOf('DK') >= 0 || t.indexOf('ST ') >= 0 || t.indexOf('LA ') >= 0 || t.indexOf('DKF') >= 0) window.__durum.WN = (window.__durum.WN || []).concat(t); else log('İZ', d.tick, t); for (const f of d.kare || []) { const u = new Uint32Array(f.buffer, f.byteOffset, f.length); let h = 2166136261; for (let j = 0; j < 84; j++) { h ^= u[j]; h = Math.imul(h, 16777619); } window.__durum.H.push((h >>> 0).toString(36)); } const gap = now - sonT; if (gap > 1500) window.__durum.bosluk.push({ tik: d.tick, onceki: sonTik, sn: +(gap / 1000).toFixed(1) }); sonT = now; sonTik = d.tick; kare++; if (d.pd) { const s = window.__durum.pd, o = s[s.length - 1]; if (!o || o.pd.bozuk !== d.pd.bozuk || o.pd.neden !== d.pd.neden || d.pd.n !== o.pd.n) { s.push({ tik: d.tick, zaman: new Date().toISOString().slice(11, 19), pd: d.pd }); log('PD değişti', d.tick, JSON.stringify(d.pd)); } } if (kare % 25 === 0) log('tik', d.tick, 'süre', ((now - t0) / 1000).toFixed(0) + ' sn', 'pd', JSON.stringify(d.pd)); if (d.yari) w.postMessage({ tip: 'devam', gen: 1 }); if (d.son) { window.__durum.bitti = true; log('BİTTİ tik', d.tick, ((now - t0) / 1000).toFixed(0) + ' sn'); } }
+    else if (d.tip === 'hata') { log('HATA', d.msg); window.__durum.hata = d.msg; } else if (d.tip !== 'basla') log('ileti', d.tip); };
+  w.onerror = e => log('İŞÇİ HATASI', e.message);
+  const y = { ...k.yeni, gen: 1, len: LEN, dur: Math.min(LEN, k.yeni.dur || LEN) }; w.postMessage(y); log('maç başladı', y.tohum, 'len', LEN);
+});
+</script>
