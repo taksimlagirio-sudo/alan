@@ -32,73 +32,81 @@ Kendi yarımızda kafa doğru davranıyor, çünkü orada kaybın bedeli büyük
 
 ## 2 · Kavram
 
-**Sahiplik değeri S(takım, yer, durum):** Takım topu bu yerde, bu durumda kontrol ediyorken bu sahipliğin gol ile bitme olasılığı.
-
-- **Rakibin sahiplik değeri S_r:** Rakip topu bu yerde kazanırsa, onun bu sahipliğinin gol ile bitme olasılığı. Kontra burada: top kaybından başlayan sahiplik, karşı takım dağınık başlar.
+**Sahiplik değeri N(takım, yer):** Takım topu bu yerde kontrol ediyorken, bu sahiplikten **bizim gol atmamız ile rakibin gol atması arasındaki olasılık farkı**. Kendi kale önünde, kaybedersek rakip hemen vurabileceği için eksiye de düşebilir.
 
 Kafanın kullanacağı iki ölçü:
-- **Tutulursa değer** = max(imkân, S). İmkân "buradan şimdi açık olan"; S "bu sahipliğin ortalama geleceği". İyi bir an ortalamanın üstündedir, ortalama ise tabandır. Bugünkü `zemin` tabanının yerine S geçer.
-- **Kaybın bedeli** = max(rakibin imkânı ve zinciri (bugünkü), S_r). Kaybı rakibin geçiş sahipliği olarak sayar.
+- **Tutulursa değer** = N(biz, seçeneğin bitiş yeri). Bugünkü max(imkân, zemin) yerine geçer.
+- **Kaybın bedeli** = N(rakip, topun kaybedildiği yer). Topu orada kazanan rakibin sahipliğinin değeri: hemen şut, kontra pası (kontraKur), oradan kuracağı oyun.
 
 Birim aynı kalır, gol olasılığı. Şut, pas, sürme, tutma aynı ölçüyle tartılmaya devam eder.
 
-## 3 · S nereden gelir: ölçülmüş tablo (önerim)
+## 3 · N nasıl hesaplanır: formülle zincir
 
-**Önerim:** S'yi motorun kendi maçlarından ölçmek. Şut tablosunda (`shot-table.js`) yaptığımızın aynısı.
+Sahiplik bir zincir: top sahibi ya vurur, ya topu başka bir yere götürür (pas ya da sürme) ve orada yeni bir top sahibi olur, ya da topu kaybeder ve rakip orada top sahibi olur. N bu zincirin değeri; geriye doğru, birkaç adımda hesaplanır (değer yinelemesi).
 
-- **Nasıl:** Her sahiplik kaydedilir: hangi takım, hangi tikten hangi tike, her tikte top nerede. Sahiplik gol ile bittiyse o sahipliğin her anı "1", bitmediyse "0" yazar. Bir bölgedeki ortalama, o bölgede topa sahip olmanın gol olasılığıdır.
-- **S_r:** Yalnız top kaybıyla başlayan sahipliklerin başlangıç noktasından ölçülür (kontra dahil).
-- **Kafa = maç:** Tablo maçın kendisinden geliyor. Kafa kendi motorunun gerçeğini bilir, uydurma bir eğri değil.
-- **Döngü:** Tablo kafanın kararlarını değiştirir, kararlar da tabloyu. Ölç → yükle → yeniden ölç, değişim küçülene kadar (2–3 tur). Tablonun her sürümü ölçüldüğü motor sürümüyle etiketlenir.
+**Izgara:** Saha, imkân haritasının bölge ızgarasıyla (6 br) hücrelere bölünür. Her takım için bir alan: N_biz(hücre), N_rak(hücre).
 
-**Alternatif: formülle zincir.** S(x) = en iyi devam seçeneğinin değeri, adım adım geriye doğru (değer yinelemesi). Daha "temiz" görünür ama her kararda pahalı. Ayrıca kafanın tahminiyle beslendiği için iyimserliğini kendine yansıtır. Ölçülen tablo bunu düzeltir. Önerim tablo.
+**Başlangıç (0. adım):** Her hücrenin değeri oradan hemen şutun değeri, yani imkân haritası (`imkan`, kafa ve maçın şut kuralıyla). Haritanın erimi dışında 0.
 
-## 4 · Tablonun boyutları
+**Bir adım (her hücre için, iki takımda birlikte):**
 
-Az boyut, bol veri. Öneri:
-- **Boy:** Kaleye uzaklık, 10 dilim (12 br).
-- **En:** Orta, iç kanat, kenar (3 dilim).
-- **Durum:** Rakip yerleşik mi, geçişte mi (`m.gc`, bugünkü geçiş tanımı), 2 dilim.
+  N(c) = max( şut(c),  max over c' [ k(c→c') · γ · N(c')  −  (1 − k(c→c')) · N_karşı(kayıp yeri) ] )
 
-Toplam 60 hücre. 5 dakikalık bir maçta birkaç gol var (son üç maçta 2–6); hücreleri ayırt edecek kadar gol görmek için **60–100 maç** gerekir. Komşu hücreler yumuşatılır (az veri olan hücre komşusuna yaslanır).
+- **c':** Topun c'den gidebileceği yerler. Pas için kendi oyuncumuzun rakipten önce varabildiği hücreler (pas menzili içinde); sürme için komşu hücreler.
+- **k(c→c'):** Topun oraya bizde kalarak varma ihtimali. Maçın kuralıyla, imkân haritasının bugün kullandığı yarışla hesaplanır: kim nereye önce varır (`gecTab`, `vSp`, tepki), pas yolu açık mı (`laneOk`, `bekYol`). Kafa = maç: yeni bir olasılık kuralı yok.
+- **Kayıp yeri:** Yolun üstünde rakibin önce varabildiği nokta; topu orada rakip kazanır.
+- **γ:** Bir adımın indirimi, zincirde bugün kullanılan `combo` payı. Her pas ve sürme bir adım; adım arttıkça hem süre geçer hem dünya değişir, uzak gelecek daha az kesin.
 
-Bilerek koymadıklarım:
-- **Baskı ve oyuncu yeteneği:** Bunlar seçeneğin tutma ihtimalinde (P) zaten var. Tabloya eklersek iki kez sayılır.
-- **Skor ve kalan süre:** 5 dakikalık maçta önemli olabilir ama ayrı bir konu. Talimat olarak "skoru koru / risk al" (`risk` talimatı kaybın bedelini zaten çarpıyor).
+**Kaç adım:** 3–4. Her adımda bilgi bir pas ötesine yayılır. Böylece orta sahadaki hücre "iki pas sonra kale önüne varabilmenin" değerini alır. `combo` indirimi zinciri doğal olarak kısar.
 
-## 5 · Kafada nereye girer
+**İki alan birlikte:** Bizim değerimiz kaybın bedelinde rakibin alanını, rakibinki bizimkini kullanır. Aynı adımda ikisi birlikte güncellenir.
+
+**Dünya:** Kararın tahmin dünyası (bugünkü imkân haritasıyla aynı dünya). Zincirin ilerleyen adımlarında oyuncuların yerleri sabit sayılır, imkân haritasında olduğu gibi kimin ne karar vereceği tahmin edilmez. `combo` indirimi bu belirsizliğin de payı.
+
+**Neden bu, `zemin`'in yerini alır:** zemin (taşıma, ilerleme) "ileri gitmek değerlidir" diyen el yazımı bir eğri. Zincir aynı şeyi kendiliğinden söylüyor: ileri giden yolun değeri, varılan yerden açılan imkândır. İkisi birlikte kalırsa aynı şey iki kez sayılır.
+
+## 4 · Kafada nereye girer
 
 | Yer | Bugün | Sonra |
 |---|---|---|
-| Tutulursa değer (pas, önüne, kenardan, sürme, tut) | max(imkân, zemin) | max(imkân, S) |
-| Kaybın bedeli (`lossAt`, A2) | rakip imkânı, kontraKur | max(o, S_r) |
-| Şut | gol olasılığı − kaybın bedeli | aynı, kaybın bedeli yeni ölçüyle |
+| Tutulursa değer (pas, önüne, kenardan, sürme, tut) | max(imkân, zemin) | N_biz(bitiş yeri), en az o anki imkân |
+| Kaybın bedeli (`lossAt`, A2) | rakip imkânı, kontraKur | N_rak(kayıp yeri) |
+| Şut | gol olasılığı − kaybın bedeli | aynı, kaybın bedeli N_rak ile |
 | Topsuz oyuncunun yer tartısı (A3) | yerDeger | değişmez (bu tasarımın dışında) |
+
+`risk` talimatı kaybın bedelini bugünkü gibi çarpar.
+
+## 5 · Hız
+
+Izgara yaklaşık 20 × 10 = 200 hücre, takım başına. Her hücreden 20–30 hedef, 3–4 adım, iki takım: kararda birkaç on bin yarış hesabı.
+- Alan **karar başına bir kez** kurulur, kararın bütün seçenekleri onu okur (imkân haritasının önbelleği gibi: `cx.IM`).
+- **İleri bakış kopyalarında** (kafanın içindeki öteki oyuncuların kararları) alan yeniden kurulmaz, ana kararın alanı kullanılır.
+- Telefonda karar süresi ölçülür; maçın akışına yetişmezse adım sayısı ya da hedef sayısı düşer (davranış ölçülerek).
 
 ## 6 · Beklenen etki ve riskler
 
 **Beklenen:**
-- Orta sahada %10–40'lık paslar azalır. Kayıp artık en az ~0,01–0,03 (S_r), tutmak en az S.
-- Rakip yarıda risk hâlâ alınır, çünkü imkân S'nin üstüne çıkar; ama tamamen bedava olmaz.
-- Kaybın kontraya dönüştüğü yerlerde (rakip dağınık değil, biz dağınıkken) kafa daha temkinli olur.
+- Orta sahada %10–40'lık paslar azalır. Kayıp artık rakibin sahipliğinin değeri kadar bedelli, tutmak da iki pas sonraki imkân kadar değerli.
+- Rakip yarıda risk hâlâ alınır, çünkü şut imkânı yüksek; ama tamamen bedava olmaz.
+- Kendi yarımızda bugünkü temkin korunur.
 
 **Riskler:**
-- **Fazla temkin:** Top yan yana dolaşır, kimse ileri pas vermez. Ölçüt: ileri pas oranı, şut sayısı, gol. Döngüde S küçülürse oyun kendini dengeler (temkinli oyun gol üretmezse S düşer).
-- **Beklemenin bedava üstünlüğü:** Tutmanın tabanı S. Aynı bölgedeki arkadaşa pas da S taşır, yani ikisi eşit. Bugünkü `combo` indirimi devam seçeneklerine uygulanmaya devam eder, tutmaya üstünlük doğmaz.
-- **Tablo bayatlaması:** Motor değiştikçe tablo eskir. Her önemli motor değişikliğinden sonra yeniden ölçüm gerekir (şut tablosunda olduğu gibi).
-- **Tarzlar:** Direkt oyun (uzun top) S_r'yi daha çok yer, çünkü uzun top daha çok kaybedilir. Bu doğru ama tarz matrisinde ölçülmeli. Dikine'nin baskınlığı değişebilir.
+- **Fazla temkin:** Top yan yana dolaşır, kimse ileri pas vermez. Ölçüt: ileri pas oranı, şut sayısı, gol.
+- **İyimserlik:** Zincir her adımda en iyi devamı seçer; oyuncu her adımda en iyiyi seçmez (seçim hatası). Uzun zincirde bu fark birikir. `combo` indirimi ve kısa zincir (3–4 adım) bunu sınırlar; kafa ↔ maç dedektörüyle ölçülür.
+- **Sabit dünya:** Zincirin ilerleyen adımlarında savunma kaymıyor sayılıyor. Uzak pasların değeri biraz şişebilir.
+- **Tarzlar:** Direkt oyun (uzun top) kaybın bedelini daha çok yer. Tarz matrisinde ölçülmeli.
 
 ## 7 · Karar bekleyenler
 
-1. **Kaynak:** Ölçülmüş tablo (önerim) mi, formülle zincir mi?
-2. **`zemin` tabanı:** Tamamen S ile değişsin mi, yoksa ikisinin büyüğü mü kalsın? Öneri: değişsin. zemin el yazımı bir eğri, S ölçülmüş.
-3. **Tablonun boyutu:** 10 × 3 × 2 yeterli mi? Geçiş ayrımı dışında bir şey (örneğin topun gerisindeki rakip sayısı) gerekli mi?
-4. **Ölçüm:** 60–100 maçlık arka plan koşusu kabul mü? Bir maç bu makinede ~10 dakika sürüyor; 4 işlemciyle 60 maç ~2,5 saat, 100 maç ~4 saat.
+1. **Adım sayısı:** 3 mü, 4 mü?
+2. **Pas hedefleri:** Yalnız arkadaşın önce vardığı hücreler mi (önerim), yoksa menzildeki bütün hücreler (koşu yaratma dahil) mi?
+3. **İki takım birlikte (fark değeri) mi**, yoksa kaybın bedeli için yalnız rakibin alanı mı? Önerim birlikte: kendi kale önünde tutmanın eksi değeri ancak böyle ortaya çıkar.
+4. **`zemin` tamamen kalksın mı?** Önerim kalksın, aksi halde ilerleme iki kez sayılır.
 
 ## 8 · Ölçüm (uygulama sonrası)
 
 - Pas kaybı bölgeye göre (özellikle orta saha), %50'nin altında seçilen pas sayısı.
 - İleri pas oranı, şut sayısı, gol (fazla temkin kontrolü).
 - Kafa ↔ maç sapma dedektörü: kayıp sapmaları.
-- Tarz matrisi: Dikine, pres, derin blok.
+- Karar süresi (telefonda maçın akışına yetişiyor mu).
 - Aynı tohumlar: 462566, 1101, 1102 eski/yeni.
