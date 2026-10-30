@@ -3,7 +3,7 @@ const ALAN_SURUM_Q = (v => v ? '?v=' + v[1] : '')(/[?&]v=(\w+)/.exec(self.locati
 self.window = self;
 { const sb = /[?&]saha=(\d+)x(\d+)/.exec(self.location && self.location.search || ''); if (sb) self.ALAN_SAHA_BOY = [+sb[1], +sb[2]]; } /* deney: new Worker('mac-isci.js?saha=140x70'). Verilmezse 120 × 60 (core.js varsayılanı) */
 const YARDIMCI = +((/[?&]yardimci=(\d+)/.exec(self.location && self.location.search || '') || [])[1] || 0); /* v5 · paralel kafa: yardımcı işçi (maçın kopyasını oynar, kare göndermez); 0: ana işçi */
-importScripts(...['sabit-mat.js', 'yetenek.js', 'paralel.js', 'core.js', 'shot-table.js', 'value-table.js', 'decide.js', 'match.js', 'shape.js'].map(f => f + ALAN_SURUM_Q));
+importScripts(...['sabit-mat.js', 'yetenek.js', 'paralel.js', 'cekirdek-wasm.js', 'core.js', 'shot-table.js', 'value-table.js', 'decide.js', 'match.js', 'shape.js'].map(f => f + ALAN_SURUM_Q));
 const M = self.AlanMatch, NF = 145 /* 113–126: denge; 127–140: ikili durumu (1 sendeliyor, 2 ayak basmış); 141–144: bu tikin teması (x, y, normal açısı, itme);  42–83: oyuncu başına görev kodu, hedef x, hedef y; 84–97: enerji; 98–111: alan seçimi (+1 hızlandır, −1 yavaşlat, 0 kapalı); 112: taşıyıcı şarj ediyor */, isler = [], isNo = new Map(); let gen = 0, m = null, len = self.ALAN_MAC_LEN, dur = self.ALAN_MAC_LEN, kosuyor = 0 /* devre devre hesap: işçi dur tikinde (ilk yarı sonu) bekler, 'devam' gelince ikinci yarıya geçer */, kur = null, gecmis = [], buf = null, sonDec = null, anBitis = 0 /* an: kayıtlı bir andan oynatılıyorsa bitiş tiki */;
 const yeniBuf = () => ({ kare: [], olay: [], karar: [], is: [], kafa: [] });
 function statik(m) { return m.ps.map(p => ({ id: p.id, name: p.name, role: p.role, team: p.team, a: { ...p.a }, R: p.R, D: p.D, i: p.i })); }
