@@ -37,6 +37,7 @@
     const z = atan(Math.abs(y / x)); if (x > 0) return y > 0 ? z : -z; return y > 0 ? PI - (z - PI_LO) : -(PI - (z - PI_LO)); }
   const acos = x => x !== x || x > 1 || x < -1 ? NaN : atan2(Math.sqrt((1 - x) * (1 + x)), x);
   function tanh(x) { if (x !== x) return x; if (x > 22) return 1; if (x < -22) return -1; if (Math.abs(x) < 1e-8) return x; const e = exp(2 * x); return (e - 1) / (e + 1); }
-  function hypot() { let s = 0; for (let i = 0; i < arguments.length; i++) { const v = +arguments[i]; if (v === Infinity || v === -Infinity) return Infinity; s += v * v; } return Math.sqrt(s); }
+  function hypotN() { let s = 0; for (let i = 0; i < arguments.length; i++) { const v = +arguments[i]; if (v === Infinity || v === -Infinity) return Infinity; s += v * v; } return Math.sqrt(s); }
+  const H2 = !self.ALAN_HYPOT2_ESKI; function hypot(a, b) { if (!H2 || arguments.length !== 2) return hypotN.apply(null, arguments); a = +a; b = +b; if (a === Infinity || a === -Infinity || b === Infinity || b === -Infinity) return Infinity; return Math.sqrt(a * a + b * b); } /* v5 · hız: iki argümanlı çağrı (motorda hemen hepsi) döngüsüz, aynı işlemler aynı sırayla (0 + a² = a² tam): sonuç bit bit aynı. arguments döngüsü tarayıcıda iyileştirilemiyordu (Chromium'da sürenin %3,7'si). Deney: self.ALAN_HYPOT2_ESKI */
   Object.assign(Math, { exp, log, pow, sin, cos, atan, atan2, acos, tanh, hypot }); self.ALAN_MAT = true;
 })();
