@@ -16,10 +16,10 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:'Bricolage Grote
 a{color:#8EA2FF}a:hover{color:var(--gold)}
 button,select,input{font:inherit;color:inherit}
 </style>
-<script src="alan-v5/kadro.js?v=202610301510"></script>
-<script src="alan-v5/yetenek.js?v=202610301510"></script>
-<script src="alan-v5/core.js?v=202610301510"></script>
-<script>window.ALAN_SURUM = '202610301510'; /* v5 · motor sürümü: işçi ve motor betikleri bu etiketle yüklenir; motor değişince etiket değişir, tarayıcı eski kopyayı kullanamaz */</script>
+<script src="alan-v5/kadro.js?v=202610311000"></script>
+<script src="alan-v5/yetenek.js?v=202610311000"></script>
+<script src="alan-v5/core.js?v=202610311000"></script>
+<script>window.ALAN_SURUM = '202610311000'; /* v5 · motor sürümü: işçi ve motor betikleri bu etiketle yüklenir; motor değişince etiket değişir, tarayıcı eski kopyayı kullanamaz */</script>
 <script>/* v5 · paralel kafa: maç işçisinin adresi. Deney: sayfa adresine ?paralel=N (kabuk içindeyse kabuğun adresine: alan…/?paralel=4) ya da localStorage 'alan-paralel' = N (1: kapalı, tek çekirdek; verilmezse işçi kendisi seçer) */ window.isciAdres = function (ek) { var oku = function (w) { try { return new URLSearchParams(w.location.search).get('paralel'); } catch (e) { return null; } }, p = oku(window) || oku(window.top) || ''; if (!p) try { p = localStorage.getItem('alan-paralel') || ''; } catch (e) {} var a = [ek, /^\d+$/.test(p) ? 'paralel=' + p : '', 'v=' + window.ALAN_SURUM].filter(Boolean).join('&'); return 'alan-v5/mac-isci.js' + (a ? '?' + a : ''); };</script>
 </helmet>
 <div style="min-height:100vh;display:flex;flex-direction:column;background:var(--bg)">
