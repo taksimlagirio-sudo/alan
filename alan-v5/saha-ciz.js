@@ -7,7 +7,7 @@ class SahaCiz {
   constructor() { this.cvRef = { current: null }; this.kareler = []; this.ps = null; this.isler = []; this.t = 0; this.secili = -1; this.state = { inceleme: false }; this.giris = null; this.gd = false; this.yazisiz = false; this.halkaHep = false; }
   boyut() { if (window.ALAN_SAHA) { W = window.ALAN_SAHA.W; H = window.ALAN_SAHA.H; } return [W, H]; }
   ciz() { const cv = this.cvRef.current, C = window.AlanCore; if (!cv || !C) return; this.boyut();
-    const x = cv.getContext('2d'), s = cv.width / W, t = Math.floor(this.t), f = this.giris || this.kareler[t], GOLD = '#FFD25A';
+    const x = cv.getContext('2d'), s = cv.width / W, t = Math.floor(this.t), f = this.giris || (window.AlanAraKare && this.ps ? window.AlanAraKare(this.kareler, this.t, this.ps.length) : null) || this.kareler[t], GOLD = '#FFD25A';
     x.fillStyle = this.gd ? '#8FA3B2' : '#17202A'; x.fillRect(0, 0, cv.width, cv.height);
     if (f && this.ps) this.arena(x, cv, s, f, t, GOLD); else x.drawImage(this.zeminOC(cv.width, cv.height, s), 0, 0); }
   hepsi() { this.ciz(); this.fakeCiz(); this.incelemeCiz(); this.gorevCiz(); }
@@ -96,4 +96,21 @@ class SahaCiz {
       if (a > .12 && b > .12) { this.duel = [a, b]; const pa = a / (a + b), R2 = RR + s * .45; x.lineWidth = s * .2; x.strokeStyle = 'rgba(63,224,192,.85)'; x.beginPath(); x.arc(bx, by, R2, -Math.PI / 2, -Math.PI / 2 + pa * Math.PI * 2); x.stroke(); x.strokeStyle = 'rgba(196,139,255,.85)'; x.beginPath(); x.arc(bx, by, R2, -Math.PI / 2 + pa * Math.PI * 2, Math.PI * 1.5); x.stroke(); } } }
 }
 window.AlanSahaCiz = SahaCiz;
+})();
+/* v5 · görüntü katmanı (oyuna dokunmaz, yalnız çizim): kareler arası akış. Motor saniyede 30 tik üretir, ekran 60+ kare çizer; önce her ekran karesi bir önceki tikin aynısıydı (kademeli hareket). Şimdi: (1) iki tik arası ara konum; (2) taşıyıcının topu gövdenin etrafında yayla (açı ve uzaklık ayrı) kayar, kirişten gövdenin içinden geçmez; (3) bir tikte olağan dışı sıçrama (Bekçi dalışı, gövde itişi) önceki 6 tike yayılır: Bekçi topa değmeden önce atılmaya başlar, değdiği anda orada olur; (4) top ayağa alınınca geldiği yerden 6 tikte ayağa süzülür (ışınlanmaz); (5) tutulan top gövdenin kenarına değer gibi çizilir (gövde 0,9 + top 0,46; fizikte merkez 1,15'te, çizimde gövdeye gömülüyordu). Deney: window.ALAN_ARA_KARE_ESKI */
+(function () {
+  const YAY = 6, ESIK = .5, KES = 4, GOR = .9 + .46, ez = u => u <= 0 ? 0 : u >= 1 ? 1 : u * u * (3 - 2 * u);
+  function oyuncu(K, k, T, i, u) { const a = K[i], b0 = K[i + 1] || a, b = Math.hypot(b0[2 * k] - a[2 * k], b0[2 * k + 1] - a[2 * k + 1]) > KES ? a : b0; let x = a[2 * k] + (b[2 * k] - a[2 * k]) * u, y = a[2 * k + 1] + (b[2 * k + 1] - a[2 * k + 1]) * u; /* KES: yeniden başlama (gol sonrası diziliş) bir kesmedir, akıtılmaz */
+    for (let j = i + 1; j <= i + YAY; j++) { const P = K[j], Q = K[j - 1], R = K[j - 2]; if (!P || !Q || !R) break; const Jx = (P[2 * k] - Q[2 * k]) - (Q[2 * k] - R[2 * k]), Jy = (P[2 * k + 1] - Q[2 * k + 1]) - (Q[2 * k + 1] - R[2 * k + 1]); const Jl = Math.hypot(Jx, Jy); if (Jl < ESIK || Jl > KES) continue; const w = ez((T - (j - YAY)) / YAY) - Math.max(0, Math.min(1, T - (j - 1))); x += Jx * w; y += Jy * w; } /* sıçrama: önceki YAY tike yumuşak yayılır (ara konumun 1 tiklik doğrusu yerine) */
+    return [x, y]; }
+  function top(K, T, i, u, g, N) { const a = K[i], b = K[i + 1] || a, ha = a[30], hb = b[30];
+    if (ha >= 0 && ha === hb) { const hx = g[2 * ha], hy = g[2 * ha + 1], ax = a[28] - a[2 * ha], ay = a[29] - a[2 * ha + 1], bx = b[28] - b[2 * ha], by = b[29] - b[2 * ha + 1], fa = Math.atan2(ay, ax), fb = Math.atan2(by, bx); let df = fb - fa; while (df > Math.PI) df -= 2 * Math.PI; while (df < -Math.PI) df += 2 * Math.PI; const f = fa + df * u, r = Math.hypot(ax, ay) + (Math.hypot(bx, by) - Math.hypot(ax, ay)) * u; return [hx + Math.cos(f) * r, hy + Math.sin(f) * r]; }
+    if (isNaN(b[28]) || Math.hypot(b[28] - a[28], b[29] - a[29]) > 6) return [a[28], a[29]]; return [a[28] + (b[28] - a[28]) * u, a[29] + (b[29] - a[29]) * u]; }
+  window.AlanAraKare = function (K, T, N) { if (window.ALAN_ARA_KARE_ESKI) return null; const i = Math.floor(T), a = K[i]; if (!a) return null; const u = T - i, g = Float32Array.from(a); N = Math.min(N || 14, Math.floor(28 / 2));
+    for (let k = 0; k < N; k++) { const p = oyuncu(K, k, T, i, u); g[2 * k] = p[0]; g[2 * k + 1] = p[1]; }
+    if (!isNaN(a[28])) { let [x, y] = top(K, T, i, u, g, N); const h = a[30];
+      if (h >= 0) { for (let j = i + 1; j > Math.max(0, i - YAY); j--) { const P = K[j], Q = K[j - 1]; if (!P || !Q || P[30] !== h) break; if (Q[30] !== h) { if (!isNaN(Q[28])) { const ox = Q[28] - P[28], oy = Q[29] - P[29], w = 1 - ez((T - (j - 1)) / YAY); if (Math.hypot(ox, oy) > .3 && w > 0) { x += ox * w; y += oy * w; } } break; } } /* alış: top geldiği yerden ayağa süzülür */
+        const hx = g[2 * h], hy = g[2 * h + 1], dx = x - hx, dy = y - hy, d = Math.hypot(dx, dy); if (d > 1e-3 && d < GOR + .05) { const r = d + (GOR - d) * Math.min(1, Math.max(0, (d - .5) / .65)); x = hx + dx / d * r; y = hy + dy / d * r; } } /* tutulan top gövdenin kenarına değer */
+      g[28] = x; g[29] = y; }
+    return g; };
 })();
