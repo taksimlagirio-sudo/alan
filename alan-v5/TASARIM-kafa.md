@@ -29,7 +29,7 @@ Bir kararı elle konmuş bir sayıya bağlayan kural yazılmaz.
 
 ### 4. Oyuncuyu serbest bırak: nereye ve nasıl
 
-Pasta "nereye" (alıcının çevresi, koşusunun önü, boşluk) ve "nasıl" (şiddet, yumuşak ya da sert, savurma) oyuncuya bırakılınca paslar çok iyileşti. Aynısı her hamle için geçerli.
+Pasta "nereye" (alıcının çevresi, koşusunun önü, boşluk) ve "nasıl" (şiddet, yumuşak ya da sert, savurma) oyuncuya bırakılınca paslar çok iyileşti. Aynısı her hamle için geçerli. Serbestlik bu oyunun kurallarının izin verdiği kadardır (ilke 10).
 
 - Sürme sabit uzunluklarla değil, bir yön ve bir amaçla yapılır. Uzunluk durumdan çıkar: önüne biri çıkana, beklenen pas açılana, hedefe varılana kadar.
 - Adaylar kaba bir ölçüyle elenmemeli. Kaba ölçü düz bir değerden geliyorsa (orta sahada sahiplik alanı gibi) her zaman en kısa hamleyi seçer.
@@ -74,6 +74,27 @@ Yeni bir ölçü yalnız bir seçeneğe eklenirse o seçenek haksız yere öne g
 
 - Örnek: açık kalan fırsat ölçüsü yalnız sürmenin ucuna eklenince her durumda kısa sürme kazandı. Kafanın "bir yere varınca ne yapabilirim" hesabına (`durumD`) taşınınca sürme, tutma ve pas aynı ölçüyle tartıldı.
 - Aynı soruyu iki ayrı hesap tartıyorsa iyimser olan kazanır. "Şimdi pas" ile "sürüp sonra pas", şut ile sürme hep bu yüzden ayrıştı.
+
+### 10. Bu oyun futbolun aynısı değil
+
+ALAN futbola benzer ama futbol değil; kendine özgü kuralları var ve bunlar oyunun kimliği. Kafa gerçek futbolun alışkanlıklarını değil, bu oyunun kurallarını bilir. Sohbetler inatla futbola benzetmeye çalışıyor; yapılmayacak.
+
+- **Gövde yönü yok ve olmayacak.** Koşan oyuncunun dönüş bedeli hareketinden gelir (`gec`), duran oyuncu her yöne bedelsiz döner. "Açık gövdeyle almak", "sırtı dönük alıcı", "omuz üstünden bakmak" gibi futbol kavramları kafaya eklenmez. Kafa maçta olmayan bir bedeli hesaplarsa (ilke 7) oyuncu yanlış karar verir.
+- Oyunun kendi parçaları (duvarlar ve kenardan pas, Çekirdek ve şarj, Kuyu, Bekçi'nin kuralları, ikili mücadele) futboldaki bir karşılığa çevrilmez; olduğu gibi tartılır.
+- Bir davranışı düzeltirken soru "futbolcu ne yapardı" değil, "bu oyunun kurallarıyla en akıllı hamle ne".
+
+### 11. Oyun kurarken gol para birimi olamaz
+
+Kendi yarısında oyun kuran oyuncu için "buradan gole ne kadar sürede varılır" bilinemez. Golü para birimi yapan her ölçü (sahiplik alanı gibi) orada düzdür; seçenekler arasındaki fark gürültüye kalır.
+
+- Oyuncu golü getirmesi muhtemel ara amaçları güder. Bunlar hamleden sonraki durumun nitelikleridir ve o anki dünyadan ölçülür:
+  - **güvenlik:** topun gidip gitmeyeceği;
+  - **geçilen rakip:** topun gerisinde kalan rakip sayısındaki artış;
+  - **zaman:** topu alana rakibin yetişmesinden önce kalan süre;
+  - **açık ileri pas:** savunma ne yaparsa yapsın topu alanın önünde açık kalan, rakip geçen paslar.
+- Ara amaçlar gole çevrilerek ya da ağırlıkla toplanarak değil, birlikte değerlendirilir. Tek bir amaç seçtirilmez; akıllı hamle birden çok şeyi birden iyi yapandır.
+- **Baskınlık:** Bir seçenek başka bir seçenekten bütün niteliklerde en az onun kadar iyiyse ve birinde daha iyiyse, öteki elenir. Ağırlık, toplama, eşik yok. "Daha iyi" oyuncunun kendi algı payını aşan fark demektir: zamanda kafanın konum belirsizliği, güvenlikte oyuncunun olasılığı yanlış kestirme payı (yanılma zarı). Elenmeyenler arasından niyet ya da kafanın kendi değeri seçer.
+- İleri hatta gol hesaplanabildiği için değer zaten belirgindir; şut her zaman serbesttir.
 
 ## Nasıl çalışılır
 
