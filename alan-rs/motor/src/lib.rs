@@ -6,6 +6,7 @@
 
 pub mod alan;
 pub mod core_sabit;
+pub mod donus;
 pub mod mat;
 pub mod oyuncu;
 pub mod temas;

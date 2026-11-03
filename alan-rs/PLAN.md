@@ -19,10 +19,10 @@ Hedef: telefon ve bilgisayar uygulamasında yerel çalışan maç motoru. JS mot
 | # | Parça | JS kaynağı | Durum |
 |---|---|---|---|
 | 1 | Belirlenimli matematik | sabit-mat.js | ✅ 20.013 vektörde 14 işlev bit bit aynı |
-| 2 | Sabitler, saha, Q/P parametreleri | core.js | |
-| 3 | Yetenekler (ALAN_Y, OZ) | yetenek.js | |
-| 4 | Top fiziği (stepBall, predict, solveLaunch, rollTo) | core.js | |
-| 5 | Temas, dönüş (Turn), Bekçi, Kuyu, stepAll | core.js | |
+| 2 | Sabitler, saha, Q/P parametreleri | core.js | ✅ saha.rs, core_sabit.rs |
+| 3 | Yetenekler (ALAN_Y, OZ) | yetenek.js | ✅ 340 oyuncuda bit bit aynı |
+| 4 | Top fiziği (K, stepBall, predict, solveLaunch, rollTo) | core.js | ✅ 300 durumda bit bit aynı |
+| 5 | Temas, dönüş (Turn), Bekçi, Kuyu, stepAll | core.js | ✅ gerçek maçtan 700 + 300 durumda bit bit aynı |
 | 6 | Enerji (EN2/EN3, bar, dolum, sprint) | core.js, match.js | |
 | 7 | Maç döngüsü (step, ikili, olaylar) — kafasız (sabit kararlarla) | match.js | |
 | 8 | Yerleşim (shape) | shape.js | |
