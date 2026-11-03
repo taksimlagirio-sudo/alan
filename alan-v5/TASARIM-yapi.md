@@ -2,6 +2,8 @@
 
 30 Ekim 2026. Paralel kafa, hız ve WebAssembly denemelerinden çıkan ilkeler. Amaç: kurallar oturunca motor tek seferde, bit bit aynı maçla WebAssembly'ye (Rust) taşınabilsin. Bu ilkeler yeni kafa kuralı yazılırken de geçerli; taşıma zamanı geldiğinde iş küçülür.
 
+**3 Kasım güncellemesi:** motor telefon ve bilgisayar uygulaması için yerel Rust'a taşınıyor (WebAssembly değil). Plan ve durum: `alan-rs/PLAN.md`.
+
 ## Neden şimdi değil
 
 - Kafanın kuralları neredeyse her gün değişiyor. Taşınan bir bölgedeki her değişiklik iki dilde (JS ve Rust) yapılmak zorunda kalır.
