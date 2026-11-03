@@ -16,13 +16,14 @@ html,body{margin:0;height:100%;background:#0E0D09;color:#F6F3EC;font-family:'Bri
 a{color:#FFD25A}a:hover{color:#FFF2C4}
 button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 </style>
-<script src="alan-v5/kadro.js?v=202611040400"></script>
-<script src="alan-v5/saha-ciz.js?v=202611040400"></script>
-<script src="alan-v5/analiz-panel.js?v=202611040400"></script>
+<script src="alan-v5/kadro.js?v=202611040500"></script>
+<script src="alan-v5/saha-ciz.js?v=202611040500"></script>
+<script src="alan-v5/enerji-gorunum.js?v=202611040500"></script>
+<script src="alan-v5/analiz-panel.js?v=202611040500"></script>
 <script>window.AlanYeEk = a => { const U = 'aeıioöuü'; let v = 'e'; for (let i = a.length - 1; i >= 0; i--) { const ch = a[i].toLocaleLowerCase('tr'); if (U.includes(ch)) { v = ch; break; } } return a + '’' + (U.includes(a.slice(-1).toLocaleLowerCase('tr')) ? 'y' : '') + ('aıou'.includes(v) ? 'a' : 'e'); }; window.AlanDersOzet = d => d.tur === 'takim' ? 'Takım · ' + ({ blok: 'savunma bloğu', pres: 'pres yerleşimi', kurulum: 'oyun kurulumu', gecis: 'geçiş' })[d.alt] : d.tur === 'konum' ? 'yer al' : d.tur === 'pres' ? 'bas' : d.tur === 'pas' ? (d.pas && d.pas.kime ? window.AlanYeEk(d.pas.kime) + ' pas' : 'koşana pas') + (d.pas ? ({ onune: ' · koşusunun önüne', arka: ' · savunmanın arkasına' })[Array.isArray(d.pas.nereye) ? 'onune' : d.pas.nereye] || '' : '') + (d.pas && d.pas.yol === 'kenardan' ? ' · kenardan' : '') : ({ tut: 'tut', sur: 'sür', gonder: 'gönder' })[d.karar] || d.tur;</script>
-<script src="alan-v5/yetenek.js?v=202611040400"></script>
-<script src="alan-v5/core.js?v=202611040400"></script>
-<script>window.ALAN_SURUM = '202611040400'; /* v5 · motor sürümü: işçi ve motor betikleri bu etiketle yüklenir; motor değişince etiket değişir, tarayıcı eski kopyayı kullanamaz */</script>
+<script src="alan-v5/yetenek.js?v=202611040500"></script>
+<script src="alan-v5/core.js?v=202611040500"></script>
+<script>window.ALAN_SURUM = '202611040500'; /* v5 · motor sürümü: işçi ve motor betikleri bu etiketle yüklenir; motor değişince etiket değişir, tarayıcı eski kopyayı kullanamaz */</script>
 <script>/* v5 · paralel kafa: maç işçisinin adresi. Deney: sayfa adresine ?paralel=N (kabuk içindeyse kabuğun adresine: alan…/?paralel=4) ya da localStorage 'alan-paralel' = N (1: kapalı, tek çekirdek; verilmezse işçi kendisi seçer) */ window.isciAdres = function (ek) { var oku = function (w) { try { return new URLSearchParams(w.location.search).get('paralel'); } catch (e) { return null; } }, p = oku(window) || oku(window.top) || ''; if (!p) try { p = localStorage.getItem('alan-paralel') || ''; } catch (e) {} var spr = (function () { try { return new URLSearchParams(window.location.search).get('sprint') || new URLSearchParams(window.top.location.search).get('sprint') || localStorage.getItem('alan-sprint') || ''; } catch (e) { return ''; } })(); var dok = (function () { try { return new URLSearchParams(window.location.search).get('dokunus') || new URLSearchParams(window.top.location.search).get('dokunus') || localStorage.getItem('alan-dokunus') || ''; } catch (e) { return ''; } })(); var a = [ek, /^\d+$/.test(p) ? 'paralel=' + p : '', spr === '1' ? 'sprint=1' : '', dok === '1' ? 'dokunus=1' : dok === '0' ? 'dokunus=0' : '', 'v=' + window.ALAN_SURUM].filter(Boolean).join('&'); return 'alan-v5/mac-isci.js' + (a ? '?' + a : ''); };</script>
 </helmet>
 <div style="position:fixed;inset:0;background:#0E0D09;display:flex;justify-content:center">
@@ -552,7 +553,7 @@ class Component extends DCLogic {
     const ox = (cw - fw) / 2, oy = (ch - fh) / 2, sc = dik ? fw / H : fw / W, M = dik ? (a, b) => [ox + b / H * fw, oy + fh - a / W * fh] : (a, b) => [ox + a / W * fw, oy + b / H * fh], GOLD = '#FFD25A';
     /* v5 · saha masaüstüyle aynı çizimden (alan-v5/saha-ciz.js: zemin, taşlar, alanlar, enerji/denge halkaları, ikili, şarj, fake, inceleme, görev); dikeyde yatay tuval döndürülür, yazılar dik yazılır */
     const sz = this.sz || (this.sz = new window.AlanSahaCiz()), LW = Math.max(2, Math.round((dik ? fh : fw) * Math.min(dpr, 1.25))), LH = Math.max(1, Math.round(LW / 2)), oc = this.szc || (this.szc = document.createElement('canvas')); if (oc.width !== LW || oc.height !== LH) { oc.width = LW; oc.height = LH; }
-    Object.assign(sz, { kareler: this.kareler, ps: this.ps, isler: this.isler || [], t: this.t, secili: this.secili == null ? -1 : this.secili, giris: null, gd: false, yazisiz: true, halkaHep: true }); sz.state = { inceleme: !!this.state.inceleme }; sz.cvRef.current = oc; sz.hepsi();
+    Object.assign(sz, { kareler: this.kareler, olaylar: this.olaylar || [], ps: this.ps, isler: this.isler || [], t: this.t, secili: this.secili == null ? -1 : this.secili, giris: null, gd: false, yazisiz: true, halkaHep: true }); sz.state = { inceleme: !!this.state.inceleme }; sz.cvRef.current = oc; sz.hepsi();
     x.save(); x.imageSmoothingEnabled = true; if (dik) { x.translate(ox, oy + fh); x.rotate(-Math.PI / 2); x.drawImage(oc, 0, 0, fh, fw); } else x.drawImage(oc, ox, oy, fw, fh); x.restore();
     const t = Math.floor(this.t), r = .9 * sc, fs = Math.max(9, Math.round(sc * .72)), ik = f.length >= 145, now = performance.now(), dersAd = new Set(); for (let i = this.olaylar.length - 1; i >= 0; i--) { const o = this.olaylar[i]; if (o.tick > t) continue; if (t - o.tick > 120) break; if (o.type === 'ders') { if (o.ad) dersAd.add(o.ad); for (const a of o.ads || []) dersAd.add(a); } }
     this.ps.forEach((p, k) => { const [px, py] = M(f[2 * k], f[2 * k + 1]), sdl = ik && k < 14 && (f[127 + k] & 1);
