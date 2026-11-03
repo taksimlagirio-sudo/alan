@@ -14,5 +14,6 @@ pub mod rng;
 pub mod temas;
 pub mod saha;
 pub mod top;
+pub mod veri;
 pub mod yetenek;
 mod yetenek_tablo;
