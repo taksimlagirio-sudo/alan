@@ -5,7 +5,10 @@
 //! gizli durum yok, önbellekler sıradan bağımsız, kafa = maç tek işlev, belirlenimli matematik.
 
 pub mod alan;
+pub mod core_sabit;
 pub mod mat;
+pub mod oyuncu;
+pub mod temas;
 pub mod saha;
 pub mod top;
 pub mod yetenek;

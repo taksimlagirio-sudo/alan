@@ -35,6 +35,8 @@ pub enum Bitis {
     KuyuSol,
     KuyuSag,
     Durdu,
+    /// bir oyuncu tuttu (JS 'tutuldu')
+    Tutuldu,
 }
 impl Bitis {
     pub fn ad(self) -> &'static str {
@@ -42,6 +44,7 @@ impl Bitis {
             Bitis::KuyuSol => "kuyu-sol",
             Bitis::KuyuSag => "kuyu-sag",
             Bitis::Durdu => "durdu",
+            Bitis::Tutuldu => "tutuldu",
         }
     }
 }
@@ -55,6 +58,8 @@ pub enum TopOlay {
     KenarUc { sag: bool },
     KenarYan { ust: bool },
     Dur { sonuk: bool },
+    Tut,
+    Sek,
 }
 
 #[derive(Clone, Debug)]
@@ -78,8 +83,10 @@ pub struct Top {
     /// duvarsız, sapmasız geçen tik (JS tp, _w0, _d0)
     pub tp: Option<f64>,
     pub w0: Option<f64>,
-    pub d0: Option<f64>,
+    pub d0: Option<(f64, bool)>,
+    /// sapma sayısı; JS'te gövde çarpması bunu `true` yapar (sonra `true + 1 = 2`): defl_b
     pub defl: f64,
+    pub defl_b: bool,
 }
 
 impl Top {
@@ -106,9 +113,20 @@ impl Top {
             w0: None,
             d0: None,
             defl: 0.0,
+            defl_b: false,
         };
         saha_ici(&mut b);
         b
+    }
+    /// JS `b.defl = (b.defl || 0) + 1` (true + 1 = 2).
+    pub fn defl_ekle(&mut self) {
+        self.defl = (if self.defl_b { 1.0 } else { self.defl }) + 1.0;
+        self.defl_b = false;
+    }
+    /// JS `b.defl = true` (gövde çarpması).
+    pub fn defl_dogru(&mut self) {
+        self.defl = 1.0;
+        self.defl_b = true;
     }
     /// JS clone: günlük boş.
     pub fn kopya(&self) -> Top {
@@ -317,10 +335,10 @@ pub fn adim(b: &mut Top, src: &mut Kaynak, p: &Fizik) {
     b.x = nx;
     b.y = ny;
     b.t += 1.0;
-    if Some(b.walls) != b.w0 || b.defl != b.d0.unwrap_or(f64::NAN) {
+    if Some(b.walls) != b.w0 || Some((b.defl, b.defl_b)) != b.d0 {
         b.tp = Some(0.0);
         b.w0 = Some(b.walls);
-        b.d0 = Some(b.defl);
+        b.d0 = Some((b.defl, b.defl_b));
     } else {
         b.tp = Some(b.tp.unwrap_or(b.t - 1.0) + 1.0);
     }
