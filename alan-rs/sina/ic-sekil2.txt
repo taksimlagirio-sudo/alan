@@ -1,0 +1,3871 @@
+p.id : number
+p.team : number
+p.i : number
+p.role : string
+p.slot : object {role,d,l}
+p.slot.role : string
+p.slot.d : number
+p.slot.l : number
+p.name : string
+p.a : object {hiz,ceviklik,guc,uzanma,alan,kontrol,surme,pas,gonderme,yukleme,tepki,gorus,yeralma,sogukkanlilik,kesme,refleks,yerlesim,hakimiyet,taraf,enerji,govde,caliskanlik}
+p.a.hiz : number
+p.a.ceviklik : number
+p.a.guc : number
+p.a.uzanma : number
+p.a.alan : number
+p.a.kontrol : number
+p.a.surme : number
+p.a.pas : number
+p.a.gonderme : number
+p.a.yukleme : number
+p.a.tepki : number
+p.a.gorus : number
+p.a.yeralma : number
+p.a.sogukkanlilik : number
+p.a.kesme : number
+p.a.refleks : number
+p.a.yerlesim : number
+p.a.hakimiyet : number
+p.a.taraf : string
+p.a.enerji : number
+p.a.govde : number
+p.a.caliskanlik : number
+p.R : number
+p.D : number
+p.x : number
+p.y : number
+p.vx : number
+p.vy : number
+p.tx : number
+p.ty : number
+p.cd : number
+p.en : number
+p.driveTo : null|object {x,y}
+p._dur : number|null
+p._korT : number
+p.bekBas : number|null
+p.noTouch : boolean
+p.hist : dizi
+p.hist[] : object {x,y,vx,vy}
+p.hist[].x : number
+p.hist[].y : number
+p.hist[].vx : number
+p.hist[].vy : number
+p.lock : number
+p.kapPrev : null
+p.zonePrev : null|OYUNCU
+p.swPrev : null|OYUNCU
+p.uaPrev : null|OYUNCU
+p.rec : number
+p.tutQ : null|OYUNCU
+p.sprint : boolean
+p.press : boolean
+p.job : string
+p.otx : null|number
+p._bk : dizi
+p._bk[] : undef|object {x,y,vx,vy,t,z}
+p._bk[].x : number
+p._bk[].y : number
+p._bk[].vx : number
+p._bk[].vy : number
+p._bk[].t : number
+p._bk[].z : number
+p._ktB : object {x,y}
+p._ktB.x : number
+p._ktB.y : number
+p._topSpr : boolean
+p._kosuK : null|string
+p._hizK : null|number
+p._evx : number
+p._evy : number
+p._yog : number
+p._D0 : number
+p._Dl : number
+p._enOnce : number
+p.ca : number
+p._don : number
+p.drive : boolean
+p._dke : number
+p.rslot : object {d,l}
+p.rslot.d : number
+p.rslot.l : number
+p.slot0 : object {role,d,l}
+p.slot0.role : string
+p.slot0.d : number
+p.slot0.l : number
+p.rslot0 : object {d,l}
+p.rslot0.d : number
+p.rslot0.l : number
+p.rh : string
+p.rs : string
+p.tl : object {huc,sav}
+p.tl.huc : object {kosu,istek,destek,risk,ritim,tempo,gonder,serbest}
+p.tl.huc.kosu : number
+p.tl.huc.istek : number
+p.tl.huc.destek : number
+p.tl.huc.risk : number
+p.tl.huc.ritim : number
+p.tl.huc.tempo : number
+p.tl.huc.gonder : number
+p.tl.huc.serbest : number
+p.tl.sav : object {adam,pres}
+p.tl.sav.adam : number
+p.tl.sav.pres : number
+p.markRef : OYUNCU
+p.eg : object {ps,rk}
+p.eg.ps : number
+p.eg.rk : number
+p.oty : number
+p._otH : OYUNCU|null
+p._otB : null|object {x,y,i,name,vx,vy,tx,ty,a,id,team}
+p._otE : object {x,y}
+p._otE.x : number
+p._otE.y : number
+p._otF : null|OYUNCU
+p._kv : null|object {x,y,t}
+p._amacJob : null|string
+p._kt : object {x,y}
+p._kt.x : number
+p._kt.y : number
+p._hizF : number
+p.kuyuT : number
+p.sonuk : boolean
+p._kuyuCik : boolean
+p._yer : boolean
+p._savT : number
+p._savD : number
+p._blokT : number
+m.seed : number
+m.tick : number
+m.len : number
+m.devre : boolean
+m.devre2 : boolean
+m.score : dizi
+m.score[] : number
+m.ball : null|TOP
+m.holder : OYUNCU|null
+m.ch : number
+m.decT : number
+m.over : boolean
+m.fl : null|object {t0,kind,q,to,end,shot}
+m.tac : dizi
+m.tac[] : object {blok,pres,onde,genislik,risk,tempo,kazaninca,tuzak,sistem,siddet,savGen,gecisH,kpYer,kpSure,kaleOnu,pasSurme,pasBoy,sabir,sut,enDinlen,enYipratma,tetik,durus,yz}
+m.tac[].blok : string
+m.tac[].pres : number
+m.tac[].onde : number
+m.tac[].genislik : string
+m.tac[].risk : number
+m.tac[].tempo : number
+m.tac[].kazaninca : string
+m.tac[].tuzak : null
+m.tac[].sistem : string
+m.tac[].siddet : number
+m.tac[].savGen : number
+m.tac[].gecisH : string
+m.tac[].kpYer : string
+m.tac[].kpSure : number
+m.tac[].kaleOnu : string
+m.tac[].pasSurme : number
+m.tac[].pasBoy : number
+m.tac[].sabir : number
+m.tac[].sut : number
+m.tac[].enDinlen : number
+m.tac[].enYipratma : number
+m.tac[].tetik : dizi
+m.tac[].tetik[] : string
+m.tac[].durus : object {huc,sav}
+m.tac[].durus.huc : dizi
+m.tac[].durus.huc[] : dizi
+m.tac[].durus.huc[][] : object
+m.tac[].durus.sav : dizi
+m.tac[].durus.sav[] : dizi
+m.tac[].durus.sav[][] : object
+m.tac[].yz : boolean
+m.st : object {duel,duelW,pass,passOk,shot,steal,poss,bank,lead,loose,swarm,swN,enH,enP,sprF,sprT,enCal,calim,cal}
+m.st.duel : dizi
+m.st.duel[] : number
+m.st.duelW : dizi
+m.st.duelW[] : number
+m.st.pass : dizi
+m.st.pass[] : number
+m.st.passOk : dizi
+m.st.passOk[] : number
+m.st.shot : dizi
+m.st.shot[] : number
+m.st.steal : dizi
+m.st.steal[] : number
+m.st.poss : dizi
+m.st.poss[] : number
+m.st.bank : dizi
+m.st.bank[] : number
+m.st.lead : dizi
+m.st.lead[] : number
+m.st.loose : dizi
+m.st.loose[] : number
+m.st.swarm : number
+m.st.swN : number
+m.st.enH : dizi
+m.st.enH[] : object {sprint,ivme,ikili,alan,sarj,dol,fake,calindi,caldi,dalış}
+m.st.enH[].sprint : number
+m.st.enH[].ivme : number
+m.st.enH[].ikili : number
+m.st.enH[].alan : number
+m.st.enH[].sarj : number
+m.st.enH[].dol : number
+m.st.enP : object {0,7,4,9,8,10,3,5,6,2,13,1,11,12}
+m.st.enP.0 : object {sarj,dol,sprint,alan,dalış}
+m.st.enP.0.sarj : number
+m.st.enP.0.dol : number
+m.diz : dizi
+m.diz[] : object {sav,huc}
+m.diz[].sav : dizi|string
+m.diz[].sav[] : object {d,l}
+m.diz[].sav[].d : number
+m.diz[].sav[].l : number
+m.diz[].huc : dizi|string
+m.diz[].huc[] : object {d,l}
+m.diz[].huc[].d : number
+m.diz[].huc[].l : number
+m.winT : null|number
+m.gecis : boolean
+m.gc : null|object {team,t0,kendi,git,on,biz,rakip,hizli}
+m.sh : object {aday,att,gain,ball,ballT,defl,yr,gs,yvBas,fr,frT,frB,adayT}
+m.sh.aday : null|number
+m.sh.att : number
+m.sh.gain : number
+m.sh.ball : null|TOP|TOPKOPYA|object {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,cds,defl,holder,gvx,gvy,sap}
+m.sh.ballT : number
+m.sh.defl : number
+m.sh.yr : object {gain,dt,on}
+m.sh.yr.gain : number
+m.sh.yr.dt : number
+m.sh.yr.on : boolean
+m.sh.gs : object {t,dt,on,onP,oy}
+m.sh.gs.t : number
+m.sh.gs.dt : number
+m.sh.gs.on : boolean
+m.sh.gs.onP : boolean
+m.sh.gs.oy : boolean
+m.ra : dizi
+m.ra[] : object {1,2,3,4,5,6}
+m.tac0 : dizi
+m.tac0[] : object {blok,pres,onde,genislik,risk,tempo,kazaninca,tuzak,sistem,siddet,savGen,gecisH,kpYer,kpSure,kaleOnu,pasSurme,pasBoy,sabir,sut,enDinlen,enYipratma,tetik,durus,yz}
+m.tac0[].blok : string
+m.tac0[].pres : number
+m.tac0[].onde : number
+m.tac0[].genislik : string
+m.tac0[].risk : number
+m.tac0[].tempo : number
+m.tac0[].kazaninca : string
+m.tac0[].tuzak : null
+m.tac0[].sistem : string
+m.tac0[].siddet : number
+m.tac0[].savGen : number
+m.tac0[].gecisH : string
+m.tac0[].kpYer : string
+m.tac0[].kpSure : number
+m.tac0[].kaleOnu : string
+m.tac0[].pasSurme : number
+m.tac0[].pasBoy : number
+m.tac0[].sabir : number
+m.tac0[].sut : number
+m.tac0[].enDinlen : number
+m.tac0[].enYipratma : number
+m.tac0[].tetik : dizi
+m.tac0[].tetik[] : string
+m.tac0[].durus : object {huc,sav}
+m.tac0[].durus.huc : dizi
+m.tac0[].durus.huc[] : dizi
+m.tac0[].durus.huc[][] : object
+m.tac0[].durus.sav : dizi
+m.tac0[].durus.sav[] : dizi
+m.tac0[].durus.sav[][] : object
+m.tac0[].yz : boolean
+m.evre : dizi
+m.evre[] : object {key,ev,ad,t0}
+m.evre[].key : string
+m.evre[].ev : string
+m.evre[].ad : string
+m.evre[].t0 : number
+m._macC : object {0:74,0:73,0:72,0:71,0:70,0:69,0:68,0:67,0:66,0:65,0:64,0:63,0:62}
+m._macC.0:74 : object {g,c,e0}
+m._macC.0:74.g : number
+m._macC.0:74.c : number
+m._macC.0:74.e0 : number
+m.macDurum : dizi
+m.macDurum[] : null|object {oran,g,c}
+m.macDurum[].oran : number
+m.macDurum[].g : number
+m.macDurum[].c : number
+m._sn : Map
+m._sn{k} : OYUNCU
+m._sn{v} : dizi
+m._sn{v}[] : object {a,x,y,R,D,team,role,press,ref,gvx,gvy}
+m._sn{v}[].a : object {hiz,ceviklik,guc,uzanma,alan,kontrol,surme,pas,gonderme,yukleme,tepki,gorus,yeralma,sogukkanlilik,kesme,refleks,yerlesim,hakimiyet,taraf,enerji,govde,caliskanlik}
+m._sn{v}[].a.hiz : number
+m._sn{v}[].a.ceviklik : number
+m._sn{v}[].a.guc : number
+m._sn{v}[].a.uzanma : number
+m._sn{v}[].a.alan : number
+m._sn{v}[].a.kontrol : number
+m._sn{v}[].a.surme : number
+m._sn{v}[].a.pas : number
+m._sn{v}[].a.gonderme : number
+m._sn{v}[].a.yukleme : number
+m._sn{v}[].a.tepki : number
+m._sn{v}[].a.gorus : number
+m._sn{v}[].a.yeralma : number
+m._sn{v}[].a.sogukkanlilik : number
+m._sn{v}[].a.kesme : number
+m._sn{v}[].a.refleks : number
+m._sn{v}[].a.yerlesim : number
+m._sn{v}[].a.hakimiyet : number
+m._sn{v}[].a.taraf : string
+m._sn{v}[].a.enerji : number
+m._sn{v}[].a.govde : number
+m._sn{v}[].a.caliskanlik : number
+m._sn{v}[].x : number
+m._sn{v}[].y : number
+m._sn{v}[].R : number
+m._sn{v}[].D : number
+m._sn{v}[].team : number
+m._sn{v}[].role : string
+m._sn{v}[].press : boolean
+m._sn{v}[].ref : OYUNCU
+m._sn{v}[].gvx : number
+m._sn{v}[].gvy : number
+m._snT : number
+m._kayL : object {key,f}
+m._kayL.key : string
+m._kayL.f : function
+m.E : object {x,y}
+m.E.x : number
+m.E.y : number
+m.att : number
+m._perde : null
+m._kuyuTop : number
+m._temaslar : object {t,L}
+m._temaslar.t : number
+m._temaslar.L : dizi
+m.not : object {p,s,actor,team}
+m.not.p : object {0,4,1,14,13,15,6,2}
+m.not.p.0 : number
+m.not.s : number
+m.not.actor : OYUNCU
+m.not.team : number
+D.simMax : number
+D.errOk : number
+D.errPos : number
+D.aimErr : number
+D.v0Err : number
+D.arrive : number
+D.arriveSpace : number
+D.vmax : number
+D.shotV : number
+D.plaseV : number
+D.riskBase : number
+D.riskCay : number
+D.riskP0 : number
+D.riskPk : number
+D.surKarar : number
+D.asanPay : number
+D.amIleri : number
+D.amGec : number
+D.amAc : number
+D.sutHazir : number
+D.threatK : number
+D.sideK : number
+D.b0 : number
+D.b1 : number
+D.recvKeepT : number
+D.shotThru : number
+D.disc : number
+D.istekK : number
+D.planK : number
+D.belirsiz : number
+D.bekCek : number
+D.bekleAtla : number
+D.bekBedel : number
+D.bekTempo : number
+D.cevTempo : number
+D.otErr : number
+D.otOk : number
+D.otMargin : number
+D.passMax : number
+D.passMaxF : number
+D.spcBallV : number
+D.useValTab : boolean
+D.useCurve : boolean
+D.useSpace : boolean
+D.look : boolean
+D.lookReuse : number
+D.lookMove : number
+D.lookAge : number
+D.lookR : number
+D.lookN : number
+D.lookT : number
+D.lookMargin : number
+D.laneLag : number
+D.aimPow : number
+D.aimPlase : number
+D.arriveFirm : number
+D.vK : number
+D.combo : number
+D.chV : number
+D.pierceV : number
+D.chgMin : number
+D.enBedel : number
+D.sarjUfuk : number
+D.sarjEgim : number
+D.chg0 : number
+D.chgTek : number
+D.chgPasif : number
+D.enHizV : number
+D.enUfuk : number
+D.enTmin : number
+D.sabirEn : number
+D.direktK : number
+D.kontraL : number
+D.sarjKap : number
+D.zoneMin : number
+D.zoneD : number
+D.chRecv : number
+D.threadMin : number
+D.threadLane : number
+D.threadOff : dizi
+D.threadOff[] : number
+D.bankOk : number
+D.bankIf : number
+D.bankN : number
+D.trials : number
+D.nFull : number
+D.yokD : number
+D.nSpots : number
+D.nFullLook : number
+D.nMates : number
+D.growMax : number
+D.shotRange : number
+D.tPS : number
+D.tPB : number
+D.pbOrta : number
+D.pbGen : number
+D.tSut : number
+D.tSab : number
+D._tick : number
+D.imkEski : boolean
+m.ra[].1 : object {h,s}
+m.ra[].1.h : dizi
+m.ra[].1.h[] : number
+m.ra[].1.s : dizi
+m.ra[].1.s[] : number
+m.ra[].2 : object {h,s}
+m.ra[].2.h : dizi
+m.ra[].2.h[] : number
+m.ra[].2.s : dizi
+m.ra[].2.s[] : number
+m.ra[].3 : object {h,s}
+m.ra[].3.h : dizi
+m.ra[].3.h[] : number
+m.ra[].3.s : dizi
+m.ra[].3.s[] : number
+m.ra[].4 : object {h,s}
+m.ra[].4.h : dizi
+m.ra[].4.h[] : number
+m.ra[].4.s : dizi
+m.ra[].4.s[] : number
+m.ra[].5 : object {h,s}
+m.ra[].5.h : dizi
+m.ra[].5.h[] : number
+m.ra[].5.s : dizi
+m.ra[].5.s[] : number
+m.ra[].6 : object {h,s}
+m.ra[].6.h : dizi
+m.ra[].6.h[] : number
+m.ra[].6.s : dizi
+m.ra[].6.s[] : number
+m.st.enP.7 : object {sprint,dol}
+m.st.enP.7.sprint : number
+p.past : dizi
+p.past[] : object {x,y}
+p.past[].x : number
+p.past[].y : number
+m.st.enP.7.dol : number
+p.holdD : boolean
+p._plan : null|object {kind,q,to,P,t}
+p._surK : null|object {id,to,t,T,nd0}
+p._sprIst : boolean
+p.sarj : boolean
+p.savur : object|null {t0,o,s,a,wMax,wR,rem,w,g,u,dur}
+p.savur.t0 : number
+p.savur.o : object {kind,to,q,arrive,tek,_own,firm,spr,itK,launch,sYon,savT,_sek,v,det,tf,en,enV,dok,prensip,_pw,_pT,kh,kendine,lead,lf0,shot}
+p.savur.o.kind : string
+p.savur.o.to : object {x,y}
+p.savur.o.to.x : number
+p.savur.o.to.y : number
+p.savur.o.q : OYUNCU
+p.savur.o.arrive : number
+p.savur.o.tek : number
+p.savur.o._own : number
+p.savur.o.firm : undef|boolean
+p.savur.o.spr : undef
+p.savur.o.itK : undef
+p.savur.o.launch : object {vx,vy,ok}
+p.savur.o.launch.vx : number
+p.savur.o.launch.vy : number
+p.savur.o.launch.ok : boolean
+p.savur.o.sYon : number
+p.savur.o.savT : number
+p.savur.o._sek : number
+p.savur.o.v : number
+p.savur.o.det : object {P,Pk,Pl,end,endM,endO,Ps,endS,endD,Psek,endSek}
+p.savur.o.det.P : number
+p.savur.o.det.Pk : number
+p.savur.o.det.Pl : number
+p.savur.o.det.end : object {x,y}
+p.savur.o.det.end.x : number
+p.savur.o.det.end.y : number
+p.savur.o.det.endM : object {x,y}
+p.savur.o.det.endM.x : number
+p.savur.o.det.endM.y : number
+p.savur.o.det.endO : object {x,y}
+p.savur.o.det.endO.x : number
+p.savur.o.det.endO.y : number
+p.savur.o.det.Ps : number
+p.savur.o.det.endS : object {x,y}
+p.savur.o.det.endS.x : number
+p.savur.o.det.endS.y : number
+p.savur.o.det.endD : object {x,y}
+p.savur.o.det.endD.x : number
+p.savur.o.det.endD.y : number
+p.savur.o.det.Psek : number
+p.savur.o.det.endSek : object {x,y}
+p.savur.o.det.endSek.x : number
+p.savur.o.det.endSek.y : number
+p.savur.o.tf : number
+p.savur.o.en : object {biz,rakip,hizBiz,hizRakip,hizRakipD,hizRakipY,per,ek}
+p.savur.o.en.biz : number
+p.savur.o.en.rakip : number
+p.savur.o.en.hizBiz : number
+p.savur.o.en.hizRakip : number
+p.savur.o.en.hizRakipD : number
+p.savur.o.en.hizRakipY : number
+p.savur.o.en.per : Map
+p.savur.o.en.per{k} : string
+p.savur.o.en.per{v} : number
+p.savur.o.en.ek : number
+p.savur.o.enV : number
+p.savur.o.dok : object {tutar,alici,durum,sekme,kayip,sure,sut,ileri,surme,zemin,gol}
+p.savur.o.dok.tutar : number
+p.savur.o.dok.alici : number
+p.savur.o.dok.durum : number
+p.savur.o.dok.sekme : number
+p.savur.o.dok.kayip : number
+p.savur.o.dok.sure : number
+p.savur.o.dok.sut : number
+p.savur.o.dok.ileri : number
+p.savur.o.dok.surme : number
+p.savur.o.dok.zemin : number
+p.savur.o.prensip : string
+p.savur.o._pw : dizi
+p.savur.o._pw[] : object {id,team,i,role,slot,name,a,R,D,x,y,vx,vy,tx,ty,cd,en,driveTo,_dur,_korT,bekBas,noTouch,hist,lock,kapPrev,zonePrev,swPrev,uaPrev,rec,tutQ,sprint,press,job,otx,_bk,_ktB,_topSpr,_kosuK,_hizK,_evx,_evy,_yog,_D0,_Dl,_enOnce,ca,_don,drive,_dke,past,holdD,rslot,slot0,rslot0,rh,rs,tl,markRef,eg,oty,_otH,_otB,_otE,_otF,_kv,_amacJob,_kt,_hizF,kuyuT,sonuk,_kuyuCik,__g,__yas,__e,_o,_plan,_surK,_sprIst,sarj,savur,lastWhy,_yer,amA,am,_rcvV,_rcvB,_rcvAbs,_rcvX,_rcvY,chB,_preB,_preT,_otA,_onH,_lc,_donDir,_donT,_savT,_savD,_blokT,_savCar,lockAt,_lockH,_presT,_presH,_kh,_khT,_khQ,_onK,_kal,_kalH,hamle,_dolYok,adandi,adT,son,adNeden,den,_omEv,_omuzT,_sf,fiskeCd,fiske,fiskeDir,_omuz,sendT,sendCd,stun,okudu,_dalis}
+p.savur.o._pw[].id : number
+p.savur.o._pw[].team : number
+p.savur.o._pw[].i : number
+p.savur.o._pw[].role : string
+p.savur.o._pw[].slot : object {role,d,l}
+p.savur.o._pw[].slot.role : string
+p.savur.o._pw[].slot.d : number
+p.savur.o._pw[].slot.l : number
+p.savur.o._pw[].name : string
+p.savur.o._pw[].a : object {hiz,ceviklik,guc,uzanma,alan,kontrol,surme,pas,gonderme,yukleme,tepki,gorus,yeralma,sogukkanlilik,kesme,refleks,yerlesim,hakimiyet,taraf,enerji,govde,caliskanlik}
+p.savur.o._pw[].a.hiz : number
+p.savur.o._pw[].a.ceviklik : number
+p.savur.o._pw[].a.guc : number
+p.savur.o._pw[].a.uzanma : number
+p.savur.o._pw[].a.alan : number
+p.savur.o._pw[].a.kontrol : number
+p.savur.o._pw[].a.surme : number
+p.savur.o._pw[].a.pas : number
+p.savur.o._pw[].a.gonderme : number
+p.savur.o._pw[].a.yukleme : number
+p.savur.o._pw[].a.tepki : number
+p.savur.o._pw[].a.gorus : number
+p.savur.o._pw[].a.yeralma : number
+p.savur.o._pw[].a.sogukkanlilik : number
+p.savur.o._pw[].a.kesme : number
+p.savur.o._pw[].a.refleks : number
+p.savur.o._pw[].a.yerlesim : number
+p.savur.o._pw[].a.hakimiyet : number
+p.savur.o._pw[].a.taraf : string
+p.savur.o._pw[].a.enerji : number
+p.savur.o._pw[].a.govde : number
+p.savur.o._pw[].a.caliskanlik : number
+p.savur.o._pw[].R : number
+p.savur.o._pw[].D : number
+p.savur.o._pw[].x : number
+p.savur.o._pw[].y : number
+p.savur.o._pw[].vx : number
+p.savur.o._pw[].vy : number
+p.savur.o._pw[].tx : number
+p.savur.o._pw[].ty : number
+p.savur.o._pw[].cd : number
+p.savur.o._pw[].en : number
+p.savur.o._pw[].driveTo : null|object {x,y}
+p.savur.o._pw[]._dur : number|null
+p.savur.o._pw[]._korT : number
+p.savur.o._pw[].bekBas : number|null
+p.savur.o._pw[].noTouch : boolean
+p.savur.o._pw[].hist : dizi
+p.savur.o._pw[].hist[] : object
+p.savur.o._pw[].lock : number
+p.savur.o._pw[].kapPrev : null
+p.savur.o._pw[].zonePrev : null|OYUNCU
+p.savur.o._pw[].swPrev : null|OYUNCU
+p.savur.o._pw[].uaPrev : null
+p.savur.o._pw[].rec : number
+p.savur.o._pw[].tutQ : null|OYUNCU
+p.savur.o._pw[].sprint : boolean
+p.savur.o._pw[].press : boolean
+p.savur.o._pw[].job : string
+p.savur.o._pw[].otx : null|number
+p.savur.o._pw[]._bk : dizi
+p.savur.o._pw[]._bk[] : undef|object
+p.savur.o._pw[]._ktB : object {x,y}
+p.savur.o._pw[]._ktB.x : number
+p.savur.o._pw[]._ktB.y : number
+p.savur.o._pw[]._topSpr : boolean
+p.savur.o._pw[]._kosuK : null|string
+p.savur.o._pw[]._hizK : null|number
+p.savur.o._pw[]._evx : number
+p.savur.o._pw[]._evy : number
+p.savur.o._pw[]._yog : number
+p.savur.o._pw[]._D0 : number
+p.savur.o._pw[]._Dl : number
+p.savur.o._pw[]._enOnce : number
+p.savur.o._pw[].ca : number
+p.savur.o._pw[]._don : number
+p.savur.o._pw[].drive : boolean
+p.savur.o._pw[]._dke : number
+p.savur.o._pw[].past : dizi
+p.savur.o._pw[].past[] : object
+p.savur.o._pw[].holdD : boolean
+p.savur.o._pw[].rslot : object {d,l}
+p.savur.o._pw[].rslot.d : number
+p.savur.o._pw[].rslot.l : number
+p.savur.o._pw[].slot0 : object {role,d,l}
+p.savur.o._pw[].slot0.role : string
+p.savur.o._pw[].slot0.d : number
+p.savur.o._pw[].slot0.l : number
+p.savur.o._pw[].rslot0 : object {d,l}
+p.savur.o._pw[].rslot0.d : number
+p.savur.o._pw[].rslot0.l : number
+p.savur.o._pw[].rh : string
+p.savur.o._pw[].rs : string
+p.savur.o._pw[].tl : object {huc,sav}
+p.savur.o._pw[].tl.huc : object
+p.savur.o._pw[].tl.sav : object
+p.savur.o._pw[].markRef : OYUNCU
+p.savur.o._pw[].eg : object {ps,rk}
+p.savur.o._pw[].eg.ps : number
+p.savur.o._pw[].eg.rk : number
+p.savur.o._pw[].oty : number
+p.savur.o._pw[]._otH : OYUNCU|null
+p.savur.o._pw[]._otB : null
+p.savur.o._pw[]._otE : object {x,y}
+p.savur.o._pw[]._otE.x : number
+p.savur.o._pw[]._otE.y : number
+p.savur.o._pw[]._otF : null|OYUNCU
+p.savur.o._pw[]._kv : null|object {x,y,t}
+p.savur.o._pw[]._amacJob : null|string
+p.savur.o._pw[]._kt : object {x,y}
+p.savur.o._pw[]._kt.x : number
+p.savur.o._pw[]._kt.y : number
+p.savur.o._pw[]._hizF : number
+p.savur.o._pw[].kuyuT : number
+p.savur.o._pw[].sonuk : boolean
+p.savur.o._pw[]._kuyuCik : boolean
+p.savur.o._pw[].__g : OYUNCU
+p.savur.o._pw[].__yas : number
+p.savur.o._pw[].__e : number
+p.savur.o._pw[]._o : object|OYUNCU {id,team,i,role,slot,name,a,R,D,x,y,vx,vy,tx,ty,cd,rslot,slot0,rslot0,en,driveTo,_dur,rh,rs,tl,markRef,eg,bekBas,noTouch,hist,lock,kapPrev,zonePrev,swPrev,uaPrev,rec,tutQ,sprint,press,job,otx,oty,_otH,_otB,_otE,_otF,_kv,_amacJob,_bk,_kt,_topSpr,_kosuK,_hizK,_hizF,kuyuT,sonuk,_kuyuCik,_evx,_evy,_yog,_D0,_Dl,_enOnce,past,__g,__yas,__e,amA,am,drive,sarj,savur,_savT,_savD,_blokT,_kh,_khT,_khQ,_omEv,_omuzT,_savCar,lockAt,_lockH,_presT,_presH,_onK,_kal,_kalH,hamle,adandi,adT,son,den,_sf,_dolYok,adNeden}
+p.savur.o._pw[]._o.id : number
+p.savur.o._pw[]._o.team : number
+p.savur.o._pw[]._o.i : number
+p.savur.o._pw[]._o.role : string
+p.savur.o._pw[]._o.slot : object
+p.savur.o._pw[]._o.name : string
+p.savur.o._pw[]._o.a : object
+p.savur.o._pw[]._o.R : number
+p.savur.o._pw[]._o.D : number
+p.savur.o._pw[]._o.x : number
+p.savur.o._pw[]._o.y : number
+p.savur.o._pw[]._o.vx : number
+p.savur.o._pw[]._o.vy : number
+p.savur.o._pw[]._o.tx : number
+p.savur.o._pw[]._o.ty : number
+p.savur.o._pw[]._o.cd : number
+p.savur.o._pw[]._o.rslot : object
+p.savur.o._pw[]._o.slot0 : object
+p.savur.o._pw[]._o.rslot0 : object
+p.savur.o._pw[]._o.en : number
+p.savur.o._pw[]._o.driveTo : null
+p.savur.o._pw[]._o._dur : null
+p.savur.o._pw[]._o.rh : string
+p.savur.o._pw[]._o.rs : string
+p.savur.o._pw[]._o.tl : object
+p.savur.o._pw[]._o.markRef : OYUNCU
+p.savur.o._pw[]._o.eg : object
+p.savur.o._pw[]._o.bekBas : null
+p.savur.o._pw[]._o.noTouch : boolean
+p.savur.o._pw[]._o.hist : dizi
+p.savur.o._pw[]._o.lock : number
+p.savur.o._pw[]._o.kapPrev : null
+p.savur.o._pw[]._o.zonePrev : null|OYUNCU
+p.savur.o._pw[]._o.swPrev : null|OYUNCU
+p.savur.o._pw[]._o.uaPrev : null
+p.savur.o._pw[]._o.rec : number
+p.savur.o._pw[]._o.tutQ : null|OYUNCU
+p.savur.o._pw[]._o.sprint : boolean
+p.savur.o._pw[]._o.press : boolean
+p.savur.o._pw[]._o.job : string
+p.savur.o._pw[]._o.otx : number|null
+p.savur.o._pw[]._o.oty : number
+p.savur.o._pw[]._o._otH : OYUNCU
+p.savur.o._pw[]._o._otB : null
+p.savur.o._pw[]._o._otE : object
+p.savur.o._pw[]._o._otF : null
+p.savur.o._pw[]._o._kv : null|object
+p.savur.o._pw[]._o._amacJob : null|string
+p.savur.o._pw[]._o._bk : dizi
+p.savur.o._pw[]._o._kt : object
+p.savur.o._pw[]._o._topSpr : boolean
+p.savur.o._pw[]._o._kosuK : null|string
+p.savur.o._pw[]._o._hizK : null|number
+p.savur.o._pw[]._o._hizF : number
+p.savur.o._pw[]._o.kuyuT : number
+p.savur.o._pw[]._o.sonuk : boolean
+p.savur.o._pw[]._o._kuyuCik : boolean
+p.savur.o._pw[]._o._evx : number
+p.savur.o._pw[]._o._evy : number
+p.savur.o._pw[]._o._yog : number
+p.savur.o._pw[]._o._D0 : number
+p.savur.o._pw[]._o._Dl : number
+p.savur.o._pw[]._o._enOnce : number
+p.savur.o._pw[]._o.past : dizi
+p.savur.o._pw[]._o.__g : OYUNCU
+p.savur.o._pw[]._o.__yas : number
+p.savur.o._pw[]._o.__e : number
+p.savur.o._pT : number
+p.savur.s : number
+p.savur.a : number
+p.savur.wMax : number
+p.savur.wR : number
+p.savur.rem : number
+p.savur.w : number
+p.savur.g : number
+p.savur.u : number
+p.savur.dur : number
+p.lastWhy : string
+m.pre : null|object {b,q,r,x,y,nd,t}
+m.ctl : null|object {p,t,r}
+m._prT : object {team,hId,t,m,mm,hm,h}
+m._prT.team : number
+m._prT.hId : number
+m._prT.t : number
+m._prT.m : Map
+m._prT.m{k} : number
+m._prT.m{v} : number
+m._prT.mm : Map
+m._prT.mm{k} : string
+m._prT.mm{v} : number
+m._prT.hm : Map
+m._prT.h : number
+m._sec : object {h,t,o,tut}
+m._sec.h : OYUNCU
+m._sec.t : number
+m._sec.o : dizi
+m._sec.o[] : object {k,x,y,v,dv}
+m._sec.o[].k : string
+m._sec.o[].x : number
+m._sec.o[].y : number
+m._sec.o[].v : number
+m._sec.tut : number
+m.lastDec : object {name,team,x,y,opts}
+m.lastDec.name : string
+m.lastDec.team : number
+m.lastDec.x : number
+m.lastDec.y : number
+m.lastDec.opts : dizi
+m.lastDec.opts[] : object {kind,to,q,P,v,hw,bulus,am,en,drk,sjK,kh,rc,cek,devam,neden,bak,dok}
+m.lastDec.opts[].kind : string
+m.lastDec.opts[].to : object|undef {x,y}
+m.lastDec.opts[].to.x : number
+m.lastDec.opts[].to.y : number
+m.lastDec.opts[].q : string
+m.lastDec.opts[].P : number
+m.lastDec.opts[].v : number
+m.lastDec.opts[].hw : undef
+m.lastDec.opts[].bulus : undef
+m.lastDec.opts[].am : undef
+m.lastDec.opts[].en : object|undef {biz,rakip,hizBiz,hizRakip,hizRakipD,hizRakipY,per,ek}
+m.lastDec.opts[].en.biz : number
+m.lastDec.opts[].en.rakip : number
+m.lastDec.opts[].en.hizBiz : number
+m.lastDec.opts[].en.hizRakip : number
+m.lastDec.opts[].en.hizRakipD : number
+m.lastDec.opts[].en.hizRakipY : number
+m.lastDec.opts[].en.per : Map
+m.lastDec.opts[].en.per{k} : string
+m.lastDec.opts[].en.per{v} : number
+m.lastDec.opts[].en.ek : number
+m.lastDec.opts[].drk : undef
+m.lastDec.opts[].sjK : undef|number
+m.lastDec.opts[].kh : undef|string
+m.lastDec.opts[].rc : undef
+m.lastDec.opts[].cek : undef
+m.lastDec.opts[].devam : undef|number
+m.lastDec.opts[].neden : undef
+m.lastDec.opts[].bak : undef
+m.lastDec.opts[].dok : object {tutar,alici,durum,sekme,kayip,sure,sut,ileri,surme,zemin,simdi,sonra,gol}
+m.lastDec.opts[].dok.tutar : number
+m.lastDec.opts[].dok.alici : number
+m.lastDec.opts[].dok.durum : number
+m.lastDec.opts[].dok.sekme : number
+m.lastDec.opts[].dok.kayip : number
+m.lastDec.opts[].dok.sure : number
+m.lastDec.opts[].dok.sut : number
+m.lastDec.opts[].dok.ileri : number
+m.lastDec.opts[].dok.surme : number
+m.lastDec.opts[].dok.zemin : number
+m.lastDec.opts[].dok.simdi : number
+m.lastDec.opts[].dok.sonra : string
+D._tekL : undef
+D._sut : number
+D._zin : null
+D._kuyruk : undef
+D._savT : undef
+D._savW : undef
+D._savU : undef
+D._savCa : undef
+D._kenar : undef
+D._kayipYap : undef
+D._gPr : undef
+D._enWD : undef
+D._enTm : undef
+p.amA : boolean
+p.am : number
+p._rcvV : number|null
+p._rcvB : TOP|TOPKOPYA|object {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,holder,gvx,gvy,cds,defl,sap}
+p._rcvAbs : number
+p._rcvX : number
+p._rcvY : number
+p.chB : TOP|TOPKOPYA|object {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,holder,gvx,gvy,cds,defl,sap,gon,shotPk}
+p._preB : TOP|TOPKOPYA|object {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,holder,gvx,gvy,cds,defl,sap}
+p._preT : number
+p._otA : object {b,ok}
+p._otA.b : TOP|TOPKOPYA|object {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,holder,gvx,gvy,cds,defl,sap}
+p._otA.ok : boolean
+b.x : number
+b.y : number
+b.vx : number
+b.vy : number
+b.e : number
+b.ch : number
+b.team : number
+b.alive : boolean
+b.dead : number
+b.t : number
+b.dist : number
+b.walls : number
+b.done : null
+b.log : dizi
+b.from : OYUNCU
+b.recv : OYUNCU|null
+b.vur : OYUNCU
+b.kt : number
+b.kz : number
+b.cue : number
+b.bekId : number
+b.bekM : number
+b._oku : object {111,112,113,114,115,116,-112,-113,-114,-115,-116,-117,1,2,3,4,5,6,-2,-3,-4,-5,-6,-7,-2110}
+b._oku.111 : object {k,on}
+b._oku.111.k : number
+b._oku.111.on : number
+b._oku.112 : object {k,on}
+b._oku.112.k : number
+b._oku.112.on : number
+b._oku.113 : object {k,on}
+b._oku.113.k : number
+b._oku.113.on : number
+b._oku.114 : object {k,on}
+b._oku.114.k : number
+b._oku.114.on : number
+b._oku.115 : object {k,on}
+b._oku.115.k : number
+b._oku.115.on : number
+b._oku.116 : object {k,on}
+b._oku.116.k : number
+b._oku.116.on : number
+b._oku.-112 : object {k,on}
+b._oku.-112.k : number
+b._oku.-112.on : number
+b._oku.-113 : object {k,on}
+b._oku.-113.k : number
+b._oku.-113.on : number
+b._oku.-114 : object {k,on}
+b._oku.-114.k : number
+b._oku.-114.on : number
+b._oku.-115 : object {k,on}
+b._oku.-115.k : number
+b._oku.-115.on : number
+b._oku.-116 : object {k,on}
+b._oku.-116.k : number
+b._oku.-116.on : number
+b._oku.-117 : object {k,on}
+b._oku.-117.k : number
+b._oku.-117.on : number
+b.tp : number
+b._w0 : number
+b._d0 : number
+b._tt : number
+m.fl.t0 : number
+m.fl.kind : string
+m.fl.q : OYUNCU|null
+m.fl.to : object {x,y}
+m.fl.to.x : number
+m.fl.to.y : number
+m.fl.end : object {x,y}
+m.fl.end.x : number
+m.fl.end.y : number
+m.fl.shot : undef|string
+m.sh.yvBas : object {h,t}
+m.sh.yvBas.h : OYUNCU
+m.sh.yvBas.t : number
+m.sh.fr : object {arr,first,pts}
+m.sh.fr.arr : Map
+m.sh.fr.arr{k} : OYUNCU
+m.sh.fr.arr{v} : object {t,x,y,est,fren,direnc}
+m.sh.fr.arr{v}.t : number
+m.sh.fr.arr{v}.x : number
+m.sh.fr.arr{v}.y : number
+m.sh.fr.arr{v}.est : number
+m.sh.fr.first : OYUNCU
+m.sh.fr.pts : dizi
+m.sh.fr.pts[] : object {x,y,e}
+m.sh.fr.pts[].x : number
+m.sh.fr.pts[].y : number
+m.sh.fr.pts[].e : number
+m.sh.frT : number
+m.sh.frB : TOP|TOPKOPYA|object {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,holder,gvx,gvy,cds,defl,sap,gon,shotPk}
+m._pas : object {team,fx,tx,len,t}
+m._pas.team : number
+m._pas.fx : number
+m._pas.tx : number
+m._pas.len : number
+m._pas.t : number
+m.st.enP.4 : object {sprint,dol,sarj,ikili,fake,calindi,alan}
+m.st.enP.4.sprint : number
+m.st.enP.9 : object {sprint,dol}
+m.st.enP.9.sprint : number
+m.st.enP.0.sprint : number
+m.st.enP.8 : object {sprint,dol,alan}
+m.st.enP.8.sprint : number
+m.st.enP.10 : object {sprint,dol,alan,sarj,ikili,calindi}
+m.st.enP.10.sprint : number
+m.st.enP.8.dol : number
+m.st.enP.10.dol : number
+m.pre.b : TOP|TOPKOPYA|object {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,cds,defl,holder,gvx,gvy,sap}
+m.pre.q : OYUNCU
+m.pre.r : object {best,opts,T}
+m.pre.r.best : object {kind,to,dir,_own,uzun,duvar,v,dok,det,en,enV,prensip,_pw,_pT,sjK,toE,TsE,q,arrive,tek,firm,spr,itK,siddet,lf0,launch,sYon,savT,_sek,tf}
+m.pre.r.best.kind : string
+m.pre.r.best.to : object {x,y}
+m.pre.r.best.to.x : number
+m.pre.r.best.to.y : number
+m.pre.r.best.dir : object {x,y}
+m.pre.r.best.dir.x : number
+m.pre.r.best.dir.y : number
+m.pre.r.best._own : number
+m.pre.r.best.uzun : undef
+m.pre.r.best.duvar : undef|boolean
+m.pre.r.best.v : number
+m.pre.r.best.dok : object {tutar,durum,kayip,sure,sut,ileri,surme,zemin,sonra,simdi,alici,sekme}
+m.pre.r.best.dok.tutar : number
+m.pre.r.best.dok.durum : number
+m.pre.r.best.dok.kayip : number
+m.pre.r.best.dok.sure : number
+m.pre.r.best.dok.sut : number
+m.pre.r.best.dok.ileri : number
+m.pre.r.best.dok.surme : number
+m.pre.r.best.dok.zemin : number
+m.pre.r.best.dok.sonra : string
+m.pre.r.best.det : object {P,ch,Pk,Pl,end,endM,endO,Ps,endS,endD,Psek,endSek}
+m.pre.r.best.det.P : number
+m.pre.r.best.det.ch : number
+m.pre.r.best.en : object {biz,rakip,hizBiz,hizRakip,hizRakipD,hizRakipY,per,ek}
+m.pre.r.best.en.biz : number
+m.pre.r.best.en.rakip : number
+m.pre.r.best.en.hizBiz : number
+m.pre.r.best.en.hizRakip : number
+m.pre.r.best.en.hizRakipD : number
+m.pre.r.best.en.hizRakipY : number
+m.pre.r.best.en.per : Map
+m.pre.r.best.en.per{k} : string
+m.pre.r.best.en.per{v} : number
+m.pre.r.best.en.ek : number
+m.pre.r.best.enV : number
+m.pre.r.best.prensip : string
+m.pre.r.best._pw : dizi
+m.pre.r.best._pw[] : object {id,team,i,role,slot,name,a,R,D,x,y,vx,vy,tx,ty,cd,en,driveTo,_dur,_korT,bekBas,noTouch,hist,lock,kapPrev,zonePrev,swPrev,uaPrev,rec,tutQ,sprint,press,job,otx,_bk,_ktB,_topSpr,_kosuK,_hizK,_evx,_evy,_yog,_D0,_Dl,_enOnce,ca,_don,drive,_dke,past,holdD,_plan,_surK,_sprIst,sarj,savur,lastWhy,_yer,amA,am,__g,__yas,__e,rslot,slot0,rslot0,rh,rs,tl,markRef,eg,oty,_otH,_otB,_otE,_otF,_kv,_amacJob,_kt,_hizF,kuyuT,sonuk,_kuyuCik,_o,_rcvV,_rcvB,_rcvAbs,_rcvX,_rcvY,chB,_preB,_preT,_otA,_onH,_lc,_donDir,_donT,_savT,_savD,_blokT,_omuzT,_omEv,_savCar,lockAt,_lockH,_presT,_presH,_kh,_khT,_khQ,_onK,_kal,_kalH,hamle,adandi,adT,_dolYok,son,adNeden,den,_sf,_bosT,_gvKaz,pplan,_kAn,_kAnT,fiskeCd,fiske,fiskeDir,okudu,_winSeen,_omuz,sendT,sendCd,stun,_dalis}
+m.pre.r.best._pw[].id : number
+m.pre.r.best._pw[].team : number
+m.pre.r.best._pw[].i : number
+m.pre.r.best._pw[].role : string
+m.pre.r.best._pw[].slot : object
+m.pre.r.best._pw[].name : string
+m.pre.r.best._pw[].a : object
+m.pre.r.best._pw[].R : number
+m.pre.r.best._pw[].D : number
+m.pre.r.best._pw[].x : number
+m.pre.r.best._pw[].y : number
+m.pre.r.best._pw[].vx : number
+m.pre.r.best._pw[].vy : number
+m.pre.r.best._pw[].tx : number
+m.pre.r.best._pw[].ty : number
+m.pre.r.best._pw[].cd : number
+m.pre.r.best._pw[].en : number
+m.pre.r.best._pw[].driveTo : null|object
+m.pre.r.best._pw[]._dur : number|null
+m.pre.r.best._pw[]._korT : number
+m.pre.r.best._pw[].bekBas : null
+m.pre.r.best._pw[].noTouch : boolean
+m.pre.r.best._pw[].hist : dizi
+m.pre.r.best._pw[].lock : number
+m.pre.r.best._pw[].kapPrev : null
+m.pre.r.best._pw[].zonePrev : null|OYUNCU
+m.pre.r.best._pw[].swPrev : null|OYUNCU
+m.pre.r.best._pw[].uaPrev : null|OYUNCU
+m.pre.r.best._pw[].rec : number
+m.pre.r.best._pw[].tutQ : null|OYUNCU
+m.pre.r.best._pw[].sprint : boolean
+m.pre.r.best._pw[].press : boolean
+m.pre.r.best._pw[].job : string
+m.pre.r.best._pw[].otx : null|number
+m.pre.r.best._pw[]._bk : dizi
+m.pre.r.best._pw[]._ktB : object
+m.pre.r.best._pw[]._topSpr : boolean
+m.pre.r.best._pw[]._kosuK : null|string
+m.pre.r.best._pw[]._hizK : null|number
+m.pre.r.best._pw[]._evx : number
+m.pre.r.best._pw[]._evy : number
+m.pre.r.best._pw[]._yog : number
+m.pre.r.best._pw[]._D0 : number
+m.pre.r.best._pw[]._Dl : number
+m.pre.r.best._pw[]._enOnce : number
+m.pre.r.best._pw[].ca : number
+m.pre.r.best._pw[]._don : number
+m.pre.r.best._pw[].drive : boolean
+m.pre.r.best._pw[]._dke : number
+m.pre.r.best._pw[].past : dizi
+m.pre.r.best._pw[].holdD : boolean
+m.pre.r.best._pw[]._plan : null
+m.pre.r.best._pw[]._surK : null
+m.pre.r.best._pw[]._sprIst : boolean
+m.pre.r.best._pw[].sarj : boolean
+m.pre.r.best._pw[].savur : null
+m.pre.r.best._pw[].lastWhy : string
+m.pre.r.best._pw[]._yer : boolean
+m.pre.r.best._pw[].amA : boolean
+m.pre.r.best._pw[].am : number
+m.pre.r.best._pw[].__g : OYUNCU
+m.pre.r.best._pw[].__yas : number
+m.pre.r.best._pw[].__e : number
+m.pre.r.best._pw[].rslot : object
+m.pre.r.best._pw[].slot0 : object
+m.pre.r.best._pw[].rslot0 : object
+m.pre.r.best._pw[].rh : string
+m.pre.r.best._pw[].rs : string
+m.pre.r.best._pw[].tl : object
+m.pre.r.best._pw[].markRef : OYUNCU
+m.pre.r.best._pw[].eg : object
+m.pre.r.best._pw[].oty : number
+m.pre.r.best._pw[]._otH : null|OYUNCU
+m.pre.r.best._pw[]._otB : null
+m.pre.r.best._pw[]._otE : object
+m.pre.r.best._pw[]._otF : OYUNCU|null
+m.pre.r.best._pw[]._kv : null
+m.pre.r.best._pw[]._amacJob : null|string
+m.pre.r.best._pw[]._kt : object
+m.pre.r.best._pw[]._hizF : number
+m.pre.r.best._pw[].kuyuT : number
+m.pre.r.best._pw[].sonuk : boolean
+m.pre.r.best._pw[]._kuyuCik : boolean
+m.pre.r.best._pw[]._o : object
+m.pre.r.best._pT : number
+m.pre.r.opts : dizi
+m.pre.r.opts[] : object {kind,to,dir,_own,uzun,duvar,v,dok,det,en,enV,prensip,_pw,_pT,spr,sprBos,sjK,q,arrive,tek,firm,itK,launch,sYon,savT,_sek,tf,lf0,toE,TsE,siddet,hold,shot}
+m.pre.r.opts[].kind : string
+m.pre.r.opts[].to : object {x,y}
+m.pre.r.opts[].to.x : number
+m.pre.r.opts[].to.y : number
+m.pre.r.opts[].dir : object {x,y}
+m.pre.r.opts[].dir.x : number
+m.pre.r.opts[].dir.y : number
+m.pre.r.opts[]._own : number
+m.pre.r.opts[].uzun : undef|number
+m.pre.r.opts[].duvar : undef|boolean
+m.pre.r.opts[].v : number
+m.pre.r.opts[].dok : object {tutar,durum,kayip,sure,sut,ileri,surme,zemin,sonra,simdi,alici,sekme}
+m.pre.r.opts[].dok.tutar : number
+m.pre.r.opts[].dok.durum : number
+m.pre.r.opts[].dok.kayip : number
+m.pre.r.opts[].dok.sure : number
+m.pre.r.opts[].dok.sut : number
+m.pre.r.opts[].dok.ileri : number
+m.pre.r.opts[].dok.surme : number
+m.pre.r.opts[].dok.zemin : number
+m.pre.r.opts[].dok.sonra : string
+m.pre.r.opts[].det : object {P,ch,Pk,Pl,end,endM,endO,Ps,endS,endD,Psek,endSek}
+m.pre.r.opts[].det.P : number
+m.pre.r.opts[].det.ch : number
+m.pre.r.opts[].en : object {biz,rakip,hizBiz,hizRakip,hizRakipD,hizRakipY,per,ek}
+m.pre.r.opts[].en.biz : number
+m.pre.r.opts[].en.rakip : number
+m.pre.r.opts[].en.hizBiz : number
+m.pre.r.opts[].en.hizRakip : number
+m.pre.r.opts[].en.hizRakipD : number
+m.pre.r.opts[].en.hizRakipY : number
+m.pre.r.opts[].en.per : Map
+m.pre.r.opts[].en.ek : number
+m.pre.r.opts[].enV : number
+m.pre.r.opts[].prensip : string
+m.pre.r.opts[]._pw : dizi
+m.pre.r.opts[]._pw[] : object
+m.pre.r.opts[]._pT : number
+m.pre.r.opts[].spr : number|undef
+m.pre.r.opts[].sprBos : number
+m.pre.r.T : number
+m.pre.x : number
+m.pre.y : number
+m.pre.nd : number
+p.driveTo.x : number
+p.driveTo.y : number
+p._rcvB.x : number
+p._rcvB.y : number
+p._rcvB.vx : number
+p._rcvB.vy : number
+p._rcvB.e : number
+p._rcvB.ch : number
+p._rcvB.team : number
+p._rcvB.alive : boolean
+p._rcvB.dead : number
+p._rcvB.t : number
+p._rcvB.dist : number
+p._rcvB.walls : number
+p._rcvB.done : string
+p._rcvB.log : dizi
+p._rcvB.log[] : object {t,k,txt}
+p._rcvB.log[].t : number
+p._rcvB.log[].k : string
+p._rcvB.log[].txt : string
+p._rcvB.from : OYUNCU
+p._rcvB.recv : OYUNCU
+p._rcvB.vur : OYUNCU
+p._rcvB.kt : number
+p._rcvB.kz : number
+p._rcvB.cue : number
+p._rcvB.bekId : number
+p._rcvB.bekM : number
+p._rcvB._oku : object {111,112,113,114,115,116,-112,-113,-114,-115,-116,-117,1,2,3,4,5,6,-2,-3,-4,-5,-6,-7}
+p._rcvB._oku.111 : object {k,on}
+p._rcvB._oku.111.k : number
+p._rcvB._oku.111.on : number
+p._rcvB._oku.112 : object {k,on}
+p._rcvB._oku.112.k : number
+p._rcvB._oku.112.on : number
+p._rcvB._oku.113 : object {k,on}
+p._rcvB._oku.113.k : number
+p._rcvB._oku.113.on : number
+p._rcvB._oku.114 : object {k,on}
+p._rcvB._oku.114.k : number
+p._rcvB._oku.114.on : number
+p._rcvB._oku.115 : object {k,on}
+p._rcvB._oku.115.k : number
+p._rcvB._oku.115.on : number
+p._rcvB._oku.116 : object {k,on}
+p._rcvB._oku.116.k : number
+p._rcvB._oku.116.on : number
+p._rcvB._oku.-112 : object {k,on}
+p._rcvB._oku.-112.k : number
+p._rcvB._oku.-112.on : number
+p._rcvB._oku.-113 : object {k,on}
+p._rcvB._oku.-113.k : number
+p._rcvB._oku.-113.on : number
+p._rcvB._oku.-114 : object {k,on}
+p._rcvB._oku.-114.k : number
+p._rcvB._oku.-114.on : number
+p._rcvB._oku.-115 : object {k,on}
+p._rcvB._oku.-115.k : number
+p._rcvB._oku.-115.on : number
+p._rcvB._oku.-116 : object {k,on}
+p._rcvB._oku.-116.k : number
+p._rcvB._oku.-116.on : number
+p._rcvB._oku.-117 : object {k,on}
+p._rcvB._oku.-117.k : number
+p._rcvB._oku.-117.on : number
+p._rcvB.tp : number
+p._rcvB._w0 : number
+p._rcvB._d0 : number
+p._rcvB._tt : number
+p._rcvB.holder : OYUNCU
+p._rcvB.gvx : number
+p._rcvB.gvy : number
+p.chB.x : number
+p.chB.y : number
+p.chB.vx : number
+p.chB.vy : number
+p.chB.e : number
+p.chB.ch : number
+p.chB.team : number
+p.chB.alive : boolean
+p.chB.dead : number
+p.chB.t : number
+p.chB.dist : number
+p.chB.walls : number
+p.chB.done : string
+p.chB.log : dizi
+p.chB.log[] : object {t,k,txt}
+p.chB.log[].t : number
+p.chB.log[].k : string
+p.chB.log[].txt : string
+p.chB.from : OYUNCU
+p.chB.recv : OYUNCU|null
+p.chB.vur : OYUNCU
+p.chB.kt : number
+p.chB.kz : number
+p.chB.cue : number
+p.chB.bekId : number
+p.chB.bekM : number
+p.chB._oku : object {111,112,113,114,115,116,-112,-113,-114,-115,-116,-117,1,2,3,4,5,6,-2,-3,-4,-5,-6,-7,-2110}
+p.chB._oku.111 : object {k,on}
+p.chB._oku.111.k : number
+p.chB._oku.111.on : number
+p.chB._oku.112 : object {k,on}
+p.chB._oku.112.k : number
+p.chB._oku.112.on : number
+p.chB._oku.113 : object {k,on}
+p.chB._oku.113.k : number
+p.chB._oku.113.on : number
+p.chB._oku.114 : object {k,on}
+p.chB._oku.114.k : number
+p.chB._oku.114.on : number
+p.chB._oku.115 : object {k,on}
+p.chB._oku.115.k : number
+p.chB._oku.115.on : number
+p.chB._oku.116 : object {k,on}
+p.chB._oku.116.k : number
+p.chB._oku.116.on : number
+p.chB._oku.-112 : object {k,on}
+p.chB._oku.-112.k : number
+p.chB._oku.-112.on : number
+p.chB._oku.-113 : object {k,on}
+p.chB._oku.-113.k : number
+p.chB._oku.-113.on : number
+p.chB._oku.-114 : object {k,on}
+p.chB._oku.-114.k : number
+p.chB._oku.-114.on : number
+p.chB._oku.-115 : object {k,on}
+p.chB._oku.-115.k : number
+p.chB._oku.-115.on : number
+p.chB._oku.-116 : object {k,on}
+p.chB._oku.-116.k : number
+p.chB._oku.-116.on : number
+p.chB._oku.-117 : object {k,on}
+p.chB._oku.-117.k : number
+p.chB._oku.-117.on : number
+p.chB.tp : number
+p.chB._w0 : number
+p.chB._d0 : number|boolean
+p.chB._tt : number
+p.chB.holder : OYUNCU
+p.chB.gvx : number
+p.chB.gvy : number
+p._preB.x : number
+p._preB.y : number
+p._preB.vx : number
+p._preB.vy : number
+p._preB.e : number
+p._preB.ch : number
+p._preB.team : number
+p._preB.alive : boolean
+p._preB.dead : number
+p._preB.t : number
+p._preB.dist : number
+p._preB.walls : number
+p._preB.done : string
+p._preB.log : dizi
+p._preB.log[] : object {t,k,txt}
+p._preB.log[].t : number
+p._preB.log[].k : string
+p._preB.log[].txt : string
+p._preB.from : OYUNCU
+p._preB.recv : OYUNCU
+p._preB.vur : OYUNCU
+p._preB.kt : number
+p._preB.kz : number
+p._preB.cue : number
+p._preB.bekId : number
+p._preB.bekM : number
+p._preB._oku : object {111,112,113,114,115,116,-112,-113,-114,-115,-116,-117,1,2,3,4,5,6,-2,-3,-4,-5,-6,-7}
+p._preB._oku.111 : object {k,on}
+p._preB._oku.111.k : number
+p._preB._oku.111.on : number
+p._preB._oku.112 : object {k,on}
+p._preB._oku.112.k : number
+p._preB._oku.112.on : number
+p._preB._oku.113 : object {k,on}
+p._preB._oku.113.k : number
+p._preB._oku.113.on : number
+p._preB._oku.114 : object {k,on}
+p._preB._oku.114.k : number
+p._preB._oku.114.on : number
+p._preB._oku.115 : object {k,on}
+p._preB._oku.115.k : number
+p._preB._oku.115.on : number
+p._preB._oku.116 : object {k,on}
+p._preB._oku.116.k : number
+p._preB._oku.116.on : number
+p._preB._oku.-112 : object {k,on}
+p._preB._oku.-112.k : number
+p._preB._oku.-112.on : number
+p._preB._oku.-113 : object {k,on}
+p._preB._oku.-113.k : number
+p._preB._oku.-113.on : number
+p._preB._oku.-114 : object {k,on}
+p._preB._oku.-114.k : number
+p._preB._oku.-114.on : number
+p._preB._oku.-115 : object {k,on}
+p._preB._oku.-115.k : number
+p._preB._oku.-115.on : number
+p._preB._oku.-116 : object {k,on}
+p._preB._oku.-116.k : number
+p._preB._oku.-116.on : number
+p._preB._oku.-117 : object {k,on}
+p._preB._oku.-117.k : number
+p._preB._oku.-117.on : number
+p._preB.tp : number
+p._preB._w0 : number
+p._preB._d0 : number
+p._preB._tt : number
+p._preB.holder : OYUNCU
+p._preB.gvx : number
+p._preB.gvy : number
+p._otA.b.x : number
+p._otA.b.y : number
+p._otA.b.vx : number
+p._otA.b.vy : number
+p._otA.b.e : number
+p._otA.b.ch : number
+p._otA.b.team : number
+p._otA.b.alive : boolean
+p._otA.b.dead : number
+p._otA.b.t : number
+p._otA.b.dist : number
+p._otA.b.walls : number
+p._otA.b.done : string
+p._otA.b.log : dizi
+p._otA.b.log[] : object {t,k,txt}
+p._otA.b.log[].t : number
+p._otA.b.log[].k : string
+p._otA.b.log[].txt : string
+p._otA.b.from : OYUNCU
+p._otA.b.recv : OYUNCU
+p._otA.b.vur : OYUNCU
+p._otA.b.kt : number
+p._otA.b.kz : number
+p._otA.b.cue : number
+p._otA.b.bekId : number
+p._otA.b.bekM : number
+p._otA.b._oku : object {111,112,113,114,115,116,-112,-113,-114,-115,-116,-117,1,2,3,4,5,6,-2,-3,-4,-5,-6,-7}
+p._otA.b._oku.111 : object {k,on}
+p._otA.b._oku.111.k : number
+p._otA.b._oku.111.on : number
+p._otA.b._oku.112 : object {k,on}
+p._otA.b._oku.112.k : number
+p._otA.b._oku.112.on : number
+p._otA.b._oku.113 : object {k,on}
+p._otA.b._oku.113.k : number
+p._otA.b._oku.113.on : number
+p._otA.b._oku.114 : object {k,on}
+p._otA.b._oku.114.k : number
+p._otA.b._oku.114.on : number
+p._otA.b._oku.115 : object {k,on}
+p._otA.b._oku.115.k : number
+p._otA.b._oku.115.on : number
+p._otA.b._oku.116 : object {k,on}
+p._otA.b._oku.116.k : number
+p._otA.b._oku.116.on : number
+p._otA.b._oku.-112 : object {k,on}
+p._otA.b._oku.-112.k : number
+p._otA.b._oku.-112.on : number
+p._otA.b._oku.-113 : object {k,on}
+p._otA.b._oku.-113.k : number
+p._otA.b._oku.-113.on : number
+p._otA.b._oku.-114 : object {k,on}
+p._otA.b._oku.-114.k : number
+p._otA.b._oku.-114.on : number
+p._otA.b._oku.-115 : object {k,on}
+p._otA.b._oku.-115.k : number
+p._otA.b._oku.-115.on : number
+p._otA.b._oku.-116 : object {k,on}
+p._otA.b._oku.-116.k : number
+p._otA.b._oku.-116.on : number
+p._otA.b._oku.-117 : object {k,on}
+p._otA.b._oku.-117.k : number
+p._otA.b._oku.-117.on : number
+p._otA.b.tp : number
+p._otA.b._w0 : number
+p._otA.b._d0 : number
+p._otA.b._tt : number
+p._otA.b.holder : OYUNCU
+p._otA.b.gvx : number
+p._otA.b.gvy : number
+p._onH : null|object {b,tArr,s,wS,phi,caR,kal,a,Tsw,w}
+p._lc : null
+p._surK.id : number
+p._surK.to : object {x,y}
+p._surK.to.x : number
+p._surK.to.y : number
+p._surK.t : number
+p._surK.T : number
+p._surK.nd0 : number
+m.st.enP.3 : object {sprint,dol,ikili,calindi,alan}
+m.st.enP.3.sprint : number
+m.st.enP.4.dol : number
+m.st.enP.4.sarj : number
+m.st.enP.5 : object {sprint,dol,ikili}
+m.st.enP.5.sprint : number
+m.st.enP.6 : object {sprint,dol,alan,sarj}
+m.st.enP.6.sprint : number
+m.sh.frB.x : number
+m.sh.frB.y : number
+m.sh.frB.vx : number
+m.sh.frB.vy : number
+m.sh.frB.e : number
+m.sh.frB.ch : number
+m.sh.frB.team : number
+m.sh.frB.alive : boolean
+m.sh.frB.dead : number
+m.sh.frB.t : number
+m.sh.frB.dist : number
+m.sh.frB.walls : number
+m.sh.frB.done : string
+m.sh.frB.log : dizi
+m.sh.frB.log[] : object {t,k,txt}
+m.sh.frB.log[].t : number
+m.sh.frB.log[].k : string
+m.sh.frB.log[].txt : string
+m.sh.frB.from : OYUNCU
+m.sh.frB.recv : OYUNCU|null
+m.sh.frB.vur : OYUNCU
+m.sh.frB.kt : number
+m.sh.frB.kz : number
+m.sh.frB.cue : number
+m.sh.frB.bekId : number
+m.sh.frB.bekM : number
+m.sh.frB._oku : object {111,112,113,114,115,116,-112,-113,-114,-115,-116,-117,1,2,3,4,5,6,-2,-3,-4,-5,-6,-7,-2110}
+m.sh.frB._oku.111 : object {k,on}
+m.sh.frB._oku.111.k : number
+m.sh.frB._oku.111.on : number
+m.sh.frB._oku.112 : object {k,on}
+m.sh.frB._oku.112.k : number
+m.sh.frB._oku.112.on : number
+m.sh.frB._oku.113 : object {k,on}
+m.sh.frB._oku.113.k : number
+m.sh.frB._oku.113.on : number
+m.sh.frB._oku.114 : object {k,on}
+m.sh.frB._oku.114.k : number
+m.sh.frB._oku.114.on : number
+m.sh.frB._oku.115 : object {k,on}
+m.sh.frB._oku.115.k : number
+m.sh.frB._oku.115.on : number
+m.sh.frB._oku.116 : object {k,on}
+m.sh.frB._oku.116.k : number
+m.sh.frB._oku.116.on : number
+m.sh.frB._oku.-112 : object {k,on}
+m.sh.frB._oku.-112.k : number
+m.sh.frB._oku.-112.on : number
+m.sh.frB._oku.-113 : object {k,on}
+m.sh.frB._oku.-113.k : number
+m.sh.frB._oku.-113.on : number
+m.sh.frB._oku.-114 : object {k,on}
+m.sh.frB._oku.-114.k : number
+m.sh.frB._oku.-114.on : number
+m.sh.frB._oku.-115 : object {k,on}
+m.sh.frB._oku.-115.k : number
+m.sh.frB._oku.-115.on : number
+m.sh.frB._oku.-116 : object {k,on}
+m.sh.frB._oku.-116.k : number
+m.sh.frB._oku.-116.on : number
+m.sh.frB._oku.-117 : object {k,on}
+m.sh.frB._oku.-117.k : number
+m.sh.frB._oku.-117.on : number
+m.sh.frB.tp : number
+m.sh.frB._w0 : number
+m.sh.frB._d0 : number|boolean
+m.sh.frB._tt : number
+m.sh.frB.holder : OYUNCU
+m.sh.frB.gvx : number
+m.sh.frB.gvy : number
+m.not.p.4 : number
+m._gelenB : TOPKOPYA|object|null {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,holder,gvx,gvy,cds,defl,sap,gon,shotPk}
+m._gelenB.x : number
+m._gelenB.y : number
+m._gelenB.vx : number
+m._gelenB.vy : number
+m._gelenB.e : number
+m._gelenB.ch : number
+m._gelenB.team : number
+m._gelenB.alive : boolean
+m._gelenB.dead : number
+m._gelenB.t : number
+m._gelenB.dist : number
+m._gelenB.walls : number
+m._gelenB.done : string
+m._gelenB.log : dizi
+m._gelenB.log[] : object {t,k,txt}
+m._gelenB.log[].t : number
+m._gelenB.log[].k : string
+m._gelenB.log[].txt : string
+m._gelenB.from : OYUNCU
+m._gelenB.recv : OYUNCU|null
+m._gelenB.vur : OYUNCU
+m._gelenB.kt : number
+m._gelenB.kz : number
+m._gelenB.cue : number
+m._gelenB.bekId : number
+m._gelenB.bekM : number
+m._gelenB._oku : object {111,112,113,114,115,116,-112,-113,-114,-115,-116,-117,1,2,3,4,5,6,-2,-3,-4,-5,-6,-7,-2110}
+m._gelenB._oku.111 : object {k,on}
+m._gelenB._oku.111.k : number
+m._gelenB._oku.111.on : number
+m._gelenB._oku.112 : object {k,on}
+m._gelenB._oku.112.k : number
+m._gelenB._oku.112.on : number
+m._gelenB._oku.113 : object {k,on}
+m._gelenB._oku.113.k : number
+m._gelenB._oku.113.on : number
+m._gelenB._oku.114 : object {k,on}
+m._gelenB._oku.114.k : number
+m._gelenB._oku.114.on : number
+m._gelenB._oku.115 : object {k,on}
+m._gelenB._oku.115.k : number
+m._gelenB._oku.115.on : number
+m._gelenB._oku.116 : object {k,on}
+m._gelenB._oku.116.k : number
+m._gelenB._oku.116.on : number
+m._gelenB._oku.-112 : object {k,on}
+m._gelenB._oku.-112.k : number
+m._gelenB._oku.-112.on : number
+m._gelenB._oku.-113 : object {k,on}
+m._gelenB._oku.-113.k : number
+m._gelenB._oku.-113.on : number
+m._gelenB._oku.-114 : object {k,on}
+m._gelenB._oku.-114.k : number
+m._gelenB._oku.-114.on : number
+m._gelenB._oku.-115 : object {k,on}
+m._gelenB._oku.-115.k : number
+m._gelenB._oku.-115.on : number
+m._gelenB._oku.-116 : object {k,on}
+m._gelenB._oku.-116.k : number
+m._gelenB._oku.-116.on : number
+m._gelenB._oku.-117 : object {k,on}
+m._gelenB._oku.-117.k : number
+m._gelenB._oku.-117.on : number
+m._gelenB.tp : number
+m._gelenB._w0 : number
+m._gelenB._d0 : number|boolean
+m._gelenB._tt : number
+m._gelenB.holder : OYUNCU
+m._gelenB.gvx : number
+m._gelenB.gvy : number
+m._onHk : null
+m._inSp : number
+D._kanca : undef
+D._ot : number
+D._tekD : boolean
+p._donDir : number
+p._donT : number
+m.st.enP.2 : object {sprint,dol,sarj,fake,ikili,caldi,alan}
+m.st.enP.2.sprint : number
+m.st.enP.6.dol : number
+m.st.enP.9.dol : number
+m.st.enP.5.dol : number
+m.st.enP.2.dol : number
+m.st.enP.13 : object {sprint,dol,alan}
+m.st.enP.13.sprint : number
+m.st.enP.1 : object {sprint,dol,alan,sarj,ikili,calindi,fake,caldi}
+m.st.enP.1.sprint : number
+m.st.enP.3.dol : number
+m._macC.0:73 : object {g,c,e0}
+m._macC.0:73.g : number
+m._macC.0:73.c : number
+m._macC.0:73.e0 : number
+m.st.enP.11 : object {sprint,dol,ikili,caldi,sarj,fake,alan}
+m.st.enP.11.sprint : number
+m.st.enP.12 : object {sprint,dol,sarj,ikili,caldi,fake,alan,calindi}
+m.st.enP.12.sprint : number
+m.st.enP.13.dol : number
+m.st.enP.1.dol : number
+m.st.enP.11.dol : number
+m.sh.fr.arr{v}.fren : boolean
+p._onH.b : TOP
+p._onH.tArr : number
+p._onH.s : number
+p._onH.wS : number
+p._onH.phi : number
+p._onH.caR : number
+p._onH.kal : number
+p._onH.a : number
+p._onH.Tsw : number
+p._onH.w : number
+m.pre.r.best._pw[]._rcvV : number|null
+m.pre.r.best._pw[]._rcvB : TOP|TOPKOPYA|object
+m.pre.r.best._pw[]._rcvAbs : number
+m.pre.r.best._pw[]._rcvX : number
+m.pre.r.best._pw[]._rcvY : number
+m.pre.r.best._pw[].chB : TOP|TOPKOPYA|object
+m.pre.r.best._pw[]._preB : TOP|TOPKOPYA|object
+m.pre.r.best._pw[]._preT : number
+m.pre.r.best._pw[]._otA : object
+m.pre.r.opts[].dok.simdi : number
+m.pre.r.opts[].sjK : number
+b.log[] : object {t,k,txt}
+b.log[].t : number
+b.log[].k : string
+b.log[].txt : string
+b.cds : Map
+b.cds{k} : OYUNCU
+b.cds{v} : number
+b.defl : number|boolean
+m.st.enP.1.alan : number
+p._rcvB.cds : Map
+p._rcvB.cds{k} : OYUNCU
+p._rcvB.cds{v} : number
+p._rcvB.defl : number
+p.chB.cds : Map
+p.chB.cds{k} : OYUNCU
+p.chB.cds{v} : number
+p.chB.defl : number|boolean
+p._preB.cds : Map
+p._preB.cds{k} : OYUNCU
+p._preB.cds{v} : number
+p._preB.defl : number
+p._otA.b.cds : Map
+p._otA.b.cds{k} : OYUNCU
+p._otA.b.cds{v} : number
+p._otA.b.defl : number
+m.sh.ball.x : number
+m.sh.ball.y : number
+m.sh.ball.vx : number
+m.sh.ball.vy : number
+m.sh.ball.e : number
+m.sh.ball.ch : number
+m.sh.ball.team : number
+m.sh.ball.alive : boolean
+m.sh.ball.dead : number
+m.sh.ball.t : number
+m.sh.ball.dist : number
+m.sh.ball.walls : number
+m.sh.ball.done : string
+m.sh.ball.log : dizi
+m.sh.ball.log[] : object {t,k,txt}
+m.sh.ball.log[].t : number
+m.sh.ball.log[].k : string
+m.sh.ball.log[].txt : string
+m.sh.ball.from : OYUNCU
+m.sh.ball.recv : OYUNCU
+m.sh.ball.vur : OYUNCU
+m.sh.ball.kt : number
+m.sh.ball.kz : number
+m.sh.ball.cue : number
+m.sh.ball.bekId : number
+m.sh.ball.bekM : number
+m.sh.ball._oku : object {111,112,113,114,115,116,-112,-113,-114,-115,-116,-117,1,2,3,4,5,6,-2,-3,-4,-5,-6,-7}
+m.sh.ball._oku.111 : object {k,on}
+m.sh.ball._oku.111.k : number
+m.sh.ball._oku.111.on : number
+m.sh.ball._oku.112 : object {k,on}
+m.sh.ball._oku.112.k : number
+m.sh.ball._oku.112.on : number
+m.sh.ball._oku.113 : object {k,on}
+m.sh.ball._oku.113.k : number
+m.sh.ball._oku.113.on : number
+m.sh.ball._oku.114 : object {k,on}
+m.sh.ball._oku.114.k : number
+m.sh.ball._oku.114.on : number
+m.sh.ball._oku.115 : object {k,on}
+m.sh.ball._oku.115.k : number
+m.sh.ball._oku.115.on : number
+m.sh.ball._oku.116 : object {k,on}
+m.sh.ball._oku.116.k : number
+m.sh.ball._oku.116.on : number
+m.sh.ball._oku.-112 : object {k,on}
+m.sh.ball._oku.-112.k : number
+m.sh.ball._oku.-112.on : number
+m.sh.ball._oku.-113 : object {k,on}
+m.sh.ball._oku.-113.k : number
+m.sh.ball._oku.-113.on : number
+m.sh.ball._oku.-114 : object {k,on}
+m.sh.ball._oku.-114.k : number
+m.sh.ball._oku.-114.on : number
+m.sh.ball._oku.-115 : object {k,on}
+m.sh.ball._oku.-115.k : number
+m.sh.ball._oku.-115.on : number
+m.sh.ball._oku.-116 : object {k,on}
+m.sh.ball._oku.-116.k : number
+m.sh.ball._oku.-116.on : number
+m.sh.ball._oku.-117 : object {k,on}
+m.sh.ball._oku.-117.k : number
+m.sh.ball._oku.-117.on : number
+m.sh.ball.tp : number
+m.sh.ball._w0 : number
+m.sh.ball._d0 : number
+m.sh.ball._tt : number
+m.sh.ball.cds : Map
+m.sh.ball.cds{k} : OYUNCU
+m.sh.ball.cds{v} : number
+m.sh.ball.defl : number
+m.sh.ball.holder : OYUNCU
+m.sh.ball.gvx : number
+m.sh.ball.gvy : number
+m.sh.frB.cds : Map
+m.sh.frB.cds{k} : OYUNCU
+m.sh.frB.cds{v} : number
+m.sh.frB.defl : number|boolean
+m.not.p.1 : number
+m.pre.b.x : number
+m.pre.b.y : number
+m.pre.b.vx : number
+m.pre.b.vy : number
+m.pre.b.e : number
+m.pre.b.ch : number
+m.pre.b.team : number
+m.pre.b.alive : boolean
+m.pre.b.dead : number
+m.pre.b.t : number
+m.pre.b.dist : number
+m.pre.b.walls : number
+m.pre.b.done : string
+m.pre.b.log : dizi
+m.pre.b.log[] : object {t,k,txt}
+m.pre.b.log[].t : number
+m.pre.b.log[].k : string
+m.pre.b.log[].txt : string
+m.pre.b.from : OYUNCU
+m.pre.b.recv : OYUNCU
+m.pre.b.vur : OYUNCU
+m.pre.b.kt : number
+m.pre.b.kz : number
+m.pre.b.cue : number
+m.pre.b.bekId : number
+m.pre.b.bekM : number
+m.pre.b._oku : object {111,112,113,114,115,116,-112,-113,-114,-115,-116,-117,1,2,3,4,5,6,-2,-3,-4,-5,-6,-7}
+m.pre.b._oku.111 : object {k,on}
+m.pre.b._oku.111.k : number
+m.pre.b._oku.111.on : number
+m.pre.b._oku.112 : object {k,on}
+m.pre.b._oku.112.k : number
+m.pre.b._oku.112.on : number
+m.pre.b._oku.113 : object {k,on}
+m.pre.b._oku.113.k : number
+m.pre.b._oku.113.on : number
+m.pre.b._oku.114 : object {k,on}
+m.pre.b._oku.114.k : number
+m.pre.b._oku.114.on : number
+m.pre.b._oku.115 : object {k,on}
+m.pre.b._oku.115.k : number
+m.pre.b._oku.115.on : number
+m.pre.b._oku.116 : object {k,on}
+m.pre.b._oku.116.k : number
+m.pre.b._oku.116.on : number
+m.pre.b._oku.-112 : object {k,on}
+m.pre.b._oku.-112.k : number
+m.pre.b._oku.-112.on : number
+m.pre.b._oku.-113 : object {k,on}
+m.pre.b._oku.-113.k : number
+m.pre.b._oku.-113.on : number
+m.pre.b._oku.-114 : object {k,on}
+m.pre.b._oku.-114.k : number
+m.pre.b._oku.-114.on : number
+m.pre.b._oku.-115 : object {k,on}
+m.pre.b._oku.-115.k : number
+m.pre.b._oku.-115.on : number
+m.pre.b._oku.-116 : object {k,on}
+m.pre.b._oku.-116.k : number
+m.pre.b._oku.-116.on : number
+m.pre.b._oku.-117 : object {k,on}
+m.pre.b._oku.-117.k : number
+m.pre.b._oku.-117.on : number
+m.pre.b.tp : number
+m.pre.b._w0 : number
+m.pre.b._d0 : number
+m.pre.b._tt : number
+m.pre.b.cds : Map
+m.pre.b.cds{k} : OYUNCU
+m.pre.b.cds{v} : number
+m.pre.b.defl : number
+m.pre.b.holder : OYUNCU
+m.pre.b.gvx : number
+m.pre.b.gvy : number
+m.pre.t : number
+m.ctl.p : OYUNCU
+m.ctl.t : number
+m.ctl.r : object {best,opts,T}
+m.ctl.r.best : object {kind,to,dir,_own,uzun,duvar,toE,TsE,v,dok,det,en,enV,prensip,_pw,_pT,sjK,spr,q,arrive,tek,firm,itK,siddet,lf0,launch,sYon,savT,_sek,tf}
+m.ctl.r.best.kind : string
+m.ctl.r.best.to : object {x,y}
+m.ctl.r.best.to.x : number
+m.ctl.r.best.to.y : number
+m.ctl.r.best.dir : object {x,y}
+m.ctl.r.best.dir.x : number
+m.ctl.r.best.dir.y : number
+m.ctl.r.best._own : number
+m.ctl.r.best.uzun : undef
+m.ctl.r.best.duvar : undef
+m.ctl.r.best.toE : object {x,y}
+m.ctl.r.best.toE.x : number
+m.ctl.r.best.toE.y : number
+m.ctl.r.best.TsE : number
+m.ctl.r.best.v : number
+m.ctl.r.best.dok : object {tutar,durum,kayip,sure,sut,ileri,surme,zemin,sonra,simdi,alici,sekme}
+m.ctl.r.best.dok.tutar : number
+m.ctl.r.best.dok.durum : number
+m.ctl.r.best.dok.kayip : number
+m.ctl.r.best.dok.sure : number
+m.ctl.r.best.dok.sut : number
+m.ctl.r.best.dok.ileri : number
+m.ctl.r.best.dok.surme : number
+m.ctl.r.best.dok.zemin : number
+m.ctl.r.best.dok.sonra : string
+m.ctl.r.best.det : object {P,ch,Pk,Pl,end,endM,endO,Ps,endS,endD,Psek,endSek}
+m.ctl.r.best.det.P : number
+m.ctl.r.best.det.ch : number
+m.ctl.r.best.en : object {biz,rakip,hizBiz,hizRakip,hizRakipD,hizRakipY,per,ek}
+m.ctl.r.best.en.biz : number
+m.ctl.r.best.en.rakip : number
+m.ctl.r.best.en.hizBiz : number
+m.ctl.r.best.en.hizRakip : number
+m.ctl.r.best.en.hizRakipD : number
+m.ctl.r.best.en.hizRakipY : number
+m.ctl.r.best.en.per : Map
+m.ctl.r.best.en.per{k} : string
+m.ctl.r.best.en.per{v} : number
+m.ctl.r.best.en.ek : number
+m.ctl.r.best.enV : number
+m.ctl.r.best.prensip : string
+m.ctl.r.best._pw : dizi
+m.ctl.r.best._pw[] : object {id,team,i,role,slot,name,a,R,D,x,y,vx,vy,tx,ty,cd,en,driveTo,_dur,_korT,bekBas,noTouch,hist,lock,kapPrev,zonePrev,swPrev,uaPrev,rec,tutQ,sprint,press,job,otx,_bk,_ktB,_topSpr,_kosuK,_hizK,_evx,_evy,_yog,_D0,_Dl,_enOnce,ca,_don,drive,_dke,past,holdD,_plan,_surK,_sprIst,sarj,savur,lastWhy,_yer,amA,am,__g,__yas,__e,rslot,slot0,rslot0,rh,rs,tl,markRef,eg,oty,_otH,_otB,_otE,_otF,_kv,_amacJob,_kt,_hizF,kuyuT,sonuk,_kuyuCik,_rcvV,_rcvB,_rcvAbs,_rcvX,_rcvY,chB,_preB,_preT,_otA,_onH,_lc,_o,_donDir,_donT,_savT,_savD,_blokT,_omuzT,_omEv,_savCar,lockAt,_lockH,_presT,_presH,_kh,_khT,_khQ,_onK,_kal,_kalH,hamle,_dolYok,adandi,adT,son,adNeden,den,_sf,_bosT,_gvKaz,pplan,_kAn,_kAnT,fiskeCd,fiske,fiskeDir,okudu,_winSeen}
+m.ctl.r.best._pw[].id : number
+m.ctl.r.best._pw[].team : number
+m.ctl.r.best._pw[].i : number
+m.ctl.r.best._pw[].role : string
+m.ctl.r.best._pw[].slot : object
+m.ctl.r.best._pw[].name : string
+m.ctl.r.best._pw[].a : object
+m.ctl.r.best._pw[].R : number
+m.ctl.r.best._pw[].D : number
+m.ctl.r.best._pw[].x : number
+m.ctl.r.best._pw[].y : number
+m.ctl.r.best._pw[].vx : number
+m.ctl.r.best._pw[].vy : number
+m.ctl.r.best._pw[].tx : number
+m.ctl.r.best._pw[].ty : number
+m.ctl.r.best._pw[].cd : number
+m.ctl.r.best._pw[].en : number
+m.ctl.r.best._pw[].driveTo : null|object
+m.ctl.r.best._pw[]._dur : number|null
+m.ctl.r.best._pw[]._korT : number
+m.ctl.r.best._pw[].bekBas : null
+m.ctl.r.best._pw[].noTouch : boolean
+m.ctl.r.best._pw[].hist : dizi
+m.ctl.r.best._pw[].lock : number
+m.ctl.r.best._pw[].kapPrev : null
+m.ctl.r.best._pw[].zonePrev : null|OYUNCU
+m.ctl.r.best._pw[].swPrev : null|OYUNCU
+m.ctl.r.best._pw[].uaPrev : null|OYUNCU
+m.ctl.r.best._pw[].rec : number
+m.ctl.r.best._pw[].tutQ : null|OYUNCU
+m.ctl.r.best._pw[].sprint : boolean
+m.ctl.r.best._pw[].press : boolean
+m.ctl.r.best._pw[].job : string
+m.ctl.r.best._pw[].otx : null|number
+m.ctl.r.best._pw[]._bk : dizi
+m.ctl.r.best._pw[]._ktB : object
+m.ctl.r.best._pw[]._topSpr : boolean
+m.ctl.r.best._pw[]._kosuK : null|string
+m.ctl.r.best._pw[]._hizK : null|number
+m.ctl.r.best._pw[]._evx : number
+m.ctl.r.best._pw[]._evy : number
+m.ctl.r.best._pw[]._yog : number
+m.ctl.r.best._pw[]._D0 : number
+m.ctl.r.best._pw[]._Dl : number
+m.ctl.r.best._pw[]._enOnce : number
+m.ctl.r.best._pw[].ca : number
+m.ctl.r.best._pw[]._don : number
+m.ctl.r.best._pw[].drive : boolean
+m.ctl.r.best._pw[]._dke : number
+m.ctl.r.best._pw[].past : dizi
+m.ctl.r.best._pw[].holdD : boolean
+m.ctl.r.best._pw[]._plan : null
+m.ctl.r.best._pw[]._surK : null
+m.ctl.r.best._pw[]._sprIst : boolean
+m.ctl.r.best._pw[].sarj : boolean
+m.ctl.r.best._pw[].savur : null
+m.ctl.r.best._pw[].lastWhy : string
+m.ctl.r.best._pw[]._yer : boolean
+m.ctl.r.best._pw[].amA : boolean
+m.ctl.r.best._pw[].am : number
+m.ctl.r.best._pw[].__g : OYUNCU
+m.ctl.r.best._pw[].__yas : number
+m.ctl.r.best._pw[].__e : number
+m.ctl.r.best._pw[].rslot : object
+m.ctl.r.best._pw[].slot0 : object
+m.ctl.r.best._pw[].rslot0 : object
+m.ctl.r.best._pw[].rh : string
+m.ctl.r.best._pw[].rs : string
+m.ctl.r.best._pw[].tl : object
+m.ctl.r.best._pw[].markRef : OYUNCU
+m.ctl.r.best._pw[].eg : object
+m.ctl.r.best._pw[].oty : number
+m.ctl.r.best._pw[]._otH : OYUNCU|null
+m.ctl.r.best._pw[]._otB : null
+m.ctl.r.best._pw[]._otE : object
+m.ctl.r.best._pw[]._otF : null|OYUNCU
+m.ctl.r.best._pw[]._kv : null
+m.ctl.r.best._pw[]._amacJob : null
+m.ctl.r.best._pw[]._kt : object
+m.ctl.r.best._pw[]._hizF : number
+m.ctl.r.best._pw[].kuyuT : number
+m.ctl.r.best._pw[].sonuk : boolean
+m.ctl.r.best._pw[]._kuyuCik : boolean
+m.ctl.r.best._pw[]._rcvV : null|number
+m.ctl.r.best._pw[]._rcvB : TOPKOPYA|object
+m.ctl.r.best._pw[]._rcvAbs : number
+m.ctl.r.best._pw[]._rcvX : number
+m.ctl.r.best._pw[]._rcvY : number
+m.ctl.r.best._pw[].chB : TOPKOPYA|object
+m.ctl.r.best._pw[]._preB : TOPKOPYA|object
+m.ctl.r.best._pw[]._preT : number
+m.ctl.r.best._pw[]._otA : object
+m.ctl.r.best._pw[]._onH : null
+m.ctl.r.best._pw[]._lc : null
+m.ctl.r.best._pw[]._o : object|OYUNCU
+m.ctl.r.best._pT : number
+m.ctl.r.opts : dizi
+m.ctl.r.opts[] : object {kind,to,dir,_own,uzun,duvar,toE,TsE,v,dok,det,en,enV,prensip,_pw,_pT,spr,sprBos,sjK,q,arrive,tek,firm,itK,launch,sYon,savT,_sek,tf,lf0,siddet}
+m.ctl.r.opts[].kind : string
+m.ctl.r.opts[].to : object {x,y}
+m.ctl.r.opts[].to.x : number
+m.ctl.r.opts[].to.y : number
+m.ctl.r.opts[].dir : object {x,y}
+m.ctl.r.opts[].dir.x : number
+m.ctl.r.opts[].dir.y : number
+m.ctl.r.opts[]._own : number
+m.ctl.r.opts[].uzun : undef
+m.ctl.r.opts[].duvar : undef
+m.ctl.r.opts[].toE : object {x,y}
+m.ctl.r.opts[].toE.x : number
+m.ctl.r.opts[].toE.y : number
+m.ctl.r.opts[].TsE : number
+m.ctl.r.opts[].v : number
+m.ctl.r.opts[].dok : object {tutar,durum,kayip,sure,sut,ileri,surme,zemin,sonra,simdi,alici,sekme}
+m.ctl.r.opts[].dok.tutar : number
+m.ctl.r.opts[].dok.durum : number
+m.ctl.r.opts[].dok.kayip : number
+m.ctl.r.opts[].dok.sure : number
+m.ctl.r.opts[].dok.sut : number
+m.ctl.r.opts[].dok.ileri : number
+m.ctl.r.opts[].dok.surme : number
+m.ctl.r.opts[].dok.zemin : number
+m.ctl.r.opts[].dok.sonra : string
+m.ctl.r.opts[].det : object {P,ch,Pk,Pl,end,endM,endO,Ps,endS,endD,Psek,endSek}
+m.ctl.r.opts[].det.P : number
+m.ctl.r.opts[].det.ch : number
+m.ctl.r.opts[].en : object {biz,rakip,hizBiz,hizRakip,hizRakipD,hizRakipY,per,ek}
+m.ctl.r.opts[].en.biz : number
+m.ctl.r.opts[].en.rakip : number
+m.ctl.r.opts[].en.hizBiz : number
+m.ctl.r.opts[].en.hizRakip : number
+m.ctl.r.opts[].en.hizRakipD : number
+m.ctl.r.opts[].en.hizRakipY : number
+m.ctl.r.opts[].en.per : Map
+m.ctl.r.opts[].en.ek : number
+m.ctl.r.opts[].enV : number
+m.ctl.r.opts[].prensip : string
+m.ctl.r.opts[]._pw : dizi
+m.ctl.r.opts[]._pw[] : object
+m.ctl.r.opts[]._pT : number
+m.ctl.r.opts[].spr : number|undef
+m.ctl.r.opts[].sprBos : number
+m.ctl.r.opts[].dok.simdi : number
+m.ctl.r.opts[].sjK : number
+m.ctl.r.T : number
+m._prT.hm{k} : number
+m._prT.hm{v} : number
+m._gelenB.cds : Map
+m._gelenB.cds{k} : OYUNCU
+m._gelenB.cds{v} : number
+m._gelenB.defl : number|boolean
+o : object {kind,to,dir,_own,uzun,duvar,toE,TsE,v,dok,det,en,enV,prensip,_pw,_pT,spr,sprBos,sjK,q,arrive,tek,firm,itK,launch,sYon,savT,_sek,tf,kh,lf0,siddet,asim,kendine,lead,hold,shot}
+o.kind : string
+o.to : object {x,y}
+o.to.x : number
+o.to.y : number
+o.dir : object {x,y}
+o.dir.x : number
+o.dir.y : number
+o._own : number
+o.uzun : undef|number
+o.duvar : undef
+o.toE : object {x,y}
+o.toE.x : number
+o.toE.y : number
+o.TsE : number
+o.v : number
+o.dok : object {tutar,durum,kayip,sure,sut,ileri,surme,zemin,sonra,simdi,alici,sekme,gol}
+o.dok.tutar : number
+o.dok.durum : number
+o.dok.kayip : number
+o.dok.sure : number
+o.dok.sut : number
+o.dok.ileri : number
+o.dok.surme : number
+o.dok.zemin : number
+o.dok.sonra : string
+o.det : object {P,ch,Pk,Pl,end,endM,endO,Ps,endS,endD,Psek,endSek}
+o.det.P : number
+o.det.ch : number
+o.en : object {biz,rakip,hizBiz,hizRakip,hizRakipD,hizRakipY,per,ek}
+o.en.biz : number
+o.en.rakip : number
+o.en.hizBiz : number
+o.en.hizRakip : number
+o.en.hizRakipD : number
+o.en.hizRakipY : number
+o.en.per : Map
+o.en.per{k} : string
+o.en.per{v} : number
+o.en.ek : number
+o.enV : number
+o.prensip : string
+o._pw : dizi
+o._pw[] : object {id,team,i,role,slot,name,a,R,D,x,y,vx,vy,tx,ty,cd,en,driveTo,_dur,_korT,bekBas,noTouch,hist,lock,kapPrev,zonePrev,swPrev,uaPrev,rec,tutQ,sprint,press,job,otx,_bk,_ktB,_topSpr,_kosuK,_hizK,_evx,_evy,_yog,_D0,_Dl,_enOnce,ca,_don,drive,_dke,past,holdD,_plan,_surK,_sprIst,sarj,savur,lastWhy,_yer,amA,am,__g,__yas,__e,rslot,slot0,rslot0,rh,rs,tl,markRef,eg,oty,_otH,_otB,_otE,_otF,_kv,_amacJob,_kt,_hizF,kuyuT,sonuk,_kuyuCik,_rcvV,_rcvB,_rcvAbs,_rcvX,_rcvY,chB,_preB,_preT,_otA,_onH,_lc,_o,_donDir,_donT,_savT,_savD,_blokT,_omuzT,_omEv,_savCar,lockAt,_lockH,_presT,_presH,_kh,_khT,_khQ,_onK,_kal,_kalH,hamle,_dolYok,adandi,adT,son,adNeden,den,_sf,_bosT,_gvKaz,pplan,_kAn,_kAnT,fiskeCd,fiske,fiskeDir,okudu,_winSeen}
+o._pw[].id : number
+o._pw[].team : number
+o._pw[].i : number
+o._pw[].role : string
+o._pw[].slot : object {role,d,l}
+o._pw[].slot.role : string
+o._pw[].slot.d : number
+o._pw[].slot.l : number
+o._pw[].name : string
+o._pw[].a : object {hiz,ceviklik,guc,uzanma,alan,kontrol,surme,pas,gonderme,yukleme,tepki,gorus,yeralma,sogukkanlilik,kesme,refleks,yerlesim,hakimiyet,taraf,enerji,govde,caliskanlik}
+o._pw[].a.hiz : number
+o._pw[].a.ceviklik : number
+o._pw[].a.guc : number
+o._pw[].a.uzanma : number
+o._pw[].a.alan : number
+o._pw[].a.kontrol : number
+o._pw[].a.surme : number
+o._pw[].a.pas : number
+o._pw[].a.gonderme : number
+o._pw[].a.yukleme : number
+o._pw[].a.tepki : number
+o._pw[].a.gorus : number
+o._pw[].a.yeralma : number
+o._pw[].a.sogukkanlilik : number
+o._pw[].a.kesme : number
+o._pw[].a.refleks : number
+o._pw[].a.yerlesim : number
+o._pw[].a.hakimiyet : number
+o._pw[].a.taraf : string
+o._pw[].a.enerji : number
+o._pw[].a.govde : number
+o._pw[].a.caliskanlik : number
+o._pw[].R : number
+o._pw[].D : number
+o._pw[].x : number
+o._pw[].y : number
+o._pw[].vx : number
+o._pw[].vy : number
+o._pw[].tx : number
+o._pw[].ty : number
+o._pw[].cd : number
+o._pw[].en : number
+o._pw[].driveTo : null|object {x,y}
+o._pw[]._dur : number|null
+o._pw[]._korT : number
+o._pw[].bekBas : null
+o._pw[].noTouch : boolean
+o._pw[].hist : dizi
+o._pw[].hist[] : object {x,y,vx,vy}
+o._pw[].hist[].x : number
+o._pw[].hist[].y : number
+o._pw[].hist[].vx : number
+o._pw[].hist[].vy : number
+o._pw[].lock : number
+o._pw[].kapPrev : null
+o._pw[].zonePrev : null|OYUNCU
+o._pw[].swPrev : null|OYUNCU
+o._pw[].uaPrev : null|OYUNCU
+o._pw[].rec : number
+o._pw[].tutQ : null|OYUNCU
+o._pw[].sprint : boolean
+o._pw[].press : boolean
+o._pw[].job : string
+o._pw[].otx : null|number
+o._pw[]._bk : dizi
+o._pw[]._bk[] : undef|object {x,y,vx,vy,t,z}
+o._pw[]._bk[].x : number
+o._pw[]._bk[].y : number
+o._pw[]._bk[].vx : number
+o._pw[]._bk[].vy : number
+o._pw[]._bk[].t : number
+o._pw[]._bk[].z : number
+o._pw[]._ktB : object {x,y}
+o._pw[]._ktB.x : number
+o._pw[]._ktB.y : number
+o._pw[]._topSpr : boolean
+o._pw[]._kosuK : null|string
+o._pw[]._hizK : null|number
+o._pw[]._evx : number
+o._pw[]._evy : number
+o._pw[]._yog : number
+o._pw[]._D0 : number
+o._pw[]._Dl : number
+o._pw[]._enOnce : number
+o._pw[].ca : number
+o._pw[]._don : number
+o._pw[].drive : boolean
+o._pw[]._dke : number
+o._pw[].past : dizi
+o._pw[].past[] : object {x,y}
+o._pw[].past[].x : number
+o._pw[].past[].y : number
+o._pw[].holdD : boolean
+o._pw[]._plan : null
+o._pw[]._surK : null
+o._pw[]._sprIst : boolean
+o._pw[].sarj : boolean
+o._pw[].savur : null
+o._pw[].lastWhy : string
+o._pw[]._yer : boolean
+o._pw[].amA : boolean
+o._pw[].am : number
+o._pw[].__g : OYUNCU
+o._pw[].__yas : number
+o._pw[].__e : number
+o._pw[].rslot : object {d,l}
+o._pw[].rslot.d : number
+o._pw[].rslot.l : number
+o._pw[].slot0 : object {role,d,l}
+o._pw[].slot0.role : string
+o._pw[].slot0.d : number
+o._pw[].slot0.l : number
+o._pw[].rslot0 : object {d,l}
+o._pw[].rslot0.d : number
+o._pw[].rslot0.l : number
+o._pw[].rh : string
+o._pw[].rs : string
+o._pw[].tl : object {huc,sav}
+o._pw[].tl.huc : object {kosu,istek,destek,risk,ritim,tempo,gonder,serbest}
+o._pw[].tl.huc.kosu : number
+o._pw[].tl.huc.istek : number
+o._pw[].tl.huc.destek : number
+o._pw[].tl.huc.risk : number
+o._pw[].tl.huc.ritim : number
+o._pw[].tl.huc.tempo : number
+o._pw[].tl.huc.gonder : number
+o._pw[].tl.huc.serbest : number
+o._pw[].tl.sav : object {adam,pres}
+o._pw[].tl.sav.adam : number
+o._pw[].tl.sav.pres : number
+o._pw[].markRef : OYUNCU
+o._pw[].eg : object {ps,rk}
+o._pw[].eg.ps : number
+o._pw[].eg.rk : number
+o._pw[].oty : number
+o._pw[]._otH : OYUNCU|null
+o._pw[]._otB : null
+o._pw[]._otE : object {x,y}
+o._pw[]._otE.x : number
+o._pw[]._otE.y : number
+o._pw[]._otF : null|OYUNCU
+o._pw[]._kv : null
+o._pw[]._amacJob : null
+o._pw[]._kt : object {x,y}
+o._pw[]._kt.x : number
+o._pw[]._kt.y : number
+o._pw[]._hizF : number
+o._pw[].kuyuT : number
+o._pw[].sonuk : boolean
+o._pw[]._kuyuCik : boolean
+o._pw[]._rcvV : null|number
+o._pw[]._rcvB : TOPKOPYA|object {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,cds,defl,holder,gvx,gvy}
+o._pw[]._rcvB.x : number
+o._pw[]._rcvB.y : number
+o._pw[]._rcvB.vx : number
+o._pw[]._rcvB.vy : number
+o._pw[]._rcvB.e : number
+o._pw[]._rcvB.ch : number
+o._pw[]._rcvB.team : number
+o._pw[]._rcvB.alive : boolean
+o._pw[]._rcvB.dead : number
+o._pw[]._rcvB.t : number
+o._pw[]._rcvB.dist : number
+o._pw[]._rcvB.walls : number
+o._pw[]._rcvB.done : string
+o._pw[]._rcvB.log : dizi
+o._pw[]._rcvB.log[] : object
+o._pw[]._rcvB.from : OYUNCU
+o._pw[]._rcvB.recv : OYUNCU
+o._pw[]._rcvB.vur : OYUNCU
+o._pw[]._rcvB.kt : number
+o._pw[]._rcvB.kz : number
+o._pw[]._rcvB.cue : number
+o._pw[]._rcvB.bekId : number
+o._pw[]._rcvB.bekM : number
+o._pw[]._rcvB._oku : object {111,112,113,114,115,116,-112,-113,-114,-115,-116,-117}
+o._pw[]._rcvB._oku.111 : object
+o._pw[]._rcvB._oku.112 : object
+o._pw[]._rcvB._oku.113 : object
+o._pw[]._rcvB._oku.114 : object
+o._pw[]._rcvB._oku.115 : object
+o._pw[]._rcvB._oku.116 : object
+o._pw[]._rcvB._oku.-112 : object
+o._pw[]._rcvB._oku.-113 : object
+o._pw[]._rcvB._oku.-114 : object
+o._pw[]._rcvB._oku.-115 : object
+o._pw[]._rcvB._oku.-116 : object
+o._pw[]._rcvB._oku.-117 : object
+o._pw[]._rcvB.tp : number
+o._pw[]._rcvB._w0 : number
+o._pw[]._rcvB._d0 : number
+o._pw[]._rcvB._tt : number
+o._pw[]._rcvB.cds : Map
+o._pw[]._rcvB.cds{k} : OYUNCU
+o._pw[]._rcvB.cds{v} : number
+o._pw[]._rcvB.defl : number
+o._pw[]._rcvB.holder : OYUNCU
+o._pw[]._rcvB.gvx : number
+o._pw[]._rcvB.gvy : number
+o._pw[]._rcvAbs : number
+o._pw[]._rcvX : number
+o._pw[]._rcvY : number
+o._pw[].chB : TOPKOPYA|object {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,cds,defl,holder,gvx,gvy}
+o._pw[].chB.x : number
+o._pw[].chB.y : number
+o._pw[].chB.vx : number
+o._pw[].chB.vy : number
+o._pw[].chB.e : number
+o._pw[].chB.ch : number
+o._pw[].chB.team : number
+o._pw[].chB.alive : boolean
+o._pw[].chB.dead : number
+o._pw[].chB.t : number
+o._pw[].chB.dist : number
+o._pw[].chB.walls : number
+o._pw[].chB.done : string
+o._pw[].chB.log : dizi
+o._pw[].chB.log[] : object
+o._pw[].chB.from : OYUNCU
+o._pw[].chB.recv : OYUNCU
+o._pw[].chB.vur : OYUNCU
+o._pw[].chB.kt : number
+o._pw[].chB.kz : number
+o._pw[].chB.cue : number
+o._pw[].chB.bekId : number
+o._pw[].chB.bekM : number
+o._pw[].chB._oku : object {111,112,113,114,115,116,-112,-113,-114,-115,-116,-117}
+o._pw[].chB._oku.111 : object
+o._pw[].chB._oku.112 : object
+o._pw[].chB._oku.113 : object
+o._pw[].chB._oku.114 : object
+o._pw[].chB._oku.115 : object
+o._pw[].chB._oku.116 : object
+o._pw[].chB._oku.-112 : object
+o._pw[].chB._oku.-113 : object
+o._pw[].chB._oku.-114 : object
+o._pw[].chB._oku.-115 : object
+o._pw[].chB._oku.-116 : object
+o._pw[].chB._oku.-117 : object
+o._pw[].chB.tp : number
+o._pw[].chB._w0 : number
+o._pw[].chB._d0 : number|boolean
+o._pw[].chB._tt : number
+o._pw[].chB.cds : Map
+o._pw[].chB.cds{k} : OYUNCU
+o._pw[].chB.cds{v} : number
+o._pw[].chB.defl : number|boolean
+o._pw[].chB.holder : OYUNCU
+o._pw[].chB.gvx : number
+o._pw[].chB.gvy : number
+o._pw[]._preB : TOPKOPYA|object {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,cds,defl,holder,gvx,gvy}
+o._pw[]._preB.x : number
+o._pw[]._preB.y : number
+o._pw[]._preB.vx : number
+o._pw[]._preB.vy : number
+o._pw[]._preB.e : number
+o._pw[]._preB.ch : number
+o._pw[]._preB.team : number
+o._pw[]._preB.alive : boolean
+o._pw[]._preB.dead : number
+o._pw[]._preB.t : number
+o._pw[]._preB.dist : number
+o._pw[]._preB.walls : number
+o._pw[]._preB.done : string
+o._pw[]._preB.log : dizi
+o._pw[]._preB.log[] : object
+o._pw[]._preB.from : OYUNCU
+o._pw[]._preB.recv : OYUNCU
+o._pw[]._preB.vur : OYUNCU
+o._pw[]._preB.kt : number
+o._pw[]._preB.kz : number
+o._pw[]._preB.cue : number
+o._pw[]._preB.bekId : number
+o._pw[]._preB.bekM : number
+o._pw[]._preB._oku : object {111,112,113,114,115,116,-112,-113,-114,-115,-116,-117}
+o._pw[]._preB._oku.111 : object
+o._pw[]._preB._oku.112 : object
+o._pw[]._preB._oku.113 : object
+o._pw[]._preB._oku.114 : object
+o._pw[]._preB._oku.115 : object
+o._pw[]._preB._oku.116 : object
+o._pw[]._preB._oku.-112 : object
+o._pw[]._preB._oku.-113 : object
+o._pw[]._preB._oku.-114 : object
+o._pw[]._preB._oku.-115 : object
+o._pw[]._preB._oku.-116 : object
+o._pw[]._preB._oku.-117 : object
+o._pw[]._preB.tp : number
+o._pw[]._preB._w0 : number
+o._pw[]._preB._d0 : number
+o._pw[]._preB._tt : number
+o._pw[]._preB.cds : Map
+o._pw[]._preB.cds{k} : OYUNCU
+o._pw[]._preB.cds{v} : number
+o._pw[]._preB.defl : number
+o._pw[]._preB.holder : OYUNCU
+o._pw[]._preB.gvx : number
+o._pw[]._preB.gvy : number
+o._pw[]._preT : number
+o._pw[]._otA : object {b,ok}
+o._pw[]._otA.b : TOPKOPYA|object {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,cds,defl,holder,gvx,gvy}
+o._pw[]._otA.b.x : number
+o._pw[]._otA.b.y : number
+o._pw[]._otA.b.vx : number
+o._pw[]._otA.b.vy : number
+o._pw[]._otA.b.e : number
+o._pw[]._otA.b.ch : number
+o._pw[]._otA.b.team : number
+o._pw[]._otA.b.alive : boolean
+o._pw[]._otA.b.dead : number
+o._pw[]._otA.b.t : number
+o._pw[]._otA.b.dist : number
+o._pw[]._otA.b.walls : number
+o._pw[]._otA.b.done : string
+o._pw[]._otA.b.log : dizi
+o._pw[]._otA.b.from : OYUNCU
+o._pw[]._otA.b.recv : OYUNCU
+o._pw[]._otA.b.vur : OYUNCU
+o._pw[]._otA.b.kt : number
+o._pw[]._otA.b.kz : number
+o._pw[]._otA.b.cue : number
+o._pw[]._otA.b.bekId : number
+o._pw[]._otA.b.bekM : number
+o._pw[]._otA.b._oku : object
+o._pw[]._otA.b.tp : number
+o._pw[]._otA.b._w0 : number
+o._pw[]._otA.b._d0 : number
+o._pw[]._otA.b._tt : number
+o._pw[]._otA.b.cds : Map
+o._pw[]._otA.b.defl : number
+o._pw[]._otA.b.holder : OYUNCU
+o._pw[]._otA.b.gvx : number
+o._pw[]._otA.b.gvy : number
+o._pw[]._otA.ok : boolean
+o._pw[]._onH : null
+o._pw[]._lc : null
+o._pw[]._o : object|OYUNCU {id,team,i,role,slot,name,a,R,D,x,y,vx,vy,tx,ty,cd,rslot,slot0,rslot0,en,driveTo,_dur,rh,rs,tl,markRef,eg,bekBas,noTouch,hist,lock,kapPrev,zonePrev,swPrev,uaPrev,rec,tutQ,sprint,press,job,otx,oty,_otH,_otB,_otE,_otF,_kv,_amacJob,_bk,_kt,_topSpr,_kosuK,_hizK,_hizF,kuyuT,sonuk,_kuyuCik,_evx,_evy,_yog,_D0,_Dl,_enOnce,past,amA,am,drive,sarj,savur,__g,__yas,__e,_rcvV,_rcvB,_rcvAbs,_rcvX,_rcvY,chB,_preB,_preT,_otA,_onH,ca,_lc,_plan,_dke,_don,holdD,_surK,_sprIst,lastWhy,_donDir,_donT,_savT,_savD,_blokT,_omuzT,_omEv,_savCar,lockAt,_lockH,_presT,_presH,_kh,_khT,_khQ,_onK,_kal,_kalH,hamle,_dolYok,adandi,adT,son,adNeden,den,_sf,_bosT,_gvKaz,pplan,_kAn,_kAnT,fiskeCd,fiske,fiskeDir,okudu,_winSeen}
+o._pw[]._o.id : number
+o._pw[]._o.team : number
+o._pw[]._o.i : number
+o._pw[]._o.role : string
+o._pw[]._o.slot : object {role,d,l}
+o._pw[]._o.slot.role : string
+o._pw[]._o.slot.d : number
+o._pw[]._o.slot.l : number
+o._pw[]._o.name : string
+o._pw[]._o.a : object {hiz,ceviklik,guc,uzanma,alan,kontrol,surme,pas,gonderme,yukleme,tepki,gorus,yeralma,sogukkanlilik,kesme,refleks,yerlesim,hakimiyet,taraf,enerji,govde,caliskanlik}
+o._pw[]._o.a.hiz : number
+o._pw[]._o.a.ceviklik : number
+o._pw[]._o.a.guc : number
+o._pw[]._o.a.uzanma : number
+o._pw[]._o.a.alan : number
+o._pw[]._o.a.kontrol : number
+o._pw[]._o.a.surme : number
+o._pw[]._o.a.pas : number
+o._pw[]._o.a.gonderme : number
+o._pw[]._o.a.yukleme : number
+o._pw[]._o.a.tepki : number
+o._pw[]._o.a.gorus : number
+o._pw[]._o.a.yeralma : number
+o._pw[]._o.a.sogukkanlilik : number
+o._pw[]._o.a.kesme : number
+o._pw[]._o.a.refleks : number
+o._pw[]._o.a.yerlesim : number
+o._pw[]._o.a.hakimiyet : number
+o._pw[]._o.a.taraf : string
+o._pw[]._o.a.enerji : number
+o._pw[]._o.a.govde : number
+o._pw[]._o.a.caliskanlik : number
+o._pw[]._o.R : number
+o._pw[]._o.D : number
+o._pw[]._o.x : number
+o._pw[]._o.y : number
+o._pw[]._o.vx : number
+o._pw[]._o.vy : number
+o._pw[]._o.tx : number
+o._pw[]._o.ty : number
+o._pw[]._o.cd : number
+o._pw[]._o.rslot : object {d,l}
+o._pw[]._o.rslot.d : number
+o._pw[]._o.rslot.l : number
+o._pw[]._o.slot0 : object {role,d,l}
+o._pw[]._o.slot0.role : string
+o._pw[]._o.slot0.d : number
+o._pw[]._o.slot0.l : number
+o._pw[]._o.rslot0 : object {d,l}
+o._pw[]._o.rslot0.d : number
+o._pw[]._o.rslot0.l : number
+o._pw[]._o.en : number
+o._pw[]._o.driveTo : null|object {x,y}
+o._pw[]._o._dur : null
+o._pw[]._o.rh : string
+o._pw[]._o.rs : string
+o._pw[]._o.tl : object {huc,sav}
+o._pw[]._o.tl.huc : object
+o._pw[]._o.tl.sav : object
+o._pw[]._o.markRef : OYUNCU
+o._pw[]._o.eg : object {ps,rk}
+o._pw[]._o.eg.ps : number
+o._pw[]._o.eg.rk : number
+o._pw[]._o.bekBas : null
+o._pw[]._o.noTouch : boolean
+o._pw[]._o.hist : dizi
+o._pw[]._o.hist[] : object
+o._pw[]._o.lock : number
+o._pw[]._o.kapPrev : null
+o._pw[]._o.zonePrev : null|OYUNCU
+o._pw[]._o.swPrev : null|OYUNCU
+o._pw[]._o.uaPrev : null|OYUNCU
+o._pw[]._o.rec : number
+o._pw[]._o.tutQ : null|OYUNCU
+o._pw[]._o.sprint : boolean
+o._pw[]._o.press : boolean
+o._pw[]._o.job : string
+o._pw[]._o.otx : number|null
+o._pw[]._o.oty : number
+o._pw[]._o._otH : null|OYUNCU
+o._pw[]._o._otB : null
+o._pw[]._o._otE : object {x,y}
+o._pw[]._o._otE.x : number
+o._pw[]._o._otE.y : number
+o._pw[]._o._otF : OYUNCU|null
+o._pw[]._o._kv : null
+o._pw[]._o._amacJob : null
+o._pw[]._o._bk : dizi
+o._pw[]._o._bk[] : object|undef
+o._pw[]._o._kt : object {x,y}
+o._pw[]._o._kt.x : number
+o._pw[]._o._kt.y : number
+o._pw[]._o._topSpr : boolean
+o._pw[]._o._kosuK : string|null
+o._pw[]._o._hizK : number|null
+o._pw[]._o._hizF : number
+o._pw[]._o.kuyuT : number
+o._pw[]._o.sonuk : boolean
+o._pw[]._o._kuyuCik : boolean
+o._pw[]._o._evx : number
+o._pw[]._o._evy : number
+o._pw[]._o._yog : number
+o._pw[]._o._D0 : number
+o._pw[]._o._Dl : number
+o._pw[]._o._enOnce : number
+o._pw[]._o.past : dizi
+o._pw[]._o.past[] : object
+o._pw[]._o.amA : boolean
+o._pw[]._o.am : number
+o._pw[]._o.drive : boolean
+o._pw[]._o.sarj : boolean
+o._pw[]._o.savur : null
+o._pw[]._o.__g : OYUNCU
+o._pw[]._o.__yas : number
+o._pw[]._o.__e : number
+o._pT : number
+o.spr : number|undef|boolean
+o.sprBos : number
+o.dok.simdi : number
+o.sjK : number
+o.q : OYUNCU
+o.arrive : number
+o.tek : number
+o.firm : undef|boolean
+o.itK : undef|number
+o.launch : object {vx,vy,ok}
+o.launch.vx : number
+o.launch.vy : number
+o.launch.ok : boolean
+o.sYon : number
+o.savT : number
+o._sek : number
+o.det.Pk : number
+o.det.Pl : number
+o.det.end : object {x,y}
+o.det.end.x : number
+o.det.end.y : number
+o.det.endM : object {x,y}
+o.det.endM.x : number
+o.det.endM.y : number
+o.det.endO : object {x,y}
+o.det.endO.x : number
+o.det.endO.y : number
+o.det.Ps : number
+o.det.endS : object {x,y}
+o.det.endS.x : number
+o.det.endS.y : number
+o.det.endD : object {x,y}
+o.det.endD.x : number
+o.det.endD.y : number
+o.det.Psek : number
+o.det.endSek : object {x,y}
+o.det.endSek.x : number
+o.det.endSek.y : number
+o.tf : number
+o.dok.alici : number
+o.dok.sekme : number
+o.kh : string
+m.st.enP.1.sarj : number
+m.st.enP.12.dol : number
+p._omuzT : number
+m._sec.o[].dv : number
+m._temaslar.L[] : object {i,j,J,o,s}
+m._temaslar.L[].i : number
+m._temaslar.L[].j : number
+m._temaslar.L[].J : number
+m._temaslar.L[].o : number
+m._temaslar.L[].s : number
+m._temas : object {x,y,a,J,t}
+m._temas.x : number
+m._temas.y : number
+m._temas.a : number
+m._temas.J : number
+m._temas.t : number
+p._kv.x : number
+p._kv.y : number
+p._kv.t : number
+m._macC.0:72 : object {g,c,e0}
+m._macC.0:72.g : number
+m._macC.0:72.c : number
+m._macC.0:72.e0 : number
+p._sf : object|null {t0,f}
+p._sf.t0 : number
+p._sf.f : string
+m.st.sprF : dizi
+m.st.sprF[] : number
+m.st.sprT : dizi
+m.st.sprT[] : number
+p._savCar : number
+p.lockAt : number
+p._lockH : OYUNCU
+p._presT : number
+p._presH : OYUNCU
+p._onK : object {h,koy}
+p._onK.h : number
+p._onK.koy : boolean
+p._omEv : number
+m._macC.0:71 : object {g,c,e0}
+m._macC.0:71.g : number
+m._macC.0:71.c : number
+m._macC.0:71.e0 : number
+m.st.enP.4.ikili : number
+p.fiskeCd : number
+p.fiske : number
+p.fiskeDir : number
+m.st.enH[].fake : number
+m.st.enP.4.fake : number
+p._kal : boolean
+p._kalH : OYUNCU
+p.hamle : object|null {k,hid,t0,W}
+p.hamle.k : string
+p.hamle.hid : number
+p.hamle.t0 : number
+p.hamle.W : number
+p._dolYok : number
+p.adandi : number
+p.adT : object {x,y}
+p.adT.x : number
+p.adT.y : number
+m.st.enP.11.ikili : number
+p._gvKaz : object {h,t,kaz}
+p._gvKaz.h : number
+p._gvKaz.t : number
+p._gvKaz.kaz : number
+p._winSeen : number
+p.son : object {k,t,ok,x,y}
+p.son.k : string
+p.son.t : number
+p.son.ok : boolean
+p.son.x : number
+p.son.y : number
+m.st.enH[].calindi : number
+m.st.enH[].caldi : number
+m.st.enP.4.calindi : number
+m.st.enP.11.caldi : number
+m.st.enP.11.sarj : number
+m.st.enCal : dizi
+m.st.enCal[] : number
+m.gc.team : number
+m.gc.t0 : number
+m.gc.kendi : boolean
+m.gc.git : boolean
+m.gc.on : dizi
+m.gc.on[] : number
+m.gc.biz : number
+m.gc.rakip : number
+m._macC.0:70 : object {g,c,e0}
+m._macC.0:70.g : number
+m._macC.0:70.c : number
+m._macC.0:70.e0 : number
+m.not.p.14 : number
+m.winTeam : number
+m.hhKul : boolean
+m.gecisGeri : number
+m.kp : object|null {team,ids,bitis,sahip}
+m.kp.team : number
+m.kp.ids : dizi
+m.kp.ids[] : number
+m.kp.bitis : number
+m.kp.sahip : OYUNCU
+p.den : number
+b.sap : boolean
+m.st.enP.11.fake : number
+m._yzBas : number
+m._yzBekle : boolean
+b._oku.1 : object {k,on}
+b._oku.1.k : number
+b._oku.1.on : number
+b._oku.2 : object {k,on}
+b._oku.2.k : number
+b._oku.2.on : number
+b._oku.3 : object {k,on}
+b._oku.3.k : number
+b._oku.3.on : number
+b._oku.4 : object {k,on}
+b._oku.4.k : number
+b._oku.4.on : number
+b._oku.5 : object {k,on}
+b._oku.5.k : number
+b._oku.5.on : number
+b._oku.6 : object {k,on}
+b._oku.6.k : number
+b._oku.6.on : number
+b._oku.-2 : object {k,on}
+b._oku.-2.k : number
+b._oku.-2.on : number
+b._oku.-3 : object {k,on}
+b._oku.-3.k : number
+b._oku.-3.on : number
+b._oku.-4 : object {k,on}
+b._oku.-4.k : number
+b._oku.-4.on : number
+b._oku.-5 : object {k,on}
+b._oku.-5.k : number
+b._oku.-5.on : number
+b._oku.-6 : object {k,on}
+b._oku.-6.k : number
+b._oku.-6.on : number
+b._oku.-7 : object {k,on}
+b._oku.-7.k : number
+b._oku.-7.on : number
+m.pre.r.best.dok.simdi : number
+m.pre.r.best.sjK : number
+m.pre.r.best._pw[]._onH : null
+m.pre.r.best._pw[]._lc : null
+m.pre.r.best._pw[]._donDir : number
+m.pre.r.best._pw[]._donT : number
+m.pre.r.best._pw[]._savT : number
+m.pre.r.best._pw[]._savD : number
+m.pre.r.best._pw[]._blokT : number
+m.pre.r.best._pw[]._omuzT : number
+m.pre.r.best._pw[]._omEv : number
+m.pre.r.opts[].q : OYUNCU
+m.pre.r.opts[].arrive : number
+m.pre.r.opts[].tek : number
+m.pre.r.opts[].firm : undef|boolean
+m.pre.r.opts[].itK : undef
+m.pre.r.opts[].launch : object {vx,vy,ok}
+m.pre.r.opts[].launch.vx : number
+m.pre.r.opts[].launch.vy : number
+m.pre.r.opts[].launch.ok : boolean
+m.pre.r.opts[].sYon : number
+m.pre.r.opts[].savT : number
+m.pre.r.opts[]._sek : number
+m.pre.r.opts[].det.Pk : number
+m.pre.r.opts[].det.Pl : number
+m.pre.r.opts[].det.end : object
+m.pre.r.opts[].det.endM : object
+m.pre.r.opts[].det.endO : object
+m.pre.r.opts[].det.Ps : number
+m.pre.r.opts[].det.endS : object
+m.pre.r.opts[].det.endD : object
+m.pre.r.opts[].det.Psek : number
+m.pre.r.opts[].det.endSek : object
+m.pre.r.opts[].tf : number
+m.pre.r.opts[].dok.alici : number
+m.pre.r.opts[].dok.sekme : number
+m.pre.r.opts[].lf0 : object {vx,vy,ok}
+m.pre.r.opts[].lf0.vx : number
+m.pre.r.opts[].lf0.vy : number
+m.pre.r.opts[].lf0.ok : boolean
+p._rcvB.sap : boolean
+p._rcvB._oku.1 : object {k,on}
+p._rcvB._oku.1.k : number
+p._rcvB._oku.1.on : number
+p._rcvB._oku.2 : object {k,on}
+p._rcvB._oku.2.k : number
+p._rcvB._oku.2.on : number
+p._rcvB._oku.3 : object {k,on}
+p._rcvB._oku.3.k : number
+p._rcvB._oku.3.on : number
+p._rcvB._oku.4 : object {k,on}
+p._rcvB._oku.4.k : number
+p._rcvB._oku.4.on : number
+p._rcvB._oku.5 : object {k,on}
+p._rcvB._oku.5.k : number
+p._rcvB._oku.5.on : number
+p._rcvB._oku.6 : object {k,on}
+p._rcvB._oku.6.k : number
+p._rcvB._oku.6.on : number
+p._rcvB._oku.-2 : object {k,on}
+p._rcvB._oku.-2.k : number
+p._rcvB._oku.-2.on : number
+p._rcvB._oku.-3 : object {k,on}
+p._rcvB._oku.-3.k : number
+p._rcvB._oku.-3.on : number
+p._rcvB._oku.-4 : object {k,on}
+p._rcvB._oku.-4.k : number
+p._rcvB._oku.-4.on : number
+p._rcvB._oku.-5 : object {k,on}
+p._rcvB._oku.-5.k : number
+p._rcvB._oku.-5.on : number
+p._rcvB._oku.-6 : object {k,on}
+p._rcvB._oku.-6.k : number
+p._rcvB._oku.-6.on : number
+p._rcvB._oku.-7 : object {k,on}
+p._rcvB._oku.-7.k : number
+p._rcvB._oku.-7.on : number
+p.chB.sap : boolean
+p.chB._oku.1 : object {k,on}
+p.chB._oku.1.k : number
+p.chB._oku.1.on : number
+p.chB._oku.2 : object {k,on}
+p.chB._oku.2.k : number
+p.chB._oku.2.on : number
+p.chB._oku.3 : object {k,on}
+p.chB._oku.3.k : number
+p.chB._oku.3.on : number
+p.chB._oku.4 : object {k,on}
+p.chB._oku.4.k : number
+p.chB._oku.4.on : number
+p.chB._oku.5 : object {k,on}
+p.chB._oku.5.k : number
+p.chB._oku.5.on : number
+p.chB._oku.6 : object {k,on}
+p.chB._oku.6.k : number
+p.chB._oku.6.on : number
+p.chB._oku.-2 : object {k,on}
+p.chB._oku.-2.k : number
+p.chB._oku.-2.on : number
+p.chB._oku.-3 : object {k,on}
+p.chB._oku.-3.k : number
+p.chB._oku.-3.on : number
+p.chB._oku.-4 : object {k,on}
+p.chB._oku.-4.k : number
+p.chB._oku.-4.on : number
+p.chB._oku.-5 : object {k,on}
+p.chB._oku.-5.k : number
+p.chB._oku.-5.on : number
+p.chB._oku.-6 : object {k,on}
+p.chB._oku.-6.k : number
+p.chB._oku.-6.on : number
+p.chB._oku.-7 : object {k,on}
+p.chB._oku.-7.k : number
+p.chB._oku.-7.on : number
+p._preB.sap : boolean
+p._preB._oku.1 : object {k,on}
+p._preB._oku.1.k : number
+p._preB._oku.1.on : number
+p._preB._oku.2 : object {k,on}
+p._preB._oku.2.k : number
+p._preB._oku.2.on : number
+p._preB._oku.3 : object {k,on}
+p._preB._oku.3.k : number
+p._preB._oku.3.on : number
+p._preB._oku.4 : object {k,on}
+p._preB._oku.4.k : number
+p._preB._oku.4.on : number
+p._preB._oku.5 : object {k,on}
+p._preB._oku.5.k : number
+p._preB._oku.5.on : number
+p._preB._oku.6 : object {k,on}
+p._preB._oku.6.k : number
+p._preB._oku.6.on : number
+p._preB._oku.-2 : object {k,on}
+p._preB._oku.-2.k : number
+p._preB._oku.-2.on : number
+p._preB._oku.-3 : object {k,on}
+p._preB._oku.-3.k : number
+p._preB._oku.-3.on : number
+p._preB._oku.-4 : object {k,on}
+p._preB._oku.-4.k : number
+p._preB._oku.-4.on : number
+p._preB._oku.-5 : object {k,on}
+p._preB._oku.-5.k : number
+p._preB._oku.-5.on : number
+p._preB._oku.-6 : object {k,on}
+p._preB._oku.-6.k : number
+p._preB._oku.-6.on : number
+p._preB._oku.-7 : object {k,on}
+p._preB._oku.-7.k : number
+p._preB._oku.-7.on : number
+p._otA.b.sap : boolean
+p._otA.b._oku.1 : object {k,on}
+p._otA.b._oku.1.k : number
+p._otA.b._oku.1.on : number
+p._otA.b._oku.2 : object {k,on}
+p._otA.b._oku.2.k : number
+p._otA.b._oku.2.on : number
+p._otA.b._oku.3 : object {k,on}
+p._otA.b._oku.3.k : number
+p._otA.b._oku.3.on : number
+p._otA.b._oku.4 : object {k,on}
+p._otA.b._oku.4.k : number
+p._otA.b._oku.4.on : number
+p._otA.b._oku.5 : object {k,on}
+p._otA.b._oku.5.k : number
+p._otA.b._oku.5.on : number
+p._otA.b._oku.6 : object {k,on}
+p._otA.b._oku.6.k : number
+p._otA.b._oku.6.on : number
+p._otA.b._oku.-2 : object {k,on}
+p._otA.b._oku.-2.k : number
+p._otA.b._oku.-2.on : number
+p._otA.b._oku.-3 : object {k,on}
+p._otA.b._oku.-3.k : number
+p._otA.b._oku.-3.on : number
+p._otA.b._oku.-4 : object {k,on}
+p._otA.b._oku.-4.k : number
+p._otA.b._oku.-4.on : number
+p._otA.b._oku.-5 : object {k,on}
+p._otA.b._oku.-5.k : number
+p._otA.b._oku.-5.on : number
+p._otA.b._oku.-6 : object {k,on}
+p._otA.b._oku.-6.k : number
+p._otA.b._oku.-6.on : number
+p._otA.b._oku.-7 : object {k,on}
+p._otA.b._oku.-7.k : number
+p._otA.b._oku.-7.on : number
+m.st.enP.8.alan : number
+m.st.enP.10.alan : number
+m.sh.ball.sap : boolean
+m.sh.ball._oku.1 : object {k,on}
+m.sh.ball._oku.1.k : number
+m.sh.ball._oku.1.on : number
+m.sh.ball._oku.2 : object {k,on}
+m.sh.ball._oku.2.k : number
+m.sh.ball._oku.2.on : number
+m.sh.ball._oku.3 : object {k,on}
+m.sh.ball._oku.3.k : number
+m.sh.ball._oku.3.on : number
+m.sh.ball._oku.4 : object {k,on}
+m.sh.ball._oku.4.k : number
+m.sh.ball._oku.4.on : number
+m.sh.ball._oku.5 : object {k,on}
+m.sh.ball._oku.5.k : number
+m.sh.ball._oku.5.on : number
+m.sh.ball._oku.6 : object {k,on}
+m.sh.ball._oku.6.k : number
+m.sh.ball._oku.6.on : number
+m.sh.ball._oku.-2 : object {k,on}
+m.sh.ball._oku.-2.k : number
+m.sh.ball._oku.-2.on : number
+m.sh.ball._oku.-3 : object {k,on}
+m.sh.ball._oku.-3.k : number
+m.sh.ball._oku.-3.on : number
+m.sh.ball._oku.-4 : object {k,on}
+m.sh.ball._oku.-4.k : number
+m.sh.ball._oku.-4.on : number
+m.sh.ball._oku.-5 : object {k,on}
+m.sh.ball._oku.-5.k : number
+m.sh.ball._oku.-5.on : number
+m.sh.ball._oku.-6 : object {k,on}
+m.sh.ball._oku.-6.k : number
+m.sh.ball._oku.-6.on : number
+m.sh.ball._oku.-7 : object {k,on}
+m.sh.ball._oku.-7.k : number
+m.sh.ball._oku.-7.on : number
+m.sh.frB.sap : boolean
+m.sh.frB._oku.1 : object {k,on}
+m.sh.frB._oku.1.k : number
+m.sh.frB._oku.1.on : number
+m.sh.frB._oku.2 : object {k,on}
+m.sh.frB._oku.2.k : number
+m.sh.frB._oku.2.on : number
+m.sh.frB._oku.3 : object {k,on}
+m.sh.frB._oku.3.k : number
+m.sh.frB._oku.3.on : number
+m.sh.frB._oku.4 : object {k,on}
+m.sh.frB._oku.4.k : number
+m.sh.frB._oku.4.on : number
+m.sh.frB._oku.5 : object {k,on}
+m.sh.frB._oku.5.k : number
+m.sh.frB._oku.5.on : number
+m.sh.frB._oku.6 : object {k,on}
+m.sh.frB._oku.6.k : number
+m.sh.frB._oku.6.on : number
+m.sh.frB._oku.-2 : object {k,on}
+m.sh.frB._oku.-2.k : number
+m.sh.frB._oku.-2.on : number
+m.sh.frB._oku.-3 : object {k,on}
+m.sh.frB._oku.-3.k : number
+m.sh.frB._oku.-3.on : number
+m.sh.frB._oku.-4 : object {k,on}
+m.sh.frB._oku.-4.k : number
+m.sh.frB._oku.-4.on : number
+m.sh.frB._oku.-5 : object {k,on}
+m.sh.frB._oku.-5.k : number
+m.sh.frB._oku.-5.on : number
+m.sh.frB._oku.-6 : object {k,on}
+m.sh.frB._oku.-6.k : number
+m.sh.frB._oku.-6.on : number
+m.sh.frB._oku.-7 : object {k,on}
+m.sh.frB._oku.-7.k : number
+m.sh.frB._oku.-7.on : number
+m.not.p.13 : number
+m.pre.b.sap : boolean
+m.pre.b._oku.1 : object {k,on}
+m.pre.b._oku.1.k : number
+m.pre.b._oku.1.on : number
+m.pre.b._oku.2 : object {k,on}
+m.pre.b._oku.2.k : number
+m.pre.b._oku.2.on : number
+m.pre.b._oku.3 : object {k,on}
+m.pre.b._oku.3.k : number
+m.pre.b._oku.3.on : number
+m.pre.b._oku.4 : object {k,on}
+m.pre.b._oku.4.k : number
+m.pre.b._oku.4.on : number
+m.pre.b._oku.5 : object {k,on}
+m.pre.b._oku.5.k : number
+m.pre.b._oku.5.on : number
+m.pre.b._oku.6 : object {k,on}
+m.pre.b._oku.6.k : number
+m.pre.b._oku.6.on : number
+m.pre.b._oku.-2 : object {k,on}
+m.pre.b._oku.-2.k : number
+m.pre.b._oku.-2.on : number
+m.pre.b._oku.-3 : object {k,on}
+m.pre.b._oku.-3.k : number
+m.pre.b._oku.-3.on : number
+m.pre.b._oku.-4 : object {k,on}
+m.pre.b._oku.-4.k : number
+m.pre.b._oku.-4.on : number
+m.pre.b._oku.-5 : object {k,on}
+m.pre.b._oku.-5.k : number
+m.pre.b._oku.-5.on : number
+m.pre.b._oku.-6 : object {k,on}
+m.pre.b._oku.-6.k : number
+m.pre.b._oku.-6.on : number
+m.pre.b._oku.-7 : object {k,on}
+m.pre.b._oku.-7.k : number
+m.pre.b._oku.-7.on : number
+m.ctl.r.best.dok.simdi : number
+m.ctl.r.best.sjK : number
+m.ctl.r.best._pw[]._donDir : number
+m.ctl.r.best._pw[]._donT : number
+m.ctl.r.best._pw[]._savT : number
+m.ctl.r.best._pw[]._savD : number
+m.ctl.r.best._pw[]._blokT : number
+m.ctl.r.best._pw[]._omuzT : number
+m.ctl.r.best._pw[]._omEv : number
+m.ctl.r.opts[].q : OYUNCU
+m.ctl.r.opts[].arrive : number
+m.ctl.r.opts[].tek : number
+m.ctl.r.opts[].firm : undef|boolean
+m.ctl.r.opts[].itK : undef
+m.ctl.r.opts[].launch : object {vx,vy,ok}
+m.ctl.r.opts[].launch.vx : number
+m.ctl.r.opts[].launch.vy : number
+m.ctl.r.opts[].launch.ok : boolean
+m.ctl.r.opts[].sYon : number
+m.ctl.r.opts[].savT : number
+m.ctl.r.opts[]._sek : number
+m.ctl.r.opts[].det.Pk : number
+m.ctl.r.opts[].det.Pl : number
+m.ctl.r.opts[].det.end : object
+m.ctl.r.opts[].det.endM : object
+m.ctl.r.opts[].det.endO : object
+m.ctl.r.opts[].det.Ps : number
+m.ctl.r.opts[].det.endS : object
+m.ctl.r.opts[].det.endD : object
+m.ctl.r.opts[].det.Psek : number
+m.ctl.r.opts[].det.endSek : object
+m.ctl.r.opts[].tf : number
+m.ctl.r.opts[].dok.alici : number
+m.ctl.r.opts[].dok.sekme : number
+m.ctl.r.opts[].lf0 : object {vx,vy,ok}
+m.ctl.r.opts[].lf0.vx : number
+m.ctl.r.opts[].lf0.vy : number
+m.ctl.r.opts[].lf0.ok : boolean
+m._gelenB.sap : boolean
+m._gelenB._oku.1 : object {k,on}
+m._gelenB._oku.1.k : number
+m._gelenB._oku.1.on : number
+m._gelenB._oku.2 : object {k,on}
+m._gelenB._oku.2.k : number
+m._gelenB._oku.2.on : number
+m._gelenB._oku.3 : object {k,on}
+m._gelenB._oku.3.k : number
+m._gelenB._oku.3.on : number
+m._gelenB._oku.4 : object {k,on}
+m._gelenB._oku.4.k : number
+m._gelenB._oku.4.on : number
+m._gelenB._oku.5 : object {k,on}
+m._gelenB._oku.5.k : number
+m._gelenB._oku.5.on : number
+m._gelenB._oku.6 : object {k,on}
+m._gelenB._oku.6.k : number
+m._gelenB._oku.6.on : number
+m._gelenB._oku.-2 : object {k,on}
+m._gelenB._oku.-2.k : number
+m._gelenB._oku.-2.on : number
+m._gelenB._oku.-3 : object {k,on}
+m._gelenB._oku.-3.k : number
+m._gelenB._oku.-3.on : number
+m._gelenB._oku.-4 : object {k,on}
+m._gelenB._oku.-4.k : number
+m._gelenB._oku.-4.on : number
+m._gelenB._oku.-5 : object {k,on}
+m._gelenB._oku.-5.k : number
+m._gelenB._oku.-5.on : number
+m._gelenB._oku.-6 : object {k,on}
+m._gelenB._oku.-6.k : number
+m._gelenB._oku.-6.on : number
+m._gelenB._oku.-7 : object {k,on}
+m._gelenB._oku.-7.k : number
+m._gelenB._oku.-7.on : number
+o._pw[]._donDir : number
+o._pw[]._donT : number
+o._pw[]._savT : number
+o._pw[]._savD : number
+o._pw[]._blokT : number
+o._pw[]._o._rcvV : null
+o._pw[]._o._rcvB : TOPKOPYA|object {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,cds,defl,holder,gvx,gvy}
+o._pw[]._o._rcvB.x : number
+o._pw[]._o._rcvB.y : number
+o._pw[]._o._rcvB.vx : number
+o._pw[]._o._rcvB.vy : number
+o._pw[]._o._rcvB.e : number
+o._pw[]._o._rcvB.ch : number
+o._pw[]._o._rcvB.team : number
+o._pw[]._o._rcvB.alive : boolean
+o._pw[]._o._rcvB.dead : number
+o._pw[]._o._rcvB.t : number
+o._pw[]._o._rcvB.dist : number
+o._pw[]._o._rcvB.walls : number
+o._pw[]._o._rcvB.done : string
+o._pw[]._o._rcvB.log : dizi
+o._pw[]._o._rcvB.from : OYUNCU
+o._pw[]._o._rcvB.recv : OYUNCU
+o._pw[]._o._rcvB.vur : OYUNCU
+o._pw[]._o._rcvB.kt : number
+o._pw[]._o._rcvB.kz : number
+o._pw[]._o._rcvB.cue : number
+o._pw[]._o._rcvB.bekId : number
+o._pw[]._o._rcvB.bekM : number
+o._pw[]._o._rcvB._oku : object
+o._pw[]._o._rcvB.tp : number
+o._pw[]._o._rcvB._w0 : number
+o._pw[]._o._rcvB._d0 : number
+o._pw[]._o._rcvB._tt : number
+o._pw[]._o._rcvB.cds : Map
+o._pw[]._o._rcvB.defl : number
+o._pw[]._o._rcvB.holder : OYUNCU
+o._pw[]._o._rcvB.gvx : number
+o._pw[]._o._rcvB.gvy : number
+o._pw[]._o._rcvAbs : number
+o._pw[]._o._rcvX : number
+o._pw[]._o._rcvY : number
+o._pw[]._o.chB : TOPKOPYA|object {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,cds,defl,holder,gvx,gvy}
+o._pw[]._o.chB.x : number
+o._pw[]._o.chB.y : number
+o._pw[]._o.chB.vx : number
+o._pw[]._o.chB.vy : number
+o._pw[]._o.chB.e : number
+o._pw[]._o.chB.ch : number
+o._pw[]._o.chB.team : number
+o._pw[]._o.chB.alive : boolean
+o._pw[]._o.chB.dead : number
+o._pw[]._o.chB.t : number
+o._pw[]._o.chB.dist : number
+o._pw[]._o.chB.walls : number
+o._pw[]._o.chB.done : string
+o._pw[]._o.chB.log : dizi
+o._pw[]._o.chB.from : OYUNCU
+o._pw[]._o.chB.recv : OYUNCU
+o._pw[]._o.chB.vur : OYUNCU
+o._pw[]._o.chB.kt : number
+o._pw[]._o.chB.kz : number
+o._pw[]._o.chB.cue : number
+o._pw[]._o.chB.bekId : number
+o._pw[]._o.chB.bekM : number
+o._pw[]._o.chB._oku : object
+o._pw[]._o.chB.tp : number
+o._pw[]._o.chB._w0 : number
+o._pw[]._o.chB._d0 : number|boolean
+o._pw[]._o.chB._tt : number
+o._pw[]._o.chB.cds : Map
+o._pw[]._o.chB.defl : number|boolean
+o._pw[]._o.chB.holder : OYUNCU
+o._pw[]._o.chB.gvx : number
+o._pw[]._o.chB.gvy : number
+o._pw[]._o._preB : TOPKOPYA|object {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,cds,defl,holder,gvx,gvy}
+o._pw[]._o._preB.x : number
+o._pw[]._o._preB.y : number
+o._pw[]._o._preB.vx : number
+o._pw[]._o._preB.vy : number
+o._pw[]._o._preB.e : number
+o._pw[]._o._preB.ch : number
+o._pw[]._o._preB.team : number
+o._pw[]._o._preB.alive : boolean
+o._pw[]._o._preB.dead : number
+o._pw[]._o._preB.t : number
+o._pw[]._o._preB.dist : number
+o._pw[]._o._preB.walls : number
+o._pw[]._o._preB.done : string
+o._pw[]._o._preB.log : dizi
+o._pw[]._o._preB.from : OYUNCU
+o._pw[]._o._preB.recv : OYUNCU
+o._pw[]._o._preB.vur : OYUNCU
+o._pw[]._o._preB.kt : number
+o._pw[]._o._preB.kz : number
+o._pw[]._o._preB.cue : number
+o._pw[]._o._preB.bekId : number
+o._pw[]._o._preB.bekM : number
+o._pw[]._o._preB._oku : object
+o._pw[]._o._preB.tp : number
+o._pw[]._o._preB._w0 : number
+o._pw[]._o._preB._d0 : number
+o._pw[]._o._preB._tt : number
+o._pw[]._o._preB.cds : Map
+o._pw[]._o._preB.defl : number
+o._pw[]._o._preB.holder : OYUNCU
+o._pw[]._o._preB.gvx : number
+o._pw[]._o._preB.gvy : number
+o._pw[]._o._preT : number
+o._pw[]._o._otA : object {b,ok}
+o._pw[]._o._otA.b : TOPKOPYA|object
+o._pw[]._o._otA.ok : boolean
+o._pw[]._o._onH : null
+o._pw[]._o.ca : number
+o._pw[]._o._lc : null
+o._pw[]._o._plan : null
+o._pw[]._o._dke : number
+o._pw[]._o._don : number
+o._pw[]._o.holdD : boolean
+o._pw[]._o._surK : null
+o._pw[]._o._sprIst : boolean
+o._pw[]._o.lastWhy : string
+o._pw[]._o._donDir : number
+o._pw[]._o._donT : number
+o._pw[]._o._savT : number
+o._pw[]._o._savD : number
+o._pw[]._o._blokT : number
+o._pw[]._omuzT : number
+o._pw[]._omEv : number
+o._pw[]._o._omuzT : number
+o._pw[]._o._omEv : number
+o.lf0 : object {vx,vy,ok}
+o.lf0.vx : number
+o.lf0.vy : number
+o.lf0.ok : boolean
+o.siddet : number
+o.asim : number
+m.st.enP.5.ikili : number
+m.st.enP.10.sarj : number
+m.st.enP.10.ikili : number
+m.st.enP.12.sarj : number
+m.not.p.15 : number
+m._macC.0:69 : object {g,c,e0}
+m._macC.0:69.g : number
+m._macC.0:69.c : number
+m._macC.0:69.e0 : number
+p._kh : object {dx,dy}
+p._kh.dx : number
+p._kh.dy : number
+p._khT : number
+p._khQ : OYUNCU
+m._macC.0:68 : object {g,c,e0}
+m._macC.0:68.g : number
+m._macC.0:68.c : number
+m._macC.0:68.e0 : number
+m.st.enP.12.ikili : number
+m.st.enP.3.ikili : number
+m.pre.r.best._pw[]._savCar : number
+m.pre.r.best._pw[].lockAt : number
+m.pre.r.best._pw[]._lockH : OYUNCU
+m.pre.r.best._pw[]._presT : number
+m.pre.r.best._pw[]._presH : OYUNCU
+m.pre.r.best._pw[]._kh : object
+m.pre.r.best._pw[]._khT : number
+m.pre.r.best._pw[]._khQ : OYUNCU
+m.pre.r.best._pw[]._onK : object
+m.pre.r.best._pw[]._kal : boolean
+m.pre.r.best._pw[]._kalH : OYUNCU
+m.pre.r.best._pw[].hamle : null
+m.pre.r.best._pw[].adandi : number
+m.pre.r.best._pw[].adT : object
+p._omuz : object {t,q}
+p._omuz.t : number
+p._omuz.q : number
+m.gc.hizli : boolean
+p.adNeden : string
+m.st.enP.3.calindi : number
+m.st.enP.12.caldi : number
+m.st.enP.12.fake : number
+m._macC.0:67 : object {g,c,e0}
+m._macC.0:67.g : number
+m._macC.0:67.c : number
+m._macC.0:67.e0 : number
+m.st.enP.1.ikili : number
+m.st.enP.1.calindi : number
+p.savur.o._pw[]._plan : null
+p.savur.o._pw[]._surK : null|object {id,to,t,T,nd0}
+p.savur.o._pw[]._sprIst : boolean
+p.savur.o._pw[].sarj : boolean
+p.savur.o._pw[].savur : null
+p.savur.o._pw[].lastWhy : string
+p.savur.o._pw[]._yer : boolean
+p.savur.o._pw[].amA : boolean
+p.savur.o._pw[].am : number
+p.savur.o._pw[]._rcvV : null
+p.savur.o._pw[]._rcvB : TOPKOPYA|object {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,cds,defl,holder,gvx,gvy}
+p.savur.o._pw[]._rcvB.x : number
+p.savur.o._pw[]._rcvB.y : number
+p.savur.o._pw[]._rcvB.vx : number
+p.savur.o._pw[]._rcvB.vy : number
+p.savur.o._pw[]._rcvB.e : number
+p.savur.o._pw[]._rcvB.ch : number
+p.savur.o._pw[]._rcvB.team : number
+p.savur.o._pw[]._rcvB.alive : boolean
+p.savur.o._pw[]._rcvB.dead : number
+p.savur.o._pw[]._rcvB.t : number
+p.savur.o._pw[]._rcvB.dist : number
+p.savur.o._pw[]._rcvB.walls : number
+p.savur.o._pw[]._rcvB.done : string
+p.savur.o._pw[]._rcvB.log : dizi
+p.savur.o._pw[]._rcvB.from : OYUNCU
+p.savur.o._pw[]._rcvB.recv : OYUNCU
+p.savur.o._pw[]._rcvB.vur : OYUNCU
+p.savur.o._pw[]._rcvB.kt : number
+p.savur.o._pw[]._rcvB.kz : number
+p.savur.o._pw[]._rcvB.cue : number
+p.savur.o._pw[]._rcvB.bekId : number
+p.savur.o._pw[]._rcvB.bekM : number
+p.savur.o._pw[]._rcvB._oku : object
+p.savur.o._pw[]._rcvB.tp : number
+p.savur.o._pw[]._rcvB._w0 : number
+p.savur.o._pw[]._rcvB._d0 : number
+p.savur.o._pw[]._rcvB._tt : number
+p.savur.o._pw[]._rcvB.cds : Map
+p.savur.o._pw[]._rcvB.defl : number
+p.savur.o._pw[]._rcvB.holder : OYUNCU
+p.savur.o._pw[]._rcvB.gvx : number
+p.savur.o._pw[]._rcvB.gvy : number
+p.savur.o._pw[]._rcvAbs : number
+p.savur.o._pw[]._rcvX : number
+p.savur.o._pw[]._rcvY : number
+p.savur.o._pw[].chB : TOPKOPYA|object {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,cds,defl,holder,gvx,gvy,gon,shotPk,sap}
+p.savur.o._pw[].chB.x : number
+p.savur.o._pw[].chB.y : number
+p.savur.o._pw[].chB.vx : number
+p.savur.o._pw[].chB.vy : number
+p.savur.o._pw[].chB.e : number
+p.savur.o._pw[].chB.ch : number
+p.savur.o._pw[].chB.team : number
+p.savur.o._pw[].chB.alive : boolean
+p.savur.o._pw[].chB.dead : number
+p.savur.o._pw[].chB.t : number
+p.savur.o._pw[].chB.dist : number
+p.savur.o._pw[].chB.walls : number
+p.savur.o._pw[].chB.done : string
+p.savur.o._pw[].chB.log : dizi
+p.savur.o._pw[].chB.from : OYUNCU
+p.savur.o._pw[].chB.recv : OYUNCU|null
+p.savur.o._pw[].chB.vur : OYUNCU
+p.savur.o._pw[].chB.kt : number
+p.savur.o._pw[].chB.kz : number
+p.savur.o._pw[].chB.cue : number
+p.savur.o._pw[].chB.bekId : number
+p.savur.o._pw[].chB.bekM : number
+p.savur.o._pw[].chB._oku : object
+p.savur.o._pw[].chB.tp : number
+p.savur.o._pw[].chB._w0 : number
+p.savur.o._pw[].chB._d0 : number
+p.savur.o._pw[].chB._tt : number
+p.savur.o._pw[].chB.cds : Map
+p.savur.o._pw[].chB.defl : number
+p.savur.o._pw[].chB.holder : OYUNCU
+p.savur.o._pw[].chB.gvx : number
+p.savur.o._pw[].chB.gvy : number
+p.savur.o._pw[]._preB : TOPKOPYA|object {x,y,vx,vy,e,ch,team,alive,dead,t,dist,walls,done,log,from,recv,vur,kt,kz,cue,bekId,bekM,_oku,tp,_w0,_d0,_tt,cds,defl,holder,gvx,gvy}
+p.savur.o._pw[]._preB.x : number
+p.savur.o._pw[]._preB.y : number
+p.savur.o._pw[]._preB.vx : number
+p.savur.o._pw[]._preB.vy : number
+p.savur.o._pw[]._preB.e : number
+p.savur.o._pw[]._preB.ch : number
+p.savur.o._pw[]._preB.team : number
+p.savur.o._pw[]._preB.alive : boolean
+p.savur.o._pw[]._preB.dead : number
+p.savur.o._pw[]._preB.t : number
+p.savur.o._pw[]._preB.dist : number
+p.savur.o._pw[]._preB.walls : number
+p.savur.o._pw[]._preB.done : string
+p.savur.o._pw[]._preB.log : dizi
+p.savur.o._pw[]._preB.from : OYUNCU
+p.savur.o._pw[]._preB.recv : OYUNCU
+p.savur.o._pw[]._preB.vur : OYUNCU
+p.savur.o._pw[]._preB.kt : number
+p.savur.o._pw[]._preB.kz : number
+p.savur.o._pw[]._preB.cue : number
+p.savur.o._pw[]._preB.bekId : number
+p.savur.o._pw[]._preB.bekM : number
+p.savur.o._pw[]._preB._oku : object
+p.savur.o._pw[]._preB.tp : number
+p.savur.o._pw[]._preB._w0 : number
+p.savur.o._pw[]._preB._d0 : number
+p.savur.o._pw[]._preB._tt : number
+p.savur.o._pw[]._preB.cds : Map
+p.savur.o._pw[]._preB.defl : number
+p.savur.o._pw[]._preB.holder : OYUNCU
+p.savur.o._pw[]._preB.gvx : number
+p.savur.o._pw[]._preB.gvy : number
+p.savur.o._pw[]._preT : number
+p.savur.o._pw[]._otA : object {b,ok}
+p.savur.o._pw[]._otA.b : TOPKOPYA|object
+p.savur.o._pw[]._otA.ok : boolean
+p.savur.o._pw[]._onH : null
+p.savur.o._pw[]._lc : null
+p.savur.o._pw[]._donDir : number
+p.savur.o._pw[]._donT : number
+p.savur.o._pw[]._savT : number
+p.savur.o._pw[]._savD : number
+p.savur.o._pw[]._blokT : number
+p.savur.o._pw[]._savCar : number
+p.savur.o._pw[].lockAt : number
+p.savur.o._pw[]._lockH : OYUNCU
+p.savur.o._pw[]._presT : number
+p.savur.o._pw[]._presH : OYUNCU
+p.savur.o._pw[]._kh : object {dx,dy}
+p.savur.o._pw[]._kh.dx : number
+p.savur.o._pw[]._kh.dy : number
+p.savur.o._pw[]._khT : number
+p.savur.o._pw[]._khQ : OYUNCU
+p.savur.o._pw[]._onK : object {h,koy}
+p.savur.o._pw[]._onK.h : number
+p.savur.o._pw[]._onK.koy : boolean
+p.savur.o._pw[]._kal : boolean
+p.savur.o._pw[]._kalH : OYUNCU
+p.savur.o._pw[].hamle : null
+p.savur.o._pw[]._dolYok : number
+p.savur.o._pw[].adandi : number
+p.savur.o._pw[].adT : object {x,y}
+p.savur.o._pw[].adT.x : number
+p.savur.o._pw[].adT.y : number
+p.savur.o._pw[].son : object {k,t,ok,x,y}
+p.savur.o._pw[].son.k : string
+p.savur.o._pw[].son.t : number
+p.savur.o._pw[].son.ok : boolean
+p.savur.o._pw[].son.x : number
+p.savur.o._pw[].son.y : number
+p.savur.o._pw[].adNeden : string
+p.savur.o._pw[].den : number
+p.savur.o._pw[]._omEv : number
+p.savur.o._pw[]._o.amA : boolean
+p.savur.o._pw[]._o.am : number
+p.savur.o._pw[]._o.drive : boolean
+p.savur.o._pw[]._o.sarj : boolean
+p.savur.o._pw[]._o.savur : null
+p.savur.o._pw[]._o._savT : number
+p.savur.o._pw[]._o._savD : number
+p.savur.o._pw[]._o._blokT : number
+p.savur.o._pw[]._o._kh : object
+p.savur.o._pw[]._o._khT : number
+p.savur.o._pw[]._o._khQ : OYUNCU
+p.savur.o._pw[]._o._omEv : number
+p.savur.o._pw[]._omuzT : number
+p.savur.o._pw[]._sf : null|object {t0,f}
+p.savur.o._pw[]._o._omuzT : number
+p.savur.o._pw[]._o._savCar : number
+p.savur.o._pw[]._o.lockAt : number
+p.savur.o._pw[]._o._lockH : OYUNCU
+p.savur.o._pw[]._o._presT : number
+p.savur.o._pw[]._o._presH : OYUNCU
+p.savur.o._pw[]._o._onK : object
+p.savur.o._pw[]._o._kal : boolean
+p.savur.o._pw[]._o._kalH : OYUNCU
+p.savur.o._pw[]._o.hamle : null
+p.savur.o._pw[]._o.adandi : number
+p.savur.o._pw[]._o.adT : object
+p.savur.o._pw[]._o.son : object
+p.savur.o._pw[]._o.den : number
+p.savur.o._pw[]._o._sf : null
+p.savur.o._pw[]._o._dolYok : number
+p.savur.o._pw[]._o.adNeden : string
+m.st.enP.3.alan : number
+m.st.enP.12.alan : number
+m.st.enP.11.alan : number
+m.st.enP.4.alan : number
+m.pre.r.best.toE : object {x,y}
+m.pre.r.best.toE.x : number
+m.pre.r.best.toE.y : number
+m.pre.r.best.TsE : number
+m.pre.r.best._pw[]._dolYok : number
+m.pre.r.best._pw[].son : object
+m.pre.r.best._pw[].adNeden : string
+m.pre.r.best._pw[].den : number
+m.pre.r.best._pw[]._sf : null
+m.pre.r.opts[].toE : object {x,y}
+m.pre.r.opts[].toE.x : number
+m.pre.r.opts[].toE.y : number
+m.pre.r.opts[].TsE : number
+m.ctl.r.best.spr : number|undef
+m.ctl.r.best._pw[]._savCar : number
+m.ctl.r.best._pw[].lockAt : number
+m.ctl.r.best._pw[]._lockH : OYUNCU
+m.ctl.r.best._pw[]._presT : number
+m.ctl.r.best._pw[]._presH : OYUNCU
+m.ctl.r.best._pw[]._kh : object
+m.ctl.r.best._pw[]._khT : number
+m.ctl.r.best._pw[]._khQ : OYUNCU
+m.ctl.r.best._pw[]._onK : object
+m.ctl.r.best._pw[]._kal : boolean
+m.ctl.r.best._pw[]._kalH : OYUNCU
+m.ctl.r.best._pw[].hamle : null
+m.ctl.r.best._pw[]._dolYok : number
+m.ctl.r.best._pw[].adandi : number
+m.ctl.r.best._pw[].adT : object
+m.ctl.r.best._pw[].son : object
+m.ctl.r.best._pw[].adNeden : string
+m.ctl.r.best._pw[].den : number
+m.ctl.r.best._pw[]._sf : null
+o._pw[]._savCar : number
+o._pw[].lockAt : number
+o._pw[]._lockH : OYUNCU
+o._pw[]._presT : number
+o._pw[]._presH : OYUNCU
+o._pw[]._kh : object {dx,dy}
+o._pw[]._kh.dx : number
+o._pw[]._kh.dy : number
+o._pw[]._khT : number
+o._pw[]._khQ : OYUNCU
+o._pw[]._onK : object {h,koy}
+o._pw[]._onK.h : number
+o._pw[]._onK.koy : boolean
+o._pw[]._kal : boolean
+o._pw[]._kalH : OYUNCU
+o._pw[].hamle : null
+o._pw[]._dolYok : number
+o._pw[].adandi : number
+o._pw[].adT : object {x,y}
+o._pw[].adT.x : number
+o._pw[].adT.y : number
+o._pw[].son : object {k,t,ok,x,y}
+o._pw[].son.k : string
+o._pw[].son.t : number
+o._pw[].son.ok : boolean
+o._pw[].son.x : number
+o._pw[].son.y : number
+o._pw[].adNeden : string
+o._pw[].den : number
+o._pw[]._o._savCar : number
+o._pw[]._o.lockAt : number
+o._pw[]._o._lockH : OYUNCU
+o._pw[]._o._presT : number
+o._pw[]._o._presH : OYUNCU
+o._pw[]._o._kh : object {dx,dy}
+o._pw[]._o._kh.dx : number
+o._pw[]._o._kh.dy : number
+o._pw[]._o._khT : number
+o._pw[]._o._khQ : OYUNCU
+o._pw[]._o._onK : object {h,koy}
+o._pw[]._o._onK.h : number
+o._pw[]._o._onK.koy : boolean
+o._pw[]._o._kal : boolean
+o._pw[]._o._kalH : OYUNCU
+o._pw[]._o.hamle : null
+o._pw[]._o._dolYok : number
+o._pw[]._o.adandi : number
+o._pw[]._o.adT : object {x,y}
+o._pw[]._o.adT.x : number
+o._pw[]._o.adT.y : number
+o._pw[]._o.son : object {k,t,ok,x,y}
+o._pw[]._o.son.k : string
+o._pw[]._o.son.t : number
+o._pw[]._o.son.ok : boolean
+o._pw[]._o.son.x : number
+o._pw[]._o.son.y : number
+o._pw[]._o.adNeden : string
+o._pw[]._o.den : number
+o._pw[]._sf : null
+o._pw[]._o._sf : null
+o.kendine : boolean
+o.lead : object {x,y}
+o.lead.x : number
+o.lead.y : number
+p.pplan : object {k,s,t0,until}
+p.pplan.k : string
+p.pplan.s : number
+p.pplan.t0 : number
+p.pplan.until : number
+p._kAn : number
+p._kAnT : number
+m._acikK : object {key,v}
+m._acikK.key : string
+m._acikK.v : dizi
+m._acikK.v[] : object {x,y,yv}
+m._acikK.v[].x : number
+m._acikK.v[].y : number
+m._acikK.v[].yv : number
+p.okudu : number
+m._macC.0:66 : object {g,c,e0}
+m._macC.0:66.g : number
+m._macC.0:66.c : number
+m._macC.0:66.e0 : number
+p._bosT : number
+p._otB.x : number
+p._otB.y : number
+p._otB.i : number
+p._otB.name : string
+p._otB.vx : number
+p._otB.vy : number
+p._otB.tx : number
+p._otB.ty : number
+p._otB.a : object {hiz,ceviklik,guc,uzanma,alan,kontrol,surme,pas,gonderme,yukleme,tepki,gorus,yeralma,sogukkanlilik,kesme,refleks,yerlesim,hakimiyet,taraf,enerji,govde,caliskanlik}
+p._otB.a.hiz : number
+p._otB.a.ceviklik : number
+p._otB.a.guc : number
+p._otB.a.uzanma : number
+p._otB.a.alan : number
+p._otB.a.kontrol : number
+p._otB.a.surme : number
+p._otB.a.pas : number
+p._otB.a.gonderme : number
+p._otB.a.yukleme : number
+p._otB.a.tepki : number
+p._otB.a.gorus : number
+p._otB.a.yeralma : number
+p._otB.a.sogukkanlilik : number
+p._otB.a.kesme : number
+p._otB.a.refleks : number
+p._otB.a.yerlesim : number
+p._otB.a.hakimiyet : number
+p._otB.a.taraf : string
+p._otB.a.enerji : number
+p._otB.a.govde : number
+p._otB.a.caliskanlik : number
+p._otB.id : number
+p._otB.team : number
+p.sendT : number
+p.sendCd : number
+p.stun : number
+p.savur.o.kh : string
+m._macC.0:65 : object {g,c,e0}
+m._macC.0:65.g : number
+m._macC.0:65.c : number
+m._macC.0:65.e0 : number
+D._itme : undef
+D._gon : undef
+D._sYon : undef
+p._itK : number|null
+m.pre.r.best._pw[]._bosT : number
+m.pre.r.opts[].siddet : number
+m.ctl.r.best._pw[]._bosT : number
+o._pw[]._bosT : number
+o._pw[]._o._bosT : number
+o.hold : number
+o.shot : string
+o.dok.gol : number
+m._macC.0:64 : object {g,c,e0}
+m._macC.0:64.g : number
+m._macC.0:64.c : number
+m._macC.0:64.e0 : number
+m.st.enP.1.fake : number
+m.st.enP.1.caldi : number
+m.st.enP.12.calindi : number
+m.pre.r.best._pw[]._gvKaz : object
+m.pre.r.best._pw[].pplan : object
+m.pre.r.best._pw[]._kAn : number
+m.pre.r.best._pw[]._kAnT : number
+m.pre.r.best._pw[].fiskeCd : number
+m.pre.r.best._pw[].fiske : number
+m.pre.r.best._pw[].fiskeDir : number
+m.pre.r.best._pw[].okudu : number
+m.pre.r.best._pw[]._winSeen : number
+m.pre.r.opts[].hold : number
+m.pre.r.opts[].shot : string
+m.st.enP.6.alan : number
+m._macC.0:63 : object {g,c,e0}
+m._macC.0:63.g : number
+m._macC.0:63.c : number
+m._macC.0:63.e0 : number
+m.st.enP.6.sarj : number
+m.not.p.6 : number
+m._macC.0:62 : object {g,c,e0}
+m._macC.0:62.g : number
+m._macC.0:62.c : number
+m._macC.0:62.e0 : number
+p._plan.kind : string
+p._plan.q : OYUNCU
+p._plan.to : object {x,y}
+p._plan.to.x : number
+p._plan.to.y : number
+p._plan.P : number
+p._plan.t : number
+m.not.p.2 : number
+m.pre.r.best.q : OYUNCU
+m.pre.r.best.arrive : number
+m.pre.r.best.tek : number
+m.pre.r.best.firm : boolean
+m.pre.r.best.spr : undef
+m.pre.r.best.itK : undef
+m.pre.r.best.siddet : number
+m.pre.r.best.lf0 : object {vx,vy,ok}
+m.pre.r.best.lf0.vx : number
+m.pre.r.best.lf0.vy : number
+m.pre.r.best.lf0.ok : boolean
+m.pre.r.best.launch : object {vx,vy,ok}
+m.pre.r.best.launch.vx : number
+m.pre.r.best.launch.vy : number
+m.pre.r.best.launch.ok : boolean
+m.pre.r.best.sYon : number
+m.pre.r.best.savT : number
+m.pre.r.best._sek : number
+m.pre.r.best.det.Pk : number
+m.pre.r.best.det.Pl : number
+m.pre.r.best.det.end : object {x,y}
+m.pre.r.best.det.end.x : number
+m.pre.r.best.det.end.y : number
+m.pre.r.best.det.endM : object {x,y}
+m.pre.r.best.det.endM.x : number
+m.pre.r.best.det.endM.y : number
+m.pre.r.best.det.endO : object {x,y}
+m.pre.r.best.det.endO.x : number
+m.pre.r.best.det.endO.y : number
+m.pre.r.best.det.Ps : number
+m.pre.r.best.det.endS : object {x,y}
+m.pre.r.best.det.endS.x : number
+m.pre.r.best.det.endS.y : number
+m.pre.r.best.det.endD : object {x,y}
+m.pre.r.best.det.endD.x : number
+m.pre.r.best.det.endD.y : number
+m.pre.r.best.det.Psek : number
+m.pre.r.best.det.endSek : object {x,y}
+m.pre.r.best.det.endSek.x : number
+m.pre.r.best.det.endSek.y : number
+m.pre.r.best.tf : number
+m.pre.r.best.dok.alici : number
+m.pre.r.best.dok.sekme : number
+m.ctl.r.best.q : OYUNCU
+m.ctl.r.best.arrive : number
+m.ctl.r.best.tek : number
+m.ctl.r.best.firm : boolean
+m.ctl.r.best.itK : undef
+m.ctl.r.best.siddet : number
+m.ctl.r.best.lf0 : object {vx,vy,ok}
+m.ctl.r.best.lf0.vx : number
+m.ctl.r.best.lf0.vy : number
+m.ctl.r.best.lf0.ok : boolean
+m.ctl.r.best.launch : object {vx,vy,ok}
+m.ctl.r.best.launch.vx : number
+m.ctl.r.best.launch.vy : number
+m.ctl.r.best.launch.ok : boolean
+m.ctl.r.best.sYon : number
+m.ctl.r.best.savT : number
+m.ctl.r.best._sek : number
+m.ctl.r.best.det.Pk : number
+m.ctl.r.best.det.Pl : number
+m.ctl.r.best.det.end : object {x,y}
+m.ctl.r.best.det.end.x : number
+m.ctl.r.best.det.end.y : number
+m.ctl.r.best.det.endM : object {x,y}
+m.ctl.r.best.det.endM.x : number
+m.ctl.r.best.det.endM.y : number
+m.ctl.r.best.det.endO : object {x,y}
+m.ctl.r.best.det.endO.x : number
+m.ctl.r.best.det.endO.y : number
+m.ctl.r.best.det.Ps : number
+m.ctl.r.best.det.endS : object {x,y}
+m.ctl.r.best.det.endS.x : number
+m.ctl.r.best.det.endS.y : number
+m.ctl.r.best.det.endD : object {x,y}
+m.ctl.r.best.det.endD.x : number
+m.ctl.r.best.det.endD.y : number
+m.ctl.r.best.det.Psek : number
+m.ctl.r.best.det.endSek : object {x,y}
+m.ctl.r.best.det.endSek.x : number
+m.ctl.r.best.det.endSek.y : number
+m.ctl.r.best.tf : number
+m.ctl.r.best.dok.alici : number
+m.ctl.r.best.dok.sekme : number
+m.ctl.r.best._pw[]._gvKaz : object
+m.ctl.r.best._pw[].pplan : object
+m.ctl.r.best._pw[]._kAn : number
+m.ctl.r.best._pw[]._kAnT : number
+m.ctl.r.best._pw[].fiskeCd : number
+m.ctl.r.best._pw[].fiske : number
+m.ctl.r.best._pw[].fiskeDir : number
+m.ctl.r.best._pw[].okudu : number
+m.ctl.r.best._pw[]._winSeen : number
+m.ctl.r.opts[].siddet : number
+o._pw[].driveTo.x : number
+o._pw[].driveTo.y : number
+o._pw[]._gvKaz : object {h,t,kaz}
+o._pw[]._gvKaz.h : number
+o._pw[]._gvKaz.t : number
+o._pw[]._gvKaz.kaz : number
+o._pw[].pplan : object {k,s,t0,until}
+o._pw[].pplan.k : string
+o._pw[].pplan.s : number
+o._pw[].pplan.t0 : number
+o._pw[].pplan.until : number
+o._pw[]._kAn : number
+o._pw[]._kAnT : number
+o._pw[].fiskeCd : number
+o._pw[].fiske : number
+o._pw[].fiskeDir : number
+o._pw[].okudu : number
+o._pw[]._winSeen : number
+o._pw[]._o.driveTo.x : number
+o._pw[]._o.driveTo.y : number
+o._pw[]._o._gvKaz : object {h,t,kaz}
+o._pw[]._o._gvKaz.h : number
+o._pw[]._o._gvKaz.t : number
+o._pw[]._o._gvKaz.kaz : number
+o._pw[]._o.pplan : object {k,s,t0,until}
+o._pw[]._o.pplan.k : string
+o._pw[]._o.pplan.s : number
+o._pw[]._o.pplan.t0 : number
+o._pw[]._o.pplan.until : number
+o._pw[]._o._kAn : number
+o._pw[]._o._kAnT : number
+o._pw[]._o.fiskeCd : number
+o._pw[]._o.fiske : number
+o._pw[]._o.fiskeDir : number
+o._pw[]._o.okudu : number
+o._pw[]._o._winSeen : number
+m.st.enP.2.sarj : number
+m.st.enP.2.fake : number
+m.st.enP.2.ikili : number
+m.st.enP.2.caldi : number
+m.st.enP.10.calindi : number
+p._koyEv : number
+p.savur.o.kendine : boolean
+p.savur.o.lead : object {x,y}
+p.savur.o.lead.x : number
+p.savur.o.lead.y : number
+p.savur.o._pw[]._surK.id : number
+p.savur.o._pw[]._surK.to : object
+p.savur.o._pw[]._surK.t : number
+p.savur.o._pw[]._surK.T : number
+p.savur.o._pw[]._surK.nd0 : number
+p.savur.o._pw[].fiskeCd : number
+p.savur.o._pw[].fiske : number
+p.savur.o._pw[].fiskeDir : number
+p.savur.o._pw[]._omuz : object {t,q}
+p.savur.o._pw[]._omuz.t : number
+p.savur.o._pw[]._omuz.q : number
+p.savur.o._pw[].sendT : number
+p.savur.o._pw[].sendCd : number
+p.savur.o._pw[].stun : number
+m.st.calim : dizi
+m.st.calim[] : number
+m.sh.fr.arr{v}.direnc : boolean
+m.st.enP.2.alan : number
+m.st.enP.13.alan : number
+m.sh.adayT : number
+m.pre.r.best._pw[]._omuz : object
+m.pre.r.best._pw[].sendT : number
+m.pre.r.best._pw[].sendCd : number
+m.pre.r.best._pw[].stun : number
+p.savur.o.lf0 : object {vx,vy,ok}
+p.savur.o.lf0.vx : number
+p.savur.o.lf0.vy : number
+p.savur.o.lf0.ok : boolean
+p.savur.o._pw[].driveTo.x : number
+p.savur.o._pw[].driveTo.y : number
+p.savur.o._pw[]._sf.t0 : number
+p.savur.o._pw[]._sf.f : string
+p.savur.o._pw[].okudu : number
+p.savur.o.shot : string
+p.savur.o.dok.gol : number
+m.lastDec.opts[].dok.gol : number
+b.gon : boolean
+b.shotPk : number
+b._oku.-2110 : object {k,on}
+b._oku.-2110.k : number
+b._oku.-2110.on : number
+m.st.cal : object {n,pk,g}
+m.st.cal.n : number
+m.st.cal.pk : number
+m.st.cal.g : number
+m.st.enP.0.alan : number
+p.chB.gon : boolean
+p.chB.shotPk : number
+p.chB._oku.-2110 : object {k,on}
+p.chB._oku.-2110.k : number
+p.chB._oku.-2110.on : number
+p._dalis : number
+m.st.enH[].dalış : number
+m.st.enP.0.dalış : number
+m.sh.frB.gon : boolean
+m.sh.frB.shotPk : number
+m.sh.frB._oku.-2110 : object {k,on}
+m.sh.frB._oku.-2110.k : number
+m.sh.frB._oku.-2110.on : number
+m._gelenB.gon : boolean
+m._gelenB.shotPk : number
+m._gelenB._oku.-2110 : object {k,on}
+m._gelenB._oku.-2110.k : number
+m._gelenB._oku.-2110.on : number
+p.savur.o._pw[].chB.gon : boolean
+p.savur.o._pw[].chB.shotPk : number
+p.savur.o._pw[]._dalis : number
+p.savur.o._pw[].chB.sap : boolean
+p.savur.o._pw[]._kv.x : number
+p.savur.o._pw[]._kv.y : number
+p.savur.o._pw[]._kv.t : number
+m.pre.r.best._pw[]._dalis : number

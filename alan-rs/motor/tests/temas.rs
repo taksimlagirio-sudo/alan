@@ -9,14 +9,22 @@ fn h(v: &Value) -> f64 { match v.as_str() { Some("true") => 1.0, Some(s) => f64:
 fn ho(v: &Value) -> Option<f64> { if v.is_null() { None } else { Some(h(v)) } }
 fn ayni(a: f64, b: f64) -> bool { a.to_bits() == b.to_bits() || (a != a && b != b) }
 
-struct KayitKural(Vec<(u8, u32, f64)>);
+struct KayitKural(Vec<(f64, f64, f64)>);
 impl Kural for KayitKural { fn spr(&self, p: &Oyuncu) -> f64 { self.0.iter().find(|x| x.0 == p.team && x.1 == p.id).unwrap().2 } }
 
 fn oyuncu(v: &Value) -> Oyuncu {
     let mut a = Ham::default();
     for (k, x) in v["a"].as_object().unwrap() { a.v.insert(k.clone(), h(x)); }
-    let bek = v["bek"].as_bool().unwrap();
-    Oyuncu { id: v["id"].as_u64().unwrap() as u32, team: v["team"].as_u64().unwrap() as u8, rol: if bek { Rol::Bekci } else { Rol::Diger }, rol_ad: String::new(), name: String::new(), yet: if v["a"].as_object().unwrap().is_empty() { Yetenek::bos() } else { Yetenek::kur(&a) }, x: h(&v["x"]), y: h(&v["y"]), vx: h(&v["vx"]), vy: h(&v["vy"]), tx: ho(&v["tx"]), ty: ho(&v["ty"]), en: ho(&v["en"]), den: ho(&v["den"]), no_touch: v["noTouch"].as_bool().unwrap(), sonuk: v["sonuk"].as_bool().unwrap(), kuyu_t: h(&v["kuyuT"]), r: ho(&v["R"]), d: ho(&v["D"]), cone: v["cone"].as_bool().unwrap(), fx: h(&v["fx"]), fy: h(&v["fy"]), am_a: v["amA"].as_bool().unwrap(), am: h(&v["am"]), rcv_b: if v["rcvB"].as_bool().unwrap() { Some(1) } else { None }, dalis: h(&v["dalis"]) }
+    let mut p = Oyuncu::default();
+    p.id = v["id"].as_u64().unwrap() as f64; p.team = v["team"].as_u64().unwrap() as f64;
+    p.role = if v["bek"].as_bool().unwrap() { "Bekçi".into() } else { "Orta".into() };
+    p.yet = if v["a"].as_object().unwrap().is_empty() { Yetenek::bos() } else { Yetenek::kur(&a) };
+    p.x = h(&v["x"]); p.y = h(&v["y"]); p.vx = h(&v["vx"]); p.vy = h(&v["vy"]);
+    p.en = ho(&v["en"]); p.den = ho(&v["den"]);
+    p.tx = h(&v["tx"]); p.ty = h(&v["ty"]); p.noTouch = v["noTouch"].as_bool().unwrap(); p.sonuk = v["sonuk"].as_bool().unwrap();
+    p.kuyuT = ho(&v["kuyuT"]); p.R = ho(&v["R"]).unwrap_or(0.0); p.D = ho(&v["D"]).unwrap_or(1.0); p.amA = v["amA"].as_bool().unwrap(); p.am = ho(&v["am"]);
+    p._rcvB = if v["rcvB"].as_bool().unwrap() { Some(1) } else { None }; p._dalis = ho(&v["dalis"]);
+    p
 }
 fn top(v: &Value) -> TopT {
     let mut b = Top::yeni(0.0, 0.0, 0.0, 0.0, v["team"].as_u64().unwrap() as u8, None, 0.2);
@@ -38,7 +46,7 @@ fn js_ile_bit_bit_ayni() {
     for c in v.as_array().unwrap() {
         let tk = c["tick"].as_u64().unwrap();
         let mut ps: Vec<Oyuncu> = c["ps"].as_array().unwrap().iter().map(oyuncu).collect();
-        let kk = KayitKural(c["ps"].as_array().unwrap().iter().map(|p| (p["team"].as_u64().unwrap() as u8, p["id"].as_u64().unwrap() as u32, h(&p["spr"]))).collect());
+        let kk = KayitKural(c["ps"].as_array().unwrap().iter().map(|p| (p["team"].as_u64().unwrap() as f64, p["id"].as_u64().unwrap() as f64, h(&p["spr"]))).collect());
         for (i, pj) in c["per"].as_array().unwrap().iter().enumerate() {
             let mut b = top(&c["ball"]); let t = touch_cap(&mut b, i, &ps, &kk);
             for (n, x, j) in [("cap", t.cap, &pj["cap"]), ("vr", t.vr, &pj["vr"]), ("s", t.s, &pj["s"]), ("sk", t.sk, &pj["sk"])] { if !ayni(x, h(j)) { hata.push(format!("t{tk} oyuncu {i} touchCap.{n}: {x:e} js {:e}", h(j))); } }
@@ -59,7 +67,7 @@ fn js_ile_bit_bit_ayni() {
         }
         let sj = &c["son"];
         for (n, x) in [("x", b.b.x), ("y", b.b.y), ("vx", b.b.vx), ("vy", b.b.vy), ("e", b.b.e), ("ch", b.b.ch), ("defl", b.b.defl)] { if !ayni(x, h(&sj[n])) { hata.push(format!("t{tk} contact top.{n}: {x:e} js {:e}", h(&sj[n]))); } }
-        for (i, q) in c["pson"].as_array().unwrap().iter().enumerate() { if !ayni(ps[i].x, h(&q[0])) || !ayni(ps[i].y, h(&q[1])) || !ayni(ps[i].dalis, h(&q[2])) { hata.push(format!("t{tk} contact oyuncu {i} yeri")); } }
+        for (i, q) in c["pson"].as_array().unwrap().iter().enumerate() { if !ayni(ps[i].x, h(&q[0])) || !ayni(ps[i].y, h(&q[1])) || !ayni(ps[i]._dalis.unwrap_or(0.0), h(&q[2])) { hata.push(format!("t{tk} contact oyuncu {i} yeri")); } }
     }
     eprintln!("temassız {} tutulan {} seken {}", say[0], say[1], say[2]);
     assert!(hata.is_empty(), "{} hata:\n{}", hata.len(), hata[..hata.len().min(20)].join("\n"));

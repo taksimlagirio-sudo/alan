@@ -141,6 +141,12 @@ impl Yetenek {
     }
 }
 
+impl Default for Yetenek {
+    fn default() -> Self {
+        Yetenek::bos()
+    }
+}
+
 pub const SUT_YAKIN: f64 = 12.0;
 pub const SUT_UZAK: f64 = 30.0;
 

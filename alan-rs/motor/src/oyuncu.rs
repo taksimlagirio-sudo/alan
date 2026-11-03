@@ -5,71 +5,30 @@ use crate::alan::Etki;
 use crate::mat::{jmax, jmin};
 use crate::yetenek::{mek, spr_h, Yetenek};
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Rol {
-    Bekci,
-    Diger,
-}
-
-#[derive(Clone, Debug)]
-pub struct Oyuncu {
-    /// takım içindeki numara (JS id) ve takım (0/1)
-    pub id: u32,
-    pub team: u8,
-    pub rol: Rol,
-    /// rolün adı (Bekçi, Forvet…)
-    pub rol_ad: String,
-    pub name: String,
-    pub yet: Yetenek,
-    pub x: f64,
-    pub y: f64,
-    pub vx: f64,
-    pub vy: f64,
-    pub tx: Option<f64>,
-    pub ty: Option<f64>,
-    /// bar (0–1); JS `p.en` (null: enerji yok)
-    pub en: Option<f64>,
-    /// denge (0–1, ikili sonrası); yoksa tam
-    pub den: Option<f64>,
-    pub no_touch: bool,
-    /// Kuyu süresi dolup sönmüş (Kuyu'ya giremez)
-    pub sonuk: bool,
-    /// Kuyu alanında geçen tik
-    pub kuyu_t: f64,
-    /// alan kaynağı: yarıçap, şiddet, koni, yön, seçim
-    pub r: Option<f64>,
-    pub d: Option<f64>,
-    pub cone: bool,
-    pub fx: f64,
-    pub fy: f64,
-    pub am_a: bool,
-    pub am: f64,
-    /// bu topun alıcısı (JS `_rcvB === b`): topun kimliği
-    pub rcv_b: Option<u64>,
-    /// Bekçi'nin bu tikteki dalış payı (JS `_dalis`)
-    pub dalis: f64,
-}
+pub use crate::model::Oyuncu;
 
 impl Oyuncu {
     pub fn bekci(&self) -> bool {
-        self.rol == Rol::Bekci
+        self.role == "Bekçi"
     }
-    /// Alan kaynağı olarak görünüşü.
+    /// takım (0/1) tam sayı olarak
+    #[inline(always)]
+    pub fn takim(&self) -> u8 {
+        self.team as u8
+    }
+    /// Alan kaynağı olarak görünüşü (JS: R || 8, D ?? 1, cone, fx, fy, amA, am, en).
     pub fn etki(&self) -> Etki {
         Etki {
             x: self.x,
             y: self.y,
-            r: match self.r {
-                Some(r) if r != 0.0 && r == r => r,
-                _ => 8.0,
-            },
-            d: self.d.unwrap_or(1.0),
-            koni: self.cone,
-            fx: self.fx,
-            fy: self.fy,
-            team: self.team,
-            am_a: self.am_a,
-            am: self.am,
+            r: if self.R != 0.0 && self.R == self.R { self.R } else { 8.0 },
+            d: self.D,
+            koni: false,
+            fx: 0.0,
+            fy: 0.0,
+            team: self.takim(),
+            am_a: self.amA,
+            am: self.am.unwrap_or(0.0),
             en: self.en.unwrap_or(1.0),
         }
     }

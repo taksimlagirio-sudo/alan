@@ -9,8 +9,13 @@ fn ayni(a: f64, b: f64) -> bool { a.to_bits() == b.to_bits() || (a != a && b != 
 fn oyuncu(v: &Value) -> Oyuncu {
     let mut a = Ham::default();
     for (k, x) in v["a"].as_object().unwrap() { a.v.insert(k.clone(), h(x)); }
-    let bek = v["bek"].as_bool().unwrap();
-    Oyuncu { id: v["id"].as_u64().unwrap() as u32, team: v["team"].as_u64().unwrap() as u8, rol: if bek { Rol::Bekci } else { Rol::Diger }, rol_ad: String::new(), name: String::new(), yet: Yetenek::kur(&a), x: h(&v["x"]), y: h(&v["y"]), vx: h(&v["vx"]), vy: h(&v["vy"]), tx: None, ty: None, en: ho(&v["en"]), den: ho(&v["den"]), no_touch: false, sonuk: false, kuyu_t: 0.0, r: None, d: None, cone: false, fx: 0.0, fy: 0.0, am_a: false, am: 0.0, rcv_b: None, dalis: 0.0 }
+    let mut p = Oyuncu::default();
+    p.id = v["id"].as_u64().unwrap() as f64; p.team = v["team"].as_u64().unwrap() as f64;
+    p.role = if v["bek"].as_bool().unwrap() { "Bekçi".into() } else { "Orta".into() };
+    p.yet = if v["a"].as_object().unwrap().is_empty() { Yetenek::bos() } else { Yetenek::kur(&a) };
+    p.x = h(&v["x"]); p.y = h(&v["y"]); p.vx = h(&v["vx"]); p.vy = h(&v["vy"]);
+    p.en = ho(&v["en"]); p.den = ho(&v["den"]);
+    p
 }
 fn sonuc(s: &str) -> DonusSonuc { match s { "döndü" => DonusSonuc::Dondu, "fiske kaçtı" => DonusSonuc::FiskeKacti, _ => DonusSonuc::RakipAldi } }
 #[test]

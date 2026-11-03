@@ -99,11 +99,11 @@ fn sez_f(p: &Oyuncu, v: &Oyuncu) -> f64 {
 pub fn bek_oku(b: &mut TopT, pi: usize, ps: &[Oyuncu]) -> Option<(f64, f64)> {
     let p = &ps[pi];
     let from = b.t.from?;
-    if b.t.kt.is_none() || !b.t.gon || b.b.defl != 0.0 || b.b.walls != 0.0 || !p.bekci() || p.team == b.b.team {
+    if b.t.kt.is_none() || !b.t.gon || b.b.defl != 0.0 || b.b.walls != 0.0 || !p.bekci() || p.takim() == b.b.team {
         return None;
     }
     let bek = b.t.k_bek;
-    let a = 100.0 * p.team as f64 + p.id as f64;
+    let a = 100.0 * p.team + p.id;
     let ck = ((if bek { -3e3 } else { -2e3 }) - a) as i64;
     if let Some(r) = b.t.oku.get(&ck) {
         return Some(*r);
@@ -146,7 +146,7 @@ pub fn bek_har(p: &Oyuncu, x: f64, y: f64, vx: f64, vy: f64, k: &dyn Kural) -> f
 /// Bekçi'nin menzili (JS bekR): gövde + dalış (topun yaşı ve tepkisiyle).
 pub fn bek_r(b: &mut TopT, pi: usize, ps: &[Oyuncu]) -> f64 {
     let p = &ps[pi];
-    let hm = if b.b.defl == 0.0 && b.t.bek_id == Some(p.id) && b.t.bek_m > 0.0 { b.t.bek_m } else { 0.0 };
+    let hm = if b.b.defl == 0.0 && b.t.bek_id == Some(p.id as u32) && b.t.bek_m > 0.0 { b.t.bek_m } else { 0.0 };
     let o = bek_oku(b, pi, ps);
     let re = (match o {
         Some((k, on)) => bek_re(p) * k - on,
@@ -172,7 +172,7 @@ fn har(p: &Oyuncu) -> f64 {
 
 pub fn touch_cap(b: &mut TopT, pi: usize, ps: &[Oyuncu], k: &dyn Kural) -> Kap {
     let p = &ps[pi];
-    let mate = p.team == b.b.team;
+    let mate = p.takim() == b.b.team;
     let bek = p.bekci();
     let mut ark_k = 0.0;
     let mut sk = if bek { p.yet.y(mek::TUT_CEL) } else if mate { p.yet.y(mek::KONTROL_KAP) } else { p.yet.y(mek::KESME_KAP) };
@@ -222,11 +222,11 @@ pub fn touch_cap(b: &mut TopT, pi: usize, ps: &[Oyuncu], k: &dyn Kural) -> Kap {
 /// Rakibin vuruşu okuması (JS vurusOku): tepki katı ve öne alma; Bekçi okumaz (bekOku).
 pub fn vurus_oku(b: &mut TopT, pi: usize, ps: &[Oyuncu], bek0: bool) -> Option<(f64, f64)> {
     let p = &ps[pi];
-    if b.t.kt.is_none() || b.b.defl != 0.0 || b.b.walls != 0.0 || p.team == b.b.team || p.bekci() {
+    if b.t.kt.is_none() || b.b.defl != 0.0 || b.b.walls != 0.0 || p.takim() == b.b.team || p.bekci() {
         return None;
     }
     let bek = bek0 || b.t.k_bek;
-    let a = 100.0 * p.team as f64 + p.id as f64;
+    let a = 100.0 * p.team + p.id;
     let ck = if bek { (-1.0 - a) as i64 } else { a as i64 };
     if let Some(r) = b.t.oku.get(&ck) {
         return Some(*r);
@@ -267,7 +267,7 @@ pub fn uc_k(x: f64, p: Option<&Oyuncu>) -> f64 {
 /// Rakibin uzanması topun yaşıyla büyür (JS oppReach).
 pub fn opp_reach(b: &mut TopT, pi: usize, ps: &[Oyuncu], r: f64, s: &TepkiS) -> f64 {
     let p = &ps[pi];
-    if p.bekci() || p.team == b.b.team {
+    if p.bekci() || p.takim() == b.b.team {
         return r;
     }
     let rr = oku_t(b, pi, ps, tepki(p, Tepki::Uzanma, s), false);
@@ -299,7 +299,7 @@ pub fn bek_uc(d: f64, r: f64) -> f64 {
 
 /// Sert topun bacaktan sızma ihtimali (JS thruP).
 pub fn thru_p(b: &Top, p: &Oyuncu) -> f64 {
-    if p.team == b.team {
+    if p.takim() == b.team {
         return 0.0;
     }
     let sp = hyp(b.vx, b.vy);
@@ -327,16 +327,16 @@ pub fn contact(b: &mut TopT, ps: &mut [Oyuncu], rnd: &mut dyn FnMut() -> f64, ox
     let (mut bd, mut be, mut b_r) = (1e9f64, 1e9f64, 1.0f64);
     for pi in 0..ps.len() {
         let p = &ps[pi];
-        if p.no_touch || p.sonuk || b.t.cds.get(&pi).copied().unwrap_or(0.0) > b.b.t {
+        if p.noTouch || p.sonuk || b.t.cds.get(&pi).copied().unwrap_or(0.0) > b.b.t {
             continue;
         }
         if Some(pi) == b.t.from && b.b.t < 8.0 {
             continue;
         }
-        if b.t.recv.is_some() && p.team == b.b.team && Some(pi) != b.t.recv && b.b.defl == 0.0 && !b.t.sap {
+        if b.t.recv.is_some() && p.takim() == b.b.team && Some(pi) != b.t.recv && b.b.defl == 0.0 && !b.t.sap {
             continue;
         }
-        if b.t.gon && p.team == b.b.team && !p.bekci() && b.b.defl == 0.0 {
+        if b.t.gon && p.takim() == b.b.team && !p.bekci() && b.b.defl == 0.0 {
             continue;
         }
         let t0 = if sl > 0.0 { ((p.x - ox) * sx + (p.y - oy) * sy) / sl } else { 1.0 };
@@ -383,7 +383,7 @@ pub fn contact(b: &mut TopT, ps: &mut [Oyuncu], rnd: &mut dyn FnMut() -> f64, ox
                 let bp = &mut ps[bi];
                 bp.x += dx / dl * d;
                 bp.y += dy / dl * d;
-                bp.dalis += f;
+                bp._dalis = Some(bp._dalis.unwrap_or(0.0) + f);
             }
         }
     }
@@ -401,10 +401,10 @@ pub fn contact(b: &mut TopT, ps: &mut [Oyuncu], rnd: &mut dyn FnMut() -> f64, ox
         b.b.done = Some(crate::top::Bitis::Tutuldu);
         b.t.holder = Some(bi);
         {
-            let gx = if bp.team == 0 { W } else { 0.0 };
+            let gx = if bp.team == 0.0 { W } else { 0.0 };
             let yn = hyp(b.b.x - bp.x, b.b.y - bp.y) > 0.001;
-            let ix = if yn { b.b.x - bp.x } else if let Some(tx) = bp.tx { tx - bp.x } else { gx - bp.x };
-            let iy = if yn { b.b.y - bp.y } else if let Some(ty) = bp.ty { ty - bp.y } else { CY - bp.y };
+            let ix = if yn { b.b.x - bp.x } else if true { bp.tx - bp.x } else { gx - bp.x };
+            let iy = if yn { b.b.y - bp.y } else if true { bp.ty - bp.y } else { CY - bp.y };
             let il = {
                 let h = hyp(ix, iy);
                 if h == 0.0 || h != h {
@@ -424,7 +424,7 @@ pub fn contact(b: &mut TopT, ps: &mut [Oyuncu], rnd: &mut dyn FnMut() -> f64, ox
         b.b.log.push((b.b.t, TopOlay::Tut));
         return Some(TemasSonuc { p: bi, took: true, pp, thru: false });
     }
-    let mate_t = bp.team == b.b.team;
+    let mate_t = bp.takim() == b.b.team;
     let sp0 = {
         let h = hyp(b.b.vx, b.b.vy);
         if h == 0.0 || h != h {
@@ -486,10 +486,10 @@ pub fn contact(b: &mut TopT, ps: &mut [Oyuncu], rnd: &mut dyn FnMut() -> f64, ox
         ox2 /= ol;
         oy2 /= ol;
         let bk_p = bp.bekci() && !mate_t;
-        let gx_a = if bp.team == 0 { W } else { 0.0 };
+        let gx_a = if bp.team == 0.0 { W } else { 0.0 };
         let (mut bkx, mut bky): (Option<f64>, Option<f64>) = (None, None);
         if bk_p {
-            let own = if bp.team == 0 { 0.0 } else { W };
+            let own = if bp.team == 0.0 { 0.0 } else { W };
             let out = if own == 0.0 { 1.0 } else { -1.0 };
             let lp = kis(15.0 * jmax(left, 0.8 + 0.04 * (tk.sk - 10.0)), 3.0, 14.0);
             let mut bs = -1e9;
@@ -502,7 +502,7 @@ pub fn contact(b: &mut TopT, ps: &mut [Oyuncu], rnd: &mut dyn FnMut() -> f64, ox
                 let py = kis(bp.y + dy * lp, 1.0, H - 1.0);
                 let mut od = 12.0;
                 for o in ps.iter() {
-                    if o.team == bp.team || o.no_touch {
+                    if o.team == bp.team || o.noTouch {
                         continue;
                     }
                     od = jmin(od, hyp(o.x - px, o.y - py));
@@ -516,16 +516,16 @@ pub fn contact(b: &mut TopT, ps: &mut [Oyuncu], rnd: &mut dyn FnMut() -> f64, ox
                 a += 10.0;
             }
         }
-        let rcv = mate_t && (b.t.recv == Some(bi) || bp.rcv_b == Some(b.t.kimlik));
-        let ix = if mate_t && bp.tx.is_some() && !rcv {
-            bp.tx.unwrap() - bp.x
+        let rcv = mate_t && (b.t.recv == Some(bi) || bp._rcvB == Some(b.t.kimlik));
+        let ix = if mate_t && true && !rcv {
+            bp.tx - bp.x
         } else if bk_p {
             bkx.unwrap_or(0.35 * (gx_a - bp.x))
         } else {
             gx_a - bp.x
         };
-        let iy = if mate_t && bp.ty.is_some() && !rcv {
-            bp.ty.unwrap() - bp.y
+        let iy = if mate_t && true && !rcv {
+            bp.ty - bp.y
         } else if bk_p {
             bky.unwrap_or(25.0 * if bp.y >= CY { 1.0 } else { -1.0 })
         } else {
@@ -623,7 +623,7 @@ pub fn kuyu_girer(p: &Oyuncu, x: f64, y: f64, t: f64, cik: bool, k: &dyn Kural) 
         return true;
     }
     let t_e = if ic_p { 0.0 } else { (d_p - Q.kuyu_a) / v };
-    let ic = jmax(0.0, t - t_e) + if ic_p { p.kuyu_t } else { 0.0 };
+    let ic = jmax(0.0, t - t_e) + if ic_p { p.kuyuT.unwrap_or(0.0) } else { 0.0 };
     let t_c = if cik { (Q.kuyu_a - d_x + 0.3) / v + 1.0 / (0.18 * crate::yetenek::ah(&p.yet)) } else { 0.0 };
     ic + t_c <= Q.kuyu_sn
 }
