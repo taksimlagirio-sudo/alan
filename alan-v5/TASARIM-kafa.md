@@ -35,15 +35,14 @@ Pasta "nereye" (alıcının çevresi, koşusunun önü, boşluk) ve "nasıl" (ş
 - Adaylar kaba bir ölçüyle elenmemeli. Kaba ölçü düz bir değerden geliyorsa (orta sahada sahiplik alanı gibi) her zaman en kısa hamleyi seçer.
 - Sprint planı hazır olunca sürmenin "nasıl"ına (tempo) eklenecek. Dokunuşla sürme ve sprint 3 Kasım 2026'da kullanıcı kararıyla kapatıldı.
 
-### 5. Niyet taşıyıcınındır
+### 5. Karar taşıyıcınındır
 
 Takıma ortak bir karar dayatılmaz; taşıyıcının kendi karar gücü (agency) korunur.
 
-- Taşıyıcı topu alınca kendi konumundan bir niyet seçer: hangi yoldan, hangi bölgeye.
-- Niyet kararlıdır: başka bir niyet belirgin biçimde daha iyi olmadıkça değişmez.
-- Niyet nedenlidir: oyuncu bir şeyi yaparken neden yaptığını bilir, bu neden yazılabilir ve kafa panelinde gösterilebilir.
-- Pas verilince niyet alıcıya devredilmez. Alıcı kendi niyetini seçer; pasın amacı onun için yalnız bir bilgidir.
-- Değerler birbirine yakınken seçimi niyet belirler; bu, oyuncunun "bir öyle bir böyle" davranmasını önler.
+- Taşıyıcı kendi nedenini kendi seçeneklerinden edinir (ilke 12); bölge yok.
+- Neden kararlıdır: seçenekleri ayırdığı sürece değişmez.
+- Neden yazılabilir ve kafa panelinde gösterilebilir: "rakip geçmek", "açık ileri pas", "şut".
+- Pas verilince neden alıcıya devredilmez. Alıcı kendi nedenini edinir. Topsuz arkadaşlar ise taşıyıcının nedenine hizmet eden yeri seçer.
 
 ### 6. Gol amaçtır, zaman bedeldir
 
@@ -110,12 +109,3 @@ Değerler birbirine yakınken oyuncunun bir öyle bir böyle davranması gürül
 - **Uzun ölçüm yok:** Onlarca maçlık ya da 30 tekrarlı ölçümler yerine sahnede tek oynatma ve adım adım izleme.
 - **Bayrak:** Her değişiklik bir `self.ALAN_…_ESKI` bayrağının arkasında. Bayrak açıkken maç bire bir eskisi gibi (3 tohumlu parmak izi).
 - **Main:** Kullanıcı onay vermeden main'e itilmez.
-
-## Niyet: açık sorular
-
-Niyet iskeleti `yay2` dalında deneniyor (`ALAN_NIYET_ESKI`). Aşağıdakiler henüz yanıtsız ve rakamlı kuralla değil, ilkelerle yanıtlanmalı.
-
-1. **Niyet ile değer çelişince:** Siper'in niyeti orta saha, ama geriye Burç'a pası belirgin biçimde daha değerli görünüyor ve onu seçiyor. Geriye ya da yana pas bir fırsat değilse niyet neden ezildi? Değer mi yanlış, yoksa niyet değere nasıl katılmalı?
-2. **Bölgeye varınca:** Mancınık hedef bölgesinin içinde, niyet ona yön vermiyor, topu tutup bekliyor. Bölgeye varınca niyet bir sonraki basamak olmalı (orta sahadan kanada, kanattan arkaya, ceza alanı önünde şut ya da arkaya pas). Bölgeler basamaktır; niyet zinciri buradan çıkmalı.
-3. **Değerler hep eksiyken:** Kendi ceza alanında her yol kayıp riskinden ötürü eksi çıkıyor ve niyet bir kararda bir yöne, öteki kararda "koru"ya titriyor.
-4. **Deney kodundaki sayılar:** `niyetSec`, `acikKalan` ve yönlü sürmede bugün elle konmuş sayılar var (bölge sınırları, arkadaşın koşabileceği 10 br, hedefe 8 br, yürüyüş adımı 2 br). İlke 3'e göre durumdan çıkan ölçülerle değiştirilmeli.
