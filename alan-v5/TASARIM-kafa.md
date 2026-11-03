@@ -96,6 +96,14 @@ Kendi yarısında oyun kuran oyuncu için "buradan gole ne kadar sürede varıl�
 - **Baskınlık:** Bir seçenek başka bir seçenekten bütün niteliklerde en az onun kadar iyiyse ve birinde daha iyiyse, öteki elenir. Ağırlık, toplama, eşik yok. "Daha iyi" oyuncunun kendi algı payını aşan fark demektir: zamanda kafanın konum belirsizliği, güvenlikte oyuncunun olasılığı yanlış kestirme payı (yanılma zarı). Elenmeyenler arasından niyet ya da kafanın kendi değeri seçer.
 - İleri hatta gol hesaplanabildiği için değer zaten belirgindir; şut her zaman serbesttir.
 
+### 12. Gürültü bir nedenle susar
+
+Değerler birbirine yakınken oyuncunun bir öyle bir böyle davranması gürültüdür. Gürültü bir seçeneğe fazladan değer vererek değil, oyuncuya o an bir neden edindirerek susturulur.
+
+- Baskınlıktan sağ kalanlar arasında oyuncu seçenekleri gerçekten ayıran bir amacı neden edinir: rakip geçmek ya da açık ileri pas. Güvenlik ve zaman amaç değil, eleme koşuludur; yoksa geriye sürmek ödüllenir.
+- Neden, seçenekleri ayırdığı sürece tutulur. O amaçta en iyi seçenek seçilir; eşitlikte öbür amaç, sonra önceki planına uyan, sonra kafanın değeri. Yanılma zarı atılmaz; yanılgı baskınlığın algı payındadır.
+- Topsuz oyuncu da yerini aynı ölçüyle seçer: taşıyıcıya sunduğu pasın nitelikleri, taşıyıcının nedenine göre. Böylece taşıyıcının ayırt edebileceği bir seçenek olur.
+
 ## Nasıl çalışılır
 
 - **Sahne sahne:** Bir pozisyon seç, oyuncu orada ne yapmalıydı ve neden yapmadı, düzeltince ne yapıyor. Aynı pozisyonu farklı kafalarla oynat.
