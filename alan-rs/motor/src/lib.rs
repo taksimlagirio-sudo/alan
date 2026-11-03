@@ -8,3 +8,5 @@ pub mod alan;
 pub mod mat;
 pub mod saha;
 pub mod top;
+pub mod yetenek;
+mod yetenek_tablo;
