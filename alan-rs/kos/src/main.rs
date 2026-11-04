@@ -114,6 +114,11 @@ fn main() {
     }
     let m = &mt.m;
     eprintln!("tik {} · skor {}-{} · {:.1} sn ({:.2} ms/tik)", m.tick, m.score[0], m.score[1], dt, 1e3 * dt / (m.tick.max(1.0)));
+    if alan_motor::kafa::kafa2_zemin::onden_acik() {
+        let (o, k, t) = alan_motor::kafa::kafa2_zemin::onden_say();
+        let s = alan_motor::kafa::kafa2_zemin::onden_sn();
+        eprintln!("önceden hesaplama: {o} hücre, {k} tanesi sonra istendi (oran %{:.0}) · kararın istediği {t} hücreden önceden hazır olan: %{:.0} · toplu hesap {s:.2} sn (toplam sürenin %{:.0})", 100.0 * k as f64 / o.max(1) as f64, 100.0 * k as f64 / t.max(1) as f64, 100.0 * s / dt);
+    }
     alan_motor::kafa::kafa2_karar::dalga_olc_yaz();
     if std::env::var("ALAN_BEK_IZ").is_ok() {
         let (h, k) = alan_motor::sekil::yer::BEK_DER_SAY.with(|c| c.get());

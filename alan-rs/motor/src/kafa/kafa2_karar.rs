@@ -850,7 +850,9 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
         c.kf = Some(eski::kontraKur(src.clone(), team, ch, h.clone()));
     }
     if PR {
-        c.lossAt = Some(Rc::new(RefCell::new(kayipF(k, src.clone(), team, ch, risk))));
+        let mut kf = kayipF(k, src.clone(), team, ch, risk);
+        kf.karar_icin(k);
+        c.lossAt = Some(Rc::new(RefCell::new(kf)));
     }
     let mut direct: Vec<(Pid, f64)> = Vec::new();
     let dirYaz = |direct: &mut Vec<(Pid, f64)>, q: Pid, v: f64| match direct.iter_mut().find(|x| x.0 == q) {
