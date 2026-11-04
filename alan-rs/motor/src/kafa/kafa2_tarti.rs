@@ -13,7 +13,7 @@ use crate::mat::{cos, exp, hypot, jmax, jmin, jround};
 use crate::model::{Dok, Oyuncu, Secenek};
 use crate::saha::{CY as GCY, H as GH, KR, W as GW};
 use std::cell::RefCell;
-use std::collections::HashMap;
+
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -59,15 +59,15 @@ pub struct Cx {
     pub kayip: KayipRef,
     pub h: Op,
     /// pDunya önbelleği ("w|…")
-    pub PW: HashMap<String, Arc<Dunya>>,
+    pub PW: crate::HizliMap<String, Arc<Dunya>>,
     /// pencere önbelleği
-    pub PE: HashMap<String, Arc<Pencere>>,
+    pub PE: crate::HizliMap<String, Arc<Pencere>>,
     /// nodeV önbelleği ("v|…")
-    pub PV: HashMap<String, f64>,
+    pub PV: crate::HizliMap<String, f64>,
     /// durumD önbelleği ("d|…")
-    pub PD: HashMap<String, Arc<DurumR>>,
+    pub PD: crate::HizliMap<String, Arc<DurumR>>,
     /// zeminH'nin imkân önbelleği (JS cx.IM; cxSiz kopyaları varsa paylaşır)
-    pub IM: Option<Rc<RefCell<HashMap<String, f64>>>>,
+    pub IM: Option<Rc<RefCell<crate::HizliMap<String, f64>>>>,
 }
 
 /// JS pencere'nin girdisi
@@ -172,7 +172,7 @@ pub fn zeminH(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Op
         }
         Some(c) => c,
     };
-    let M = cx.IM.get_or_insert_with(|| Rc::new(RefCell::new(HashMap::new()))).clone();
+    let M = cx.IM.get_or_insert_with(|| Rc::new(RefCell::new(Default::default()))).clone();
     let key = format!(
         "{}|{}|{}|{}|{}",
         js_sayi(team),
@@ -507,7 +507,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
             nd = jmin(nd, hypot(q.x - h.x, q.y - h.y));
         }
     }
-    let mut cx = Cx { src: src.clone(), team, ch, kayip: lossAt.clone(), h: h.clone(), PW: HashMap::new(), PE: HashMap::new(), PV: HashMap::new(), PD: HashMap::new(), IM: None };
+    let mut cx = Cx { src: src.clone(), team, ch, kayip: lossAt.clone(), h: h.clone(), PW: Default::default(), PE: Default::default(), PV: Default::default(), PD: Default::default(), IM: None };
     let L = |k: &mut Kafa, x: f64, y: f64| kay(k, lossAt, x, y);
     for o in opts.iter_mut() {
         if o.v.is_none() {
@@ -634,10 +634,10 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                         ch: cx.ch,
                         kayip: cx.kayip.clone(),
                         h: cx.h.clone(),
-                        PW: HashMap::new(),
-                        PE: HashMap::new(),
-                        PV: HashMap::new(),
-                        PD: HashMap::new(),
+                        PW: Default::default(),
+                        PE: Default::default(),
+                        PV: Default::default(),
+                        PD: Default::default(),
                         IM: cx.IM.clone(),
                     };
                     CXS.push((d.clone(), c));

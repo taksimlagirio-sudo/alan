@@ -53,9 +53,9 @@ pub struct TopTemas {
     /// vuruşun okunabilirliği
     pub cue: f64,
     /// okuma önbelleği (JS b._oku)
-    pub oku: std::collections::HashMap<i64, (f64, f64)>,
+    pub oku: crate::HizliMap<i64, (f64, f64)>,
     /// yeniden dokunma beklemesi: oyuncu → tik (JS b.cds)
-    pub cds: std::collections::HashMap<usize, f64>,
+    pub cds: crate::HizliMap<usize, f64>,
     /// Bekçi'nin harekete geçirdiği top (bekId: oyuncu id'si, bekM)
     pub bek_id: Option<u32>,
     pub bek_m: f64,

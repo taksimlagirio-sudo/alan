@@ -79,7 +79,7 @@ fn gecY_k(y: &sekil::gec::GecY) -> Arc<d1::GecY> {
 thread_local! {
     /// Yerleşimin gecikme eğrilerinin (önbellekte, değişmez) kafa biçimi: bir kez dönüştürülür.
     /// Anahtar eğrinin Arc adresi; yerleşimin Arc'ı da tutulur ki adres başka eğriye geçmesin.
-    static GECY_K: std::cell::RefCell<std::collections::HashMap<usize, (Arc<sekil::gec::GecY>, Arc<d1::GecY>)>> = std::cell::RefCell::new(std::collections::HashMap::new());
+    static GECY_K: std::cell::RefCell<crate::HizliMap<usize, (Arc<sekil::gec::GecY>, Arc<d1::GecY>)>> = std::cell::RefCell::new(Default::default());
 }
 fn gecY_k_arc(y: &Arc<sekil::gec::GecY>) -> Arc<d1::GecY> {
     let k = Arc::as_ptr(y) as usize;

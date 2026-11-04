@@ -10,7 +10,7 @@ use super::kafa2_tarti::bekYol;
 use crate::mat::{hypot, jmax, jmin};
 use crate::model::Oyuncu;
 use crate::saha::{CY as GCY, H as GH, W as GW};
-use std::collections::HashMap;
+
 use std::sync::Arc;
 
 /// JS gam() (decide.js:5939): sonraki adımın indirimi (prensip tartısında D._gPr)
@@ -27,14 +27,14 @@ pub struct KayipF {
     risk: f64,
     cc: f64,
     ot: f64,
-    c: HashMap<u64, f64>,
+    c: crate::HizliMap<u64, f64>,
     yq: Option<Vec<(Op, f64)>>,
     gB: Option<f64>,
     oB: f64,
 }
 
 pub fn kayipF(k: &Kafa, src: Arc<Dunya>, team: f64, ch: f64, risk: f64) -> KayipF {
-    KayipF { src, team, risk, cc: dis::chKayip(k, ch), ot: 1.0 - team, c: HashMap::new(), yq: None, gB: k.D._gPr, oB: k.k2.IMK_OFS }
+    KayipF { src, team, risk, cc: dis::chKayip(k, ch), ot: 1.0 - team, c: Default::default(), yq: None, gB: k.D._gPr, oB: k.k2.IMK_OFS }
 }
 
 impl KayipF {

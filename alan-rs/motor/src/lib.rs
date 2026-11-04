@@ -31,3 +31,34 @@ pub fn iz_acik() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     *A.get_or_init(|| std::env::vars().any(|(k, _)| k.starts_with("ALAN_") && (k.ends_with("_IZ") || k == "ALAN_IMK_HU")))
 }
+
+/// Önbellekler için hızlı karma (FxHash yöntemi). Yalnız arama yapılan sözlüklerde kullanılır;
+/// gezme sırası maçı etkilemez, sonuçlar aynıdır. Varsayılan SipHash saldırıya dayanıklı ama yavaş.
+#[derive(Default, Clone, Copy)]
+pub struct HizliKarma(u64);
+impl std::hash::Hasher for HizliKarma {
+    #[inline]
+    fn write(&mut self, bytes: &[u8]) {
+        for c in bytes.chunks(8) {
+            let mut b = [0u8; 8];
+            b[..c.len()].copy_from_slice(c);
+            self.write_u64(u64::from_le_bytes(b));
+        }
+    }
+    #[inline]
+    fn write_u64(&mut self, i: u64) {
+        self.0 = (self.0.rotate_left(5) ^ i).wrapping_mul(0x51_7c_c1_b7_27_22_0a_95);
+    }
+    #[inline]
+    fn write_u8(&mut self, i: u8) { self.write_u64(i as u64) }
+    #[inline]
+    fn write_u32(&mut self, i: u32) { self.write_u64(i as u64) }
+    #[inline]
+    fn write_i64(&mut self, i: i64) { self.write_u64(i as u64) }
+    #[inline]
+    fn write_usize(&mut self, i: usize) { self.write_u64(i as u64) }
+    #[inline]
+    fn finish(&self) -> u64 { self.0 }
+}
+/// Hızlı karmalı sözlük.
+pub type HizliMap<K, V> = std::collections::HashMap<K, V, std::hash::BuildHasherDefault<HizliKarma>>;

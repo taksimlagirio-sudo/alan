@@ -18,7 +18,7 @@ use crate::model::{KafaD, Oyuncu};
 use crate::oyuncu::{tepki, Tepki, TepkiS};
 use crate::temas::Kural;
 use std::cell::{Cell, RefCell};
-use std::collections::HashMap;
+
 use std::sync::Arc;
 
 /// Uçuşun yol tablosu (JS ucusYol dönüşü).
@@ -41,11 +41,11 @@ pub struct Kafa {
     /// JS `kesisK.son`
     pub kesisK_son: Cell<f64>,
     /// JS `UCUS`: varış hızı (bit) → uzunluk (1..80) → yol
-    pub(crate) ucus: RefCell<HashMap<u64, Vec<Option<Arc<UcusYol>>>>>,
+    pub(crate) ucus: RefCell<crate::HizliMap<u64, Vec<Option<Arc<UcusYol>>>>>,
     /// JS `SUTY`: hız (1/20) → yol birikimi
-    pub(crate) suty: RefCell<HashMap<i64, Arc<Vec<f64>>>>,
+    pub(crate) suty: RefCell<crate::HizliMap<i64, Arc<Vec<f64>>>>,
     /// JS `GE`, `GEk`, `GEt`, `GEic`
-    pub(crate) ge: RefCell<(Option<f64>, HashMap<String, f64>, HashMap<String, f64>)>,
+    pub(crate) ge: RefCell<(Option<f64>, crate::HizliMap<String, f64>, crate::HizliMap<String, f64>)>,
     pub(crate) ge_ic: Cell<bool>,
     /// JS `D._mac` (kafa2'nin okuduğu maç görünümü; maç döngüsü kararın önünde doldurur)
     pub mac: Option<MacGor>,
@@ -56,9 +56,9 @@ pub struct Kafa {
     /// decide0'ın `srcC._kc`'si (kararın K önbelleği; launchFor/ucusSure/bankSure/bankFor buna bakar)
     pub srcC_kc: Option<RefCell<KOnbellek>>,
     /// JS `RNB`, `RNBt`
-    pub(crate) rnb: RefCell<(Option<f64>, HashMap<String, f64>)>,
+    pub(crate) rnb: RefCell<(Option<f64>, crate::HizliMap<String, f64>)>,
     /// JS `SHT`'nin tabloda olmayan hücreleri (hesaplanmış)
-    pub(crate) sht_ek: RefCell<HashMap<i64, f64>>,
+    pub(crate) sht_ek: RefCell<crate::HizliMap<i64, f64>>,
 }
 
 impl Kafa {
@@ -69,12 +69,12 @@ impl Kafa {
             SAH_F: None,
             keepP_son: Cell::new(f64::INFINITY),
             kesisK_son: Cell::new(0.0),
-            ucus: RefCell::new(HashMap::new()),
-            suty: RefCell::new(HashMap::new()),
-            ge: RefCell::new((None, HashMap::new(), HashMap::new())),
+            ucus: RefCell::new(Default::default()),
+            suty: RefCell::new(Default::default()),
+            ge: RefCell::new((None, Default::default(), Default::default())),
             ge_ic: Cell::new(false),
-            rnb: RefCell::new((None, HashMap::new())),
-            sht_ek: RefCell::new(HashMap::new()),
+            rnb: RefCell::new((None, Default::default())),
+            sht_ek: RefCell::new(Default::default()),
             mac: None,
             prT: None,
             k2: Kafa2Durum { PWT: Some(-1e9), IMK_INAN_T: 60.0, ..Default::default() },

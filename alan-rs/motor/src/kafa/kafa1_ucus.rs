@@ -19,7 +19,7 @@ use crate::temas::{bek_dl, bek_dv, bek_har, bek_kay, bek_oku_e, bek_re, bek_uc, 
 use crate::top::{adim, tahmin, Bitis, Top};
 use crate::yetenek::mek;
 use std::borrow::Cow;
-use std::collections::HashMap;
+
 use std::sync::Arc;
 
 /// Uçuşun topu (JS ucusFormul'ün `b0`): çıkış yeri, hızı, şarjı ve (varsa) nişan noktası.
@@ -586,7 +586,7 @@ impl Kafa {
                 }
             }
         }
-        let mut okc: HashMap<i64, (f64, f64)> = HashMap::new();
+        let mut okc: crate::HizliMap<i64, (f64, f64)> = Default::default();
         let hfrom: Option<&Oyuncu> = Some(h);
         for &(z, w, zs, yol) in &UCsY {
             let an = z * Ah;
