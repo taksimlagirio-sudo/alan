@@ -329,16 +329,18 @@ impl Dis for MacDis {
         p.__yas
     }
     fn bekciFm(&self, p: &Oyuncu, B: Nk, fm: &d1::Fm) -> Nk {
-        let ps: Vec<Oyuncu> = fm.ps.iter().map(|q| (**q).clone()).collect();
-        let ben = fm.ps.iter().position(|q| q.id == p.id && q.team == p.team);
-        let bm = sekil::yer::BekM { ps: &ps, holder: fm.holder, ben };
-        let (x, y) = sekil::yer::bekci(p, B.x, B.y, Some(&bm), &self.kural.get());
-        nk(x, y)
+        dunya_kopya(fm.ps, |ps| {
+            let ben = fm.ps.iter().position(|q| q.id == p.id && q.team == p.team);
+            let bm = sekil::yer::BekM { ps, holder: fm.holder, ben };
+            let (x, y) = sekil::yer::bekci(p, B.x, B.y, Some(&bm), &self.kural.get());
+            nk(x, y)
+        })
     }
     fn slotBase(&self, fm: &d1::Fm, p: &Oyuncu, B: Nk, hucum: bool) -> Nk {
-        let ps: Vec<Oyuncu> = fm.ps.iter().map(|q| (**q).clone()).collect();
-        let y = sekil::yer::slotBase(&self.mac, &ps, p, B.x, B.y, hucum);
-        nk(y.x, y.y)
+        dunya_kopya(fm.ps, |ps| {
+            let y = sekil::yer::slotBase(&self.mac, ps, p, B.x, B.y, hucum);
+            nk(y.x, y.y)
+        })
     }
     fn S_prHat(&self, blok: &str) -> Option<f64> {
         sekil::sabit::prHat(blok)
@@ -433,6 +435,35 @@ struct IlkTampon {
 }
 thread_local! {
     static ILK_TAMPON: std::cell::RefCell<IlkTampon> = std::cell::RefCell::new(IlkTampon::default());
+}
+thread_local! {
+    /// Kafa dünyasının (Arc'lı oyuncular, değişmez) düz kopyası: aynı dünya için yeniden kopyalanmaz.
+    /// Anahtar oyuncu nesnelerinin kendisi (Arc'lar tutulduğu için başka dünyayla karışmaz).
+    static DUNYA_KOPYA: std::cell::RefCell<(Vec<crate::kafa::kafa1_js::Op>, Vec<Oyuncu>)> = const { std::cell::RefCell::new((Vec::new(), Vec::new())) };
+}
+/// `src`'nin düz kopyasıyla `f`'i çalıştır (dünya aynıysa önceki kopya).
+fn dunya_kopya<R>(src: &[crate::kafa::kafa1_js::Op], f: impl FnOnce(&[Oyuncu]) -> R) -> R {
+    DUNYA_KOPYA.with(|c| {
+        let ayni = {
+            let c = c.borrow();
+            c.0.len() == src.len() && c.0.iter().zip(src).all(|(a, b)| Arc::ptr_eq(a, b))
+        };
+        if !ayni {
+            match c.try_borrow_mut() {
+                Ok(mut c) => {
+                    c.0 = src.to_vec();
+                    c.1 = src.iter().map(|q| (**q).clone()).collect();
+                }
+                // iç içe çağrıda (kopya ödünçteyken) başka dünya: geçici kopya
+                Err(_) => {
+                    let ps: Vec<Oyuncu> = src.iter().map(|q| (**q).clone()).collect();
+                    return f(&ps);
+                }
+            }
+        }
+        let c = c.borrow();
+        f(&c.1)
+    })
 }
 /// Maçın dokunuş ayarı (JS ALAN_DOKUNUS): bugün kapalı (maç taşımadı)
 pub fn mac_dokunus() -> Option<d1::Dokunus> {
