@@ -7,7 +7,7 @@ use crate::mat::{atan2, hypot, jmax, jmin, jsign};
 use crate::model::{KafaD, Mac, Oyuncu, Pid};
 use crate::oyuncu::Tepki;
 use crate::saha::{KR, MOUTH};
-use crate::temas::{bek_dl, Kural};
+use crate::temas::{bek_dl, bek_dv, bek_re, Kural};
 use crate::yetenek::mek;
 
 use super::gecici_dis as dis;
@@ -159,9 +159,22 @@ pub fn bekci(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (
             1.0
         }
     };
-    let cov = Q.bek_body + 0.8 * bek_dl(p);
-    let MoE = jmax(0.4, MOUTH * dx.abs() / L);
-    let mut r = cl(L * cl(1.0 - cov / MoE, 0.1, 0.55) + 0.08 * (bekY(p, mek::ACI_DARALT) - 10.0), 2.5, KR);
+    // açıortay (Bekçi'nin duracağı çizgi): topun yerinden iki direğin ortası
+    let (bxu, byu) = {
+        let nz = |l: f64| if l != 0.0 && l == l { l } else { 1.0 };
+        let (a1x, a1y, a2x, a2y) = (gx - ex, GCY - MOUTH - ey, gx - ex, GCY + MOUTH - ey);
+        let (l1, l2) = (nz(hypot(a1x, a1y)), nz(hypot(a2x, a2y)));
+        let (x, y) = (a1x / l1 + a2x / l2, a1y / l1 + a2y / l2);
+        let l = nz(hypot(x, y));
+        (x / l, y / l)
+    };
+    let mut r = if let Some(vb) = m.and_then(|m| m.holder).filter(|hh| hh.team != p.team).and_then(dis::sutHiz) {
+        bek_derinlik(p, ex, ey, gx, L, bxu, byu, vb)
+    } else {
+        let cov = Q.bek_body + 0.8 * bek_dl(p);
+        let MoE = jmax(0.4, MOUTH * dx.abs() / L);
+        cl(L * cl(1.0 - cov / MoE, 0.1, 0.55) + 0.08 * (bekY(p, mek::ACI_DARALT) - 10.0), 2.5, KR)
+    };
     if let Some(m) = m {
         if L > S.bekSupL {
             let mut dD = 1e9;
@@ -225,7 +238,10 @@ pub fn bekci(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (
                     };
                     jmax(r, hypot(p.x - gx, p.y - GCY)) + spd(p) * ALAN_SPRE(p, k) * tS
                 };
-                r += (jmin(rOut, jmax(r, rY)) - r) * w;
+                let _ = rY;
+                if yakin && rOut > r {
+                    r += (rOut - r) * w;
+                } /* şut hazırlığında her tik bir adım öne çıkma yok (dalış modelinde öne çıkan Bekçi tepkisi içinde yetişemiyordu); yalnız taşıyıcı dibe girince (karşı karşıya) üstüne çıkar */
             }
         }
     }
@@ -244,6 +260,62 @@ pub fn bekci(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (
     by /= bl;
     let st = jmax(0.0, L - _r);
     (ex + bx * st, ey + by * st)
+}
+
+/// Bekçi'nin derinliği değerle (dalış modeliyle aynı hesap): açıortay üstündeki aday derinliklerde, taşıyıcının kale
+/// ağzına (direkten direğe, gövde aralığıyla) çekebileceği en sert şutlar tartılır: Bekçi tepki süresince yerinde,
+/// sonra dalış hızıyla en çok tam uzanma kadar; top çizgiye varmadan gövdesi topun yoluna değebiliyorsa o şut kapanır.
+/// Kale ağzının en büyük kapanan payı seçilir; eşitlikte Bekçi'nin şimdiki derinliğine en yakın aday (titreme yok).
+/// Adaylar Bekçi'nin bir tikte aldığı yol aralığıyla, 2,5 br'den Kuyu sınırına (eski sınırlar).
+fn bek_derinlik(p: &Oyuncu, ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64) -> f64 {
+    let body = Q.bek_body;
+    let (re, dv, dl) = (bek_re(p), bek_dv(p), bek_dl(p));
+    let vb = jmax(vb, 1e-6);
+    let n = (2.0 * MOUTH / body).ceil().max(1.0) as usize;
+    let kap = |r: f64| -> usize {
+        let st = jmax(0.0, L - r);
+        let (kx, ky) = (ex + bxu * st, ey + byu * st);
+        let mut c = 0;
+        for j in 0..=n {
+            let ty = GCY - MOUTH + 2.0 * MOUTH * j as f64 / n as f64;
+            let (ux, uy) = (gx - ex, ty - ey);
+            let ld = hypot(ux, uy);
+            if !(ld > 0.0) {
+                continue;
+            }
+            let (ux, uy) = (ux / ld, uy / ld);
+            let mut s = 0.0;
+            loop {
+                let t = s / vb;
+                let er = body + jmin(dl, dv * jmax(0.0, t - re));
+                if hypot(ex + ux * s - kx, ey + uy * s - ky) <= er {
+                    c += 1;
+                    break;
+                }
+                if s >= ld {
+                    break;
+                }
+                s = jmin(ld, s + vb);
+            }
+        }
+        c
+    };
+    let r_maks = jmin(KR, jmax(2.5, L - body));
+    let adim = jmax(0.05, crate::mac::enerji::spd(p));
+    let r_simdi = hypot(p.x - gx, p.y - GCY);
+    let (mut eniyi, mut ek, mut ed) = (2.5, 0usize, f64::INFINITY);
+    let mut r = 2.5;
+    while r <= r_maks + 1e-9 {
+        let k = kap(r);
+        let d = (r - r_simdi).abs();
+        if k > ek || (k == ek && d < ed) {
+            eniyi = r;
+            ek = k;
+            ed = d;
+        }
+        r += adim;
+    }
+    eniyi
 }
 
 /// JS koyHedef(p, h, ax, ay): taşıyıcının önüne gövde koyma noktası.
