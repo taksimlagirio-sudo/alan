@@ -328,9 +328,12 @@ impl Sv {
                                 Some(e) => e.P,
                                 None => 1.0 / (1.0 + exp((jmax(0.0, TEPKI(pp, Tepki::Kovala, k)) + jmax(0.0, hypot(pp.x - hp.x, pp.y - hp.y) - 2.4) / v - 8.0) / 8.0)),
                             };
-                            J.w * PP + match &self.tP {
-                                Some(t) => yada(t.hm_get(pp.id).unwrap_or(0.0), 0.0) * P.K,
-                                None => 0.0,
+                            match &self.tP {
+                                // değerin tek anlamı: bu oyuncu yapmazsa kaybedilen (kafanın "o olmasa"sı ya da işin
+                                // kendi ağırlığı, hangisi büyükse; eksi değil) × oraya zamanında yetişme
+                                Some(t) if !uadeg_eski() => jmax(yada(t.hm_get(pp.id).unwrap_or(0.0), 0.0) * P.K, jmax(0.0, J.w)) * PP,
+                                Some(t) => J.w * PP + yada(t.hm_get(pp.id).unwrap_or(0.0), 0.0) * P.K,
+                                None => J.w * PP,
                             }
                         }
                     }
@@ -346,7 +349,9 @@ impl Sv {
                             Some(tp) if qp.id >= 0.0 && !J.bul => yada(tp.mm_get(&format!("{}|{}", idStr(qp.id), idStr(pp.id))).unwrap_or(0.0), 0.0),
                             _ => 0.0,
                         };
-                        if kp > 0.001 || mg > 0.0 {
+                        if self.tP.is_some() && !uadeg_eski() {
+                            jmax(mg, jmax(0.0, J.w)) * kp
+                        } else if kp > 0.001 || mg > 0.0 {
                             J.w * kp + mg
                         } else {
                             0.0
@@ -944,4 +949,10 @@ impl Sv {
     pub fn presIs_(&mut self, c: &mut Mc, p: Pid, kk: usize) {
         self.presIs(c, p, kk);
     }
+}
+
+/// Eşleşme işinin değeri eskisi gibi (ağırlık × yetişme + "o olmasa", toplam): ALAN_UADEG_ESKI_IZ.
+fn uadeg_eski() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_UADEG_ESKI_IZ").is_ok())
 }

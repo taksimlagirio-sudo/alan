@@ -505,6 +505,11 @@ static UZAK_KIS_: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
 fn uzak_kis() -> bool {
     *UZAK_KIS_.get_or_init(|| !(crate::iz_acik() && std::env::var("ALAN_UZAK_ESKI_IZ").is_ok()))
 }
+/// "Bir rakip olmasa" dünyaları fırsat önbelleğini (IM) paylaşırdı; eskisi: ALAN_CXIM_ESKI_IZ.
+fn cxim_eski() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_CXIM_ESKI_IZ").is_ok())
+}
 fn uzak_h() -> bool {
     crate::iz_acik() && std::env::var("ALAN_UZAKH_IZ").is_ok()
 }
@@ -693,6 +698,9 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
         let mut tm: Vec<(f64, f64)> = Vec::new();
         let mut mm: Vec<(String, f64)> = Vec::new();
         let mut CXS: Vec<(Op, Cx)> = Vec::new();
+        // karşılaştırmanın gerçek dünyası da temiz bağlamda: seçenek tartısının önbellekleri başka (bitiş) dünyalarından
+        // dolu; "o olmasa" farkı iki taraf aynı biçimde hesaplanmazsa önbellek artığını ölçer
+        let mut cx0 = Cx { src: cx.src.clone(), team: cx.team, ch: cx.ch, kayip: cx.kayip.clone(), h: cx.h.clone(), PW: Default::default(), PE: Default::default(), PV: Default::default(), PD: Default::default(), IM: None };
         let mac_var = k.mac.is_some();
         let inL = k.k2._inLook;
         fn cx_siz<'a>(CXS: &'a mut Vec<(Op, Cx)>, cx: &Cx, d: &Op) -> &'a mut Cx {
@@ -709,7 +717,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                         PE: Default::default(),
                         PV: Default::default(),
                         PD: Default::default(),
-                        IM: cx.IM.clone(),
+                        IM: if cxim_eski() { cx.IM.clone() } else { None }, /* her varsayım dünyasının kendi fırsat önbelleği (anahtarda dünya yok: paylaşılınca ilk dünyanın değeri bütün savunmacılara gidiyordu) */
                     };
                     CXS.push((d.clone(), c));
                     CXS.len() - 1
@@ -722,7 +730,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                 continue;
             }
             let Tk = dis::ucusT(k, jmax(5.0, hypot(kq.x - h.x, kq.y - h.y)), k.D.arriveFirm, None) + k.D.sutHazir;
-            let vk = nodeV(k, &mut cx, kq, Tk, 0.0, None);
+            let vk = nodeV(k, if cxim_eski() { &mut cx } else { &mut cx0 }, kq, Tk, 0.0, None);
             tm.push((kq.id, vk));
             if !inL && mac_var {
                 for d in src.iter() {
@@ -755,7 +763,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                     continue;
                 }
                 if base.is_none() {
-                    base = Some(nodeV(k, &mut cx, &h, k.D.sutHazir, 0.0, None));
+                    base = Some(nodeV(k, if cxim_eski() { &mut cx } else { &mut cx0 }, &h, k.D.sutHazir, 0.0, None));
                 }
                 let uz = hypot(d.x - h.x, d.y - h.y);
                 if uzak_h() && uz > UZAK_R {
