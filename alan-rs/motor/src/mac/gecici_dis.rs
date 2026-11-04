@@ -104,6 +104,7 @@ pub mod DU {
 /// iş bitince geri konur (JS'te hepsi `m` üstünde).
 pub fn mc_ile<T>(m: &mut Mac, f: impl FnOnce(&mut crate::sekil::varlik::Mc) -> T) -> T {
     use crate::sekil::varlik::Mc;
+    crate::mac::kafa_dis::kafa_hazirla(m);
     let kural = crate::mac::MacKural::of(m);
     let mut ps = std::mem::take(&mut m.ps);
     // top maçta kalır (takımı okunur); yerleşim kopyasında çalışır, sonra geri yazılır
@@ -181,66 +182,93 @@ pub fn gorulen(m: &mut Mac, p: Pid) -> Option<Vec<Oyuncu>> {
 pub fn gercek(_o: &mut Secenek) {}
 
 // ---- decide.js ----
+use crate::kafa::kafa1_js::nk;
+use crate::mac::kafa_dis::{kafa_ile, op_dunya};
+fn rng_fn(r: &mut Rng) -> impl FnMut() -> f64 + '_ {
+    move || r.sonraki()
+}
 
 pub fn pressAt(ps: &[Oyuncu], team: f64, x: f64, y: f64) -> f64 {
-    todo!("decide.js pressAt")
+    kafa_ile(|k| k.pressAt(&op_dunya(ps), team, x, y))
 }
 pub fn oppAt(ps: &[Oyuncu], team: f64, x: f64, y: f64) -> f64 {
-    todo!("decide.js oppAt")
+    kafa_ile(|k| k.oppAt(&op_dunya(ps), team, x, y))
 }
 pub fn threat(team: f64, x: f64, y: f64) -> f64 {
-    todo!("decide.js threat")
+    kafa_ile(|k| k.threat(team, x, y))
 }
 /// Pasın d'ye uçuş süresi (aF: varış sertliği)
 pub fn ucusT(d: f64, aF: f64) -> f64 {
-    todo!("decide.js ucusT")
+    kafa_ile(|k| k.ucusT(d, aF, None))
 }
 /// Çekirdeğin gövdedeki yönü (birim vektör)
 pub fn coreSide(m: &Mac, h: Pid) -> (f64, f64) {
-    todo!("decide.js coreSide")
+    kafa_ile(|k| {
+        let c = k.coreSide(&m.ps[h]);
+        (c.ux, c.uy)
+    })
 }
 pub fn caOf(m: &Mac, h: Pid) -> f64 {
-    todo!("decide.js caOf")
+    kafa_ile(|k| k.caOf(&m.ps[h]))
 }
 pub fn vurE(m: &Mac, h: Pid, ch: f64, gon: bool) -> f64 {
-    todo!("decide.js vurE")
+    kafa_ile(|k| k.vurE(&m.ps[h], Some(ch), gon))
 }
 pub fn savurPlan(m: &Mac, h: Pid, launch: (f64, f64), ca0: f64, w0: f64, sYon: f64, plase: bool, vE: f64) -> Option<SavurPlan> {
-    todo!("decide.js savurPlan")
+    kafa_ile(|k| {
+        k.savurPlan(&m.ps[h], nk(launch.0, launch.1), ca0, w0, sYon, Some(&op_dunya(&m.ps)), plase, vE)
+            .map(|p| SavurPlan { T: p.T, wRel: p.wRel, uSh: p.uSh, k: p.k, A: p.A, s: p.s, a: p.a, wMax: p.wMax, wR: p.wR, w0: p.w0, P: if crate::mat::dogru(p.P) { p.P } else { 0.0 } })
+    })
 }
 /// Ön hareket planı (JS onPlan): {s, wS, phi, caR, kal, a, Tsw} (b, tArr, w maç doldurur)
 pub fn onPlan(m: &Mac, q: Pid, launch: (f64, f64), plase: bool, vE: f64) -> Option<JP_onH> {
-    todo!("decide.js onPlan")
+    let b = m.ball.as_ref().map_or(nk(f64::NAN, f64::NAN), |b| nk(b.x, b.y));
+    let top = m.ball.as_ref().map(|b| b.tt.t.kimlik).unwrap_or_default();
+    kafa_ile(|k| {
+        k.onPlan(&m.ps[q], nk(launch.0, launch.1), b, plase, vE)
+            .map(|p| JP_onH { b: top, s: p.s, wS: p.wS, phi: p.phi, caR: p.caR, kal: p.kal, a: p.a, Tsw: p.Tsw, ..Default::default() })
+    })
 }
 pub fn fakeT(m: &Mac, h: Pid) -> f64 {
-    todo!("decide.js fakeT")
+    kafa_ile(|k| k.fakeT(&m.ps[h]))
 }
 pub fn fakeIlgili(m: &Mac, p: Pid, h: Pid, sh: &FakeShow) -> bool {
-    todo!("decide.js fakeIlgili")
+    kafa_ile(|k| k.fakeIlgili(&m.ps[p], &m.ps[h], &crate::kafa::kafa1_fake::FakeSh { k: sh.k.clone(), to: nk(sh.to.0, sh.to.1), c: sh.c }))
 }
-pub fn fakeP(m: &Mac, h: Pid, p: Pid, k: &str, c: f64) -> f64 {
-    todo!("decide.js fakeP")
+pub fn fakeP(m: &Mac, h: Pid, p: Pid, k_: &str, c: f64) -> f64 {
+    kafa_ile(|k| k.fakeP(&m.ps[h], &m.ps[p], k_, Some(c)))
 }
 pub fn fakeHedef(m: &Mac, p: Pid, h: Pid, sh: &FakeShow) -> (f64, f64) {
-    todo!("decide.js fakeHedef")
+    kafa_ile(|k| {
+        let t = k.fakeHedef(&m.ps[p], &m.ps[h], &crate::kafa::kafa1_fake::FakeSh { k: sh.k.clone(), to: nk(sh.to.0, sh.to.1), c: sh.c });
+        (t.x, t.y)
+    })
 }
 pub fn gonEk(m: &Mac, h: Pid, shot: Option<&str>) -> f64 {
-    todo!("decide.js gonEk")
+    kafa_ile(|k| k.gonEk(&m.ps[h], &op_dunya(&m.ps), shot.unwrap_or("")))
 }
 pub fn pasEk(m: &Mac, h: Pid) -> f64 {
-    todo!("decide.js pasEk")
+    kafa_ile(|k| k.pasEk(&m.ps[h], &op_dunya(&m.ps)))
 }
 pub fn applyErrorSav(m: &Mac, h: Pid, launch: (f64, f64), r: &mut Rng, ek: f64, gon: bool, savW: f64, savU: f64, shot: Option<&str>, kenar: bool) -> (f64, f64) {
-    todo!("decide.js applyErrorSav")
+    let src = op_dunya(&m.ps);
+    kafa_ile(|k| {
+        let v = k.applyErrorSav(&m.ps[h], nk(launch.0, launch.1), &mut rng_fn(r), ek, gon, savW, savU, Some(&src), shot, Some(kenar));
+        (v.x, v.y)
+    })
 }
 pub fn applyError(m: &Mac, h: Pid, launch: (f64, f64), r: &mut Rng, ek: f64, gon: bool, shot: Option<&str>, kenar: bool) -> (f64, f64) {
-    todo!("decide.js applyError")
+    let src = op_dunya(&m.ps);
+    kafa_ile(|k| {
+        let v = k.applyError(&m.ps[h], nk(launch.0, launch.1), &mut rng_fn(r), ek, gon, Some(&src), shot, Some(kenar));
+        (v.x, v.y)
+    })
 }
 pub fn sarjKarar(m: &Mac, p: Pid, g: &[Oyuncu], ch: f64) -> bool {
-    todo!("decide.js sarjKarar")
+    kafa_ile(|k| k.sarjKarar(&m.ps[p], &op_dunya(g), ch))
 }
 pub fn recvCh(m: &Mac, ps: &[Oyuncu], team: f64, x: f64, y: f64, ch: f64, p: &Oyuncu) -> f64 {
-    todo!("decide.js recvCh")
+    kafa_ile(|k| k.recvCh(&op_dunya(ps), team, x, y, ch, p))
 }
 pub fn otFactor(m: &Mac, p: Pid, inSp: f64) -> f64 {
     todo!("decide.js otFactor")
@@ -254,41 +282,41 @@ pub fn decide(m: &Mac, p: &Oyuncu, g: &[Oyuncu], ch: f64, r: &mut Rng, tE: &crat
     todo!("decide.js decide")
 }
 pub fn secimN(m: &Mac, p: Pid, o: &Secenek, g: &[Oyuncu], T: f64) -> f64 {
-    todo!("decide.js secimN")
+    kafa_ile(|k| k.secimN(&m.ps[p], Some(o), &op_dunya(g), T))
 }
 /// Seçim: r.opts içindeki sıra
 pub fn secim(m: &Mac, h: Pid, r: &Karar, g: &[Oyuncu]) -> usize {
     todo!("decide.js secim")
 }
 pub fn secimW(m: &Mac, h: Pid, pr: f64, b: bool) -> f64 {
-    todo!("decide.js secimW")
+    kafa_ile(|k| k.secimW(&m.ps[h], pr, b, None))
 }
 pub fn chargeRate(m: &Mac, h: Pid, still: f64, ch: f64) -> f64 {
-    todo!("decide.js chargeRate")
+    kafa_ile(|k| k.chargeRate(&m.ps[h], &op_dunya(&m.ps), still, ch, false))
 }
 pub fn sarjMal(m: &Mac, h: Pid) -> f64 {
-    todo!("decide.js sarjMal")
+    kafa_ile(|k| k.sarjMal(&m.ps[h]))
 }
 /// Fiskede rakibin bx, by'ye (taşıyıcıya göre) kovalaması
 pub fn rakipKovala(m: &Mac, o: &RakipK, bx: f64, by: f64, md: f64) -> (f64, f64) {
     todo!("decide.js rakipKovala")
 }
 pub fn govdeVurP(m: &Mac, q: Pid, h: Pid) -> f64 {
-    todo!("decide.js govdeVurP")
+    kafa_ile(|k| k.govdeVurP(&m.ps[q], &m.ps[h], None, false))
 }
 pub fn duelP(m: &Mac, q: Pid, h: Pid) -> f64 {
-    todo!("decide.js duelP")
+    kafa_ile(|k| k.duelP(&m.ps[q], &m.ps[h], &op_dunya(&m.ps), None))
 }
 pub fn enIkiliEk(m: &Mac, q: Pid, h: Pid) -> f64 {
-    todo!("decide.js enIkiliEk")
+    kafa_ile(|k| k.enIkiliEk(&m.ps[q], &m.ps[h]))
 }
 pub fn girEsik(m: &Mac, q: Pid, h: Pid, ch: f64) -> Option<f64> {
-    todo!("decide.js girEsik")
+    kafa_ile(|k| k.girEsik(&m.ps[q], &m.ps[h], &op_dunya(&m.ps), Some(ch)))
 }
 pub fn commitThr(m: &Mac, q: Pid, h: Pid) -> f64 {
-    todo!("decide.js commitThr")
+    kafa_ile(|k| k.commitThr(&m.ps[q], &m.ps[h], &op_dunya(&m.ps)))
 }
 /// Alan değeri (not için)
 pub fn V(ps: &[Oyuncu], team: f64, x: f64, y: f64, ch: f64) -> f64 {
-    todo!("decide.js V")
+    kafa_ile(|k| k.V(&op_dunya(ps), team, x, y, ch))
 }

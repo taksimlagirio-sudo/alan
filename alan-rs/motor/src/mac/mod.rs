@@ -149,6 +149,8 @@ pub struct MacEk {
     pub sekil: crate::sekil::varlik::SekilDurum,
     /// kafanın pres tartısı (JS m._prT): kafa yazar, sonraki kararda kafa okur
     pub prT_k: Option<crate::kafa::gecici_dis1::PrT>,
+    /// maçın kafası (JS AlanDecide)
+    pub kafa: kafa_dis::KafaKutu,
 }
 
 // ---- küçük JS yardımcıları ----

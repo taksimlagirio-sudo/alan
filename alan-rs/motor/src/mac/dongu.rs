@@ -278,6 +278,7 @@ fn bosaDus(m: &mut Mac, o: TopIstek, takim: f64) {
 
 /// JS _step(m)
 pub fn _step(m: &mut Mac) {
+    crate::mac::kafa_dis::kafa_hazirla(m);
     if m.over {
         return;
     }
@@ -698,18 +699,19 @@ fn donus(m: &mut Mac, h: Pid, kk: &MacKural) -> bool {
                 let b = Q.body;
                 let cr = TQ.min_d / 2.0 + 0.3;
                 let md = TQ.min_d;
-                let qs: Vec<dis::RakipK> = (0..m.ps.len()).filter(|&qi| m.ps[qi].team != ht && !m.ps[qi].noTouch).map(|qi| {
+                // JS: kovalayanların göreli yeri (o.x, o.y) iki yön denemesi boyunca birikir
+                let mut qs: Vec<crate::kafa::kafa1_savur::Kov> = (0..m.ps.len()).filter(|&qi| m.ps[qi].team != ht && !m.ps[qi].noTouch).map(|qi| {
                     let q = &m.ps[qi];
-                    dis::RakipK { q: qi, f: atan2(q.y - hp.y, q.x - hp.x), d: hypot(q.x - hp.x, q.y - hp.y), v: spd(q) * ALAN_SPR(q, kk) }
+                    crate::kafa::kafa1_savur::Kov { f: atan2(q.y - hp.y, q.x - hp.x), d: hypot(q.x - hp.x, q.y - hp.y), v: spd(q) * ALAN_SPR(q, kk), x: None, y: None }
                 }).collect();
-                let yol = |dr: f64, ar: f64| -> bool {
+                let mut yol = |dr: f64, ar: f64| -> bool {
                     let n = (ar / fw).ceil() as i64;
                     for k in 1..=n {
                         let a = ca + dr * jmin(ar, k as f64 * fw);
                         let bx = cos(a) * b;
                         let by = sin(a) * b;
-                        for o in &qs {
-                            let (qx, qy) = dis::rakipKovala(m, o, bx, by, md);
+                        for o in qs.iter_mut() {
+                            let (qx, qy) = crate::kafa::kafa1_savur::rakipKovala(o, bx, by, md);
                             if hypot(bx - qx, by - qy) < cr {
                                 return false;
                             }

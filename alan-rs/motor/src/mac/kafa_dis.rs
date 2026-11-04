@@ -291,3 +291,61 @@ impl Dis for MacDis {
         p.__yas
     }
 }
+
+// ======================================================================
+// Maçın kafası: tek `Kafa` nesnesi maçta yaşar (JS'te AlanDecide modülü); her tikte dış dünyası
+// (MacDis) ve D._tick tazelenir. Yerleşim ve maç, çalışırken kafaya bu kapsamlı bağlamdan ulaşır.
+// ======================================================================
+use crate::kafa::Kafa;
+use std::cell::RefCell;
+use std::rc::Rc;
+
+#[derive(Clone, Default)]
+pub struct KafaKutu {
+    pub k: Option<Rc<RefCell<Kafa>>>,
+    /// dış dünyanın tazelendiği tik
+    pub t: Option<f64>,
+}
+impl std::fmt::Debug for KafaKutu {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("KafaKutu").field("t", &self.t).finish_non_exhaustive()
+    }
+}
+
+thread_local! {
+    static KAFA: RefCell<Option<Rc<RefCell<Kafa>>>> = const { RefCell::new(None) };
+}
+
+/// Maçın kafasını bu tik için hazırla (yoksa kur) ve kapsamlı bağlama koy.
+pub fn kafa_hazirla(m: &mut Mac) -> Rc<RefCell<Kafa>> {
+    if m.mac.kafa.k.is_none() {
+        let d = MacDis::kur(m);
+        m.mac.kafa.k = Some(Rc::new(RefCell::new(Kafa::yeni(Arc::new(d)))));
+        m.mac.kafa.t = Some(m.tick);
+    } else if m.mac.kafa.t != Some(m.tick) {
+        let d = MacDis::kur(m);
+        let k = m.mac.kafa.k.as_ref().unwrap();
+        if let Ok(mut k) = k.try_borrow_mut() {
+            k.dis = Arc::new(d);
+        }
+        m.mac.kafa.t = Some(m.tick);
+    }
+    let k = m.mac.kafa.k.clone().unwrap();
+    if let Ok(mut kk) = k.try_borrow_mut() {
+        kk.D._tick = Some(m.tick);
+    }
+    KAFA.with(|c| *c.borrow_mut() = Some(k.clone()));
+    k
+}
+
+/// Kapsamdaki kafayla çalış (yerleşimin ve maçın kafa çağrıları).
+pub fn kafa_ile<R>(f: impl FnOnce(&Kafa) -> R) -> R {
+    let k = KAFA.with(|c| c.borrow().clone()).expect("kafa bağlamı kurulmadı (kafa_hazirla)");
+    let b = k.borrow();
+    f(&b)
+}
+
+/// Dünyayı kafanın biçimine çevir.
+pub fn op_dunya(ps: &[Oyuncu]) -> Vec<crate::kafa::kafa1_js::Op> {
+    ps.iter().map(|p| Arc::new(p.clone())).collect()
+}

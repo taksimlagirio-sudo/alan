@@ -38,45 +38,66 @@ use crate::model::{JMTacE, Oyuncu};
 use super::varlik::{KayipF, Mc, Varlik};
 
 // ---- AlanDecide ----
+use crate::kafa::kafa1_js::{nk, Op};
+use crate::mac::kafa_dis::kafa_ile;
+/// Yerleşimin dünyasını kafanın dünyasına çevir (varlık: konum/hız kendinde, beden oyuncudan).
+fn ow(w: &[Varlik], oy: &[Oyuncu]) -> Vec<Op> {
+    w.iter()
+        .map(|v| {
+            let mut o = v.govde(oy).clone();
+            o.x = v.x;
+            o.y = v.y;
+            o.vx = v.vx;
+            o.vy = v.vy;
+            std::sync::Arc::new(o)
+        })
+        .collect()
+}
+fn ops(ps: &[Oyuncu]) -> Vec<Op> {
+    crate::mac::kafa_dis::op_dunya(ps)
+}
 
 pub fn threat(team: u8, x: f64, y: f64) -> f64 {
-    todo!("AlanDecide.threat")
+    kafa_ile(|k| k.threat(team as f64, x, y))
 }
 pub fn frenT(p: &Oyuncu, x: f64, y: f64, R: f64, T: f64, v: f64) -> f64 {
-    todo!("AlanDecide.frenT")
+    kafa_ile(|k| k.frenT(p, x, y, R, T, v))
 }
 pub fn freeAt(w: &[Varlik], oy: &[Oyuncu], team: f64, x: f64, y: f64) -> f64 {
-    todo!("AlanDecide.freeAt")
+    kafa_ile(|k| k.freeAt(&ow(w, oy), team, x, y))
 }
 pub fn coreSide(h: &Oyuncu) -> (f64, f64) {
-    todo!("AlanDecide.coreSide")
+    kafa_ile(|k| {
+        let c = k.coreSide(h);
+        (c.ux, c.uy)
+    })
 }
 pub fn govdeV(h: &Oyuncu) -> f64 {
-    todo!("AlanDecide.govdeV")
+    kafa_ile(|k| k.govdeV(h))
 }
 /// JS `savurPlan(h, {vx, vy}, ca0, w0, sYon, null, itme, E)` → `pl ? pl.T : None`.
 pub fn savurPlan(h: &Oyuncu, vx: f64, vy: f64, ca0: f64, w0: f64, sYon: f64, itme: bool, E: f64) -> Option<f64> {
-    todo!("AlanDecide.savurPlan")
+    kafa_ile(|k| k.savurPlan(h, nk(vx, vy), ca0, w0, sYon, None, itme, E).map(|p| p.T))
 }
 pub fn topK(h: &Oyuncu) -> f64 {
-    todo!("AlanDecide.topK")
+    kafa_ile(|k| k.topK(h))
 }
 pub fn duelP(q: &Oyuncu, h: &Oyuncu, ps: &[Oyuncu]) -> f64 {
-    todo!("AlanDecide.duelP")
+    kafa_ile(|k| k.duelP(q, h, &ops(ps), None))
 }
 pub fn girThr(q: &Oyuncu, h: &Oyuncu, ps: &[Oyuncu]) -> f64 {
-    todo!("AlanDecide.girThr")
+    kafa_ile(|k| k.girThr(q, h, &ops(ps)))
 }
 pub fn ucusT(L: f64, arrive: f64, al: Option<f64>) -> f64 {
-    todo!("AlanDecide.ucusT")
+    kafa_ile(|k| k.ucusT(L, arrive, al))
 }
 /// `arr`: None = JS'te verilmedi (undefined).
 pub fn laneOk(w: &[Varlik], oy: &[Oyuncu], team: u8, A: (f64, f64), B: (f64, f64), arr: f64, lag: Option<f64>) -> f64 {
-    todo!("AlanDecide.laneOk")
+    kafa_ile(|k| k.laneOk(&ow(w, oy), team as f64, nk(A.0, A.1), nk(B.0, B.1), Some(arr), lag))
 }
 /// JS laneOk(src, team, A, B) (arr ve lag verilmeden).
 pub fn laneOk0(w: &[Varlik], oy: &[Oyuncu], team: u8, A: (f64, f64), B: (f64, f64)) -> f64 {
-    todo!("AlanDecide.laneOk (arr/lag yok)")
+    kafa_ile(|k| k.laneOk(&ow(w, oy), team as f64, nk(A.0, A.1), nk(B.0, B.1), None, None))
 }
 pub fn bekYol(w: &[Varlik], oy: &[Oyuncu], team: u8, A: (f64, f64), B: (f64, f64), lag: f64) -> f64 {
     todo!("AlanDecide.bekYol")
@@ -85,22 +106,22 @@ pub fn yerDeger(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64, ch: f64) 
     todo!("AlanDecide.yerDeger")
 }
 pub fn recvCh(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64, ch: f64, q: Option<&Oyuncu>) -> f64 {
-    todo!("AlanDecide.recvCh")
+    kafa_ile(|k| k.recvCh(&ow(w, oy), team as f64, x, y, ch, q.unwrap_or(&Oyuncu::default())))
 }
 pub fn keepP(h: &Oyuncu, w: &[Varlik], oy: &[Oyuncu], dir: Option<(f64, f64)>, T: f64) -> f64 {
-    todo!("AlanDecide.keepP")
+    kafa_ile(|k| k.keepP(h, &ow(w, oy), dir.map(|d| nk(d.0, d.1)), T))
 }
 pub fn runOn(w: &[Varlik], oy: &[Oyuncu], team: u8, h: &Oyuncu, at: (f64, f64)) -> f64 {
-    todo!("AlanDecide.runOn")
+    kafa_ile(|k| k.runOn(&ow(w, oy), team as f64, h, nk(at.0, at.1)))
 }
 pub fn space(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64) -> f64 {
-    todo!("AlanDecide.space")
+    kafa_ile(|k| k.space(&ow(w, oy), team as f64, x, y))
 }
 pub fn front(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64) -> f64 {
-    todo!("AlanDecide.front")
+    kafa_ile(|k| k.front(&ow(w, oy), team as f64, x, y))
 }
 pub fn dagin(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, vv: f64, y: f64) -> f64 {
-    todo!("AlanDecide.dagin")
+    kafa_ile(|k| k.dagin(&ow(w, oy), team as f64, x, vv, Some(y)))
 }
 pub fn kayipYer(ps: &[Oyuncu], team: u8, ch: f64, h: &Oyuncu, tac: Option<&crate::mac::Tac>) -> KayipF {
     todo!("AlanDecide.kayipYer")
