@@ -130,15 +130,15 @@ fn top(v: &Value) -> TopT {
     }
     TopT { b, t }
 }
-fn tac(v: &Value) -> JMTacE {
-    let mut t = JMTacE::default();
-    t.blok = v["blok"].as_str().unwrap_or("").to_string();
-    t.genislik = v["genislik"].as_str().unwrap_or("").to_string();
-    t.risk = h(&v["risk"]);
+fn tac(v: &Value) -> alan_motor::mac::Tac {
+    use alan_motor::mac::tac::{Durus, DurusN};
+    let mut t = alan_motor::mac::Tac::default();
+    t.blok = v["blok"].as_str().map(|s| s.to_string());
+    t.genislik = v["genislik"].as_str().map(|s| s.to_string());
+    t.risk = Some(h(&v["risk"]));
     if !v["durus"].is_null() {
-        let dz = |a: &Value| -> Vec<Vec<(Option<f64>, Option<f64>)>> { a.as_array().unwrap().iter().map(|r| r.as_array().unwrap().iter().map(|q| if q.is_null() { (None, None) } else { (ho(&q[0]), ho(&q[1])) }).collect()).collect() };
-        t.durus.huc = dz(&v["durus"]["huc"]).into_iter().map(|r| r.into_iter().map(|(f, y)| JMTacEDurusHucEE { f, y }).collect()).collect();
-        t.durus.sav = dz(&v["durus"]["sav"]).into_iter().map(|r| r.into_iter().map(|(f, y)| JMTacEDurusSavEE { f, y }).collect()).collect();
+        let dz = |a: &Value| -> Vec<Vec<DurusN>> { a.as_array().unwrap().iter().map(|r| r.as_array().unwrap().iter().map(|q| if q.is_null() { DurusN { f: None, y: None } } else { DurusN { f: ho(&q[0]), y: ho(&q[1]) } }).collect()).collect() };
+        t.durus = Some(Durus { huc: dz(&v["durus"]["huc"]), sav: dz(&v["durus"]["sav"]) });
     }
     t
 }
