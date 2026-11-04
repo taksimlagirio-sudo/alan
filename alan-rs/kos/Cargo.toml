@@ -1,0 +1,9 @@
+[package]
+name = "alan-kos"
+version = "0.1.0"
+edition = "2021"
+description = "Komut satırı: kayıttan maç oynat, ölç, JS ile karşılaştır"
+
+[dependencies]
+alan-motor = { path = "../motor" }
+serde_json = "1"

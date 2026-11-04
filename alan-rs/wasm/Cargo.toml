@@ -1,0 +1,12 @@
+[package]
+name = "alan-wasm"
+version = "0.1.0"
+edition = "2021"
+description = "Tarayıcı için ince kabuk: maç işçisi (rust-isci.js) Rust motorunu bununla çalıştırır"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+alan-motor = { path = "../motor" }
+serde_json = "1"
