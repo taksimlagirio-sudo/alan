@@ -142,7 +142,7 @@ impl Kafa {
         hh.y = y;
         hh.team = team;
         hh.id = -9.0;
-        hh.role = String::new();
+        hh.role = "".into();
         hh.vx = 0.0;
         hh.vy = 0.0;
         hh.D = 1.0;

@@ -19,11 +19,11 @@ pub struct Oyuncu {
     /// `i`: number
     pub i: f64,
     /// `role`: string
-    pub role: String,
+    pub role: std::sync::Arc<str>,
     /// `slot`: object
     pub slot: JPSlot,
     /// `name`: string
-    pub name: String,
+    pub name: std::sync::Arc<str>,
     /// `a`: object
     pub a: JPA,
     /// `R`: number

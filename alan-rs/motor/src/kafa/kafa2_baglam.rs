@@ -95,7 +95,7 @@ pub fn pres_mi(job: &Option<String>) -> bool {
 }
 #[inline(always)]
 pub fn bekci(p: &Oyuncu) -> bool {
-    p.role == "Bekçi"
+    &*p.role == "Bekçi"
 }
 /// JS `0 === team`
 #[inline(always)]

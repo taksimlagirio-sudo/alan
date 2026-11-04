@@ -886,8 +886,8 @@ impl Kafa {
                 }
                 None => jmax(0.0, qT - 0.5 * hT + kapa(yol, vO, away)),
             };
-            let KIZ = crate::iz_acik() && dir.map_or(false, |di| std::env::var("ALAN_KIZ").ok().map_or(false, |v| { let (a, b) = v.split_once(":").unwrap_or(("", "0")); h.name == a && (di.x - b.parse::<f64>().unwrap_or(9.0)).abs() < 1e-4 })) && std::env::var("ALAN_C3_IZ").ok().map_or(false, |x| x == format!("{}", self.tick()));
-            if KIZ && q.name == "Hendek" { let di = dir.unwrap(); eprintln!("   RT hT {} donS {} qT {} yol {} vO {} away {} d {}", hT, self.donS(h, di.x, di.y), qT, yol, vO, away, d); }
+            let KIZ = crate::iz_acik() && dir.map_or(false, |di| std::env::var("ALAN_KIZ").ok().map_or(false, |v| { let (a, b) = v.split_once(":").unwrap_or(("", "0")); &*h.name == a && (di.x - b.parse::<f64>().unwrap_or(9.0)).abs() < 1e-4 })) && std::env::var("ALAN_C3_IZ").ok().map_or(false, |x| x == format!("{}", self.tick()));
+            if KIZ && &*q.name == "Hendek" { let di = dir.unwrap(); eprintln!("   RT hT {} donS {} qT {} yol {} vO {} away {} d {}", hT, self.donS(h, di.x, di.y), qT, yol, vO, away, d); }
             if KIZ { eprintln!("   KQ {} reach {} T {} keep0 {} e {:?} x {} {}", q.name, reachT, T, keep, self.dis.algi_e(q), q.x, q.y); }
             if reachT > T {
                 continue;

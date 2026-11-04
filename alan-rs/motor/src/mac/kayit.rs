@@ -75,7 +75,7 @@ pub fn kurUygula(m: &mut Mac, d: &Kayit, dis: &mut dyn KurDis) {
                 }
                 let Some(Some(o)) = a.get(m.ps[pi].i as usize) else { continue };
                 if let Some(ad) = &o.ad {
-                    m.ps[pi].name = ad.clone();
+                    m.ps[pi].name = ad.as_str().into();
                 }
                 let mut h = m.mac.ham[pi].clone();
                 for (k, v) in &o.a {

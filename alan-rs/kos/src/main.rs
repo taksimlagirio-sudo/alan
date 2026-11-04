@@ -71,9 +71,9 @@ fn main() {
     if kip == "kare" {
         let m = &mt.m;
         let yol = a.get(4).expect("kare <cikti.json>");
-        let ad: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&p.name).unwrap()).collect();
+        let ad: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.name).unwrap()).collect();
         let tk: Vec<String> = m.ps.iter().map(|p| format!("{}", p.team)).collect();
-        let rl: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&p.role).unwrap()).collect();
+        let rl: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.role).unwrap()).collect();
         let is: Vec<String> = isler.yazilar.iter().map(|j| serde_json::to_string(j).unwrap()).collect();
         let j = format!("{{\"motor\":\"Rust motoru\",\"ad\":[{}],\"takim\":[{}],\"rol\":[{}],\"isler\":[{}],\"olay\":[{}],\"k\":[{}]}}", ad.join(","), tk.join(","), rl.join(","), is.join(","), olaylar.join(","), kareler.join(","));
         std::fs::write(yol, j).expect("yazılamadı");

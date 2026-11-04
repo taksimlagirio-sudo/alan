@@ -173,7 +173,7 @@ pub fn iliski(m: &mut Mac) {
         let bx = (if att == 0.0 { 0.0 } else { W }) + dir * (8.0 + 84.0 * s.0) * KX;
         let by = CY + 20.0 * s.1 * KY;
         if (A.x - bx) * dir > 8.0 && !icer(job(p), &["kovala", "alıcı", "koşu"]) {
-            let ad = if A.name.is_empty() { js_num(j) } else { A.name.clone() };
+            let ad = if A.name.is_empty() { js_num(j) } else { A.name.to_string() };
             let p = &mut m.ps[pi];
             p.tx = bx;
             p.ty = by;

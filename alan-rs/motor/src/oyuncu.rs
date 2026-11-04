@@ -9,7 +9,7 @@ pub use crate::model::Oyuncu;
 
 impl Oyuncu {
     pub fn bekci(&self) -> bool {
-        self.role == "Bekçi"
+        &*self.role == "Bekçi"
     }
     /// takım (0/1) tam sayı olarak
     #[inline(always)]

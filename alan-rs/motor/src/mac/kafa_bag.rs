@@ -140,12 +140,12 @@ pub fn kafaBasla(m: &mut Mac, h: Pid, o: &mut Secenek, ot: bool) {
     };
     let r = KafaKayit {
         t: m.tick,
-        ad: hp.name.clone(),
+        ad: hp.name.to_string(),
         id: hp.id,
         team: hp.team,
         kind: o.kind.clone(),
         kendine: o.kendine,
-        q: q.filter(|&q| q != h).map(|q| m.ps[q].name.clone()),
+        q: q.filter(|&q| q != h).map(|q| m.ps[q].name.to_string()),
         qid: q.map(|q| m.ps[q].id),
         shot: o.shot.clone(),
         ot,

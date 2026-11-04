@@ -572,7 +572,7 @@ impl Sv {
                 let xx = (jmax(0.0, r * r - dy * dy)).sqrt();
                 Aday { x: cl(gx - dr * xx, 2.0, GW - 2.0), y: cl(GCY + dy, 2.0, GH - 2.0), dogal: true, ..Default::default() }
             };
-            match pp.role.as_str() {
+            match &*pp.role {
                 "Uç" => {
                     cands.push(nok(yb * MOUTH, KR + 1.0));
                     cands.push(nok(0.0, KR + 2.5));

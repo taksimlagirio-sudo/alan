@@ -121,7 +121,7 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
         }
         m.st.ot[t as usize] += 1.0;
         if !gon && !kenar {
-            let qn = o.q.map_or(String::new(), |q| m.ps[q].name.clone());
+            let qn = o.q.map_or(String::new(), |q| m.ps[q].name.to_string());
             let ch = js_num(jround(100.0 * m.ch));
             ev(m, "pas", t, format!("{hname} tek dokunuşla → {qn} · şarj %{ch}"));
         }
@@ -192,7 +192,7 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
                 m.st.calim[ti] += 1.0;
                 ev(m, "pas", t, format!("{hname} kenardan çalım · kendine sektirdi"));
             } else {
-                let qn = o.q.map_or(String::new(), |q| m.ps[q].name.clone());
+                let qn = o.q.map_or(String::new(), |q| m.ps[q].name.to_string());
                 ev(m, "pas", t, format!("{hname} kenardan sektirdi → {qn}{tk}"));
             }
         }

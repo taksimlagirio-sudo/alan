@@ -195,8 +195,8 @@ impl Motor {
                 format!(
                     "{{\"id\":{},\"name\":{},\"role\":{},\"team\":{},\"a\":{},\"R\":{},\"D\":{},\"i\":{}}}",
                     p.id,
-                    serde_json::to_string(&p.name).unwrap(),
-                    serde_json::to_string(&p.role).unwrap(),
+                    serde_json::to_string(&*p.name).unwrap(),
+                    serde_json::to_string(&*p.role).unwrap(),
                     p.team,
                     a.unwrap_or_else(|| "{}".into()),
                     p.R,

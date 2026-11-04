@@ -98,7 +98,7 @@ pub fn take(m: &mut Mac, p: Pid, how: Option<String>) {
     let g = gor(m, p);
     m.ps[p].sarj = Some(dis::sarjKarar(m, p, g.as_deref().unwrap_or(&m.ps), m.ch));
     let pp = &m.ps[p];
-    let son = Son { kim: Some(pp.name.clone()), kimId: Some(pp.id), kimT: Some(pp.team), x: k3(Some(pp.x)), y: k3(Some(pp.y)), ..Default::default() };
+    let son = Son { kim: Some(pp.name.to_string()), kimId: Some(pp.id), kimT: Some(pp.team), x: k3(Some(pp.x)), y: k3(Some(pp.y)), ..Default::default() };
     kafaBitir(m, son);
     m._gelenB = m.ball.clone().map(Box::new);
     if let Some(gb) = &m.ball {
@@ -1174,7 +1174,7 @@ fn ikiliGiris(m: &mut Mac, h: Pid) {
         };
         {
             let ge = dis::girEsik(m, qi, h, m.ch);
-            if crate::iz_acik() && m.ps[qi].name == "Cansu" && std::env::var("ALAN_EN_IZ").ok().and_then(|x| x.parse::<f64>().ok()) == Some(m.tick) { eprintln!("IKE P {} est {} ge {:?} thr0 {} enEk {} ch {}", P, est, ge, thr0, dis::enIkiliEk(m, qi, h), m.ch); }
+            if crate::iz_acik() && &*m.ps[qi].name == "Cansu" && std::env::var("ALAN_EN_IZ").ok().and_then(|x| x.parse::<f64>().ok()) == Some(m.tick) { eprintln!("IKE P {} est {} ge {:?} thr0 {} enEk {} ch {}", P, est, ge, thr0, dis::enIkiliEk(m, qi, h), m.ch); }
             let gec = match ge {
                 Some(g) => est < g,
                 None => est < thr0 + (if oya { if thr0 >= dis::DU::thrLast { dis::DU::oyala } else { dis::DU::oyalaC } } else { 0.0 }) - 0.2 * (sdq - 0.5),
@@ -1309,7 +1309,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
             crate::model::JMLastDecOptsE {
                 kind,
                 to: o.to.as_ref().map(|t| crate::model::JMLastDecOptsETo { x: t.x, y: t.y }),
-                q: o.q.map_or(String::new(), |q| m.ps[q].name.clone()),
+                q: o.q.map_or(String::new(), |q| m.ps[q].name.to_string()),
                 P: o.det.as_ref().map_or(f64::NAN, |d| if o.kind == "gönder" { d.Pk.unwrap_or(f64::NAN) } else { d.P.unwrap_or(f64::NAN) - d.Ps.unwrap_or(f64::NAN) }),
                 v: o.v.unwrap_or(f64::NAN),
                 sjK: o.sjK,
@@ -1318,7 +1318,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
                 ..Default::default()
             }
         }).collect();
-        m.lastDec = Some(crate::model::JMLastDec { name: hp.name.clone(), team: ht, x: hp.x, y: hp.y, opts });
+        m.lastDec = Some(crate::model::JMLastDec { name: hp.name.to_string(), team: ht, x: hp.x, y: hp.y, opts });
     }
     let z = m.r.sonraki();
     m.decT = jround(5.0 + 8.0 * (1.0 - m.tac[ht as usize].tempo.unwrap_or(f64::NAN)) + 3.0 * z);
@@ -1507,7 +1507,7 @@ fn bostaTop(m: &mut Mac) {
                     c.g += 1.0;
                 }
             }
-            let t = format!("SAYI · {} · {}–{}", from.map_or(String::new(), |f| m.ps[f].name.clone()), js_num(m.score[0]), js_num(m.score[1]));
+            let t = format!("SAYI · {} · {}–{}", from.map_or(String::new(), |f| m.ps[f].name.to_string()), js_num(m.score[0]), js_num(m.score[1]));
             ev(m, "sayi", sc, t);
             super::kurulum::kickoff(m, 1.0 - sc);
         } else if dn == Some("durdu") {
