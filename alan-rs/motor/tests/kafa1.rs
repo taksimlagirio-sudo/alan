@@ -439,7 +439,7 @@ impl Hata {
         e.0 += 1;
         if !ayni(rs, js) {
             e.1 += 1;
-            if self.ilk.len() < 40 {
+            if self.ilk.len() < 400 {
                 self.ilk.push(format!("{ad} {ek}: rust {rs:e} js {js:e}"));
             }
         }
@@ -449,7 +449,7 @@ impl Hata {
         e.0 += 1;
         if !ok {
             e.1 += 1;
-            if self.ilk.len() < 40 {
+            if self.ilk.len() < 400 {
                 self.ilk.push(format!("{ad} {ek}"));
             }
         }
@@ -493,6 +493,9 @@ fn js_ile_bit_bit_ayni() {
         let team = hh.team;
         let gx = if team == 0.0 { 120.0 } else { 0.0 };
         let et = format!("t{tk}");
+        for t in c["tan"].as_array().unwrap() {
+            H.bak("tan", alan_motor::kafa::kafa1_js::tan(h(&t[0])), h(&t[1]), &et);
+        }
         for t in c["thr"].as_array().unwrap() {
             H.bak("threat", k.threat(t[0].as_f64().unwrap(), h(&t[1]), h(&t[2])), h(&t[3]), &et);
         }
@@ -576,7 +579,8 @@ fn js_ile_bit_bit_ayni() {
                 _ => H.evet("savurPlan", false, format!("{et} var/yok")),
             }
             let a = alan_motor::mat::atan2(V.y, V.x);
-            let r2 = k.onPlan(hh, V, nk(alan_motor::mat::cos(a + 1.0), alan_motor::mat::sin(a + 1.0)), it, 1.0);
+            let _ = a;
+            let r2 = k.onPlan(hh, V, nk(h(&t[6]), h(&t[7])), it, 1.0);
             match (r2, t[5].is_null()) {
                 (None, true) => H.evet("onPlan", true, String::new()),
                 (Some(r), false) => {
@@ -653,7 +657,7 @@ fn js_ile_bit_bit_ayni() {
             let dis2 = Arc::new(KayitDis { oy: oy.clone(), mac: Some(MacK { ch: ho(&mj["ch"]), gs, tac, prT }) });
             let k2 = Kafa::yeni(dis2);
             let mut k2 = k2;
-            k2.D._tick = Some(tk + 0.5);
+            k2.D._tick = Some(c["mtick"].as_f64().unwrap() + 0.5);
             for e in mj["vk"].as_array().unwrap() {
                 k2.ge_vk_koy(e[0].as_str().unwrap().into(), h(&e[1]));
             }

@@ -27,9 +27,10 @@ while (m.tick < 5400 && out.length < 150) {
   M.step(m);
   const h = m.holder; if (!h || m.tick % 9) continue;
   const ps = m.ps, team = h.team, gx = team === 0 ? 120 : 0, k0 = kaydet();
-  D._mac = null; D._tick = m.tick; D._gon = false; D._sut = .5; D._ot = 1; D._savT = 0; D._savCa = null; D._savW = null; D._savU = null; D._kanca = null; D._sYon = 0; D._itme = null; D._kenar = false; D._tekD = false;
-  const o = { tick: m.tick, ps: ps.map(ser), h: ps.indexOf(h), ch: b(m.ch ?? .5) };
+  D._mac = null; D._tick = m.tick + .25; D._gon = false; D._sut = .5; D._ot = 1; D._savT = 0; D._savCa = null; D._savW = null; D._savU = null; D._kanca = null; D._sYon = 0; D._itme = null; D._kenar = false; D._tekD = false;
+  const o = { tick: D._tick, ps: ps.map(ser), h: ps.indexOf(h), ch: b(m.ch ?? .5) };
   try {
+    o.tan = []; for (let i = 0; i < 20; i++) { const x = (lcg() - .5) * 3.2; o.tan.push([b(x), b(Math.tan(x))]); }
     o.thr = []; for (let i = 0; i < 6; i++) { const t = lcg() < .5 ? 0 : 1, x = lcg() * 120, y = lcg() * 60; o.thr.push([t, b(x), b(y), b(AD.threat(t, x, y))]); }
     o.ut = []; for (let i = 0; i < 6; i++) { const L = 1 + lcg() * 85, ar = [D.arrive, D.arriveFirm, D.arriveSpace, .02 + lcg() * 2.4][Math.floor(lcg() * 4)], al = lcg() < .4 ? null : lcg() * L * 1.2; o.ut.push([b(L), b(ar), b(al), b(AD.ucusT(L, ar, al ?? undefined))]); }
     o.yer = []; for (let i = 0; i < 4; i++) { const x = h.x + (lcg() - .5) * 40, y = Math.max(1, Math.min(59, h.y + (lcg() - .5) * 30)), c = lcg(); o.yer.push([b(x), b(y), b(c), b(AD.pressAt(ps, team, x, y)), b(AD.freeAt(ps, team, x, y)), b(AD.holdVal(ps, team, x, y)), b(AD.V(ps, team, x, y, c)), b(AD.shotQ(ps, team, x, y, c)), b(AD.sutKapali(ps, team, x, y, c)), b(AD.oppAt(ps, team, x, y))]); }
@@ -49,8 +50,8 @@ while (m.tick < 5400 && out.length < 150) {
     o.lf = []; for (let i = 0; i < 2; i++) { const to = { x: 5 + lcg() * 110, y: 3 + lcg() * 54 }, ar = .1 + lcg(), ch = lcg(); const r = AD.launchFor(h, to, ar, ps, ch); o.lf.push([b(to.x), b(to.y), b(ar), b(ch), b(r.vx), b(r.vy), r.ok]); }
     o.bf = []; { const B = { x: h.x + (lcg() - .5) * 30, y: lcg() < .5 ? .6 : 59.4 }, q = { x: h.x + (lcg() - .5) * 40, y: 10 + lcg() * 40 }, ar = .3, ch = .5; const r = AD.bankFor(h, B, q, ar, ps, ch); o.bf.push([b(B.x), b(B.y), b(q.x), b(q.y), b(ar), b(ch), b(r.vx), b(r.vy), r.ok]); }
     // savurma
-    o.sp = []; for (let i = 0; i < 2; i++) { const a = lcg() * 6.283, v = .8 + 1.8 * lcg(), V = { vx: Math.cos(a) * v, vy: Math.sin(a) * v }, ca0 = lcg() * 6.283 - 3.14, it = lcg() < .3; const r = AD.savurPlan(h, V, ca0, 0, 0, ps, it, 1); const p2 = AD.onPlan(h, V, { vx: Math.cos(a + 1), vy: Math.sin(a + 1) }, it, 1);
-      o.sp.push([b(V.vx), b(V.vy), b(ca0), it, r ? [r.s, r.caR, r.A, r.P, r.T, r.wR, r.wRel, r.uSh, r.k].map(b) : null, p2 ? [p2.s, p2.wS, p2.phi, p2.caR, p2.kal, p2.Tsw].map(b) : null]); }
+    o.sp = []; for (let i = 0; i < 2; i++) { const a = lcg() * 6.283, v = .8 + 1.8 * lcg(), V = { vx: Math.cos(a) * v, vy: Math.sin(a) * v }, ca0 = lcg() * 6.283 - 3.14, it = lcg() < .3; const r = AD.savurPlan(h, V, ca0, 0, 0, ps, it, 1); const bb = { vx: Math.cos(a + 1), vy: Math.sin(a + 1) }, p2 = AD.onPlan(h, V, bb, it, 1);
+      o.sp.push([b(V.vx), b(V.vy), b(ca0), it, r ? [r.s, r.caR, r.A, r.P, r.T, r.wR, r.wRel, r.uSh, r.k].map(b) : null, p2 ? [p2.s, p2.wS, p2.phi, p2.caR, p2.kal, p2.Tsw].map(b) : null, b(bb.vx), b(bb.vy)]); }
     o.ae = []; { const v = { vx: 1.2, vy: .4 }, rr = [], rnd = () => { const x = lcg(); rr.push(b(x)); return x; }; const r1 = AD.applyError(h, v, rnd, 1, false, ps); const r2 = AD.applyErrorSav(h, v, rnd, 1, true, .7, .8, ps, 'güçlü'); o.ae = [rr, b(r1.vx), b(r1.vy), b(r2.vx), b(r2.vy)]; }
     // fake
     o.fk = { T: b(AD.fakeT(h)), p: [] }; for (const q of ps) if (q.team !== team) { const sh = { k: ['gönder', 'pas', 'gövde'][Math.floor(lcg() * 3)], to: { x: h.x + (lcg() - .5) * 30, y: h.y + (lcg() - .5) * 20 }, c: lcg() }; const t = AD.fakeHedef(q, h, sh); o.fk.p.push([ps.indexOf(q), sh.k, b(sh.to.x), b(sh.to.y), b(sh.c), b(AD.fakeP(h, q, sh.k, sh.c)), b(t.x), b(t.y), AD.fakeIlgili(q, h, sh)]); }
@@ -59,7 +60,7 @@ while (m.tick < 5400 && out.length < 150) {
     { const a = lcg() * 6.283, bl = C.makeBall({ x: h.x, y: h.y, vx: Math.cos(a) * 1.5, vy: Math.sin(a) * 1.5, team, ch: .5 }), pts = C.predict(bl, ps, null, 120).pts, opp = ps.filter(q => q.team !== team); const pl = AD.chasePlan(pts, opp, 0, { lag: 0, loose: false });
       o.cp = { pts: pts.map(p => [b(p.x), b(p.y)]), r: [...pl].map(([p, g]) => [ps.indexOf(p), b(g.t), b(g.x), b(g.y), b(g.rc)]) }; }
     // girme eşiği maçla (D._mac; pres tartısı varsa yerDeger'i kaydet)
-    D._mac = m; D._tick = m.tick + .5; const tP = m._prT;
+    D._mac = m; D._tick = m.tick + .5; o.mtick = m.tick; const tP = m._prT;
     o.mac = { ch: b(m.ch), gs: m.sh && m.sh.gs ? { t: b(m.sh.gs.t), dt: m.sh.gs.dt, oy: !!m.sh.gs.oy } : null, tac: [0, 1].map(k => { const tq = m.tac[k] || {}, ME = self.AlanMatch.macEff; return [b(tq.siddet), !!tq.yz, b(tq.yz && ME ? (ME(m, k, {}).macK ?? 1) : 1)]; }),
       prT: tP ? { team: tP.team, hId: tP.hId ?? null, t: b(tP.t), h: b(tP.h), hm: tP.hm ? [...tP.hm].map(([k, v]) => [k, b(v)]) : null, hmk: tP.hm && tP.hm.k ? [...tP.hm.k] : null } : null, vk: [], ge: [] };
     for (const q of ps) { if (q.team === team) continue; const c = m.ch ?? .3, cs2 = AD.coreSide(h), kx = h.x + cs2.ux * C.Q.body, ky = h.y + cs2.uy * C.Q.body; if (tP) o.mac.vk.push([q.team + '|' + Math.round(kx) + ',' + Math.round(ky), b(AD.yerDeger(ps, q.team, kx, ky, c))]); }
