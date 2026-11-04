@@ -54,6 +54,19 @@ fn main() {
         }
     }
     let dt = t0.elapsed().as_secs_f64();
+    if kip == "boyut" {
+        for p in mt.m.ps.iter().take(3) {
+            eprintln!("{} hist {:?} past {:?} _bk {:?} job {:?} _lc {} sizeof {}", p.name, p.hist.as_ref().map(|v| v.len()), p.past.as_ref().map(|v| v.len()), p._bk.as_ref().map(|v| v.len()), p.job.as_ref().map(|j| j.len()), p._lc.is_some(), std::mem::size_of::<alan_motor::model::Oyuncu>());
+        }
+        let t = std::time::Instant::now();
+        let mut n = 0usize;
+        for _ in 0..100000 { let c = mt.m.ps[3].clone(); n += c.name.len(); }
+        eprintln!("klon 100k: {:?} ({})", t.elapsed(), n);
+        let mut q = mt.m.ps[3].clone(); q.hist = None; q.past = None; q._bk = None;
+        let t = std::time::Instant::now();
+        for _ in 0..100000 { let c = q.clone(); n += c.name.len(); }
+        eprintln!("klon hist/past/_bk yok 100k: {:?} ({})", t.elapsed(), n);
+    }
     if kip == "karar" {
         if let Some(d) = &mt.m.lastDec {
             println!("karar {} ({},{})", d.name, d.x, d.y);
