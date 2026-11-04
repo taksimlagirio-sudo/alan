@@ -17,6 +17,7 @@ pub mod kuyu;
 pub mod notlar;
 pub mod tac;
 pub mod kafa_dis;
+pub mod motor;
 pub mod vurus;
 
 pub use dongu::{run, step, take};
