@@ -138,8 +138,30 @@ pub fn slotBase(m: &Mac, ps: &[Oyuncu], p: &Oyuncu, ex: f64, ey: f64, att: bool)
 }
 
 /// Bekçi'nin yerine bakarken maçın gerekli parçası (JS `m`): oyuncular, taşıyıcı, Bekçi'nin kendi sırası.
+/// Bekçi'nin okuduğu dünya: maçın düz oyuncuları ya da kafanın paylaşımlı dünyası (kopyasız).
+#[derive(Clone, Copy)]
+pub enum BekPs<'a> {
+    Duz(&'a [Oyuncu]),
+    Pay(&'a [std::sync::Arc<Oyuncu>]),
+}
+impl<'a> BekPs<'a> {
+    #[inline]
+    pub fn len(self) -> usize {
+        match self {
+            BekPs::Duz(v) => v.len(),
+            BekPs::Pay(v) => v.len(),
+        }
+    }
+    #[inline]
+    pub fn get(self, i: usize) -> &'a Oyuncu {
+        match self {
+            BekPs::Duz(v) => &v[i],
+            BekPs::Pay(v) => &v[i],
+        }
+    }
+}
 pub struct BekM<'a> {
-    pub ps: &'a [Oyuncu],
+    pub ps: BekPs<'a>,
     /// JS `m.holder`: topu tutan (sahte de olabilir: kafa "top burada olsa" diye sorar)
     pub holder: Option<&'a Oyuncu>,
     /// JS `q === p` için Bekçi'nin sırası
@@ -201,7 +223,8 @@ fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (f
     if let Some(m) = m {
         if L > S.bekSupL {
             let mut dD = 1e9;
-            for q in m.ps {
+            for qi in 0..m.ps.len() {
+                let q = m.ps.get(qi);
                 if q.team == p.team && !q.bekci() {
                     dD = jmin(dD, hypot(q.x - gx, q.y - GCY));
                 }
@@ -216,7 +239,8 @@ fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (f
         if let Some(hh) = m.holder {
             if hh.team != p.team && L < 30.0 {
                 let mut dmin = 1e9;
-                for (qi, q) in m.ps.iter().enumerate() {
+                for qi in 0..m.ps.len() {
+                    let q = m.ps.get(qi);
                     if q.team != p.team || Some(qi) == m.ben {
                         continue;
                     }
@@ -291,41 +315,78 @@ fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (f
 /// Kale ağzının en büyük kapanan payı seçilir; eşitlikte Bekçi'nin şimdiki derinliğine en yakın aday (titreme yok).
 /// Adaylar Bekçi'nin bir tikte aldığı yol aralığıyla, 2,5 br'den Kuyu sınırına (eski sınırlar).
 fn bek_derinlik(p: &Oyuncu, ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64) -> f64 {
-    let body = Q.bek_body;
     let (re, dv, dl) = (bek_re(p), bek_dv(p), bek_dl(p));
     let vb = jmax(vb, 1e-6);
+    let adim = jmax(0.05, crate::mac::enerji::spd(p));
+    let r_simdi = hypot(p.x - gx, p.y - GCY);
+    // saf hesap: girdileri bit bit aynıysa sonuç aynı (L, bxu, byu ex, ey, gx'ten çıkar)
+    let anahtar = [re, dv, dl, adim, r_simdi, ex, ey, gx, vb].map(f64::to_bits);
+    if let Some(v) = BEK_DER.with(|c| c.borrow().get(&anahtar).copied()) {
+        BEK_DER_SAY.with(|c| c.set((c.get().0 + 1, c.get().1)));
+        return v;
+    }
+    BEK_DER_SAY.with(|c| c.set((c.get().0, c.get().1 + 1)));
+    let v = bek_derinlik0(ex, ey, gx, L, bxu, byu, vb, re, dv, dl, adim, r_simdi);
+    BEK_DER.with(|c| {
+        let mut c = c.borrow_mut();
+        if c.len() > 200_000 {
+            c.clear();
+        }
+        c.insert(anahtar, v);
+    });
+    v
+}
+thread_local! {
+    static BEK_DER: std::cell::RefCell<crate::HizliMap<[u64; 9], f64>> = std::cell::RefCell::new(Default::default());
+    pub static BEK_DER_SAY: std::cell::Cell<(u64, u64)> = const { std::cell::Cell::new((0, 0)) };
+}
+#[allow(clippy::too_many_arguments)]
+fn bek_derinlik0(ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64, re: f64, dv: f64, dl: f64, adim: f64, r_simdi: f64) -> f64 {
+    let body = Q.bek_body;
     let n = (2.0 * MOUTH / body).ceil().max(1.0) as usize;
+    // şut yollarının noktaları ve o anki erişim aday derinlikten bağımsız: bir kez (sonuç aynı)
+    let mut yol: Vec<Vec<(f64, f64, f64)>> = Vec::with_capacity(n + 1);
+    for j in 0..=n {
+        let ty = GCY - MOUTH + 2.0 * MOUTH * j as f64 / n as f64;
+        let (ux, uy) = (gx - ex, ty - ey);
+        let ld = hypot(ux, uy);
+        if !(ld > 0.0) {
+            continue;
+        }
+        let (ux, uy) = (ux / ld, uy / ld);
+        let mut v = Vec::new();
+        let mut s = 0.0;
+        loop {
+            let t = s / vb;
+            let er = body + jmin(dl, dv * jmax(0.0, t - re));
+            v.push((ex + ux * s, ey + uy * s, er));
+            if s >= ld {
+                break;
+            }
+            s = jmin(ld, s + vb);
+        }
+        yol.push(v);
+    }
     let kap = |r: f64| -> usize {
         let st = jmax(0.0, L - r);
         let (kx, ky) = (ex + bxu * st, ey + byu * st);
         let mut c = 0;
-        for j in 0..=n {
-            let ty = GCY - MOUTH + 2.0 * MOUTH * j as f64 / n as f64;
-            let (ux, uy) = (gx - ex, ty - ey);
-            let ld = hypot(ux, uy);
-            if !(ld > 0.0) {
-                continue;
-            }
-            let (ux, uy) = (ux / ld, uy / ld);
-            let mut s = 0.0;
-            loop {
-                let t = s / vb;
-                let er = body + jmin(dl, dv * jmax(0.0, t - re));
-                if hypot(ex + ux * s - kx, ey + uy * s - ky) <= er {
+        for v in &yol {
+            for &(px, py, er) in v {
+                let (ax, ay) = (px - kx, py - ky);
+                // hypot(ax, ay) >= |ax|, |ay| (IEEE): bunlardan biri er'i aşıyorsa uzak, hypot gereksiz
+                if ax.abs() > er || ay.abs() > er {
+                    continue;
+                }
+                if hypot(ax, ay) <= er {
                     c += 1;
                     break;
                 }
-                if s >= ld {
-                    break;
-                }
-                s = jmin(ld, s + vb);
             }
         }
         c
     };
     let r_maks = jmin(KR, jmax(2.5, L - body));
-    let adim = jmax(0.05, crate::mac::enerji::spd(p));
-    let r_simdi = hypot(p.x - gx, p.y - GCY);
     let (mut eniyi, mut ek, mut ed) = (2.5, 0usize, f64::INFINITY);
     let mut r = 2.5;
     while r <= r_maks + 1e-9 {

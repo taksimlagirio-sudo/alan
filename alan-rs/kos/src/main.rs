@@ -115,6 +115,10 @@ fn main() {
     let m = &mt.m;
     eprintln!("tik {} · skor {}-{} · {:.1} sn ({:.2} ms/tik)", m.tick, m.score[0], m.score[1], dt, 1e3 * dt / (m.tick.max(1.0)));
     alan_motor::kafa::kafa2_karar::dalga_olc_yaz();
+    if std::env::var("ALAN_BEK_IZ").is_ok() {
+        let (h, k) = alan_motor::sekil::yer::BEK_DER_SAY.with(|c| c.get());
+        eprintln!("bek_derinlik: {} isabet, {} hesap", h, k);
+    }
     if let Some(i) = ana_isci {
         let o = i.olc.borrow();
         eprintln!("paralel {} işçi: ana işçi {} iş hesapladı (ort {} bayt), {} paket açtı ({:.2} sn), {:.2} sn bekledi; dalgalarda {:.2} sn", n_isci, o.0, o.4 / o.0.max(1), o.1, o.3, o.2, i.olc_d.get());

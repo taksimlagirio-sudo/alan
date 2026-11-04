@@ -345,12 +345,11 @@ impl Dis for MacDis {
         p.__yas
     }
     fn bekciFm(&self, p: &Oyuncu, B: Nk, fm: &d1::Fm) -> Nk {
-        dunya_kopya(fm.ps, |ps| {
-            let ben = fm.ps.iter().position(|q| q.id == p.id && q.team == p.team);
-            let bm = sekil::yer::BekM { ps, holder: fm.holder, ben };
-            let (x, y) = sekil::yer::bekci(p, B.x, B.y, Some(&bm), &self.kural.get());
-            nk(x, y)
-        })
+        // dünya kopyalanmaz: Bekçi oyuncuların yalnız yerini ve takımını okur
+        let ben = fm.ps.iter().position(|q| q.id == p.id && q.team == p.team);
+        let bm = sekil::yer::BekM { ps: sekil::yer::BekPs::Pay(fm.ps), holder: fm.holder, ben };
+        let (x, y) = sekil::yer::bekci(p, B.x, B.y, Some(&bm), &self.kural.get());
+        nk(x, y)
     }
     fn slotBase(&self, fm: &d1::Fm, p: &Oyuncu, B: Nk, hucum: bool) -> Nk {
         dunya_kopya(fm.ps, |ps| {

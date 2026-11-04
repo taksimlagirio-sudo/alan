@@ -144,7 +144,7 @@ pub fn slotBase(m: &Mac, p: Pid, ex: f64, ey: f64, att: bool) -> (f64, f64) {
 /// Bekçi'nin yeri
 pub fn bekci(m: &Mac, p: Pid, ex: f64, ey: f64) -> (f64, f64) {
     let kural = crate::mac::MacKural::of(m);
-    let bm = crate::sekil::yer::BekM { ps: &m.ps, holder: m.holder.map(|h| &m.ps[h]), ben: Some(p) };
+    let bm = crate::sekil::yer::BekM { ps: crate::sekil::yer::BekPs::Duz(&m.ps), holder: m.holder.map(|h| &m.ps[h]), ben: Some(p) };
     crate::sekil::yer::bekci(&m.ps[p], ex, ey, Some(&bm), &kural)
 }
 /// Topsuz oyuncuların hedefleri ve işleri (tx, ty, job, sprint, press …)
