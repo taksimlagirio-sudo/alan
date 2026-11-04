@@ -3657,11 +3657,19 @@ pub struct JPSavurOLf0 {
 /// JS `m.tac[].durus.huc[][]`
 #[derive(Clone, Debug, Default)]
 pub struct JMTacEDurusHucEE {
+    /// `f`: number (duran topta derinlik, saha yüzdesi; yerleşim okur)
+    pub f: Option<f64>,
+    /// `y`: number
+    pub y: Option<f64>,
 }
 
 /// JS `m.tac[].durus.sav[][]`
 #[derive(Clone, Debug, Default)]
 pub struct JMTacEDurusSavEE {
+    /// `f`: number (duran topta derinlik, saha yüzdesi; yerleşim okur)
+    pub f: Option<f64>,
+    /// `y`: number
+    pub y: Option<f64>,
 }
 
 /// JS `m.sh.fr.arr{v}`

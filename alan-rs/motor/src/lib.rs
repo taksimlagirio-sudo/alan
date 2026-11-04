@@ -13,6 +13,7 @@ pub mod oyuncu;
 pub mod rng;
 pub mod temas;
 pub mod saha;
+pub mod sekil;
 pub mod top;
 pub mod yetenek;
 mod yetenek_tablo;
