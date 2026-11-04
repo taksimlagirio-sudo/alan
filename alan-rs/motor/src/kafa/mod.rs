@@ -5,7 +5,7 @@
 //! gizlidir. Burada hepsi açık bir bağlam yapısındadır: [`Kafa`] (`kafa1_baglam.rs`). Kafa'nın iki
 //! yarısı aynı yapının yöntemleridir: kafa1 (satır 1–4716: imkân, uçuş, şut, tutma/ikili, seçenekler)
 //! ve kafa2 (satır 4717–: dünyalar, tartı, karar). Dış modüller (maç, yerleşim, enerji) [`Dis`]
-//! özelliğinden çağrılır (`gecici_dis1.rs`).
+//! özelliğinden çağrılır (`gecici_dis1.rs`); kafa2 kafa1'e ve Dis'e `kafa2_bag.rs` üzerinden bağlanır (NOT-BIRLESIK.md).
 
 pub mod gecici_dis1;
 pub mod kafa2_bag;

@@ -38,7 +38,7 @@ fn ayni_b(a: f64, b: f64) -> bool {
 fn oyuncu(v: &Value) -> Oyuncu {
     let mut a = Ham::default();
     let mut p = Oyuncu::default();
-    for e in v["a"].as_array().unwrap() {
+    for e in v["a"].as_array().into_iter().flatten() {
         let k = e[0].as_str().unwrap();
         let x = h(&e[1]);
         a.v.insert(k.to_string(), x);
@@ -68,8 +68,8 @@ fn oyuncu(v: &Value) -> Oyuncu {
         };
         *f = x;
     }
-    p.id = v["id"].as_f64().unwrap();
-    p.team = v["team"].as_f64().unwrap();
+    p.id = v["id"].as_f64().unwrap_or(f64::NAN); // kısmi nesne (JS {...}, id yok)
+    p.team = v["team"].as_f64().unwrap_or(0.0);
     p.i = v["i"].as_f64().unwrap_or(0.0);
     p.role = v["role"].as_str().unwrap_or("").into();
     p.name = v["name"].as_str().unwrap_or("").into();
@@ -84,9 +84,9 @@ fn oyuncu(v: &Value) -> Oyuncu {
     p.den = ho(&v["den"]);
     p.R = ho(&v["R"]).unwrap_or(0.0);
     p.D = ho(&v["D"]).unwrap_or(1.0);
-    p.noTouch = v["noTouch"].as_bool().unwrap();
-    p.press = v["press"].as_bool().unwrap();
-    p.sprint = v["sprint"].as_bool().unwrap();
+    p.noTouch = v["noTouch"].as_bool().unwrap_or(false);
+    p.press = v["press"].as_bool().unwrap_or(false);
+    p.sprint = v["sprint"].as_bool().unwrap_or(false);
     p.job = v["job"].as_str().map(|s| s.to_string());
     p.markRef = v["markRef"].as_u64().map(|x| x as usize);
     p.tutQ = v["tutQ"].as_u64().map(|x| x as usize);
@@ -205,6 +205,8 @@ mod tdis {
     fn prT(&self) -> Option<PrT> { self.m.prT() }
     fn algi_e(&self, p: &Oyuncu) -> Option<f64> { self.m.algi_e(p) }
     fn algi_yas(&self, p: &Oyuncu) -> Option<f64> { self.m.algi_yas(p) }
+    fn ilkPres(&self, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[Tehlike], dtac: &TacEff, gs: &Option<JMShGs>) { self.m.ilkPres(tick, qv, hx, team, TH, dtac, gs) }
+    fn ivme(&self, p: &mut Oyuncu, wx: f64, wy: f64, vmax: f64) { self.m.ivme(p, wx, wy, vmax) }
         fn bekciFm(&self, p: &Oyuncu, B: Nk, fm: &Fm) -> Nk {
             let ps = kisi(fm.ps);
             let holder = fm.holder.and_then(|h| fm.ps.iter().position(|q| q.id == h.id && q.team == h.team));
@@ -255,6 +257,7 @@ fn kafa(g: &Value) -> Kafa {
     if let Some(src) = g["src"].as_array() {
         m.ps = src.iter().map(oyuncu).collect();
     }
+    let src_var = g["src"].is_array();
     m.tick = g["mac"]["tick"].as_f64().or(g["tick"].as_f64()).unwrap_or(0.0);
     m.holder = g["mac"]["holder"].as_u64().map(|x| x as usize).filter(|&i| i < m.ps.len());
     m.ch = ho(&g["ch"]).unwrap_or(0.3);
@@ -267,7 +270,7 @@ fn kafa(g: &Value) -> Kafa {
     k.D._tick = ho(&g["D"]["_tick"]);
     if !g["mac"].is_null() {
         let m = &g["mac"];
-        k.mac = Some(MacGor { tick: m["tick"].as_f64().unwrap_or(0.0), len: 9000.0, tac: m["tac"].as_array().map(|a| a.iter().map(tac_e).collect()).unwrap_or_default(), ps: dunya(&g["src"]), holder: m["holder"].as_u64().map(|x| x as usize) });
+        k.mac = Some(MacGor { tick: m["tick"].as_f64().unwrap_or(0.0), len: 9000.0, tac: m["tac"].as_array().map(|a| a.iter().map(tac_e).collect()).unwrap_or_default(), ps: if src_var { dunya(&g["src"]) } else { Vec::new() }, holder: m["holder"].as_u64().map(|x| x as usize) });
     }
     k
 }
@@ -284,13 +287,20 @@ fn kafa2_dunyalar_js_ile() {
         None => return,
     };
     let mut hata = Vec::new();
+    let mut say = 0;
     for g in v["bekKay"].as_array().into_iter().flatten() {
         let k = kafa(g);
         let p = Arc::new(oyuncu(&g["p"]));
         let r = kafa2_dunya::bekKay(&k, &p, nok(&g["B"]).unwrap(), h(&g["T"]));
         if !ayni_b(r.x, h(&g["R"][0])) || !ayni_b(r.y, h(&g["R"][1])) {
-            hata.push(format!("bekKay t{}", g["tick"]));
+            let g0 = alan_motor::kafa::kafa2_bag::AS_bekci(&k, &p, nok(&g["B"]).unwrap(), None);
+            let (jx, jy) = (h(&g["R"][0]), h(&g["R"][1]));
+            let L = ((g0.x - p.x).powi(2) + (g0.y - p.y).powi(2)).sqrt();
+            let mvj = ((jx - p.x).powi(2) + (jy - p.y).powi(2)).sqrt();
+            let mvr = ((r.x - p.x).powi(2) + (r.y - p.y).powi(2)).sqrt();
+            hata.push(format!("bekKay t{}: L {L} mv rs {mvr} js {mvj}; yön rs ({}, {}) js ({}, {}); SPRE {}", g["tick"], r.x - p.x, r.y - p.y, jx - p.x, jy - p.y, k.dis.ALAN_SPRE(&p)));
         }
+        say += 1;
     }
     for g in v["predictWorld"].as_array().into_iter().flatten() {
         let mut k = kafa(g);
@@ -302,7 +312,20 @@ fn kafa2_dunyalar_js_ile() {
                 hata.push(format!("predictWorld t{} oyuncu {i}", g["tick"]));
             }
         }
+        say += 1;
     }
+    eprintln!("bekKay + predictWorld: {say} çağrı");
+    assert!(hata.is_empty(), "{} hata: {:#?}", hata.len(), &hata[..hata.len().min(20)]);
+}
+
+#[test]
+#[ignore = "uzun; JS vektörüyle: cargo test --release -- --ignored kafa2"]
+fn kafa2_imkan_sahiplik_js_ile() {
+    let v = match vektor() {
+        Some(v) => v,
+        None => return,
+    };
+    let mut hata = Vec::new();
     for g in v["imkan"].as_array().into_iter().flatten() {
         let mut k = kafa(g);
         let src = dunya(&g["src"]);
