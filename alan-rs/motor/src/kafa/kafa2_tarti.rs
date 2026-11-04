@@ -750,7 +750,9 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                     let c = cx_siz(&mut CXS, &cx, d);
                     let v2 = nodeV(k, c, kq, Tk, 0.0, None);
                     if uzak_iz() {
-                        eprintln!("UZAK {:.2} {:.6} t={:?} kq={} d={} dx={:.0} dy={:.0} kx={:.0}", uz, jmax(0.0, v2 - vk), k.D._tick, kq.id, d.id, d.x, d.y, kq.x);
+                        // atamadaki yetişme olasılığının yaklaşığı (esles: 1/(1+e^((t−TW)/5)), t ≈ uzaklık/hız, TW ≈ Tk)
+                        let kp = 1.0 / (1.0 + exp((uz / crate::kafa::kafa1_js::ya(k.vS(d), 0.05) - Tk) / 5.0));
+                        eprintln!("UZAK {:.2} {:.6} t={:?} kq={} d={} dx={:.0} dy={:.0} kx={:.0} kp={:.6}", uz, jmax(0.0, v2 - vk), k.D._tick, kq.id, d.id, d.x, d.y, kq.x, kp);
                     }
                     if v2 > vk {
                         mm.push((format!("{}|{}", js_sayi(kq.id), js_sayi(d.id)), v2 - vk));
