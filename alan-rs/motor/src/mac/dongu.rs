@@ -426,7 +426,7 @@ pub fn _step(m: &mut Mac) {
                     p.tx = k.x;
                     p.ty = k.y;
                     if !tepki_re(job(p)) {
-                        p.job = Some(format!("{} · tepki", job(p)));
+                        p.job = Some(format!("{} · tepki", job(p)).into());
                     }
                 } else {
                     p._ktB = Some(crate::model::JP_ktB { x: p.tx, y: p.ty });
@@ -451,7 +451,7 @@ pub fn _step(m: &mut Mac) {
                 p.tx = k.x;
                 p.ty = k.y;
                 if !tepki_re(job(p)) {
-                    p.job = Some(format!("{} · tepki", job(p)));
+                    p.job = Some(format!("{} · tepki", job(p)).into());
                 }
             } else {
                 p._kt = Some(crate::model::JP_kt { x: p.tx, y: p.ty });
@@ -1368,10 +1368,10 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
         if spr && SPR_FAZ.ayir && hp._sf.is_none() && !hp.bekci() && hp.en.unwrap_or(1.0) >= ALAN_EN3_SGIR(hp, SBED()) {
             sprintBasla(m, h, None);
         }
-        m.ps[h].lastWhy = Some(why);
+        m.ps[h].lastWhy = Some(why.into());
     } else if o.kind == "fake" {
         fakeBasla(m, h, &o);
-        m.ps[h].lastWhy = Some(why);
+        m.ps[h].lastWhy = Some(why.into());
     } else if o.kind == "tut" {
         {
             let hp = &mut m.ps[h];
@@ -1393,9 +1393,9 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
                 ev(m, "pas", ht, format!("{n} bekliyor · {l} koşusunu bitirince verecek"));
             }
         }
-        m.ps[h].lastWhy = Some(why);
+        m.ps[h].lastWhy = Some(why.into());
     } else {
-        m.ps[h].lastWhy = Some(why);
+        m.ps[h].lastWhy = Some(why.into());
         if o.launch.is_some() {
             let sy = o.sYon.unwrap_or(0.0);
             savurBasla(m, h, o, 0.0, sy, None);

@@ -57,7 +57,7 @@ pub struct Oyuncu {
     /// `noTouch`: boolean
     pub noTouch: bool,
     /// `hist`: dizi (sonradan eklenir)
-    pub hist: Option<Vec<JPHistE>>,
+    pub hist: Option<std::sync::Arc<Vec<JPHistE>>>,
     /// `lock`: number (sonradan eklenir)
     pub lock: Option<f64>,
     /// `kapPrev`: OYUNCU|null (yerleşim: kapatma işinin adamı)
@@ -77,17 +77,17 @@ pub struct Oyuncu {
     /// `press`: boolean
     pub press: bool,
     /// `job`: string (sonradan eklenir)
-    pub job: Option<String>,
+    pub job: Option<std::sync::Arc<str>>,
     /// `otx`: null|number
     pub otx: Option<f64>,
     /// `_bk`: dizi (sonradan eklenir)
-    pub _bk: Option<Vec<Option<JP_bkE>>>,
+    pub _bk: Option<std::sync::Arc<Vec<Option<JP_bkE>>>>,
     /// `_ktB`: object (sonradan eklenir)
     pub _ktB: Option<JP_ktB>,
     /// `_topSpr`: boolean
     pub _topSpr: bool,
     /// `_kosuK`: null|string
-    pub _kosuK: Option<String>,
+    pub _kosuK: Option<std::sync::Arc<str>>,
     /// `_hizK`: null|number
     pub _hizK: Option<f64>,
     /// `_evx`: number (sonradan eklenir)
@@ -117,11 +117,11 @@ pub struct Oyuncu {
     /// `rslot0`: object (sonradan eklenir)
     pub rslot0: Option<JPRslot0>,
     /// `rh`: string (sonradan eklenir)
-    pub rh: Option<String>,
+    pub rh: Option<std::sync::Arc<str>>,
     /// `rs`: string (sonradan eklenir)
-    pub rs: Option<String>,
+    pub rs: Option<std::sync::Arc<str>>,
     /// `tl`: object (sonradan eklenir)
-    pub tl: Option<JPTl>,
+    pub tl: Option<std::sync::Arc<JPTl>>,
     /// `markRef`: OYUNCU (sonradan eklenir)
     pub markRef: Option<Pid>,
     /// `eg`: object (sonradan eklenir)
@@ -139,7 +139,7 @@ pub struct Oyuncu {
     /// `_kv`: null|object
     pub _kv: Option<JP_kv>,
     /// `_amacJob`: null|string
-    pub _amacJob: Option<String>,
+    pub _amacJob: Option<std::sync::Arc<str>>,
     /// `_kt`: object (sonradan eklenir)
     pub _kt: Option<JP_kt>,
     /// `_hizF`: number (sonradan eklenir)
@@ -159,7 +159,7 @@ pub struct Oyuncu {
     /// `_blokT`: number (sonradan eklenir)
     pub _blokT: Option<f64>,
     /// `past`: dizi (sonradan eklenir)
-    pub past: Option<Vec<JPPastE>>,
+    pub past: Option<std::sync::Arc<Vec<JPPastE>>>,
     /// `holdD`: boolean
     pub holdD: bool,
     /// `_plan`: null|object
@@ -174,7 +174,7 @@ pub struct Oyuncu {
     /// `savur`: null|object
     pub savur: Option<JPSavur>,
     /// `lastWhy`: string (sonradan eklenir)
-    pub lastWhy: Option<String>,
+    pub lastWhy: Option<std::sync::Arc<str>>,
     /// `amA`: boolean
     pub amA: bool,
     /// `am`: number (sonradan eklenir)
@@ -258,7 +258,7 @@ pub struct Oyuncu {
     /// `_omuz`: object (sonradan eklenir)
     pub _omuz: Option<JP_omuz>,
     /// `adNeden`: string (sonradan eklenir)
-    pub adNeden: Option<String>,
+    pub adNeden: Option<std::sync::Arc<str>>,
     /// `pplan`: object (sonradan eklenir)
     pub pplan: Option<JPPplan>,
     /// `_kAn`: number (sonradan eklenir)
@@ -917,7 +917,7 @@ pub struct SecAmac {
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JPSlot {
     /// `role`: string
-    pub role: String,
+    pub role: std::sync::Arc<str>,
     /// `d`: number
     pub d: f64,
     /// `l`: number
@@ -1034,7 +1034,7 @@ pub struct JPRslot {
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JPSlot0 {
     /// `role`: string
-    pub role: String,
+    pub role: std::sync::Arc<str>,
     /// `d`: number
     pub d: f64,
     /// `l`: number

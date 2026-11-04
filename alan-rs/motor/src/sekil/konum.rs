@@ -35,7 +35,7 @@ pub fn position(c: &mut Mc) {
     let KT = if c.m.holder.is_some() { None } else { kendiTopu(c) };
     let h: Option<Pid> = c.m.holder.or(KT.map(|x| x.0));
     for p in c.ps.iter_mut() {
-        let hs = p.hist.get_or_insert_with(Vec::new);
+        let hs = std::sync::Arc::make_mut(p.hist.get_or_insert_with(Default::default));
         hs.push(JPHistE { x: p.x, y: p.y, vx: p.vx, vy: p.vy });
         if hs.len() > 14 {
             hs.remove(0);
@@ -43,7 +43,7 @@ pub fn position(c: &mut Mc) {
     }
     if tick % 20.0 == 0.0 {
         for p in c.ps.iter_mut() {
-            let pa = p.past.get_or_insert_with(Vec::new);
+            let pa = std::sync::Arc::make_mut(p.past.get_or_insert_with(Default::default));
             pa.push(JPPastE { x: p.x, y: p.y });
             if pa.len() > 4 {
                 pa.remove(0);
@@ -174,7 +174,7 @@ pub fn position(c: &mut Mc) {
         }
         p.sprint = false;
         p.press = kilitli(p, tick) && !p.noTouch;
-        p.job = Some(if p.noTouch { "geçildi".into() } else { String::new() });
+        p.job = Some(if p.noTouch { "geçildi".into() } else { String::new().into() });
     }
     if let Some(hh) = h {
         if c.m.holder.is_none() && c.ball.is_some() && c.m.fl.as_ref().and_then(|f| f.q) == Some(hh) {

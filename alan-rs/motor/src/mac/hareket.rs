@@ -106,7 +106,7 @@ pub fn dolan(m: &mut Mac) {
         p.tx = hx + cos(a) * r0;
         p.ty = hy + sin(a) * r0;
         p.sprint = true;
-        p.job = Some(format!("{} · dolanıyor", job(p)));
+        p.job = Some(format!("{} · dolanıyor", job(p)).into());
     }
     for pi in 0..m.ps.len() {
         let p = &m.ps[pi];
@@ -144,7 +144,7 @@ pub fn dolan(m: &mut Mac) {
         p.ty = oby + ny * sg * 2.4 + ay / l * 0.8;
         p.sprint = true;
         if !job(p).contains("dolanıyor") {
-            p.job = Some(format!("{} · dolanıyor", job(p)));
+            p.job = Some(format!("{} · dolanıyor", job(p)).into());
         }
     }
 }
@@ -178,7 +178,7 @@ pub fn iliski(m: &mut Mac) {
             p.tx = bx;
             p.ty = by;
             p.sprint = hypot(p.x - bx, p.y - by) > 6.0;
-            p.job = Some(format!("boşluk doldurma · {ad}"));
+            p.job = Some(format!("boşluk doldurma · {ad}").into());
         }
     }
     let tuzak = m.tac.get(dt as usize).and_then(|t| t.tuzak.clone());

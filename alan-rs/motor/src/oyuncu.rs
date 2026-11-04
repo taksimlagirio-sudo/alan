@@ -7,7 +7,16 @@ use crate::yetenek::{mek, spr_h, Yetenek};
 
 pub use crate::model::Oyuncu;
 
+thread_local! {
+    static BOS: Oyuncu = Oyuncu::default();
+}
+
 impl Oyuncu {
+    /// `Oyuncu::default()` ile aynı, ama bellek ayırmadan: bir kez kurulan boş oyuncunun kopyası
+    /// (boş yetenek paylaşımlı).
+    pub fn bos() -> Oyuncu {
+        BOS.with(|b| b.clone())
+    }
     pub fn bekci(&self) -> bool {
         &*self.role == "Bekçi"
     }

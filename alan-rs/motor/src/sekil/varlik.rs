@@ -86,7 +86,7 @@ impl Varlik {
 
 /// Hayaletin bedeni (JS seen çıktısı: `{a, R, D, team, role, press}`; id/bar/sprint evresi yok).
 pub fn hayal(q: &Oyuncu) -> Oyuncu {
-    let mut o = Oyuncu::default();
+    let mut o = Oyuncu::bos();
     o.a = q.a.clone();
     o.yet = q.yet.clone();
     o.R = q.R;

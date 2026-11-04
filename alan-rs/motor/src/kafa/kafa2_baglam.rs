@@ -90,7 +90,7 @@ pub fn uz(ax: f64, ay: f64, bx: f64, by: f64) -> f64 {
 }
 /// JS `/^pres/.test(job || "")`
 #[inline(always)]
-pub fn pres_mi(job: &Option<String>) -> bool {
+pub fn pres_mi(job: &Option<std::sync::Arc<str>>) -> bool {
     job.as_deref().map(|j| j.starts_with("pres")).unwrap_or(false)
 }
 #[inline(always)]
