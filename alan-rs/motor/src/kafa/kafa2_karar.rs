@@ -969,13 +969,17 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
                 let kay = {
                     let items = &mut opts[a..b];
                     let snap = d_al(k);
-                    let mut kay = Vec::new();
-                    for it in items.iter_mut() {
+                    let mut kay: Vec<DalgaR> = (0..items.len()).map(|_| DalgaR::default()).collect();
+                    // sıra sınaması (ALAN_TERS_IZ): işler ters sırayla tartılır, sonuç sırası aynı
+                    let ters = crate::iz_acik() && std::env::var("ALAN_TERS_IZ").is_ok();
+                    let n = items.len();
+                    for j in 0..n {
+                        let i = if ters { n - 1 - j } else { j };
                         d_geri(k, &snap);
                         let mut r = DalgaR::default();
-                        tart(k, it, &mut r, rnd);
+                        tart(k, &mut items[i], &mut r, rnd);
                         d_geri(k, &snap);
-                        kay.push(r);
+                        kay[i] = r;
                     }
                     kay
                 };
