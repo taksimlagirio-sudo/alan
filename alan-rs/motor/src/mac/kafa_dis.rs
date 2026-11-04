@@ -16,7 +16,9 @@ use std::sync::Arc;
 
 /// Kararın başındaki maç görüntüsü.
 pub struct MacDis {
-    pub kural: MacKural,
+    /// maçın sprint kuralı (son karar veren taşıyıcı, tik, taşıyıcı, alıcı): JS bunları canlı okur;
+    /// kafa her çağrıldığında `kural_tazele` ile güncellenir
+    pub kural: std::cell::Cell<MacKural>,
     pub ch: Option<f64>,
     /// (id, team, x, y)
     pub holder: Option<(f64, f64, f64, f64)>,
@@ -64,7 +66,7 @@ impl MacDis {
             (p.id, p.team, p.x, p.y)
         });
         let gs = m.mac.sekil.sh.gs.as_ref().map(|g| JMShGs { t: g.t, dt: g.dt as f64, on: g.on, onP: g.onP, oy: g.oy, ..Default::default() });
-        MacDis { kural, ch: Some(m.ch), holder, tacE, siddet, enHarcama, gs, prT: m.mac.prT_k.clone(), mac: Arc::new(hafif(m)) }
+        MacDis { kural: std::cell::Cell::new(kural), ch: Some(m.ch), holder, tacE, siddet, enHarcama, gs, prT: m.mac.prT_k.clone(), mac: Arc::new(hafif(m)) }
     }
     fn takim_tac(&self, t: f64) -> &sekil::gecici_dis::TacE {
         &self.tacE[if t == 1.0 { 1 } else { 0 }]
@@ -99,10 +101,10 @@ fn gecTab_s(g: &d1::GecTab) -> sekil::gec::GecTab {
 impl Dis for MacDis {
     // ---- enerji / sprint ----
     fn ALAN_SPRE(&self, p: &Oyuncu) -> f64 {
-        sekil::ALAN_SPRE(p, &self.kural)
+        sekil::ALAN_SPRE(p, &self.kural.get())
     }
     fn ALAN_SPR(&self, p: &Oyuncu) -> f64 {
-        en::ALAN_SPR(p, &self.kural)
+        en::ALAN_SPR(p, &self.kural.get())
     }
     fn ALAN_SPR_HK(&self, p: &Oyuncu) -> f64 {
         en::ALAN_SPR_HK(p)
@@ -113,13 +115,13 @@ impl Dis for MacDis {
         Some(d1::SprFaz { ust: b(F.ust), hkPay: F.hkPay, tepeT: F.tepeT, after: F.after, dolT: F.dolT, bedel: F.bedel, patT: F.patT, frenT: F.frenT, patK: F.patK, ayir: b(F.ayir), itKos: b(F.itKos), topla: b(F.topla), toplaBos: F.toplaBos, itBos: None, peak: None })
     }
     fn ALAN_KOSU_T(&self, p: &Oyuncu, d: f64, v1: f64) -> f64 {
-        en::ALAN_KOSU_T(p, d, v1, &self.kural)
+        en::ALAN_KOSU_T(p, d, v1, &self.kural.get())
     }
     fn ALAN_KOSU_M(&self, p: &Oyuncu, t: f64, v1: f64) -> f64 {
-        en::ALAN_KOSU_M(p, t, v1, &self.kural)
+        en::ALAN_KOSU_M(p, t, v1, &self.kural.get())
     }
     fn ALAN_EN3_KUL(&self, p: &Oyuncu, e: f64, bizde: bool, bx: f64, by: f64) -> f64 {
-        en::ALAN_EN3_KUL(p, e, bizde, Some((bx, by)), &self.kural)
+        en::ALAN_EN3_KUL(p, e, bizde, Some((bx, by)), &self.kural.get())
     }
     fn ALAN_EN3_SGIR(&self, p: &Oyuncu, bed: f64) -> f64 {
         en::ALAN_EN3_SGIR(p, bed)
@@ -165,7 +167,7 @@ impl Dis for MacDis {
     }
     // ---- yerleşim ----
     fn tepki_s(&self) -> TepkiS {
-        self.kural.tepki_s()
+        self.kural.get().tepki_s()
     }
     fn S(&self) -> Option<d1::ShapeS> {
         let S = &sekil::sabit::S;
@@ -178,25 +180,25 @@ impl Dis for MacDis {
         sekil::sabit::GR.yasHata(yas)
     }
     fn gecTab(&self, o: &Oyuncu, _refsiz: bool) -> Option<d1::GecTab> {
-        Some(gecTab_k(&sekil::gec::gecTab(o, &self.kural)))
+        Some(gecTab_k(&sekil::gec::gecTab(o, &self.kural.get())))
     }
     fn gecOf(&self, G: &d1::GecTab, x: f64, y: f64, s: Option<f64>) -> f64 {
         sekil::gec::gecOf(&gecTab_s(G), x, y, s)
     }
     fn gec(&self, o: &Oyuncu, x: f64, y: f64, s: Option<f64>) -> Option<f64> {
-        Some(sekil::gec::gec(o, x, y, s, &self.kural))
+        Some(sekil::gec::gec(o, x, y, s, &self.kural.get()))
     }
     fn gside(&self, a: Nk, t: f64, off: f64) -> Nk {
         let (x, y) = sekil::yer::gside(a.x, a.y, if t == 1.0 { 1 } else { 0 }, off);
         nk(x, y)
     }
     fn bekci(&self, p: &Oyuncu, b: Nk) -> Option<Nk> {
-        let (x, y) = sekil::yer::bekci(p, b.x, b.y, None, &self.kural);
+        let (x, y) = sekil::yer::bekci(p, b.x, b.y, None, &self.kural.get());
         Some(nk(x, y))
     }
     fn aliciDirenc(&self, pts: &[Nk], p: &Oyuncu, rc: f64, iMin: f64, rP: f64) -> Option<Nk> {
         let yol: Vec<sekil::ucus::Nokta> = pts.iter().map(|q| sekil::ucus::Nokta { x: q.x, y: q.y, e: 0.0 }).collect();
-        sekil::ucus::aliciDirenc(&yol, p, rc, iMin, Some(rP), &self.kural).map(|a| nk(a.x, a.y))
+        sekil::ucus::aliciDirenc(&yol, p, rc, iMin, Some(rP), &self.kural.get()).map(|a| nk(a.x, a.y))
     }
     fn tehlike(&self, h: &Oyuncu) -> Vec<d1::Tehlike> {
         let m = &*self.mac;
@@ -219,7 +221,7 @@ impl Dis for MacDis {
         let dtac = self.takim_tac(team).clone();
         let d = crate::mac::gecici_dis::kafa_d();
         {
-            let mut c = Mc { m: &mut m, ps: &mut ps, ball: None, ek: &mut ek, k: &self.kural, d, lite: true, rnd: None };
+            let mut c = Mc { m: &mut m, ps: &mut ps, ball: None, ek: &mut ek, k: &self.kural.get(), d, lite: true, rnd: None };
             sekil::ilkPres(&mut c, 0, 1, if team == 1.0 { 1 } else { 0 }, Some(&th), &dtac);
         }
         qv.tx = ps[0].tx;
@@ -294,7 +296,7 @@ impl Dis for MacDis {
         let ps: Vec<Oyuncu> = fm.ps.iter().map(|q| (**q).clone()).collect();
         let ben = fm.ps.iter().position(|q| q.id == p.id && q.team == p.team);
         let bm = sekil::yer::BekM { ps: &ps, holder: fm.holder, ben };
-        let (x, y) = sekil::yer::bekci(p, B.x, B.y, Some(&bm), &self.kural);
+        let (x, y) = sekil::yer::bekci(p, B.x, B.y, Some(&bm), &self.kural.get());
         nk(x, y)
     }
     fn slotBase(&self, fm: &d1::Fm, p: &Oyuncu, B: Nk, hucum: bool) -> Nk {
@@ -309,7 +311,7 @@ impl Dis for MacDis {
         crate::mac::kurulum::tl(p, ev, k)
     }
     fn sprK(&self, p: &Oyuncu) -> f64 {
-        en::sprK(p, &self.kural)
+        en::sprK(p, &self.kural.get())
     }
 }
 
@@ -324,6 +326,8 @@ use std::rc::Rc;
 #[derive(Clone, Default)]
 pub struct KafaKutu {
     pub k: Option<Rc<RefCell<Kafa>>>,
+    /// bu tikin dış dünyası (kuralı tazelemek için)
+    pub dis: Option<Arc<MacDis>>,
     /// dış dünyanın tazelendiği tik
     pub t: Option<f64>,
 }
@@ -340,8 +344,9 @@ thread_local! {
 /// Maçın kafasını bu tik için hazırla (yoksa kur) ve kapsamlı bağlama koy.
 pub fn kafa_hazirla(m: &mut Mac) -> Rc<RefCell<Kafa>> {
     if m.mac.kafa.k.is_none() {
-        let d = MacDis::kur(m);
-        m.mac.kafa.k = Some(Rc::new(RefCell::new(Kafa::yeni(Arc::new(d)))));
+        let d = Arc::new(MacDis::kur(m));
+        m.mac.kafa.dis = Some(d.clone());
+        m.mac.kafa.k = Some(Rc::new(RefCell::new(Kafa::yeni(d))));
         m.mac.kafa.t = Some(m.tick);
     } else if m.mac.kafa.t != Some(m.tick) {
         // JS m._prT: kafanın yazdığı pres tartısını maç tutar, kafa1 (girEsik) dış dünyadan okur
@@ -350,10 +355,11 @@ pub fn kafa_hazirla(m: &mut Mac) -> Rc<RefCell<Kafa>> {
                 m.mac.prT_k = k.prT.as_ref().map(|p| p.d1());
             }
         }
-        let d = MacDis::kur(m);
+        let d = Arc::new(MacDis::kur(m));
+        m.mac.kafa.dis = Some(d.clone());
         let k = m.mac.kafa.k.as_ref().unwrap();
         if let Ok(mut k) = k.try_borrow_mut() {
-            k.dis = Arc::new(d);
+            k.dis = d;
         }
         m.mac.kafa.t = Some(m.tick);
     }
@@ -423,4 +429,11 @@ pub fn kafa_bagla(dis: Arc<dyn crate::kafa::gecici_dis1::Dis>, tick: Option<f64>
     k.D._tick = tick;
     KAFA.with(|c| *c.borrow_mut() = Some(Rc::new(RefCell::new(k))));
     DIS.with(|d| *d.borrow_mut() = Some((dis, tick)));
+}
+
+/// JS'in canlı okuduğu sprint bağlamı (self.__mH, taşıyıcı, alıcı, tik): kafa çağrılmadan hemen önce.
+pub fn kural_tazele(m: &Mac) {
+    if let Some(d) = &m.mac.kafa.dis {
+        d.kural.set(MacKural::of(m));
+    }
 }

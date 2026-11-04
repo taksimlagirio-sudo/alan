@@ -449,6 +449,9 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             let lo = if kalan > 0.5 { dis::laneOk(k, w, team, q, nk(x, y), Some(k.D.arriveFirm), Some(k.D.sutHazir)) } else { 1.0 };
             let t = s / vh + if kalan > 0.5 { dis::ucusT(k, kalan, k.D.arriveFirm, None) + k.D.sutHazir } else { 0.0 };
             let kk = kk_ * lo;
+            if x == 104.0 && y == 36.0 && std::env::var("ALAN_IMK_HU").is_ok() {
+                eprintln!("    ty s {} kalan {:.3} k {:.6} lo {:.6} t {:.3}", s, kalan, kk_, lo, t);
+            }
             if 1e3 * kk - t > 1e3 * best.k - best.t {
                 best = TopYol { t, k: kk, s: Some(s) };
             }
@@ -580,6 +583,9 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
                 }
             };
             let (p, e) = imk(k, TY, IC, a, zi, tR);
+            if di.is_none() && biz[a].p.name == "Kaan" && z.x == 104.0 && z.y == 36.0 && std::env::var("ALAN_IMK_HU").is_ok() {
+                eprintln!("    kaan ön z {} {} tR {:.3} p {:.6} ta {:.3} k {} kalkis {} q {:?}", z.x, z.y, tR, p, e.ta, e.k, e.kalkis, e.q.map(|q| (q.x, q.y)));
+            }
             if p * imkInan(k, e.ta) <= r.u {
                 continue;
             }
