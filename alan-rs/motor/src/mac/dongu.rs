@@ -702,12 +702,13 @@ fn donus(m: &mut Mac, h: Pid, kk: &MacKural) -> bool {
                 let b = Q.body;
                 let cr = TQ.min_d / 2.0 + 0.3;
                 let md = TQ.min_d;
-                // JS: kovalayanların göreli yeri (o.x, o.y) iki yön denemesi boyunca birikir
-                let mut qs: Vec<crate::kafa::kafa1_savur::Kov> = (0..m.ps.len()).filter(|&qi| m.ps[qi].team != ht && !m.ps[qi].noTouch).map(|qi| {
+                // JS: kovalayanlar (Q) her yön denemesinde yeniden kurulur; göreli yerleri (o.x, o.y) bir denemenin adımları boyunca birikir
+                let qs0: Vec<crate::kafa::kafa1_savur::Kov> = (0..m.ps.len()).filter(|&qi| m.ps[qi].team != ht && !m.ps[qi].noTouch).map(|qi| {
                     let q = &m.ps[qi];
                     crate::kafa::kafa1_savur::Kov { f: atan2(q.y - hp.y, q.x - hp.x), d: hypot(q.x - hp.x, q.y - hp.y), v: spd(q) * ALAN_SPR(q, kk), x: None, y: None }
                 }).collect();
-                let mut yol = |dr: f64, ar: f64| -> bool {
+                let yol = |dr: f64, ar: f64| -> bool {
+                    let mut qs = qs0.clone();
                     let n = (ar / fw).ceil() as i64;
                     for k in 1..=n {
                         let a = ca + dr * jmin(ar, k as f64 * fw);
