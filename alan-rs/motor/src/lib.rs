@@ -9,6 +9,7 @@ pub mod core_sabit;
 pub mod donus;
 pub mod mat;
 pub mod model;
+pub mod oyun;
 pub mod oyuncu;
 pub mod rng;
 pub mod temas;
