@@ -1008,7 +1008,6 @@ impl Sv {
 
     /// JS yol ver: pas/şut yolundaki takım arkadaşı yana çekilir.
     fn yolVer(&mut self, c: &mut Mc) {
-        let tick = c.m.tick;
         let hS = c.m.holder;
         let so = hS.and_then(|h| c.ps[h].savur.as_ref().map(|s| (s.o.clone(), s.t0)));
         if let (Some(h), Some((_, t0))) = (hS, &so) {
