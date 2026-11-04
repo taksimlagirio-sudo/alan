@@ -82,11 +82,17 @@ pub fn savurPlan(h: &Oyuncu, vx: f64, vy: f64, ca0: f64, w0: f64, sYon: f64, itm
 pub fn topK(h: &Oyuncu) -> f64 {
     kafa_ile(|k| k.topK(h))
 }
+/// JS'te oyuncular dünyadaki nesnelerin kendisidir (kafa `o !== q` ile karşılaştırır): kopya dünyada kimliğiyle bul.
+fn kim<'a>(src: &'a [Op], p: &'a Oyuncu) -> &'a Oyuncu {
+    src.iter().find(|q| q.id == p.id && q.team == p.team).map(|q| &**q).unwrap_or(p)
+}
 pub fn duelP(q: &Oyuncu, h: &Oyuncu, ps: &[Oyuncu]) -> f64 {
-    kafa_ile(|k| k.duelP(q, h, &ops(ps), None))
+    let src = ops(ps);
+    kafa_ile(|k| k.duelP(kim(&src, q), kim(&src, h), &src, None))
 }
 pub fn girThr(q: &Oyuncu, h: &Oyuncu, ps: &[Oyuncu]) -> f64 {
-    kafa_ile(|k| k.girThr(q, h, &ops(ps)))
+    let src = ops(ps);
+    kafa_ile(|k| k.girThr(kim(&src, q), kim(&src, h), &src))
 }
 pub fn ucusT(L: f64, arrive: f64, al: Option<f64>) -> f64 {
     kafa_ile(|k| k.ucusT(L, arrive, al))

@@ -175,12 +175,18 @@ pub fn ilkPres(c: &mut Mc, pi: Pid, hi: Pid, dt: u8, TH: Option<&[Tehlike]>, dta
             return;
         }
         {
-            let (Pd, th) = {
-                let ps = &*c.ps;
-                (dis::duelP(&ps[pi], &h, ps), dis::girThr(&ps[pi], &h, ps))
+            // JS `if (m.ps)`: kafanın ileri bakışındaki görünümde (vm, maç listesi yok, zar yok) önceki kararı okur
+            let koy = if c.rnd.is_some() {
+                let (Pd, th) = {
+                    let ps = &*c.ps;
+                    (dis::duelP(&ps[pi], &h, ps), dis::girThr(&ps[pi], &h, ps))
+                };
+                let koy = !(Pd >= th);
+                c.ps[pi]._onK = Some(JP_onK { h: h.id, koy });
+                koy
+            } else {
+                c.ps[pi]._onK.as_ref().map_or(false, |o| o.h == h.id && o.koy)
             };
-            let koy = !(Pd >= th);
-            c.ps[pi]._onK = Some(JP_onK { h: h.id, koy });
             if koy {
                 let an = match &T1 {
                     Some(t) => t.0,
