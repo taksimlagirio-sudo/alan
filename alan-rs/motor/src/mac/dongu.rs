@@ -543,7 +543,7 @@ fn tasiyici(m: &mut Mac, h: Pid) -> bool {
     let ht = m.ps[h].team;
     m.st.poss[ht as usize] += 1.0;
     let kk = MacKural::of(m);
-    let _pr = dis::oppAt(&m.ps, ht, m.ps[h].x, m.ps[h].y);
+    // JS `pr = D.oppAt(...)`: hesaplanır ama kullanılmaz (taşınmadı)
     let hp = &m.ps[h];
     let still = cl(1.0 - hypot(hp.vx, hp.vy) / (spd(hp) * ALAN_SPR(hp, &kk)), 0.0, 1.0);
     {

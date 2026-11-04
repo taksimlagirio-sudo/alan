@@ -29,7 +29,7 @@ const ser = (p, ps) => {
   return o;
 };
 const kopyaPs = ps => ps.map(p => Object.assign(Object.create(Object.getPrototypeOf(p)), p, { a: p.a }));
-const out = { mek: MEK, kur: [], macW: [], macEff: [], en2: [], ivme: [], ik: [], gov: [], spr: [], kuyu: [], sapma: [] };
+const out = { mek: MEK, kur: [], macW: [], macEff: [], en2: [], ivme: [], ik: [], gov: [], spr: [], kuyu: [], sapma: [], tac: [] };
 
 // ---- kurulum ----
 const AS = self.AlanShape, sb0 = AS.slotBase, bk0 = AS.bekci;
@@ -69,10 +69,17 @@ while (m.tick < 2400) {
   { const c = M.kopya(m); const ps = c.ps; for (const p of ps) { p.x = 50 + lcg() * 8; p.y = 25 + lcg() * 8; if (lcg() < .5) p.den = .3 + .7 * lcg(); } const S = ps.map(p => ser(p)); const hi = c.holder ? ps.indexOf(c.holder) : -1; M.govdeAyir(ps, c.holder); out.gov.push({ ps: S, h: hi, son: ps.map(p => [b(p.x), b(p.y), b(p.vx), b(p.vy), b(p.den)]) }); }
   // sprint katı, koşu süresi, vK
   { I.setMt(m); const S = mser(m); const per = m.ps.map(p => { const d = 3 + lcg() * 30; const pr = I.kosuPr(p); return { spr: b(self.ALAN_SPR(p)), sprK: b(M.sprK(p)), spre: b(self.ALAN_SPRE(p, d)), spre0: b(self.ALAN_SPRE(p)), d: b(d), kt: b(self.ALAN_KOSU_T(p, d, M.spd(p))), km: b(self.ALAN_KOSU_M(p, d / 3, M.spd(p))), pr: pr ? [b(pr.Ts), b(pr.k)] : null, vK: b(I.vK(p)), sgir: b(self.ALAN_EN3_SGIR(p, 0)) }; }); out.spr.push({ m: S, per }); }
+  // tacEff, geçiş, evre (kopyada)
+  { const c = M.kopya(m); const kp = c.kp ? { team: c.kp.team, ids: c.kp.ids, bitis: b(c.kp.bitis), sahip: c.kp.sahip ? c.ps.indexOf(c.kp.sahip) : null } : null;
+    const gcs = g => g ? { team: g.team, t0: b(g.t0), kendi: g.kendi, git: g.git, on: g.on || [], biz: b(g.biz), rakip: b(g.rakip), hizli: !!g.hizli } : null;
+    const S = { m: mser(c), score: c.score.slice(), tac: c.tac, tac0: c.tac0 || null, kp, gc: gcs(c.gc), hhKul: !!c.hhKul, yzBas: b(c._yzBas), yzBekle: !!c._yzBekle, devre: c.devre, macC: Object.entries(c._macC || {}).map(([k, w]) => [k, b(w.g), b(w.c), b(w.e0)]) };
+    const r = [0, 1].map(t => { const e = M.tacEff(c, t); return { risk: b(e.risk), tempo: b(e.tempo), sabir: b(e.sabir), kontra: !!e.kontra, kp: e._kp || null, macK: b(e.macK) }; });
+    const ev = [0, 1].map(t => M.evreBul(c, t)); M.gecisGuncelle(c);
+    out.tac.push({ S, r, ev, gc: gcs(c.gc), gecis: c.gecis, hhKul: !!c.hhKul, yzBekle: !!c._yzBekle, kpVar: !!c.kp }); }
   // Kuyu çıkışı: oyuncuyu Kuyu alanına koy (kopyada)
   { const c = M.kopya(m); const p = c.ps[1 + Math.floor(lcg() * 5)]; const gx = lcg() < .5 ? 0 : 120, a = lcg() * Math.PI - Math.PI / 2, r = lcg() * 12; p.x = gx + (gx ? -1 : 1) * Math.cos(a) * r + .5; p.y = 30 + Math.sin(a) * r; p.vx = (lcg() - .5) * .3; p.vy = (lcg() - .5) * .3; const Y = I.kuyuCikYon(c, p); out.kuyu.push({ m: mser(c), p: c.ps.indexOf(p), Y: Y ? [b(Y.k), b(Y.ux), b(Y.uy), b(Y.L), b(Y.x), b(Y.y)] : null, T: b(I.kuyuCikT(c, p)) }); }
 }
 // kafa sapması: kafa günlüğünün kayıtları
 for (const r of (m._kafa && m._kafa.L || []).slice(0, 400)) out.sapma.push({ r: JSON.parse(JSON.stringify(r, (k, v) => k === 'sapma' ? undefined : v)), s: r.sapma });
 fs.writeFileSync(process.argv[3], JSON.stringify(out));
-console.log('kurulum', out.kur.length, 'macEff', out.macEff.length, 'enerji2', out.en2.length, 'ivme', out.ivme.length, 'ikili', out.ik.length, 'gövde', out.gov.length, 'sprint', out.spr.length, 'kuyu', out.kuyu.length, 'sapma', out.sapma.length);
+console.log('kurulum', out.kur.length, 'macEff', out.macEff.length, 'enerji2', out.en2.length, 'ivme', out.ivme.length, 'ikili', out.ik.length, 'gövde', out.gov.length, 'sprint', out.spr.length, 'kuyu', out.kuyu.length, 'sapma', out.sapma.length, 'tac', out.tac.length);
