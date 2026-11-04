@@ -147,7 +147,30 @@ pub struct BekM<'a> {
 }
 
 /// JS bekci(p, E, m): Bekçi'nin yeri (açıyı daraltır, uzaktan topa destek, karşı karşıyada çıkış).
+/// Taşıyıcı rakipse Bekçi topun şimdiki yerine değil, kendisi yerine varana kadar (tepki + yol / hız) taşıyıcının
+/// gideceği yere göre yerleşir: yoksa vardığında açı çoktan kaymış olur, kapattığı açı yanlış açıdır.
 pub fn bekci(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (f64, f64) {
+    let g0 = bekci_an(p, ex, ey, m, k);
+    let hh = match m.and_then(|m| m.holder).filter(|hh| hh.team != p.team) {
+        Some(h) => h,
+        None => return g0,
+    };
+    let hv = hypot(hh.vx, hh.vy);
+    if !(hv > 1e-9) {
+        return g0;
+    }
+    let sp = jmax(1e-6, crate::mac::enerji::spd(p));
+    let mut t = bek_re(p) + hypot(g0.0 - p.x, g0.1 - p.y) / sp;
+    // taşıyıcı kale çizgisini geçemez: öngörü çizgide kesilir
+    let gx = ownX(p.takim());
+    let (dx0, dx1) = (ex - gx, ex + hh.vx * t - gx);
+    if dx0 * dx1 <= 0.0 && hh.vx.abs() > 1e-9 {
+        t = jmax(0.0, (gx - ex) / hh.vx);
+    }
+    bekci_an(p, ex + hh.vx * t, ey + hh.vy * t, m, k)
+}
+
+fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (f64, f64) {
     let gx = ownX(p.takim());
     let dx = ex - gx;
     let dy = ey - GCY;

@@ -82,6 +82,9 @@ pub struct DalBas {
     pub vy: f64,
     pub t0: f64,
     pub td: f64,
+    /// itki (dalış bitince söner: Bekçi uçmaya devam etmez)
+    pub ix: f64,
+    pub iy: f64,
     /// gereken uzanmanın tam uzanmaya oranı (barın bedeli)
     pub f: f64,
 }
@@ -235,6 +238,16 @@ pub fn bek_dalis(b: &mut TopT, pi: usize, ps: &[Oyuncu]) -> Option<(f64, f64, f6
                         if lo >= 0.0 { r = Some(lo); } else if hi >= 0.0 { r = Some(hi); }
                     }
                 }
+                // en az yolla uzanma: topun yolunun Bekçi'ye en yakın noktası (dik ayak) zamanında yetişilebiliyorsa oraya
+                // (gerçek Bekçi topa doğru atılmaz, yolun önüne en kısa yoldan uzanır); yetişilemiyorsa yetişilen en yakın
+                // geç nokta (ikinci kök), o da yoksa en az geç kalınan nokta
+                let ayak = (-a).max(0.0);
+                let ayak_d = (w2 + 2.0 * a * ayak + ayak * ayak).max(0.0).sqrt();
+                let yeter = ayak_d <= body + kk * ayak;
+                let r = if yeter { Some(ayak) } else if qc > 0.0 && qa.abs() >= 1e-12 {
+                    let dd = qb * qb - 4.0 * qa * qc;
+                    if dd >= 0.0 { let sq = dd.sqrt(); let h = ((-qb - sq) / (2.0 * qa)).max((-qb + sq) / (2.0 * qa)); if h >= ayak { Some(h) } else { r } } else { r }
+                } else { r };
                 match r {
                     Some(v) => v,
                     // yetişemiyor: en az geç kalınan nokta (|w + ûs| − k·s en küçük)
@@ -267,7 +280,7 @@ pub fn bek_dalis(b: &mut TopT, pi: usize, ps: &[Oyuncu]) -> Option<(f64, f64, f6
                 }
             }
             let (ix, iy) = if nl > body { (nx / nl * dv, ny / nl * dv) } else { (0.0, 0.0) };
-            let d = DalBas { p: pi, x: p.x, y: p.y, vx: p.vx + ix, vy: p.vy + iy, t0: re, td: if nl > Q.bek_body { jmin(dl, nl - Q.bek_body) / dv } else { 0.0 }, /* dalış topun yoluna varınca biter (gövde yola değer); en çok tam uzanma */ f: jmin(1.0, jmax(0.0, nl - Q.bek_body) / jmax(0.5, dl)) };
+            let d = DalBas { p: pi, x: p.x, y: p.y, vx: p.vx + ix, vy: p.vy + iy, t0: re, td: if nl > Q.bek_body { jmin(dl, nl - Q.bek_body) / dv } else { 0.0 }, ix, iy, /* dalış topun yoluna varınca biter (gövde yola değer); en çok tam uzanma */ f: jmin(1.0, jmax(0.0, nl - Q.bek_body) / jmax(0.5, dl)) };
             if !b.t.hayal {
                 b.t.dal_bas = Some(d);
             }
@@ -275,7 +288,9 @@ pub fn bek_dalis(b: &mut TopT, pi: usize, ps: &[Oyuncu]) -> Option<(f64, f64, f6
         }
     };
     let u = jmin(tau - bas.t0, bas.td);
-    Some((bas.x + bas.vx * u, bas.y + bas.vy * u, bas.vx, bas.vy))
+    let bitti = tau - bas.t0 >= bas.td;
+    let (vx, vy) = if bitti { (bas.vx - bas.ix, bas.vy - bas.iy) } else { (bas.vx, bas.vy) };
+    Some((bas.x + bas.vx * u, bas.y + bas.vy * u, vx, vy))
 }
 
 /// Alma kapasitesi (JS touchCap).
