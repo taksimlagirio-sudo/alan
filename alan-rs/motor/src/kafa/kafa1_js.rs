@@ -56,14 +56,14 @@ pub fn bul_i(src: &[Op], q: &Oyuncu) -> Option<usize> {
 }
 
 /// İş adı önekle mi başlıyor (JS `/^(a|b)/.test(job || "")`).
-pub fn is_bas(job: &Option<String>, onek: &[&str]) -> bool {
+pub fn is_bas(job: &Option<std::sync::Arc<str>>, onek: &[&str]) -> bool {
     match job {
         Some(j) => onek.iter().any(|o| j.starts_with(o)),
         None => false,
     }
 }
 /// İş adında geçiyor mu (JS `/a|b/.test(job || "")`).
-pub fn is_icer(job: &Option<String>, parca: &[&str]) -> bool {
+pub fn is_icer(job: &Option<std::sync::Arc<str>>, parca: &[&str]) -> bool {
     match job {
         Some(j) => parca.iter().any(|o| j.contains(o)),
         None => false,

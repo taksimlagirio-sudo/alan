@@ -150,7 +150,12 @@ pub fn yerDeger(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64, ch: f64) 
     kafa_ile(|k| crate::kafa::kafa2_zemin::yerDeger(k, &ow(w, oy), team as f64, x, y, ch))
 }
 pub fn recvCh(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64, ch: f64, q: Option<&Oyuncu>) -> f64 {
-    kafa_ile(|k| k.recvCh(&ow(w, oy), team as f64, x, y, ch, q.unwrap_or(&Oyuncu::bos())))
+    // kafanın recvCh'i dünyayı okumaz: köprü kurulmaz
+    let _ = (w, oy);
+    kafa_ile(|k| match q {
+        Some(q) => k.recvCh(&[], team as f64, x, y, ch, q),
+        None => k.recvCh(&[], team as f64, x, y, ch, &Oyuncu::bos()),
+    })
 }
 pub fn keepP(h: &Oyuncu, w: &[Varlik], oy: &[Oyuncu], dir: Option<(f64, f64)>, T: f64) -> f64 {
     kafa_ile(|k| k.keepP(h, &ow(w, oy), dir.map(|d| nk(d.0, d.1)), T))

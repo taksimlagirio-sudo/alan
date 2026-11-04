@@ -178,8 +178,8 @@ pub fn createMatch_ile(seed: f64, o: &KurSecenek, dis: &mut dyn KurDis) -> Mac {
                     a.koy(k, v.clone());
                 }
             }
-            let bek = s.role == "Bekçi";
-            let mut p = Oyuncu { id: (10 * t + i) as f64, team: t as f64, i: i as f64, role: s.role.as_str().into(), slot: s.clone(), name: NAMES[t][i].into(), R: if bek { 7.0 } else { 8.0 }, D: if bek { 1.2 } else { 1.0 }, x: W / 2.0, y: CY, vx: 0.0, vy: 0.0, tx: W / 2.0, ty: CY, cd: 0.0, ..Default::default() };
+            let bek = &*s.role == "Bekçi";
+            let mut p = Oyuncu { id: (10 * t + i) as f64, team: t as f64, i: i as f64, role: s.role.clone(), slot: s.clone(), name: NAMES[t][i].into(), R: if bek { 7.0 } else { 8.0 }, D: if bek { 1.2 } else { 1.0 }, x: W / 2.0, y: CY, vx: 0.0, vy: 0.0, tx: W / 2.0, ty: CY, cd: 0.0, ..Default::default() };
             yetKur(&mut p, &a);
             m.ps.push(p);
             m.mac.ham.push(a);
@@ -407,8 +407,8 @@ pub fn assignRoles_ile(m: &mut Mac, roles: &Roller, dis: &mut dyn KurDis) {
                 continue;
             }
             if let Some(r) = rol(roles, t, p.i) {
-                p.rh = Some(r.h.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| "Serbest".into()));
-                p.rs = Some(r.s.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| "Bölge".into()));
+                p.rh = Some(r.h.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| "Serbest".into()).into());
+                p.rs = Some(r.s.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| "Bölge".into()).into());
                 p.tl = Some(std::sync::Arc::new(tlKur(&r)));
             }
         }
@@ -649,7 +649,7 @@ pub fn slotPos(m: &Mac, p: &Oyuncu, bx: f64, by: f64, att: bool) -> (f64, f64) {
     let x0 = ownX(t);
     let dir = dirOf(t);
     let bd = (bx - x0) * dir;
-    if s.role == "Bekçi" {
+    if &*s.role == "Bekçi" {
         let (gx, gy) = (x0, CY);
         let (dx, dy) = (bx - gx, by - gy);
         let l = { let l = hypot(dx, dy); if dogru(l) { l } else { 1.0 } };

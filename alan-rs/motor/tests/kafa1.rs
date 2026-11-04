@@ -408,7 +408,7 @@ fn oyuncu(v: &Value) -> Oyuncu {
     p._don = ho(&v["don"]);
     p._dke = ho(&v["dke"]);
     p.sprint = v["sprint"].as_bool().unwrap();
-    p.job = v["job"].as_str().map(|s| s.to_string());
+    p.job = v["job"].as_str().map(|s| s.into());
     p.press = v["press"].as_bool().unwrap();
     p._sf = if v["sf"].is_null() { None } else { Some(JP_sf { t0: h(&v["sf"]["t0"]), f: v["sf"]["f"].as_str().unwrap().into() }) };
     p._korT = ho(&v["korT"]);

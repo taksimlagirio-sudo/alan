@@ -141,7 +141,7 @@ pub fn bak(c: &mut Mc) {
         let nyP = niyet(&c.ps[i]);
         let pteam = c.ps[i].team;
         let mut B = match c.ps[i]._bk.take() {
-            Some(b) if b.len() == n => b,
+            Some(b) if b.len() == n => std::sync::Arc::unwrap_or_clone(b),
             _ => vec![None; n],
         };
         for j in 0..n {
@@ -170,7 +170,7 @@ pub fn bak(c: &mut Mc) {
             }
             B[j] = Some(JP_bkE { x: hx, y: hy, vx: hvx, vy: hvy, t: t - kf, z: 2.0 * (t / GR.blok).floor() });
         }
-        c.ps[i]._bk = Some(B);
+        c.ps[i]._bk = Some(std::sync::Arc::new(B));
     }
 }
 
