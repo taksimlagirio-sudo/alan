@@ -227,6 +227,14 @@ pub fn mac_gor(m: &Mac) -> crate::kafa::kafa2_baglam::MacGor {
 fn sira(g: &[Oyuncu], p: &Oyuncu) -> Pid {
     g.iter().position(|q| q.id == p.id && q.team == p.team).expect("karar veren dünyada yok")
 }
+/// JS'te kafaya giden oyuncu dünyadaki nesnenin kendisidir (`o !== q` kimlikle karşılaştırır): kopya dünyada
+/// aynı oyuncuyu (kimliğiyle) bul; yoksa verileni kullan.
+fn ozne<'a>(g: &[Oyuncu], src: &'a [crate::kafa::kafa1_js::Op], p: &'a Oyuncu) -> &'a Oyuncu {
+    match g.iter().position(|q| q.id == p.id && q.team == p.team) {
+        Some(i) => &src[i],
+        None => p,
+    }
+}
 fn rng_fn(r: &mut Rng) -> impl FnMut() -> f64 + '_ {
     move || r.sonraki()
 }
@@ -262,8 +270,9 @@ pub fn vurE(m: &Mac, h: Pid, ch: f64, gon: bool) -> f64 {
 }
 pub fn savurPlan(m: &Mac, h: Pid, launch: (f64, f64), ca0: f64, w0: f64, sYon: f64, plase: bool, vE: f64) -> Option<SavurPlan> {
     crate::mac::kafa_dis::kural_tazele(m);
+    let src = op_dunya(&m.ps);
     kafa_ile(|k| {
-        k.savurPlan(&m.ps[h], nk(launch.0, launch.1), ca0, w0, sYon, Some(&op_dunya(&m.ps)), plase, vE)
+        k.savurPlan(&src[h], nk(launch.0, launch.1), ca0, w0, sYon, Some(&src), plase, vE)
             .map(|p| SavurPlan { T: p.T, wRel: p.wRel, uSh: p.uSh, k: p.k, A: p.A, s: p.s, a: p.a, wMax: p.wMax, wR: p.wR, w0: p.w0, P: if crate::mat::dogru(p.P) { p.P } else { 0.0 } })
     })
 }
@@ -298,17 +307,19 @@ pub fn fakeHedef(m: &Mac, p: Pid, h: Pid, sh: &FakeShow) -> (f64, f64) {
 }
 pub fn gonEk(m: &Mac, h: Pid, shot: Option<&str>) -> f64 {
     crate::mac::kafa_dis::kural_tazele(m);
-    kafa_ile(|k| k.gonEk(&m.ps[h], &op_dunya(&m.ps), shot.unwrap_or("")))
+    let src = op_dunya(&m.ps);
+    kafa_ile(|k| k.gonEk(&src[h], &src, shot.unwrap_or("")))
 }
 pub fn pasEk(m: &Mac, h: Pid) -> f64 {
     crate::mac::kafa_dis::kural_tazele(m);
-    kafa_ile(|k| k.pasEk(&m.ps[h], &op_dunya(&m.ps)))
+    let src = op_dunya(&m.ps);
+    kafa_ile(|k| k.pasEk(&src[h], &src))
 }
 pub fn applyErrorSav(m: &Mac, h: Pid, launch: (f64, f64), r: &mut Rng, ek: f64, gon: bool, savW: f64, savU: f64, shot: Option<&str>, kenar: bool) -> (f64, f64) {
     crate::mac::kafa_dis::kural_tazele(m);
     let src = op_dunya(&m.ps);
     kafa_ile(|k| {
-        let v = k.applyErrorSav(&m.ps[h], nk(launch.0, launch.1), &mut rng_fn(r), ek, gon, savW, savU, Some(&src), shot, Some(kenar));
+        let v = k.applyErrorSav(&src[h], nk(launch.0, launch.1), &mut rng_fn(r), ek, gon, savW, savU, Some(&src), shot, Some(kenar));
         (v.x, v.y)
     })
 }
@@ -316,13 +327,14 @@ pub fn applyError(m: &Mac, h: Pid, launch: (f64, f64), r: &mut Rng, ek: f64, gon
     crate::mac::kafa_dis::kural_tazele(m);
     let src = op_dunya(&m.ps);
     kafa_ile(|k| {
-        let v = k.applyError(&m.ps[h], nk(launch.0, launch.1), &mut rng_fn(r), ek, gon, Some(&src), shot, Some(kenar));
+        let v = k.applyError(&src[h], nk(launch.0, launch.1), &mut rng_fn(r), ek, gon, Some(&src), shot, Some(kenar));
         (v.x, v.y)
     })
 }
 pub fn sarjKarar(m: &Mac, p: Pid, g: &[Oyuncu], ch: f64) -> bool {
     crate::mac::kafa_dis::kural_tazele(m);
-    kafa_ile(|k| k.sarjKarar(&m.ps[p], &op_dunya(g), ch))
+    let src = op_dunya(g);
+    kafa_ile(|k| k.sarjKarar(ozne(g, &src, &m.ps[p]), &src, ch))
 }
 pub fn recvCh(m: &Mac, ps: &[Oyuncu], team: f64, x: f64, y: f64, ch: f64, p: &Oyuncu) -> f64 {
     crate::mac::kafa_dis::kural_tazele(m);
@@ -391,12 +403,14 @@ pub fn decide(m: &Mac, p: &Oyuncu, g: &[Oyuncu], ch: f64, r: &mut Rng, tE: &crat
 }
 pub fn secimN(m: &Mac, p: Pid, o: &Secenek, g: &[Oyuncu], T: f64) -> f64 {
     crate::mac::kafa_dis::kural_tazele(m);
-    kafa_ile(|k| k.secimN(&m.ps[p], Some(o), &op_dunya(g), T))
+    let src = op_dunya(g);
+    kafa_ile(|k| k.secimN(ozne(g, &src, &m.ps[p]), Some(o), &src, T))
 }
 /// Seçim: r.opts içindeki sıra
 pub fn secim(m: &Mac, h: Pid, r: &Karar, g: &[Oyuncu]) -> usize {
     crate::mac::kafa_dis::kural_tazele(m);
-    kafa_ile(|k| k.secim(&m.ps[h], &r.opts, r.best, r.T, &op_dunya(g))).or(r.best).unwrap_or(0)
+    let src = op_dunya(g);
+    kafa_ile(|k| k.secim(ozne(g, &src, &m.ps[h]), &r.opts, r.best, r.T, &src)).or(r.best).unwrap_or(0)
 }
 pub fn secimW(m: &Mac, h: Pid, pr: f64, b: bool) -> f64 {
     crate::mac::kafa_dis::kural_tazele(m);
@@ -404,7 +418,8 @@ pub fn secimW(m: &Mac, h: Pid, pr: f64, b: bool) -> f64 {
 }
 pub fn chargeRate(m: &Mac, h: Pid, still: f64, ch: f64) -> f64 {
     crate::mac::kafa_dis::kural_tazele(m);
-    kafa_ile(|k| k.chargeRate(&m.ps[h], &op_dunya(&m.ps), still, ch, false))
+    let src = op_dunya(&m.ps);
+    kafa_ile(|k| k.chargeRate(&src[h], &src, still, ch, false))
 }
 pub fn sarjMal(m: &Mac, h: Pid) -> f64 {
     crate::mac::kafa_dis::kural_tazele(m);
@@ -421,7 +436,8 @@ pub fn govdeVurP(m: &Mac, q: Pid, h: Pid) -> f64 {
 }
 pub fn duelP(m: &Mac, q: Pid, h: Pid) -> f64 {
     crate::mac::kafa_dis::kural_tazele(m);
-    kafa_ile(|k| k.duelP(&m.ps[q], &m.ps[h], &op_dunya(&m.ps), None))
+    let src = op_dunya(&m.ps);
+    kafa_ile(|k| k.duelP(&src[q], &src[h], &src, None))
 }
 pub fn enIkiliEk(m: &Mac, q: Pid, h: Pid) -> f64 {
     crate::mac::kafa_dis::kural_tazele(m);
@@ -429,11 +445,13 @@ pub fn enIkiliEk(m: &Mac, q: Pid, h: Pid) -> f64 {
 }
 pub fn girEsik(m: &Mac, q: Pid, h: Pid, ch: f64) -> Option<f64> {
     crate::mac::kafa_dis::kural_tazele(m);
-    kafa_ile(|k| k.girEsik(&m.ps[q], &m.ps[h], &op_dunya(&m.ps), Some(ch)))
+    let src = op_dunya(&m.ps);
+    kafa_ile(|k| k.girEsik(&src[q], &src[h], &src, Some(ch)))
 }
 pub fn commitThr(m: &Mac, q: Pid, h: Pid) -> f64 {
     crate::mac::kafa_dis::kural_tazele(m);
-    kafa_ile(|k| k.commitThr(&m.ps[q], &m.ps[h], &op_dunya(&m.ps)))
+    let src = op_dunya(&m.ps);
+    kafa_ile(|k| k.commitThr(&src[q], &src[h], &src))
 }
 /// Alan değeri (not için)
 pub fn V(ps: &[Oyuncu], team: f64, x: f64, y: f64, ch: f64) -> f64 {

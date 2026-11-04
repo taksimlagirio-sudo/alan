@@ -392,6 +392,7 @@ pub fn enHarca_p(st: &mut JMSt, lite: bool, p: &mut Oyuncu, pi: Pid, k: &str, v:
     p.en = Some(en - d);
 }
 pub fn enHarca(m: &mut Mac, pi: Pid, k: &str, v: f64) {
+    if crate::iz_acik() && !m.mac._lite && m.ps[pi].name == "Cansu" && std::env::var("ALAN_EN_IZ").ok().and_then(|x| x.parse::<f64>().ok()).map_or(false, |x| m.tick >= x - 1.0 && m.tick <= x) { eprintln!("ENH {} {} {} {} en {:?}", m.tick, m.ps[pi].name, k, v, m.ps[pi].en); }
     let lite = m.mac._lite;
     enHarca_p(&mut m.st, lite, &mut m.ps[pi], pi, k, v);
 }

@@ -1174,6 +1174,7 @@ fn ikiliGiris(m: &mut Mac, h: Pid) {
         };
         {
             let ge = dis::girEsik(m, qi, h, m.ch);
+            if crate::iz_acik() && m.ps[qi].name == "Cansu" && std::env::var("ALAN_EN_IZ").ok().and_then(|x| x.parse::<f64>().ok()) == Some(m.tick) { eprintln!("IKE P {} est {} ge {:?} thr0 {} enEk {} ch {}", P, est, ge, thr0, dis::enIkiliEk(m, qi, h), m.ch); }
             let gec = match ge {
                 Some(g) => est < g,
                 None => est < thr0 + (if oya { if thr0 >= dis::DU::thrLast { dis::DU::oyala } else { dis::DU::oyalaC } } else { 0.0 }) - 0.2 * (sdq - 0.5),
