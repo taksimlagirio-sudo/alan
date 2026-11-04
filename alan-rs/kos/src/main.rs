@@ -15,6 +15,27 @@ fn main() {
     let v: serde_json::Value = serde_json::from_str(&metin).expect("kayıt JSON değil");
     let tik: u32 = a[2].parse().expect("tik");
     let kip = a.get(3).map(|s| s.as_str()).unwrap_or("ozet");
+    // paralel kafa (ALAN_ISCI=n): n-1 yardımcı iş parçacığı aynı maçı oynar, dalgaları bölüşür
+    let n_isci: usize = std::env::var("ALAN_ISCI").ok().and_then(|s| s.parse().ok()).unwrap_or(1);
+    let mut yardimci = Vec::new();
+    let mut ana_isci: Option<std::rc::Rc<alan_motor::paralel::yerel::Isci>> = None;
+    if n_isci > 1 {
+        let pano = std::sync::Arc::new(alan_motor::paralel::yerel::Pano::default());
+        for _ in 1..n_isci {
+            let v2 = v.clone();
+            let p2 = pano.clone();
+            yardimci.push(std::thread::Builder::new().stack_size(256 << 20).spawn(move || {
+                let mut mt = Motor::kayittan(&v2).expect("maç kurulamadı");
+                alan_motor::paralel::kur(Some(std::rc::Rc::new(alan_motor::paralel::yerel::Isci::yeni(p2, n_isci))));
+                while mt.tick() < tik && !mt.bitti() {
+                    mt.adim();
+                }
+            }).unwrap());
+        }
+        let i = std::rc::Rc::new(alan_motor::paralel::yerel::Isci::yeni(pano, n_isci));
+        alan_motor::paralel::kur(Some(i.clone()));
+        ana_isci = Some(i);
+    }
     let mut mt = Motor::kayittan(&v).expect("maç kurulamadı");
     let mut isler = alan_motor::oyun::IsSozluk::default();
     let mut kareler: Vec<String> = Vec::new();
@@ -93,6 +114,14 @@ fn main() {
     }
     let m = &mt.m;
     eprintln!("tik {} · skor {}-{} · {:.1} sn ({:.2} ms/tik)", m.tick, m.score[0], m.score[1], dt, 1e3 * dt / (m.tick.max(1.0)));
+    alan_motor::kafa::kafa2_karar::dalga_olc_yaz();
+    if let Some(i) = ana_isci {
+        let o = i.olc.borrow();
+        eprintln!("paralel {} işçi: ana işçi {} iş hesapladı (ort {} bayt), {} paket açtı ({:.2} sn), {:.2} sn bekledi; dalgalarda {:.2} sn", n_isci, o.0, o.4 / o.0.max(1), o.1, o.3, o.2, i.olc_d.get());
+    }
+    for y in yardimci {
+        y.join().unwrap();
+    }
 }
 
 

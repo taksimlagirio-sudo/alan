@@ -12,6 +12,8 @@ pub mod mat;
 pub mod mac;
 pub mod model;
 pub mod oyun;
+pub mod paket;
+pub mod paralel;
 pub mod oyuncu;
 pub mod rng;
 pub mod temas;

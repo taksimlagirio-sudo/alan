@@ -7,10 +7,10 @@ pub type Pid = usize;
 pub type TopRef = u64;
 #[derive(Clone, Debug, Default)] pub struct JsFn;
 /// Karışık tipli JS değeri (taslakta; sahibi düzeltir).
-#[derive(Clone, Debug, Default)] pub enum JsDeger { #[default] Yok, Sayi(f64), Metin(String), Mantik(bool), Dizi(Vec<JsDeger>), Nesne(Vec<(String, JsDeger)>) }
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)] pub enum JsDeger { #[default] Yok, Sayi(f64), Metin(String), Mantik(bool), Dizi(Vec<JsDeger>), Nesne(Vec<(String, JsDeger)>) }
 
 /// JS `p`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct Oyuncu {
     /// `id`: number
     pub id: f64,
@@ -283,6 +283,7 @@ pub struct Oyuncu {
     pub _dalis: Option<f64>,
     /// (Rust) yetenek satırı: `a`dan maç başında kurulur (ALAN_Y)
     /// paylaşımlı: maç içinde değişmez, kopyası yalnız sayaç (her oyuncu kopyasında sözlük kurulmasın)
+    #[serde(with = "crate::paket::yet_kod")]
     pub yet: std::sync::Arc<crate::yetenek::Yetenek>,
     /// (mac) `slowT`: omuzla yavaşlama bitişi
     pub slowT: Option<f64>,
@@ -769,7 +770,7 @@ pub struct DKanca {
 }
 
 /// JS `{x, y}` (nokta; seçeneğin hedefleri, hayalin bitiş yerleri)
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct Nokta {
     pub x: f64,
     pub y: f64,
@@ -777,7 +778,7 @@ pub struct Nokta {
 
 /// JS `o` (kafanın seçeneği). Kafa 2 düzeltti: noktalar `Nokta`, `det` alanları isteğe bağlı,
 /// `dok` sıralı sözlük, hayali dünyalar paylaşımlı (`Arc`); tartının yazdığı alanlar eklendi.
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct Secenek {
     /// `kind`: string ("pas" | "önüne" | "kenardan" | "sür" | "çalım" | "tut" | "gönder" | "fake")
     pub kind: String,
@@ -796,6 +797,7 @@ pub struct Secenek {
     pub enV: Option<f64>,
     pub prensip: Option<String>,
     /// tartının dünyası (JS `o._pw`)
+    #[serde(with = "crate::paket::dunya_kod")]
     pub _pw: Option<std::sync::Arc<Vec<std::sync::Arc<Oyuncu>>>>,
     pub _pT: Option<f64>,
     /// JS `o.spr` (sprint niyeti: true ya da kat)
@@ -835,8 +837,10 @@ pub struct Secenek {
     pub bekci: Option<f64>,
     pub asan: Option<f64>,
     pub _at: Option<Nokta>,
+    #[serde(with = "crate::paket::dunya_kod")]
     pub _w: Option<std::sync::Arc<Vec<std::sync::Arc<Oyuncu>>>>,
     pub _T: Option<f64>,
+    #[serde(with = "crate::paket::dunya_kod")]
     pub _wE: Option<std::sync::Arc<Vec<std::sync::Arc<Oyuncu>>>>,
     pub _en: Option<f64>,
     pub _enB: Option<f64>,
@@ -861,7 +865,7 @@ pub struct Secenek {
 }
 
 /// JS `o.dok`: değer dökümü (anahtar sırası JS ekleme sırası) ve `sonra` yazısı.
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct Dok {
     pub k: Vec<(String, f64)>,
     pub sonra: Option<String>,
@@ -887,7 +891,7 @@ impl Dok {
 }
 
 /// JS `o.hw` (beklemenin hayali dünyası)
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct SecHw {
     pub kayip: bool,
     pub tik: Option<f64>,
@@ -899,7 +903,7 @@ pub struct SecHw {
 }
 
 /// JS `o.amac`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct SecAmac {
     pub il: f64,
     pub ac: f64,
@@ -910,7 +914,7 @@ pub struct SecAmac {
 }
 
 /// JS `p.slot`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JPSlot {
     /// `role`: string
     pub role: String,
@@ -921,7 +925,7 @@ pub struct JPSlot {
 }
 
 /// JS `p.a`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JPA {
     /// `hiz`: number
     pub hiz: f64,
@@ -970,7 +974,7 @@ pub struct JPA {
 }
 
 /// JS `p.driveTo`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JPDriveTo {
     /// `x`: number
     pub x: f64,
@@ -979,7 +983,7 @@ pub struct JPDriveTo {
 }
 
 /// JS `p.hist[]`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JPHistE {
     /// `x`: number
     pub x: f64,
@@ -992,7 +996,7 @@ pub struct JPHistE {
 }
 
 /// JS `p._bk[]`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JP_bkE {
     /// `x`: number
     pub x: f64,
@@ -1009,7 +1013,7 @@ pub struct JP_bkE {
 }
 
 /// JS `p._ktB`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JP_ktB {
     /// `x`: number
     pub x: f64,
@@ -1018,7 +1022,7 @@ pub struct JP_ktB {
 }
 
 /// JS `p.rslot`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JPRslot {
     /// `d`: number
     pub d: f64,
@@ -1027,7 +1031,7 @@ pub struct JPRslot {
 }
 
 /// JS `p.slot0`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JPSlot0 {
     /// `role`: string
     pub role: String,
@@ -1038,7 +1042,7 @@ pub struct JPSlot0 {
 }
 
 /// JS `p.rslot0`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JPRslot0 {
     /// `d`: number
     pub d: f64,
@@ -1047,7 +1051,7 @@ pub struct JPRslot0 {
 }
 
 /// JS `p.tl`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JPTl {
     /// (mac) hücum talimatları: yalnız verilenler (JS'te eksik anahtar varsayılana düşer: mac::kurulum::tl)
     pub huc: std::collections::BTreeMap<String, f64>,
@@ -1056,7 +1060,7 @@ pub struct JPTl {
 }
 
 /// JS `p.eg`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JPEg {
     /// `ps`: number
     pub ps: f64,
@@ -1092,7 +1096,7 @@ pub struct JP_otB {
 }
 
 /// JS `p._otE`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JP_otE {
     /// `x`: number
     pub x: f64,
@@ -1101,7 +1105,7 @@ pub struct JP_otE {
 }
 
 /// JS `p._kv`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JP_kv {
     /// `x`: number
     pub x: f64,
@@ -1112,7 +1116,7 @@ pub struct JP_kv {
 }
 
 /// JS `p._kt`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JP_kt {
     /// `x`: number
     pub x: f64,
@@ -1121,7 +1125,7 @@ pub struct JP_kt {
 }
 
 /// JS `p.past[]`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JPPastE {
     /// `x`: number
     pub x: f64,
@@ -1130,7 +1134,7 @@ pub struct JPPastE {
 }
 
 /// JS `p._plan`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JP_plan {
     /// `kind`: string
     pub kind: String,
@@ -1145,7 +1149,7 @@ pub struct JP_plan {
 }
 
 /// JS `p._surK`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JP_surK {
     /// `id`: number
     pub id: f64,
@@ -1160,7 +1164,7 @@ pub struct JP_surK {
 }
 
 /// JS `p.savur`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JPSavur {
     /// `t0`: number
     pub t0: f64,
@@ -1187,7 +1191,7 @@ pub struct JPSavur {
 }
 
 /// JS `p._otA`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JP_otA {
     /// `b`: TOP|TOPKOPYA|object
     pub b: TopRef,
@@ -1196,7 +1200,7 @@ pub struct JP_otA {
 }
 
 /// JS `p._onH`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JP_onH {
     /// `b`: TOP
     pub b: TopRef,
@@ -1221,7 +1225,7 @@ pub struct JP_onH {
 }
 
 /// JS `p._sf`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JP_sf {
     /// `t0`: number
     pub t0: f64,
@@ -1230,7 +1234,7 @@ pub struct JP_sf {
 }
 
 /// JS `p._onK`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JP_onK {
     /// `h`: number
     pub h: f64,
@@ -1239,7 +1243,7 @@ pub struct JP_onK {
 }
 
 /// JS `p.hamle`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JPHamle {
     /// `k`: string
     pub k: String,
@@ -1252,7 +1256,7 @@ pub struct JPHamle {
 }
 
 /// JS `p.adT`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JPAdT {
     /// `x`: number
     pub x: f64,
@@ -1261,7 +1265,7 @@ pub struct JPAdT {
 }
 
 /// JS `p._gvKaz`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JP_gvKaz {
     /// `h`: number
     pub h: f64,
@@ -1272,7 +1276,7 @@ pub struct JP_gvKaz {
 }
 
 /// JS `p.son`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JPSon {
     /// `k`: string
     pub k: String,
@@ -1287,7 +1291,7 @@ pub struct JPSon {
 }
 
 /// JS `p._kh`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JP_kh {
     /// `dx`: number
     pub dx: f64,
@@ -1296,7 +1300,7 @@ pub struct JP_kh {
 }
 
 /// JS `p._omuz`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JP_omuz {
     /// `t`: number
     pub t: f64,
@@ -1305,7 +1309,7 @@ pub struct JP_omuz {
 }
 
 /// JS `p.pplan`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JPPplan {
     /// `k`: string
     pub k: String,
@@ -1935,7 +1939,7 @@ pub struct JODok {
 }
 
 /// JS `o.det`: hayalin sonucu (imagine) ya da tartının {P, ch}. Kafa 2 düzeltti: alanlar isteğe bağlı.
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JODet {
     pub P: Option<f64>,
     pub ch: Option<f64>,
@@ -1962,7 +1966,7 @@ pub struct JODet {
 }
 
 /// JS `o.en`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JOEn {
     /// `biz`: number
     pub biz: f64,
@@ -2250,7 +2254,7 @@ pub struct JO_pwE {
 }
 
 /// JS `o.launch`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JOLaunch {
     /// `vx`: number
     pub vx: f64,
@@ -2360,7 +2364,7 @@ pub struct JP_otBA {
 }
 
 /// JS `p._plan.to`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JP_planTo {
     /// `x`: number
     pub x: f64,
@@ -2369,7 +2373,7 @@ pub struct JP_planTo {
 }
 
 /// JS `p._surK.to`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct JP_surKTo {
     /// `x`: number
     pub x: f64,

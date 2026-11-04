@@ -8,5 +8,6 @@ description = "ALAN maç motoru (JS motorundan, yalnız bugünkü davranış)"
 name = "alan_motor"
 
 [dependencies]
-serde = { version = "1", features = ["derive"] }
+serde = { version = "1", features = ["derive", "rc"] }
+bincode = "1.3"
 serde_json = { version = "1", features = ["float_roundtrip"] }

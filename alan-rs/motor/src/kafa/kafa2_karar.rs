@@ -97,8 +97,46 @@ pub fn decide0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar, 
     r
 }
 
+thread_local! {
+    static DALGA_DER: std::cell::Cell<u32> = const { std::cell::Cell::new(0) };
+    pub static PAKET_OLC: std::cell::RefCell<(usize, usize)> = const { std::cell::RefCell::new((0, 0)) };
+    /// ölçüm (ALAN_DALGA_IZ): [toplam, dalga sayısı, iş sayısı, 2 işçi, 3 işçi, 4 işçi, 6 işçi süresi]
+    pub static DALGA_OLC: std::cell::RefCell<[f64; 7]> = const { std::cell::RefCell::new([0.0; 7]) };
+}
+fn dalga_olc(s: &[f64]) {
+    DALGA_OLC.with(|o| {
+        let mut o = o.borrow_mut();
+        o[0] += s.iter().sum::<f64>();
+        o[1] += 1.0;
+        o[2] += s.len() as f64;
+        for (j, n) in [2usize, 3, 4, 6].iter().enumerate() {
+            // paylaşımlı sayaçla sırayla alma: boşalan işçi sıradakini alır
+            let mut w = vec![0.0f64; *n];
+            for &t in s {
+                let m = (0..*n).min_by(|a, b| w[*a].partial_cmp(&w[*b]).unwrap()).unwrap();
+                w[m] += t;
+            }
+            o[3 + j] += w.iter().cloned().fold(0.0, f64::max);
+        }
+    });
+}
+pub fn dalga_olc_yaz() {
+    PAKET_OLC.with(|p| {
+        let p = p.borrow();
+        if p.0 > 0 {
+            eprintln!("paket: {} sonuç, ort {} bayt", p.0, p.1 / p.0);
+        }
+    });
+    DALGA_OLC.with(|o| {
+        let o = o.borrow();
+        if o[1] > 0.0 {
+            eprintln!("dalga: toplam {:.2} s, {} dalga, ort {:.1} iş; 2 işçi {:.2} s, 3 işçi {:.2} s, 4 işçi {:.2} s, 6 işçi {:.2} s", o[0], o[1], o[2] / o[1], o[3], o[4], o[5], o[6]);
+        }
+    });
+}
+
 /// dalgaKos'un bir kaydı (JS `{ ek, dir }`)
-#[derive(Default)]
+#[derive(Default, serde::Serialize, serde::Deserialize)]
 pub struct DalgaR {
     pub ek: Option<Vec<Secenek>>,
     pub dir: Option<(Pid, f64)>,
@@ -973,13 +1011,64 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
                     // sıra sınaması (ALAN_TERS_IZ): işler ters sırayla tartılır, sonuç sırası aynı
                     let ters = crate::iz_acik() && std::env::var("ALAN_TERS_IZ").is_ok();
                     let n = items.len();
-                    for j in 0..n {
-                        let i = if ters { n - 1 - j } else { j };
+                    let olc = crate::iz_acik() && std::env::var("ALAN_DALGA_IZ").is_ok() && DALGA_DER.with(|d| d.get()) == 0;
+                    DALGA_DER.with(|d| d.set(d.get() + 1));
+                    let mut sure = Vec::new();
+                    let pk = crate::iz_acik() && std::env::var("ALAN_PAKET_IZ").is_ok() && DALGA_DER.with(|d| d.get()) == 1;
+                    if pk {
+                        let mp: Vec<Op> = k.mac.as_ref().map(|m| m.ps.clone()).unwrap_or_default();
+                        crate::paket::taban_kur([src], mp.iter());
+                    }
+                    let bol = !ters && !pk && crate::paralel::hazir(n);
+                    if bol {
+                        let mp: Vec<Op> = k.mac.as_ref().map(|m| m.ps.clone()).unwrap_or_default();
+                        crate::paket::taban_kur([src], mp.iter());
+                    }
+                    let mut bir = |i: usize, pb: Option<&[u8]>| -> Option<Vec<u8>> {
+                        if let Some(pb) = pb {
+                            let (o2, r2): (Secenek, DalgaR) = crate::paket::coz(pb);
+                            items[i] = o2;
+                            kay[i] = r2;
+                            return None;
+                        }
                         d_geri(k, &snap);
                         let mut r = DalgaR::default();
                         tart(k, &mut items[i], &mut r, rnd);
                         d_geri(k, &snap);
                         kay[i] = r;
+                        if bol {
+                            return Some(crate::paket::kodla(&(&items[i], &kay[i])));
+                        }
+                        if pk {
+                            // paket sınaması: sonuç paketlenip geri açılır (başka işçiden gelmiş gibi)
+                            let b = crate::paket::kodla(&(&items[i], &kay[i]));
+                            let (o2, r2): (Secenek, DalgaR) = crate::paket::coz(&b);
+                            items[i] = o2;
+                            kay[i] = r2;
+                            PAKET_OLC.with(|p| {
+                                let mut p = p.borrow_mut();
+                                p.0 += 1;
+                                p.1 += b.len();
+                            });
+                        }
+                        None
+                    };
+                    if !(bol && crate::paralel::dagit(n, &mut bir)) {
+                        for j in 0..n {
+                            let i = if ters { n - 1 - j } else { j };
+                            let t0 = std::time::Instant::now();
+                            bir(i, None);
+                            if olc {
+                                sure.push(t0.elapsed().as_secs_f64());
+                            }
+                        }
+                    }
+                    if bol {
+                        crate::paket::taban_bos();
+                    }
+                    DALGA_DER.with(|d| d.set(d.get() - 1));
+                    if olc {
+                        dalga_olc(&sure);
                     }
                     kay
                 };

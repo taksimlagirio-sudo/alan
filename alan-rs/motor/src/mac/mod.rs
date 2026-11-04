@@ -58,7 +58,7 @@ pub struct Perde {
 }
 
 /// JS `p.kenarW`.
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct KenarW {
     pub x: f64,
     pub y: f64,

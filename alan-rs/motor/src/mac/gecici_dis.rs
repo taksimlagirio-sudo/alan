@@ -43,7 +43,7 @@ pub struct Karar {
 }
 
 /// Fake'in gösterdiği (JS o.show = {k, to, c}).
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct FakeShow {
     pub k: String,
     pub to: (f64, f64),

@@ -496,6 +496,8 @@ fn dok_dk(r: &DurumR, o: &mut Secenek) {
     }
 }
 
+const PR_BOL: bool = false;
+
 /// JS prensipDegerle0 (decide.js:7126): seçenekleri prensiple tartar (Vur, İlerlet, Güvene al, Çevir,
 /// Alana sür, Çalım, Kalkan, Bekle); sonra arkadaşların ve taşıyanın değerini m._prT'ye yazar.
 pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f64, opts: &mut Vec<Secenek>, lossAt: &KayipRef, T: f64) {
@@ -509,10 +511,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
     }
     let mut cx = Cx { src: src.clone(), team, ch, kayip: lossAt.clone(), h: h.clone(), PW: Default::default(), PE: Default::default(), PV: Default::default(), PD: Default::default(), IM: None };
     let L = |k: &mut Kafa, x: f64, y: f64| kay(k, lossAt, x, y);
-    for o in opts.iter_mut() {
-        if o.v.is_none() {
-            continue;
-        }
+    let mut govde = |k: &mut Kafa, mut cx: &mut Cx, o: &mut Secenek| {
         let d = o.det.clone().unwrap_or_default();
         let kind = o.kind.as_str();
         if kind == "gönder" {
@@ -615,6 +614,64 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
             o._pw = Some(wE);
             o._pT = Some(Th);
             dok_dk(&tH, o);
+        }
+    };
+    // seçenekler birbirinden bağımsız (paralel kafada işçilere bölüşülür; sıra sınaması ALAN_TERS_IZ)
+    let ix: Vec<usize> = (0..opts.len()).filter(|&i| opts[i].v.is_some()).collect();
+    let n = ix.len();
+    let ters = crate::iz_acik() && std::env::var("ALAN_TERS_PR_IZ").is_ok();
+    let taze = crate::iz_acik() && std::env::var("ALAN_PR_TAZE_IZ").is_ok();
+    // DİKKAT: önbellekler (PW/PE/PV/PD) yuvarlanmış anahtarla ilk soranın sonucunu verir (JS gibi): sıra
+    // sınaması 289. tikte ayrışır, bu yüzden bölüşülmez (PR_BOL kapalı).
+    let bol = (PR_BOL || taze) && !ters && crate::paralel::hazir(n);
+    if bol {
+        let mp: Vec<Op> = k.mac.as_ref().map(|m| m.ps.clone()).unwrap_or_default();
+        crate::paket::taban_kur([src], mp.iter());
+    }
+    {
+        let mut bir = |j: usize, pb: Option<&[u8]>| -> Option<Vec<u8>> {
+            let i = ix[j];
+            if let Some(pb) = pb {
+                opts[i] = crate::paket::coz(pb);
+                return None;
+            }
+            if taze {
+                cx.PW.clear();
+                cx.PE.clear();
+                cx.PV.clear();
+                cx.PD.clear();
+                if let Some(m) = &cx.IM {
+                    m.borrow_mut().clear();
+                }
+            }
+            govde(k, &mut cx, &mut opts[i]);
+            if bol {
+                let b = crate::paket::kodla(&opts[i]);
+                if crate::iz_acik() && std::env::var("ALAN_PKS_IZ").is_ok() {
+                    let _o: Secenek = crate::paket::coz(&b);
+                }
+                Some(b)
+            } else {
+                None
+            }
+        };
+        if !(bol && crate::paralel::dagit(n, &mut bir)) {
+            for j in 0..n {
+                bir(if ters { n - 1 - j } else { j }, None);
+            }
+        }
+    }
+    if bol {
+        crate::paket::taban_bos();
+    }
+    if taze {
+        // seçeneklerin önbellekleri sonrasına taşınmaz (hangi işçi en son hangisini tarttıysa ondan bağımsız)
+        cx.PW.clear();
+        cx.PE.clear();
+        cx.PV.clear();
+        cx.PD.clear();
+        if let Some(m) = &cx.IM {
+            m.borrow_mut().clear();
         }
     }
     // m._prT: arkadaşların ve taşıyanın değeri, bir rakip olmasa ne kazanılırdı
