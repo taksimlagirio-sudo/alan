@@ -89,4 +89,20 @@ Kafa2'nin işlevleri (serbest, `todo!()`; birleştirmede `self.X`): `predictWorl
 
 ## Sınama (tests/kafa1.rs + sina/kafa1-vektor.js)
 
-Bkz. aşağıdaki sonuç tablosu (sınama sayısı / fark).
+Üretmek: `node sina/kafa1-vektor.js ../alan-v5 <kayit.json> sina/kafa1-vektor.json` (~8 dk; 150 anlık durum, taşıyıcı
+varken 9 tikte bir). Dosya yoksa sınama atlanır. Dış dünya `KayitDis`: SPRE/SPR/SPR_HK/DENGE_KAYIP/KOSU_PR kayıttan,
+yerleşimin gec* işlevleri, maçın ivme/kutle/direnc/omuzK/durtFark/sendS/ikEn'i sınamaya taşındı, sabitler JS'ten.
+JS'te girEsik'in tik önbelleği maçın kendi çağrılarıyla dolmasın diye sınama kesirli tik kullanır (+0,25 / +0,5).
+
+909623-on ve 713732-karisik kayıtlarında **hepsi bit bit aynı (0 fark)**: threat (900), ucusT (900), tan (3000),
+pressAt/freeAt/oppAt/holdVal/V/shotQ/sutKapali (600'er), sutHedef, laneOk (900), space, front, respond (300),
+coreSide, trapped, duelP/govdeVurP/commitThr/girThr (1050'şer), keepP (yönsüz 300, yönlü = kesisK 300, .son ile),
+girEsik/girThr maçla (1050; 852'si pres tartılı), ucusFormul şut (2550) ve pas (5100 alan; sekYaris, sutUC,
+kap_al içinde), launchFor (600), bankFor (300), savurPlan (~2500), onPlan (1800), applyError/applyErrorSav (300),
+fakeP/fakeHedef/fakeIlgili/fakeT, chargeRate (450), chasePlan (150), secim/secimN/secimW.
+
+Sınanmayanlar: ucusFormul'ün savurma gecikmeli (gecik ≥ 1: bekSav kafa2'nin) ve hedefli pas (predictWorld kafa2'nin)
+dalları, kesisK'nın pres rolleri (presRol/ilkPres: yerleşim), fakeSecenek (sonraDeger kafa2'nin), enMuh2, sarjKarar/
+sarjTut/sarjBd (EN3_KUL), surSure, itT/itV, runOn/runSut (sutEngel, bekci), Vend (bosluk), kenarIm, effFric,
+siddetFor, ucusSure/bankSure, recvPoint, donS (keepP'nin yönlü yolunda dolaylı sınandı), kWof/siddetQ/oyalaEk
+(dolaylı).

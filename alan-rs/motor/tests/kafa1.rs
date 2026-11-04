@@ -636,6 +636,28 @@ fn js_ile_bit_bit_ayni() {
                 H.evet("fakeIlgili", k.fakeIlgili(q, hh, &sh) == t[8].as_bool().unwrap(), et.clone());
             }
         }
+        {
+            let sj = &c["sec"];
+            let T = h(&sj["T"]);
+            let os: Vec<alan_motor::model::Secenek> = sj["os"].as_array().unwrap().iter().map(|x| alan_motor::model::Secenek {
+                kind: x[0].as_str().unwrap().into(),
+                to: if x[1].is_null() { None } else { Some(alan_motor::model::JOTo { x: h(&x[1][0]), y: h(&x[1][1]) }) },
+                q: x[2].as_u64().map(|i| i as usize),
+                v: Some(h(&x[3])),
+                det: if x[4].is_null() { None } else { Some(alan_motor::model::JODet { P: h(&x[4]), ..Default::default() }) },
+                shot: x[5].as_str().map(|s| s.into()),
+                sYon: x[6].as_f64(),
+                hold: ho(&x[7]),
+                ..Default::default()
+            }).collect();
+            for (o, n) in os.iter().zip(sj["n"].as_array().unwrap()) {
+                H.bak("secimN", k.secimN(hh, Some(o), &ps, T), h(n), &format!("{et} {}", o.kind));
+            }
+            H.bak("secimW", k.secimW(hh, 0.4, true, None), h(&sj["w"][0]), &et);
+            H.bak("secimW", k.secimW(hh, 0.7, false, Some("secenekTur")), h(&sj["w"][1]), &et);
+            let i = k.secim(hh, &os, Some(0), T, &ps);
+            H.evet("secim", i == sj["i"].as_u64().map(|x| x as usize), format!("{et} {i:?} js {}", sj["i"]));
+        }
         for t in c["cr"].as_array().unwrap() {
             H.bak("chargeRate", k.chargeRate(hh, &ps, h(&t[0]), h(&t[2]), t[1].as_bool().unwrap()), h(&t[3]), &et);
         }

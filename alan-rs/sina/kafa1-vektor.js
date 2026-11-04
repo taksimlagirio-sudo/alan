@@ -58,6 +58,10 @@ while (m.tick < 5400 && out.length < 150) {
     o.ae = []; { const v = { vx: 1.2, vy: .4 }, rr = [], rnd = () => { const x = lcg(); rr.push(b(x)); return x; }; const r1 = AD.applyError(h, v, rnd, 1, false, ps); const r2 = AD.applyErrorSav(h, v, rnd, 1, true, .7, .8, ps, 'güçlü'); o.ae = [rr, b(r1.vx), b(r1.vy), b(r2.vx), b(r2.vy)]; }
     // fake
     o.fk = { T: b(AD.fakeT(h)), p: [] }; for (const q of ps) if (q.team !== team) { const sh = { k: ['gönder', 'pas', 'gövde'][Math.floor(lcg() * 3)], to: { x: h.x + (lcg() - .5) * 30, y: h.y + (lcg() - .5) * 20 }, c: lcg() }; const t = AD.fakeHedef(q, h, sh); o.fk.p.push([ps.indexOf(q), sh.k, b(sh.to.x), b(sh.to.y), b(sh.c), b(AD.fakeP(h, q, sh.k, sh.c)), b(t.x), b(t.y), AD.fakeIlgili(q, h, sh)]); }
+    { const os = [], T = 20 + lcg() * 40; for (const q of ps) if (q.team === team && q !== h) os.push({ kind: 'pas', to: { x: q.x + lcg(), y: q.y }, q, v: lcg() * .4, det: { P: lcg() } });
+      os.push({ kind: 'sür', to: { x: h.x + 6, y: h.y }, v: lcg() * .4, det: { P: .9 } }, { kind: 'gönder', shot: 'güçlü', sYon: -1, to: { x: gx, y: 31 }, v: lcg() * .3 }, { kind: 'tut', hold: 30, v: lcg() * .3 });
+      const ser2 = x => [x.kind, x.to ? [b(x.to.x), b(x.to.y)] : null, x.q ? ps.indexOf(x.q) : null, b(x.v), x.det ? b(x.det.P) : null, x.shot ?? null, x.sYon ?? null, b(x.hold)];
+      o.sec = { T: b(T), os: os.map(ser2), n: os.map(x => b(AD.secimN(h, x, ps, T))), w: [b(AD.secimW(h, .4, true)), b(AD.secimW(h, .7, false, 'secenekTur'))], i: os.indexOf(AD.secim(h, { opts: os, best: os[0], T }, ps)) }; }
     o.cr = []; for (const [st, ham] of [[1, true], [0, false], [.5, true]]) { const c = lcg(); o.cr.push([b(st), ham, b(c), b(AD.chargeRate(h, ps, st, c, ham))]); }
     // kovalama planı
     { const a = lcg() * 6.283, bl = C.makeBall({ x: h.x, y: h.y, vx: Math.cos(a) * 1.5, vy: Math.sin(a) * 1.5, team, ch: .5 }), pts = C.predict(bl, ps, null, 120).pts, opp = ps.filter(q => q.team !== team); const pl = AD.chasePlan(pts, opp, 0, { lag: 0, loose: false });
