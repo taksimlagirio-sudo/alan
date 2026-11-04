@@ -150,7 +150,7 @@ impl Kafa {
     }
     /// Şarj hızı (decide.js:3990).
     pub fn chargeRate(&self, h: &Oyuncu, src: &[Op], still: f64, ch: f64, ham: bool) -> f64 {
-        let pasif = !ham && !h.sarj;
+        let pasif = !ham && !h.sarj.unwrap_or(true);
         let pr = self.pressAt(src, h.team, h.x, h.y);
         let yk = h.yet.y(mek::SARJ_KOSU_PAY);
         let mn = jmin(0.9, self.D.chgMin * jmax(0.3, 1.0 + 0.08 * (yk - 10.0)));

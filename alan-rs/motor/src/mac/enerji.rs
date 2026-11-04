@@ -528,7 +528,7 @@ pub fn alanSec(m: &mut Mac) {
     let b = m.ball.as_ref().unwrap();
     let (bx, by, bt) = (b.x, b.y, b.team as f64);
     let bdefl = dogru(b.defl) || b.defl_b;
-    let fr = m.sh.as_ref().filter(|s| s.frB == b.kimlik()).map(|s| s.fr.clone());
+    let fr = frTop(m);
     let fl = m.fl.as_ref();
     let sut = fl.map_or(false, |f| f.kind == "gönder") && !bdefl;
     let q = if !sut && !bdefl { fl.and_then(|f| f.q) } else { None };
@@ -628,13 +628,27 @@ pub fn sf_kesin_re(j: &str) -> bool {
     bas(j, &["alıcı", "uzanıyor", "omuz", "karşıla", "kovala", "geçildi", "pres · kale tarafına", "çalım", "fake"])
 }
 
-/// Boştaki topun uçuş tahmini (JS `m.sh.fr`, yalnız top boştayken ve bu topunsa).
+/// Boştaki topun uçuş tahmini (JS `m.sh.fr`, yalnız top boştayken ve bu topunsa). Yerleşim yazar
+/// (`m.mac.sekil.sh`); maç okur.
 pub fn frAl(m: &Mac) -> Option<crate::model::JMShFr> {
-    let b = m.ball.as_ref()?;
     if m.holder.is_some() {
         return None;
     }
-    m.sh.as_ref().filter(|s| s.frB == b.kimlik()).map(|s| s.fr.clone())
+    frTop(m)
+}
+/// JS `m.sh.fr` (`m.sh.frB === m.ball` ise): yerleşimin uçuş okuması maçın biçiminde.
+pub fn frTop(m: &Mac) -> Option<crate::model::JMShFr> {
+    let b = m.ball.as_ref()?;
+    let sh = &m.mac.sekil.sh;
+    if sh.frB != Some(b.kimlik()) {
+        return None;
+    }
+    let fr = sh.fr.as_ref()?;
+    Some(crate::model::JMShFr {
+        arr: fr.arr.iter().enumerate().map(|(i, a)| (i, crate::model::JMShFrArrV { t: a.t, x: a.x, y: a.y, est: a.est, fren: a.fren, direnc: a.direnc, ..Default::default() })).collect(),
+        first: fr.first.unwrap_or(0),
+        pts: fr.pts.iter().map(|q| crate::model::JMShFrPtsE { x: q.x, y: q.y, e: q.e, ..Default::default() }).collect(),
+    })
 }
 
 /// JS sprintKarar3(m): her koşucu için koşu hızı (tempo → sprint arası sürekli kat, _hizK).
@@ -812,6 +826,9 @@ pub fn sprintKarar3(m: &mut Mac) {
         dene(f1 + 0.05, &mut fB, &mut vB);
         let (kS, _, _) = cK(fB);
         let _ = sS;
+        if std::env::var("ALAN_K3_IZ").ok().as_deref() == Some(&format!("{}:{}", m.tick, pi)) {
+            eprintln!("K3 tD={tD} sS={sS} e={e} dol={dol} topa={topa} bizde={bizde} j={j} f={fB} b={b} vm={vm} hk={hk} kM={kM} Sy={Sy} decT={}", m.decT);
+        }
         let p = &mut m.ps[pi];
         p._hizK = Some(kS);
         p._hizF = Some(fB);

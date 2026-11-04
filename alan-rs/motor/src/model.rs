@@ -169,7 +169,8 @@ pub struct Oyuncu {
     /// `_sprIst`: boolean
     pub _sprIst: bool,
     /// `sarj`: boolean
-    pub sarj: bool,
+    /// JS `p.sarj` (tanımsız: şarj pasif sayılmaz, `?? 1`)
+    pub sarj: Option<bool>,
     /// `savur`: null|object
     pub savur: Option<JPSavur>,
     /// `lastWhy`: string (sonradan eklenir)

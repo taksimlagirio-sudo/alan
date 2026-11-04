@@ -24,11 +24,18 @@ fn main() {
     let out = std::io::stdout();
     let mut out = std::io::BufWriter::new(out.lock());
     let mut olay_say = mt.m.events.len();
+    if kip == "durum" {
+        writeln!(out, "{}", durum(&mt.m)).unwrap();
+    }
     while mt.tick() < tik && !mt.bitti() {
         mt.adim();
         let s = mt.iz();
         if kip == "iz" {
             writeln!(out, "{}", s.json()).unwrap();
+        }
+        if kip == "durum" {
+            let m = &mt.m;
+            writeln!(out, "{}", durum(m)).unwrap();
         }
         if kip == "kare" {
             let k = mt.kare(&mut isler);
@@ -47,6 +54,12 @@ fn main() {
         }
     }
     let dt = t0.elapsed().as_secs_f64();
+    if kip == "oyuncu" {
+        let k: usize = a[4].parse().unwrap();
+        let mut p = mt.m.ps[k].clone();
+        p.yet = Default::default();
+        println!("{:#?}", p);
+    }
     if kip == "kare" {
         let m = &mt.m;
         let yol = a.get(4).expect("kare <cikti.json>");
@@ -61,3 +74,17 @@ fn main() {
     eprintln!("tik {} · skor {}-{} · {:.1} sn ({:.2} ms/tik)", m.tick, m.score[0], m.score[1], dt, 1e3 * dt / (m.tick.max(1.0)));
 }
 
+
+/// Bir tikin tam durumu (sina karşılaştırması için; durum-js.js ile aynı biçim)
+fn durum(m: &alan_motor::model::Mac) -> String {
+    use serde_json::{json, Value};
+    let o = |v: Option<f64>| v.map_or(Value::Null, |x| json!(x));
+    let f = |x: f64| if x.is_finite() { json!(x) } else { Value::Null };
+    let ps: Vec<Value> = m
+        .ps
+        .iter()
+        .map(|p| json!([f(p.x), f(p.y), f(p.vx), f(p.vy), o(p.en), o(p.den), f(p.tx), f(p.ty), p.job.clone().unwrap_or_default(), p._sf.as_ref().map_or(String::new(), |s| s.f.clone()), o(p.ca)]))
+        .collect();
+    let b = m.ball.as_ref().map_or(Value::Null, |b| json!([b.x, b.y, b.vx, b.vy]));
+    json!({"t": m.tick, "h": m.holder.map_or(-1, |h| h as i64), "ch": m.ch, "r": m.r.s, "b": b, "p": ps}).to_string()
+}

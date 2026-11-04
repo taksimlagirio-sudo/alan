@@ -406,3 +406,14 @@ pub fn kafa_ile<R>(f: impl FnOnce(&mut Kafa) -> R) -> R {
 pub fn op_dunya(ps: &[Oyuncu]) -> Vec<crate::kafa::kafa1_js::Op> {
     ps.iter().map(|p| Arc::new(p.clone())).collect()
 }
+
+/// JS `m._prT`: kafa kararda yazar (D._mac === m). Rust'ta kafa kendinde tutar; karardan hemen sonra
+/// maça (yerleşim okur) ve kafa1'in dış dünyasına (girEsik okur) aktarılır.
+pub fn prT_esitle(m: &mut Mac) {
+    let p = KAFA.with(|c| c.borrow().clone()).and_then(|k| k.try_borrow().ok().and_then(|k| k.prT.clone()));
+    if let Some(p) = p {
+        let (hm, _) = p.hm.clone().unwrap_or_default();
+        m._prT = Some(crate::model::JM_prT { team: p.team, hId: p.hId, t: p.t.unwrap_or(f64::NAN), m: p.m.clone(), mm: p.mm.clone(), hm, h: p.h });
+        m.mac.prT_k = Some(p.d1());
+    }
+}

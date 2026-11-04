@@ -145,7 +145,7 @@ impl Motor {
             f[146 + 3 * q] = nan;
             f[147 + 3 * q] = nan;
         }
-        f[112] = if hold.map_or(false, |h| h.sarj) { 1.0 } else { 0.0 };
+        f[112] = if hold.map_or(false, |h| h.sarj == Some(true)) { 1.0 } else { 0.0 };
         // itilmiş açık top: iten ve duracağı yer
         let it = match (&m.ball, &m.fl) {
             (Some(b), Some(fl)) if m.holder.is_none() && b.done.is_none() => match b.tt.t.from {

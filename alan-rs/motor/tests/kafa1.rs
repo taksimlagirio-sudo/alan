@@ -424,7 +424,7 @@ fn oyuncu(v: &Value) -> Oyuncu {
     p._kalH = v["kalH"].as_u64().map(|x| x as usize);
     p.tutQ = v["tutQ"].as_u64().map(|x| x as usize);
     p.markRef = v["markRef"].as_u64().map(|x| x as usize);
-    p.sarj = v["sarj"].as_bool().unwrap_or(true);
+    p.sarj = Some(v["sarj"].as_bool().unwrap_or(true));
     p._yer = v["yer"].as_bool().unwrap();
     p
 }

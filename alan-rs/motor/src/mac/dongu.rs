@@ -92,11 +92,11 @@ pub fn take(m: &mut Mac, p: Pid, how: Option<String>) {
     }
     for (i, q) in m.ps.iter_mut().enumerate() {
         if i != p {
-            q.sarj = false;
+            q.sarj = Some(false);
         }
     }
     let g = gor(m, p);
-    m.ps[p].sarj = dis::sarjKarar(m, p, g.as_deref().unwrap_or(&m.ps), m.ch);
+    m.ps[p].sarj = Some(dis::sarjKarar(m, p, g.as_deref().unwrap_or(&m.ps), m.ch));
     let pp = &m.ps[p];
     let son = Son { kim: Some(pp.name.clone()), kimId: Some(pp.id), kimT: Some(pp.team), x: k3(Some(pp.x)), y: k3(Some(pp.y)), ..Default::default() };
     kafaBitir(m, son);
@@ -185,10 +185,12 @@ pub fn take(m: &mut Mac, p: Pid, how: Option<String>) {
                 kn = kancaOf(m, p);
                 let me = m.ps[p].clone();
                 let mut r = rng_ile(m, |m, r| dis::decideOT(m, &me, g0.as_deref().unwrap_or(&m.ps), chFull, r, &tE, ot, kn));
+                crate::mac::kafa_dis::prT_esitle(m);
                 if let Some(o) = r.as_mut() {
                     dis::gercek(o);
                 }
                 let mut rc = rng_ile(m, |m, r| dis::decide(m, &me, g0.as_deref().unwrap_or(&m.ps), chCtrl, r, &tE));
+                crate::mac::kafa_dis::prT_esitle(m);
                 if g0.is_some() {
                     karar_gercek(&mut rc);
                 }
@@ -329,6 +331,7 @@ pub fn _step(m: &mut Mac) {
                         let ch2 = dis::recvCh(m, &ps2, hc.team, hc.x, hc.y, bch, &hc);
                         let tE = tacEff(m, hc.team);
                         let mut r = rng_ile(m, |m, rr| dis::decide(m, &hc, &ps2, ch2, rr, &tE));
+                crate::mac::kafa_dis::prT_esitle(m);
                         if r.best.is_some() {
                             karar_gercek(&mut r);
                             m.pre = Some(JMPre { b: bk, q, r, x: hc.x, y: hc.y, nd, t: 0.0 });
@@ -1165,8 +1168,8 @@ fn ikiliGiris(m: &mut Mac, h: Pid) {
         let thr0 = dis::commitThr(m, qi, h);
         let oya = {
             let q = &m.ps[qi];
-            let gs = m.sh.as_ref().map(|s| &s.gs);
-            !q.bekci() && gs.map_or(false, |g| g.oy && g.dt == q.team && g.t >= tick - 1.0) && hypot(hx - if q.team == 0.0 { 0.0 } else { W }, hy - H / 2.0) > dis::DU::oyalaR
+            let gs = m.mac.sekil.sh.gs.as_ref();
+            !q.bekci() && gs.map_or(false, |g| g.oy && g.dt as f64 == q.team && g.t >= tick - 1.0) && hypot(hx - if q.team == 0.0 { 0.0 } else { W }, hy - H / 2.0) > dis::DU::oyalaR
         };
         {
             let ge = dis::girEsik(m, qi, h, m.ch);
@@ -1231,6 +1234,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
             let me = m.ps[h].clone();
             let ch = m.ch;
             let mut r = rng_ile(m, |m, rr| dis::decide(m, &me, g.as_deref().unwrap_or(&m.ps), ch, rr, &tE));
+                crate::mac::kafa_dis::prT_esitle(m);
             if g.is_some() {
                 karar_gercek(&mut r);
             }
@@ -1337,11 +1341,11 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
     m.ps[h]._sprIst = o.spr.map_or(false, crate::mat::dogru);
     kafaBasla(m, h, &mut o, false);
     {
-        let s0 = m.ps[h].sarj;
+        let s0 = m.ps[h].sarj == Some(true);
         let sk = dis::sarjKarar(m, h, &gg, m.ch);
         let tutS = o.kind == "tut" && o.det.as_ref().map_or(false, |d| d.ch.unwrap_or(f64::NAN) > m.ch + 0.005) && m.ps[h].en.unwrap_or(1.0) >= 0.1;
-        m.ps[h].sarj = sk || tutS;
-        if m.ps[h].sarj && !s0 && !m.mac._lite {
+        m.ps[h].sarj = Some(sk || tutS);
+        if m.ps[h].sarj == Some(true) && !s0 && !m.mac._lite {
             let n = m.ps[h].name.clone();
             let ch = js_num(jround(100.0 * m.ch));
             ev(m, "sarj", ht, format!("{n} şarj ediyor · %{ch}"));
