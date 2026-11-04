@@ -708,7 +708,13 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                 Some(i) => i,
                 None => {
                     let c = Cx {
-                        src: Arc::new(cx.src.iter().filter(|z| !ayni(z, d)).cloned().collect()),
+                        // sıra korunur (kafada sırayla tutulan bir şey kaymasın): çıkarılan savunmacı silinmez, etkisizleşir
+                        // (dokunamaz ve sahanın çok dışında). Eskisi (listeden silmek): ALAN_CXIM_ESKI_IZ
+                        src: Arc::new(if cxim_eski() {
+                            cx.src.iter().filter(|z| !ayni(z, d)).cloned().collect()
+                        } else {
+                            cx.src.iter().map(|z| if ayni(z, d) { let mut o = (**z).clone(); o.noTouch = true; o.x = -1000.0; o.y = -1000.0; o.vx = 0.0; o.vy = 0.0; Arc::new(o) } else { z.clone() }).collect()
+                        }),
                         team: cx.team,
                         ch: cx.ch,
                         kayip: cx.kayip.clone(),
@@ -744,7 +750,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                     let c = cx_siz(&mut CXS, &cx, d);
                     let v2 = nodeV(k, c, kq, Tk, 0.0, None);
                     if uzak_iz() {
-                        eprintln!("UZAK {:.2} {:.6}", uz, jmax(0.0, v2 - vk));
+                        eprintln!("UZAK {:.2} {:.6} t={:?} kq={} d={} dx={:.0} dy={:.0} kx={:.0}", uz, jmax(0.0, v2 - vk), k.D._tick, kq.id, d.id, d.x, d.y, kq.x);
                     }
                     if v2 > vk {
                         mm.push((format!("{}|{}", js_sayi(kq.id), js_sayi(d.id)), v2 - vk));
