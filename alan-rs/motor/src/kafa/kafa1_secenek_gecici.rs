@@ -13,5 +13,5 @@ impl Kafa {
     /// decide.js SUR()
     pub fn SUR(&self) -> bool { todo!() }
     /// decide.js siddetFor(h, to, tR, src, ch)
-    pub fn siddetFor(&self, h: &Oyuncu, to: Nk, tR: f64, src: &[Oyuncu], ch: f64) -> Option<f64> { todo!() }
+    pub fn siddetFor(&self, h: &Oyuncu, to: Nk, tR: f64, src: &[super::kafa1_secenek::Op], ch: f64) -> Option<f64> { todo!() }
 }

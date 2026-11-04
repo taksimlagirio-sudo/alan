@@ -17,6 +17,9 @@ use crate::model::{JODir, JOLf0, JOTo, JsDeger, Oyuncu, Pid, Secenek};
 use crate::oyuncu::Tepki;
 use crate::saha::{CY as GCY, H as GH, W as GW};
 
+/// Hayali dünyanın oyuncusu (kafa2 ile ortak tip; birleştirmede tek tanım).
+pub type Op = std::sync::Arc<Oyuncu>;
+
 /// options'ın dönüşü: seçenekler ve JS dizisine asılı yan bilgiler (out.tekH, out.tekS, out.tekC).
 #[derive(Clone, Debug, Default)]
 pub struct Secenekler {
@@ -116,7 +119,7 @@ impl Kafa {
     }
 
     /// JS `lane(a, b)`: yolun dört ara noktasında rakibin en büyük etkisi.
-    fn lane(&self, src: &[Oyuncu], team: f64, a: &Oyuncu, b: &Oyuncu) -> f64 {
+    fn lane(&self, src: &[Op], team: f64, a: &Oyuncu, b: &Oyuncu) -> f64 {
         let mut m = 0.0;
         for i in 1..=4 {
             let f = i as f64 / 5.0;
@@ -126,7 +129,7 @@ impl Kafa {
     }
 
     /// Taşıyıcının seçenekleri (JS options(h, src, ch)).
-    pub fn options(&self, h: &Oyuncu, src: &[Oyuncu], ch: f64) -> Secenekler {
+    pub fn options(&self, h: &Oyuncu, src: &[Op], ch: f64) -> Secenekler {
         let team = h.team;
         let gx = if team == 0.0 { GW } else { 0.0 };
         let D = &self.D;
