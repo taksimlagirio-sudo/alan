@@ -134,7 +134,7 @@ impl Kafa {
         let gx = if team == 0.0 { GW } else { 0.0 };
         let D = &self.D;
         let saf = self.SAH_F.clone().expect("options: SAH_F (kafa her kararda kurar)");
-        let SAH = |t: f64, x: f64, y: f64| -> f64 { saf(t, x, y) };
+        let SAH = |t: f64, x: f64, y: f64| -> f64 { saf.oku(t, x, y) };
         let TOPLA = h.id >= 0.0;
         let mut res = Secenekler::default();
         let hi = src.iter().position(|q| ayni(q, h));

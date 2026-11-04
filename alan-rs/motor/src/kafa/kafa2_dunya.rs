@@ -3,8 +3,8 @@
 //! bağlarının dünyada çözülmesi.
 #![allow(non_snake_case, clippy::too_many_arguments)]
 
-use super::gecici_dis2 as dis;
-use super::gecici_dis2::{ALAN_HZ, ALAN_SPR, ALAN_SPRE, ALAN_TEPKI};
+use super::kafa2_bag as dis;
+use super::kafa2_bag::{ALAN_HZ};
 use super::kafa2_baglam::*;
 use crate::mat::{hypot, jmax, jmin, jround};
 use crate::model::Oyuncu;
@@ -45,7 +45,7 @@ pub fn bekKay(k: &Kafa, p: &Op, B: Nokta, T: f64) -> Op {
     if L < 0.05 {
         return p.clone();
     }
-    let mv = jmin(L, (T + k.D.sutHazir) * (0.17 + 0.006 * ALAN_HZ(p)) * ALAN_SPRE(p) * crate::temas::bek_kay(p));
+    let mv = jmin(L, (T + k.D.sutHazir) * (0.17 + 0.006 * ALAN_HZ(p)) * dis::ALAN_SPRE(k, p) * crate::temas::bek_kay(p));
     if mv > 0.0 {
         kxy(p, p.x + dx / L * mv, p.y + dy / L * mv)
     } else {
@@ -62,8 +62,8 @@ pub fn bekSav(k: &Kafa, p: &Op, h: &Oyuncu, T: f64, src: &[Op]) -> Op {
     let mut q = kv(p);
     let gx = if t0(p.team) { 0.0 } else { GW };
     let kc0 = crate::temas::bek_kay(p);
-    let v0 = dis::AM_spd(p);
-    let sK = dis::AM_sprK(p);
+    let v0 = dis::AM_spd(k, p);
+    let sK = dis::AM_sprK(k, p);
     let mut hv = h.clone();
     let mut t = 0usize;
     while (t as f64) < T {
@@ -203,8 +203,8 @@ pub fn pwKos(k: &mut Kafa, p: &Op, gx0: f64, gy0: f64, sw0: Option<Sw>, vmax: f6
 }
 
 /// JS adamMi (predictWorld): adam adama savunan
-fn adamMi(p: &Oyuncu) -> bool {
-    p.markRef.is_some() && dis::AM_tl(p, "sav", "adam") >= 0.5
+fn adamMi(k: &Kafa, p: &Oyuncu) -> bool {
+    p.markRef.is_some() && dis::AM_tl(k, p, "sav", "adam") >= 0.5
 }
 
 /// JS predictWorld(src, team, B, T, cevapAyri, resp, pasta, tas) (decide.js:4920): top B'deyken T tik
@@ -245,12 +245,12 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
             _ => None,
         };
         let mr_id = |k: &Kafa, p: &Oyuncu| ref_nesne(k, src, p.markRef.unwrap()).id;
-        let acik: Vec<Op> = basan.iter().filter(|&&i| adamMi(&src[i]) && Some(mr_id(k, &src[i])) != tid).map(|&i| ref_bul(k, src, src[i].markRef.unwrap())).collect();
+        let acik: Vec<Op> = basan.iter().filter(|&&i| adamMi(k, &src[i]) && Some(mr_id(k, &src[i])) != tid).map(|&i| ref_bul(k, src, src[i].markRef.unwrap())).collect();
         let mut alinan: Vec<Op> = Vec::new();
         if !acik.is_empty() && tid.is_some() {
             for fi in 0..n_src {
                 let f = &src[fi];
-                if f.team == team || bekci(f) || basan.contains(&fi) || !adamMi(f) || Some(mr_id(k, f)) != tid {
+                if f.team == team || bekci(f) || basan.contains(&fi) || !adamMi(k, f) || Some(mr_id(k, f)) != tid {
                     continue;
                 }
                 let mut bq: Option<&Op> = None;
@@ -319,7 +319,7 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
                     let mr: Option<Op> = match &devir[i] {
                         Some(d) => Some(d.clone()),
                         None => {
-                            if p.markRef.is_some() && dis::AM_tl(p, "sav", "adam") >= 0.5 {
+                            if p.markRef.is_some() && dis::AM_tl(k, p, "sav", "adam") >= 0.5 {
                                 Some(ref_bul(k, src, p.markRef.unwrap()))
                             } else {
                                 None
@@ -336,8 +336,8 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
                         if let (Some(kv_), Some(otx)) = (&mr._kv, mr.otx) {
                             let oty = mr.oty.unwrap_or(f64::NAN);
                             let L2 = veya(hypot(gxk - otx, GCY - oty), 1.0);
-                            let t1 = hypot(kv_.x - mr.x, kv_.y - mr.y) / ((0.17 + 0.006 * ALAN_HZ(&mr)) * ALAN_SPRE(&mr));
-                            let lag = jmax(1.0, jround(ALAN_TEPKI(p, "algi"))) * 0.5;
+                            let t1 = hypot(kv_.x - mr.x, kv_.y - mr.y) / ((0.17 + 0.006 * ALAN_HZ(&mr)) * dis::ALAN_SPRE(k, &mr));
+                            let lag = jmax(1.0, jround(dis::ALAN_TEPKI(k, p, "algi"))) * 0.5;
                             sw = Some(Sw { yer: false, t: Some(t1 + lag), x: otx + (gxk - otx) / L2 * 1.6, y: oty + (GCY - oty) / L2 * 1.6 });
                         }
                     } else {
@@ -385,8 +385,8 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
             }
         }
         let rk = p.team != team;
-        let vmax = sp * if rk || p.sprint { ALAN_SPR(p) } else { 1.0 };
-        let rc = if rk { jmax(0.0, ALAN_TEPKI(p, "kovala")) } else { 0.0 };
+        let vmax = sp * if rk || p.sprint { dis::ALAN_SPR(k, p) } else { 1.0 };
+        let rc = if rk { jmax(0.0, dis::ALAN_TEPKI(k, p, "kovala")) } else { 0.0 };
         let n = jmin(jround(T), 60.0).max(0.0) as usize;
         if pm {
             out.push(pwKos(k, p, gx, gy, sw, vmax, rc, n));
@@ -416,7 +416,7 @@ pub fn bekYerW(k: &Kafa, w: &[Op], team: f64, B: Nokta, T: Option<f64>) -> Dunya
 
 /// JS geriCekil(w, team, A, E, T, ilk) (decide.js:6779): taşıyıcı A'dan E'ye sürerken yakındaki
 /// savunmacıların T tikteki cevabı (pres: önüne, arkadakiler: izler, ötekiler: E çevresine).
-pub fn geriCekil(w: &[Op], team: f64, A: Nokta, E: Nokta, T: f64, ilk: bool) -> Dunya {
+pub fn geriCekil(k: &Kafa, w: &[Op], team: f64, A: Nokta, E: Nokta, T: f64, ilk: bool) -> Dunya {
     let gx = if t0(team) { GW } else { 0.0 };
     let dA = hypot(gx - A.x, GCY - A.y);
     let mx = E.x - A.x;
@@ -430,7 +430,7 @@ pub fn geriCekil(w: &[Op], team: f64, A: Nokta, E: Nokta, T: f64, ilk: bool) -> 
             if d > 16.0 {
                 return o.clone();
             }
-            let run = jmax(0.0, T - if ilk { jmax(0.0, ALAN_TEPKI(o, "kovala")) } else { 0.0 }) * (0.17 + 0.006 * ALAN_HZ(o)) * ALAN_SPRE(o);
+            let run = jmax(0.0, T - if ilk { jmax(0.0, dis::ALAN_TEPKI(k, o, "kovala")) } else { 0.0 }) * (0.17 + 0.006 * ALAN_HZ(o)) * dis::ALAN_SPRE(k, o);
             let (tx, ty);
             if o.press {
                 let gl = veya(hypot(gx - E.x, GCY - E.y), 1.0);
@@ -489,7 +489,7 @@ pub fn paylastir(k: &Kafa, W: &[Op], team: f64, T: f64, haric: &[usize]) -> Duny
                 continue;
             }
             let p = &W[z];
-            let t = jmax(0.0, ALAN_TEPKI(p, "kovala")) + hypot(p.x - g.x, p.y - g.y) / ((0.17 + 0.006 * ALAN_HZ(p)) * ALAN_SPRE(p));
+            let t = jmax(0.0, dis::ALAN_TEPKI(k, p, "kovala")) + hypot(p.x - g.x, p.y - g.y) / ((0.17 + 0.006 * ALAN_HZ(p)) * dis::ALAN_SPRE(k, p));
             if t < bt {
                 bt = t;
                 bz = Some(z);
@@ -501,7 +501,7 @@ pub fn paylastir(k: &Kafa, W: &[Op], team: f64, T: f64, haric: &[usize]) -> Duny
         };
         kul.push(bz);
         let d = &W[bz];
-        let run = jmax(0.0, T - jmax(0.0, ALAN_TEPKI(d, "kovala"))) * (0.17 + 0.006 * ALAN_HZ(d)) * ALAN_SPRE(d);
+        let run = jmax(0.0, T - jmax(0.0, dis::ALAN_TEPKI(k, d, "kovala"))) * (0.17 + 0.006 * ALAN_HZ(d)) * dis::ALAN_SPRE(k, d);
         let dx = g.x - d.x;
         let dy = g.y - d.y;
         let L = hypot(dx, dy);

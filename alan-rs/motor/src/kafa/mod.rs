@@ -8,7 +8,7 @@
 //! özelliğinden çağrılır (`gecici_dis1.rs`).
 
 pub mod gecici_dis1;
-pub mod gecici_dis2;
+pub mod kafa2_bag;
 pub mod kafa2_baglam;
 pub mod kafa2_dunya;
 pub mod kafa2_eski;

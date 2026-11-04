@@ -7,10 +7,13 @@
 //! - Fonksiyon özellikleri (JS `keepP.son`, `kesisK.son`): `Cell`.
 //! - Kafa2'nin kurduğu sahiplik haritası (JS `SAH_F`): `SAH_F`.
 //! - Dış dünya: `dis` ([`Dis`]).
+//! - Kafa2'nin durumu: `mac` (JS `D._mac`), `prT` (JS `m._prT`), `k2` (önbellekler), `srcC_kc`.
 #![allow(non_snake_case)]
 
 use super::gecici_dis1::{Dis, Ik, IK_JS};
 use super::kafa1_param::d_js;
+use super::kafa2_baglam::{Kafa2Durum, MacGor, PrT};
+use crate::alan::KOnbellek;
 use crate::model::{KafaD, Oyuncu};
 use crate::oyuncu::{tepki, Tepki, TepkiS};
 use crate::temas::Kural;
@@ -26,8 +29,8 @@ pub struct UcusYol {
     pub T: f64,
 }
 
-/// Sahiplik haritası (JS `SAH_F(team, x, y)`; kafa2'nin sahiplikKur'u kurar).
-pub type SahF = Arc<dyn Fn(f64, f64, f64) -> f64>;
+/// Sahiplik haritası (JS `SAH_F(team, x, y)`; kafa2'nin sahiplikKur'u kurar, `oku` ile okunur).
+pub type SahF = Arc<super::kafa2_zemin::Sahiplik>;
 
 pub struct Kafa {
     pub D: KafaD,
@@ -44,6 +47,14 @@ pub struct Kafa {
     /// JS `GE`, `GEk`, `GEt`, `GEic`
     pub(crate) ge: RefCell<(Option<f64>, HashMap<String, f64>, HashMap<String, f64>)>,
     pub(crate) ge_ic: Cell<bool>,
+    /// JS `D._mac` (kafa2'nin okuduğu maç görünümü; maç döngüsü kararın önünde doldurur)
+    pub mac: Option<MacGor>,
+    /// JS `m._prT` çıktısı (kafa2 yazar; maç ve kafa1'in girEsik'i `Dis::prT` ile okur, bkz. `PrT::d1`)
+    pub prT: Option<PrT>,
+    /// kafa2'nin modül düzeyi önbellekleri ve bayrakları
+    pub k2: Kafa2Durum,
+    /// decide0'ın `srcC._kc`'si (kararın K önbelleği; launchFor/ucusSure/bankSure/bankFor buna bakar)
+    pub srcC_kc: Option<RefCell<KOnbellek>>,
     /// JS `RNB`, `RNBt`
     pub(crate) rnb: RefCell<(Option<f64>, HashMap<String, f64>)>,
     /// JS `SHT`'nin tabloda olmayan hücreleri (hesaplanmış)
@@ -64,6 +75,10 @@ impl Kafa {
             ge_ic: Cell::new(false),
             rnb: RefCell::new((None, HashMap::new())),
             sht_ek: RefCell::new(HashMap::new()),
+            mac: None,
+            prT: None,
+            k2: Kafa2Durum { PWT: Some(-1e9), IMK_INAN_T: 60.0, ..Default::default() },
+            srcC_kc: None,
         }
     }
     /// JS `D._tick || 0`

@@ -47,6 +47,9 @@ pub fn kuyuD(x: f64, y: f64) -> f64 {
 }
 
 /// SPT (space'in örnek noktaları: [r, açı])
+pub fn SPT() -> Vec<(f64, f64)> {
+    spt()
+}
 fn spt() -> Vec<(f64, f64)> {
     let mut v = Vec::new();
     for r in [6.0, 10.0, 14.0, 18.0, 22.0, 26.0, 30.0] {
@@ -74,12 +77,12 @@ fn frt() -> Vec<(f64, f64)> {
 }
 
 /// JS bosOy dönüşü
-struct BosOy {
-    x: Vec<f64>,
-    y: Vec<f64>,
-    v: Vec<f64>,
-    a: Vec<f64>,
-    t: Vec<i8>,
+pub struct BosOy {
+    pub x: Vec<f64>,
+    pub y: Vec<f64>,
+    pub v: Vec<f64>,
+    pub a: Vec<f64>,
+    pub t: Vec<i8>,
 }
 
 impl Kafa {
@@ -143,7 +146,8 @@ impl Kafa {
         self.D.b0 + self.D.b1 * self.threat(team, x, y)
     }
 
-    fn bosOy(&self, src: &[Op], team: f64, bx: f64, by: f64) -> BosOy {
+    /// JS bosOy(src, team, bx, by) (bosluk'un oyuncu dizileri)
+    pub fn bosOy(&self, src: &[Op], team: f64, bx: f64, by: f64) -> BosOy {
         let n = src.len();
         let mut o = BosOy { x: vec![0.0; n], y: vec![0.0; n], v: vec![0.0; n], a: vec![0.0; n], t: vec![0; n] };
         for (k, p) in src.iter().enumerate() {
@@ -222,12 +226,12 @@ impl Kafa {
         best
     }
     /// decide.js:3598
-    pub fn Vend(&self, src: &[Op], team: f64, x: f64, y: f64, ch: f64) -> f64 {
+    pub fn Vend(&mut self, src: &[Op], team: f64, x: f64, y: f64, ch: f64) -> f64 {
         let vv = jmax(jmax(jmax(self.shotQ(src, team, x, y, ch), self.build(src, team, x, y)), bosluk(self, src, team, x, y)), self.front(src, team, x, y));
         self.dagin(src, team, x, vv, Some(y))
     }
     /// Topa koşunun değeri (decide.js:3602).
-    pub fn runOn(&self, w: &[Op], team: f64, h: &Oyuncu, at: Nk) -> f64 {
+    pub fn runOn(&mut self, w: &[Op], team: f64, h: &Oyuncu, at: Nk) -> f64 {
         let dir = if team == 0.0 { 1.0 } else { -1.0 };
         let vC = 0.85 * self.spd(h);
         let mut best: f64 = 0.0;

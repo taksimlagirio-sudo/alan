@@ -2,8 +2,7 @@
 //! (ileriKur, ileriTab, ileriDeger, ilerleme), zemin, sahiplik haritası (sahiplikKur, zeminS), yerDeger.
 #![allow(non_snake_case, clippy::too_many_arguments)]
 
-use super::gecici_dis2 as dis;
-use super::gecici_dis2::ALAN_TEPKI;
+use super::kafa2_bag as dis;
 use super::kafa2_baglam::*;
 use super::kafa2_dunya::{bekYerW, predictWorld};
 use super::kafa2_imkan::{imkSg, imkTau, imkUzak, imkan, sutS, sutVakit, tasima, IMK_HUC};
@@ -35,7 +34,7 @@ pub struct KayipF {
 }
 
 pub fn kayipF(k: &Kafa, src: Arc<Dunya>, team: f64, ch: f64, risk: f64) -> KayipF {
-    KayipF { src, team, risk, cc: dis::chKayip(ch), ot: 1.0 - team, c: HashMap::new(), yq: None, gB: k.D._gPr, oB: k.k2.IMK_OFS }
+    KayipF { src, team, risk, cc: dis::chKayip(k, ch), ot: 1.0 - team, c: HashMap::new(), yq: None, gB: k.D._gPr, oB: k.k2.IMK_OFS }
 }
 
 impl KayipF {
@@ -210,9 +209,10 @@ pub fn ileriKur(k: &mut Kafa, m: &MacGor) -> Option<IleriTab> {
             Arc::new(d)
         })
         .collect();
+    let kd = k.dis.clone();
     let hat = |t: usize| -> f64 {
         let blok = m.tac.get(1 - t).map(|x| x.blok.clone()).unwrap_or_default();
-        dis::AS_S_prHat(&blok).unwrap_or(62.0 * (GW / 100.0))
+        kd.S_prHat(&blok).unwrap_or(62.0 * (GW / 100.0))
     };
     let tasi = |p: &Op, g: Nokta| -> Op {
         let mut q = (**p).clone();
@@ -245,7 +245,7 @@ pub fn ileriKur(k: &mut Kafa, m: &MacGor) -> Option<IleriTab> {
                         }
                     }
                     if let Some(bi) = bi {
-                        let g = dis::AS_gside(E, 1.0 - tf, 2.2);
+                        let g = dis::AS_gside(k, E, 1.0 - tf, 2.2);
                         sav[bi] = kxy(&sav[bi], g.x, g.y);
                     }
                 }
@@ -453,11 +453,12 @@ pub fn sahiplikKur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>
         gxo: f64,
     }
     let mut FF: Vec<F> = Vec::new();
+    let kd = k.dis.clone();
     for t in [0.0, 1.0] {
-        let cT = if t == team { ch } else { dis::chKayip(ch) };
+        let cT = if t == team { ch } else { dis::chKayip(k, ch) };
         struct R {
             p: Op,
-            G: dis::GecTab,
+            G: Option<dis::GecTab>,
             v: f64,
             R: f64,
             rc: f64,
@@ -465,14 +466,14 @@ pub fn sahiplikKur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>
         let rak: Vec<R> = w
             .iter()
             .filter(|p| p.team != t && !p.noTouch && !bekci(p))
-            .map(|p| R { p: p.clone(), G: dis::AS_gecTab(p), v: dis::AS_vSp(p), R: jmin(2.0, crate::temas::menzil(p, 0.35)), rc: jmax(0.0, ALAN_TEPKI(p, "kovala")) })
+            .map(|p| R { p: p.clone(), G: dis::AS_gecTab(k, p), v: dis::AS_vSp(k, p), R: jmin(2.0, crate::temas::menzil(p, 0.35)), rc: jmax(0.0, dis::ALAN_TEPKI(k, p, "kovala")) })
             .collect();
         let rv = |x: f64, y: f64| -> f64 {
             let mut m = 1e9;
             for o in &rak {
                 let d = jmax(0.0, hypot(o.p.x - x, o.p.y - y) - o.R);
                 if !(o.rc + d / o.v >= m) {
-                    m = jmin(m, o.rc + dis::AS_gecOf(&o.G, x, y, d) + d / o.v);
+                    m = jmin(m, o.rc + o.G.as_ref().map_or(0.0, |g| kd.gecOf(g, x, y, Some(d))) + d / o.v);
                 }
             }
             m
@@ -576,7 +577,7 @@ pub fn sahiplikKur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>
 
 /// JS zeminS(w, team, x, y, ch, k) (decide.js:6747): sahiplik haritası varsa ondan
 pub fn zeminS(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Option<&Oyuncu>) -> f64 {
-    match &k.k2.SAH_F {
+    match &k.SAH_F {
         Some(f) => f.oku(team, x, y),
         None => zemin(k, w, team, x, y, ch, kq),
     }
