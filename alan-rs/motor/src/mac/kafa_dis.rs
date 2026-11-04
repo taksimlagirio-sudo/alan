@@ -182,7 +182,31 @@ impl Dis for MacDis {
         Some(gecTab_k(&sekil::gec::gecTab(o, &self.kural.get())))
     }
     fn gecOf(&self, G: &d1::GecTab, x: f64, y: f64, s: Option<f64>) -> f64 {
-        sekil::gec::gecOf(&gecTab_s(G), x, y, s)
+        // sekil::gec::gecOf ile aynı; yalnız gereken yönün tablosu okunur (9 yön kopyalanmaz)
+        let dx = x - G.x;
+        let dy = y - G.y;
+        let L = crate::mat::hypot(dx, dy);
+        if L < 0.5 {
+            return 0.0;
+        }
+        let c = if G.s0 < 0.001 { 1.0 } else { (G.vx * dx + G.vy * dy) / (G.s0 * L) };
+        let kk = (crate::mat::jround(4.0 * crate::mat::jmax(-1.0, crate::mat::jmin(1.0, c))) + 4.0) as usize;
+        match s {
+            Some(s) => {
+                let Y = &G.Y[kk];
+                if let Some(a) = Y.m.as_ref().and_then(|v| v.get(..81)).and_then(|v| <&[f64; 81]>::try_from(v).ok()) {
+                    return sekil::gec::gecK_m(Y.g, a, s, G.vm);
+                }
+                let mut m = [0.0; 81];
+                if let Some(v) = &Y.m {
+                    for (i, x) in v.iter().take(81).enumerate() {
+                        m[i] = *x;
+                    }
+                }
+                sekil::gec::gecK_m(Y.g, &m, s, G.vm)
+            }
+            None => G.t[kk],
+        }
     }
     fn gec(&self, o: &Oyuncu, x: f64, y: f64, s: Option<f64>) -> Option<f64> {
         Some(sekil::gec::gec(o, x, y, s, &self.kural.get()))
