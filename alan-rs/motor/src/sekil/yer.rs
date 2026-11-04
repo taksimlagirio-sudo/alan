@@ -364,20 +364,28 @@ fn bek_derinlik0(ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64,
         // Adaya, yol üstündeki izdüşümünden (|s − proj|) en büyük erişimden uzak nokta yetişemez (|P − k| ≥ |s − proj|;
         // 1e-6 pay kayan nokta hatasının çok üstünde): o noktalar sınanmaz, sayım aynı. NaN'da pencere açılmaz (hepsi sınanır).
         let EM = em + 1e-6;
-        let kap = |r: f64| -> usize {
+        // yol başına pencerenin başı: aday adım adım kaydığı için önceki yerden yürünür (sıralı s'lerde
+        // partition_point(|s| s < lo) ile aynı yer)
+        let mut gost: Vec<usize> = yollar.iter().map(|y| y.2).collect();
+        let mut kap = |r: f64| -> usize {
             let st = jmax(0.0, L - r);
             let (kx, ky) = (ex + bxu * st, ey + byu * st);
             let mut c = 0;
-            for &(ux, uy, bas, son) in yollar.iter() {
+            for (yi, &(ux, uy, bas, son)) in yollar.iter().enumerate() {
                 let proj = (kx - ex) * ux + (ky - ey) * uy;
                 let (lo, hi) = (proj - EM, proj + EM);
-                let sy = &ss[bas..son];
-                let i0 = sy.partition_point(|&s| s < lo);
-                for i in i0..sy.len() {
-                    if sy[i] > hi {
+                let mut i0 = gost[yi];
+                while i0 > bas && !(ss[i0 - 1] < lo) {
+                    i0 -= 1;
+                }
+                while i0 < son && ss[i0] < lo {
+                    i0 += 1;
+                }
+                gost[yi] = i0;
+                for (&s, &(px, py, er)) in ss[i0..son].iter().zip(&pts[i0..son]) {
+                    if s > hi {
                         break;
                     }
-                    let (px, py, er) = pts[bas + i];
                     let (ax, ay) = (px - kx, py - ky);
                     // hypot(ax, ay) >= |ax|, |ay| (IEEE): bunlardan biri er'i aşıyorsa uzak, hypot gereksiz
                     if ax.abs() > er || ay.abs() > er {
