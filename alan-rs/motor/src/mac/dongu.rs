@@ -417,7 +417,7 @@ pub fn _step(m: &mut Mac) {
             if m.ps[pi].bekci() {
                 let p = &m.ps[pi];
                 let tep = match bb {
-                    Some((bid, bm, defl, bt, _, _)) => !hold && bid == Some(p.id as u32) && bm > 0.0 && !defl && bt < Q.bek_har_t * bm && p._ktB.is_some(),
+                    Some((bid, _bm, defl, bt, _, _)) => !hold && bid == Some(p.id as u32) && !defl && p._ktB.is_some() && m.ball.as_ref().map_or(false, |b| b.tt.t.gon && b.team as f64 != p.team) && bt < crate::temas::bek_re(p), /* dalış modelinde Bekçi tepki süresince eski hedefini sürdürür (şutu henüz görmedi); sonra dalış onu taşır. Önce süre hareket cezasıydı (4 tik × bekHar) */
                     None => false,
                 };
                 let p = &mut m.ps[pi];
