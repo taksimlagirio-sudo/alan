@@ -24,6 +24,10 @@ mod yetenek_tablo;
 
 /// İz kancaları (ALAN_*_IZ / ALAN_IMK_HU) açık mı: bir kez okunur, sıcak yolda ortam değişkeni aranmaz.
 pub fn iz_acik() -> bool {
+    // wasm32-unknown-unknown'da ortam değişkeni listesi yok (std::env::vars panikler)
+    if cfg!(target_family = "wasm") {
+        return false;
+    }
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     *A.get_or_init(|| std::env::vars().any(|(k, _)| k.starts_with("ALAN_") && (k.ends_with("_IZ") || k == "ALAN_IMK_HU")))
 }

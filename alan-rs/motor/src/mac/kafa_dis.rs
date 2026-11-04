@@ -27,8 +27,8 @@ pub struct MacDis {
     /// takım başına: (m.tac[k].siddet, yz, macEff(m,k,{}).macK ?? 1)
     pub siddet: [(Option<f64>, bool, f64); 2],
     pub enHarcama: [Option<f64>; 2],
-    pub gs: Option<JMShGs>,
-    pub prT: Option<d1::PrT>,
+    pub gs: std::cell::RefCell<Option<JMShGs>>,
+    pub prT: std::cell::RefCell<Option<d1::PrT>>,
     /// yerleşimin tehlike'si için: son seçenekler, oyuncu kimlikleri, maçın tiki
     pub mac: Arc<Mac>,
 }
@@ -66,7 +66,7 @@ impl MacDis {
             (p.id, p.team, p.x, p.y)
         });
         let gs = m.mac.sekil.sh.gs.as_ref().map(|g| JMShGs { t: g.t, dt: g.dt as f64, on: g.on, onP: g.onP, oy: g.oy, ..Default::default() });
-        MacDis { kural: std::cell::Cell::new(kural), ch: Some(m.ch), holder: std::cell::Cell::new(holder), tacE, siddet, enHarcama, gs, prT: m.mac.prT_k.clone(), mac: Arc::new(hafif(m)) }
+        MacDis { kural: std::cell::Cell::new(kural), ch: Some(m.ch), holder: std::cell::Cell::new(holder), tacE, siddet, enHarcama, gs: std::cell::RefCell::new(gs), prT: std::cell::RefCell::new(m.mac.prT_k.clone()), mac: Arc::new(hafif(m)) }
     }
     fn takim_tac(&self, t: f64) -> &sekil::gecici_dis::TacE {
         &self.tacE[if t == 1.0 { 1 } else { 0 }]
@@ -280,10 +280,10 @@ impl Dis for MacDis {
         d1::TacEff(vec![("team".into(), team)])
     }
     fn sh_gs(&self) -> Option<JMShGs> {
-        self.gs.clone()
+        self.gs.borrow().clone()
     }
     fn prT(&self) -> Option<d1::PrT> {
-        self.prT.clone()
+        self.prT.borrow().clone()
     }
     // ---- algı kopyaları ----
     fn algi_e(&self, p: &Oyuncu) -> Option<f64> {
@@ -441,5 +441,8 @@ pub fn kural_tazele(m: &Mac) {
     if let Some(d) = &m.mac.kafa.dis {
         d.kural.set(MacKural::of(m));
         d.holder.set(m.holder.map(|h| { let p = &m.ps[h]; (p.id, p.team, p.x, p.y) }));
+        // JS m._prT ve m.sh.gs canlı okunur: aynı tikte önceki kararın yazdığı görülür
+        *d.prT.borrow_mut() = m.mac.prT_k.clone();
+        *d.gs.borrow_mut() = m.mac.sekil.sh.gs.as_ref().map(|g| JMShGs { t: g.t, dt: g.dt as f64, on: g.on, onP: g.onP, oy: g.oy, ..Default::default() });
     }
 }
