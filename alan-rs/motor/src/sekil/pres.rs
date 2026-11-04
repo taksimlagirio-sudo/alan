@@ -68,9 +68,13 @@ pub fn presLim(c: &Mc, dt: &dis::TacE, h: Option<Pid>, att: u8) -> usize {
 /// JS ilkPres(m, p, h, dt, TH, dtac, sh): ilk presçinin hedefi ve işi (yolu kes, kale tarafı, önüne gövde
 /// koy, yandan gir, fake).
 pub fn ilkPres(c: &mut Mc, pi: Pid, hi: Pid, dt: u8, TH: Option<&[Tehlike]>, dtac: &dis::TacE) {
+    let h = c.ps[hi].clone();
+    ilkPres_h(c, pi, &h, dt, TH, dtac)
+}
+/// ilkPres, taşıyıcı dışarıdan (yalnız okunur; kafanın pres görünümü kopyalamadan verir).
+pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>, dtac: &dis::TacE) {
     let k = c.k;
     let tick = c.m.tick;
-    let h = c.ps[hi].clone();
     let cs = dis::coreSide(&h);
     let B = Q.body;
     let dke = h._dke.unwrap_or(0.0);

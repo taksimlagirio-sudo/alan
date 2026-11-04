@@ -245,13 +245,12 @@ impl Dis for MacDis {
             let (pplan0, sprint0, onK0) = (qv.pplan.clone(), qv.sprint, qv._onK.clone());
             ps.clear();
             ps.push(std::mem::take(qv));
-            ps.push(hx.clone());
             let th: Vec<sekil::takim::Tehlike> = TH.iter().map(|t| sekil::takim::Tehlike { an: t.an, w: t.w, w0: t.w0, x: t.x, y: t.y, k: t.k.clone(), L: t.L }).collect();
             let dtac = self.takim_tac(team);
             let d = crate::mac::gecici_dis::kafa_d();
             let kural = self.kural.get();
             let mut c = Mc { m, ps, ball: None, ek, k: &kural, d, lite: true, rnd: None };
-            sekil::ilkPres(&mut c, 0, 1, if team == 1.0 { 1 } else { 0 }, Some(&th), dtac);
+            sekil::pres::ilkPres_h(&mut c, 0, hx, if team == 1.0 { 1 } else { 0 }, Some(&th), dtac);
             let mut sonuc = std::mem::take(&mut ps[0]);
             let (tx, ty, job) = (sonuc.tx, sonuc.ty, sonuc.job.take());
             ps.clear();
