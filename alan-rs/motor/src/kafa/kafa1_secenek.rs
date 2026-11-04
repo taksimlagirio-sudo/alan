@@ -13,7 +13,7 @@ use super::kafa1_baglam::Kafa;
 use super::kafa1_js::{nk, Nk};
 use super::kafa1_tehlike::kuyuD;
 use crate::mat::{cos, exp, hypot, jmax, jmin, kis, sin, PI};
-use crate::model::{JODir, JOLf0, JOTo, JsDeger, Oyuncu, Pid, Secenek};
+use crate::model::{JOLaunch, JsDeger, Nokta, Oyuncu, Pid, Secenek};
 use crate::oyuncu::Tepki;
 use crate::saha::{CY as GCY, H as GH, W as GW};
 
@@ -175,8 +175,9 @@ impl Kafa {
         let F = self.dis.ALAN_SPR_FAZ();
         let g = if team == 0.0 { 1.0 } else { -1.0 };
         let HZ = [D.arriveSpace, D.arrive, D.arriveFirm, 1.2, 1.6];
-        let kuyu_hed = self.KUYU_HED();
-        let ky = self.KY();
+        // JS KUYU_HED() ve KY() = C().KUYU(): bugün ikisi de açık
+        let kuyu_hed = true;
+        let ky = true;
         // ---- TEK: her alıcı için noktalar (kendine pas dahil) ----
         {
             let mut alicilar: Vec<Al> = mates.iter().map(|&i| Al::Src(i)).collect();
@@ -276,7 +277,7 @@ impl Kafa {
                     }
                     let sf = SAH(team, P.x, P.y);
                     let mds: &[i32] = if qH && self.SPK() {
-                        if self.SUR() {
+                        if true /* JS SUR(): sürekli koşu açık */ {
                             if self.SPRS(h) {
                                 &[2, 0, 3, 1]
                             } else {
@@ -348,7 +349,7 @@ impl Kafa {
                                 continue;
                             }
                             let own = sig((jmax(ta, tb) - td) / 5.0);
-                            C2.push(Aday { pi, P, hz, own, onune: ta - tb > 3.0, s: own * sf, spr: md == 1, itK: if qH && md >= 0 && self.SUR() { Some(self.itKf(h, md)) } else { None } });
+                            C2.push(Aday { pi, P, hz, own, onune: ta - tb > 3.0, s: own * sf, spr: md == 1, itK: if qH && md >= 0 && true /* JS SUR(): sürekli koşu açık */ { Some(self.itKf(h, md)) } else { None } });
                         }
                     }
                 }
@@ -373,13 +374,13 @@ impl Kafa {
                             }
                         }
                         let mut o = yeni(if onune { "önüne" } else { "pas" });
-                        o.to = Some(JOTo { x: c.P.x, y: c.P.y });
+                        o.to = Some(Nokta { x: c.P.x, y: c.P.y });
                         o.q = qid(a);
                         o.arrive = Some(c.hz);
                         o.tek = Some(1.0);
                         o._own = Some(c.own);
                         o.firm = if c.hz >= D.arriveFirm { Some(true) } else { None };
-                        o.spr = if c.spr { Some(JsDeger::Mantik(true)) } else { None };
+                        o.spr = if c.spr { Some(1.0) } else { None };
                         o.itK = c.itK;
                         res.out.push(o);
                     }
@@ -396,13 +397,13 @@ impl Kafa {
                 for sy in [1.0, -1.0] {
                     let mut o = yeni("gönder");
                     o.shot = Some("güçlü".into());
-                    o.to = Some(JOTo { x: gx, y: ty });
+                    o.to = Some(Nokta { x: gx, y: ty });
                     o.v = Some(self.sutV(h));
                     o.sYon = Some(sy);
                     res.out.push(o);
                     let mut o = yeni("gönder");
                     o.shot = Some("plase".into());
-                    o.to = Some(JOTo { x: gx, y: ty });
+                    o.to = Some(Nokta { x: gx, y: ty });
                     o.v = Some(D.plaseV);
                     o.sYon = Some(sy);
                     res.out.push(o);
@@ -495,14 +496,14 @@ impl Kafa {
                     let duvar = c.P.y < 2.6 || c.P.y > GH - 2.6;
                     let sur = |own: f64, spr: bool| {
                         let mut o = yeni("sür");
-                        o.to = Some(JOTo { x: c.P.x, y: c.P.y });
-                        o.dir = Some(JODir { x: c.u.x, y: c.u.y });
+                        o.to = Some(Nokta { x: c.P.x, y: c.P.y });
+                        o.dir = Some(Nokta { x: c.u.x, y: c.u.y });
                         o._own = Some(own);
                         if spr {
-                            o.spr = Some(JsDeger::Sayi(1.0));
+                            o.spr = Some(1.0);
                         }
                         o.uzun = if c.r >= 12.0 { Some(c.r) } else { None };
-                        o.duvar = if duvar { Some(JsDeger::Mantik(true)) } else { None };
+                        o.duvar = duvar;
                         o
                     };
                     res.out.push(sur(c.own, false));
@@ -522,8 +523,8 @@ impl Kafa {
                 let to = nk(h.x + 6.0 * dx, h.y + 6.0 * dy);
                 if !(to.x < 2.0 || to.x > GW - 2.0 || to.y < 2.0 || to.y > GH - 2.0) {
                     let mut o = yeni("sür");
-                    o.to = Some(JOTo { x: to.x, y: to.y });
-                    o.dir = Some(JODir { x: dx, y: dy });
+                    o.to = Some(Nokta { x: to.x, y: to.y });
+                    o.dir = Some(Nokta { x: dx, y: dy });
                     res.out.push(o);
                 }
             }
@@ -556,9 +557,9 @@ impl Kafa {
                                 }
                             };
                             let mut o = yeni("sür");
-                            o.to = Some(JOTo { x: to.x, y: to.y });
-                            o.dir = Some(JODir { x: (to.x - h.x) / L, y: (to.y - h.y) / L });
-                            o.duvar = Some(JsDeger::Mantik(true));
+                            o.to = Some(Nokta { x: to.x, y: to.y });
+                            o.dir = Some(Nokta { x: (to.x - h.x) / L, y: (to.y - h.y) / L });
+                            o.duvar = true;
                             res.out.push(o);
                         }
                     }
@@ -583,8 +584,8 @@ impl Kafa {
                     });
                     if !engel {
                         let mut o = yeni("sür");
-                        o.to = Some(JOTo { x: to.x, y: to.y });
-                        o.dir = Some(JODir { x: dx, y: dy });
+                        o.to = Some(Nokta { x: to.x, y: to.y });
+                        o.dir = Some(Nokta { x: dx, y: dy });
                         o.uzun = Some(L);
                         res.out.push(o);
                     }
@@ -608,7 +609,9 @@ impl Kafa {
                 let vq = (0.17 + 0.006 * q.hz()) * self.dis.ALAN_SPRE(q);
                 let dq = hypot(to.x - q.x, to.y - q.y);
                 let tR = dq / vq + self.dis.gec(q, to.x, to.y, Some(dq)).unwrap_or(0.0);
-                if let Some(v0) = self.siddetFor(h, nk(to.x, to.y), tR, src, ch) {
+                {
+                    // TODO(bağ): kafa2 srcC'nin alan önbelleğini (JS src._kc) buraya verebilir
+                    let v0 = self.siddetFor(h, nk(to.x, to.y), tR, src, ch, None);
                     if v0 != 0.0 && v0 == v0 {
                         let L = {
                             let v = hypot(to.x - h.x, to.y - h.y);
@@ -625,7 +628,7 @@ impl Kafa {
                             let mut c = base.clone();
                             c.firm = Some(true);
                             c.siddet = Some(to_fixed2(vv));
-                            c.lf0 = Some(JOLf0 { vx: (tx - h.x) / L * vv, vy: (ty - h.y) / L * vv, ok: true });
+                            c.lf0 = Some(JOLaunch { vx: (tx - h.x) / L * vv, vy: (ty - h.y) / L * vv, ok: true });
                             res.out.push(c);
                         }
                     }

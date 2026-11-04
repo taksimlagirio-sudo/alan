@@ -24,6 +24,7 @@ pub mod kafa1_ikili;
 pub mod kafa1_js;
 pub mod kafa1_param;
 pub mod kafa1_savur;
+pub mod kafa1_secenek;
 pub mod kafa1_secim;
 pub mod kafa1_sut;
 pub mod kafa1_sut_tablo;
