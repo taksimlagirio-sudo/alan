@@ -93,7 +93,7 @@ fn gecY_k_arc(y: &Arc<sekil::gec::GecY>) -> Arc<d1::GecY> {
     })
 }
 fn gecTab_k(g: &sekil::gec::GecTab) -> d1::GecTab {
-    d1::GecTab { vx: g.vx, vy: g.vy, s0: g.s0, x: g.x, y: g.y, t: g.t.to_vec(), Y: g.Y.iter().map(gecY_k_arc).collect(), vm: g.vm }
+    d1::GecTab { vx: g.vx, vy: g.vy, s0: g.s0, x: g.x, y: g.y, t: g.tb.0.to_vec(), Y: g.tb.1.iter().map(gecY_k_arc).collect(), vm: g.vm }
 }
 fn gecTab_s(g: &d1::GecTab) -> sekil::gec::GecTab {
     let Y: Vec<Arc<sekil::gec::GecY>> = g
@@ -111,7 +111,7 @@ fn gecTab_s(g: &d1::GecTab) -> sekil::gec::GecTab {
         .collect();
     let mut t = [0.0; 9];
     t.copy_from_slice(&g.t[..9]);
-    sekil::gec::GecTab { vx: g.vx, vy: g.vy, s0: g.s0, x: g.x, y: g.y, t, Y: Y.try_into().unwrap(), vm: g.vm }
+    sekil::gec::GecTab { vx: g.vx, vy: g.vy, s0: g.s0, x: g.x, y: g.y, tb: Arc::new((t, Y.try_into().unwrap())), vm: g.vm }
 }
 
 impl Dis for MacDis {
@@ -258,10 +258,11 @@ impl Dis for MacDis {
             let IlkTampon { m, ek, ps } = &mut *t;
             m.tick = tick;
             ek.sh.gs = gs.as_ref().map(|g| Gs { t: g.t, dt: g.dt as u8, on: g.on, onP: g.onP, oy: g.oy });
-            let (pplan0, sprint0, onK0) = (qv.pplan.clone(), qv.sprint, qv._onK.clone());
+            let onK0 = qv._onK.clone(); // ilkPres_h okur (kafa görünümünde), sonra geri konur
             ps.clear();
             ps.push(std::mem::take(qv));
-            let th: Vec<sekil::takim::Tehlike> = TH.iter().map(|t| sekil::takim::Tehlike { an: t.an, w: t.w, w0: t.w0, x: t.x, y: t.y, k: t.k.clone(), L: t.L }).collect();
+            // ilkPres_h tehlikelerin yalnız ilkini okur: yalnız o çevrilir
+            let th: Vec<sekil::takim::Tehlike> = TH.iter().take(1).map(|t| sekil::takim::Tehlike { an: t.an, w: t.w, w0: t.w0, x: t.x, y: t.y, k: t.k.clone(), L: t.L }).collect();
             let dtac = self.takim_tac(team);
             let d = crate::mac::gecici_dis::kafa_d();
             let kural = self.kural.get();
@@ -276,7 +277,6 @@ impl Dis for MacDis {
             qv.job = job;
             // JS: qv nesnesi kesişme simülasyonu boyunca yaşar; ilkPres'in yazdığı pres planı (fake/iç) ve
             // sprint bir sonraki adımda görülür. (_onK bu görünümde yazılmaz.)
-            let _ = (pplan0, sprint0);
             qv._onK = onK0;
         });
     }

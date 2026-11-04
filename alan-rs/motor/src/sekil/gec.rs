@@ -31,8 +31,8 @@ pub struct GecTab {
     pub s0: f64,
     pub x: f64,
     pub y: f64,
-    pub t: [f64; 9],
-    pub Y: [Arc<GecY>; 9],
+    /// 9 yönün tablosu (önbellekteki paylaşımlı nesne; kopyalanmaz)
+    pub tb: Arc<([f64; 9], [Arc<GecY>; 9])>,
     pub vm: f64,
 }
 
@@ -216,7 +216,7 @@ pub fn gecTabV(r0: &Oyuncu, vm0: Option<f64>, k: &dyn Kural) -> GecTab {
             v
         }
     };
-    GecTab { vx, vy, s0, x: r0.x, y: r0.y, t: T.0, Y: T.1.clone(), vm }
+    GecTab { vx, vy, s0, x: r0.x, y: r0.y, tb: T, vm }
 }
 
 /// JS gecOf(G, x, y, s).
@@ -230,7 +230,7 @@ pub fn gecOf(G: &GecTab, x: f64, y: f64, s: Option<f64>) -> f64 {
     let c = if G.s0 < 0.001 { 1.0 } else { (G.vx * dx + G.vy * dy) / (G.s0 * L) };
     let kk = (jround(4.0 * jmax(-1.0, jmin(1.0, c))) + 4.0) as usize;
     match s {
-        Some(s) => gecK(&G.Y[kk], s, G.vm),
-        None => G.t[kk],
+        Some(s) => gecK(&G.tb.1[kk], s, G.vm),
+        None => G.tb.0[kk],
     }
 }
