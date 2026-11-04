@@ -272,6 +272,8 @@ fn kafa(g: &Value) -> Kafa {
         let m = &g["mac"];
         k.mac = Some(MacGor { tick: m["tick"].as_f64().unwrap_or(0.0), len: 9000.0, tac: m["tac"].as_array().map(|a| a.iter().map(tac_e).collect()).unwrap_or_default(), ps: if src_var { dunya(&g["src"]) } else { Vec::new() }, holder: m["holder"].as_u64().map(|x| x as usize) });
     }
+    // yerleşimden kafaya dönen çağrılar (govdeV, threat …) için kapsamlı bağlam
+    alan_motor::mac::kafa_dis::kafa_bagla(k.dis.clone(), k.D._tick);
     k
 }
 fn vektor() -> Option<Value> {

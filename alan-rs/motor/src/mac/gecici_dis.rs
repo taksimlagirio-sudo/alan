@@ -309,6 +309,17 @@ pub fn decide(m: &Mac, p: &Oyuncu, g: &[Oyuncu], ch: f64, r: &mut Rng, tE: &crat
     kafa_ile(|k| {
         k.mac = Some(mg);
         let r = crate::kafa::kafa2_karar::decide(k, hi, &src, ch, &mut rng_fn(r), Some(&tac));
+        if std::env::var("ALAN_KARAR_IZ").ok().map_or(false, |v| v == format!("{}", m.tick)) {
+            eprintln!("tik {}\ndecide {} opts {}", m.tick, p.name, r.opts.len());
+            for q in g {
+                eprintln!("  dunya {} {} {} {} {} {:?} {:?}", q.name, q.x, q.y, q.vx, q.vy, q.__e, q.__yas);
+            }
+            let mut o: Vec<&crate::model::Secenek> = r.opts.iter().collect();
+            o.sort_by(|a, b| b.v.unwrap_or(f64::NAN).partial_cmp(&a.v.unwrap_or(f64::NAN)).unwrap_or(std::cmp::Ordering::Equal));
+            for o in o {
+                eprintln!("  {:<34} {:<8} v={:.6} to={}", o.kind, o.q.map_or(String::new(), |q| g[q].name.clone()), o.v.unwrap_or(f64::NAN), o.to.as_ref().map_or("-".into(), |t| format!("{:.3},{:.3}", t.x, t.y)));
+            }
+        }
         Karar { best: if r.best.is_some() { Some(0) } else { None }, opts: r.opts, T: r.T }
     })
 }

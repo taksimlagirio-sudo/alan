@@ -417,3 +417,11 @@ pub fn prT_esitle(m: &mut Mac) {
         m.mac.prT_k = Some(p.d1());
     }
 }
+
+/// Maçsız kullanım (sınamalar): dış dünyası verili bir kafayı kapsamlı bağlama koy.
+pub fn kafa_bagla(dis: Arc<dyn crate::kafa::gecici_dis1::Dis>, tick: Option<f64>) {
+    let mut k = Kafa::yeni(dis.clone());
+    k.D._tick = tick;
+    KAFA.with(|c| *c.borrow_mut() = Some(Rc::new(RefCell::new(k))));
+    DIS.with(|d| *d.borrow_mut() = Some((dis, tick)));
+}

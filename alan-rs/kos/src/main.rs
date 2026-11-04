@@ -54,6 +54,14 @@ fn main() {
         }
     }
     let dt = t0.elapsed().as_secs_f64();
+    if kip == "karar" {
+        if let Some(d) = &mt.m.lastDec {
+            println!("karar {} ({},{})", d.name, d.x, d.y);
+            for o in &d.opts {
+                println!("  {:<40} q={:<8} v={:.6} P={:.4} to={:?}", o.kind, o.q, o.v, o.P, o.to.as_ref().map(|t| (t.x, t.y)));
+            }
+        }
+    }
     if kip == "oyuncu" {
         let k: usize = a[4].parse().unwrap();
         let mut p = mt.m.ps[k].clone();
