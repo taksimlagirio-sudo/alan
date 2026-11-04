@@ -118,7 +118,7 @@ fn oyuncu(v: &Value) -> Oyuncu {
             tl.sav.insert("adam".into(), sv.get("adam").map(h).unwrap_or(0.0));
             tl.sav.insert("pres".into(), sv.get("pres").map(h).unwrap_or(0.0));
         }
-        p.tl = Some(tl);
+        p.tl = Some(tl.into());
     }
     if !v["eg"].is_null() {
         p.eg = Some(JPEg { ps: h(&v["eg"]["ps"]), rk: h(&v["eg"]["rk"]) });

@@ -81,7 +81,7 @@ fn oyuncu(v: &Value) -> Oyuncu {
         let mut t = JPTl::default();
         t.huc.insert("risk".into(), h(&v["tlRisk"]));
         t.huc.insert("tempo".into(), h(&v["tlTempo"]));
-        p.tl = Some(t);
+        p.tl = Some(t.into());
     }
     if !v["egRk"].is_null() {
         p.eg = Some(JPEg { ps: 0.5, rk: h(&v["egRk"]) });
