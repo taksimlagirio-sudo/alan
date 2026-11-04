@@ -490,7 +490,9 @@ impl Sv {
                 break;
             }
             let yet = e.P * jmin(1.0, 2.0 * hatK) > S.prPmin;
-            if (kilitli(&c.ps[*q], tick) && hatK >= 0.5 && yet) || (yet && e.v > 0.0) {
+            // başlamak için hem yetişmek hem değer gerekir; başlamış (kilitli) presçi ikisinden biri sürdükçe bırakmaz:
+            // eşikte her tik girip çıkmak oyuncuyu presle arka iş arasında titretiyor, ikisini de yaptırmıyordu
+            if (kilitli(&c.ps[*q], tick) && hatK >= 0.5 && (yet || e.v > 0.0)) || (yet && e.v > 0.0) {
                 self.press.push(*q);
             }
         }

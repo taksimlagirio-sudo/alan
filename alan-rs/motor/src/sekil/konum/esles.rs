@@ -597,21 +597,9 @@ impl Sv {
             pp.ty = GCY + 11.0 * pp.slot.l * GKY;
             pp.job = Some("önde bekle".into());
         }
-        if let Some(hh) = h {
-            if c.ps[hh].takim() == self.att {
-                let hp = c.ps[hh].clone();
-                let mut dp: Vec<Pid> = ra.iter().copied().filter(|&q| (c.ps[q].x - oppX(dt)).abs() < (hp.x - oppX(dt)).abs() - 3.0).collect();
-                let (px, py) = (c.ps[p].x, c.ps[p].y);
-                dp.sort_by(|&u, &v| sira(hypot(c.ps[u].x - px, c.ps[u].y - py) - hypot(c.ps[v].x - px, c.ps[v].y - py)));
-                if let Some(&d) = dp.first() {
-                    let (dx, dy, nm) = (c.ps[d].x, c.ps[d].y, c.ps[d].name.clone());
-                    let pp = &mut c.ps[p];
-                    pp.tx = hp.x + 0.55 * (dx - hp.x);
-                    pp.ty = hp.y + 0.55 * (dy - hp.y);
-                    pp.job = Some(format!("önde · geri pası kapat · {}", nm));
-                }
-            }
-        }
+        // önde talimatlı oyuncu savunmaya katılmaz: işi kontra için önde beklemek. Taşıyıcının arkasındaki adama pas yolunu
+        // kapatmak için geriye koşmak (eski 'geri pası kapat') onu hem kontradan koparıyordu hem de kaleden uzak, tehlikesiz bir pası kesiyordu.
+        let _ = h;
         true
     }
 

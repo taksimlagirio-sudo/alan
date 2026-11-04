@@ -1240,6 +1240,9 @@ pub struct JP_onK {
     pub h: f64,
     /// `koy`: boolean
     pub koy: bool,
+    /// kararın verildiği tik
+    #[serde(default)]
+    pub t: f64,
 }
 
 /// JS `p.hamle`

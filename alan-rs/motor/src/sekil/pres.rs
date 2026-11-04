@@ -180,13 +180,20 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
         }
         {
             // JS `if (m.ps)`: kafanın ileri bakışındaki görünümde (vm, maç listesi yok, zar yok) önceki kararı okur
-            let koy = if c.rnd.is_some() {
+            // girmek mi yolu kesmek mi: taşıyıcı başına bir kez karar verilir (o ikili boyunca sürer); taşıyıcı değişince
+            // yeniden tartılır. Eşikte her tik yeniden tartmak oyuncuyu ikisi arasında titretiyor, hiçbirini yapmıyordu
+            let tik = c.m.tick;
+            let suren = c.ps[pi]._onK.as_ref().filter(|o| o.h == h.id).map(|o| o.koy);
+            let _ = (tik, Tepki::Karar);
+            let koy = if let (Some(kk), true) = (suren, c.rnd.is_some()) {
+                kk
+            } else if c.rnd.is_some() {
                 let (Pd, th) = {
                     let ps = &*c.ps;
                     (dis::duelP(&ps[pi], &h, ps), dis::girThr(&ps[pi], &h, ps))
                 };
                 let koy = !(Pd >= th);
-                c.ps[pi]._onK = Some(JP_onK { h: h.id, koy });
+                c.ps[pi]._onK = Some(JP_onK { h: h.id, koy, t: tik });
                 koy
             } else {
                 c.ps[pi]._onK.as_ref().map_or(false, |o| o.h == h.id && o.koy)
