@@ -386,3 +386,26 @@ fn D_KALAN() -> KafaD {
         ..KafaD::default()
     }
 }
+
+/// D'nin `_` alanlarını (`_tick` dışında) boşaltır (JS: `for (k of Object.keys(D)) if (k[0] === "_" && k !== "_tick") delete D[k]`).
+pub fn d_alt_bosalt(d: &mut KafaD) {
+    d._tekL = None;
+    d._sut = None;
+    d._zin = None;
+    d._kuyruk = None;
+    d._savT = None;
+    d._savW = None;
+    d._savU = None;
+    d._savCa = None;
+    d._kenar = None;
+    d._kayipYap = None;
+    d._gPr = None;
+    d._enWD = None;
+    d._enTm = None;
+    d._kanca = None;
+    d._ot = None;
+    d._tekD = false;
+    d._itme = None;
+    d._gon = None;
+    d._sYon = None;
+}

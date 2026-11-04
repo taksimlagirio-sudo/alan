@@ -357,10 +357,8 @@ pub fn ileriTab(k: &mut Kafa) -> Option<Arc<IleriTab>> {
         };
         if degisti {
             // D'nin `_` alanları (_tick dışında) geçici olarak boşaltılır; D._mac sade maç görünümü.
-            let sakla_d = std::mem::take(&mut k.D);
-            let mut d2 = super::kafa2_baglam::kafa_d();
-            d2._tick = sakla_d._tick;
-            k.D = d2;
+            let sakla_d = k.D.clone();
+            super::kafa2_baglam::d_alt_bosalt(&mut k.D);
             let sakla_k2 = (k.k2._inLook, k.k2._noHold, k.k2._noFake, k.k2._dalgada, k.k2.zin.take());
             k.k2._inLook = false;
             k.k2._noHold = false;

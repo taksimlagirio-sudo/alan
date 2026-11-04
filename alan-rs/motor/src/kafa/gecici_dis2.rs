@@ -52,9 +52,18 @@ pub fn ALAN_OZ(p: &Oyuncu, k: &str) -> f64 {
 pub fn ALAN_HZ(p: &Oyuncu) -> f64 {
     p.yet.hiz
 }
-/// JS ALAN_SPR (core.js:101)
+/// JS ALAN_SPR: çekirdekte (core.js:101) Hız'dan; maç (match.js:2168) sprint evresiyle sarar
+/// (`_sf`, `_sfNiyet`, ALAN_SPR_FAZ). GEÇİCİ: maç modülü yokken çekirdek değeri; sınamalar JS'in
+/// değerini `SINAMA_SPR` ile verir (yalnız bu geçici dosyada; birleştirmede kalkar).
 pub fn ALAN_SPR(p: &Oyuncu) -> f64 {
+    if let Some(v) = SINAMA_SPR.with(|m| m.borrow().iter().find(|x| x.0 == p.id && x.1 == p.team).map(|x| x.2)) {
+        return v;
+    }
     crate::yetenek::spr_h(p.yet.hiz)
+}
+thread_local! {
+    /// Sınamanın verdiği sprint katları (id, team, kat). GEÇİCİ.
+    pub static SINAMA_SPR: std::cell::RefCell<Vec<(f64, f64, f64)>> = std::cell::RefCell::new(Vec::new());
 }
 /// JS ALAN_SPRE(p) (core.js:102 → ALAN_EN2_SPRE:192, L tanımsız → refL 20). GEÇİCİ KOPYA.
 pub fn ALAN_SPRE(p: &Oyuncu) -> f64 {

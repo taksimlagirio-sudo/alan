@@ -1214,10 +1214,6 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
     }
     // çalım (topu rakibin yanından duvara vurup arkasında almak)
     calim(k, &mut c, &mut ad, src, hi, rnd);
-    // eski kafa: sürmenin hayali maçı, bekleme, taktik eğilimleri, yerleşme, fake
-    if !PR {
-        eski::eskiSonra(k, hi, src, ch, rnd, tac, &mut ad.out, risk, T, &mut |k, x, y| c.loss(k, x, y));
-    }
     if bekci(&h) && h.bekBas.is_some() {
         let kal = 150.0 - (k.tick0() - h.bekBas.unwrap());
         for o in ad.out.iter_mut() {
@@ -1233,6 +1229,10 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
                 }
             }
         }
+    }
+    // eski kafa: taktik eğilimleri, yerleşme, fake
+    if !PR {
+        eski::eskiSonra(k, hi, src, ch, rnd, tac, &mut ad.out, risk, T, &mut |k, x, y| c.loss(k, x, y));
     }
     for o in ad.out.iter_mut() {
         o._wE = None;
