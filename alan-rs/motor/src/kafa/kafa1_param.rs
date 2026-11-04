@@ -1,0 +1,199 @@
+//! Kafa parametreleri (decide.js:6–130 DU, D; 148 GON; 547 PAS; 550 SAV; 1361 BKS, UC3, UC5; 4639 SDQ).
+#![allow(non_upper_case_globals)]
+
+use crate::model::KafaD;
+
+/// İkili parametreleri (JS `DU`).
+#[derive(Clone, Copy, Debug)]
+pub struct Du {
+    pub enFark: f64,
+    pub base: f64,
+    pub skill: f64,
+    pub cage: f64,
+    pub side: f64,
+    pub core0: f64,
+    pub coreV: f64,
+    pub trap: f64,
+    pub trap0: f64,
+    pub trapR: f64,
+    pub trapA: f64,
+    pub thrCover: f64,
+    pub thrLast: f64,
+    pub stun: f64,
+    pub stunOk: f64,
+    pub engage: f64,
+    pub cd: f64,
+    pub shieldK: f64,
+    pub openK: f64,
+    pub fakeT: f64,
+    pub oyala: f64,
+    pub oyalaC: f64,
+    pub oyalaR: f64,
+    pub oyalaD: f64,
+}
+pub const DU: Du = Du {
+    enFark: 0.15,
+    base: 0.3,
+    skill: 0.03,
+    cage: 0.14,
+    side: 0.16,
+    core0: 0.6,
+    coreV: 3.0,
+    trap: 0.6,
+    trap0: 0.15,
+    trapR: 4.5,
+    trapA: 0.8,
+    thrCover: 0.3,
+    thrLast: 0.5,
+    stun: 22.0,
+    stunOk: 0.5,
+    engage: 2.4,
+    cd: 14.0,
+    shieldK: 0.6,
+    openK: 0.15,
+    fakeT: 9.0,
+    oyala: 0.25,
+    oyalaC: 0.1,
+    oyalaR: 26.0,
+    oyalaD: 3.2,
+};
+
+/// Savurma (vuruş öncesi Çekirdeği döndürme) parametreleri (JS `SAV`).
+#[derive(Clone, Copy, Debug)]
+pub struct Sav {
+    pub a0: f64,
+    pub aSk: f64,
+    pub wMax0: f64,
+    pub wMaxSk: f64,
+    pub tau: f64,
+    pub ia0: f64,
+    pub iaSk: f64,
+    pub u0: f64,
+    pub uSk: f64,
+}
+pub const SAV: Sav = Sav { a0: 0.18, aSk: 0.012, wMax0: 2.3, wMaxSk: 0.03, tau: 0.08, ia0: 0.45, iaSk: 0.025, u0: 1.0, uSk: 0.03 };
+
+/// Gönderme hatasının durum katları (JS `GON`).
+pub struct Gon {
+    pub taban: f64,
+    pub baski: f64,
+    pub hareket: f64,
+    pub guc: f64,
+}
+pub const GON: Gon = Gon { taban: 1.0, baski: 0.6, hareket: 0.4, guc: 0.3 };
+/// JS `PAS.baski`
+pub const PAS_BASKI: f64 = 1.5;
+pub const BODY_R: f64 = 1.0;
+pub const BODY_E: f64 = 0.35;
+pub const MIND: f64 = 1.7;
+pub const SECIM_P: f64 = 0.1;
+pub const EN_BAR_V: f64 = 0.1;
+pub const BKS: f64 = 0.12;
+/// Uçuş belirsizliğinin örnek noktaları (JS UC3, UC5): [z, ağırlık, hız z'si]
+pub const UC3: [[f64; 3]; 3] = [[0.0, 0.5833, 0.0], [0.632, 0.20835, 0.0], [-0.632, 0.20835, 0.0]];
+pub const UC5: [[f64; 3]; 5] = [[0.0, 0.1666, 0.0], [0.632, 0.20835, 0.0], [-0.632, 0.20835, 0.0], [0.0, 0.20835, 0.632], [0.0, 0.20835, -0.632]];
+pub const BEK_YON: [f64; 5] = [-60.0, -30.0, 0.0, 30.0, 60.0];
+
+/// JS `D`'nin başlangıç değerleri.
+pub fn d_js() -> KafaD {
+    KafaD {
+        simMax: 180.0,
+        errOk: 0.05,
+        errPos: 3.0,
+        aimErr: 0.035,
+        v0Err: 0.04,
+        arrive: 0.3,
+        arriveSpace: 0.08,
+        vmax: 3.0,
+        shotV: 2.6,
+        plaseV: 1.7,
+        riskBase: 1.0,
+        riskCay: 1.0,
+        riskP0: 0.85,
+        riskPk: 0.6,
+        surKarar: 0.025,
+        asanPay: 3.0,
+        amIleri: 0.02,
+        amGec: 0.008,
+        amAc: 0.006,
+        sutHazir: 5.0,
+        threatK: 22.0,
+        sideK: 0.35,
+        b0: 0.06,
+        b1: 0.28,
+        recvKeepT: 8.0,
+        shotThru: 0.15,
+        disc: 0.985,
+        istekK: 0.03,
+        planK: 0.015,
+        belirsiz: 6.0,
+        bekCek: 4.0,
+        bekleAtla: 0.1,
+        bekBedel: 0.03,
+        bekTempo: 0.05,
+        cevTempo: 0.025,
+        otErr: 1.2,
+        otOk: 6.0,
+        otMargin: 0.02,
+        passMax: 50.0,
+        passMaxF: 80.0,
+        spcBallV: 1.0,
+        useValTab: false,
+        useCurve: false,
+        useSpace: true,
+        look: false,
+        lookReuse: 4.0,
+        lookMove: 2.5,
+        lookAge: 45.0,
+        lookR: 200.0,
+        lookN: 3.0,
+        lookT: 110.0,
+        lookMargin: 0.1,
+        laneLag: 0.0,
+        aimPow: 0.45,
+        aimPlase: 0.75,
+        arriveFirm: 0.8,
+        vK: 0.35,
+        combo: 0.9,
+        chV: 0.6,
+        pierceV: 0.85,
+        chgMin: 0.1,
+        enBedel: 0.05,
+        sarjUfuk: 30.0,
+        sarjEgim: 0.1,
+        chg0: 0.0035,
+        chgTek: 2.5,
+        chgPasif: 0.4,
+        enHizV: 0.3,
+        enUfuk: 40.0,
+        enTmin: 15.0,
+        sabirEn: 0.6,
+        direktK: 0.08,
+        kontraL: 35.0,
+        sarjKap: 0.25,
+        zoneMin: 0.45,
+        zoneD: 32.0,
+        chRecv: 0.55,
+        threadMin: 12.0,
+        threadLane: 0.08,
+        threadOff: vec![-3.0, 3.0],
+        bankOk: 8.0,
+        bankIf: 0.8,
+        bankN: 3.0,
+        trials: 2.0,
+        nFull: 9.0,
+        yokD: 0.03,
+        nSpots: 4.0,
+        nFullLook: 3.0,
+        nMates: 6.0,
+        growMax: 8.0,
+        shotRange: 34.0,
+        tPS: 0.05,
+        tPB: 0.04,
+        pbOrta: 22.0,
+        pbGen: 12.0,
+        tSut: 0.08,
+        tSab: 0.04,
+        ..Default::default()
+    }
+}

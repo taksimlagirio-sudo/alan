@@ -660,43 +660,63 @@ pub struct KafaD {
     /// `imkEski`: boolean
     pub imkEski: bool,
     /// `_tekL`: undef
-    pub _tekL: Option<JsDeger>,
+    pub _tekL: Option<f64>,
     /// `_sut`: number (sonradan eklenir)
-    pub _sut: Option<f64>,
+    pub _sut: Option<JsDeger>,
     /// `_zin`: null
     pub _zin: Option<JsDeger>,
     /// `_kuyruk`: undef
     pub _kuyruk: Option<JsDeger>,
     /// `_savT`: undef
-    pub _savT: Option<JsDeger>,
+    pub _savT: Option<f64>,
     /// `_savW`: undef
-    pub _savW: Option<JsDeger>,
+    pub _savW: Option<f64>,
     /// `_savU`: undef
-    pub _savU: Option<JsDeger>,
+    pub _savU: Option<f64>,
     /// `_savCa`: undef
-    pub _savCa: Option<JsDeger>,
+    pub _savCa: Option<f64>,
     /// `_kenar`: undef
-    pub _kenar: Option<JsDeger>,
+    pub _kenar: Option<bool>,
     /// `_kayipYap`: undef
     pub _kayipYap: Option<JsDeger>,
     /// `_gPr`: undef
-    pub _gPr: Option<JsDeger>,
+    pub _gPr: Option<f64>,
     /// `_enWD`: undef
-    pub _enWD: Option<JsDeger>,
+    pub _enWD: Option<f64>,
     /// `_enTm`: undef
-    pub _enTm: Option<JsDeger>,
+    pub _enTm: Option<f64>,
     /// `_kanca`: undef
-    pub _kanca: Option<JsDeger>,
+    pub _kanca: Option<JD_kanca>,
     /// `_ot`: number (sonradan eklenir)
     pub _ot: Option<f64>,
     /// `_tekD`: boolean
     pub _tekD: bool,
     /// `_itme`: undef
-    pub _itme: Option<JsDeger>,
+    pub _itme: Option<bool>,
     /// `_gon`: undef
-    pub _gon: Option<JsDeger>,
+    pub _gon: Option<bool>,
     /// `_sYon`: undef
-    pub _sYon: Option<JsDeger>,
+    pub _sYon: Option<f64>,
+    /// `_noFake`: boolean (kafa1 ekledi: fakeSecenek'in iç dünyası)
+    pub _noFake: bool,
+    /// `_inLook`: boolean (kafa1 ekledi: lookAhead içi)
+    pub _inLook: bool,
+}
+
+/// JS `D._kanca` (kafa1 ekledi): kancanın Çekirdek açısı, başlangıç dönüş hızı, yönü.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct JD_kanca {
+    pub ca: Option<f64>,
+    pub w0: f64,
+    pub s: f64,
+}
+
+/// JS `o.show` (kafa1 ekledi): fake'in gösterdiği vuruş: tür, hedef, inanılırlık.
+#[derive(Clone, Debug, Default)]
+pub struct JOShow {
+    pub k: String,
+    pub to: JOTo,
+    pub c: f64,
 }
 
 /// JS `o`
@@ -776,6 +796,8 @@ pub struct Secenek {
     pub hold: Option<f64>,
     /// `shot`: string (sonradan eklenir)
     pub shot: Option<String>,
+    /// `show`: object (kafa1 ekledi: fake'in gösterdiği vuruş)
+    pub show: Option<JOShow>,
 }
 
 /// JS `p.slot`
@@ -1824,6 +1846,12 @@ pub struct JODet {
     pub Psek: f64,
     /// `endSek`: object
     pub endSek: JODetEndSek,
+    /// `T`: number (kafa1 ekledi: fake seçeneğinin süresi)
+    pub T: Option<f64>,
+    /// `sonra`: string (kafa1 ekledi: fake'ten sonraki seçeneğin türü)
+    pub sonra: Option<String>,
+    /// `c`: number (kafa1 ekledi: fake'in inanılırlığı)
+    pub c: Option<f64>,
 }
 
 /// JS `o.en`
