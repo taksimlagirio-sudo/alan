@@ -137,6 +137,7 @@ pub struct Gs {
 pub type KayipF = Arc<dyn Fn(f64, f64) -> f64 + Send + Sync>;
 
 /// JS modül değişkeni `_kpC`: topu kaybetme tartısı (position'da kurulur, teamV okur).
+#[derive(Clone)]
 pub struct KpC {
     pub L: KayipF,
     pub LE: f64,
@@ -150,7 +151,7 @@ pub struct KpC {
 
 /// Yerleşimin kendi durumu: `m.sh`, görüş önbelleği (`m._sn`), JS modül değişkenleri (`_kpC`, `_tbC`),
 /// `m._kayL`, `m._acikK`, `p._bkCik`.
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub struct SekilDurum {
     pub sh: Sh,
     /// JS `m._sn` / `m._snT`: görenin sırası → gördükleri
@@ -176,7 +177,7 @@ pub struct SekilDurum {
 pub struct Mc<'a> {
     pub m: &'a mut Mac,
     /// JS `m.ps`
-    pub ps: &'a mut [Oyuncu],
+    pub ps: &'a mut Vec<Oyuncu>,
     /// JS `m.ball`
     pub ball: Option<&'a mut TopT>,
     pub ek: &'a mut SekilDurum,
@@ -190,6 +191,20 @@ pub struct Mc<'a> {
 }
 
 impl<'a> Mc<'a> {
+    /// Maçın kendi işlevini çağır: oyuncular ve top bir anlığına maça geri konur (JS'te ikisi de `m`
+    /// üstünde; burada yerleşim çalışırken ayrı tutuluyorlar).
+    pub fn mac_ile<T>(&mut self, f: impl FnOnce(&mut Mac) -> T) -> T {
+        std::mem::swap(self.ps, &mut self.m.ps);
+        if let (Some(b), Some(mb)) = (self.ball.as_deref_mut(), self.m.ball.as_mut()) {
+            std::mem::swap(b, &mut mb.tt);
+        }
+        let v = f(self.m);
+        std::mem::swap(self.ps, &mut self.m.ps);
+        if let (Some(b), Some(mb)) = (self.ball.as_deref_mut(), self.m.ball.as_mut()) {
+            std::mem::swap(b, &mut mb.tt);
+        }
+        v
+    }
     #[inline]
     pub fn tick(&self) -> f64 {
         self.m.tick
@@ -227,5 +242,11 @@ impl<'a> Mc<'a> {
     /// Gerçek oyuncuların dünyası (JS `m.ps` dünya olarak).
     pub fn dunya(&self) -> Vec<Varlik> {
         self.ps.iter().enumerate().map(|(i, p)| Varlik::oyuncu(i, p)).collect()
+    }
+}
+
+impl std::fmt::Debug for SekilDurum {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("SekilDurum").field("snT", &self.snT).field("hyT", &self.hyT).finish_non_exhaustive()
     }
 }

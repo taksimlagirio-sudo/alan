@@ -19,6 +19,14 @@ pub trait Kural {
     fn tepki_s(&self) -> TepkiS {
         TepkiS::default()
     }
+    /// match.js kosuPr(p): koşu planının (Ts, k) değeri (maç kuralı verir).
+    fn kosu_pr(&self, _p: &Oyuncu) -> Option<(f64, f64)> {
+        unimplemented!("Kural::kosu_pr (yalnız maç kuralında)")
+    }
+    /// core.js ALAN_EN3_KUL(p, e, bizde, B): enerjinin kullanım değeri (maç kuralı verir).
+    fn en3_kul(&self, _p: &Oyuncu, _e: f64, _bizde: bool, _b: Option<(f64, f64)>) -> f64 {
+        unimplemented!("Kural::en3_kul (yalnız maç kuralında)")
+    }
 }
 
 /// Çekirdeğin kendi kuralı (sprint evresi yok).

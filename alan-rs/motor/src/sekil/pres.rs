@@ -40,7 +40,7 @@ pub fn macPres(c: &mut Mc, t: u8) -> f64 {
 /// JS presLim(m, dt, h, att): tetik (geri pas, kanat, zayıf kontrol, arkası dönük, uzun pas) yoksa tek presçi.
 pub fn presLim(c: &Mc, dt: &dis::TacE, h: Option<Pid>, att: u8) -> usize {
     let n = 2usize;
-    let T = &dt.t.tetik;
+    let T: &[String] = dt.t.tetik.as_deref().unwrap_or(&[]);
     let h = match h {
         Some(h) => h,
         None => return n,
@@ -77,7 +77,7 @@ pub fn ilkPres(c: &mut Mc, pi: Pid, hi: Pid, dt: u8, TH: Option<&[Tehlike]>, dta
     let co = (h.x + cs.0 * (B + dke), h.y + cs.1 * (B + dke));
     let (px, py) = (c.ps[pi].x, c.ps[pi].y);
     let d0 = hypot(px - h.x, py - h.y);
-    let trap = dtac.t.sistem == "Kenara sıkıştır";
+    let trap = dtac.t.sistem.as_deref() == Some("Kenara sıkıştır");
     let okp = c.ps[pi].yet.y(mek::PRES_FAKE);
     let set = |c: &mut Mc, x: f64, y: f64| {
         c.ps[pi].tx = x;

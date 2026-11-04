@@ -52,7 +52,7 @@ pub fn amYok<T>(m: &mut Mac, f: impl FnOnce(&mut Mac) -> T) -> T {
 }
 
 /// JS gor(m, p): p'nin gördüğü dünya (None = gerçek)
-pub fn gor(m: &Mac, p: Pid) -> Option<Vec<Oyuncu>> {
+pub fn gor(m: &mut Mac, p: Pid) -> Option<Vec<Oyuncu>> {
     if m.mac._lite {
         None
     } else {

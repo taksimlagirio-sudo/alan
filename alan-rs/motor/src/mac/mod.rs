@@ -143,6 +143,8 @@ pub struct MacEk {
     pub topSay: u64,
     /// kafa günlüğü seçenek kimliği sayacı
     pub oSay: u64,
+    /// yerleşimin maç üstündeki durumu (JS m._sn, m._kayL, m.sh …)
+    pub sekil: crate::sekil::varlik::SekilDurum,
 }
 
 // ---- küçük JS yardımcıları ----

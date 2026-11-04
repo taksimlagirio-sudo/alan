@@ -379,8 +379,8 @@ pub fn hizYanilgi(p: &Oyuncu, h: &Oyuncu, d: &KafaD) -> f64 {
 
 /// JS yolBag(p, h): `p` (presçi) ile `h` (taşıyıcı) arasındaki yarışın değişmeyenleri.
 pub fn yolBag(p: &Oyuncu, h: &Oyuncu, k: &dyn Kural, d: &KafaD) -> YolBag {
-    let prH = dis::ALAN_KOSU_PR(h);
-    let prP = dis::ALAN_KOSU_PR(p);
+    let prH = dis::ALAN_KOSU_PR(h, k);
+    let prP = dis::ALAN_KOSU_PR(p, k);
     let vSh = vSp(h, k);
     let vSq = vSp(p, k);
     YolBag {

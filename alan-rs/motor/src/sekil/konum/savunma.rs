@@ -180,7 +180,7 @@ impl Sv {
             let dH = jmax(0.0, dis::ALAN_EN3_DOL(hp, true, ndH, 0.0) - dis::ALAN_EN3_DOL(hp, true, 2.4, 0.0)) * ThP;
             let eH = hp.en.unwrap_or(1.0);
             let eP = p.en.unwrap_or(1.0);
-            dis::ALAN_EN3_KUL(hp, eH, true, hp.x, hp.y) - dis::ALAN_EN3_KUL(hp, eH - dH, true, hp.x, hp.y) - (dis::ALAN_EN3_KUL(p, eP, false, hp.x, hp.y) - dis::ALAN_EN3_KUL(p, eP - cP, false, hp.x, hp.y))
+            dis::ALAN_EN3_KUL(hp, eH, true, hp.x, hp.y, c.k) - dis::ALAN_EN3_KUL(hp, eH - dH, true, hp.x, hp.y, c.k) - (dis::ALAN_EN3_KUL(p, eP, false, hp.x, hp.y, c.k) - dis::ALAN_EN3_KUL(p, eP - cP, false, hp.x, hp.y, c.k))
         };
         let adP = if p.markRef != Some(h) { 0.0 } else { tl0(p, "sav", "adam") * gainH * hatK };
         let cc = cost * S.prCost * (1.4 - 0.8 * sdp);
@@ -262,7 +262,7 @@ impl Sv {
             }
             let mut u: Vec<Pid> = self.defs.iter().copied().filter(|&p| !self.sweep[p]).collect();
             u.sort_by(|&a, &b| sira(c.ps[b].slot.d - c.ps[a].slot.d));
-            let onde = self.dtac.t.onde;
+            let onde = self.dtac.t.onde.unwrap_or(f64::NAN);
             let nu = if onde > 0.0 && onde == onde { onde as usize } else { 0 };
             for &p in u.iter().take(nu) {
                 self.up[p] = true;
@@ -444,8 +444,8 @@ impl Sv {
         let (att, dt) = (self.att, self.dt);
         let mp = macPres(c, 1 - att);
         let BL = ["Düşük", "Orta", "Yüksek"];
-        let bix = BL.iter().position(|b| *b == self.dtac.t.blok).map(|i| i as i64).unwrap_or(-1);
-        let ek = if mp > 0.0 || (self.dtac.t.yz && dis::macEff_macK(c, 1 - att).unwrap_or(1.0) < 0.6) { 1 } else { 0 };
+        let bix = BL.iter().position(|b| Some(*b) == self.dtac.t.blok.as_deref()).map(|i| i as i64).unwrap_or(-1);
+        let ek = if mp > 0.0 || (self.dtac.t.yz == Some(true) && dis::macEff_macK(c, 1 - att).unwrap_or(1.0) < 0.6) { 1 } else { 0 };
         let bi = (bix + ek).clamp(0, 2) as usize;
         let still = {
             let hp = &mut c.ps[h];
@@ -457,7 +457,7 @@ impl Sv {
                 0.0
             }
         };
-        let sd = jmin(1.0, self.dtac.t.siddet + if mp > 0.0 { 0.25 } else { 0.0 });
+        let sd = jmin(1.0, self.dtac.t.siddet.unwrap_or(0.5) + if mp > 0.0 { 0.25 } else { 0.0 });
         let hp = c.ps[h].clone();
         let gecikme = match &hp.savur {
             Some(s) => (s.g + s.rem) / jmax(0.1, (s.w + s.wMax) / 2.0),

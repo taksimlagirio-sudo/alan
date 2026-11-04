@@ -180,6 +180,12 @@ impl Kural for MacKural {
     fn spr(&self, p: &Oyuncu) -> f64 {
         ALAN_SPR(p, self)
     }
+    fn kosu_pr(&self, p: &Oyuncu) -> Option<(f64, f64)> {
+        kosuPr(p, self).map(|k| (k.Ts, k.k))
+    }
+    fn en3_kul(&self, p: &Oyuncu, e: f64, bizde: bool, b: Option<(f64, f64)>) -> f64 {
+        ALAN_EN3_KUL(p, e, bizde, b, self)
+    }
 }
 
 /// JS sfPk(p): sprint tepesinin katı (barla)

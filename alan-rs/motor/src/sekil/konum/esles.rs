@@ -758,7 +758,7 @@ impl Sv {
         }
         let dk = hypot(E.0 - ownX(dt), E.1 - GCY);
         let pp = &c.ps[p];
-        let st = 26.0 + 1.4 * yerS(pp) - 0.3 * (yada(BLOK(&self.dtac.t.blok).unwrap_or(0.0), 34.0) - 34.0);
+        let st = 26.0 + 1.4 * yerS(pp) - 0.3 * (yada(self.dtac.t.blok.as_deref().and_then(BLOK).unwrap_or(0.0), 34.0) - 34.0);
         let w = cl((st - dk) / jmax(6.0, st - 10.0), 0.0, 1.0);
         if w > 0.0 {
             let qo = q.and_then(|q| sn.iter().find(|o| o.r == Some(q)));
@@ -898,7 +898,7 @@ impl Sv {
                 let (nA, nD) = (nA as f64, nD as f64);
                 on = nD < nA + 1.0 || (on0 && nD < nA + 2.0);
                 let mp = macPres(c, dt);
-                let mg = 1.0 + 2.0 * (0.5 - jmin(1.0, self.dtac.t.siddet + if mp > 0.0 { 0.25 } else { 0.0 }));
+                let mg = 1.0 + 2.0 * (0.5 - jmin(1.0, self.dtac.t.siddet.unwrap_or(0.5) + if mp > 0.0 { 0.25 } else { 0.0 }));
                 let onP0 = matches!(gs0, Some(g) if g.t == tick - 1.0 && g.dt == dt && g.onP);
                 onP = (nD < nA + mg || (onP0 && nD < nA + mg + 1.0)) && self.defs.iter().any(|&o| { let op = &c.ps[o]; !self.up[o] && !op.noTouch && !op.bekci() && (op.x - ownX(dt)).abs() > (E.0 - ownX(dt)).abs() + 1.0 });
             }

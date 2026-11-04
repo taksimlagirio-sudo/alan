@@ -116,27 +116,29 @@ pub const DU_engage: f64 = 2.4;
 
 /// JS tl(p, ev, k): `null` → None.
 pub fn tl(p: &Oyuncu, ev: &str, k: &str) -> Option<f64> {
-    todo!("AlanMatch.tl")
+    crate::mac::kurulum::tl(p, ev, k)
 }
 /// JS kpAkt(m, t): kontrpresçilerin id'leri (m.kp'yi bitirebilir).
 pub fn kpAkt(c: &mut Mc, t: u8) -> Option<Vec<f64>> {
-    todo!("AlanMatch.kpAkt")
+    c.mac_ile(|m| crate::mac::tac::kpAkt(m, t as f64))
 }
 /// Etkin taktik (JS tacEff dönüşü): taktik + kontrpres (`_kp`) işareti. (`plan`, `enPresDalga` hiç kurulmaz.)
 #[derive(Clone, Debug, Default)]
 pub struct TacE {
-    pub t: JMTacE,
+    pub t: crate::mac::Tac,
     pub kp: bool,
 }
 pub fn tacEff(c: &mut Mc, t: u8) -> TacE {
-    todo!("AlanMatch.tacEff")
+    let t = c.mac_ile(|m| crate::mac::tac::tacEff(m, t as f64));
+    let kp = t._kp.is_some();
+    TacE { t, kp }
 }
 /// JS `macEff(m, t, {}).macK`.
 pub fn macEff_macK(c: &mut Mc, t: u8) -> Option<f64> {
-    todo!("AlanMatch.macEff")
+    c.mac_ile(|m| crate::mac::tac::macEff(m, t as f64, Default::default()).macK)
 }
 pub fn kuyuSafe(x: f64, y: f64) -> Option<(f64, f64)> {
-    todo!("AlanMatch.kuyuSafe")
+    crate::mac::hareket::kuyuSafe(x, y)
 }
 /// match.js kosuPr dönüşü.
 #[derive(Clone, Copy, Debug)]
@@ -144,19 +146,19 @@ pub struct KosuPr {
     pub Ts: f64,
     pub k: f64,
 }
-pub fn ALAN_KOSU_PR(p: &Oyuncu) -> Option<KosuPr> {
-    todo!("AlanMatch ALAN_KOSU_PR")
+pub fn ALAN_KOSU_PR(p: &Oyuncu, k: &dyn crate::temas::Kural) -> Option<KosuPr> {
+    k.kosu_pr(p).map(|(Ts, k)| KosuPr { Ts, k })
 }
 /// JS `p.slowT || 0`.
 pub fn slowT(p: &Oyuncu) -> f64 {
-    todo!("p.slowT (modelde yok)")
+    p.slowT.unwrap_or(0.0)
 }
 
 // ---- core.js enerji ----
 
 pub fn ALAN_EN3_DOL(p: &Oyuncu, sahip: bool, nd: f64, yerK: f64) -> f64 {
-    todo!("core ALAN_EN3_DOL")
+    crate::mac::enerji::ALAN_EN3_DOL(p, sahip, nd, yerK)
 }
-pub fn ALAN_EN3_KUL(p: &Oyuncu, e: f64, bizde: bool, bx: f64, by: f64) -> f64 {
-    todo!("core ALAN_EN3_KUL")
+pub fn ALAN_EN3_KUL(p: &Oyuncu, e: f64, bizde: bool, bx: f64, by: f64, k: &dyn crate::temas::Kural) -> f64 {
+    k.en3_kul(p, e, bizde, Some((bx, by)))
 }

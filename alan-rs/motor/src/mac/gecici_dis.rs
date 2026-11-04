@@ -100,34 +100,83 @@ pub mod DU {
 
 // ---- shape.js ----
 
+/// Yerleşimin bağlamını maçtan kur: oyuncular, top, zar ve yerleşim durumu geçici olarak maçtan alınır,
+/// iş bitince geri konur (JS'te hepsi `m` üstünde).
+pub fn mc_ile<T>(m: &mut Mac, f: impl FnOnce(&mut crate::sekil::varlik::Mc) -> T) -> T {
+    use crate::sekil::varlik::Mc;
+    let kural = crate::mac::MacKural::of(m);
+    let mut ps = std::mem::take(&mut m.ps);
+    // top maçta kalır (takımı okunur); yerleşim kopyasında çalışır, sonra geri yazılır
+    let mut ball = m.ball.as_ref().map(|b| b.tt.clone());
+    let mut ek = std::mem::take(&mut m.mac.sekil);
+    let mut r = std::mem::take(&mut m.r);
+    let lite = m.mac._lite;
+    let d = kafa_d();
+    let v = {
+        let mut zar = || r.sonraki();
+        let mut c = Mc { m: &mut *m, ps: &mut ps, ball: ball.as_mut(), ek: &mut ek, k: &kural, d, lite, rnd: Some(&mut zar) };
+        f(&mut c)
+    };
+    m.ps = ps;
+    if let (Some(b), Some(t)) = (m.ball.as_mut(), ball) {
+        b.tt = t;
+    }
+    m.mac.sekil = ek;
+    m.r = r;
+    v
+}
+
+/// Kafanın sabitleri (JS AlanDecide.D)
+pub fn kafa_d() -> &'static crate::model::KafaD {
+    static D: std::sync::OnceLock<crate::model::KafaD> = std::sync::OnceLock::new();
+    D.get_or_init(crate::kafa::kafa2_baglam::kafa_d)
+}
+
 /// Oyuncunun yerleşimdeki yeri (E: topun yeri, att: hücumda mı)
 pub fn slotBase(m: &Mac, p: Pid, ex: f64, ey: f64, att: bool) -> (f64, f64) {
-    todo!("shape.js slotBase")
+    let y = crate::sekil::yer::slotBase(m, &m.ps, &m.ps[p], ex, ey, att);
+    (y.x, y.y)
 }
 /// Bekçi'nin yeri
 pub fn bekci(m: &Mac, p: Pid, ex: f64, ey: f64) -> (f64, f64) {
-    todo!("shape.js bekci")
+    let kural = crate::mac::MacKural::of(m);
+    let bm = crate::sekil::yer::BekM { ps: &m.ps, holder: m.holder, ben: Some(p) };
+    crate::sekil::yer::bekci(&m.ps[p], ex, ey, Some(&bm), &kural)
 }
 /// Topsuz oyuncuların hedefleri ve işleri (tx, ty, job, sprint, press …)
 pub fn position(m: &mut Mac) {
-    todo!("shape.js position")
+    mc_ile(m, |c| crate::sekil::position(c))
 }
 /// Bakış (p.ca vb.)
 pub fn bak(m: &mut Mac) {
-    todo!("shape.js bak")
+    mc_ile(m, |c| crate::sekil::bak(c))
 }
 /// JS metrics(m).swarm: topa yığılma ölçüsü
-pub fn metrics_swarm(m: &Mac) -> f64 {
-    todo!("shape.js metrics")
+pub fn metrics_swarm(m: &mut Mac) -> f64 {
+    mc_ile(m, |c| crate::sekil::takim::metrics(c).swarm as f64)
 }
 /// p'nin gördüğü dünya (m.ps ile aynı sıra); None = gerçek dünya (JS `=== m.ps`)
-pub fn gorulen(m: &Mac, p: Pid) -> Option<Vec<Oyuncu>> {
-    todo!("shape.js gorulen")
+pub fn gorulen(m: &mut Mac, p: Pid) -> Option<Vec<Oyuncu>> {
+    mc_ile(m, |c| {
+        let g = crate::sekil::gorulen(c, p);
+        Some(
+            g.iter()
+                .map(|q| {
+                    let v = &q.v;
+                    let mut o = v.govde(c.ps).clone();
+                    o.x = v.x;
+                    o.y = v.y;
+                    o.vx = v.vx;
+                    o.vy = v.vy;
+                    o
+                })
+                .collect(),
+        )
+    })
 }
-/// Görülen dünyada kurulan seçeneği gerçek oyunculara bağla (yerinde)
-pub fn gercek(o: &mut Secenek) {
-    todo!("shape.js gercek")
-}
+/// Görülen dünyada kurulan seçeneği gerçek oyunculara bağla (yerinde): dünyalar sıra (Pid) ile
+/// tutulduğu için iş yok.
+pub fn gercek(_o: &mut Secenek) {}
 
 // ---- decide.js ----
 
