@@ -35,6 +35,9 @@ while (m.tick < 5400 && out.length < 150) {
     o.ut = []; for (let i = 0; i < 6; i++) { const L = 1 + lcg() * 85, ar = [D.arrive, D.arriveFirm, D.arriveSpace, .02 + lcg() * 2.4][Math.floor(lcg() * 4)], al = lcg() < .4 ? null : lcg() * L * 1.2; o.ut.push([b(L), b(ar), b(al), b(AD.ucusT(L, ar, al ?? undefined))]); }
     o.yer = []; for (let i = 0; i < 4; i++) { const x = h.x + (lcg() - .5) * 40, y = Math.max(1, Math.min(59, h.y + (lcg() - .5) * 30)), c = lcg(); o.yer.push([b(x), b(y), b(c), b(AD.pressAt(ps, team, x, y)), b(AD.freeAt(ps, team, x, y)), b(AD.holdVal(ps, team, x, y)), b(AD.V(ps, team, x, y, c)), b(AD.shotQ(ps, team, x, y, c)), b(AD.sutKapali(ps, team, x, y, c)), b(AD.oppAt(ps, team, x, y))]); }
     o.sh = AD.sutHedef(h, ps, gx).map(b);
+    o.lo = []; for (const q of ps) if (q.team === team && q !== h) { const ar = [D.arrive, D.arriveFirm][Math.floor(lcg() * 2)], lag = lcg() < .5 ? 0 : 3; o.lo.push([ps.indexOf(q), b(ar), b(lag), b(AD.laneOk(ps, team, h, q, ar, lag))]); }
+    o.spf = [b(AD.space(ps, team, h.x, h.y)), b(AD.front(ps, team, h.x, h.y))];
+    o.rs = []; for (const kind of ['drive', 'pass']) { const at = { x: h.x + (lcg() - .5) * 20, y: Math.max(2, Math.min(58, h.y + (lcg() - .5) * 20)) }, T = 10 + lcg() * 40, w = AD.respond(ps, team, at, T, kind); o.rs.push([kind, b(at.x), b(at.y), b(T), w.map((p, i) => p === ps[i] ? null : [b(p.x), b(p.y)])]); }
     const cs = AD.coreSide(h); o.cs = [b(cs.ux), b(cs.uy), b(cs.off)]; o.trap = b(AD.trapped(h, ps, 1 - team));
     o.ik = ps.map((q, i) => q.team === team ? null : [i, b(AD.duelP(q, h, ps)), b(AD.govdeVurP(q, h, null, false)), b(AD.commitThr(q, h, ps)), b(AD.girThr(q, h, ps))]).filter(Boolean);
     o.kp = []; for (const T of [8, 20]) { const v = AD.keepP(h, ps, null, T); o.kp.push([null, b(T), b(v), b(AD.keepP.son)]); }

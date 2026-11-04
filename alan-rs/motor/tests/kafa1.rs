@@ -517,6 +517,22 @@ fn js_ile_bit_bit_ayni() {
             let j: Vec<f64> = c["sh"].as_array().unwrap().iter().map(h).collect();
             H.evet("sutHedef", r.len() == j.len() && r.iter().zip(&j).all(|(a, b)| ayni(*a, *b)), format!("{et} {r:?} js {j:?}"));
         }
+        for t in c["lo"].as_array().unwrap() {
+            let q: &Oyuncu = &ps[t[0].as_u64().unwrap() as usize];
+            H.bak("laneOk", k.laneOk(&ps, team, nk(hh.x, hh.y), nk(q.x, q.y), Some(h(&t[1])), Some(h(&t[2]))), h(&t[3]), &et);
+        }
+        H.bak("space", k.space(&ps, team, hh.x, hh.y), h(&c["spf"][0]), &et);
+        H.bak("front", k.front(&ps, team, hh.x, hh.y), h(&c["spf"][1]), &et);
+        for t in c["rs"].as_array().unwrap() {
+            let r = k.respond(&ps, team, nk(h(&t[1]), h(&t[2])), h(&t[3]), t[0].as_str().unwrap());
+            let j = t[4].as_array().unwrap();
+            let ok = r.len() == j.len() && r.iter().zip(j).all(|(a, b)| match (a, b.is_null()) {
+                (None, true) => true,
+                (Some(p), false) => ayni(p.x, h(&b[0])) && ayni(p.y, h(&b[1])),
+                _ => false,
+            });
+            H.evet("respond", ok, format!("{et} {r:?} js {j:?}"));
+        }
         {
             let cs = k.coreSide(hh);
             H.bak("coreSide", cs.ux, h(&c["cs"][0]), &et);
