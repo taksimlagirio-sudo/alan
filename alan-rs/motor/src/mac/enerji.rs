@@ -197,9 +197,23 @@ pub fn hkK(_p: &Oyuncu, k: f64) -> f64 {
     1.0 + (k - 1.0) * SPR_FAZ.hkPay
 }
 
+thread_local! {
+    /// JS `h._sfNiyet` / `h._sfNiyetK`: kafa bir seçeneği tartarken taşıyıcıya yazdığı sprint niyeti
+    /// (id, team, sprint mi, itK). JS'te oyuncunun üstünde durur, kopyaları da görür; burada kimliğiyle eşlenir.
+    pub static SF_NIYET: std::cell::RefCell<Option<(f64, f64, bool, Option<f64>)>> = const { std::cell::RefCell::new(None) };
+}
+/// Taşıyıcının tartı süresince sprint niyeti (yoksa None): (sprint mi, itK)
+pub fn sf_niyet(p: &Oyuncu) -> Option<(bool, Option<f64>)> {
+    SF_NIYET.with(|n| n.borrow().as_ref().and_then(|&(id, t, s, k)| if id == p.id && t == p.team { Some((s, k)) } else { None }))
+}
 /// JS ALAN_SPR (match.js sarması): sprint evresine göre koşu katı.
 pub fn ALAN_SPR(p: &Oyuncu, k: &MacKural) -> f64 {
     let F = &SPR_FAZ;
+    if p._sf.is_none() {
+        if let Some((spr, itK)) = sf_niyet(p) {
+            return if spr { sfPk(p) } else { itK.unwrap_or_else(|| hkK(p, SPR0(p))) };
+        }
+    }
     match &p._sf {
         Some(s) => {
             if s.f == "dolum" {
@@ -273,7 +287,11 @@ pub fn kosuPr(p: &Oyuncu, k: &MacKural) -> Option<KosuPr> {
     }
     let tk = k.tick;
     let T = F.patT + F.tepeT;
-    let kar = k.sprKar(p) || p._topSpr;
+    let niyet = sf_niyet(p);
+    if p._sf.is_none() && matches!(niyet, Some((false, _))) {
+        return None;
+    }
+    let kar = niyet.is_some() || k.sprKar(p) || p._topSpr;
     let ts = if let Some(s) = &p._sf {
         if s.f != "patlama" && s.f != "tepe" {
             return None;

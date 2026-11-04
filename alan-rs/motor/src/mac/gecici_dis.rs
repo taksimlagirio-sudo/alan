@@ -382,7 +382,7 @@ pub fn decide(m: &Mac, p: &Oyuncu, g: &[Oyuncu], ch: f64, r: &mut Rng, tE: &crat
         if crate::iz_acik() && std::env::var("ALAN_SUR_IZ").ok().map_or(false, |v| v == format!("{}", m.tick)) {
             let mut o: Vec<&crate::model::Secenek> = r.opts.iter().filter(|o| o.kind == "sür").collect();
             o.sort_by(|a, b| b.v.unwrap_or(f64::NAN).partial_cmp(&a.v.unwrap_or(f64::NAN)).unwrap_or(std::cmp::Ordering::Equal));
-            for o in o.iter().take(3) {
+            for o in o.iter().filter(|o| o.to.map_or(false, |t| (t.x - 68.126).abs() < 0.01 || std::env::var("ALAN_SUR_HEPSI").is_ok())).take(3) {
                 eprintln!("SUR to {:?} spr {:?} sprBos {:?} v {:?} _own {:?} TsE {:?} toE {:?} _pT {:?}\n   dok {:?}\n   det {:?}\n   en {:?}", o.to, o.spr, o.sprBos, o.v, o._own, o.TsE, o.toE, o._pT, o.dok, o.det, o.en);
             }
         }

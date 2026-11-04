@@ -407,8 +407,9 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
     } else if o.kind == "sür" {
         let to = o.to.unwrap();
         let Ts = jmax(6.0, dis::surSure(k, &h, hypot(to.x - h.x, to.y - h.y), o.dir, o.spr));
-        let hk: Oyuncu = if o.spr.map(dogru).unwrap_or(false) { dis::sprKop(k, &h) } else { (*h).clone() };
-        let P = dis::keepP(k, &hk, &src, o.dir, Ts);
+        // JS keepP(o.spr ? sprKop(h) : h, …): sprintsizde taşıyıcının kendisi (dünyadaki nesne; dolanma onu kimliğiyle atlar)
+        let hk: Option<Oyuncu> = if o.spr.map(dogru).unwrap_or(false) { Some(dis::sprKop(k, &h)) } else { None };
+        let P = dis::keepP(k, hk.as_ref().unwrap_or(&*h), &src, o.dir, Ts);
         let pr = k.keepP_son.get();
         let (A, A_to) = {
             let L = hypot(to.x - h.x, to.y - h.y);
@@ -953,9 +954,11 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
             if nY {
                 k.k2.sfNiyet = Some((h.id, h.team, if o.spr.map(dogru).unwrap_or(false) { "sprint".into() } else { "yok".into() }, o.itK));
             }
+            let n0 = if nY { crate::mac::enerji::SF_NIYET.with(|n| n.replace(Some((h.id, h.team, o.spr.map(dogru).unwrap_or(false), o.itK)))) } else { None };
             tartG(k, &mut c, o, r, rnd);
             if nY {
                 k.k2.sfNiyet = None;
+                crate::mac::enerji::SF_NIYET.with(|n| *n.borrow_mut() = n0);
             }
         };
         let mut bekle: Option<Vec<(usize, Secenek)>> = Some(Vec::new());
