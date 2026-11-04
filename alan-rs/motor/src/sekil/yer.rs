@@ -296,6 +296,7 @@ fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (f
 /// sonra dalış hızıyla en çok tam uzanma kadar; top çizgiye varmadan gövdesi topun yoluna değebiliyorsa o şut kapanır.
 /// Kale ağzının en büyük kapanan payı seçilir; eşitlikte Bekçi'nin şimdiki derinliğine en yakın aday (titreme yok).
 /// Adaylar Bekçi'nin bir tikte aldığı yol aralığıyla, 2,5 br'den Kuyu sınırına (eski sınırlar).
+#[inline(never)]
 fn bek_derinlik(p: &Oyuncu, ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64) -> f64 {
     let (re, dv, dl) = (bek_re(p), bek_dv(p), bek_dl(p));
     let vb = jmax(vb, 1e-6);
@@ -325,6 +326,7 @@ thread_local! {
     static BEK_YOL: std::cell::RefCell<(Vec<(f64, f64, usize, usize)>, Vec<(f64, f64, f64)>, Vec<f64>)> = const { std::cell::RefCell::new((Vec::new(), Vec::new(), Vec::new())) };
 }
 #[allow(clippy::too_many_arguments)]
+#[inline(never)]
 fn bek_derinlik0(ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64, re: f64, dv: f64, dl: f64, adim: f64, r_simdi: f64) -> f64 {
     let body = Q.bek_body;
     let n = (2.0 * MOUTH / body).ceil().max(1.0) as usize;
@@ -402,9 +404,15 @@ fn bek_derinlik0(ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64,
     let r_maks = jmin(KR, jmax(2.5, L - body));
     let (mut eniyi, mut ek, mut ed) = (2.5, 0usize, f64::INFINITY);
     let mut r = 2.5;
+    let n_yol = yollar.len();
     while r <= r_maks + 1e-9 {
-        let k = kap(r);
         let d = (r - r_simdi).abs();
+        // bütün yolları kapatan bir aday varken daha uzak (ya da eşit uzak) aday seçilemez: sayım gereksiz
+        if ek == n_yol && !(d < ed) {
+            r += adim;
+            continue;
+        }
+        let k = kap(r);
         if k > ek || (k == ek && d < ed) {
             eniyi = r;
             ek = k;
