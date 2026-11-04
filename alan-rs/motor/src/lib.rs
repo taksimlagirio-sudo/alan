@@ -8,6 +8,7 @@ pub mod alan;
 pub mod core_sabit;
 pub mod donus;
 pub mod mat;
+pub mod mac;
 pub mod model;
 pub mod oyun;
 pub mod oyuncu;
