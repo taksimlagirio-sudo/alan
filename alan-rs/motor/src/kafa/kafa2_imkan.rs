@@ -155,7 +155,7 @@ pub fn imkOrt(p: &Oyuncu) -> f64 {
 
 /// Sahte oyuncu (JS `{ team, x, y, id: -1 }` gibi kısmi nesneler)
 pub fn sahte(team: f64, x: f64, y: f64, id: f64) -> Oyuncu {
-    let mut o = Oyuncu::default();
+    let mut o = Oyuncu::bos();
     o.team = team;
     o.x = x;
     o.y = y;

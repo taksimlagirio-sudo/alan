@@ -121,7 +121,7 @@ pub struct Oyuncu {
     /// `rs`: string (sonradan eklenir)
     pub rs: Option<String>,
     /// `tl`: object (sonradan eklenir)
-    pub tl: Option<JPTl>,
+    pub tl: Option<std::sync::Arc<JPTl>>,
     /// `markRef`: OYUNCU (sonradan eklenir)
     pub markRef: Option<Pid>,
     /// `eg`: object (sonradan eklenir)

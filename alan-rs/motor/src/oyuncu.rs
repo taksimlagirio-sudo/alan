@@ -95,3 +95,14 @@ pub fn tepki(p: &Oyuncu, k: Tepki, s: &TepkiS) -> f64 {
         None => t,
     }
 }
+
+impl Oyuncu {
+    /// `Oyuncu::default()` ile aynı değer, ama boş `Arc` alanları (ad, rol, yetenek) her seferinde yeniden ayrılmaz:
+    /// bir kez kurulan şablonun kopyası (Arc'lar yalnız sayılır). Sıcak yollardaki sahte/boş oyuncular için.
+    pub fn bos() -> Oyuncu {
+        thread_local! {
+            static SABLON: Oyuncu = Oyuncu::default();
+        }
+        SABLON.with(|s| s.clone())
+    }
+}

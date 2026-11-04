@@ -260,7 +260,7 @@ impl Dis for MacDis {
             ek.sh.gs = gs.as_ref().map(|g| Gs { t: g.t, dt: g.dt as u8, on: g.on, onP: g.onP, oy: g.oy });
             let onK0 = qv._onK.clone(); // ilkPres_h okur (kafa görünümünde), sonra geri konur
             ps.clear();
-            ps.push(std::mem::take(qv));
+            ps.push(std::mem::replace(qv, Oyuncu::bos()));
             // ilkPres_h tehlikelerin yalnız ilkini okur: yalnız o çevrilir
             let th: Vec<sekil::takim::Tehlike> = TH.iter().take(1).map(|t| sekil::takim::Tehlike { an: t.an, w: t.w, w0: t.w0, x: t.x, y: t.y, k: t.k.clone(), L: t.L }).collect();
             let dtac = self.takim_tac(team);
@@ -268,7 +268,7 @@ impl Dis for MacDis {
             let kural = self.kural.get();
             let mut c = Mc { m, ps, ball: None, ek, k: &kural, d, lite: true, rnd: None };
             sekil::pres::ilkPres_h(&mut c, 0, hx, if team == 1.0 { 1 } else { 0 }, Some(&th), dtac);
-            let mut sonuc = std::mem::take(&mut ps[0]);
+            let mut sonuc = std::mem::replace(&mut ps[0], Oyuncu::bos());
             let (tx, ty, job) = (sonuc.tx, sonuc.ty, sonuc.job.take());
             ps.clear();
             *qv = sonuc;

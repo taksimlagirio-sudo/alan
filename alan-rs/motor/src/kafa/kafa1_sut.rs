@@ -137,7 +137,7 @@ impl Kafa {
         }
         let bk = src.iter().find(|p| p.team != team && p.bekci());
         let M = MOUTH;
-        let mut hh = Oyuncu::default();
+        let mut hh = Oyuncu::bos();
         hh.x = x;
         hh.y = y;
         hh.team = team;

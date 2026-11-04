@@ -409,7 +409,7 @@ pub fn assignRoles_ile(m: &mut Mac, roles: &Roller, dis: &mut dyn KurDis) {
             if let Some(r) = rol(roles, t, p.i) {
                 p.rh = Some(r.h.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| "Serbest".into()));
                 p.rs = Some(r.s.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| "Bölge".into()));
-                p.tl = Some(tlKur(&r));
+                p.tl = Some(std::sync::Arc::new(tlKur(&r)));
             }
         }
     }
@@ -450,7 +450,7 @@ pub fn assignRoles_ile(m: &mut Mac, roles: &Roller, dis: &mut dyn KurDis) {
             let p = &mut m.ps[pi];
             p.rh = Some("Serbest".into());
             p.rs = Some("Bölge".into());
-            p.tl = Some(ort.clone());
+            p.tl = Some(std::sync::Arc::new(ort.clone()));
         }
     }
     for t in [0.0, 1.0] {
