@@ -282,7 +282,8 @@ pub struct Oyuncu {
     /// `_dalis`: number (sonradan eklenir)
     pub _dalis: Option<f64>,
     /// (Rust) yetenek satırı: `a`dan maç başında kurulur (ALAN_Y)
-    pub yet: crate::yetenek::Yetenek,
+    /// paylaşımlı: maç içinde değişmez, kopyası yalnız sayaç (her oyuncu kopyasında sözlük kurulmasın)
+    pub yet: std::sync::Arc<crate::yetenek::Yetenek>,
     /// (mac) `slowT`: omuzla yavaşlama bitişi
     pub slowT: Option<f64>,
     /// (yerleşim) görülen kopyanın konum hatası `__e` ve yaşı `__yas` (gerçek oyuncuda yok)

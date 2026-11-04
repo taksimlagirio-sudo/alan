@@ -137,7 +137,7 @@ pub fn yetKur(p: &mut Oyuncu, a: &HamA) {
         }
     }
     p.a = j;
-    p.yet = crate::yetenek::Yetenek::kur(&a.ham());
+    p.yet = std::sync::Arc::new(crate::yetenek::Yetenek::kur(&a.ham()));
 }
 
 /// JS createMatch(seed, o) (yerleşim gerçek: gecici_dis).
