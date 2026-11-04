@@ -585,6 +585,9 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             }
             let S = imkS(k, IC, a, zi);
             let u = p * S * imkInan(k, e.ta);
+            if di.is_none() && biz[a].p.name == "Kaan" && std::env::var("ALAN_IMK_HU").is_ok() {
+                eprintln!("    kaan z {} {} tR {:.3} p {:.6} ta {:.3} S {:.6} u {:.6}", z.x, z.y, tR, p, e.ta, S, u);
+            }
             if u > r.u {
                 r = EnI { u, z: Some(zi), S, ta: e.ta };
             }
@@ -617,6 +620,9 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
                 di = i as isize;
             }
         }
+        if std::env::var("ALAN_IMK_HU").is_ok() {
+            eprintln!("  açg {} u {:.6} z {} {} tr {} → {}", biz[ba].p.name, bu, zs[rz].x, zs[rz].y, bos.iter().map(|&i| format!("{}:{:.3}", rak[i].p.name, zs[rz].tr[i])).collect::<Vec<_>>().join(" "), if di >= 0 { rak[di as usize].p.name.clone() } else { "-".into() });
+        }
         atanan[ba] = Some(di);
         bos.retain(|&i| i as isize != di);
     }
@@ -625,6 +631,9 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         let r = enIyi(k, &mut TY, &mut IC, &bos, a, atanan[a]);
         let S = if r.z.is_some() { r.S } else { 0.0 };
         let p = if S > 0.0 { r.u / S } else { 0.0 };
+        if std::env::var("ALAN_IMK_HU").is_ok() {
+            eprintln!("  hu {} u={:.6} S={:.6} ta={:.3} z={:?} kar={:?}", biz[a].p.name, r.u, S, r.ta, r.z.map(|z| (zs[z].x, zs[z].y)), atanan[a].and_then(|i| if i >= 0 { Some(rak[i as usize].p.name.clone()) } else { None }));
+        }
         v = jmax(v, p * S);
     }
     v

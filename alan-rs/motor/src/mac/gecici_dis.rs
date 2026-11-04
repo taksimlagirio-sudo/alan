@@ -141,7 +141,7 @@ pub fn slotBase(m: &Mac, p: Pid, ex: f64, ey: f64, att: bool) -> (f64, f64) {
 /// Bekçi'nin yeri
 pub fn bekci(m: &Mac, p: Pid, ex: f64, ey: f64) -> (f64, f64) {
     let kural = crate::mac::MacKural::of(m);
-    let bm = crate::sekil::yer::BekM { ps: &m.ps, holder: m.holder, ben: Some(p) };
+    let bm = crate::sekil::yer::BekM { ps: &m.ps, holder: m.holder.map(|h| &m.ps[h]), ben: Some(p) };
     crate::sekil::yer::bekci(&m.ps[p], ex, ey, Some(&bm), &kural)
 }
 /// Topsuz oyuncuların hedefleri ve işleri (tx, ty, job, sprint, press …)
@@ -191,7 +191,35 @@ pub fn kafa_tac(t: &crate::mac::Tac) -> crate::kafa::kafa2_baglam::Tac {
 }
 /// JS `D._mac = m`: kafanın maç görünümü
 fn mac_gor(m: &Mac) -> crate::kafa::kafa2_baglam::MacGor {
-    crate::kafa::kafa2_baglam::MacGor { tick: m.tick, len: m.len, tac: vec![Default::default(), Default::default()], ps: op_dunya(&m.ps), holder: m.holder }
+    let tac = (0..2)
+        .map(|t| {
+            let q = m.tac.get(t).cloned().unwrap_or_default();
+            let n = f64::NAN;
+            crate::model::JMTacE {
+                blok: q.blok.unwrap_or_default(),
+                pres: q.pres.unwrap_or(n),
+                onde: q.onde.unwrap_or(n),
+                genislik: q.genislik.unwrap_or_default(),
+                risk: q.risk.unwrap_or(n),
+                tempo: q.tempo.unwrap_or(n),
+                kazaninca: q.kazaninca.unwrap_or_default(),
+                sistem: q.sistem.unwrap_or_default(),
+                siddet: q.siddet.unwrap_or(n),
+                savGen: q.savGen.unwrap_or(n),
+                kaleOnu: q.kaleOnu.unwrap_or_default(),
+                pasSurme: q.pasSurme.unwrap_or(n),
+                pasBoy: q.pasBoy.unwrap_or(n),
+                sabir: q.sabir.unwrap_or(n),
+                sut: q.sut.unwrap_or(n),
+                enDinlen: q.enDinlen.unwrap_or(n),
+                enYipratma: q.enYipratma.unwrap_or(n),
+                tetik: q.tetik.unwrap_or_default(),
+                yz: q.yz == Some(true),
+                ..Default::default()
+            }
+        })
+        .collect();
+    crate::kafa::kafa2_baglam::MacGor { tick: m.tick, len: m.len, tac, ps: op_dunya(&m.ps), holder: m.holder }
 }
 fn sira(g: &[Oyuncu], p: &Oyuncu) -> Pid {
     g.iter().position(|q| q.id == p.id && q.team == p.team).expect("karar veren dünyada yok")
@@ -308,8 +336,17 @@ pub fn decide(m: &Mac, p: &Oyuncu, g: &[Oyuncu], ch: f64, r: &mut Rng, tE: &crat
     let mg = mac_gor(m);
     kafa_ile(|k| {
         k.mac = Some(mg);
+        if std::env::var("ALAN_IMK_IZ").ok().map_or(false, |v| v == format!("{}", m.tick)) {
+            for x in [20.0, 40.0, 60.0, 80.0, 100.0] {
+                for y in [10.0, 30.0, 50.0] {
+                    let i = crate::kafa::kafa2_imkan::imkan(k, &src, p.team, crate::model::Nokta { x, y }, Some(p), ch);
+                    let yd = crate::kafa::kafa2_zemin::yerDeger(k, &src, p.team, x, y, ch);
+                    eprintln!("imk {} {} {:.9} yd {:.9}", x, y, i, yd);
+                }
+            }
+        }
         let r = crate::kafa::kafa2_karar::decide(k, hi, &src, ch, &mut rng_fn(r), Some(&tac));
-        if std::env::var("ALAN_KARAR_IZ").ok().map_or(false, |v| v == format!("{}", m.tick)) {
+        if std::env::var("ALAN_KARAR_IZ").ok().map_or(false, |v| v == "hepsi" || v == format!("{}", m.tick)) {
             eprintln!("tik {}\ndecide {} opts {}", m.tick, p.name, r.opts.len());
             for q in g {
                 eprintln!("  dunya {} {} {} {} {} {:?} {:?}", q.name, q.x, q.y, q.vx, q.vy, q.__e, q.__yas);

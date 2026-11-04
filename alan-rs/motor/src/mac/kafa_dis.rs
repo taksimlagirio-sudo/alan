@@ -292,9 +292,8 @@ impl Dis for MacDis {
     }
     fn bekciFm(&self, p: &Oyuncu, B: Nk, fm: &d1::Fm) -> Nk {
         let ps: Vec<Oyuncu> = fm.ps.iter().map(|q| (**q).clone()).collect();
-        let holder = fm.holder.and_then(|h| fm.ps.iter().position(|q| q.id == h.id && q.team == h.team));
         let ben = fm.ps.iter().position(|q| q.id == p.id && q.team == p.team);
-        let bm = sekil::yer::BekM { ps: &ps, holder, ben };
+        let bm = sekil::yer::BekM { ps: &ps, holder: fm.holder, ben };
         let (x, y) = sekil::yer::bekci(p, B.x, B.y, Some(&bm), &self.kural);
         nk(x, y)
     }

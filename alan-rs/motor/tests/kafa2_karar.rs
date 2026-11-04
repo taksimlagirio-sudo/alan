@@ -209,9 +209,8 @@ mod tdis {
     fn ivme(&self, p: &mut Oyuncu, wx: f64, wy: f64, vmax: f64) { self.m.ivme(p, wx, wy, vmax) }
         fn bekciFm(&self, p: &Oyuncu, B: Nk, fm: &Fm) -> Nk {
             let ps = kisi(fm.ps);
-            let holder = fm.holder.and_then(|h| fm.ps.iter().position(|q| q.id == h.id && q.team == h.team));
             let ben = fm.ps.iter().position(|q| q.id == p.id && q.team == p.team);
-            let bm = alan_motor::sekil::yer::BekM { ps: &ps, holder, ben };
+            let bm = alan_motor::sekil::yer::BekM { ps: &ps, holder: fm.holder, ben };
             let (x, y) = alan_motor::sekil::yer::bekci(p, B.x, B.y, Some(&bm), &self.m.kural);
             nk(x, y)
         }

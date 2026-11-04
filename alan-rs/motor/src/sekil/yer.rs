@@ -140,7 +140,8 @@ pub fn slotBase(m: &Mac, ps: &[Oyuncu], p: &Oyuncu, ex: f64, ey: f64, att: bool)
 /// Bekçi'nin yerine bakarken maçın gerekli parçası (JS `m`): oyuncular, taşıyıcı, Bekçi'nin kendi sırası.
 pub struct BekM<'a> {
     pub ps: &'a [Oyuncu],
-    pub holder: Option<Pid>,
+    /// JS `m.holder`: topu tutan (sahte de olabilir: kafa "top burada olsa" diye sorar)
+    pub holder: Option<&'a Oyuncu>,
     /// JS `q === p` için Bekçi'nin sırası
     pub ben: Option<Pid>,
 }
@@ -176,8 +177,7 @@ pub fn bekci(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (
         }
     }
     if let Some(m) = m {
-        if let Some(hi) = m.holder {
-            let hh = &m.ps[hi];
+        if let Some(hh) = m.holder {
             if hh.team != p.team && L < 30.0 {
                 let mut dmin = 1e9;
                 for (qi, q) in m.ps.iter().enumerate() {
