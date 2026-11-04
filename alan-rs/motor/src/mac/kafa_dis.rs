@@ -182,7 +182,31 @@ impl Dis for MacDis {
         Some(gecTab_k(&sekil::gec::gecTab(o, &self.kural.get())))
     }
     fn gecOf(&self, G: &d1::GecTab, x: f64, y: f64, s: Option<f64>) -> f64 {
-        sekil::gec::gecOf(&gecTab_s(G), x, y, s)
+        // sekil::gec::gecOf ile aynı; yalnız gereken yönün tablosu okunur (9 yön kopyalanmaz)
+        let dx = x - G.x;
+        let dy = y - G.y;
+        let L = crate::mat::hypot(dx, dy);
+        if L < 0.5 {
+            return 0.0;
+        }
+        let c = if G.s0 < 0.001 { 1.0 } else { (G.vx * dx + G.vy * dy) / (G.s0 * L) };
+        let kk = (crate::mat::jround(4.0 * crate::mat::jmax(-1.0, crate::mat::jmin(1.0, c))) + 4.0) as usize;
+        match s {
+            Some(s) => {
+                let Y = &G.Y[kk];
+                if let Some(a) = Y.m.as_ref().and_then(|v| v.get(..81)).and_then(|v| <&[f64; 81]>::try_from(v).ok()) {
+                    return sekil::gec::gecK_m(Y.g, a, s, G.vm);
+                }
+                let mut m = [0.0; 81];
+                if let Some(v) = &Y.m {
+                    for (i, x) in v.iter().take(81).enumerate() {
+                        m[i] = *x;
+                    }
+                }
+                sekil::gec::gecK_m(Y.g, &m, s, G.vm)
+            }
+            None => G.t[kk],
+        }
     }
     fn gec(&self, o: &Oyuncu, x: f64, y: f64, s: Option<f64>) -> Option<f64> {
         Some(sekil::gec::gec(o, x, y, s, &self.kural.get()))
@@ -210,22 +234,36 @@ impl Dis for MacDis {
             .collect()
     }
     fn ilkPres(&self, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[d1::Tehlike], _dtac: &d1::TacEff, gs: &Option<JMShGs>) {
-        use sekil::varlik::{Gs, Mc, SekilDurum};
-        let mut m = Mac::default();
-        m.tick = tick;
-        let mut ps = vec![qv.clone(), hx.clone()];
-        let mut ek = SekilDurum::default();
-        ek.sh.gs = gs.as_ref().map(|g| Gs { t: g.t, dt: g.dt as u8, on: g.on, onP: g.onP, oy: g.oy });
-        let th: Vec<sekil::takim::Tehlike> = TH.iter().map(|t| sekil::takim::Tehlike { an: t.an, w: t.w, w0: t.w0, x: t.x, y: t.y, k: t.k.clone(), L: t.L }).collect();
-        let dtac = self.takim_tac(team).clone();
-        let d = crate::mac::gecici_dis::kafa_d();
-        {
-            let mut c = Mc { m: &mut m, ps: &mut ps, ball: None, ek: &mut ek, k: &self.kural.get(), d, lite: true, rnd: None };
-            sekil::ilkPres(&mut c, 0, 1, if team == 1.0 { 1 } else { 0 }, Some(&th), &dtac);
-        }
-        qv.tx = ps[0].tx;
-        qv.ty = ps[0].ty;
-        qv.job = ps[0].job.clone();
+        use sekil::varlik::{Gs, Mc};
+        // JS ilkPres(vm, …): vm yalnız tik taşır; yerleşimin pres hesabı maçtan yalnız tiki okur.
+        // Boş maç ve yerleşim durumu her çağrıda kurulmaz (kesişme döngüsünde çok sık çağrılır).
+        ILK_TAMPON.with(|t| {
+            let mut t = t.borrow_mut();
+            let IlkTampon { m, ek, ps } = &mut *t;
+            m.tick = tick;
+            ek.sh.gs = gs.as_ref().map(|g| Gs { t: g.t, dt: g.dt as u8, on: g.on, onP: g.onP, oy: g.oy });
+            let (pplan0, sprint0, onK0) = (qv.pplan.clone(), qv.sprint, qv._onK.clone());
+            ps.clear();
+            ps.push(std::mem::take(qv));
+            ps.push(hx.clone());
+            let th: Vec<sekil::takim::Tehlike> = TH.iter().map(|t| sekil::takim::Tehlike { an: t.an, w: t.w, w0: t.w0, x: t.x, y: t.y, k: t.k.clone(), L: t.L }).collect();
+            let dtac = self.takim_tac(team);
+            let d = crate::mac::gecici_dis::kafa_d();
+            let kural = self.kural.get();
+            let mut c = Mc { m, ps, ball: None, ek, k: &kural, d, lite: true, rnd: None };
+            sekil::ilkPres(&mut c, 0, 1, if team == 1.0 { 1 } else { 0 }, Some(&th), dtac);
+            let mut sonuc = std::mem::take(&mut ps[0]);
+            let (tx, ty, job) = (sonuc.tx, sonuc.ty, sonuc.job.take());
+            ps.clear();
+            *qv = sonuc;
+            qv.tx = tx;
+            qv.ty = ty;
+            qv.job = job;
+            // JS: qv nesnesi kesişme simülasyonu boyunca yaşar; ilkPres'in yazdığı pres planı (fake/iç) ve
+            // sprint bir sonraki adımda görülür. (_onK bu görünümde yazılmaz.)
+            let _ = (pplan0, sprint0);
+            qv._onK = onK0;
+        });
     }
     fn AS_ilkPres_var(&self) -> bool {
         true
@@ -387,6 +425,16 @@ thread_local! {
 
 /// Kapsamdaki kafayla çalış (yerleşimin ve maçın kafa çağrıları). Kafa o an başka bir çağrının
 /// içindeyse (iç içe) aynı dış dünyalı yedek bir kafa kullanılır.
+/// ilkPres köprüsünün yeniden kullanılan tamponu (maç yalnız tik taşır)
+#[derive(Default)]
+struct IlkTampon {
+    m: Mac,
+    ek: sekil::varlik::SekilDurum,
+    ps: Vec<Oyuncu>,
+}
+thread_local! {
+    static ILK_TAMPON: std::cell::RefCell<IlkTampon> = std::cell::RefCell::new(IlkTampon::default());
+}
 /// Maçın dokunuş ayarı (JS ALAN_DOKUNUS): bugün kapalı (maç taşımadı)
 pub fn mac_dokunus() -> Option<d1::Dokunus> {
     None

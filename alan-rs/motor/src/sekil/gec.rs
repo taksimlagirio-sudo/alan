@@ -135,12 +135,15 @@ fn gecYk(r: f64, c: f64, vm: f64, iv: [f64; 2]) -> Arc<GecY> {
 
 /// JS gecK: `s` yol için gecikme (eğriden ara değer).
 pub fn gecK(Y: &GecY, s: f64, vm: f64) -> f64 {
+    gecK_m(Y.g, &Y.m, s, vm)
+}
+/// gecK'nın tablosu dilim olarak (kafanın tablosundan kopyasız okunur).
+pub fn gecK_m(g: f64, m: &[f64; 81], s: f64, vm: f64) -> f64 {
     if !(s > 0.0) {
         return 0.0;
     }
-    let m = &Y.m;
     if s >= m[80] {
-        return Y.g;
+        return g;
     }
     let (mut lo, mut hi) = (0usize, 80usize);
     while hi - lo > 1 {
