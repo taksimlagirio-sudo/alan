@@ -74,6 +74,13 @@ pub fn coreSide(h: &Oyuncu) -> (f64, f64) {
 pub fn govdeV(h: &Oyuncu) -> f64 {
     kafa_ile(|k| k.govdeV(h))
 }
+/// Taşıyıcının şimdi çekebileceği en sert şutun hızı (tam şarj): gövde savurma hızı × vuruş enerjisi (kafanın vurE'si).
+pub fn sutHiz(h: &Oyuncu) -> Option<f64> {
+    if !crate::mac::kafa_dis::kafa_var() {
+        return None;
+    }
+    Some(kafa_ile(|k| k.govdeV(h) * k.vurE(h, Some(1.0), true)))
+}
 /// JS `savurPlan(h, {vx, vy}, ca0, w0, sYon, null, itme, E)` → `pl ? pl.T : None`.
 pub fn savurPlan(h: &Oyuncu, vx: f64, vy: f64, ca0: f64, w0: f64, sYon: f64, itme: bool, E: f64) -> Option<f64> {
     kafa_ile(|k| k.savurPlan(h, nk(vx, vy), ca0, w0, sYon, None, itme, E).map(|p| p.T))

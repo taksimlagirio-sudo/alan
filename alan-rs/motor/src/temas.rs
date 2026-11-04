@@ -65,9 +65,28 @@ pub struct TopTemas {
     /// kafadaki hayali top (Bekçi dalışı oyuncuyu yerinden oynatmaz)
     pub hayal: bool,
     pub dal: Option<Dal>,
+    /// dalışın başladığı an (maçta bir kez kurulur): Bekçi'nin yeri ve dalış hızı
+    pub dal_bas: Option<DalBas>,
     pub holder: Option<usize>,
     pub gvx: f64,
     pub gvy: f64,
+}
+
+/// Dalışın başlangıcı: Bekçi'nin tepki bittiği andaki yeri, dalış hızı (şimdiki hız + itki) ve süresi.
+#[derive(Clone, Copy, Debug)]
+pub struct DalBas {
+    pub p: usize,
+    pub x: f64,
+    pub y: f64,
+    pub vx: f64,
+    pub vy: f64,
+    pub t0: f64,
+    pub td: f64,
+    /// itki (dalış bitince söner: Bekçi uçmaya devam etmez)
+    pub ix: f64,
+    pub iy: f64,
+    /// gereken uzanmanın tam uzanmaya oranı (barın bedeli)
+    pub f: f64,
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -120,7 +139,7 @@ pub fn bek_oku(b: &mut TopT, pi: usize, ps: &[Oyuncu]) -> Option<(f64, f64)> {
     let z = if bek { 0.0 } else { zar(a, k, 21.0) + zar(a, k, 23.0) - 1.0 };
     let f = sez_f(p, &ps[from]);
     let u = (IN.u_a + IN.u_b) / 2.0;
-    let r = (1.0 + IN.tepki_z * z, b.t.cue * (f * u - 0.5));
+    let r = (1.0 + IN.tepki_z * z * 2.0 * (1.0 - f), b.t.cue * (f * u - 0.5)); /* v5 · okuma zarının genişliği okumayla: Bekçi'nin vuruşu sezmesi şutçunun gizlemesinden iyiyse (f > 0,5) tepkisi daha tutarlı, kötüyse daha dağınık; eşitken eskisi gibi. Ortalama değişmez (zar ortalaması 0) */
     b.t.oku.insert(ck, r);
     Some(r)
 }
@@ -148,8 +167,8 @@ pub fn bek_har(p: &Oyuncu, x: f64, y: f64, vx: f64, vy: f64, k: &dyn Kural) -> f
     let ny = y + vy * t - p.y;
     let nl = hyp(nx, ny);
     let c = if nl > 0.3 { (p.vx * nx + p.vy * ny) / (sp * nl) } else { 0.0 };
-    s * (1.0 - c) / 2.0
-}
+    s * jmax(0.0, -c)
+} /* v5 · hareket cezası yalnız dalış yönüne ters harekete: topun yoluna koşan (açı daraltan) ve yana kayan Bekçi dalışa hazırdır, ceza almaz; yoldan uzaklaşan tam ceza. Yer değiştirmenin kendisi maçta zaten Bekçi'nin konumunda. Önce yana kayma yarım cezaydı: açıyı izleyen Bekçi şutların neredeyse hepsinde yana tam hızla kayıyor, tepkisine 1–2 tik ekleniyor, 13–19 br'den sert şutların hepsi gol oluyordu (283884: 10 şutta 9 gol). */
 
 /// Bekçi'nin menzili (JS bekR): gövde + dalış (topun yaşı ve tepkisiyle).
 pub fn bek_r(b: &mut TopT, pi: usize, ps: &[Oyuncu]) -> f64 {
@@ -161,6 +180,117 @@ pub fn bek_r(b: &mut TopT, pi: usize, ps: &[Oyuncu]) -> f64 {
         None => bek_re(p),
     }) + Q.bek_har_t * hm;
     Q.bek_body + jmin(bek_dl(p) * (1.0 - Q.bek_har_d * hm), jmax(0.0, yas_t(b) - re) * bek_dv(p))
+}
+
+/// Bekçi'nin dalışı yeni modelde mi tartılır: rakip şutu (gönder), sekmemiş, Bekçi şutun Bekçisi.
+fn dalis_modeli(b: &TopT, pi: usize, ps: &[Oyuncu]) -> bool {
+    let p = &ps[pi];
+    p.bekci() && b.t.gon && b.b.defl == 0.0 && b.b.walls == 0.0 && p.takim() != b.b.team && b.t.bek_id == Some(p.id as u32)
+}
+
+/// Bekçi'nin dalışı (hareket): tepki süresince eski hareketini sürdürür; tepki bitince topun yolundaki en yakın
+/// noktaya doğru itki alır: dalış hızı = şimdiki hız + itki (büyüklüğü dalış hızı, bek_dv), süresi gereken uzanma / dalış hızı, en çok tam uzanma
+/// (duran Bekçi eski modeldeki kadar uzanır). Ters yöne koşan Bekçi'nin hızı itkinin bir kısmını yer, açı daraltan ve
+/// topun tarafına kayanınki ekler: hareket cezası kural değil, hareketin kendisi. Döner: (x, y, vx, vy) bu andaki yer ve hız
+/// (tepki sürüyorsa None: Bekçi kendi hareketinde). Maç ve kafa aynı işlevi kullanır.
+pub fn bek_dalis(b: &mut TopT, pi: usize, ps: &[Oyuncu]) -> Option<(f64, f64, f64, f64)> {
+    if !dalis_modeli(b, pi, ps) {
+        return None;
+    }
+    let p = &ps[pi];
+    let oku = bek_oku(b, pi, ps);
+    let re = match oku { Some((k, on)) => bek_re(p) * k - on, None => bek_re(p) };
+    let tau = yas_t(b);
+    if tau <= re {
+        return None;
+    }
+    let bas = match b.t.dal_bas.filter(|d| d.p == pi) {
+        Some(d) => d,
+        None => {
+            // tepki bitti: dalışın başı. Bekçi topun yolunu bu anki uçuşundan okur ve topla aynı anda varabileceği
+            // ilk noktaya dalar: |B + û·s − K| = gövde + (dalış hızı / top hızı)·s (ikinci derece); yoksa en az geç kaldığı nokta.
+            let (bx, by, bvx, bvy) = (b.b.x, b.b.y, b.b.vx, b.b.vy);
+            let vb = hyp(bvx, bvy);
+            let e = p.en.map_or(1.0, |e| kis(e, 0.0, 1.0));
+            let dv = bek_dv(p) * (crate::mac::enerji::EN3.tepeAlt + (1.0 - crate::mac::enerji::EN3.tepeAlt) * e); /* itki barla (tepe hızının bar kuralıyla aynı ölçü): barı düşük Bekçi daha yavaş uzanır */
+            let dl = bek_dl(p);
+            let (ux, uy) = if vb > 1e-9 { (bvx / vb, bvy / vb) } else { (0.0, 0.0) };
+            let (wx, wy) = (bx - p.x, by - p.y);
+            let a = wx * ux + wy * uy;
+            let w2 = wx * wx + wy * wy;
+            let kk = if vb > 1e-9 { dv / vb } else { 0.0 };
+            let body = Q.bek_body;
+            let s_kes = {
+                let qa = 1.0 - kk * kk;
+                let qb = 2.0 * a - 2.0 * body * kk;
+                let qc = w2 - body * body;
+                let mut r: Option<f64> = None;
+                if qc <= 0.0 {
+                    r = Some(0.0);
+                } else if qa.abs() < 1e-12 {
+                    if qb < 0.0 { r = Some(-qc / qb); }
+                } else {
+                    let dd = qb * qb - 4.0 * qa * qc;
+                    if dd >= 0.0 {
+                        let sq = dd.sqrt();
+                        let (r1, r2) = ((-qb - sq) / (2.0 * qa), (-qb + sq) / (2.0 * qa));
+                        let (lo, hi) = if r1 < r2 { (r1, r2) } else { (r2, r1) };
+                        if lo >= 0.0 { r = Some(lo); } else if hi >= 0.0 { r = Some(hi); }
+                    }
+                }
+                // en az yolla uzanma: topun yolunun Bekçi'ye en yakın noktası (dik ayak) zamanında yetişilebiliyorsa oraya
+                // (gerçek Bekçi topa doğru atılmaz, yolun önüne en kısa yoldan uzanır); yetişilemiyorsa yetişilen en yakın
+                // geç nokta (ikinci kök), o da yoksa en az geç kalınan nokta
+                let ayak = (-a).max(0.0);
+                let ayak_d = (w2 + 2.0 * a * ayak + ayak * ayak).max(0.0).sqrt();
+                let yeter = ayak_d <= body + kk * ayak;
+                let r = if yeter { Some(ayak) } else if qc > 0.0 && qa.abs() >= 1e-12 {
+                    let dd = qb * qb - 4.0 * qa * qc;
+                    if dd >= 0.0 { let sq = dd.sqrt(); let h = ((-qb - sq) / (2.0 * qa)).max((-qb + sq) / (2.0 * qa)); if h >= ayak { Some(h) } else { r } } else { r }
+                } else { r };
+                match r {
+                    Some(v) => v,
+                    // yetişemiyor: en az geç kalınan nokta (|w + ûs| − k·s en küçük)
+                    None => {
+                        let bb = (w2 - a * a).max(0.0).sqrt();
+                        if kk < 1.0 { (kk * bb / (1.0 - kk * kk).sqrt() - a).max(0.0) } else { (-a).max(0.0) }
+                    }
+                }
+            };
+            let (nx, ny) = (bx + ux * s_kes - p.x, by + uy * s_kes - p.y);
+            let nl = hyp(nx, ny);
+            let (mut nx, mut ny) = (nx, ny);
+            // yanlış yöne dalış: Bekçi vuruşu önceden okuyup öne aldıysa (on > 0), şutçunun gizlemesi sezmesinden iyi
+            // olduğu ölçüde (1 − f) yanlış köşeyi okur: dalış yönü şutçuyla Bekçi'yi birleştiren eksene göre aynalanır.
+            if let (Some((_, on)), Some(fi)) = (oku, b.t.from) {
+                if on > 1e-9 && nl > body { /* öne alma gerçekten var (sezme ile gizleme eşitken kayan nokta artığı sayılmaz) */
+                    let f = sez_f(p, &ps[fi]);
+                    let a0 = 100.0 * p.team + p.id;
+                    let k0 = b.t.kt.unwrap_or(0.0) + 1.618 * b.t.kz;
+                    if zar(a0, k0, 31.0) < 1.0 - f {
+                        let (ax, ay) = (ps[fi].x - p.x, ps[fi].y - p.y);
+                        let al = hyp(ax, ay);
+                        if al > 1e-9 {
+                            let (ax, ay) = (ax / al, ay / al);
+                            let dt = nx * ax + ny * ay;
+                            nx = 2.0 * dt * ax - nx;
+                            ny = 2.0 * dt * ay - ny;
+                        }
+                    }
+                }
+            }
+            let (ix, iy) = if nl > body { (nx / nl * dv, ny / nl * dv) } else { (0.0, 0.0) };
+            let d = DalBas { p: pi, x: p.x, y: p.y, vx: p.vx + ix, vy: p.vy + iy, t0: re, td: if nl > Q.bek_body { jmin(dl, nl - Q.bek_body) / dv } else { 0.0 }, ix, iy, /* dalış topun yoluna varınca biter (gövde yola değer); en çok tam uzanma */ f: jmin(1.0, jmax(0.0, nl - Q.bek_body) / jmax(0.5, dl)) };
+            if !b.t.hayal {
+                b.t.dal_bas = Some(d);
+            }
+            d
+        }
+    };
+    let u = jmin(tau - bas.t0, bas.td);
+    let bitti = tau - bas.t0 >= bas.td;
+    let (vx, vy) = if bitti { (bas.vx - bas.ix, bas.vy - bas.iy) } else { (bas.vx, bas.vy) };
+    Some((bas.x + bas.vx * u, bas.y + bas.vy * u, vx, vy))
 }
 
 /// Alma kapasitesi (JS touchCap).
@@ -347,11 +477,14 @@ pub fn contact(b: &mut TopT, ps: &mut [Oyuncu], rnd: &mut dyn FnMut() -> f64, ox
         if b.t.gon && p.takim() == b.b.team && !p.bekci() && b.b.defl == 0.0 {
             continue;
         }
-        let t0 = if sl > 0.0 { ((p.x - ox) * sx + (p.y - oy) * sy) / sl } else { 1.0 };
+        let yeni = dalis_modeli(b, pi, ps);
+        let vardi = b.t.dal_bas.is_some();
+        let (px, py) = if yeni { match bek_dalis(b, pi, ps) { Some((x, y, vx, vy)) => { if !b.t.hayal { let yeni_bas = !vardi && b.t.dal_bas.is_some(); let f = b.t.dal_bas.map_or(0.0, |d| d.f); let q = &mut ps[pi]; if yeni_bas && f > 0.0 { q._dalis = Some(q._dalis.unwrap_or(0.0) + f); } q.x = x; q.y = y; q.vx = vx; q.vy = vy; } (x, y) } None => (ps[pi].x, ps[pi].y) } } else { (ps[pi].x, ps[pi].y) }; /* maçta Bekçi'nin gerçek yeri dalışla güncellenir (ekranda görünür); dalışın bedeli bardan, gereken uzanmanın payıyla (dalış başlarken bir kez) */
+        let t0 = if sl > 0.0 { ((px - ox) * sx + (py - oy) * sy) / sl } else { 1.0 };
         let tt = kis(t0, 0.0, 1.0);
-        let dd = hyp(ox + sx * tt - p.x, oy + sy * tt - p.y);
+        let dd = hyp(ox + sx * tt - px, oy + sy * tt - py);
         b.t.tt = tt;
-        let r0 = if ps[pi].bekci() { bek_r(b, pi, ps) } else { menzil(&ps[pi], yavas) } * if t0 < 0.0 { Q.away_k } else { 1.0 };
+        let r0 = if yeni { Q.bek_body } else if ps[pi].bekci() { bek_r(b, pi, ps) } else { menzil(&ps[pi], yavas) } * if t0 < 0.0 { Q.away_k } else { 1.0 };
         let r = opp_reach(b, pi, ps, r0, &ts);
         let r2 = jmax(r, 1.15);
         if dd < r2 {
@@ -366,7 +499,7 @@ pub fn contact(b: &mut TopT, ps: &mut [Oyuncu], rnd: &mut dyn FnMut() -> f64, ox
     }
     b.t.tt = 0.0;
     let bi = best?;
-    if ps[bi].bekci() {
+    if ps[bi].bekci() && !dalis_modeli(b, bi, ps) {
         let mn = menzil(&ps[bi], yavas);
         if bd > mn + 1e-6 {
             let bp = &ps[bi];

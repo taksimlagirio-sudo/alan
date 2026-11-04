@@ -487,6 +487,10 @@ pub fn mac_dokunus() -> Option<d1::Dokunus> {
 }
 /// Yedek kafaya düşülen çağrı sayısı (sınama)
 pub static YAN_SAY: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+/// Kafa bağlamı kurulu mu (maç kurulumunda henüz değil)
+pub fn kafa_var() -> bool {
+    KAFA.with(|c| c.borrow().is_some())
+}
 pub fn kafa_ile<R>(f: impl FnOnce(&mut Kafa) -> R) -> R {
     let k = KAFA.with(|c| c.borrow().clone()).expect("kafa bağlamı kurulmadı (kafa_hazirla)");
     if let Ok(mut b) = k.try_borrow_mut() {
