@@ -230,6 +230,7 @@ pub fn job(p: &Oyuncu) -> &str {
 /// JS `ev(m, type, team, text)`: olay günlüğü (en yenisi başta, en çok 120).
 pub fn ev(m: &mut Mac, tip: &str, team: f64, text: String) {
     let s = (m.tick / SN()).floor() as i64;
+    m.ev_n += 1;
     m.events.insert(0, Olay { t: format!("{:02}:{:02}", s / 60, s % 60), r#type: tip.to_string(), team, text });
     if m.events.len() > 120 {
         m.events.pop();

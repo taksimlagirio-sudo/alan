@@ -44,7 +44,7 @@ fn main() {
     let t0 = std::time::Instant::now();
     let out = std::io::stdout();
     let mut out = std::io::BufWriter::new(out.lock());
-    let mut olay_say = mt.m.events.len();
+    let mut olay_say = mt.m.ev_n;
     if kip == "durum" {
         writeln!(out, "{}", durum(&mt.m)).unwrap();
     }
@@ -67,11 +67,11 @@ fn main() {
             t.push(']');
             kareler.push(t);
             let m = &mt.m;
-            let yeni = m.events.len().saturating_sub(olay_say);
+            let yeni = ((m.ev_n - olay_say) as usize).min(m.events.len());
             for e in m.events.iter().take(yeni).rev() {
                 olaylar.push(format!("[{},{},{}]", m.tick, e.team, serde_json::to_string(&e.text).unwrap()));
             }
-            olay_say = m.events.len();
+            olay_say = m.ev_n;
         }
     }
     let dt = t0.elapsed().as_secs_f64();

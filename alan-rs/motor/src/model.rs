@@ -480,6 +480,8 @@ pub struct Mac {
     pub r: crate::rng::Rng,
     /// (mac) `events`: olaylar (en yenisi başta, en çok 120)
     pub events: Vec<crate::mac::Olay>,
+    /// (mac) bugüne dek çıkan olay sayısı (events 120'de kesilir; yeni olayları bulmak için)
+    pub ev_n: u64,
     /// (mac) taslakta olmayan maç alanları (_lite, _kafa, fake, __mH …)
     pub mac: crate::mac::MacEk,
 }

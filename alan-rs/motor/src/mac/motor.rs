@@ -8,14 +8,14 @@ pub struct Motor {
     pub m: Mac,
     /// son görülen olay (yeni olayları bulmak için; JS m._sonOlay)
     son_olay: Option<(String, String, String)>,
-    ev_say: usize,
+    ev_say: u64,
     son_fl: Option<(f64, String)>,
     h0: Option<usize>,
 }
 
 impl Motor {
     pub fn yeni(m: Mac) -> Motor {
-        let ev_say = m.events.len();
+        let ev_say = m.ev_n;
         Motor { m, ev_say, son_fl: None, h0: None, son_olay: None }
     }
 }
@@ -45,9 +45,10 @@ impl MacMotoru for Motor {
     fn iz(&mut self) -> IzSatiri {
         let m = &self.m;
         let n = m.events.len();
-        let yeni = n.saturating_sub(self.ev_say);
+        // liste 120'de kesildiği için uzunluk değil sayaç: yeni olaylar listenin başında
+        let yeni = ((m.ev_n - self.ev_say) as usize).min(n);
         let sut = m.events.iter().take(yeni).any(|e| e.r#type == "gonder");
-        self.ev_say = n;
+        self.ev_say = m.ev_n;
         let fl = m.fl.as_ref().map(|f| (f.t0, f.kind.clone()));
         let mut yeni_ucus = None;
         if let (Some(f), Some(fo)) = (&fl, m.fl.as_ref()) {
