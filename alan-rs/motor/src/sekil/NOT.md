@@ -90,4 +90,24 @@ Modelde olmayan ama kullanılan alanlar: `p.slowT` (gecici), `p._bkCik` (SekilDu
 
 ## Bit bit aynılık
 
-(sınama sonucu aşağıda)
+`motor/tests/sekil.rs`, kayit-909623-on.json, 220 anlık durum (3600 tike kadar her 11 tikte), hepsi **bit bit aynı**:
+
+| İşlev | Durum |
+|---|---|
+| vSp, tepki, gecTab (t, Y.g, Y.m[0..80], vm), gec (s'li/s'siz), gecOf | 3080 oyuncu × 4 nokta |
+| bak (`p._bk`) | 220 |
+| seen (ref, x, y, gvx, gvy) | 220 × 12 |
+| gorulen (kopyaların x, y, vx, vy, yaş, hata) | 3024 (56 atlandı: Bekçi kestirimi savurPlan'a uğruyor) |
+| flightRead (first, arr t/x/y/est, pts, `_rcv*`) | 18 serbest top (25 atlandı: alıcı varsa alici → freeAt/frenT) |
+| slotBase (+el), durusW, bekci (m'siz) | 1320 |
+| bekci (m'li) | 1226 (94 atlandı: karşı karşıya → savurPlan) |
+| tehlike, tasHamle | 177 |
+| yolBag (vSh, vP, tR0), yolKesis, presKesis (tehlikeler JS'ten), koyHedef | 1062 |
+| coverSpots, laneOpen (v verili), yolT, metrics | 220 |
+
+Sınanmayan (yabancı işleve bağlı; JS'ten satır satır taşındı): **position** (ve kovala, pres seçimi, süpürücü,
+markaj, UA, yedek, takım, hücum, yol ver), alici/aliciDirenc'in alıcı dalı (frenT, freeAt), ilkPres (coreSide,
+duelP, girThr), presLim, macPres, teamV/kpOf, kapatHat, coverBoth, teamBest, laneOpen'ın ucusT kipi,
+yolBag'in vH'si (topK). Birleştirmede position için JS ile tik tik iz karşılaştırması gerekir (en kuşkulu
+yerler: UA atamasının GI/cov düzeltmesi, swT Map anlamı, hücumcunun "eski hedefi tut" koşulu, kTasi + `_tbC`
+sırası).

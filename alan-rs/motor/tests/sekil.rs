@@ -1,3 +1,4 @@
+#![allow(non_snake_case)]
 //! Yerleşim (shape.js): JS ile bit bit aynılık (sina/sekil-vektor.js, gerçek maçtan anlık durumlar).
 //! Yabancı işleve (gecici_dis: `todo!()`) uğrayan durumlar sayılır ve atlanır.
 use std::panic::{catch_unwind, AssertUnwindSafe};
