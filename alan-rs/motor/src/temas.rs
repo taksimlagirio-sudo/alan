@@ -120,7 +120,7 @@ pub fn bek_oku(b: &mut TopT, pi: usize, ps: &[Oyuncu]) -> Option<(f64, f64)> {
     let z = if bek { 0.0 } else { zar(a, k, 21.0) + zar(a, k, 23.0) - 1.0 };
     let f = sez_f(p, &ps[from]);
     let u = (IN.u_a + IN.u_b) / 2.0;
-    let r = (1.0 + IN.tepki_z * z, b.t.cue * (f * u - 0.5));
+    let r = (1.0 + IN.tepki_z * z * 2.0 * (1.0 - f), b.t.cue * (f * u - 0.5)); /* v5 · okuma zarının genişliği okumayla: Bekçi'nin vuruşu sezmesi şutçunun gizlemesinden iyiyse (f > 0,5) tepkisi daha tutarlı, kötüyse daha dağınık; eşitken eskisi gibi. Ortalama değişmez (zar ortalaması 0) */
     b.t.oku.insert(ck, r);
     Some(r)
 }
@@ -148,8 +148,8 @@ pub fn bek_har(p: &Oyuncu, x: f64, y: f64, vx: f64, vy: f64, k: &dyn Kural) -> f
     let ny = y + vy * t - p.y;
     let nl = hyp(nx, ny);
     let c = if nl > 0.3 { (p.vx * nx + p.vy * ny) / (sp * nl) } else { 0.0 };
-    s * (1.0 - c) / 2.0
-}
+    s * jmax(0.0, -c)
+} /* v5 · hareket cezası yalnız dalış yönüne ters harekete: topun yoluna koşan (açı daraltan) ve yana kayan Bekçi dalışa hazırdır, ceza almaz; yoldan uzaklaşan tam ceza. Yer değiştirmenin kendisi maçta zaten Bekçi'nin konumunda. Önce yana kayma yarım cezaydı: açıyı izleyen Bekçi şutların neredeyse hepsinde yana tam hızla kayıyor, tepkisine 1–2 tik ekleniyor, 13–19 br'den sert şutların hepsi gol oluyordu (283884: 10 şutta 9 gol). */
 
 /// Bekçi'nin menzili (JS bekR): gövde + dalış (topun yaşı ve tepkisiyle).
 pub fn bek_r(b: &mut TopT, pi: usize, ps: &[Oyuncu]) -> f64 {
