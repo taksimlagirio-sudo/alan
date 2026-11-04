@@ -500,7 +500,15 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         let mut kalkis = 0.0;
         let mut q = None;
         if own {
-            let r = topYol(k, z.x, z.y);
+            // topYol hücrenin (x, y)'sinin saf işlevi: taşıyıcı da arkadaşlarla aynı önbelleği kullanır
+            let r = match TY[z.i] {
+                Some(r) => r,
+                None => {
+                    let r = topYol(k, z.x, z.y);
+                    TY[z.i] = Some(r);
+                    r
+                }
+            };
             let Lz = hypot(z.x - B.x, z.y - B.y);
             if r.s.is_none() || (r.s.unwrap() - Lz).abs() > 0.5 {
                 ta = Lz / vh;
