@@ -73,7 +73,7 @@ fn oyuncu(v: &Value) -> Oyuncu {
     p.i = v["i"].as_f64().unwrap_or(0.0);
     p.role = v["role"].as_str().unwrap_or("").into();
     p.name = v["name"].as_str().unwrap_or("").into();
-    p.yet = if a.v.is_empty() { Yetenek::bos() } else { Yetenek::kur(&a) };
+    p.yet = if a.v.is_empty() { Yetenek::bos().into() } else { Yetenek::kur(&a).into() };
     p.x = h(&v["x"]);
     p.y = h(&v["y"]);
     p.vx = ho(&v["vx"]).unwrap_or(0.0);
@@ -210,8 +210,8 @@ mod tdis {
         fn bekciFm(&self, p: &Oyuncu, B: Nk, fm: &Fm) -> Nk {
             let ps = kisi(fm.ps);
             let ben = fm.ps.iter().position(|q| q.id == p.id && q.team == p.team);
-            let bm = alan_motor::sekil::yer::BekM { ps: &ps, holder: fm.holder, ben };
-            let (x, y) = alan_motor::sekil::yer::bekci(p, B.x, B.y, Some(&bm), &self.m.kural);
+            let bm = alan_motor::sekil::yer::BekM { ps: alan_motor::sekil::yer::BekPs::Duz(&ps), holder: fm.holder, ben };
+            let (x, y) = alan_motor::sekil::yer::bekci(p, B.x, B.y, Some(&bm), &self.m.kural.get());
             nk(x, y)
         }
         fn slotBase(&self, fm: &Fm, p: &Oyuncu, B: Nk, hucum: bool) -> Nk {
@@ -226,7 +226,7 @@ mod tdis {
             alan_motor::mac::kurulum::tl(p, ev, k)
         }
         fn sprK(&self, p: &Oyuncu) -> f64 {
-            alan_motor::mac::enerji::sprK(p, &self.m.kural)
+            alan_motor::mac::enerji::sprK(p, &self.m.kural.get())
         }
     }
 }

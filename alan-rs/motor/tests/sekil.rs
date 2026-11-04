@@ -55,9 +55,9 @@ fn oyuncu(v: &Value) -> Oyuncu {
     p.id = v["id"].as_f64().unwrap();
     p.team = v["team"].as_f64().unwrap();
     p.i = v["i"].as_f64().unwrap_or(0.0);
-    p.role = v["role"].as_str().unwrap().to_string();
-    p.name = v["name"].as_str().unwrap().to_string();
-    p.yet = if v["a"].as_object().unwrap().is_empty() { Yetenek::bos() } else { Yetenek::kur(&a) };
+    p.role = v["role"].as_str().unwrap().into();
+    p.name = v["name"].as_str().unwrap().into();
+    p.yet = if v["a"].as_object().unwrap().is_empty() { Yetenek::bos().into() } else { Yetenek::kur(&a).into() };
     p.slot.d = h(&v["slot"]["d"]);
     p.slot.l = h(&v["slot"]["l"]);
     if !v["rslot"].is_null() {
@@ -234,11 +234,11 @@ fn js_ile_bit_bit_ayni() {
             let G = gecTab(p, &K.kk);
             chk(&mut hata, format!("t{tk} {i} gecTab.vm"), G.vm, h(&pj["gvm"]));
             for kk in 0..9 {
-                chk(&mut hata, format!("t{tk} {i} gecTab.t[{kk}]"), G.t[kk], h(&pj["gt"][kk]));
-                chk(&mut hata, format!("t{tk} {i} gecTab.Y[{kk}].g"), G.Y[kk].g, h(&pj["gy"][kk][0]));
+                chk(&mut hata, format!("t{tk} {i} gecTab.t[{kk}]"), G.tb.0[kk], h(&pj["gt"][kk]));
+                chk(&mut hata, format!("t{tk} {i} gecTab.Y[{kk}].g"), G.tb.1[kk].g, h(&pj["gy"][kk][0]));
                 if let Some(mm) = pj["gy"][kk][1].as_array() {
                     for (j, x) in mm.iter().enumerate() {
-                        chk(&mut hata, format!("t{tk} {i} gecTab.Y[{kk}].m[{j}]"), G.Y[kk].m[j], h(x));
+                        chk(&mut hata, format!("t{tk} {i} gecTab.Y[{kk}].m[{j}]"), G.tb.1[kk].m[j], h(x));
                     }
                 }
             }
@@ -325,7 +325,7 @@ fn js_ile_bit_bit_ayni() {
             chk(&mut hata, format!("t{tk} bekci {pi} y"), b0.1, h(&y["bk"]["y"]));
             say.entry("slotBase/bekci").or_default().tamam += 1;
             if !y["bkm"].is_null() {
-                let bm = BekM { ps: &K.ps, holder: K.m.holder.map(|h| &K.ps[h]), ben: Some(pi) };
+                let bm = BekM { ps: alan_motor::sekil::yer::BekPs::Duz(&K.ps), holder: K.m.holder.map(|h| &K.ps[h]), ben: Some(pi) };
                 match catch_unwind(AssertUnwindSafe(|| bekci(&K.ps[pi], ex, ey, Some(&bm), &K.kk))) {
                     Ok(b1) => {
                         chk(&mut hata, format!("t{tk} bekci(m) {pi} x"), b1.0, h(&y["bkm"]["x"]));

@@ -12,7 +12,7 @@ fn oyuncu(v: &Value) -> Oyuncu {
     let mut p = Oyuncu::default();
     p.id = v["id"].as_u64().unwrap() as f64; p.team = v["team"].as_u64().unwrap() as f64;
     p.role = if v["bek"].as_bool().unwrap() { "Bekçi".into() } else { "Orta".into() };
-    p.yet = if v["a"].as_object().unwrap().is_empty() { Yetenek::bos() } else { Yetenek::kur(&a) };
+    p.yet = if v["a"].as_object().unwrap().is_empty() { Yetenek::bos().into() } else { Yetenek::kur(&a).into() };
     p.x = h(&v["x"]); p.y = h(&v["y"]); p.vx = h(&v["vx"]); p.vy = h(&v["vy"]);
     p.en = ho(&v["en"]); p.den = ho(&v["den"]);
     p

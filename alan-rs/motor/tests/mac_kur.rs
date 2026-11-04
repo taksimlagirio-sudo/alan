@@ -62,8 +62,8 @@ fn kayittan_kurulum_js_ile_ayni() {
                     hata.push(format!("{ad}: oyuncu {i} ({}) {n}", p.name));
                 }
             };
-            f("ad", p.name == pj["name"].as_str().unwrap());
-            f("rol", p.role == pj["role"].as_str().unwrap());
+            f("ad", &*p.name == pj["name"].as_str().unwrap());
+            f("rol", &*p.role == pj["role"].as_str().unwrap());
             f("id", p.id == pj["id"].as_f64().unwrap() && p.team == pj["team"].as_f64().unwrap() && p.i == pj["i"].as_f64().unwrap());
             f("slot", es(p.slot.d, &pj["slot"][0]) && es(p.slot.l, &pj["slot"][1]));
             let ik = |a: Option<(f64, f64)>, b: &Value| match (a, b.is_null()) { (None, true) => true, (Some(a), false) => ayni(a.0, h(&b[0])) && ayni(a.1, h(&b[1])), _ => false };

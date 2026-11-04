@@ -388,7 +388,7 @@ fn oyuncu(v: &Value) -> Oyuncu {
     p.team = v["team"].as_f64().unwrap();
     p.name = v["name"].as_str().unwrap_or("").into();
     p.role = if v["bek"].as_bool().unwrap() { "Bekçi".into() } else { "Orta".into() };
-    p.yet = if v["a"].as_object().unwrap().is_empty() { Yetenek::bos() } else { Yetenek::kur(&a) };
+    p.yet = if v["a"].as_object().unwrap().is_empty() { Yetenek::bos().into() } else { Yetenek::kur(&a).into() };
     p.x = h(&v["x"]);
     p.y = h(&v["y"]);
     p.vx = h(&v["vx"]);
