@@ -497,6 +497,20 @@ fn dok_dk(r: &DurumR, o: &mut Secenek) {
 }
 
 const PR_BOL: bool = false;
+/// Hız (yalnız Rust, JS'te yok): "bir rakip olmasa" tablosunda arkadaşından UZAK_R'den uzak rakip atlanır
+/// (çıkarılmasının o arkadaşın değerine etkisi ölçüldü, bkz. ALAN_UZAK_IZ). Eskisi: ALAN_UZAK_ESKI_IZ.
+const UZAK_R: f64 = 20.0;
+#[allow(non_upper_case_globals)]
+static UZAK_KIS_: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+fn uzak_kis() -> bool {
+    *UZAK_KIS_.get_or_init(|| !(crate::iz_acik() && std::env::var("ALAN_UZAK_ESKI_IZ").is_ok()))
+}
+fn uzak_h() -> bool {
+    crate::iz_acik() && std::env::var("ALAN_UZAKH_IZ").is_ok()
+}
+fn uzak_iz() -> bool {
+    crate::iz_acik() && std::env::var("ALAN_UZAK_IZ").is_ok()
+}
 
 /// JS prensipDegerle0 (decide.js:7126): seçenekleri prensiple tartar (Vur, İlerlet, Güvene al, Çevir,
 /// Alana sür, Çalım, Kalkan, Bekle); sonra arkadaşların ve taşıyanın değerini m._prT'ye yazar.
@@ -715,8 +729,15 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                     if d.team == team || bekci(d) || d.noTouch {
                         continue;
                     }
+                    let uz = hypot(d.x - kq.x, d.y - kq.y);
+                    if uzak_kis() && uz > UZAK_R {
+                        continue;
+                    }
                     let c = cx_siz(&mut CXS, &cx, d);
                     let v2 = nodeV(k, c, kq, Tk, 0.0, None);
+                    if uzak_iz() {
+                        eprintln!("UZAK {:.2} {:.6}", uz, jmax(0.0, v2 - vk));
+                    }
                     if v2 > vk {
                         mm.push((format!("{}|{}", js_sayi(kq.id), js_sayi(d.id)), v2 - vk));
                     }
@@ -736,8 +757,19 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                 if base.is_none() {
                     base = Some(nodeV(k, &mut cx, &h, k.D.sutHazir, 0.0, None));
                 }
+                let uz = hypot(d.x - h.x, d.y - h.y);
+                if uzak_h() && uz > UZAK_R {
+                    // listede kalır (Mk: tartılan rakipler), değeri tartılmaz: uzak rakip taşıyıcıya etki etmiyor
+                    if !Mk.contains(&d.id) {
+                        Mk.push(d.id);
+                    }
+                    continue;
+                }
                 let c = cx_siz(&mut CXS, &cx, d);
                 let v = nodeV(k, c, &h, k.D.sutHazir, 0.0, None);
+                if uzak_iz() {
+                    eprintln!("UZAKH {:.2} {:.6}", uz, jmax(0.0, v - base.unwrap()));
+                }
                 if !Mk.contains(&d.id) {
                     Mk.push(d.id);
                 }
