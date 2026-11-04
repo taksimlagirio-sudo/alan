@@ -282,6 +282,16 @@ pub struct Oyuncu {
     pub _dalis: Option<f64>,
     /// (Rust) yetenek satırı: `a`dan maç başında kurulur (ALAN_Y)
     pub yet: crate::yetenek::Yetenek,
+    /// (mac) `slowT`: omuzla yavaşlama bitişi
+    pub slowT: Option<f64>,
+    /// (mac) `kenarW`: kenardan çalımın yol noktası
+    pub kenarW: Option<crate::mac::KenarW>,
+    /// (mac) `fkBlock`, `fkCool`: fake sonrası bekleme
+    pub fkBlock: bool,
+    pub fkCool: Option<f64>,
+    /// (mac) `gvH`, `gvCd`: gövdeyle vurma hamlesi
+    pub gvH: Option<JPHamle>,
+    pub gvCd: Option<f64>,
 }
 
 /// JS `b`
@@ -351,6 +361,8 @@ pub struct TopEk {
     pub gon: bool,
     /// `shotPk`: number (sonradan eklenir)
     pub shotPk: Option<f64>,
+    /// (mac) `_dk0`: direk sayacının son görülen değeri
+    pub _dk0: f64,
 }
 
 /// JS `m`
@@ -369,7 +381,7 @@ pub struct Mac {
     /// `score`: dizi
     pub score: Vec<f64>,
     /// `ball`: TOP|null
-    pub ball: Option<TopRef>,
+    pub ball: Option<MacTop>,
     /// `holder`: OYUNCU|null
     pub holder: Option<Pid>,
     /// `ch`: number
@@ -381,11 +393,11 @@ pub struct Mac {
     /// `fl`: null|object
     pub fl: Option<JMFl>,
     /// `tac`: dizi
-    pub tac: Vec<JMTacE>,
+    pub tac: Vec<crate::mac::Tac>,
     /// `st`: object
     pub st: JMSt,
     /// `diz`: dizi (sonradan eklenir)
-    pub diz: Option<Vec<JMDizE>>,
+    pub diz: Option<Vec<Option<crate::mac::Diz>>>,
     /// `winT`: null|number
     pub winT: Option<f64>,
     /// `gecis`: boolean
@@ -397,11 +409,11 @@ pub struct Mac {
     /// `ra`: dizi (sonradan eklenir)
     pub ra: Option<Vec<std::collections::BTreeMap<usize, JMRaEE>>>,
     /// `tac0`: dizi (sonradan eklenir)
-    pub tac0: Option<Vec<JMTac0E>>,
+    pub tac0: Option<Vec<Option<crate::mac::Tac>>>,
     /// `evre`: dizi (sonradan eklenir)
-    pub evre: Option<Vec<JMEvreE>>,
+    pub evre: Option<Vec<Option<JMEvreE>>>,
     /// `_macC`: object (sonradan eklenir)
-    pub _macC: Option<JM_macC>,
+    pub _macC: Option<std::collections::BTreeMap<String, crate::mac::MacW>>,
     /// `macDurum`: dizi (sonradan eklenir)
     pub macDurum: Option<Vec<Option<JMMacDurumE>>>,
     /// `_sn`: Map (sonradan eklenir)
@@ -415,7 +427,7 @@ pub struct Mac {
     /// `att`: number (sonradan eklenir)
     pub att: Option<f64>,
     /// `_perde`: null
-    pub _perde: Option<JsDeger>,
+    pub _perde: Option<crate::mac::Perde>,
     /// `_kuyuTop`: number (sonradan eklenir)
     pub _kuyuTop: Option<f64>,
     /// `_temaslar`: object (sonradan eklenir)
@@ -435,9 +447,9 @@ pub struct Mac {
     /// `_pas`: object (sonradan eklenir)
     pub _pas: Option<JM_pas>,
     /// `_gelenB`: TOPKOPYA|null|object
-    pub _gelenB: Option<TopRef>,
+    pub _gelenB: Option<Box<MacTop>>,
     /// `_onHk`: null
-    pub _onHk: Option<JsDeger>,
+    pub _onHk: Option<JP_onH>,
     /// `_inSp`: number (sonradan eklenir)
     pub _inSp: Option<f64>,
     /// `_temas`: object (sonradan eklenir)
@@ -456,6 +468,33 @@ pub struct Mac {
     pub _yzBekle: bool,
     /// `_acikK`: object (sonradan eklenir)
     pub _acikK: Option<JM_acikK>,
+    /// (mac) `ps`: oyuncular (Pid = sıra)
+    pub ps: Vec<Oyuncu>,
+    /// (mac) `r`: maçın zar dizisi
+    pub r: crate::rng::Rng,
+    /// (mac) `events`: olaylar (en yenisi başta, en çok 120)
+    pub events: Vec<crate::mac::Olay>,
+    /// (mac) taslakta olmayan maç alanları (_lite, _kafa, fake, __mH …)
+    pub mac: crate::mac::MacEk,
+}
+
+/// (mac) Maç topu `m.ball`: fizik ve temas `temas::TopT`'de, ek alanlar `TopEk`'te
+/// (TopEk'in TopT'de karşılığı olan alanları kullanılmaz). `Deref` fiziğe (`Top`) iner.
+#[derive(Clone, Debug)]
+pub struct MacTop {
+    pub tt: crate::temas::TopT,
+    pub ek: TopEk,
+}
+impl std::ops::Deref for MacTop {
+    type Target = crate::top::Top;
+    fn deref(&self) -> &crate::top::Top { &self.tt.b }
+}
+impl std::ops::DerefMut for MacTop {
+    fn deref_mut(&mut self) -> &mut crate::top::Top { &mut self.tt.b }
+}
+impl MacTop {
+    /// topun kimliği (JS nesne kimliği)
+    pub fn kimlik(&self) -> TopRef { self.tt.t.kimlik }
 }
 
 /// JS `D`
@@ -774,6 +813,18 @@ pub struct Secenek {
     pub lead: Option<JOLead>,
     /// `hold`: number (sonradan eklenir)
     pub hold: Option<f64>,
+    /// (mac) maçın yazdığı / okuduğu, taslakta olmayan alanlar
+    pub savW: Option<f64>,
+    pub savU: Option<f64>,
+    pub ot: Option<f64>,
+    pub noErr: bool,
+    pub why: Option<String>,
+    pub devam: Option<f64>,
+    pub wp: Option<JOTo>,
+    pub wp1: Option<JOTo>,
+    pub show: Option<crate::mac::gecici_dis::FakeShow>,
+    /// (mac) kafa günlüğü için seçeneğin kimliği (JS nesne kimliği)
+    pub _kafaId: Option<u64>,
     /// `shot`: string (sonradan eklenir)
     pub shot: Option<String>,
 }
@@ -918,10 +969,10 @@ pub struct JPRslot0 {
 /// JS `p.tl`
 #[derive(Clone, Debug, Default)]
 pub struct JPTl {
-    /// `huc`: object
-    pub huc: JPTlHuc,
-    /// `sav`: object
-    pub sav: JPTlSav,
+    /// (mac) hücum talimatları: yalnız verilenler (JS'te eksik anahtar varsayılana düşer: mac::kurulum::tl)
+    pub huc: std::collections::BTreeMap<String, f64>,
+    /// (mac) savunma talimatları
+    pub sav: std::collections::BTreeMap<String, f64>,
 }
 
 /// JS `p.eg`
@@ -1034,7 +1085,7 @@ pub struct JPSavur {
     /// `t0`: number
     pub t0: f64,
     /// `o`: object
-    pub o: JPSavurO,
+    pub o: Box<Secenek>,
     /// `s`: number
     pub s: f64,
     /// `a`: number
@@ -1262,7 +1313,7 @@ pub struct JMFl {
     /// `q`: OYUNCU|null
     pub q: Option<Pid>,
     /// `to`: object
-    pub to: JMFlTo,
+    pub to: Option<JMFlTo>,
     /// `end`: object
     pub end: JMFlEnd,
     /// `shot`: string|undef
@@ -1350,9 +1401,9 @@ pub struct JMSt {
     /// `swN`: number
     pub swN: f64,
     /// `enH`: dizi
-    pub enH: Vec<JMStEnHE>,
+    pub enH: Vec<crate::mac::EnSayac>,
     /// `enP`: object
-    pub enP: std::collections::BTreeMap<usize, JMStEnPE>,
+    pub enP: std::collections::BTreeMap<usize, crate::mac::EnSayac>,
     /// `sprF`: dizi
     pub sprF: Vec<f64>,
     /// `sprT`: dizi
@@ -1362,7 +1413,13 @@ pub struct JMSt {
     /// `calim`: dizi
     pub calim: Vec<f64>,
     /// `cal`: object
-    pub cal: JMStCal,
+    pub cal: Option<JMStCal>,
+    /// (mac) taslakta olmayan sayaçlar (boş = yok)
+    pub fake: Vec<f64>,
+    pub fakeOk: Vec<f64>,
+    pub ot: Vec<f64>,
+    pub combo: Vec<f64>,
+    pub direk: Vec<f64>,
 }
 
 /// JS `m.diz[]`
@@ -1602,12 +1659,12 @@ pub struct JM_temaslar {
 pub struct JMNot {
     /// `p`: object
     pub p: std::collections::BTreeMap<usize, f64>,
-    /// `s`: number
-    pub s: f64,
-    /// `actor`: OYUNCU
-    pub actor: Pid,
-    /// `team`: number
-    pub team: f64,
+    /// `s`: number|null
+    pub s: Option<f64>,
+    /// `actor`: OYUNCU|null
+    pub actor: Option<Pid>,
+    /// `team`: number|null
+    pub team: Option<f64>,
 }
 
 /// JS `m.pre`
@@ -1618,7 +1675,7 @@ pub struct JMPre {
     /// `q`: OYUNCU
     pub q: Pid,
     /// `r`: object
-    pub r: JMPreR,
+    pub r: crate::mac::gecici_dis::Karar,
     /// `x`: number
     pub x: f64,
     /// `y`: number
@@ -1637,7 +1694,7 @@ pub struct JMCtl {
     /// `t`: number
     pub t: f64,
     /// `r`: object
-    pub r: JMCtlR,
+    pub r: crate::mac::gecici_dis::Karar,
 }
 
 /// JS `m._prT`
@@ -1727,7 +1784,7 @@ pub struct JMKp {
     /// `bitis`: number
     pub bitis: f64,
     /// `sahip`: OYUNCU
-    pub sahip: Pid,
+    pub sahip: Option<Pid>,
 }
 
 /// JS `m._acikK`
