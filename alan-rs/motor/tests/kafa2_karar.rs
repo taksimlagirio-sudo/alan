@@ -87,7 +87,7 @@ fn oyuncu(v: &Value) -> Oyuncu {
     p.noTouch = v["noTouch"].as_bool().unwrap_or(false);
     p.press = v["press"].as_bool().unwrap_or(false);
     p.sprint = v["sprint"].as_bool().unwrap_or(false);
-    p.job = v["job"].as_str().map(|s| s.to_string());
+    p.job = v["job"].as_str().map(|s| s.into());
     p.markRef = v["markRef"].as_u64().map(|x| x as usize);
     p.tutQ = v["tutQ"].as_u64().map(|x| x as usize);
     p._kv = nok(&v["kv"]).map(|n| JP_kv { x: n.x, y: n.y, t: 0.0 });

@@ -41,7 +41,7 @@ pub fn oyuncu(v: &Value) -> Oyuncu {
     let mut p = Oyuncu::default();
     p.name = v["name"].as_str().unwrap_or("").into();
     p.role = v["role"].as_str().unwrap_or("").into();
-    p.job = v["job"].as_str().map(|s| s.to_string());
+    p.job = v["job"].as_str().map(|s| s.into());
     let mut a = HamA::default();
     for (k, x) in v["a"].as_object().unwrap() {
         match k.as_str() {

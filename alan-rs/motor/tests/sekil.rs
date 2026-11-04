@@ -78,9 +78,9 @@ fn oyuncu(v: &Value) -> Oyuncu {
     p.sonuk = v["sonuk"].as_bool().unwrap();
     p.kuyuT = ho(&v["kuyuT"]);
     p.cd = h(&v["cd"]);
-    p.hist = Some(v["hist"].as_array().unwrap().iter().map(|e| JPHistE { x: h(&e[0]), y: h(&e[1]), vx: h(&e[2]), vy: h(&e[3]) }).collect());
-    p.past = Some(v["past"].as_array().unwrap().iter().map(|e| JPPastE { x: h(&e[0]), y: h(&e[1]) }).collect());
-    p._bk = bk(&v["bk"]);
+    p.hist = Some(v["hist"].as_array().unwrap().iter().map(|e| JPHistE { x: h(&e[0]), y: h(&e[1]), vx: h(&e[2]), vy: h(&e[3]) }).collect::<Vec<_>>().into());
+    p.past = Some(v["past"].as_array().unwrap().iter().map(|e| JPPastE { x: h(&e[0]), y: h(&e[1]) }).collect::<Vec<_>>().into());
+    p._bk = bk(&v["bk"]).map(std::sync::Arc::new);
     p._rcvB = if v["rcvB"].as_bool().unwrap() { Some(1) } else { None };
     p._rcvAbs = ho(&v["rcvAbs"]);
     p._rcvV = ho(&v["rcvV"]);
@@ -251,7 +251,7 @@ fn js_ile_bit_bit_ayni() {
         }
         // bak: önceki akıl kareleri üstüne
         for (i, p) in K.ps.iter_mut().enumerate() {
-            p._bk = bk(&c["bk0"][i]);
+            p._bk = bk(&c["bk0"][i]).map(std::sync::Arc::new);
         }
         bak(&mut K.mc());
         for i in 0..n {
@@ -352,7 +352,7 @@ fn js_ile_bit_bit_ayni() {
         if let Some(fj) = c.get("fr").filter(|f| !f.is_null()) {
             let mut K2 = kur(c);
             for (i, p) in K2.ps.iter_mut().enumerate() {
-                p._bk = bk(&c["bak"][i]);
+                p._bk = bk(&c["bak"][i]).map(std::sync::Arc::new);
             }
             match catch_unwind(AssertUnwindSafe(|| flightRead(&mut K2.mc()))) {
                 Err(_) => say.entry("flightRead").or_default().atla += 1,
