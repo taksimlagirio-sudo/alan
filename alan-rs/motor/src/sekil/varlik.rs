@@ -6,7 +6,7 @@
 //! `Oyuncu`), `r` = JS `o.ref`, `kim` = nesnenin kimin kopyası olduğu (JS `o === q`, `o.id === d.id`).
 #![allow(non_snake_case)]
 
-use std::collections::HashMap;
+
 use std::sync::Arc;
 
 use crate::model::{KafaD, Mac, Oyuncu, Pid, TopRef};
@@ -146,7 +146,7 @@ pub struct KpC {
     pub kH: f64,
     pub mut_: i32,
     /// JS `kc`: dünya (görenin sırası) × T → keepP
-    pub kc: HashMap<(Pid, u64), f64>,
+    pub kc: crate::HizliMap<(Pid, u64), f64>,
 }
 
 /// Yerleşimin kendi durumu: `m.sh`, görüş önbelleği (`m._sn`), JS modül değişkenleri (`_kpC`, `_tbC`),

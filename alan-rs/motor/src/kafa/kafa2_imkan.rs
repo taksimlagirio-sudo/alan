@@ -10,7 +10,7 @@ use super::kafa2_dunya::{bekKay, bekYerW};
 use crate::mat::{cos, exp, hypot, jmax, jmin, sin};
 use crate::model::Oyuncu;
 use crate::saha::{CY as GCY, H as GH, MOUTH, W as GW};
-use std::collections::HashMap;
+
 use std::sync::{Arc, Mutex};
 
 // ------------------------------------------------------------------ şut tablosu (ALAN_IMK_SUT_VE)
@@ -55,7 +55,7 @@ pub struct ImkBol {
     st: f64,
     ci: usize,
     ct: f64,
-    tabs: HashMap<usize, Arc<(Vec<f64>, Vec<f64>)>>,
+    tabs: crate::HizliMap<usize, Arc<(Vec<f64>, Vec<f64>)>>,
 }
 impl ImkBol {
     fn tab(&mut self, tab: usize) -> Arc<(Vec<f64>, Vec<f64>)> {
@@ -109,7 +109,7 @@ fn nb(x: f64) -> u64 {
 fn imkBol(k: &mut Kafa, team: f64, x: f64, y: f64, dd: f64, sy: f64, ch: f64) -> Arc<Mutex<ImkBol>> {
     if !k.k2.IMKBT {
         k.k2.IMKBT = true;
-        k.k2.IMKB = HashMap::new();
+        k.k2.IMKB = Default::default();
     }
     let key = format!("{}|{}|{}|{}", nb(team), nb(x), nb(y), nb(ch));
     if let Some(e) = k.k2.IMKB.get(&key) {
@@ -121,7 +121,7 @@ fn imkBol(k: &mut Kafa, team: f64, x: f64, y: f64, dd: f64, sy: f64, ch: f64) ->
     let (di, dt) = fr(&IMK_DS, dd);
     let (si, st) = fr(&IMK_SY, sy);
     let (ci, ct) = fr(&IMK_CH, ch);
-    let e = Arc::new(Mutex::new(ImkBol { di, dt, si, st, ci, ct, tabs: HashMap::new() }));
+    let e = Arc::new(Mutex::new(ImkBol { di, dt, si, st, ci, ct, tabs: Default::default() }));
     k.k2.IMKB.insert(key, e.clone());
     e
 }
@@ -131,7 +131,7 @@ pub fn imkKov(k: &mut Kafa, p: &Oyuncu) -> (f64, f64) {
     let t = k.mac.as_ref().map(|m| m.tick);
     if k.k2.IMKKt != Some(t) {
         k.k2.IMKKt = Some(t);
-        k.k2.IMKK = HashMap::new();
+        k.k2.IMKK = Default::default();
     }
     let key = format!("{}|{}", p.team, p.id);
     if let Some(r) = k.k2.IMKK.get(&key) {

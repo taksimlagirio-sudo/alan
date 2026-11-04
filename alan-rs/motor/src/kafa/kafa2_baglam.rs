@@ -9,7 +9,7 @@
 
 use crate::mat::dogru;
 use crate::model::{JMTacE, KafaD, Oyuncu};
-use std::collections::HashMap;
+
 use std::sync::Arc;
 
 pub type Op = Arc<Oyuncu>;
@@ -225,20 +225,20 @@ pub struct HoldW {
 #[derive(Default)]
 pub struct Kafa2Durum {
     /// pwKos: oyuncu nesnesi (kimlik) → koşu satırları
-    pub PWM: HashMap<usize, (Op, Vec<PwE>)>,
+    pub PWM: crate::HizliMap<usize, (Op, Vec<PwE>)>,
     pub PWT: Option<f64>,
     /// holdWorld._c
     pub hold_c: Option<(Op, usize, f64, Option<f64>, f64, HoldW)>,
     /// bskTab
-    pub BSK: HashMap<String, Vec<f64>>,
+    pub BSK: crate::HizliMap<String, Vec<f64>>,
     pub BSKt: Option<f64>,
     /// bosluk: dünya (kimlik) → anahtar → değer
-    pub BSC: HashMap<usize, (Arc<Dunya>, f64, HashMap<String, f64>)>,
+    pub BSC: crate::HizliMap<usize, (Arc<Dunya>, f64, crate::HizliMap<String, f64>)>,
     /// imkBol önbelleği (tablo × konum)
-    pub IMKB: HashMap<String, Arc<std::sync::Mutex<crate::kafa::kafa2_imkan::ImkBol>>>,
+    pub IMKB: crate::HizliMap<String, Arc<std::sync::Mutex<crate::kafa::kafa2_imkan::ImkBol>>>,
     pub IMKBT: bool,
     /// imkKov: "team|id" → (tepki, hız)
-    pub IMKK: HashMap<String, (f64, f64)>,
+    pub IMKK: crate::HizliMap<String, (f64, f64)>,
     pub IMKKt: Option<Option<f64>>,
     /// ileriTab: (tick, anahtar, tablo)
     pub IT: Option<(f64, String, Option<Arc<crate::kafa::kafa2_zemin::IleriTab>>)>,

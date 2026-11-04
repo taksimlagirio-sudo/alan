@@ -105,7 +105,7 @@ fn takim_toplam(src: &[Etki], x: f64, y: f64) -> f64 {
 pub struct KOnbellek {
     v: Vec<f64>,
     f: Vec<u8>,
-    dis: std::collections::HashMap<i64, f64>,
+    dis: crate::HizliMap<i64, f64>,
 }
 impl KOnbellek {
     pub fn yeni() -> Self {

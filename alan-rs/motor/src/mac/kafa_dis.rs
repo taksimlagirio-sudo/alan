@@ -76,8 +76,24 @@ impl MacDis {
 fn gecY_k(y: &sekil::gec::GecY) -> Arc<d1::GecY> {
     Arc::new(d1::GecY { g: y.g, m: Some(y.m.to_vec()) })
 }
+thread_local! {
+    /// Yerleşimin gecikme eğrilerinin (önbellekte, değişmez) kafa biçimi: bir kez dönüştürülür.
+    /// Anahtar eğrinin Arc adresi; yerleşimin Arc'ı da tutulur ki adres başka eğriye geçmesin.
+    static GECY_K: std::cell::RefCell<crate::HizliMap<usize, (Arc<sekil::gec::GecY>, Arc<d1::GecY>)>> = std::cell::RefCell::new(Default::default());
+}
+fn gecY_k_arc(y: &Arc<sekil::gec::GecY>) -> Arc<d1::GecY> {
+    let k = Arc::as_ptr(y) as usize;
+    GECY_K.with(|c| {
+        if let Some((_, d)) = c.borrow().get(&k) {
+            return d.clone();
+        }
+        let d = gecY_k(y);
+        c.borrow_mut().insert(k, (y.clone(), d.clone()));
+        d
+    })
+}
 fn gecTab_k(g: &sekil::gec::GecTab) -> d1::GecTab {
-    d1::GecTab { vx: g.vx, vy: g.vy, s0: g.s0, x: g.x, y: g.y, t: g.t.to_vec(), Y: g.Y.iter().map(|y| gecY_k(y)).collect(), vm: g.vm }
+    d1::GecTab { vx: g.vx, vy: g.vy, s0: g.s0, x: g.x, y: g.y, t: g.t.to_vec(), Y: g.Y.iter().map(gecY_k_arc).collect(), vm: g.vm }
 }
 fn gecTab_s(g: &d1::GecTab) -> sekil::gec::GecTab {
     let Y: Vec<Arc<sekil::gec::GecY>> = g

@@ -6,7 +6,7 @@
 #![allow(non_snake_case)]
 
 use std::cell::RefCell;
-use std::collections::HashMap;
+
 use std::sync::Arc;
 
 use crate::mat::{hypot, jmax, jmin, jround};
@@ -54,8 +54,8 @@ struct GtbK {
 }
 
 thread_local! {
-    static GEC: RefCell<HashMap<GecK, Arc<GecY>>> = RefCell::new(HashMap::new());
-    static GTB: RefCell<HashMap<GtbK, Arc<([f64; 9], [Arc<GecY>; 9])>>> = RefCell::new(HashMap::new());
+    static GEC: RefCell<crate::HizliMap<GecK, Arc<GecY>>> = RefCell::new(Default::default());
+    static GTB: RefCell<crate::HizliMap<GtbK, Arc<([f64; 9], [Arc<GecY>; 9])>>> = RefCell::new(Default::default());
 }
 
 /// JS `VMQ`: azami hızın nicelenmesi.

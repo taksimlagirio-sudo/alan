@@ -167,7 +167,7 @@ struct Ctx0<'a> {
     tac: Option<&'a Tac>,
     lossAt: Option<KayipRef>,
     kf: Option<eski::KontraF>,
-    sd: std::collections::HashMap<String, Arc<Dunya>>,
+    sd: crate::HizliMap<String, Arc<Dunya>>,
     RV: Option<(f64, f64, f64, f64)>,
 }
 

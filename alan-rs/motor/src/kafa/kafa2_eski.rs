@@ -15,7 +15,7 @@ use super::kafa2_dunya::bekKay;
 use crate::mat::{atan2, cos, dogru, exp, hypot, jmax, jmin, pow, sin};
 use crate::model::{Oyuncu, SecAmac, Secenek};
 use crate::saha::{CY as GCY, W as GW};
-use std::collections::HashMap;
+
 use std::sync::Arc;
 
 /// JS D._zin (zincir haritası: arkadaş id → değer)
@@ -89,11 +89,11 @@ pub struct KontraF {
     team: f64,
     ch: f64,
     h: Op,
-    C2: HashMap<u64, f64>,
+    C2: crate::HizliMap<u64, f64>,
     Z: Option<Vec<(Op, f64)>>,
 }
 pub fn kontraKur(src: Arc<Dunya>, team: f64, ch: f64, h: Op) -> KontraF {
-    KontraF { src, team, ch, h, C2: HashMap::new(), Z: None }
+    KontraF { src, team, ch, h, C2: Default::default(), Z: None }
 }
 impl KontraF {
     fn zK(&mut self, k: &mut Kafa) -> Vec<(Op, f64)> {
@@ -319,7 +319,7 @@ pub fn amac(k: &mut Kafa, hi: Pid, opts: &mut [Secenek], tac: Option<&Tac>, src:
         }
         n
     };
-    let mut Wk: HashMap<String, Dunya> = HashMap::new();
+    let mut Wk: crate::HizliMap<String, Dunya> = Default::default();
     let mut kosuDun = |k: &mut Kafa, B: Nokta, T: f64| -> Dunya {
         let key = format!("{}|{}|{}", crate::mat::jround(B.x), crate::mat::jround(B.y), crate::mat::jround(T / 5.0));
         if let Some(w) = Wk.get(&key) {
@@ -332,7 +332,7 @@ pub fn amac(k: &mut Kafa, hi: Pid, opts: &mut [Secenek], tac: Option<&Tac>, src:
     let O: Vec<Op> = src.iter().filter(|o| o.team != team && !bekci(o) && !o.noTouch).cloned().collect();
     let n0 = secenek(k, h.x, h.y, &h, src);
     let gB = gD(h.x, h.y);
-    let mut memo: HashMap<String, f64> = HashMap::new();
+    let mut memo: crate::HizliMap<String, f64> = Default::default();
     for o in opts.iter_mut() {
         if o.v.is_none() || o.kind == "gönder" || o.kind == "fake" {
             continue;
