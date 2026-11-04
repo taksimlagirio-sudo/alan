@@ -153,6 +153,22 @@ pub fn imkOrt(p: &Oyuncu) -> f64 {
     s / v.len() as f64
 }
 
+thread_local! {
+    static SAHTE: std::cell::Cell<Option<Box<Oyuncu>>> = const { std::cell::Cell::new(None) };
+}
+/// `f(&sahte(team, x, y, id))` ile aynı, ama sahte oyuncu her çağrıda yeniden kurulmaz: ödünç alınıp
+/// yalnız bu dört alan yazılır (geri kalanı hep varsayılan; f yalnız okur), sonra geri konur. İç içe çağrıda yenisi kurulur.
+pub fn sahte_ile<R>(team: f64, x: f64, y: f64, id: f64, f: impl FnOnce(&Oyuncu) -> R) -> R {
+    let mut o = SAHTE.with(|c| c.take()).unwrap_or_else(|| Box::new(Oyuncu::bos()));
+    o.team = team;
+    o.x = x;
+    o.y = y;
+    o.id = id;
+    let r = f(&o);
+    SAHTE.with(|c| c.set(Some(o)));
+    r
+}
+
 /// Sahte oyuncu (JS `{ team, x, y, id: -1 }` gibi kısmi nesneler)
 pub fn sahte(team: f64, x: f64, y: f64, id: f64) -> Oyuncu {
     let mut o = Oyuncu::bos();
@@ -418,9 +434,10 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             while y <= GCY + 18.0 {
                 let tr = rak.iter().map(|o| varB(k, o, x, y)).collect();
                 let yer = bk.as_ref().map(|b| {
-                    let hold = sahte(team, x, y, -1.0);
-                    let fm = dis::Fm { tac: &tac, ps: w, holder: Some(&hold) };
-                    dis::AS_bekci(k, b, nk(x, y), Some(&fm))
+                    sahte_ile(team, x, y, -1.0, |hold| {
+                        let fm = dis::Fm { tac: &tac, ps: w, holder: Some(hold) };
+                        dis::AS_bekci(k, b, nk(x, y), Some(&fm))
+                    })
                 });
                 zs.push(ImkZ { i: zs.len(), x, y, tr, yer });
                 y += IMK_HUC;
@@ -653,10 +670,10 @@ pub fn sutYol(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, tS: Option<f64>
         Some(t) => imkSap(t),
     };
     let gx = if t0(team) { GW } else { 0.0 };
-    let mut hh = sahte(team, x, y, -9.0);
-    hh.role = "".into();
+    // sahte taşıyıcı (rolü boş: varsayılan zaten "")
+    let hedef = sahte_ile(team, x, y, -9.0, |hh| dis::sutHedef(k, hh, w, gx));
     let mut en: f64 = 0.0;
-    for yt in dis::sutHedef(k, &hh, w, gx) {
+    for yt in hedef {
         let d = veya(hypot(gx - x, yt - y), 1.0);
         let ux = (gx - x) / d;
         let uy = (yt - y) / d;

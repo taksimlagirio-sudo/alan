@@ -259,8 +259,12 @@ impl Dis for MacDis {
             m.tick = tick;
             ek.sh.gs = gs.as_ref().map(|g| Gs { t: g.t, dt: g.dt as u8, on: g.on, onP: g.onP, oy: g.oy });
             let onK0 = qv._onK.clone(); // ilkPres_h okur (kafa görünümünde), sonra geri konur
-            ps.clear();
-            ps.push(std::mem::replace(qv, Oyuncu::bos()));
+            // qv tampona yer değiştirerek girer (kopya yok); tamponda hep tek oyuncu
+            if ps.len() != 1 {
+                ps.clear();
+                ps.push(Oyuncu::bos());
+            }
+            std::mem::swap(qv, &mut ps[0]);
             // ilkPres_h tehlikelerin yalnız ilkini okur: yalnız o çevrilir
             let th: Vec<sekil::takim::Tehlike> = TH.iter().take(1).map(|t| sekil::takim::Tehlike { an: t.an, w: t.w, w0: t.w0, x: t.x, y: t.y, k: t.k.clone(), L: t.L }).collect();
             let dtac = self.takim_tac(team);
@@ -268,13 +272,8 @@ impl Dis for MacDis {
             let kural = self.kural.get();
             let mut c = Mc { m, ps, ball: None, ek, k: &kural, d, lite: true, rnd: None };
             sekil::pres::ilkPres_h(&mut c, 0, hx, if team == 1.0 { 1 } else { 0 }, Some(&th), dtac);
-            let mut sonuc = std::mem::replace(&mut ps[0], Oyuncu::bos());
-            let (tx, ty, job) = (sonuc.tx, sonuc.ty, sonuc.job.take());
-            ps.clear();
-            *qv = sonuc;
-            qv.tx = tx;
-            qv.ty = ty;
-            qv.job = job;
+            // sonuç (tx, ty, job dahil) qv'ye geri döner; tamponda eski hâli kalır, bir sonraki çağrıda üzerine yazılır
+            std::mem::swap(qv, &mut ps[0]);
             // JS: qv nesnesi kesişme simülasyonu boyunca yaşar; ilkPres'in yazdığı pres planı (fake/iç) ve
             // sprint bir sonraki adımda görülür. (_onK bu görünümde yazılmaz.)
             qv._onK = onK0;
