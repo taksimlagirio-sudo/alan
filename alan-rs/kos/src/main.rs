@@ -1,6 +1,8 @@
 //! alan-kos: kayıttan maç oynat. Kullanım: alan-kos <kayit.json> <tik> [iz|ozet]
 //! iz: her tik bir satır (sina/istatistik.js okur); ozet: süre ve skor;
 //! kare <cikti.json>: izleme ekranı için bütün kareler (oyuncu yerleri, top, işler, olaylar).
+//! parmak: her tik bir satır, maçın gözlemlenebilir durumunun bit bit özeti (motor::parmak; sina/ayni.sh).
+//! Kayıt yerine anlar/ dosyası da verilebilir (içindeki `kurulum` kullanılır).
 use alan_motor::mac::motor::Motor;
 use alan_motor::oyun::MacMotoru;
 use std::io::Write;
@@ -13,6 +15,8 @@ fn main() {
     }
     let metin = std::fs::read_to_string(&a[1]).expect("kayıt okunamadı");
     let v: serde_json::Value = serde_json::from_str(&metin).expect("kayıt JSON değil");
+    // anlar/ dosyası: kurulum içinde
+    let v = match v.get("kurulum") { Some(k) if v.get("yeni").is_none() => k.clone(), _ => v };
     let tik: u32 = a[2].parse().expect("tik");
     let kip = a.get(3).map(|s| s.as_str()).unwrap_or("ozet");
     // paralel kafa (ALAN_ISCI=n): n-1 yardımcı iş parçacığı aynı maçı oynar, dalgaları bölüşür
@@ -53,6 +57,9 @@ fn main() {
         let s = mt.iz();
         if kip == "iz" {
             writeln!(out, "{}", s.json()).unwrap();
+        }
+        if kip == "parmak" {
+            writeln!(out, "{} {:016x}", mt.m.tick, alan_motor::parmak::parmak_izi(&mt.m)).unwrap();
         }
         if kip == "durum" {
             let m = &mt.m;
