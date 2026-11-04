@@ -15,6 +15,7 @@ pub mod oyuncu;
 pub mod rng;
 pub mod temas;
 pub mod saha;
+pub mod sekil;
 pub mod top;
 pub mod veri;
 pub mod yetenek;
