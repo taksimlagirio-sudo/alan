@@ -160,7 +160,7 @@ pub fn coverSpots(o: (f64, f64), att: u8, E: (f64, f64), targets: &[(f64, f64)],
 
 /// Ayrı kurulmuş koşu bedeni (JS `{a: p.a, x, y, vx, vy}`): yetenek p'nin, kimlik/bar yok.
 pub fn govdeF(p: &Oyuncu, x: f64, y: f64, vx: f64, vy: f64) -> Oyuncu {
-    let mut f = Oyuncu::default();
+    let mut f = Oyuncu::bos();
     f.a = p.a.clone();
     f.yet = p.yet.clone();
     f.id = f64::NAN;
@@ -225,7 +225,7 @@ pub struct TvAday {
 }
 
 /// JS iş adı `/^(markaj|arkada)/`.
-fn markajci(job: &Option<String>) -> bool {
+fn markajci(job: &Option<std::sync::Arc<str>>) -> bool {
     match job {
         Some(j) => j.starts_with("markaj") || j.starts_with("arkada"),
         None => false,

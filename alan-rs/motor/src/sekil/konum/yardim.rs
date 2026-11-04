@@ -9,11 +9,11 @@ use super::super::gecici_dis as dis;
 use super::super::*;
 
 /// JS iş adının başı (regex `^(a|b|…)`).
-pub(super) fn bas(job: &Option<String>, on: &[&str]) -> bool {
+pub(super) fn bas(job: &Option<std::sync::Arc<str>>, on: &[&str]) -> bool {
     let j = job.as_deref().unwrap_or("");
     on.iter().any(|o| j.starts_with(o))
 }
-pub(super) fn icerir(job: &Option<String>, s: &str) -> bool {
+pub(super) fn icerir(job: &Option<std::sync::Arc<str>>, s: &str) -> bool {
     job.as_deref().unwrap_or("").contains(s)
 }
 /// JS tl(p, ev, k) sayı olarak (null → 0: kullanıldığı her yerde aynı sonuç).

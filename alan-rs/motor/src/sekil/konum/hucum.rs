@@ -694,7 +694,7 @@ impl Sv {
             "açılan boşluk".into()
         } else {
             match &pm.rh {
-                Some(rh) if !rh.is_empty() && rh != "Serbest" => rh.to_lowercase(),
+                Some(rh) if !rh.is_empty() && &**rh != "Serbest" => rh.to_lowercase().into(),
                 _ => "boşluk".into(),
             }
         });
@@ -718,8 +718,8 @@ impl Sv {
         };
         let pm = &mut c.ps[p];
         if let Some(j) = yeni {
-            pm.job = Some(j.clone());
-            pm._amacJob = Some(j);
+            pm.job = Some(j.into());
+            pm._amacJob = pm.job.clone();
         }
         pm.sprint = hypot(pm.tx - pm.x, pm.ty - pm.y) > S.W.runSprint;
     }
@@ -932,8 +932,8 @@ impl Sv {
                             pp._kv = None;
                             pp.sprint = bd > 3.0;
                             let j = format!("yol kes · {}", nm);
-                            pp.job = Some(j.clone());
-                            pp._amacJob = Some(j);
+                            pp.job = Some(j.into());
+                            pp._amacJob = pp.job.clone();
                         }
                     }
                 }

@@ -528,10 +528,10 @@ impl Sv {
                         c.ps[p].ty = GCY + (J.g.1 - GCY) * kk;
                     }
                 }
-                c.ps[p].job = Some(J.job.clone());
+                c.ps[p].job = Some(J.job.clone().into());
                 if c.ps[p]._blokT == Some(tick) {
                     let nm = c.ps[J.q].name.clone();
-                    c.ps[p].job = Some(format!("arkada · blokta ({})", nm));
+                    c.ps[p].job = Some(format!("arkada · blokta ({})", nm).into());
                 }
                 c.ps[p].tutQ = Some(J.q);
                 if J.sprint {
@@ -637,7 +637,7 @@ impl Sv {
                     let pp = &mut c.ps[p];
                     pp.tx = g.0;
                     pp.ty = g.1;
-                    pp.job = Some(format!("markaj · {}", nm));
+                    pp.job = Some(format!("markaj · {}", nm).into());
                     pp.tutQ = Some(q);
                     return true;
                 }
@@ -667,7 +667,7 @@ impl Sv {
                 let pp = &mut c.ps[p];
                 pp.tx = 0.7 * g1.0 + 0.3 * g2.0;
                 pp.ty = 0.7 * g1.1 + 0.3 * g2.1;
-                pp.job = Some(format!("karşıla · {}", hp.name));
+                pp.job = Some(format!("karşıla · {}", hp.name).into());
                 pp.tutQ = Some(o);
                 return true;
             }
@@ -684,7 +684,7 @@ impl Sv {
             let pp = &mut c.ps[p];
             pp.tx = g.0;
             pp.ty = g.1;
-            pp.job = Some(format!("arkada · {}", nm));
+            pp.job = Some(format!("arkada · {}", nm).into());
             // JS `p.tutQ = o.ref || null`: o gerçek oyuncu, ref'i yok → null
             pp.tutQ = None;
             return true;
@@ -745,7 +745,7 @@ impl Sv {
             let nm = c.ps[q].name.clone();
             if self.adamT(c, p) {
                 let pp = &mut c.ps[p];
-                pp.job = Some(format!("markaj · {}", nm));
+                pp.job = Some(format!("markaj · {}", nm).into());
                 pp.tutQ = Some(q);
                 pp.tx = g.0;
                 pp.ty = g.1;
@@ -754,7 +754,7 @@ impl Sv {
             let w = S.markW * (0.6 + 0.02 * yerM(&c.ps[p]));
             tx += (g.0 - tx) * w;
             ty += (g.1 - ty) * w;
-            c.ps[p].job = Some(format!("bölge · {}", nm));
+            c.ps[p].job = Some(format!("bölge · {}", nm).into());
             c.ps[p].tutQ = Some(q);
         } else {
             let dx = ownX(dt) - E.0;
@@ -927,8 +927,7 @@ impl Sv {
                         if self.gD(pp.x, pp.y) >= gE + pay && !pp.sprint {
                             let pp = &mut c.ps[p];
                             pp.sprint = true;
-                            let j = pp.job.get_or_insert_with(String::new);
-                            j.push_str(" · geri");
+                            pp.job = Some(format!("{} · geri", pp.job.as_deref().unwrap_or("")).into());
                         }
                         continue;
                     }

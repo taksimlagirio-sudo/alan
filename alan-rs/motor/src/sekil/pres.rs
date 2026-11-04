@@ -87,7 +87,7 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
         c.ps[pi].tx = x;
         c.ps[pi].ty = y;
     };
-    let job = |c: &mut Mc, j: String| c.ps[pi].job = Some(j);
+    let job = |c: &mut Mc, j: String| c.ps[pi].job = Some(j.into());
     if !trap {
         let ox = ownX(dt);
         let KS = presKesis(&c.ps[pi], &h, dt, k, c.d);

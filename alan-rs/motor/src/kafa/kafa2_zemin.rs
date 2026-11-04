@@ -179,7 +179,7 @@ pub fn ileriKur(k: &mut Kafa, m: &MacGor) -> Option<IleriTab> {
         .ps
         .iter()
         .map(|p| {
-            let mut d = Oyuncu::default();
+            let mut d = Oyuncu::bos();
             d.id = p.id;
             d.team = p.team;
             d.i = p.i;
