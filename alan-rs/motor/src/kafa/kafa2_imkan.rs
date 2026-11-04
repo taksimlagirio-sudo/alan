@@ -532,6 +532,8 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             ImkE { ta, k: kk, tv: ta + k.D.sutHazir, kalkis, q, S: None }
         }
     };
+    // hücrenin şut yolu açıklığı oyuncuya bağlı değil (sutYol bu girdilerle saf): hücre başına bir kez
+    let SY: Vec<std::cell::Cell<Option<f64>>> = vec![std::cell::Cell::new(None); zs.len()];
     // Sof: hücreden şutun değeri
     let Sof = |k: &mut Kafa, oi: usize, zi: usize, ta: f64, kalkis: f64, q: Option<Nokta>| -> f64 {
         let o = &biz[oi];
@@ -545,7 +547,15 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             (None, _) => nk(0.0, 0.0),
         };
         let r = sutTab(k, w, team, z.x, z.y, ch, Some(&o.p), Some(0.96), z.yer, bkAt(z, bas, kalkis, ta), Some(ta + k.D.sutHazir));
-        r * sutYol(k, w, team, z.x, z.y, None)
+        let sy = match SY[zi].get() {
+            Some(v) => v,
+            None => {
+                let v = sutYol(k, w, team, z.x, z.y, None);
+                SY[zi].set(Some(v));
+                v
+            }
+        };
+        r * sy
     };
     let imk = |k: &mut Kafa, TY: &mut Vec<Option<TopYol>>, IC: &mut Vec<Vec<Option<ImkE>>>, oi: usize, zi: usize, tR: f64| -> (f64, ImkE) {
         let e = match IC[oi][zi] {
