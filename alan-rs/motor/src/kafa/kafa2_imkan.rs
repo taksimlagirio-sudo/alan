@@ -449,7 +449,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             let lo = if kalan > 0.5 { dis::laneOk(k, w, team, q, nk(x, y), Some(k.D.arriveFirm), Some(k.D.sutHazir)) } else { 1.0 };
             let t = s / vh + if kalan > 0.5 { dis::ucusT(k, kalan, k.D.arriveFirm, None) + k.D.sutHazir } else { 0.0 };
             let kk = kk_ * lo;
-            if x == 104.0 && y == 36.0 && std::env::var("ALAN_IMK_HU").is_ok() {
+            if x == 104.0 && y == 36.0 && crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
                 eprintln!("    ty s {} kalan {:.3} k {:.6} lo {:.6} t {:.3}", s, kalan, kk_, lo, t);
             }
             if 1e3 * kk - t > 1e3 * best.k - best.t {
@@ -583,7 +583,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
                 }
             };
             let (p, e) = imk(k, TY, IC, a, zi, tR);
-            if di.is_none() && biz[a].p.name == "Kaan" && z.x == 104.0 && z.y == 36.0 && std::env::var("ALAN_IMK_HU").is_ok() {
+            if di.is_none() && biz[a].p.name == "Kaan" && z.x == 104.0 && z.y == 36.0 && crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
                 eprintln!("    kaan ön z {} {} tR {:.3} p {:.6} ta {:.3} k {} kalkis {} q {:?}", z.x, z.y, tR, p, e.ta, e.k, e.kalkis, e.q.map(|q| (q.x, q.y)));
             }
             if p * imkInan(k, e.ta) <= r.u {
@@ -591,7 +591,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             }
             let S = imkS(k, IC, a, zi);
             let u = p * S * imkInan(k, e.ta);
-            if di.is_none() && biz[a].p.name == "Kaan" && std::env::var("ALAN_IMK_HU").is_ok() {
+            if di.is_none() && biz[a].p.name == "Kaan" && crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
                 eprintln!("    kaan z {} {} tR {:.3} p {:.6} ta {:.3} S {:.6} u {:.6}", z.x, z.y, tR, p, e.ta, S, u);
             }
             if u > r.u {
@@ -626,7 +626,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
                 di = i as isize;
             }
         }
-        if std::env::var("ALAN_IMK_HU").is_ok() {
+        if crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
             eprintln!("  açg {} u {:.6} z {} {} tr {} → {}", biz[ba].p.name, bu, zs[rz].x, zs[rz].y, bos.iter().map(|&i| format!("{}:{:.3}", rak[i].p.name, zs[rz].tr[i])).collect::<Vec<_>>().join(" "), if di >= 0 { rak[di as usize].p.name.clone() } else { "-".into() });
         }
         atanan[ba] = Some(di);
@@ -637,7 +637,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         let r = enIyi(k, &mut TY, &mut IC, &bos, a, atanan[a]);
         let S = if r.z.is_some() { r.S } else { 0.0 };
         let p = if S > 0.0 { r.u / S } else { 0.0 };
-        if std::env::var("ALAN_IMK_HU").is_ok() {
+        if crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
             eprintln!("  hu {} u={:.6} S={:.6} ta={:.3} z={:?} kar={:?}", biz[a].p.name, r.u, S, r.ta, r.z.map(|z| (zs[z].x, zs[z].y)), atanan[a].and_then(|i| if i >= 0 { Some(rak[i as usize].p.name.clone()) } else { None }));
         }
         v = jmax(v, p * S);

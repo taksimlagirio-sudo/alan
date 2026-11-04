@@ -21,7 +21,7 @@ pub struct MacDis {
     pub kural: std::cell::Cell<MacKural>,
     pub ch: Option<f64>,
     /// (id, team, x, y)
-    pub holder: Option<(f64, f64, f64, f64)>,
+    pub holder: std::cell::Cell<Option<(f64, f64, f64, f64)>>,
     /// takım başına: etkin taktik (yerleşimin tipi)
     pub tacE: [sekil::gecici_dis::TacE; 2],
     /// takım başına: (m.tac[k].siddet, yz, macEff(m,k,{}).macK ?? 1)
@@ -66,7 +66,7 @@ impl MacDis {
             (p.id, p.team, p.x, p.y)
         });
         let gs = m.mac.sekil.sh.gs.as_ref().map(|g| JMShGs { t: g.t, dt: g.dt as f64, on: g.on, onP: g.onP, oy: g.oy, ..Default::default() });
-        MacDis { kural: std::cell::Cell::new(kural), ch: Some(m.ch), holder, tacE, siddet, enHarcama, gs, prT: m.mac.prT_k.clone(), mac: Arc::new(hafif(m)) }
+        MacDis { kural: std::cell::Cell::new(kural), ch: Some(m.ch), holder: std::cell::Cell::new(holder), tacE, siddet, enHarcama, gs, prT: m.mac.prT_k.clone(), mac: Arc::new(hafif(m)) }
     }
     fn takim_tac(&self, t: f64) -> &sekil::gecici_dis::TacE {
         &self.tacE[if t == 1.0 { 1 } else { 0 }]
@@ -267,7 +267,7 @@ impl Dis for MacDis {
         self.ch
     }
     fn mac_holder(&self) -> Option<(f64, f64, f64, f64)> {
-        self.holder
+        self.holder.get()
     }
     fn tac_enHarcama(&self, team: f64) -> Option<f64> {
         self.enHarcama[if team == 1.0 { 1 } else { 0 }]
@@ -366,6 +366,10 @@ pub fn kafa_hazirla(m: &mut Mac) -> Rc<RefCell<Kafa>> {
     let k = m.mac.kafa.k.clone().unwrap();
     if let Ok(mut kk) = k.try_borrow_mut() {
         kk.D._tick = Some(m.tick);
+        // JS D._mac = m (kafaAc): kafa maçı her an görür (ileri tablosu ilk okunduğunda kurulur)
+        if kk.mac.as_ref().map_or(true, |g| g.tick != m.tick) {
+            kk.mac = Some(crate::mac::gecici_dis::mac_gor(m));
+        }
     }
     if let Ok(kk) = k.try_borrow() {
         let v = (kk.dis.clone(), kk.D._tick);
@@ -387,7 +391,8 @@ thread_local! {
 pub fn kafa_ile<R>(f: impl FnOnce(&mut Kafa) -> R) -> R {
     let k = KAFA.with(|c| c.borrow().clone()).expect("kafa bağlamı kurulmadı (kafa_hazirla)");
     if let Ok(mut b) = k.try_borrow_mut() {
-        return f(&mut b);
+        let t = b.D._tick;
+        return crate::sekil::d_tick_ile(t, || f(&mut b));
     }
     let (dis, tick) = DIS.with(|d| d.borrow().clone()).expect("kafa dış dünyası kurulmadı");
     let yan = YAN.with(|y| {
@@ -404,7 +409,7 @@ pub fn kafa_ile<R>(f: impl FnOnce(&mut Kafa) -> R) -> R {
         b.dis = dis;
     }
     b.D._tick = tick;
-    f(&mut b)
+    crate::sekil::d_tick_ile(tick, || f(&mut b))
 }
 
 /// Dünyayı kafanın biçimine çevir.
@@ -435,5 +440,6 @@ pub fn kafa_bagla(dis: Arc<dyn crate::kafa::gecici_dis1::Dis>, tick: Option<f64>
 pub fn kural_tazele(m: &Mac) {
     if let Some(d) = &m.mac.kafa.dis {
         d.kural.set(MacKural::of(m));
+        d.holder.set(m.holder.map(|h| { let p = &m.ps[h]; (p.id, p.team, p.x, p.y) }));
     }
 }

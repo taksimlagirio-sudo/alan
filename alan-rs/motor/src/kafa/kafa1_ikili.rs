@@ -432,6 +432,7 @@ impl Kafa {
                         self.dis.ivme(&mut qv, wx, wy, vq);
                         qv.x += qv.vx;
                         qv.y += qv.vy;
+                        if KS_IZ.with(|f| f.get()) { eprintln!("     j {} r0 {} {} q {} {} {} {} hg {} {} job {:?}", j, r0.x, r0.y, qv.x, qv.y, qv.vx, qv.vy, hg.x, hg.y, qv.job); }
                         j += 1.0;
                     }
                     qv.pplan = None;
@@ -468,7 +469,7 @@ impl Kafa {
     fn hedefQ(&self, c: &Kc, rol: &PresRol, qv: &mut Oyuncu, hx: &Oyuncu, t: f64) -> Nk {
         match rol {
             PresRol::Ilk { TH, dtac, gs } => {
-                self.dis.ilkPres(c.t0 + t, qv, hx, c.q.team, TH, dtac, gs);
+                crate::sekil::d_tick_ile(Some(c.t0), || self.dis.ilkPres(c.t0 + t, qv, hx, c.q.team, TH, dtac, gs));
                 nk(qv.tx, qv.ty)
             }
             PresRol::An { an, r } => nk(hx.x + cos(*an) * r, hx.y + sin(*an) * r),
@@ -566,6 +567,7 @@ impl Kafa {
                 let wq = if L < 0.3 { 0.0 } else { jmin(vqD, 0.25 * L) };
                 let (wx, wy) = if L != 0.0 { (ux / L * wq, uy / L * wq) } else { (0.0, 0.0) };
                 self.dis.ivme(&mut s.qv, wx, wy, vqD);
+                if KS_IZ.with(|f| f.get()) { eprintln!("     t {} tx {} {} q {} {} {} {} h {} {} L {} vqD {} job {:?}", t, tx, ty, s.qv.x, s.qv.y, s.qv.vx, s.qv.vy, s.hv.x, s.hv.y, L, vqD, s.qv.job); }
             }
             {
                 let vW = c.vB * self.ikDen(&s.hv) * if g < IK.kalkanR { IK.kalkan } else { 1.0 };
@@ -880,6 +882,8 @@ impl Kafa {
                 }
                 None => jmax(0.0, qT - 0.5 * hT + kapa(yol, vO, away)),
             };
+            let KIZ = crate::iz_acik() && dir.map_or(false, |di| (di.x + 0.809017).abs() < 1e-4) && h.name == "Deniz" && std::env::var("ALAN_C3_IZ").ok().map_or(false, |x| x == format!("{}", self.tick()));
+            if KIZ { eprintln!("   KQ {} reach {} T {} keep0 {} e {:?} x {} {}", q.name, reachT, T, keep, self.dis.algi_e(q), q.x, q.y); }
             if reachT > T {
                 continue;
             }
@@ -912,13 +916,20 @@ impl Kafa {
                             let mut qs = q.clone();
                             qs.x = q.x + sx * a;
                             qs.y = q.y + sy * a;
-                            k4 += self.kesisK(h, &qs, di, T, src, hypot(h.x - qs.x, h.y - qs.y), rl);
+                            let ks0 = KS_IZ.with(|f| f.get());
+                            KS_IZ.with(|f| f.set(ks0 || (KIZ && sx == 1.0 && sy == 1.0 && !h.sprint)));
+                            if KIZ && sx == 1.0 && sy == 1.0 && !h.sprint { eprintln!("    QS ic={} {} {} {} {} yas {:?} job {:?} pplan {}", ks0, qs.x, qs.y, qs.vx, qs.vy, qs.__yas, qs.job, qs.pplan.is_some()); }
+                            let kk = self.kesisK(h, &qs, di, T, src, hypot(h.x - qs.x, h.y - qs.y), rl);
+                            KS_IZ.with(|f| f.set(ks0));
+                            k4 += kk;
                             s4 += self.kesisK_son.get();
+                            if KIZ { eprintln!("    S {} {} k {} son {} rl {:?} hspr {} {:?} hca {:?} hv {} {}", sx, sy, kk, self.kesisK_son.get(), rl, h.sprint, h._sf.as_ref().map(|s| s.f.clone()), h.ca, h.vx, h.vy); }
                         }
                         keep *= k4 / 4.0;
                         if s4 / 4.0 < ilS {
                             ilS = s4 / 4.0;
                         }
+                        if KIZ { eprintln!("   KK4 {} keep {} son {}", q.name, keep, s4 / 4.0); }
                     } else {
                         keep *= self.kesisK(h, q, di, T, src, d, rl);
                         if self.kesisK_son.get() < ilS {
@@ -1372,3 +1383,6 @@ impl Kafa {
         DU.thrLast
     }
 }
+
+thread_local! { static KS_IZ: std::cell::Cell<bool> = const { std::cell::Cell::new(false) }; }
+pub fn ks_iz() -> bool { KS_IZ.with(|f| f.get()) }

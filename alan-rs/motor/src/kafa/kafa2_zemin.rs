@@ -391,7 +391,12 @@ pub fn ileriDeger(k: &mut Kafa, team: f64, x: f64, y: f64) -> f64 {
 }
 /// JS ilerleme(w, team, x, y) (decide.js:6589)
 pub fn ilerleme(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64) -> f64 {
-    ileriDeger(k, team, x, y) * dis::freeAt(k, w, team, x, y)
+    let d = ileriDeger(k, team, x, y);
+    let f = dis::freeAt(k, w, team, x, y);
+    if crate::iz_acik() && std::env::var("ALAN_YD_IZ").is_ok() {
+        eprintln!("  iler {} {} ileriDeger {:.9} freeAt {:.9}", x, y, d, f);
+    }
+    d * f
 }
 /// JS zemin(w, team, x, y, ch, k) (decide.js:6590)
 pub fn zemin(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Option<&Oyuncu>) -> f64 {

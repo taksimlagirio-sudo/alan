@@ -182,6 +182,7 @@ impl Kafa {
             };
             let sfE = h._sf.as_ref().map_or(false, |s| s.f == "patlama" || s.f == "tepe");
             let kos = sfE || if YS { spr && h._sf.is_none() } else { h._sf.is_none() && h.en.unwrap_or(1.0) >= F.bedel && dir.unwrap().x * (if h.team == 0.0 { 1.0 } else { -1.0 }) > 0.5 && L >= 4.0 };
+            if L == 10.0 && spr && crate::iz_acik() && std::env::var("ALAN_C3_IZ").ok().map_or(false, |x| x == format!("{}", self.tick())) { eprintln!("   SSX {} holder {:?} h {} {} {} topla {} YS {} sf {} kos {}", h.name, self.dis.mac_holder(), h.id, h.x, h.y, F.topla, YS, h._sf.is_some(), kos); }
             if F.topla != 0.0 && !h.bekci() && tutan && kos {
                 let v = self.spd(h) * self.topK(h) * self.ikDen(h);
                 let pk = spr_h(h.yet.hiz);
@@ -207,6 +208,7 @@ impl Kafa {
                 };
                 let aft = if EB && !self.dis.ALAN_TASIYICI_SONRA_YAVAS() { 1.0 } else { F.after };
                 let d1 = v * pkE * T;
+                if L == 10.0 && crate::iz_acik() && std::env::var("ALAN_C3_IZ").ok().map_or(false, |x| x == format!("{}", self.tick())) { eprintln!("   SS {} v {} pk {} e0 {} Tt {} T {} pkE {} aft {} d1 {} en {:?} sf {}", h.name, v, pk, e0, Tt, T, pkE, aft, d1, h.en, h._sf.is_some()); }
                 return if L <= d1 { L / (v * pkE) + 2.0 } else { T + 2.0 + (L - d1) / (v * aft) };
             }
         }

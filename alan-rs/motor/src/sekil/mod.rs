@@ -209,3 +209,15 @@ pub fn sinh_k(a: f64) -> f64 {
 pub fn hy(x: f64, y: f64) -> f64 {
     hypot(x, y)
 }
+
+thread_local! {
+    /// JS `AlanDecide.D._tick` canlı değeri: yerleşim kafanın o anki tikini okur (sabit KafaD kopyasındaki değil).
+    pub static D_TICK: std::cell::Cell<Option<f64>> = const { std::cell::Cell::new(None) };
+}
+/// `D._tick`'i `t` yapıp `f`'i çalıştır, sonra eskisine döndür.
+pub fn d_tick_ile<T>(t: Option<f64>, f: impl FnOnce() -> T) -> T {
+    let e = D_TICK.with(|d| d.replace(t));
+    let r = f();
+    D_TICK.with(|d| d.set(e));
+    r
+}

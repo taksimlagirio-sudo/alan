@@ -116,8 +116,10 @@ pub fn mc_ile<T>(m: &mut Mac, f: impl FnOnce(&mut crate::sekil::varlik::Mc) -> T
     let d = kafa_d();
     let v = {
         let mut zar = || r.sonraki();
+        // JS D._tick: yalnız gerçek maçın adımı yazar (match.js step, !m._lite); ileri bakış kopyaları kafanınkini görür
+        let dt = if lite { crate::sekil::D_TICK.with(|t| t.get()) } else { Some(m.tick) };
         let mut c = Mc { m: &mut *m, ps: &mut ps, ball: ball.as_mut(), ek: &mut ek, k: &kural, d, lite, rnd: Some(&mut zar) };
-        f(&mut c)
+        crate::sekil::d_tick_ile(dt, || f(&mut c))
     };
     m.ps = ps;
     if let (Some(b), Some(t)) = (m.ball.as_mut(), ball) {
@@ -191,7 +193,7 @@ pub fn kafa_tac(t: &crate::mac::Tac) -> crate::kafa::kafa2_baglam::Tac {
     crate::kafa::kafa2_baglam::Tac { risk: t.risk, tempo: t.tempo, sabir: t.sabir, sut: t.sut, pasSurme: t.pasSurme, pasBoy: t.pasBoy, kontra: t.kontra == Some(true), macK: t.macK, macZ: mz, enDinlen: t.enDinlen, enYipratma: t.enYipratma, plan_taraf: None, temel: None }
 }
 /// JS `D._mac = m`: kafanın maç görünümü
-fn mac_gor(m: &Mac) -> crate::kafa::kafa2_baglam::MacGor {
+pub fn mac_gor(m: &Mac) -> crate::kafa::kafa2_baglam::MacGor {
     let tac = (0..2)
         .map(|t| {
             let q = m.tac.get(t).cloned().unwrap_or_default();
@@ -355,7 +357,7 @@ pub fn decide(m: &Mac, p: &Oyuncu, g: &[Oyuncu], ch: f64, r: &mut Rng, tE: &crat
     let mg = mac_gor(m);
     kafa_ile(|k| {
         k.mac = Some(mg);
-        if std::env::var("ALAN_IMK_IZ").ok().map_or(false, |v| v == format!("{}", m.tick)) {
+        if crate::iz_acik() && std::env::var("ALAN_IMK_IZ").ok().map_or(false, |v| v == format!("{}", m.tick)) {
             eprintln!("vh parça vSp {} topK {} SPRE {} SPR {} spd {}", k.vS(p), k.topK(p), k.dis.ALAN_SPRE(p), k.dis.ALAN_SPR(p), k.spd(p));
             for x in [20.0, 40.0, 60.0, 80.0, 100.0] {
                 for y in [10.0, 30.0, 50.0] {
@@ -366,7 +368,7 @@ pub fn decide(m: &Mac, p: &Oyuncu, g: &[Oyuncu], ch: f64, r: &mut Rng, tE: &crat
             }
         }
         let r = crate::kafa::kafa2_karar::decide(k, hi, &src, ch, &mut rng_fn(r), Some(&tac));
-        if std::env::var("ALAN_KARAR_IZ").ok().map_or(false, |v| v == "hepsi" || v == format!("{}", m.tick)) {
+        if crate::iz_acik() && std::env::var("ALAN_KARAR_IZ").ok().map_or(false, |v| v == "hepsi" || v == format!("{}", m.tick)) {
             eprintln!("tik {}\ndecide {} opts {}", m.tick, p.name, r.opts.len());
             for q in g {
                 eprintln!("  dunya {} {} {} {} {} {:?} {:?}", q.name, q.x, q.y, q.vx, q.vy, q.__e, q.__yas);
@@ -375,6 +377,13 @@ pub fn decide(m: &Mac, p: &Oyuncu, g: &[Oyuncu], ch: f64, r: &mut Rng, tE: &crat
             o.sort_by(|a, b| b.v.unwrap_or(f64::NAN).partial_cmp(&a.v.unwrap_or(f64::NAN)).unwrap_or(std::cmp::Ordering::Equal));
             for o in o {
                 eprintln!("  {:<34} {:<8} v={:.6} to={}", o.kind, o.q.map_or(String::new(), |q| g[q].name.clone()), o.v.unwrap_or(f64::NAN), o.to.as_ref().map_or("-".into(), |t| format!("{:.3},{:.3}", t.x, t.y)));
+            }
+        }
+        if crate::iz_acik() && std::env::var("ALAN_SUR_IZ").ok().map_or(false, |v| v == format!("{}", m.tick)) {
+            let mut o: Vec<&crate::model::Secenek> = r.opts.iter().filter(|o| o.kind == "sür").collect();
+            o.sort_by(|a, b| b.v.unwrap_or(f64::NAN).partial_cmp(&a.v.unwrap_or(f64::NAN)).unwrap_or(std::cmp::Ordering::Equal));
+            for o in o.iter().take(3) {
+                eprintln!("SUR to {:?} spr {:?} sprBos {:?} v {:?} _own {:?} TsE {:?} toE {:?} _pT {:?}\n   dok {:?}\n   det {:?}\n   en {:?}", o.to, o.spr, o.sprBos, o.v, o._own, o.TsE, o.toE, o._pT, o.dok, o.det, o.en);
             }
         }
         Karar { best: if r.best.is_some() { Some(0) } else { None }, opts: r.opts, T: r.T }

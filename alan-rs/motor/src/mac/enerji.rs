@@ -826,7 +826,7 @@ pub fn sprintKarar3(m: &mut Mac) {
         dene(f1 + 0.05, &mut fB, &mut vB);
         let (kS, _, _) = cK(fB);
         let _ = sS;
-        if std::env::var("ALAN_K3_IZ").ok().as_deref() == Some(&format!("{}:{}", m.tick, pi)) {
+        if crate::iz_acik() && std::env::var("ALAN_K3_IZ").ok().as_deref() == Some(&format!("{}:{}", m.tick, pi)) {
             eprintln!("K3 tD={tD} sS={sS} e={e} dol={dol} topa={topa} bizde={bizde} j={j} f={fB} b={b} vm={vm} hk={hk} kM={kM} Sy={Sy} decT={}", m.decT);
         }
         let p = &mut m.ps[pi];

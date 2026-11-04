@@ -105,6 +105,7 @@ pub fn ilkPres(c: &mut Mc, pi: Pid, hi: Pid, dt: u8, TH: Option<&[Tehlike]>, dta
             Some(t) => (px - h.x) * cos(t.0) + (py - h.y) * sin(t.0) > 1.0 && (!t.1 || (-(px - h.x) * sin(t.0) + (py - h.y) * cos(t.0)).abs() < 1.5),
             None => hypot(px - ox, py - GCY) < hypot(h.x - ox, h.y - GCY) - 0.5,
         };
+        if crate::kafa::kafa1_ikili::ks_iz() { eprintln!("      IP tick {} KS {:?} T1 {:?} g {:?} kt {} d0 {} h {} {} {} {} p {} {} {} {}", tick, KS, T1.as_ref().map(|t| t.0), g, kt, d0, h.x, h.y, h.vx, h.vy, px, py, c.ps[pi].vx, c.ps[pi].vy); }
         if !kt && (!(d0 < 1.6) || shielded(h.x, h.y, px, py, co.0, co.1)) {
             let hk = (h.vx * (ox - h.x) + h.vy * (GCY - h.y)) / {
                 let l = hypot(ox - h.x, GCY - h.y);
