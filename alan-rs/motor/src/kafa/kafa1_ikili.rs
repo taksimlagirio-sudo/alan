@@ -138,6 +138,10 @@ struct Kc<'a> {
 impl Kafa {
     /// Top sürerken hız katı (decide.js:244).
     pub fn topK(&self, h: &Oyuncu) -> f64 {
+        topK_p(h, self.dis.ALAN_DOKUNUS())
+    }
+    #[allow(dead_code)]
+    fn _topK_eski(&self, h: &Oyuncu) -> f64 {
         let s = h.yet.y(mek::TOPLU_KOSU);
         let b = match self.dis.ALAN_DOKUNUS() {
             Some(C0) => {
@@ -1112,25 +1116,7 @@ impl Kafa {
     }
     /// Çekirdeğin bulunduğu yön (decide.js:4561).
     pub fn coreSide(&self, h: &Oyuncu) -> CoreSide {
-        let sp = hypot(z0(h.vx), z0(h.vy));
-        let (ux, uy);
-        if let Some(ca) = h.ca {
-            ux = cos(ca);
-            uy = sin(ca);
-        } else if sp > 0.04 {
-            ux = h.vx / sp;
-            uy = h.vy / sp;
-        } else if hypot(h.tx - h.x, h.ty - h.y) > 0.5 {
-            let L = hypot(h.tx - h.x, h.ty - h.y);
-            ux = (h.tx - h.x) / L;
-            uy = (h.ty - h.y) / L;
-        } else {
-            let gx = if h.team == 0.0 { GW } else { 0.0 };
-            let L = ya(hypot(gx - h.x, GCY - h.y), 1.0);
-            ux = (gx - h.x) / L;
-            uy = (GCY - h.y) / L;
-        }
-        CoreSide { ux, uy, off: DU.core0 + sp * DU.coreV }
+        coreSide_p(h)
     }
     /// decide.js:4635
     pub fn coreAng(&self, h: &Oyuncu) -> f64 {
@@ -1387,3 +1373,38 @@ impl Kafa {
 
 thread_local! { static KS_IZ: std::cell::Cell<bool> = const { std::cell::Cell::new(false) }; }
 pub fn ks_iz() -> bool { KS_IZ.with(|f| f.get()) }
+
+/// coreSide (decide.js): kafa durumuna bağlı değil, yerleşim de doğrudan çağırır.
+pub fn coreSide_p(h: &Oyuncu) -> CoreSide {
+        let sp = hypot(z0(h.vx), z0(h.vy));
+        let (ux, uy);
+        if let Some(ca) = h.ca {
+            ux = cos(ca);
+            uy = sin(ca);
+        } else if sp > 0.04 {
+            ux = h.vx / sp;
+            uy = h.vy / sp;
+        } else if hypot(h.tx - h.x, h.ty - h.y) > 0.5 {
+            let L = hypot(h.tx - h.x, h.ty - h.y);
+            ux = (h.tx - h.x) / L;
+            uy = (h.ty - h.y) / L;
+        } else {
+            let gx = if h.team == 0.0 { GW } else { 0.0 };
+            let L = ya(hypot(gx - h.x, GCY - h.y), 1.0);
+            ux = (gx - h.x) / L;
+            uy = (GCY - h.y) / L;
+        }
+        CoreSide { ux, uy, off: DU.core0 + sp * DU.coreV }
+}
+/// topK (decide.js): dokunuş ayarıyla, kafa durumuna bağlı değil.
+pub fn topK_p(h: &Oyuncu, dk: Option<crate::kafa::gecici_dis1::Dokunus>) -> f64 {
+    let s = h.yet.y(mek::TOPLU_KOSU);
+    match dk {
+        Some(C0) => {
+            let close = jmin(1.0, C0.close + (s - 10.0) * C0.closeS);
+            let Lr = jmax(0.8, C0.lRun - (s - 10.0) * C0.lRunS);
+            close + (1.0 - close) * jmin(1.0, 0.0 / Lr)
+        }
+        None => jmin(1.0, 0.68 + 0.02 * s),
+    }
+}

@@ -19,7 +19,7 @@ pub struct MacDis {
     /// maçın sprint kuralı (son karar veren taşıyıcı, tik, taşıyıcı, alıcı): JS bunları canlı okur;
     /// kafa her çağrıldığında `kural_tazele` ile güncellenir
     pub kural: std::cell::Cell<MacKural>,
-    pub ch: Option<f64>,
+    pub ch: std::cell::Cell<Option<f64>>,
     /// (id, team, x, y)
     pub holder: std::cell::Cell<Option<(f64, f64, f64, f64)>>,
     /// takım başına: etkin taktik (yerleşimin tipi)
@@ -66,7 +66,7 @@ impl MacDis {
             (p.id, p.team, p.x, p.y)
         });
         let gs = m.mac.sekil.sh.gs.as_ref().map(|g| JMShGs { t: g.t, dt: g.dt as f64, on: g.on, onP: g.onP, oy: g.oy, ..Default::default() });
-        MacDis { kural: std::cell::Cell::new(kural), ch: Some(m.ch), holder: std::cell::Cell::new(holder), tacE, siddet, enHarcama, gs: std::cell::RefCell::new(gs), prT: std::cell::RefCell::new(m.mac.prT_k.clone()), mac: Arc::new(hafif(m)) }
+        MacDis { kural: std::cell::Cell::new(kural), ch: std::cell::Cell::new(Some(m.ch)), holder: std::cell::Cell::new(holder), tacE, siddet, enHarcama, gs: std::cell::RefCell::new(gs), prT: std::cell::RefCell::new(m.mac.prT_k.clone()), mac: Arc::new(hafif(m)) }
     }
     fn takim_tac(&self, t: f64) -> &sekil::gecici_dis::TacE {
         &self.tacE[if t == 1.0 { 1 } else { 0 }]
@@ -156,8 +156,7 @@ impl Dis for MacDis {
         ikili::dengeKayip(p, t)
     }
     fn ALAN_DOKUNUS(&self) -> Option<d1::Dokunus> {
-        // ALAN_DOKUNUS bugün kapalı (maç taşımadı)
-        None
+        mac_dokunus()
     }
     fn ALAN_YOL_VER_TEPKI(&self) -> bool {
         false
@@ -264,7 +263,7 @@ impl Dis for MacDis {
         true
     }
     fn mac_ch(&self) -> Option<f64> {
-        self.ch
+        self.ch.get()
     }
     fn mac_holder(&self) -> Option<(f64, f64, f64, f64)> {
         self.holder.get()
@@ -388,12 +387,20 @@ thread_local! {
 
 /// Kapsamdaki kafayla çalış (yerleşimin ve maçın kafa çağrıları). Kafa o an başka bir çağrının
 /// içindeyse (iç içe) aynı dış dünyalı yedek bir kafa kullanılır.
+/// Maçın dokunuş ayarı (JS ALAN_DOKUNUS): bugün kapalı (maç taşımadı)
+pub fn mac_dokunus() -> Option<d1::Dokunus> {
+    None
+}
+/// Yedek kafaya düşülen çağrı sayısı (sınama)
+pub static YAN_SAY: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
 pub fn kafa_ile<R>(f: impl FnOnce(&mut Kafa) -> R) -> R {
     let k = KAFA.with(|c| c.borrow().clone()).expect("kafa bağlamı kurulmadı (kafa_hazirla)");
     if let Ok(mut b) = k.try_borrow_mut() {
         let t = b.D._tick;
         return crate::sekil::d_tick_ile(t, || f(&mut b));
     }
+    YAN_SAY.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    if crate::iz_acik() && std::env::var("ALAN_YAN_IZ").is_ok() { eprintln!("YAN {}", std::backtrace::Backtrace::force_capture().to_string().lines().filter(|l| l.contains("alan_motor::")).take(8).map(|l| l.trim().replace("alan_motor::", "")).collect::<Vec<_>>().join(" < ")); }
     let (dis, tick) = DIS.with(|d| d.borrow().clone()).expect("kafa dış dünyası kurulmadı");
     let yan = YAN.with(|y| {
         let mut y = y.borrow_mut();
@@ -441,6 +448,7 @@ pub fn kural_tazele(m: &Mac) {
     if let Some(d) = &m.mac.kafa.dis {
         d.kural.set(MacKural::of(m));
         d.holder.set(m.holder.map(|h| { let p = &m.ps[h]; (p.id, p.team, p.x, p.y) }));
+        d.ch.set(Some(m.ch));
         // JS m._prT ve m.sh.gs canlı okunur: aynı tikte önceki kararın yazdığı görülür
         *d.prT.borrow_mut() = m.mac.prT_k.clone();
         *d.gs.borrow_mut() = m.mac.sekil.sh.gs.as_ref().map(|g| JMShGs { t: g.t, dt: g.dt as f64, on: g.on, onP: g.onP, oy: g.oy, ..Default::default() });

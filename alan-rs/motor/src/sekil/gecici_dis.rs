@@ -58,7 +58,8 @@ fn ops(ps: &[Oyuncu]) -> Vec<Op> {
 }
 
 pub fn threat(team: u8, x: f64, y: f64) -> f64 {
-    kafa_ile(|k| k.threat(team as f64, x, y))
+    // saf: kafa bağlamı aranmaz (kesişme döngüsünde milyonlarca kez çağrılır)
+    crate::kafa::kafa1_tehlike::threat_d(crate::mac::gecici_dis::kafa_d(), team as f64, x, y)
 }
 pub fn frenT(p: &Oyuncu, x: f64, y: f64, R: f64, T: f64, v: f64) -> f64 {
     kafa_ile(|k| k.frenT(p, x, y, R, T, v))
@@ -67,10 +68,8 @@ pub fn freeAt(w: &[Varlik], oy: &[Oyuncu], team: f64, x: f64, y: f64) -> f64 {
     kafa_ile(|k| k.freeAt(&ow(w, oy), team, x, y))
 }
 pub fn coreSide(h: &Oyuncu) -> (f64, f64) {
-    kafa_ile(|k| {
-        let c = k.coreSide(h);
-        (c.ux, c.uy)
-    })
+    let c = crate::kafa::kafa1_ikili::coreSide_p(h);
+    (c.ux, c.uy)
 }
 pub fn govdeV(h: &Oyuncu) -> f64 {
     kafa_ile(|k| k.govdeV(h))
@@ -80,7 +79,7 @@ pub fn savurPlan(h: &Oyuncu, vx: f64, vy: f64, ca0: f64, w0: f64, sYon: f64, itm
     kafa_ile(|k| k.savurPlan(h, nk(vx, vy), ca0, w0, sYon, None, itme, E).map(|p| p.T))
 }
 pub fn topK(h: &Oyuncu) -> f64 {
-    kafa_ile(|k| k.topK(h))
+    crate::kafa::kafa1_ikili::topK_p(h, crate::mac::kafa_dis::mac_dokunus())
 }
 /// JS'te oyuncular dünyadaki nesnelerin kendisidir (kafa `o !== q` ile karşılaştırır): kopya dünyada kimliğiyle bul.
 fn kim<'a>(src: &'a [Op], p: &'a Oyuncu) -> &'a Oyuncu {

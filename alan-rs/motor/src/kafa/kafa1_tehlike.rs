@@ -93,9 +93,7 @@ impl Kafa {
 
     /// Kale tehlikesi (decide.js:136): kaleye yakınlık × ortaya yakınlık.
     pub fn threat(&self, team: f64, x: f64, y: f64) -> f64 {
-        let gx = gx_of(team);
-        let d = hypot(x - gx, y - GCY);
-        exp(-d / self.D.threatK) * (1.0 - self.D.sideK * (y - GCY).abs() / GCY)
+        threat_d(&self.D, team, x, y)
     }
     /// Rakip alanı (decide.js:140).
     pub fn oppAt(&self, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
@@ -455,4 +453,11 @@ impl Kafa {
         }
         out
     }
+}
+
+/// threat (decide.js): yalnız sabitlere bağlı (D.threatK, D.sideK).
+pub fn threat_d(D: &crate::model::KafaD, team: f64, x: f64, y: f64) -> f64 {
+    let gx = gx_of(team);
+    let d = hypot(x - gx, y - GCY);
+    exp(-d / D.threatK) * (1.0 - D.sideK * (y - GCY).abs() / GCY)
 }

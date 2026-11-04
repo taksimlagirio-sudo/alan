@@ -246,7 +246,8 @@ pub fn oppAt(ps: &[Oyuncu], team: f64, x: f64, y: f64) -> f64 {
     kafa_ile(|k| k.oppAt(&op_dunya(ps), team, x, y))
 }
 pub fn threat(team: f64, x: f64, y: f64) -> f64 {
-    kafa_ile(|k| k.threat(team, x, y))
+    // saf: kafa bağlamı aranmaz
+    crate::kafa::kafa1_tehlike::threat_d(kafa_d(), team, x, y)
 }
 /// Pasın d'ye uçuş süresi (aF: varış sertliği)
 pub fn ucusT(d: f64, aF: f64) -> f64 {
