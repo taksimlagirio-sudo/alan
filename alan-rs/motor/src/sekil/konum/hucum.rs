@@ -1129,5 +1129,7 @@ fn _kullan() -> Arc<()> {
 const SEYREK_R: f64 = 30.0;
 fn seyrek_acik() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    *A.get_or_init(|| !(crate::iz_acik() && std::env::var("ALAN_SEYREK_ESKI_IZ").is_ok()))
+    !SEYREK_KAPALI.load(std::sync::atomic::Ordering::Relaxed) && *A.get_or_init(|| !(crate::iz_acik() && std::env::var("ALAN_SEYREK_ESKI_IZ").is_ok()))
 }
+/// Tarayıcıda (ortam değişkeni yok) seyrek yerleşimi kapatmak için: rust-isci.js adreste seyrek=0 görürse kurar.
+pub static SEYREK_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
