@@ -64,3 +64,16 @@ impl std::hash::Hasher for HizliKarma {
 }
 /// Hızlı karmalı sözlük.
 pub type HizliMap<K, V> = std::collections::HashMap<K, V, std::hash::BuildHasherDefault<HizliKarma>>;
+
+/// JS Map anahtarındaki sayının yerine geçen bit anahtarı: JS'te `String(x)` iki sayı için ancak
+/// değerler eşitse aynıdır; yalnız -0 ile 0 ("0") ve bütün NaN'lar ("NaN") birleşir. Metin kurmadan aynı eşitlik.
+#[inline]
+pub fn js_sayi_k(x: f64) -> u64 {
+    if x == 0.0 {
+        0
+    } else if x.is_nan() {
+        f64::NAN.to_bits()
+    } else {
+        x.to_bits()
+    }
+}

@@ -45,7 +45,7 @@ pub struct Kafa {
     /// JS `SUTY`: hız (1/20) → yol birikimi
     pub(crate) suty: RefCell<crate::HizliMap<i64, Arc<Vec<f64>>>>,
     /// JS `GE`, `GEk`, `GEt`, `GEic`
-    pub(crate) ge: RefCell<(Option<f64>, crate::HizliMap<String, f64>, crate::HizliMap<String, f64>)>,
+    pub(crate) ge: RefCell<(Option<f64>, crate::HizliMap<[u64; 7], f64>, crate::HizliMap<[u64; 3], f64>)>,
     pub(crate) ge_ic: Cell<bool>,
     /// JS `D._mac` (kafa2'nin okuduğu maç görünümü; maç döngüsü kararın önünde doldurur)
     pub mac: Option<MacGor>,
@@ -56,7 +56,7 @@ pub struct Kafa {
     /// decide0'ın `srcC._kc`'si (kararın K önbelleği; launchFor/ucusSure/bankSure/bankFor buna bakar)
     pub srcC_kc: Option<RefCell<KOnbellek>>,
     /// JS `RNB`, `RNBt`
-    pub(crate) rnb: RefCell<(Option<f64>, crate::HizliMap<String, f64>)>,
+    pub(crate) rnb: RefCell<(Option<f64>, crate::HizliMap<[u64; 6], f64>)>,
     /// JS `SHT`'nin tabloda olmayan hücreleri (hesaplanmış)
     pub(crate) sht_ek: RefCell<crate::HizliMap<i64, f64>>,
 }

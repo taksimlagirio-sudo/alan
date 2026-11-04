@@ -245,6 +245,21 @@ pub fn teamV(c: &mut Mc, sn: &mut Vec<Varlik>, svi: Pid, att: u8, E: (f64, f64),
         crowd = jmin(crowd, hypot(q.0 - cc.x, q.1 - cc.y) / S.ayr);
     }
     let sut = c.m.tac.get(att as usize).and_then(|t| t.sut).unwrap_or(0.5);
+    // p'nin c'ye koşan kopyası teamV boyunca aynı (ps teamV içinde yazılmaz): bir kez kurulur
+    let rK = p.map(|pi| {
+        let pp = &c.ps[pi];
+        let kL = hypot(cc.x - pp.x, cc.y - pp.y);
+        let kos = kL > S.kosMin;
+        let kux = if kos { (cc.x - pp.x) / kL } else { 0.0 };
+        let kuy = if kos { (cc.y - pp.y) / kL } else { 0.0 };
+        let kva = if kos { spd(pp) * jmin(1.0, kL / S.kosHiz) } else { 0.0 };
+        let mut r = pp.clone();
+        r.x = cc.x;
+        r.y = cc.y;
+        r.vx = kux * kva;
+        r.vy = kuy * kva;
+        (r, kos, kux, kuy)
+    });
     let myOpt = |c: &mut Mc, w2: &[Varlik]| -> f64 {
         let ps = &*c.ps;
         let Vc = yerV(w2, ps, att, cc.x, cc.y, dis::recvCh(w2, ps, att, cc.x, cc.y, ch, p.map(|i| &ps[i])));
@@ -254,21 +269,12 @@ pub fn teamV(c: &mut Mc, sn: &mut Vec<Varlik>, svi: Pid, att: u8, E: (f64, f64),
                 crowd * (yP * Vc + kpOf(c, w2, svi, (cc.x, cc.y), pK, yP, 1.0)) * S.W.tvPass
             }
             Some(pi) => {
-                let pp = &ps[pi];
-                let kL = hypot(cc.x - pp.x, cc.y - pp.y);
-                let kos = kL > S.kosMin;
-                let kux = if kos { (cc.x - pp.x) / kL } else { 0.0 };
-                let kuy = if kos { (cc.y - pp.y) / kL } else { 0.0 };
-                let kva = if kos { spd(pp) * jmin(1.0, kL / S.kosHiz) } else { 0.0 };
-                let mut r = pp.clone();
-                r.x = cc.x;
-                r.y = cc.y;
-                r.vx = kux * kva;
-                r.vy = kuy * kva;
+                let (r, kos, kux, kuy) = rK.as_ref().unwrap();
+                let (r, kos, kux, kuy) = (r, *kos, *kux, *kuy);
                 let sutM = hypot(cc.x - oppX(att), cc.y - GCY) < d.shotRange * (0.75 + 0.5 * sut);
-                let kA = dis::keepP(&r, w2, ps, if kos && kux * dirOf(att) > -0.3 { Some((kux, kuy)) } else { None }, if sutM { d.sutHazir } else { d.recvKeepT });
+                let kA = dis::keepP(r, w2, ps, if kos && kux * dirOf(att) > -0.3 { Some((kux, kuy)) } else { None }, if sutM { d.sutHazir } else { d.recvKeepT });
                 let yP = yolP(w2, ps, att, E, (cc.x, cc.y), d);
-                let ro = if d.useSpace { jmax(Vc, dis::runOn(w2, ps, att, &r, (cc.x, cc.y))) } else { Vc };
+                let ro = if d.useSpace { jmax(Vc, dis::runOn(w2, ps, att, r, (cc.x, cc.y))) } else { Vc };
                 let kp = kpOf(c, w2, svi, (cc.x, cc.y), Some(pi), yP, kA);
                 crowd * (yP * kA * ro + kp) * S.W.tvPass
             }

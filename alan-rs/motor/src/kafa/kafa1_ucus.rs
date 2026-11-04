@@ -547,6 +547,8 @@ impl Kafa {
             }
         };
         let na = ad.len();
+        let mut KOP: Vec<Option<Oyuncu>> = vec![None; na];
+        let mut KOP2: Vec<Option<Oyuncu>> = vec![None; na];
         let mut SK: Vec<Sek> = vec![Sek { v: [0.0; 6], n: 0 }; na];
         let mut SKa = vec![0.0; na];
         let mut SKi: Vec<Option<f64>> = vec![None; na];
@@ -690,12 +692,12 @@ impl Kafa {
                             if ad[j].kj.is_some() && ad[j].G.is_some() && gecik + c > 0.0 {
                                 let kj = ad[j].kj.unwrap();
                                 let (wx, wy) = self.kosHiz(&ad[j].p, &kj, gecik + c);
-                                let mut oo = (*ad[j].p).clone();
+                                let oo = KOP2[j].get_or_insert_with(|| (*ad[j].p).clone());
                                 oo.x = px;
                                 oo.y = py;
                                 oo.vx = wx;
                                 oo.vy = wy;
-                                Gy = self.dis.gecTab(&oo, true);
+                                Gy = self.dis.gecTab(oo, true);
                                 let A = &mut ad[j];
                                 if A.G0.is_none() {
                                     A.G0 = Some(A.G.clone());
@@ -972,12 +974,16 @@ impl Kafa {
                         0.0
                     } else {
                         ad[j].ucX = if OK1 && !bek { XM[j] } else { None };
-                        let mut pp = (*ad[j].p).clone();
-                        if let Some((vx, vy)) = pT {
-                            pp.vx = vx;
-                            pp.vy = vy;
+                        // hız değişmiyorsa kopya yok; değişiyorsa oyuncu başına bir kez kopyalanır, yalnız vx/vy yazılır (ad[j].p döngüde değişmez)
+                        match pT {
+                            None => ctrl_p_al(&mut bL, &ad[j].p, from, src, ad[j].ucX, &kr),
+                            Some((vx, vy)) => {
+                                let pp = KOP[j].get_or_insert_with(|| (*ad[j].p).clone());
+                                pp.vx = vx;
+                                pp.vy = vy;
+                                ctrl_p_al(&mut bL, pp, from, src, ad[j].ucX, &kr)
+                            }
                         }
-                        ctrl_p_al(&mut bL, &pp, from, src, ad[j].ucX, &kr)
                     };
                     ad[j].pT = pT;
                     let p: &Oyuncu = &ad[j].p;

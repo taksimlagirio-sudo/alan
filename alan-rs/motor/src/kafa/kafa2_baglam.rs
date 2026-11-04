@@ -235,10 +235,10 @@ pub struct Kafa2Durum {
     /// bosluk: dünya (kimlik) → anahtar → değer
     pub BSC: crate::HizliMap<usize, (Arc<Dunya>, f64, crate::HizliMap<String, f64>)>,
     /// imkBol önbelleği (tablo × konum)
-    pub IMKB: crate::HizliMap<String, Arc<std::sync::Mutex<crate::kafa::kafa2_imkan::ImkBol>>>,
+    pub IMKB: crate::HizliMap<[u64; 4], Arc<std::sync::Mutex<crate::kafa::kafa2_imkan::ImkBol>>>,
     pub IMKBT: bool,
     /// imkKov: "team|id" → (tepki, hız)
-    pub IMKK: crate::HizliMap<String, (f64, f64)>,
+    pub IMKK: crate::HizliMap<(u64, u64), (f64, f64)>,
     pub IMKKt: Option<Option<f64>>,
     /// ileriTab: (tick, anahtar, tablo)
     pub IT: Option<(f64, String, Option<Arc<crate::kafa::kafa2_zemin::IleriTab>>)>,
