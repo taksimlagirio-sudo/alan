@@ -619,8 +619,15 @@ impl Sv {
     fn okunan(&self, c: &Mc, p: Pid, o0: &Varlik, q: Pid) -> Varlik {
         let mut o = o0.clone();
         let (x, y) = ileriV(o0, okuTp(&c.ps[p]), Some(&c.ps[q]), c.ps, self.sg);
-        o.x = x;
-        o.y = y;
+        // markajcı adamının yalnız kaleye doğru koşusunu önceden alır (geç kalmak arkaya kaçırmaktır); yana ya da geri
+        // gidişini öne almaz, gördüğü yerinden izler: yoksa adam dönünce markajcı adamın gitmediği yerin kale tarafında,
+        // adamının yanında/üstünde kalır ve ne pas yolunu ne kaleyi kapatır
+        let (gx, gy) = (ownX(self.dt) - o0.x, GCY - o0.y);
+        let gl = hypot(gx, gy);
+        let (ux, uy) = if gl > 1e-9 { (gx / gl, gy / gl) } else { (0.0, 0.0) };
+        let on = jmax(0.0, (x - o0.x) * ux + (y - o0.y) * uy);
+        o.x = o0.x + ux * on;
+        o.y = o0.y + uy * on;
         o
     }
 
