@@ -413,6 +413,17 @@ impl Sv {
                 bst = dal_sinir(&Bs, &GI);
             }
         }
+        if crate::iz_acik() && !c.lite && std::env::var("ALAN_UA_IZ").ok().and_then(|x| x.parse::<f64>().ok()) == Some(c.m.tick) {
+            if let Some(t) = &self.tP { eprintln!("TP {:?}", t.mm.iter().map(|(k, v)| format!("{}={:.4}", k, v)).collect::<Vec<_>>()); }
+            eprintln!("UA dt {} Ps {} bst {:?}", dt, Ps.iter().map(|&p| c.ps[p].name.clone()).collect::<Vec<_>>().join(","), bst);
+            for (j, J) in Js.iter().enumerate() {
+                let qn = match J.q { IsQ::P(q) => c.ps[q].name.clone(), _ => "bölge".into() };
+                eprintln!(" J {} {} w {} g {} {} derin {} bul {} car {:?} zone {:?} job {}", j, qn, J.w, J.g.0, J.g.1, J.derin, J.bul, J.car, J.zone.map(|z| c.ps[z].name.clone()), J.job);
+            }
+            for (i, r) in Bs.iter().enumerate() {
+                eprintln!(" B {} {}", c.ps[Ps[i]].name, r.iter().map(|v| format!("{:.5}", v)).collect::<Vec<_>>().join(" "));
+            }
+        }
         for &p in &Ps {
             if self.adamT(c, p) {
                 self.mark[p] = None;
