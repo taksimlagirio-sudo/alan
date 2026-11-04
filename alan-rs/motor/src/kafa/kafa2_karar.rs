@@ -1056,9 +1056,10 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
                     if !(bol && crate::paralel::dagit(n, &mut bir)) {
                         for j in 0..n {
                             let i = if ters { n - 1 - j } else { j };
-                            let t0 = std::time::Instant::now();
+                            // ölçüm yalnız bilgisayarda (wasm'da zaman ölçümü yok, Instant panikler)
+                            let t0 = if olc { Some(std::time::Instant::now()) } else { None };
                             bir(i, None);
-                            if olc {
+                            if let Some(t0) = t0 {
                                 sure.push(t0.elapsed().as_secs_f64());
                             }
                         }
