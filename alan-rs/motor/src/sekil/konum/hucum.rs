@@ -247,8 +247,44 @@ impl Sv {
         let _ = (tick, k);
     }
 
-    /// Bir hücumcunun işi (JS `for (const p of atk) {…}` gövdesi).
+    /// Seyrek yerleşim (yalnız Rust, davranış değişir): topa SEYREK_R'den uzak hücumcunun işi 3 tikte bir
+    /// hesaplanır (oyuncular tiklere dağılır: (tik + id) % 3); aradaki tiklerde son hesabın hedefi, işi ve
+    /// sprinti kalır (en çok 2 tik eski). Kovalayan, güvence veren, taşıyıcı ve kafanın hayali maçı her tik.
+    /// Eskisi (her tik): ALAN_SEYREK_ESKI_IZ.
     fn hucumcu(&mut self, c: &mut Mc, hk: &Hk, p: Pid) {
+        if !seyrek_acik() || c.lite {
+            return self.hucumcu0(c, hk, p);
+        }
+        let tick = c.m.tick;
+        let n = c.ps.len();
+        if c.ek.seyrek.len() != n {
+            c.ek.seyrek = vec![None; n];
+        }
+        if self.chase[p] || self.guard[p].is_some() || Some(p) == self.h {
+            c.ek.seyrek[p] = None;
+            return self.hucumcu0(c, hk, p);
+        }
+        let uzak = hypot(c.ps[p].x - self.E.0, c.ps[p].y - self.E.1) > SEYREK_R;
+        let sira = (tick + c.ps[p].id) % 3.0;
+        if uzak && sira != 0.0 && sira == sira {
+            if let Some((t, tx, ty, job, sprint)) = c.ek.seyrek[p].clone() {
+                if tick - t <= 2.0 {
+                    let pp = &mut c.ps[p];
+                    pp.tx = tx;
+                    pp.ty = ty;
+                    pp.job = job;
+                    pp.sprint = sprint;
+                    return;
+                }
+            }
+        }
+        self.hucumcu0(c, hk, p);
+        let pp = &c.ps[p];
+        c.ek.seyrek[p] = Some((tick, pp.tx, pp.ty, pp.job.clone(), pp.sprint));
+    }
+
+    /// Bir hücumcunun işi (JS `for (const p of atk) {…}` gövdesi).
+    fn hucumcu0(&mut self, c: &mut Mc, hk: &Hk, p: Pid) {
         let k = c.k;
         let tick = c.m.tick;
         let (att, E, h) = (self.att, self.E, self.h);
@@ -1087,4 +1123,11 @@ impl Sv {
 #[allow(dead_code)]
 fn _kullan() -> Arc<()> {
     Arc::new(())
+}
+
+/// Seyrek yerleşimin uzaklık eşiği (br): topa (E) bundan uzak hücumcunun işi 3 tikte bir hesaplanır.
+const SEYREK_R: f64 = 30.0;
+fn seyrek_acik() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *A.get_or_init(|| !(crate::iz_acik() && std::env::var("ALAN_SEYREK_ESKI_IZ").is_ok()))
 }
