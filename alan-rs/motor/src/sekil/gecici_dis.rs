@@ -100,10 +100,10 @@ pub fn laneOk0(w: &[Varlik], oy: &[Oyuncu], team: u8, A: (f64, f64), B: (f64, f6
     kafa_ile(|k| k.laneOk(&ow(w, oy), team as f64, nk(A.0, A.1), nk(B.0, B.1), None, None))
 }
 pub fn bekYol(w: &[Varlik], oy: &[Oyuncu], team: u8, A: (f64, f64), B: (f64, f64), lag: f64) -> f64 {
-    todo!("AlanDecide.bekYol")
+    kafa_ile(|k| crate::kafa::kafa2_tarti::bekYol(k, &ow(w, oy), team as f64, nk(A.0, A.1), nk(B.0, B.1), Some(lag)))
 }
 pub fn yerDeger(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64, ch: f64) -> f64 {
-    todo!("AlanDecide.yerDeger")
+    kafa_ile(|k| crate::kafa::kafa2_zemin::yerDeger(k, &ow(w, oy), team as f64, x, y, ch))
 }
 pub fn recvCh(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64, ch: f64, q: Option<&Oyuncu>) -> f64 {
     kafa_ile(|k| k.recvCh(&ow(w, oy), team as f64, x, y, ch, q.unwrap_or(&Oyuncu::default())))
@@ -124,7 +124,11 @@ pub fn dagin(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, vv: f64, y: f64) -> 
     kafa_ile(|k| k.dagin(&ow(w, oy), team as f64, x, vv, Some(y)))
 }
 pub fn kayipYer(ps: &[Oyuncu], team: u8, ch: f64, h: &Oyuncu, tac: Option<&crate::mac::Tac>) -> KayipF {
-    todo!("AlanDecide.kayipYer")
+    let src = std::sync::Arc::new(ops(ps));
+    let tac = tac.map(crate::mac::gecici_dis::kafa_tac);
+    let f = kafa_ile(|k| crate::kafa::kafa2_karar::kayipYer(k, &src, team as f64, ch, h, tac.as_ref()));
+    let f = std::sync::Mutex::new(f);
+    std::sync::Arc::new(move |x: f64, y: f64| kafa_ile(|k| f.lock().unwrap().deger(k, x, y)))
 }
 /// decide.js:6875 `PNC_GORUS`.
 pub const PNC_GORUS: f64 = 48.0;

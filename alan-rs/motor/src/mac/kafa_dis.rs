@@ -290,6 +290,28 @@ impl Dis for MacDis {
     fn algi_yas(&self, p: &Oyuncu) -> Option<f64> {
         p.__yas
     }
+    fn bekciFm(&self, p: &Oyuncu, B: Nk, fm: &d1::Fm) -> Nk {
+        let ps: Vec<Oyuncu> = fm.ps.iter().map(|q| (**q).clone()).collect();
+        let holder = fm.holder.and_then(|h| fm.ps.iter().position(|q| q.id == h.id && q.team == h.team));
+        let ben = fm.ps.iter().position(|q| q.id == p.id && q.team == p.team);
+        let bm = sekil::yer::BekM { ps: &ps, holder, ben };
+        let (x, y) = sekil::yer::bekci(p, B.x, B.y, Some(&bm), &self.kural);
+        nk(x, y)
+    }
+    fn slotBase(&self, fm: &d1::Fm, p: &Oyuncu, B: Nk, hucum: bool) -> Nk {
+        let ps: Vec<Oyuncu> = fm.ps.iter().map(|q| (**q).clone()).collect();
+        let y = sekil::yer::slotBase(&self.mac, &ps, p, B.x, B.y, hucum);
+        nk(y.x, y.y)
+    }
+    fn S_prHat(&self, blok: &str) -> Option<f64> {
+        sekil::sabit::prHat(blok)
+    }
+    fn tl(&self, p: &Oyuncu, ev: &str, k: &str) -> Option<f64> {
+        crate::mac::kurulum::tl(p, ev, k)
+    }
+    fn sprK(&self, p: &Oyuncu) -> f64 {
+        en::sprK(p, &self.kural)
+    }
 }
 
 // ======================================================================
@@ -323,6 +345,12 @@ pub fn kafa_hazirla(m: &mut Mac) -> Rc<RefCell<Kafa>> {
         m.mac.kafa.k = Some(Rc::new(RefCell::new(Kafa::yeni(Arc::new(d)))));
         m.mac.kafa.t = Some(m.tick);
     } else if m.mac.kafa.t != Some(m.tick) {
+        // JS m._prT: kafanın yazdığı pres tartısını maç tutar, kafa1 (girEsik) dış dünyadan okur
+        if let Some(k) = m.mac.kafa.k.as_ref() {
+            if let Ok(k) = k.try_borrow() {
+                m.mac.prT_k = k.prT.as_ref().map(|p| p.d1());
+            }
+        }
         let d = MacDis::kur(m);
         let k = m.mac.kafa.k.as_ref().unwrap();
         if let Ok(mut k) = k.try_borrow_mut() {
@@ -334,15 +362,44 @@ pub fn kafa_hazirla(m: &mut Mac) -> Rc<RefCell<Kafa>> {
     if let Ok(mut kk) = k.try_borrow_mut() {
         kk.D._tick = Some(m.tick);
     }
+    if let Ok(kk) = k.try_borrow() {
+        let v = (kk.dis.clone(), kk.D._tick);
+        DIS.with(|d| *d.borrow_mut() = Some(v));
+    }
     KAFA.with(|c| *c.borrow_mut() = Some(k.clone()));
     k
 }
 
-/// Kapsamdaki kafayla çalış (yerleşimin ve maçın kafa çağrıları).
-pub fn kafa_ile<R>(f: impl FnOnce(&Kafa) -> R) -> R {
+thread_local! {
+    /// bu tikin dış dünyası ve tiki (yedek kafalar için)
+    static DIS: RefCell<Option<(Arc<dyn crate::kafa::gecici_dis1::Dis>, Option<f64>)>> = const { RefCell::new(None) };
+    /// iç içe çağrılar için yedek kafalar (kafa → dış dünya → yerleşim → kafa)
+    static YAN: RefCell<Vec<Rc<RefCell<Kafa>>>> = const { RefCell::new(Vec::new()) };
+}
+
+/// Kapsamdaki kafayla çalış (yerleşimin ve maçın kafa çağrıları). Kafa o an başka bir çağrının
+/// içindeyse (iç içe) aynı dış dünyalı yedek bir kafa kullanılır.
+pub fn kafa_ile<R>(f: impl FnOnce(&mut Kafa) -> R) -> R {
     let k = KAFA.with(|c| c.borrow().clone()).expect("kafa bağlamı kurulmadı (kafa_hazirla)");
-    let b = k.borrow();
-    f(&b)
+    if let Ok(mut b) = k.try_borrow_mut() {
+        return f(&mut b);
+    }
+    let (dis, tick) = DIS.with(|d| d.borrow().clone()).expect("kafa dış dünyası kurulmadı");
+    let yan = YAN.with(|y| {
+        let mut y = y.borrow_mut();
+        if let Some(q) = y.iter().find(|q| q.try_borrow_mut().is_ok()) {
+            return q.clone();
+        }
+        let q = Rc::new(RefCell::new(Kafa::yeni(dis.clone())));
+        y.push(q.clone());
+        q
+    });
+    let mut b = yan.borrow_mut();
+    if !Arc::ptr_eq(&b.dis, &dis) {
+        b.dis = dis;
+    }
+    b.D._tick = tick;
+    f(&mut b)
 }
 
 /// Dünyayı kafanın biçimine çevir.

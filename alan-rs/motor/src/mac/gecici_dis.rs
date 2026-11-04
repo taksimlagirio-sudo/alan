@@ -184,6 +184,18 @@ pub fn gercek(_o: &mut Secenek) {}
 // ---- decide.js ----
 use crate::kafa::kafa1_js::nk;
 use crate::mac::kafa_dis::{kafa_ile, op_dunya};
+/// Maçın etkin taktiği → kafanın taktiği
+pub fn kafa_tac(t: &crate::mac::Tac) -> crate::kafa::kafa2_baglam::Tac {
+    let mz = t.macZ.map(|z| std::sync::Arc::new(move |dt: f64| z.zaman(dt)) as std::sync::Arc<dyn Fn(f64) -> f64 + Send + Sync>);
+    crate::kafa::kafa2_baglam::Tac { risk: t.risk, tempo: t.tempo, sabir: t.sabir, sut: t.sut, pasSurme: t.pasSurme, pasBoy: t.pasBoy, kontra: t.kontra == Some(true), macK: t.macK, macZ: mz, enDinlen: t.enDinlen, enYipratma: t.enYipratma, plan_taraf: None, temel: None }
+}
+/// JS `D._mac = m`: kafanın maç görünümü
+fn mac_gor(m: &Mac) -> crate::kafa::kafa2_baglam::MacGor {
+    crate::kafa::kafa2_baglam::MacGor { tick: m.tick, len: m.len, tac: vec![Default::default(), Default::default()], ps: op_dunya(&m.ps), holder: m.holder }
+}
+fn sira(g: &[Oyuncu], p: &Oyuncu) -> Pid {
+    g.iter().position(|q| q.id == p.id && q.team == p.team).expect("karar veren dünyada yok")
+}
 fn rng_fn(r: &mut Rng) -> impl FnMut() -> f64 + '_ {
     move || r.sonraki()
 }
@@ -271,22 +283,41 @@ pub fn recvCh(m: &Mac, ps: &[Oyuncu], team: f64, x: f64, y: f64, ch: f64, p: &Oy
     kafa_ile(|k| k.recvCh(&op_dunya(ps), team, x, y, ch, p))
 }
 pub fn otFactor(m: &Mac, p: Pid, inSp: f64) -> f64 {
-    todo!("decide.js otFactor")
+    kafa_ile(|k| crate::kafa::kafa2_karar::otFactor(k, &m.ps[p], inSp))
 }
 /// Tek dokunuş kararı (kanca: JS D._kanca, kararın süresince)
 pub fn decideOT(m: &Mac, p: &Oyuncu, g: &[Oyuncu], ch: f64, r: &mut Rng, tE: &crate::mac::Tac, ot: f64, kanca: Option<crate::mac::hareket::Kanca>) -> Option<Secenek> {
-    todo!("decide.js decideOT")
+    let src = std::sync::Arc::new(op_dunya(g));
+    let hi = sira(g, p);
+    let tac = kafa_tac(tE);
+    let mg = mac_gor(m);
+    kafa_ile(|k| {
+        k.mac = Some(mg);
+        let k0 = k.D._kanca.take();
+        k.D._kanca = kanca.map(|c| crate::model::DKanca { w0: c.w0, s: c.s, ca: Some(c.ca), u: Some(c.u), on: c.on });
+        let o = crate::kafa::kafa2_karar::decideOT(k, hi, &src, ch, &mut rng_fn(r), Some(&tac), ot);
+        k.D._kanca = k0;
+        o
+    })
 }
 /// Karar: p (g içinde kendi sırasında) için seçenekler
 pub fn decide(m: &Mac, p: &Oyuncu, g: &[Oyuncu], ch: f64, r: &mut Rng, tE: &crate::mac::Tac) -> Karar {
-    todo!("decide.js decide")
+    let src = std::sync::Arc::new(op_dunya(g));
+    let hi = sira(g, p);
+    let tac = kafa_tac(tE);
+    let mg = mac_gor(m);
+    kafa_ile(|k| {
+        k.mac = Some(mg);
+        let r = crate::kafa::kafa2_karar::decide(k, hi, &src, ch, &mut rng_fn(r), Some(&tac));
+        Karar { best: if r.best.is_some() { Some(0) } else { None }, opts: r.opts, T: r.T }
+    })
 }
 pub fn secimN(m: &Mac, p: Pid, o: &Secenek, g: &[Oyuncu], T: f64) -> f64 {
     kafa_ile(|k| k.secimN(&m.ps[p], Some(o), &op_dunya(g), T))
 }
 /// Seçim: r.opts içindeki sıra
 pub fn secim(m: &Mac, h: Pid, r: &Karar, g: &[Oyuncu]) -> usize {
-    todo!("decide.js secim")
+    kafa_ile(|k| k.secim(&m.ps[h], &r.opts, r.best, r.T, &op_dunya(g))).or(r.best).unwrap_or(0)
 }
 pub fn secimW(m: &Mac, h: Pid, pr: f64, b: bool) -> f64 {
     kafa_ile(|k| k.secimW(&m.ps[h], pr, b, None))
