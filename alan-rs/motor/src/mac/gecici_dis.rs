@@ -168,6 +168,8 @@ pub fn gorulen(m: &mut Mac, p: Pid) -> Option<Vec<Oyuncu>> {
                     o.y = v.y;
                     o.vx = v.vx;
                     o.vy = v.vy;
+                    o.__e = q.e;
+                    o.__yas = q.yas;
                     o
                 })
                 .collect(),

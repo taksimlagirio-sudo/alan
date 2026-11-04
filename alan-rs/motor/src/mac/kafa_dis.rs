@@ -1,0 +1,293 @@
+//! Kafanın dış dünyası (kafa1 `Dis`): maçın ve yerleşimin kafaya açtığı işlevler.
+//!
+//! Kafa `&self` ile okur; maçın durumu kararın başında [`MacDis::kur`] ile alınır (JS'te kafa `D._mac`
+//! üstünden maçı canlı okur; bir kararın içinde maç değişmediği için anlık görüntü aynıdır).
+#![allow(non_snake_case)]
+
+use crate::kafa::gecici_dis1::{self as d1, Dis};
+use crate::kafa::kafa1_js::{nk, Nk};
+use crate::mac::enerji as en;
+use crate::mac::{ikili, MacKural};
+use crate::model::{JMShGs, Mac, Oyuncu};
+use crate::oyuncu::TepkiS;
+use crate::sekil;
+use crate::temas::Kural;
+use std::sync::Arc;
+
+/// Kararın başındaki maç görüntüsü.
+pub struct MacDis {
+    pub kural: MacKural,
+    pub ch: Option<f64>,
+    /// (id, team, x, y)
+    pub holder: Option<(f64, f64, f64, f64)>,
+    /// takım başına: etkin taktik (yerleşimin tipi)
+    pub tacE: [sekil::gecici_dis::TacE; 2],
+    /// takım başına: (m.tac[k].siddet, yz, macEff(m,k,{}).macK ?? 1)
+    pub siddet: [(Option<f64>, bool, f64); 2],
+    pub enHarcama: [Option<f64>; 2],
+    pub gs: Option<JMShGs>,
+    pub prT: Option<d1::PrT>,
+    /// yerleşimin tehlike'si için: son seçenekler, oyuncu kimlikleri, maçın tiki
+    pub mac: Arc<Mac>,
+}
+
+fn hafif(m: &mut Mac) -> Mac {
+    // olay günlüğü ve kafa günlüğü kopyalanmaz
+    let ev = std::mem::take(&mut m.events);
+    let kg = m.mac._kafa.take();
+    let ps = std::mem::take(&mut m.ps);
+    let mut c = m.clone();
+    m.events = ev;
+    m.mac._kafa = kg;
+    c.ps = ps.clone();
+    m.ps = ps;
+    c
+}
+
+impl MacDis {
+    pub fn kur(m: &mut Mac) -> MacDis {
+        let kural = MacKural::of(m);
+        let tacE = [0u8, 1].map(|t| {
+            let tq = crate::mac::tac::tacEff(m, t as f64);
+            let kp = tq._kp.is_some();
+            sekil::gecici_dis::TacE { t: tq, kp }
+        });
+        let siddet = [0usize, 1].map(|t| {
+            let tq = m.tac.get(t).cloned().unwrap_or_default();
+            let yz = tq.yz == Some(true);
+            let mk = crate::mac::tac::macEff(m, t as f64, Default::default()).macK.unwrap_or(1.0);
+            (tq.siddet, yz, mk)
+        });
+        let enHarcama = [0usize, 1].map(|t| m.tac.get(t).and_then(|q| q.enHarcama));
+        let holder = m.holder.map(|h| {
+            let p = &m.ps[h];
+            (p.id, p.team, p.x, p.y)
+        });
+        let gs = m.mac.sekil.sh.gs.as_ref().map(|g| JMShGs { t: g.t, dt: g.dt as f64, on: g.on, onP: g.onP, oy: g.oy, ..Default::default() });
+        MacDis { kural, ch: Some(m.ch), holder, tacE, siddet, enHarcama, gs, prT: m.mac.prT_k.clone(), mac: Arc::new(hafif(m)) }
+    }
+    fn takim_tac(&self, t: f64) -> &sekil::gecici_dis::TacE {
+        &self.tacE[if t == 1.0 { 1 } else { 0 }]
+    }
+}
+
+fn gecY_k(y: &sekil::gec::GecY) -> Arc<d1::GecY> {
+    Arc::new(d1::GecY { g: y.g, m: Some(y.m.to_vec()) })
+}
+fn gecTab_k(g: &sekil::gec::GecTab) -> d1::GecTab {
+    d1::GecTab { vx: g.vx, vy: g.vy, s0: g.s0, x: g.x, y: g.y, t: g.t.to_vec(), Y: g.Y.iter().map(|y| gecY_k(y)).collect(), vm: g.vm }
+}
+fn gecTab_s(g: &d1::GecTab) -> sekil::gec::GecTab {
+    let Y: Vec<Arc<sekil::gec::GecY>> = g
+        .Y
+        .iter()
+        .map(|y| {
+            let mut m = [0.0; 81];
+            if let Some(v) = &y.m {
+                for (i, x) in v.iter().take(81).enumerate() {
+                    m[i] = *x;
+                }
+            }
+            Arc::new(sekil::gec::GecY { g: y.g, m })
+        })
+        .collect();
+    let mut t = [0.0; 9];
+    t.copy_from_slice(&g.t[..9]);
+    sekil::gec::GecTab { vx: g.vx, vy: g.vy, s0: g.s0, x: g.x, y: g.y, t, Y: Y.try_into().unwrap(), vm: g.vm }
+}
+
+impl Dis for MacDis {
+    // ---- enerji / sprint ----
+    fn ALAN_SPRE(&self, p: &Oyuncu) -> f64 {
+        sekil::ALAN_SPRE(p, &self.kural)
+    }
+    fn ALAN_SPR(&self, p: &Oyuncu) -> f64 {
+        en::ALAN_SPR(p, &self.kural)
+    }
+    fn ALAN_SPR_HK(&self, p: &Oyuncu) -> f64 {
+        en::ALAN_SPR_HK(p)
+    }
+    fn ALAN_SPR_FAZ(&self) -> Option<d1::SprFaz> {
+        let F = &en::SPR_FAZ;
+        let b = |v: bool| if v { 1.0 } else { 0.0 };
+        Some(d1::SprFaz { ust: b(F.ust), hkPay: F.hkPay, tepeT: F.tepeT, after: F.after, dolT: F.dolT, bedel: F.bedel, patT: F.patT, frenT: F.frenT, patK: F.patK, ayir: b(F.ayir), itKos: b(F.itKos), topla: b(F.topla), toplaBos: F.toplaBos, itBos: None, peak: None })
+    }
+    fn ALAN_KOSU_T(&self, p: &Oyuncu, d: f64, v1: f64) -> f64 {
+        en::ALAN_KOSU_T(p, d, v1, &self.kural)
+    }
+    fn ALAN_KOSU_M(&self, p: &Oyuncu, t: f64, v1: f64) -> f64 {
+        en::ALAN_KOSU_M(p, t, v1, &self.kural)
+    }
+    fn ALAN_EN3_KUL(&self, p: &Oyuncu, e: f64, bizde: bool, bx: f64, by: f64) -> f64 {
+        en::ALAN_EN3_KUL(p, e, bizde, Some((bx, by)), &self.kural)
+    }
+    fn ALAN_EN3_SGIR(&self, p: &Oyuncu, bed: f64) -> f64 {
+        en::ALAN_EN3_SGIR(p, bed)
+    }
+    fn ALAN_EN2_TS(&self, p: &Oyuncu, e: Option<f64>) -> f64 {
+        en::ALAN_EN2_TS(p, e)
+    }
+    fn ALAN_EN2_SB(&self, p: &Oyuncu) -> f64 {
+        en::ALAN_EN2_SB(p)
+    }
+    fn ALAN_EN2_SD(&self, p: &Oyuncu) -> f64 {
+        en::ALAN_EN2_SD(p)
+    }
+    fn ALAN_EN3_DOL(&self, p: &Oyuncu, sahip: bool, nd: f64, yerK: f64) -> f64 {
+        en::ALAN_EN3_DOL(p, sahip, nd, yerK)
+    }
+    fn ALAN_EN3_TEPE(&self, e: Option<f64>, k: f64) -> f64 {
+        en::ALAN_EN3_TEPE(e, k)
+    }
+    fn ALAN_EN_S(&self, p: &Oyuncu) -> f64 {
+        en::ALAN_EN_S(p)
+    }
+    fn ALAN_EN2(&self) -> d1::En2 {
+        let E = &en::EN2;
+        d1::En2 { tepe: E.tepe, pat: E.pat, dinlen: E.dinlen, tempoDol: E.tempoDol, yogK: E.yogK, yogMin: E.yogMin }
+    }
+    fn ALAN_EN(&self) -> d1::En {
+        let E = &en::EN;
+        d1::En { dalis: E.dalis, dalisDolYok: E.dalisDolYok, sprEsik: E.sprEsik, ivme: E.ivme, surme: E.surme, dolas: E.dolas, fake: E.fake, kalkan: E.kalkan, fizK: E.fizK }
+    }
+    fn ALAN_DENGE_KAYIP(&self, p: &Oyuncu, t: f64) -> f64 {
+        ikili::dengeKayip(p, t)
+    }
+    fn ALAN_DOKUNUS(&self) -> Option<d1::Dokunus> {
+        // ALAN_DOKUNUS bugün kapalı (maç taşımadı)
+        None
+    }
+    fn ALAN_YOL_VER_TEPKI(&self) -> bool {
+        false
+    }
+    fn ALAN_TASIYICI_SONRA_YAVAS(&self) -> bool {
+        false
+    }
+    // ---- yerleşim ----
+    fn tepki_s(&self) -> TepkiS {
+        self.kural.tepki_s()
+    }
+    fn S(&self) -> Option<d1::ShapeS> {
+        let S = &sekil::sabit::S;
+        Some(d1::ShapeS { react: Some(S.react), rcvBuf: S.rcvBuf, marginT: S.marginT, markOff: Some(S.markOff), bekOnce: Some(S.bekOnce), bekSerbest: S.bekSerbest })
+    }
+    fn GR(&self) -> Option<d1::ShapeGR> {
+        Some(d1::ShapeGR { yasH: sekil::sabit::GR.yasH })
+    }
+    fn GR_yasHata(&self, yas: f64) -> f64 {
+        sekil::sabit::GR.yasHata(yas)
+    }
+    fn gecTab(&self, o: &Oyuncu, _refsiz: bool) -> Option<d1::GecTab> {
+        Some(gecTab_k(&sekil::gec::gecTab(o, &self.kural)))
+    }
+    fn gecOf(&self, G: &d1::GecTab, x: f64, y: f64, s: Option<f64>) -> f64 {
+        sekil::gec::gecOf(&gecTab_s(G), x, y, s)
+    }
+    fn gec(&self, o: &Oyuncu, x: f64, y: f64, s: Option<f64>) -> Option<f64> {
+        Some(sekil::gec::gec(o, x, y, s, &self.kural))
+    }
+    fn gside(&self, a: Nk, t: f64, off: f64) -> Nk {
+        let (x, y) = sekil::yer::gside(a.x, a.y, if t == 1.0 { 1 } else { 0 }, off);
+        nk(x, y)
+    }
+    fn bekci(&self, p: &Oyuncu, b: Nk) -> Option<Nk> {
+        let (x, y) = sekil::yer::bekci(p, b.x, b.y, None, &self.kural);
+        Some(nk(x, y))
+    }
+    fn aliciDirenc(&self, pts: &[Nk], p: &Oyuncu, rc: f64, iMin: f64, rP: f64) -> Option<Nk> {
+        let yol: Vec<sekil::ucus::Nokta> = pts.iter().map(|q| sekil::ucus::Nokta { x: q.x, y: q.y, e: 0.0 }).collect();
+        sekil::ucus::aliciDirenc(&yol, p, rc, iMin, Some(rP), &self.kural).map(|a| nk(a.x, a.y))
+    }
+    fn tehlike(&self, h: &Oyuncu) -> Vec<d1::Tehlike> {
+        let m = &*self.mac;
+        let hi = m.ps.iter().position(|q| q.id == h.id && q.team == h.team);
+        let d = crate::mac::gecici_dis::kafa_d();
+        sekil::takim::tehlike(m, &m.ps, hi, d)
+            .unwrap_or_default()
+            .into_iter()
+            .map(|t| d1::Tehlike { an: t.an, w: t.w, w0: t.w0, x: t.x, y: t.y, k: t.k, L: t.L })
+            .collect()
+    }
+    fn ilkPres(&self, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[d1::Tehlike], _dtac: &d1::TacEff, gs: &Option<JMShGs>) {
+        use sekil::varlik::{Gs, Mc, SekilDurum};
+        let mut m = Mac::default();
+        m.tick = tick;
+        let mut ps = vec![qv.clone(), hx.clone()];
+        let mut ek = SekilDurum::default();
+        ek.sh.gs = gs.as_ref().map(|g| Gs { t: g.t, dt: g.dt as u8, on: g.on, onP: g.onP, oy: g.oy });
+        let th: Vec<sekil::takim::Tehlike> = TH.iter().map(|t| sekil::takim::Tehlike { an: t.an, w: t.w, w0: t.w0, x: t.x, y: t.y, k: t.k.clone(), L: t.L }).collect();
+        let dtac = self.takim_tac(team).clone();
+        let d = crate::mac::gecici_dis::kafa_d();
+        {
+            let mut c = Mc { m: &mut m, ps: &mut ps, ball: None, ek: &mut ek, k: &self.kural, d, lite: true, rnd: None };
+            sekil::ilkPres(&mut c, 0, 1, if team == 1.0 { 1 } else { 0 }, Some(&th), &dtac);
+        }
+        qv.tx = ps[0].tx;
+        qv.ty = ps[0].ty;
+        qv.job = ps[0].job.clone();
+    }
+    fn AS_ilkPres_var(&self) -> bool {
+        true
+    }
+    // ---- maç ----
+    fn IK(&self) -> Option<d1::Ik> {
+        Some(d1::IK_JS)
+    }
+    fn ivme(&self, p: &mut Oyuncu, wx: f64, wy: f64, vmax: f64) {
+        crate::mac::hareket::ivme(p, wx, wy, vmax)
+    }
+    fn kutle(&self, p: &Oyuncu, ayni: bool) -> f64 {
+        ikili::kutle(p, ayni)
+    }
+    fn direnc(&self, p: &Oyuncu, ayni: bool) -> f64 {
+        ikili::direnc(p, ayni)
+    }
+    fn omuzK(&self, q: &Oyuncu) -> f64 {
+        ikili::omuzK(q)
+    }
+    fn durtFark(&self, q: &Oyuncu, h: &Oyuncu) -> Option<f64> {
+        Some(ikili::durtFark(q, h))
+    }
+    fn sendS(&self, p: &Oyuncu) -> Option<f64> {
+        Some(ikili::sendS(p))
+    }
+    fn ikEn(&self, p: &Oyuncu) -> Option<f64> {
+        Some(ikili::ikEn(p))
+    }
+    fn BEKLE_BOZ(&self) -> Option<f64> {
+        Some(crate::mac::dongu::BEKLE_BOZ)
+    }
+    // ---- maçın durumu ----
+    fn mac_var(&self) -> bool {
+        true
+    }
+    fn mac_ch(&self) -> Option<f64> {
+        self.ch
+    }
+    fn mac_holder(&self) -> Option<(f64, f64, f64, f64)> {
+        self.holder
+    }
+    fn tac_enHarcama(&self, team: f64) -> Option<f64> {
+        self.enHarcama[if team == 1.0 { 1 } else { 0 }]
+    }
+    fn tac_siddet(&self, team: f64) -> Option<(Option<f64>, bool, f64)> {
+        Some(self.siddet[if team == 1.0 { 1 } else { 0 }])
+    }
+    fn tacEff(&self, team: f64) -> d1::TacEff {
+        // kafa yalnız taşır (ilkPres'e geri verir); takımı işaretle
+        d1::TacEff(vec![("team".into(), team)])
+    }
+    fn sh_gs(&self) -> Option<JMShGs> {
+        self.gs.clone()
+    }
+    fn prT(&self) -> Option<d1::PrT> {
+        self.prT.clone()
+    }
+    // ---- algı kopyaları ----
+    fn algi_e(&self, p: &Oyuncu) -> Option<f64> {
+        p.__e
+    }
+    fn algi_yas(&self, p: &Oyuncu) -> Option<f64> {
+        p.__yas
+    }
+}

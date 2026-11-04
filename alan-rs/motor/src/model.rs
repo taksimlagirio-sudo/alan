@@ -284,6 +284,9 @@ pub struct Oyuncu {
     pub yet: crate::yetenek::Yetenek,
     /// (mac) `slowT`: omuzla yavaşlama bitişi
     pub slowT: Option<f64>,
+    /// (yerleşim) görülen kopyanın konum hatası `__e` ve yaşı `__yas` (gerçek oyuncuda yok)
+    pub __e: Option<f64>,
+    pub __yas: Option<f64>,
     /// (mac) `kenarW`: kenardan çalımın yol noktası
     pub kenarW: Option<crate::mac::KenarW>,
     /// (mac) `fkBlock`, `fkCool`: fake sonrası bekleme

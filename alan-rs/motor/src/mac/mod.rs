@@ -16,6 +16,7 @@ pub mod kurulum;
 pub mod kuyu;
 pub mod notlar;
 pub mod tac;
+pub mod kafa_dis;
 pub mod vurus;
 
 pub use dongu::{run, step, take};
@@ -145,6 +146,8 @@ pub struct MacEk {
     pub oSay: u64,
     /// yerleşimin maç üstündeki durumu (JS m._sn, m._kayL, m.sh …)
     pub sekil: crate::sekil::varlik::SekilDurum,
+    /// kafanın pres tartısı (JS m._prT): kafa yazar, sonraki kararda kafa okur
+    pub prT_k: Option<crate::kafa::gecici_dis1::PrT>,
 }
 
 // ---- küçük JS yardımcıları ----
