@@ -60,8 +60,8 @@ pub struct Oyuncu {
     pub hist: Option<Vec<JPHistE>>,
     /// `lock`: number (sonradan eklenir)
     pub lock: Option<f64>,
-    /// `kapPrev`: null
-    pub kapPrev: Option<JsDeger>,
+    /// `kapPrev`: OYUNCU|null (yerleşim: kapatma işinin adamı)
+    pub kapPrev: Option<Pid>,
     /// `zonePrev`: OYUNCU|null
     pub zonePrev: Option<Pid>,
     /// `swPrev`: OYUNCU|null
@@ -130,8 +130,8 @@ pub struct Oyuncu {
     pub oty: Option<f64>,
     /// `_otH`: OYUNCU|null
     pub _otH: Option<Pid>,
-    /// `_otB`: null|object
-    pub _otB: Option<JP_otB>,
+    /// `_otB`: null|object (yerleşim: bindirmenin taşıyıcısı; yalnız var/yok okunur)
+    pub _otB: Option<Pid>,
     /// `_otE`: object (sonradan eklenir)
     pub _otE: Option<JP_otE>,
     /// `_otF`: OYUNCU|null
