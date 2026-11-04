@@ -505,6 +505,9 @@ static UZAK_KIS_: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
 fn uzak_kis() -> bool {
     *UZAK_KIS_.get_or_init(|| !(crate::iz_acik() && std::env::var("ALAN_UZAK_ESKI_IZ").is_ok()))
 }
+fn uzak_h() -> bool {
+    crate::iz_acik() && std::env::var("ALAN_UZAKH_IZ").is_ok()
+}
 fn uzak_iz() -> bool {
     crate::iz_acik() && std::env::var("ALAN_UZAK_IZ").is_ok()
 }
@@ -754,8 +757,19 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                 if base.is_none() {
                     base = Some(nodeV(k, &mut cx, &h, k.D.sutHazir, 0.0, None));
                 }
+                let uz = hypot(d.x - h.x, d.y - h.y);
+                if uzak_h() && uz > UZAK_R {
+                    // listede kalır (Mk: tartılan rakipler), değeri tartılmaz: uzak rakip taşıyıcıya etki etmiyor
+                    if !Mk.contains(&d.id) {
+                        Mk.push(d.id);
+                    }
+                    continue;
+                }
                 let c = cx_siz(&mut CXS, &cx, d);
                 let v = nodeV(k, c, &h, k.D.sutHazir, 0.0, None);
+                if uzak_iz() {
+                    eprintln!("UZAKH {:.2} {:.6}", uz, jmax(0.0, v - base.unwrap()));
+                }
                 if !Mk.contains(&d.id) {
                     Mk.push(d.id);
                 }
