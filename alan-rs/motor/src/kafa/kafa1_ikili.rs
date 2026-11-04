@@ -1242,7 +1242,7 @@ impl Kafa {
     pub fn siddetQ(&self, team: f64) -> f64 {
         match self.dis.tac_siddet(team) {
             None => 0.5,
-            Some((s, yz, macK)) => jmin(1.0, s.unwrap_or(0.5) + if yz && macK.unwrap_or(1.0) < 0.6 { 0.25 } else { 0.0 }),
+            Some((s, yz, macK)) => jmin(1.0, s.unwrap_or(0.5) + if yz && macK < 0.6 { 0.25 } else { 0.0 }),
         }
     }
     /// Oyalama (decide.js:4658).
@@ -1333,6 +1333,18 @@ impl Kafa {
         } else {
             Some(v)
         }
+    }
+    /// girEsik'in yer değeri önbelleğine (JS `GEk`) bu tik için değer koy: sınama ve birleştirme kancası
+    /// (yerDeger kafa2'nin; sınamada JS'teki değeri verir).
+    pub fn ge_vk_koy(&self, key: String, v: f64) {
+        let t = self.tick();
+        let mut g = self.ge.borrow_mut();
+        if g.0 != Some(t) {
+            g.1.clear();
+            g.2.clear();
+            g.0 = Some(t);
+        }
+        g.2.insert(key, v);
     }
     /// decide.js:4701
     pub fn girThr(&self, q: &Oyuncu, h: &Oyuncu, src: &[Op]) -> f64 {

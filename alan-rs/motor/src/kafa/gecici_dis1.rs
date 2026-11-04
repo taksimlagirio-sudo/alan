@@ -270,8 +270,8 @@ pub trait Dis {
     fn mac_holder(&self) -> Option<(f64, f64, f64, f64)> { todo!() }
     /// D._mac.tac[team].enHarcama
     fn tac_enHarcama(&self, team: f64) -> Option<f64> { todo!() }
-    /// siddetQ'nun ham değeri (decide.js:4644): m.tac[k].siddet ?? .5, yz ve macEff(m,k,{}).macK; None: maç/taktik yok
-    fn tac_siddet(&self, team: f64) -> Option<(Option<f64>, bool, Option<f64>)> { todo!() }
+    /// siddetQ'nun ham değeri (decide.js:4644): m.tac[k].siddet ?? .5, yz ve macEff(m,k,{}).macK ?? 1 (macEff yoksa 1); None: maç/taktik yok
+    fn tac_siddet(&self, team: f64) -> Option<(Option<f64>, bool, f64)> { todo!() }
     /// AlanMatch.tacEff(m, dt) (yoksa m.tac[dt])
     fn tacEff(&self, team: f64) -> TacEff { todo!() }
     /// D._mac.sh.gs
