@@ -507,8 +507,7 @@ impl Kafa {
             {
                 let (mut tx, mut ty);
                 if let Some(rol) = c.rol {
-                    let hv = s.hv.clone();
-                    let r0 = self.hedefQ(c, rol, &mut s.qv, &hv, t);
+                    let r0 = self.hedefQ(c, rol, &mut s.qv, &s.hv, t);
                     tx = r0.x;
                     ty = r0.y;
                 } else if g > 4.0 {
@@ -862,6 +861,7 @@ impl Kafa {
             None => 0.0,
         };
         let tick0 = self.tick0();
+        let mut hS: Option<Oyuncu> = None;
         for (qi, q) in src.iter().enumerate() {
             let q: &Oyuncu = q;
             if q.team == h.team || q.noTouch {
@@ -917,8 +917,9 @@ impl Kafa {
                         let a = e / 3f64.sqrt();
                         let mut k4 = 0.0;
                         let mut s4 = 0.0;
+                        // örnek noktalar için rakibin tek kopyası (kesisK onu yalnız okur)
+                        let mut qs = q.clone();
                         for (sx, sy) in [(-1.0, -1.0), (-1.0, 1.0), (1.0, -1.0), (1.0, 1.0)] {
-                            let mut qs = q.clone();
                             qs.x = q.x + sx * a;
                             qs.y = q.y + sy * a;
                             let ks0 = KS_IZ.with(|f| f.get());
@@ -958,7 +959,14 @@ impl Kafa {
                 }
                 None => (None, 0.0),
             };
-            let mut hArg = h.clone();
+            // taşıyıcının tek kopyası (rakip başına yalnız değişen alanları tazelenir)
+            let hArg = hS.get_or_insert_with(|| h.clone());
+            hArg.vx = h.vx;
+            hArg.vy = h.vy;
+            hArg._don = h._don;
+            hArg.ca = h.ca;
+            hArg._dke = h._dke;
+            let hArg = &mut *hArg;
             if let Some(di) = dir {
                 let mv = atan2(di.y, di.x);
                 let aw = atan2(h.y - q.y, h.x - q.x);
@@ -990,14 +998,14 @@ impl Kafa {
             if let Some(e) = eAt {
                 hArg._dke = Some(e);
             }
-            let d0 = self.duelP_k(&qv, &hArg, src, None);
+            let d0 = self.duelP_k(&qv, hArg, src, None);
             let P = d0.P;
             let tries = 1.0 + ((T - reachT) / DU.cd).floor();
             let w = jmax(0.01, 0.03 * (20.0 - q.yet.y(mek::IKILI_KARAR)));
             let thr = self.girThr(q, h, src);
             let pcOf = |s: &mut Kafa, Pk: f64| jmax(0.0, jmin(1.0, (Pk + s.enIkiliEk(q, h) + w / 2.0 - thr + s.girEk(q, h, thr, src)) / w));
             let pc = pcOf(self, P);
-            let hvB = &hArg;
+            let hvB = &*hArg;
             let mut dCarp: Option<f64> = None;
             let mut Pd = P;
             let mut pcd = pc;
