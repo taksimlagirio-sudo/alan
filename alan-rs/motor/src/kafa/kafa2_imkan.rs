@@ -111,7 +111,7 @@ fn imkBol(k: &mut Kafa, team: f64, x: f64, y: f64, dd: f64, sy: f64, ch: f64) ->
         k.k2.IMKBT = true;
         k.k2.IMKB = Default::default();
     }
-    let key = format!("{}|{}|{}|{}", nb(team), nb(x), nb(y), nb(ch));
+    let key = (nb(team), nb(x), nb(y), nb(ch));
     if let Some(e) = k.k2.IMKB.get(&key) {
         return e.clone();
     }
@@ -133,7 +133,7 @@ pub fn imkKov(k: &mut Kafa, p: &Oyuncu) -> (f64, f64) {
         k.k2.IMKKt = Some(t);
         k.k2.IMKK = Default::default();
     }
-    let key = format!("{}|{}", p.team, p.id);
+    let key = (crate::sayi_k(p.team), crate::sayi_k(p.id));
     if let Some(r) = k.k2.IMKK.get(&key) {
         return *r;
     }

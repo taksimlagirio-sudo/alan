@@ -278,7 +278,7 @@ impl Kafa {
         }
         let ix = crate::mat::jround(2.0 * x);
         let iy = crate::mat::jround(2.0 * y);
-        let k = format!("{}|{}|{:?}|{}|{}|{}", team, bk.id, bk.en.map(f64::to_bits), bk._yer as u8, ix, iy);
+        let k = (crate::sayi_k(team), crate::sayi_k(bk.id), bk.en.map(f64::to_bits), bk._yer, crate::sayi_k(ix), crate::sayi_k(iy));
         if let Some(v) = self.rnb.borrow().1.get(&k) {
             return *v;
         }

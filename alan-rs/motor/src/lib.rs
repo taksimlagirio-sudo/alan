@@ -62,5 +62,16 @@ impl std::hash::Hasher for HizliKarma {
     #[inline]
     fn finish(&self) -> u64 { self.0 }
 }
+/// Sayının önbellek anahtarı: `format!("{}", x)` ile aynı eşitlik (−0 ile 0 ayrı, bütün NaN'lar bir),
+/// ama metin kurmadan.
+#[inline(always)]
+pub fn sayi_k(x: f64) -> u64 {
+    if x.is_nan() { f64::NAN.to_bits() } else { x.to_bits() }
+}
+/// JS sayısının önbellek anahtarı: `format!("{}", x + 0.0)` ile aynı eşitlik (−0 → 0, bütün NaN'lar bir).
+#[inline(always)]
+pub fn sayi_k0(x: f64) -> u64 {
+    sayi_k(x + 0.0)
+}
 /// Hızlı karmalı sözlük.
 pub type HizliMap<K, V> = std::collections::HashMap<K, V, std::hash::BuildHasherDefault<HizliKarma>>;

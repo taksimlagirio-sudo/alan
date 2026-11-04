@@ -1288,7 +1288,7 @@ impl Kafa {
                 g.0 = Some(t);
             }
         }
-        let k = format!("{}|{}|{}|{},{}|{},{}", js_int(q.id), js_int(q.team), js_int(h.id), js_int(jround(2.0 * q.x)), js_int(jround(2.0 * q.y)), js_int(jround(2.0 * h.x)), js_int(jround(2.0 * h.y)));
+        let k = { use crate::sayi_k0 as s; [s(q.id), s(q.team), s(h.id), s(jround(2.0 * q.x)), s(jround(2.0 * q.y)), s(jround(2.0 * h.x)), s(jround(2.0 * h.y))] };
         if let Some(&v) = self.ge.borrow().1.get(&k) {
             return if v < 0.0 { None } else { Some(v) };
         }
@@ -1313,7 +1313,7 @@ impl Kafa {
             };
             let Vn = hz.h.unwrap();
             let G = z0(hz.hm.as_ref().unwrap().iter().find(|e| e.0 == q.id).map_or(0.0, |e| e.1));
-            let vk = format!("{}|{},{}", js_int(q.team), js_int(jround(kx)), js_int(jround(ky)));
+            let vk = { use crate::sayi_k0 as s; [s(q.team), s(jround(kx)), s(jround(ky))] };
             let Vk = {
                 let o = self.ge.borrow().2.get(&vk).copied();
                 match o {
@@ -1350,7 +1350,9 @@ impl Kafa {
             g.2.clear();
             g.0 = Some(t);
         }
-        g.2.insert(key, v);
+        // JS anahtarı "takım|x,y" → sayı anahtarı
+        let n: Vec<f64> = key.split(|c| c == '|' || c == ',').map(|t| t.parse().expect("GEk anahtarı")).collect();
+        g.2.insert([crate::sayi_k0(n[0]), crate::sayi_k0(n[1]), crate::sayi_k0(n[2])], v);
     }
     /// decide.js:4701
     pub fn girThr(&mut self, q: &Oyuncu, h: &Oyuncu, src: &[Op]) -> f64 {
