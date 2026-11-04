@@ -252,7 +252,6 @@ impl Dis for MacDis {
             let kural = self.kural.get();
             let mut c = Mc { m, ps, ball: None, ek, k: &kural, d, lite: true, rnd: None };
             sekil::ilkPres(&mut c, 0, 1, if team == 1.0 { 1 } else { 0 }, Some(&th), dtac);
-            // önceki gibi yalnız hedef ve iş geri yazılır (rakibin kopyası olduğu gibi döner)
             let mut sonuc = std::mem::take(&mut ps[0]);
             let (tx, ty, job) = (sonuc.tx, sonuc.ty, sonuc.job.take());
             ps.clear();
@@ -260,8 +259,9 @@ impl Dis for MacDis {
             qv.tx = tx;
             qv.ty = ty;
             qv.job = job;
-            qv.pplan = pplan0;
-            qv.sprint = sprint0;
+            // JS: qv nesnesi kesişme simülasyonu boyunca yaşar; ilkPres'in yazdığı pres planı (fake/iç) ve
+            // sprint bir sonraki adımda görülür. (_onK bu görünümde yazılmaz.)
+            let _ = (pplan0, sprint0);
             qv._onK = onK0;
         });
     }
