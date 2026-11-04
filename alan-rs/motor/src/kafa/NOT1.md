@@ -1,5 +1,7 @@
 # Kafa1 notu (decide.js 1–4716)
 
+> Birleştirmeden sonraki durum (tek `Kafa`, `kafa2_bag`, Dis eklemeleri): `NOT-BIRLESIK.md`. Bu not taşıma anının notudur.
+
 ## Yapı
 
 - `Kafa` (`kafa1_baglam.rs`): JS kapanışının değişkenleri. `D: KafaD` (JS `AlanDecide.D`), `dis: Arc<dyn Dis>`

@@ -3,8 +3,8 @@
 //! (nodeV), durum (durumD), imkânlı zemin (zeminH), prensipDegerle / prensipDegerle0, prGam.
 #![allow(non_snake_case, clippy::too_many_arguments)]
 
-use super::gecici_dis2 as dis;
-use super::gecici_dis2::{ALAN_HZ, ALAN_SPRE};
+use super::kafa2_bag as dis;
+use super::kafa2_bag::{ALAN_HZ};
 use super::kafa2_baglam::*;
 use super::kafa2_dunya::{bekYerW, geriCekil, predictWorld};
 use super::kafa2_imkan::{imkUzak, imkan, sutS, sutVakit, SUR_BOS, SUR_PARCA};
@@ -46,7 +46,7 @@ pub fn bekYol(k: &mut Kafa, w: &[Op], team: f64, A: Nokta, B: Nokta, lag: Option
     let Q = &crate::core_sabit::Q;
     let t = dis::ucusT(k, s, k.D.arriveFirm, None) + veyo(lag, 0.0);
     let rc = crate::temas::bek_re(&kb);
-    let vk = (0.17 + 0.006 * ALAN_HZ(&kb)) * ALAN_SPRE(&kb);
+    let vk = (0.17 + 0.006 * ALAN_HZ(&kb)) * dis::ALAN_SPRE(k, &kb);
     let R = Q.bek_body + jmin(crate::temas::bek_dl(&kb), jmax(0.0, t - rc) * crate::temas::bek_dv(&kb)) + jmax(0.0, t - rc - 2.0) * vk * 0.6;
     1.0 / (1.0 + exp(-(hypot(kb.x - cx0, kb.y - cy0) - R) / 0.3))
 }
@@ -230,7 +230,7 @@ pub fn surD(k: &mut Kafa, w: &[Op], team: f64, kq: &Oyuncu, at: Nokta, ch: f64, 
             r.vy = if yol > 0.0 { u.y * vK } else { 0.0 };
             let Ts0 = jmax(4.0, dis::surSure(k, &r, seg, Some(u), None));
             let p = jmax(0.0, jmin(1.0, dis::keepP(k, &r, &ww, Some(u), Ts0)));
-            let pr = k.k1.keepP_son;
+            let pr = k.keepP_son.get();
             let adv = if pr < seg { jmax(0.0, pr) } else { seg };
             kayv += Pc * (1.0 - p) * kay(k, kayip, pos.x + u.x * adv / 2.0, pos.y + u.y * adv / 2.0);
             Pc *= p;
@@ -239,7 +239,7 @@ pub fn surD(k: &mut Kafa, w: &[Op], team: f64, kq: &Oyuncu, at: Nokta, ch: f64, 
             }
             let E = nk(pos.x + u.x * adv, pos.y + u.y * adv);
             let Ts = if adv < seg { jmax(4.0, dis::surSure(k, &r, adv, Some(u), None)) } else { Ts0 };
-            ww = geriCekil(&ww, team, pos, E, Ts, yol == 0.0);
+            ww = geriCekil(k, &ww, team, pos, E, Ts, yol == 0.0);
             T += Ts;
             yol += adv;
             pos = E;
@@ -345,8 +345,8 @@ pub fn enIyiPas(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f6
         {
             let Lb = hypot(P0.B.x - A.x, P0.B.y - A.y);
             if Lb >= 5.0 && Lb <= dis::pasMax(k) {
-                let rb = veya(dis::AS_S_rcvBuf(), 0.0);
-                let vk = (0.17 + 0.006 * ALAN_HZ(&k0)) * ALAN_SPRE(&k0);
+                let rb = veya(dis::AS_S_rcvBuf(k), 0.0);
+                let vk = (0.17 + 0.006 * ALAN_HZ(&k0)) * dis::ALAN_SPRE(k, &k0);
                 let ux = (P0.B.x - A.x) / Lb;
                 let uy = (P0.B.y - A.y) / Lb;
                 let mut s = 5.0;
@@ -354,7 +354,7 @@ pub fn enIyiPas(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f6
                     let x = A.x + ux * s;
                     let y = A.y + uy * s;
                     let d = jmax(0.0, hypot(x - k0.x, y - k0.y) - 1.4);
-                    let tk = dis::AS_gec(&k0, x, y, d) + d / vk + rb;
+                    let tk = dis::AS_gec(k, &k0, x, y, d) + d / vk + rb;
                     let tbb = dis::ucusT(k, Lb, k.D.arriveFirm, Some(s));
                     if tk <= tbb {
                         R = Some(nk(x, y));
@@ -591,7 +591,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
             o._pw = Some(wE);
             o._pT = Some(Ts);
             dok_dk(&tE, o);
-        } else if kind == "tut" && bekci(&h) && h.bekBas.is_some() && veyo(o.hold, 15.0) >= 90.0 - (k.tick0() - h.bekBas.unwrap()) - 4.0 {
+        } else if kind == "tut" && bekci(&h) && h.bekBas.is_some() && veyo(o.hold, 15.0) >= 90.0 - (k.tick() - h.bekBas.unwrap()) - 4.0 {
             let v = -L(k, h.x, h.y);
             o.v = Some(v);
             o.prensip = Some("Bekle".into());

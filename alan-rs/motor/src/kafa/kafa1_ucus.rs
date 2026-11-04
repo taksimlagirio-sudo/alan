@@ -3,7 +3,7 @@
 #![allow(non_snake_case)]
 
 use super::gecici_dis1::{bekSav, predictWorld};
-use super::kafa1_baglam::{Kafa, UcusYol};
+use super::kafa1_baglam::{Kafa, KuralK, UcusYol};
 use super::kafa1_js::*;
 use super::kafa1_param::{BKS, BODY_R, SAV, UC3, UC5};
 use super::kafa1_sut::{sgm, top_yap};
@@ -321,7 +321,7 @@ impl Kafa {
     }
 
     /// Kafadaki uçuş denemesi (decide.js:2324): bugünkü davranışta formül (ucusFormul).
-    pub fn imagine(&self, h: &Oyuncu, src: &[Op], b0: UcusB0, q: Option<&Oyuncu>, to: Option<Nk>, kc: Kc) -> Ucus {
+    pub fn imagine(&mut self, h: &Oyuncu, src: &[Op], b0: UcusB0, q: Option<&Oyuncu>, to: Option<Nk>, kc: Kc) -> Ucus {
         self.ucusFormul(h, src, b0, q, to, kc)
     }
     /// Kenardan sektirme denemesi (decide.js:2315): D._kenar açıkken imagine.
@@ -334,11 +334,14 @@ impl Kafa {
     }
 
     /// Topun uçuşunun formülü (decide.js:1675): her tikte her adayın topa yetişme olasılığı.
-    pub fn ucusFormul(&self, h: &Oyuncu, src0: &[Op], b0in: UcusB0, q: Option<&Oyuncu>, to: Option<Nk>, kc0: Kc) -> Ucus {
-        let D = &self.D;
+    pub fn ucusFormul(&mut self, h: &Oyuncu, src0: &[Op], b0in: UcusB0, q: Option<&Oyuncu>, to: Option<Nk>, kc0: Kc) -> Ucus {
+        // D ve dış dünya yerel kopyadan okunur: keepP / predictWorld `&mut self` ister (kafa2'nin önbellekleri)
+        let D0 = self.D.clone();
+        let D = &D0;
         let team = h.team;
         let gon = D._gon.unwrap_or(false);
-        let kr = self.kural();
+        let dis0 = self.dis.clone();
+        let kr = KuralK(&*dis0);
         let S_ = self.dis.S();
         let GR = self.dis.GR();
         let tick = self.tick();
@@ -378,7 +381,7 @@ impl Kafa {
         let gecik = jmax(0.0, jround(gecik));
         let BSV = gecik >= 1.0 && h.id >= 0.0;
         let ws: Cow<[Op]> = if BSV {
-            Cow::Owned(src0.iter().map(|p| if p.team != team && p.bekci() { Op::new(bekSav(self, p, h, gecik, src0)) } else { p.clone() }).collect())
+            Cow::Owned(src0.iter().map(|p| if p.team != team && p.bekci() { bekSav(self, p, h, gecik, src0) } else { p.clone() }).collect())
         } else {
             Cow::Borrowed(src0)
         };

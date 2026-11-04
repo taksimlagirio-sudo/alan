@@ -341,7 +341,7 @@ impl Kafa {
     /// Sürerken bir rakiple kesişmeyi tik tik oynatır (decide.js:4071): topu tutma olasılığı.
     /// `kesisK_son`'a ilerleyişi yazar (JS kesisK.son).
     #[allow(clippy::too_many_arguments)]
-    pub fn kesisK(&self, h: &Oyuncu, q: &Oyuncu, dir: Nk, T: f64, src: &[Op], _d0: f64, rol: Option<&PresRol>) -> f64 {
+    pub fn kesisK(&mut self, h: &Oyuncu, q: &Oyuncu, dir: Nk, T: f64, src: &[Op], _d0: f64, rol: Option<&PresRol>) -> f64 {
         let IK = self.ik();
         let spK = |p: &Oyuncu| self.sprKafa(p);
         let vB = self.spd(h) * if h.sprint { spK(h) } else { 1.0 } * self.topK(h);
@@ -828,7 +828,7 @@ impl Kafa {
 
     /// Topu T tik tutabilme olasılığı (decide.js:4429); `dir`: sürüş yönü (yok: yerinde tutar).
     /// `keepP_son`'a ilk kesişmeye dek ilerleyişi yazar.
-    pub fn keepP(&self, h: &Oyuncu, src: &[Op], dir: Option<Nk>, T: f64) -> f64 {
+    pub fn keepP(&mut self, h: &Oyuncu, src: &[Op], dir: Option<Nk>, T: f64) -> f64 {
         self.keepP_son.set(f64::INFINITY);
         if h.bekci() {
             if let Some(k) = h._korT {
@@ -979,8 +979,8 @@ impl Kafa {
             let tries = 1.0 + ((T - reachT) / DU.cd).floor();
             let w = jmax(0.01, 0.03 * (20.0 - q.yet.y(mek::IKILI_KARAR)));
             let thr = self.girThr(q, h, src);
-            let pcOf = |Pk: f64| jmax(0.0, jmin(1.0, (Pk + self.enIkiliEk(q, h) + w / 2.0 - thr + self.girEk(q, h, thr, src)) / w));
-            let pc = pcOf(P);
+            let pcOf = |s: &mut Kafa, Pk: f64| jmax(0.0, jmin(1.0, (Pk + s.enIkiliEk(q, h) + w / 2.0 - thr + s.girEk(q, h, thr, src)) / w));
+            let pc = pcOf(self, P);
             let hvB = &hArg;
             let mut dCarp: Option<f64> = None;
             let mut Pd = P;
@@ -1015,7 +1015,7 @@ impl Kafa {
                 hvC.den = Some(dc);
                 let d1 = self.duelP_k(&qv, &hvC, src, None);
                 Pd = d1.P;
-                pcd = pcOf(Pd);
+                pcd = pcOf(self, Pd);
                 kd = Some(d1.omuz);
                 sd0 = d1.son;
             }
@@ -1047,7 +1047,7 @@ impl Kafa {
                     hv2.den = Some(jmin(1.0, jmax(0.0, dk) + dl));
                     let d2 = self.duelP_k(&qv, &hv2, src, None);
                     Pk = d2.P;
-                    ck = pcOf(Pk);
+                    ck = pcOf(self, Pk);
                     dk = if d2.omuz { d2.son } else { hv2.den.unwrap() };
                     k += 1.0;
                 }
@@ -1269,7 +1269,7 @@ impl Kafa {
         }
     }
     /// Maçın pres tartısından ikiliye girme eşiği (decide.js:4668; JS gibi tik başına önbellekli).
-    pub fn girEsik(&self, q: &Oyuncu, h: &Oyuncu, src: &[Op], ch: Option<f64>) -> Option<f64> {
+    pub fn girEsik(&mut self, q: &Oyuncu, h: &Oyuncu, src: &[Op], ch: Option<f64>) -> Option<f64> {
         if self.ge_ic.get() {
             return None;
         }
@@ -1347,14 +1347,14 @@ impl Kafa {
         g.2.insert(key, v);
     }
     /// decide.js:4701
-    pub fn girThr(&self, q: &Oyuncu, h: &Oyuncu, src: &[Op]) -> f64 {
+    pub fn girThr(&mut self, q: &Oyuncu, h: &Oyuncu, src: &[Op]) -> f64 {
         match self.girEsik(q, h, src, None) {
             Some(g) => g,
             None => self.commitThr(q, h, src),
         }
     }
     /// decide.js:4705
-    pub fn girEk(&self, q: &Oyuncu, h: &Oyuncu, thr: f64, src: &[Op]) -> f64 {
+    pub fn girEk(&mut self, q: &Oyuncu, h: &Oyuncu, thr: f64, src: &[Op]) -> f64 {
         if self.girEsik(q, h, src, None).is_some() {
             0.0
         } else {

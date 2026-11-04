@@ -3,8 +3,8 @@
 //! taşıma (tasima), sutEngel, bosluk.
 #![allow(non_snake_case, clippy::too_many_arguments)]
 
-use super::gecici_dis2 as dis;
-use super::gecici_dis2::{ALAN_HZ, ALAN_SPRE, ALAN_TEPKI};
+use super::kafa2_bag as dis;
+use super::kafa2_bag::{ALAN_HZ};
 use super::kafa2_baglam::*;
 use super::kafa2_dunya::{bekKay, bekYerW};
 use crate::mat::{cos, exp, hypot, jmax, jmin, sin};
@@ -137,7 +137,7 @@ pub fn imkKov(k: &mut Kafa, p: &Oyuncu) -> (f64, f64) {
     if let Some(r) = k.k2.IMKK.get(&key) {
         return *r;
     }
-    let r = (ALAN_TEPKI(p, "kovala"), (0.17 + 0.006 * ALAN_HZ(p)) * ALAN_SPRE(p));
+    let r = (dis::ALAN_TEPKI(k, p, "kovala"), (0.17 + 0.006 * ALAN_HZ(p)) * dis::ALAN_SPRE(k, p));
     k.k2.IMKK.insert(key, r);
     r
 }
@@ -335,7 +335,7 @@ pub fn imkUzak(team: f64, x: f64, y: f64) -> bool {
 
 struct ImkO {
     p: Op,
-    G: dis::GecTab,
+    G: Option<dis::GecTab>,
     v: f64,
     R: f64,
     rc: f64,
@@ -374,25 +374,25 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         if p.noTouch {
             continue;
         }
-        let o = ImkO { p: p.clone(), G: dis::AS_gecTab(p), v: dis::AS_vSp(p), R: jmin(2.0, crate::temas::menzil(p, 0.35)), rc: 0.0 };
+        let o = ImkO { p: p.clone(), G: dis::AS_gecTab(k, p), v: dis::AS_vSp(k, p), R: jmin(2.0, crate::temas::menzil(p, 0.35)), rc: 0.0 };
         if p.team == team {
             if !bekci(p) {
                 biz.push(o);
             }
         } else if !bekci(p) {
             let mut o = o;
-            o.rc = jmax(0.0, ALAN_TEPKI(p, "kovala"));
+            o.rc = jmax(0.0, dis::ALAN_TEPKI(k, p, "kovala"));
             rak.push(o);
         }
     }
     const IMK_BLOK: f64 = 2.4;
     let varB = |k: &Kafa, o: &ImkO, x: f64, y: f64| -> f64 {
         let d = jmax(0.0, hypot(o.p.x - x, o.p.y - y) - IMK_BLOK);
-        o.rc + dis::AS_gecOf(&o.G, x, y, d) + dis::ALAN_KOSU_T(k, &o.p, d, o.v)
+        o.rc + dis::AS_gecOf(k, &o.G, x, y, d) + dis::ALAN_KOSU_T(k, &o.p, d, o.v)
     };
     let var_ = |k: &Kafa, o: &ImkO, x: f64, y: f64, rc: f64| -> f64 {
         let d = jmax(0.0, hypot(o.p.x - x, o.p.y - y) - o.R);
-        rc + dis::AS_gecOf(&o.G, x, y, d) + dis::ALAN_KOSU_T(k, &o.p, d, o.v)
+        rc + dis::AS_gecOf(k, &o.G, x, y, d) + dis::ALAN_KOSU_T(k, &o.p, d, o.v)
     };
     let rakVar = |k: &Kafa, x: f64, y: f64| -> f64 {
         let mut t = 1e9;
@@ -402,14 +402,14 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         t
     };
     let vh = match h {
-        Some(h) => jmax(0.05, dis::AS_vSp(h) * dis::topK(k, h)),
+        Some(h) => jmax(0.05, dis::AS_vSp(k, h) * dis::topK(k, h)),
         None => 0.3,
     };
     const KISA: f64 = 15.0;
     let bk: Option<Op> = w.iter().find(|p| p.team != team && bekci(p) && !p.noTouch).cloned();
     let tac = k.mac.as_ref().map(|m| m.tac.clone()).unwrap_or_default();
-    let vk = bk.as_ref().map(|b| dis::AS_vSp(b)).unwrap_or(0.0);
-    let rk = bk.as_ref().map(|b| jmax(0.0, ALAN_TEPKI(b, "kovala"))).unwrap_or(0.0);
+    let vk = bk.as_ref().map(|b| dis::AS_vSp(k, b)).unwrap_or(0.0);
+    let rk = bk.as_ref().map(|b| jmax(0.0, dis::ALAN_TEPKI(k, b, "kovala"))).unwrap_or(0.0);
     let mut zs: Vec<ImkZ> = Vec::new();
     {
         let mut x = if gx == GW { GW - 4.0 } else { 4.0 };
@@ -655,7 +655,7 @@ pub fn sutYol(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, tS: Option<f64>
                 continue;
             }
             let pe = (-(p.x - x) * uy + (p.y - y) * ux).abs();
-            let R = crate::core_sabit::Q.reach + jmax(0.0, al / 2.4 - ALAN_TEPKI(p, "kovala")) * (0.17 + 0.006 * ALAN_HZ(p)) * ALAN_SPRE(p);
+            let R = crate::core_sabit::Q.reach + jmax(0.0, al / 2.4 - dis::ALAN_TEPKI(k, p, "kovala")) * (0.17 + 0.006 * ALAN_HZ(p)) * dis::ALAN_SPRE(k, p);
             if sg > 0.0 {
                 pass *= 1.0 - (1.0 - k.D.shotThru) * imkSg((R + 0.8 - pe) / sg);
             } else if pe < R + 0.8 {
@@ -718,14 +718,14 @@ pub fn sutVakit(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, kq: Option<&O
             }
         }
     };
-    let s = k.k1.keepP_son;
+    let s = k.keepP_son.get();
     let mut r = kk;
     r.x = x;
     r.y = y;
     r.vx = 0.0;
     r.vy = 0.0;
     let p = jmax(0.0, jmin(1.0, dis::keepP(k, &r, w, None, k.D.sutHazir)));
-    k.k1.keepP_son = s;
+    k.keepP_son.set(s);
     p
 }
 
@@ -773,7 +773,7 @@ pub fn tasima(k: &mut Kafa, w: &[Op], team: f64, kq: Option<&Oyuncu>, x: f64, y:
             };
             let mut td: f64 = 1e9;
             for o in &opp {
-                td = jmin(td, jmax(0.0, ALAN_TEPKI(o, "kovala")) + jmax(0.0, hypot(o.x - P.x, o.y - P.y) - 2.4) / ((0.17 + 0.006 * ALAN_HZ(o)) * ALAN_SPRE(o)));
+                td = jmin(td, jmax(0.0, dis::ALAN_TEPKI(k, o, "kovala")) + jmax(0.0, hypot(o.x - P.x, o.y - P.y) - 2.4) / ((0.17 + 0.006 * ALAN_HZ(o)) * dis::ALAN_SPRE(k, o)));
             }
             if td - tc < k.D.sutHazir {
                 break;
@@ -805,7 +805,7 @@ pub fn sutEngel(k: &Kafa, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
             continue;
         }
         let pe = (-(p.x - x) * uy + (p.y - y) * ux).abs();
-        let reachT = jmax(0.0, al / 2.4 - ALAN_TEPKI(p, "kovala")) * (0.17 + 0.006 * ALAN_HZ(p)) * ALAN_SPRE(p);
+        let reachT = jmax(0.0, al / 2.4 - dis::ALAN_TEPKI(k, p, "kovala")) * (0.17 + 0.006 * ALAN_HZ(p)) * dis::ALAN_SPRE(k, p);
         let R = crate::core_sabit::Q.reach + reachT;
         if pe < R + 0.8 {
             pass *= k.D.shotThru;
@@ -846,18 +846,18 @@ pub fn bosluk(k: &mut Kafa, src: &[Op], team: f64, bx: f64, by: f64) -> f64 {
         }
         let mut ta: f64 = 1e9;
         let mut td: f64 = 1e9;
-        for j in 0..O.n {
-            let tk = O.T[j];
+        for j in 0..O.x.len() {
+            let tk = O.t[j];
             if tk == 0 {
                 continue;
             }
-            let t = hypot(O.X[j] - x, O.Y[j] - y) / O.V[j];
+            let t = hypot(O.x[j] - x, O.y[j] - y) / O.v[j];
             if tk == 1 {
                 if t < ta {
                     ta = t;
                 }
             } else {
-                let tt = t + 6.0 - O.A[j];
+                let tt = t + 6.0 - O.a[j];
                 if tt < td {
                     td = tt;
                 }

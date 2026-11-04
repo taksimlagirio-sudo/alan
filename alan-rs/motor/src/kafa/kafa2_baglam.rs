@@ -168,6 +168,20 @@ pub struct PrT {
     pub h: f64,
 }
 
+impl PrT {
+    /// Kafa1'in (girEsik) ve maçın okuduğu biçim (`Dis::prT`): maç `k.prT`'yi bununla verir.
+    pub fn d1(&self) -> super::gecici_dis1::PrT {
+        super::gecici_dis1::PrT {
+            team: self.team,
+            hId: Some(self.hId),
+            t: self.t.unwrap_or(f64::NAN),
+            h: Some(self.h),
+            hm: self.hm.as_ref().map(|x| x.0.clone()),
+            hmk: self.hm.as_ref().map(|x| x.1.clone()),
+        }
+    }
+}
+
 /// pwKos önbelleğinin satırı (JS PWM'in `e`)
 #[derive(Clone, Debug)]
 pub struct PwE {
@@ -228,8 +242,6 @@ pub struct Kafa2Durum {
     pub IMKKt: Option<Option<f64>>,
     /// ileriTab: (tick, anahtar, tablo)
     pub IT: Option<(f64, String, Option<Arc<crate::kafa::kafa2_zemin::IleriTab>>)>,
-    /// SAH_F: sahiplik haritası (karar boyunca)
-    pub SAH_F: Option<Arc<crate::kafa::kafa2_zemin::Sahiplik>>,
     pub IMK_OFS: f64,
     pub IMK_INAN_T: f64,
     /// JS `self.__sahF` (görünüm için)
@@ -245,146 +257,13 @@ pub struct Kafa2Durum {
     pub sfNiyet: Option<(f64, f64, String, Option<f64>)>,
 }
 
-/// Kafanın bağlamı: JS kapanışının durumu. `D` ortak (`AlanDecide.D`), `mac` = `D._mac`.
-pub struct Kafa {
-    pub D: KafaD,
-    pub mac: Option<MacGor>,
-    /// m._prT çıktısı
-    pub prT: Option<PrT>,
-    pub k2: Kafa2Durum,
-    /// Kafa 1'in durumu (geçici; birleştirmede kafa1'in yapısı)
-    pub k1: crate::kafa::gecici_dis2::Kafa1Durum,
-}
+/// Kafanın bağlamı tektir: kafa1'in yapısı (`kafa1_baglam::Kafa`); kafa2'nin alanları (`mac`, `prT`, `k2`)
+/// ona eklendi, sahiplik haritası `Kafa::SAH_F`.
+pub use super::kafa1_baglam::Kafa;
 
-impl Kafa {
-    pub fn yeni() -> Kafa {
-        let mut k2 = Kafa2Durum::default();
-        k2.PWT = Some(-1e9);
-        k2.IMK_INAN_T = 60.0;
-        Kafa { D: kafa_d(), mac: None, prT: None, k2, k1: Default::default() }
-    }
-    /// JS `D._tick`
-    #[inline(always)]
-    pub fn tick(&self) -> Option<f64> {
-        self.D._tick
-    }
-    /// JS `D._tick || 0`
-    #[inline(always)]
-    pub fn tick0(&self) -> f64 {
-        veyo(self.D._tick, 0.0)
-    }
-}
-
-/// JS `D` (decide.js 33–150 sabitleri; `_` alanları boş).
+/// JS `D`'nin başlangıç değerleri (tek kaynak: `kafa1_param::d_js`).
 pub fn kafa_d() -> KafaD {
-    KafaD {
-        simMax: 180.0,
-        errOk: 0.05,
-        errPos: 3.0,
-        aimErr: 0.035,
-        v0Err: 0.04,
-        arrive: 0.3,
-        arriveSpace: 0.08,
-        vmax: 3.0,
-        shotV: 2.6,
-        plaseV: 1.7,
-        riskBase: 1.0,
-        riskCay: 1.0,
-        riskP0: 0.85,
-        riskPk: 0.6,
-        surKarar: 0.025,
-        asanPay: 3.0,
-        amIleri: 0.02,
-        amGec: 0.008,
-        amAc: 0.006,
-        sutHazir: 5.0,
-        threatK: 22.0,
-        sideK: 0.35,
-        b0: 0.06,
-        b1: 0.28,
-        recvKeepT: 8.0,
-        shotThru: 0.15,
-        disc: 0.985,
-        istekK: 0.03,
-        planK: 0.015,
-        belirsiz: 6.0,
-        bekCek: 4.0,
-        bekleAtla: 0.1,
-        bekBedel: 0.03,
-        bekTempo: 0.05,
-        cevTempo: 0.025,
-        otErr: 1.2,
-        otOk: 6.0,
-        otMargin: 0.02,
-        passMax: 50.0,
-        passMaxF: 80.0,
-        spcBallV: 1.0,
-        useValTab: false,
-        useCurve: false,
-        useSpace: true,
-        look: false,
-        lookReuse: 4.0,
-        lookMove: 2.5,
-        lookAge: 45.0,
-        lookR: 200.0,
-        lookN: 3.0,
-        lookT: 110.0,
-        lookMargin: 0.1,
-        laneLag: 0.0,
-        aimPow: 0.45,
-        aimPlase: 0.75,
-        arriveFirm: 0.8,
-        vK: 0.35,
-        combo: 0.9,
-        chV: 0.6,
-        pierceV: 0.85,
-        chgMin: 0.1,
-        enBedel: 0.05,
-        sarjUfuk: 30.0,
-        sarjEgim: 0.1,
-        chg0: 0.0035,
-        chgTek: 2.5,
-        chgPasif: 0.4,
-        enHizV: 0.3,
-        enUfuk: 40.0,
-        enTmin: 15.0,
-        sabirEn: 0.6,
-        direktK: 0.08,
-        kontraL: 35.0,
-        sarjKap: 0.25,
-        zoneMin: 0.45,
-        zoneD: 32.0,
-        chRecv: 0.55,
-        threadMin: 12.0,
-        threadLane: 0.08,
-        threadOff: vec![-3.0, 3.0],
-        bankOk: 8.0,
-        bankIf: 0.8,
-        bankN: 3.0,
-        trials: 2.0,
-        nFull: 9.0,
-        yokD: 0.03,
-        nSpots: 4.0,
-        nFullLook: 3.0,
-        ..D_KALAN()
-    }
-}
-
-/// D'nin geri kalanı (decide.js 121–129).
-#[allow(non_snake_case)]
-fn D_KALAN() -> KafaD {
-    KafaD {
-        nMates: 6.0,
-        growMax: 8.0,
-        shotRange: 34.0,
-        tPS: 0.05,
-        tPB: 0.04,
-        pbOrta: 22.0,
-        pbGen: 12.0,
-        tSut: 0.08,
-        tSab: 0.04,
-        ..KafaD::default()
-    }
+    super::kafa1_param::d_js()
 }
 
 /// D'nin `_` alanlarını (`_tick` dışında) boşaltır (JS: `for (k of Object.keys(D)) if (k[0] === "_" && k !== "_tick") delete D[k]`).

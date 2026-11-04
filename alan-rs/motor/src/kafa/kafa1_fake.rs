@@ -6,7 +6,8 @@ use super::gecici_dis1::{riskOf, sonraDeger};
 use super::kafa1_baglam::Kafa;
 use super::kafa1_js::*;
 use crate::mat::{exp, hypot, jmax, jmin, jround};
-use crate::model::{JMTacE, JODet, JOShow, JOTo, Oyuncu, Secenek};
+use super::kafa2_baglam::Tac;
+use crate::model::{JODet, Oyuncu, Secenek};
 use crate::saha::{CY as GCY, MOUTH, W as GW};
 use crate::yetenek::mek;
 
@@ -97,7 +98,7 @@ impl Kafa {
             k += 1.0;
         }
     }
-    fn fake_dunya(&mut self, h: &Oyuncu, src: &[Op], ch: f64, sh: &FakeSh, kandi: bool, T: f64, tac: Option<&JMTacE>) -> Option<Secenek> {
+    fn fake_dunya(&mut self, h: &Oyuncu, src: &[Op], ch: f64, sh: &FakeSh, kandi: bool, T: f64, tac: Option<&Tac>) -> Option<Secenek> {
         let mut src2: Vec<Oyuncu> = src
             .iter()
             .map(|p| {
@@ -136,7 +137,7 @@ impl Kafa {
     }
     /// Fake seçenekleri (decide.js:334): `opts`'a ekler. `kon`: kayıp yerinin değeri (kafa2'nin KF'si).
     #[allow(clippy::too_many_arguments)]
-    pub fn fakeSecenek(&mut self, h: &Oyuncu, src: &[Op], ch: f64, tac: Option<&JMTacE>, opts: &mut Vec<Secenek>, kon: Option<&dyn Fn(f64, f64) -> f64>) {
+    pub fn fakeSecenek(&mut self, h: &Oyuncu, src: &[Op], ch: f64, tac: Option<&Tac>, opts: &mut Vec<Secenek>, kon: &mut dyn FnMut(&mut Kafa, f64, f64) -> Option<f64>) {
         if self.D._noFake || self.D._inLook || h.bekci() {
             return;
         }
@@ -237,8 +238,8 @@ impl Kafa {
                 if k0.is_none() {
                     k0 = Some(jmax(0.0, jmin(1.0, self.keepP(h, src, None, T))));
                     let Vk = self.V(src, 1.0 - team, h.x, h.y, 0.3);
-                    L0 = (match kon {
-                        Some(f) => jmax(Vk, f(h.x, h.y)),
+                    L0 = (match kon(self, h.x, h.y) {
+                        Some(f) => jmax(Vk, f),
                         None => Vk,
                     }) * riskOf(self, h, tac);
                 }
@@ -246,7 +247,7 @@ impl Kafa {
                 let kY = (1.0 + k0v) / 2.0;
                 v = pAll * r1v + (pf - pAll) * (kY * (r1v + r0v) / 2.0 - (1.0 - kY) * L0) + (1.0 - pf) * (k0v * r0v - (1.0 - k0v) * L0);
             }
-            v -= tac.map_or(0.5, |t| t.tempo) * self.D.bekTempo * (T / 30.0);
+            v -= tac.and_then(|t| t.tempo).unwrap_or(0.5) * self.D.bekTempo * (T / 30.0);
             opts.push(Secenek {
                 kind: "fake".into(),
                 show: Some(crate::mac::gecici_dis::FakeShow { k: sh.k.clone(), to: (sh.to.x, sh.to.y), c: sh.c }),

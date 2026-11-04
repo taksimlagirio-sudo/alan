@@ -1,13 +1,12 @@
-//! Kafa1'in çağırdığı yabancı işlevler (AJAN.md madde 3). Birleştirmede gerçeklerine bağlanacak.
+//! Kafa1'in çağırdığı yabancı işlevler: dış dünya (`Dis`) ve kafa2'ye bağ.
 //!
 //! İki tür var:
 //! 1. **Dış modüller** (maç, yerleşim, enerji/sprint): [`Dis`] özelliğinin yöntemleri. Gövdeleri
 //!    `todo!()`; maç modülü bu özelliği kendi bağlamında gerçekler. Sınamalar kendi kayıtlı
 //!    gerçeklemelerini verir (JS'ten kaydedilmiş değerler ya da sınamaya taşınmış küçük işlevler).
 //!    Kafa bunları `self.dis` üzerinden çağırır (gizli küresel yok).
-//! 2. **Kafa2'nin işlevleri** (decide.js 4717 sonrası): bu dosyanın sonundaki serbest işlevler,
-//!    `todo!()` gövdeli. Kafa2 bunları `impl Kafa` yöntemleri olarak yazacak; birleştirmede çağrılar
-//!    `self.X(...)`'e çevrilir.
+//! 2. **Kafa2'nin işlevleri** (decide.js 4717 sonrası): bu dosyanın sonundaki serbest işlevler;
+//!    kafa2'nin gerçeklerine bağlıdır (imza farkları burada uydurulur).
 //!
 //! Her yöntemin başında JS kaynağı (dosya:satır, sade kaynakta) yazılı.
 #![allow(non_snake_case, unused_variables)]
@@ -169,6 +168,21 @@ pub struct Tehlike {
 #[derive(Clone, Debug, Default)]
 pub struct TacEff(pub Vec<(String, f64)>);
 
+/// Yerleşimin baktığı maç görünümü (JS `fm`/`m`: `{ tac, ps, holder }`; kafa2 kurar).
+pub struct Fm<'a> {
+    pub tac: &'a [crate::model::JMTacE],
+    pub ps: &'a [Op],
+    pub holder: Option<&'a Oyuncu>,
+}
+
+/// holdWorld'ün hayali maçı (JS createMatch + kopya + kopyaDurum; yalnız eski kafa, ALAN_PRENSIP kapalı).
+pub struct HayaliMac {
+    pub ps: Vec<Op>,
+    /// topu tutan (ps sırası)
+    pub holder: Option<usize>,
+    pub ch: f64,
+}
+
 /// Dış dünya: maç, yerleşim ve enerji modüllerinin kafaya açtığı işlevler.
 pub trait Dis {
     // ---- enerji / sprint (core.js, match.js) ----
@@ -240,6 +254,12 @@ pub trait Dis {
     fn ilkPres(&self, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[Tehlike], dtac: &TacEff, gs: &Option<JMShGs>) { todo!() }
     /// AlanShape var mı, ilkPres var mı (presRol'ün koşulu)
     fn AS_ilkPres_var(&self) -> bool { todo!() }
+    /// (birleştirmede eklendi; kafa2) shape.js bekci(p, B, m): `m` verili maç görünümüyle (fm)
+    fn bekciFm(&self, p: &Oyuncu, B: Nk, fm: &Fm) -> Nk { todo!() }
+    /// (birleştirmede eklendi; kafa2) shape.js slotBase(m, p, B, hucum): oyuncunun yerleşimdeki yeri
+    fn slotBase(&self, fm: &Fm, p: &Oyuncu, B: Nk, hucum: bool) -> Nk { todo!() }
+    /// (birleştirmede eklendi; kafa2) shape.js S.prHat[blok] (yoksa None)
+    fn S_prHat(&self, blok: &str) -> Option<f64> { todo!() }
 
     // ---- maç (match.js, window.AlanMatch) ----
     /// match.js:1836 IK (yoksa None: ikili kafası kapalı)
@@ -260,6 +280,15 @@ pub trait Dis {
     fn ikEn(&self, p: &Oyuncu) -> Option<f64> { todo!() }
     /// AlanMatch.BEKLE_BOZ (yoksa None)
     fn BEKLE_BOZ(&self) -> Option<f64> { todo!() }
+    /// (birleştirmede eklendi; kafa2) match.js:939 tl(p, ev, k): takım talimatı (`null` → None)
+    fn tl(&self, p: &Oyuncu, ev: &str, k: &str) -> Option<f64> { todo!() }
+    /// (birleştirmede eklendi; kafa2) match.js:311 sprK(p): enerjiyle kısılmış sprint katı
+    fn sprK(&self, p: &Oyuncu) -> f64 { todo!() }
+    /// (birleştirmede eklendi; kafa2, yalnız eski kafa) holdWorld'ün hayali maçı: createMatch + kopya +
+    /// kopyaDurum (tohum, dünya, taşıyan, şarj, taktik)
+    fn hayaliMac(&self, k: &mut Kafa, tohum: f64, src: &[Op], hi: usize, ch: f64, tac: Option<&super::kafa2_baglam::Tac>) -> HayaliMac { todo!() }
+    /// (birleştirmede eklendi; kafa2, yalnız eski kafa) hayali maçta bir tik (JS M.step(m), m.decT = 99)
+    fn hayaliAdim(&self, k: &mut Kafa, m: &mut HayaliMac) { todo!() }
 
     // ---- maçın durumu (D._mac) ----
     /// D._mac var mı
@@ -291,27 +320,39 @@ pub struct GeciciDis;
 impl Dis for GeciciDis {}
 
 // ======================================================================
-// Kafa2'nin işlevleri (decide.js 4717 sonrası). Kafa2 bunları `impl Kafa` yöntemi olarak yazacak.
+// Kafa2'nin işlevleri (decide.js 4717 sonrası): kafa2'nin gerçeklerine bağlı.
 // ======================================================================
 
 /// Kafa2'nin `predictWorld` dönüşündeki bir oyuncunun kestirilen yeri (null: değişmedi).
 pub type DunyaYer = Option<Nk>;
 
-/// decide.js:4920 predictWorld(src, team, B, T, cevapAyri, resp, pasta, tas): oyuncuların T tik
-/// sonraki yerleri (src sırasıyla; None: kestirilmedi).
-pub fn predictWorld(k: &Kafa, src: &[Op], team: f64, B: Nk, T: f64, cevapAyri: bool, pasta: bool) -> Vec<DunyaYer> { todo!() }
+/// decide.js:4920 predictWorld(src, team, B, T, cevapAyri, undefined, pasta): oyuncuların T tik
+/// sonraki yerleri (src sırasıyla; JS'te her öğe bir oyuncu nesnesi, değişmeyen de: hep Some).
+pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nk, T: f64, cevapAyri: bool, pasta: bool) -> Vec<DunyaYer> {
+    let w = super::kafa2_dunya::predictWorld(k, src, team, B, T, cevapAyri, None, pasta, None);
+    w.iter().map(|q| Some(Nk { x: q.x, y: q.y })).collect()
+}
 /// decide.js:4789 bekSav(p, h, T, src): şut savrulurken Bekçi'nin yeri (kopya).
-pub fn bekSav(k: &Kafa, p: &Oyuncu, h: &Oyuncu, T: f64, src: &[Op]) -> Oyuncu { todo!() }
+pub fn bekSav(k: &Kafa, p: &Op, h: &Oyuncu, T: f64, src: &[Op]) -> Op {
+    super::kafa2_dunya::bekSav(k, p, h, T, src)
+}
 /// decide.js:5454 bosluk(src, team, bx, by)
-pub fn bosluk(k: &Kafa, src: &[Op], team: f64, bx: f64, by: f64) -> f64 { todo!() }
+pub fn bosluk(k: &mut Kafa, src: &[Op], team: f64, bx: f64, by: f64) -> f64 {
+    super::kafa2_imkan::bosluk(k, src, team, bx, by)
+}
 /// decide.js:5440 sutEngel(src, team, x, y)
-pub fn sutEngel(k: &Kafa, src: &[Op], team: f64, x: f64, y: f64) -> f64 { todo!() }
+pub fn sutEngel(k: &Kafa, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
+    super::kafa2_imkan::sutEngel(k, src, team, x, y)
+}
 /// decide.js:6773 yerDeger(w, team, x, y, ch)
-pub fn yerDeger(k: &Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64) -> f64 { todo!() }
+pub fn yerDeger(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64) -> f64 {
+    super::kafa2_zemin::yerDeger(k, w, team, x, y, ch)
+}
 /// decide.js:5423 riskOf(h, tac)
-pub fn riskOf(k: &Kafa, h: &Oyuncu, tac: Option<&crate::model::JMTacE>) -> f64 { todo!() }
-/// decide.js:5639 sonraDeger(hc, w, ch, risk, kon): fake dünyasında taşıyıcının en iyi seçeneği.
-pub fn sonraDeger(k: &mut Kafa, hc: &Oyuncu, w: &[Op], ch: f64, risk: f64) -> Option<Secenek> { todo!() }
-/// decide.js:7306 dalgaKos(items, tart, src, h): bağımsız tartıları sırayla (ya da paralel) koşar.
-/// Kafa1'de yalnız fakeSecenek kullanır; burada dalga yerine sırayla çağrılır (sonuç sıradan bağımsız).
-pub fn dalgaKos_var(k: &Kafa) -> bool { todo!() }
+pub fn riskOf(k: &Kafa, h: &Oyuncu, tac: Option<&super::kafa2_baglam::Tac>) -> f64 {
+    super::kafa2_karar::riskOf(k, h, tac)
+}
+/// decide.js:5639 sonraDeger(hc, w, ch, risk): fake dünyasında taşıyıcının en iyi seçeneği.
+pub fn sonraDeger(k: &mut Kafa, hc: &Oyuncu, w: &[Op], ch: f64, risk: f64) -> Option<Secenek> {
+    super::kafa2_eski::sonraDeger(k, hc, w, ch, risk)
+}

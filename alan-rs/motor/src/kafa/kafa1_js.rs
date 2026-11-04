@@ -4,12 +4,8 @@ use crate::alan::{Etki, KOnbellek, Kaynak};
 use crate::model::Oyuncu;
 use std::cell::RefCell;
 
-/// Bir nokta ({x, y}).
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
-pub struct Nk {
-    pub x: f64,
-    pub y: f64,
-}
+/// Bir nokta ({x, y}): modelin ortak noktası (kafa2 ile tek tip).
+pub use crate::model::Nokta as Nk;
 #[inline(always)]
 pub fn nk(x: f64, y: f64) -> Nk {
     Nk { x, y }

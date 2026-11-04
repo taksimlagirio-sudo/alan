@@ -1,5 +1,7 @@
 # Kafa 2 (decide.js 4717–8890) — taşıma notu
 
+> Birleştirmeden sonraki durum (tek `Kafa`, `kafa2_bag`, Dis eklemeleri): `NOT-BIRLESIK.md`. Bu not taşıma anının notudur.
+
 ## Ne taşındı (dosya → JS işlevleri)
 
 | Dosya | İşlevler |

@@ -1,6 +1,10 @@
 //! Kafa 2: yabancıya uğramayan saf işlevlerin JS ile bit bit aynılığı (sina/kafa2-vektor.js).
-use alan_motor::kafa::gecici_dis2 as dis;
+use alan_motor::kafa::gecici_dis1::Dis;
+use alan_motor::kafa::kafa2_bag as dis;
 use alan_motor::kafa::kafa2_baglam::*;
+use alan_motor::mat::{jmax, jmin};
+use alan_motor::oyuncu::TepkiS;
+use std::cell::RefCell;
 use alan_motor::kafa::{kafa2_dunya, kafa2_imkan, kafa2_karar, kafa2_tarti};
 use alan_motor::model::{JPEg, JPTl, Oyuncu};
 use alan_motor::yetenek::{Ham, Yetenek};
@@ -85,6 +89,52 @@ fn oyuncu(v: &Value) -> Oyuncu {
     p
 }
 
+/// Sınamanın dış dünyası: maçın sprint katı (match.js ALAN_SPR sarmalı) JS'ten; ALAN_SPRE onun
+/// üstünde çekirdeğin EN2_SPRE'si (core.js:192, refL 20); yerleşimin tepki parametreleri JS'tekiler.
+#[derive(Default)]
+struct SinamaDis {
+    spr: RefCell<Vec<(f64, f64, f64)>>,
+}
+impl Dis for SinamaDis {
+    fn ALAN_SPR(&self, p: &Oyuncu) -> f64 {
+        if let Some(v) = self.spr.borrow().iter().find(|x| x.0 == p.id && x.1 == p.team).map(|x| x.2) {
+            return v;
+        }
+        alan_motor::yetenek::spr_h(p.yet.hiz)
+    }
+    fn ALAN_SPRE(&self, p: &Oyuncu) -> f64 {
+        let en = match p.en {
+            None => return self.ALAN_SPR(p),
+            Some(e) => e,
+        };
+        let sp = self.ALAN_SPR(p);
+        if !(sp > 1.0) {
+            return veya(sp, 1.0);
+        }
+        let en_s = 0.7 + 0.03 * dis::ALAN_Y(p, "barBoy");
+        let sb = jmax(0.5, jmin(1.6, 1.0 + 5.0 * (en_s - 1.0) / 3.0));
+        let ts = jmax(0.0, en * sb / (1.0 / 120.0));
+        if ts <= 0.0 {
+            return 1.0;
+        }
+        let b = 0.17 + 0.006 * p.hz();
+        let lr = 20.0;
+        let reach = b * sp * ts;
+        if lr <= reach {
+            return sp;
+        }
+        let t = ts + (lr - reach) / b;
+        lr / (b * t)
+    }
+    fn tepki_s(&self) -> TepkiS {
+        TepkiS::default()
+    }
+}
+fn kafa_kur() -> (Kafa, Arc<SinamaDis>) {
+    let d = Arc::new(SinamaDis::default());
+    (Kafa::yeni(d.clone()), d)
+}
+
 fn vektor() -> Option<Value> {
     let yol = concat!(env!("CARGO_MANIFEST_DIR"), "/../sina/kafa2-vektor.json");
     match std::fs::read_to_string(yol) {
@@ -102,7 +152,7 @@ fn imk_egrileri() {
         Some(v) => v,
         None => return,
     };
-    let k = Kafa::yeni();
+    let (k, _) = kafa_kur();
     let mut hata = Vec::new();
     for e in v["sap"].as_array().unwrap() {
         let t = h(&e[0]);
@@ -122,7 +172,7 @@ fn js_ile_bit_bit_ayni() {
         Some(v) => v,
         None => return,
     };
-    let mut k = Kafa::yeni();
+    let (mut k, sd) = kafa_kur();
     let mut hata: Vec<String> = Vec::new();
     let mut say = [0usize; 8];
     let bak = |ad: &str, tk: u64, x: f64, j: &Value, hata: &mut Vec<String>, s: &mut usize| {
@@ -136,13 +186,13 @@ fn js_ile_bit_bit_ayni() {
         k.D._tick = Some(tk as f64);
         let ps: Dunya = a["ps"].as_array().unwrap().iter().map(|p| Arc::new(oyuncu(p))).collect();
         // maçın sprint katı (match.js sarmalı) JS'ten
-        dis::SINAMA_SPR.with(|m| *m.borrow_mut() = a["per"].as_array().unwrap().iter().enumerate().map(|(i, e)| (ps[i].id, ps[i].team, h(&e[1]))).collect());
+        *sd.spr.borrow_mut() = a["per"].as_array().unwrap().iter().enumerate().map(|(i, e)| (ps[i].id, ps[i].team, h(&e[1]))).collect();
         for (i, e) in a["per"].as_array().unwrap().iter().enumerate() {
             let p = &ps[i];
-            bak("SPRE", tk, dis::ALAN_SPRE(p), &e[0], &mut hata, &mut say[0]);
-            bak("TEPKI kovala", tk, dis::ALAN_TEPKI(p, "kovala"), &e[2], &mut hata, &mut say[0]);
-            bak("TEPKI algi", tk, dis::ALAN_TEPKI(p, "algi"), &e[3], &mut hata, &mut say[0]);
-            bak("TEPKI bosTop", tk, dis::ALAN_TEPKI(p, "bosTop"), &e[4], &mut hata, &mut say[0]);
+            bak("SPRE", tk, dis::ALAN_SPRE(&k, p), &e[0], &mut hata, &mut say[0]);
+            bak("TEPKI kovala", tk, dis::ALAN_TEPKI(&k, p, "kovala"), &e[2], &mut hata, &mut say[0]);
+            bak("TEPKI algi", tk, dis::ALAN_TEPKI(&k, p, "algi"), &e[3], &mut hata, &mut say[0]);
+            bak("TEPKI bosTop", tk, dis::ALAN_TEPKI(&k, p, "bosTop"), &e[4], &mut hata, &mut say[0]);
             let _ = &e[5]; // otFactor: rastgele inSp, girdi yazılmadı
         }
         for e in a["nok"].as_array().unwrap() {
@@ -156,7 +206,7 @@ fn js_ile_bit_bit_ayni() {
         }
         for e in a["gc"].as_array().unwrap() {
             let team = e[0].as_f64().unwrap();
-            let r = kafa2_dunya::geriCekil(&ps, team, nk(h(&e[1]), h(&e[2])), nk(h(&e[3]), h(&e[4])), h(&e[5]), e[6].as_bool().unwrap());
+            let r = kafa2_dunya::geriCekil(&k, &ps, team, nk(h(&e[1]), h(&e[2])), nk(h(&e[3]), h(&e[4])), h(&e[5]), e[6].as_bool().unwrap());
             for (i, q) in e[7].as_array().unwrap().iter().enumerate() {
                 for (j, x) in [r[i].x, r[i].y, r[i].vx, r[i].vy].iter().enumerate() {
                     bak(&format!("geriCekil {i}.{j}"), tk, *x, &q[j], &mut hata, &mut say[3]);
