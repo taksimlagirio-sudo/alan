@@ -236,7 +236,11 @@ pub fn sprK(p: &Oyuncu, k: &MacKural) -> f64 {
 }
 /// JS ALAN_EN2_SPRE(p, L): L boyunca ortalama sprint katı
 pub fn ALAN_EN2_SPRE(p: &Oyuncu, l: Option<f64>, k: &MacKural) -> f64 {
-    let sp = ALAN_SPR(p, k);
+    spre_bar(p, l, ALAN_SPR(p, k))
+}
+/// Barlı oyuncuda sprintin etkin katı: sprint katı `sp` bar süresince sürer, `l` (yoksa EN2.refL) yolunda
+/// ortalama kat. ALAN_EN2_SPRE'nin ve yerleşimin ALAN_SPRE'sinin ortak çekirdeği.
+pub fn spre_bar(p: &Oyuncu, l: Option<f64>, sp: f64) -> f64 {
     if !(sp > 1.0) {
         return if dogru(sp) { sp } else { 1.0 };
     }
