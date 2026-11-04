@@ -3,7 +3,7 @@
 #![allow(non_snake_case)]
 
 use crate::core_sabit::{Q, TQ};
-use crate::mat::{atan2, hypot, jmax, jmin, jsign};
+use crate::mat::{hypot, jmax, jmin, jsign};
 use crate::model::{KafaD, Mac, Oyuncu, Pid};
 use crate::oyuncu::Tepki;
 use crate::saha::{KR, MOUTH};
@@ -267,25 +267,7 @@ fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (f
                     2.5,
                     jmax(2.5, jmin(KR + 4.0, L - if yakin { 1.2 } else { 2.5 })),
                 );
-                let rY = {
-                    let hl = {
-                        let l = hypot(gx - hh.x, GCY - hh.y);
-                        if l != 0.0 && l == l {
-                            l
-                        } else {
-                            1.0
-                        }
-                    };
-                    let gV = dis::govdeV(hh);
-                    let cs = dis::coreSide(hh);
-                    let pl = dis::savurPlan(hh, (gx - hh.x) / hl * gV, (GCY - hh.y) / hl * gV, atan2(cs.1, cs.0), 0.0, 0.0, false, 1.0);
-                    let tS = match pl {
-                        Some(t) => jmax(1.0, t),
-                        None => 1.0,
-                    };
-                    jmax(r, hypot(p.x - gx, p.y - GCY)) + spd(p) * ALAN_SPRE(p, k) * tS
-                };
-                let _ = rY;
+                /* (rY: taşıyıcının şut hazırlığına göre çıkış yarıçapı — artık kullanılmıyor, hesaplanmaz) */
                 if yakin && rOut > r {
                     r += (rOut - r) * w;
                 } /* şut hazırlığında her tik bir adım öne çıkma yok (dalış modelinde öne çıkan Bekçi tepkisi içinde yetişemiyordu); yalnız taşıyıcı dibe girince (karşı karşıya) üstüne çıkar */
