@@ -129,8 +129,8 @@ pub fn kafaBasla(m: &mut Mac, h: Pid, o: &mut Secenek, ot: bool) {
     let hp = &m.ps[h];
     let d = o.det.as_ref();
     let q = o.q.filter(|&q| !m.ps[q].name.is_empty());
-    let e: Option<(f64, f64)> = if let Some(d) = d.filter(|d| d.endM.x.is_finite()) {
-        Some((d.endM.x, d.endM.y))
+    let e: Option<(f64, f64)> = if let Some(d) = d.and_then(|d| d.endM.as_ref()).filter(|e| e.x.is_finite()) {
+        Some((d.x, d.y))
     } else if o.kind == "sür" || o.kind == "önüne" {
         o.to.as_ref().map(|t| (t.x, t.y))
     } else if let Some(q) = q.filter(|&q| q != h) {
@@ -150,9 +150,9 @@ pub fn kafaBasla(m: &mut Mac, h: Pid, o: &mut Secenek, ot: bool) {
         shot: o.shot.clone(),
         ot,
         v: k3(o.v),
-        P: k3(d.map(|d| d.P)),
-        Ps: d.map(|d| d.Ps).and_then(|x| k3(Some(x))),
-        Pk: k3(d.map(|d| d.Pk)),
+        P: k3(d.and_then(|d| d.P)),
+        Ps: d.and_then(|d| d.Ps).and_then(|x| k3(Some(x))),
+        Pk: k3(d.and_then(|d| d.Pk)),
         hiz: k3(kHiz(o.launch.as_ref().map(|l| (l.vx, l.vy)))),
         savT: o.savT,
         tf: o.tf.map(jround),

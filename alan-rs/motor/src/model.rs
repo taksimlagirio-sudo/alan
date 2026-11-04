@@ -699,134 +699,194 @@ pub struct KafaD {
     /// `imkEski`: boolean
     pub imkEski: bool,
     /// `_tekL`: undef
-    pub _tekL: Option<JsDeger>,
+    pub _tekL: Option<f64>,
     /// `_sut`: number (sonradan eklenir)
-    pub _sut: Option<f64>,
+    pub _sut: Option<JsDeger>,
     /// `_zin`: null
     pub _zin: Option<JsDeger>,
     /// `_kuyruk`: undef
     pub _kuyruk: Option<JsDeger>,
     /// `_savT`: undef
-    pub _savT: Option<JsDeger>,
+    pub _savT: Option<f64>,
     /// `_savW`: undef
-    pub _savW: Option<JsDeger>,
+    pub _savW: Option<f64>,
     /// `_savU`: undef
-    pub _savU: Option<JsDeger>,
+    pub _savU: Option<f64>,
     /// `_savCa`: undef
-    pub _savCa: Option<JsDeger>,
+    pub _savCa: Option<f64>,
     /// `_kenar`: undef
     pub _kenar: Option<JsDeger>,
     /// `_kayipYap`: undef
     pub _kayipYap: Option<JsDeger>,
     /// `_gPr`: undef
-    pub _gPr: Option<JsDeger>,
+    pub _gPr: Option<f64>,
     /// `_enWD`: undef
-    pub _enWD: Option<JsDeger>,
+    pub _enWD: Option<f64>,
     /// `_enTm`: undef
-    pub _enTm: Option<JsDeger>,
+    pub _enTm: Option<f64>,
     /// `_kanca`: undef
-    pub _kanca: Option<JsDeger>,
+    pub _kanca: Option<DKanca>,
     /// `_ot`: number (sonradan eklenir)
     pub _ot: Option<f64>,
     /// `_tekD`: boolean
     pub _tekD: bool,
     /// `_itme`: undef
-    pub _itme: Option<JsDeger>,
+    pub _itme: Option<bool>,
     /// `_gon`: undef
-    pub _gon: Option<JsDeger>,
+    pub _gon: Option<bool>,
     /// `_sYon`: undef
-    pub _sYon: Option<JsDeger>,
+    pub _sYon: Option<f64>,
 }
 
-/// JS `o`
+/// JS `D._kanca` (tek dokunuşun kancası: gelen topun savurması; maç kurar, kafa okur). Kafa 2 tipledi.
+#[derive(Clone, Debug, Default)]
+pub struct DKanca {
+    pub w0: f64,
+    pub s: f64,
+    pub ca: Option<f64>,
+    pub u: Option<f64>,
+    pub on: bool,
+}
+
+/// JS `{x, y}` (nokta; seçeneğin hedefleri, hayalin bitiş yerleri)
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct Nokta {
+    pub x: f64,
+    pub y: f64,
+}
+
+/// JS `o` (kafanın seçeneği). Kafa 2 düzeltti: noktalar `Nokta`, `det` alanları isteğe bağlı,
+/// `dok` sıralı sözlük, hayali dünyalar paylaşımlı (`Arc`); tartının yazdığı alanlar eklendi.
 #[derive(Clone, Debug, Default)]
 pub struct Secenek {
-    /// `kind`: string
+    /// `kind`: string ("pas" | "önüne" | "kenardan" | "sür" | "çalım" | "tut" | "gönder" | "fake")
     pub kind: String,
-    /// `to`: object (sonradan eklenir)
-    pub to: Option<JOTo>,
-    /// `dir`: object (sonradan eklenir)
-    pub dir: Option<JODir>,
-    /// `_own`: number (sonradan eklenir)
+    pub to: Option<Nokta>,
+    pub dir: Option<Nokta>,
     pub _own: Option<f64>,
-    /// `uzun`: number|undef
     pub uzun: Option<f64>,
-    /// `duvar`: undef
-    pub duvar: Option<JsDeger>,
-    /// `toE`: object (sonradan eklenir)
-    pub toE: Option<JOToE>,
-    /// `TsE`: number (sonradan eklenir)
+    pub duvar: bool,
+    pub toE: Option<Nokta>,
     pub TsE: Option<f64>,
-    /// `v`: number (sonradan eklenir)
+    /// değer (JS null → None)
     pub v: Option<f64>,
-    /// `dok`: object (sonradan eklenir)
-    pub dok: Option<JODok>,
-    /// `det`: object (sonradan eklenir)
+    pub dok: Option<Dok>,
     pub det: Option<JODet>,
-    /// `en`: object (sonradan eklenir)
     pub en: Option<JOEn>,
-    /// `enV`: number (sonradan eklenir)
     pub enV: Option<f64>,
-    /// `prensip`: string (sonradan eklenir)
     pub prensip: Option<String>,
-    /// `_pw`: dizi (sonradan eklenir)
-    pub _pw: Option<Vec<JO_pwE>>,
-    /// `_pT`: number (sonradan eklenir)
+    /// tartının dünyası (JS `o._pw`)
+    pub _pw: Option<std::sync::Arc<Vec<std::sync::Arc<Oyuncu>>>>,
     pub _pT: Option<f64>,
-    /// `spr`: boolean|number|undef
-    pub spr: Option<JsDeger>,
-    /// `sprBos`: number (sonradan eklenir)
+    /// JS `o.spr` (sprint niyeti: true ya da kat)
+    pub spr: Option<f64>,
     pub sprBos: Option<f64>,
-    /// `sjK`: number (sonradan eklenir)
     pub sjK: Option<f64>,
-    /// `q`: OYUNCU (sonradan eklenir)
+    /// alıcı (kararın dünyasındaki sıra)
     pub q: Option<Pid>,
-    /// `arrive`: number (sonradan eklenir)
     pub arrive: Option<f64>,
-    /// `tek`: number (sonradan eklenir)
     pub tek: Option<f64>,
-    /// `firm`: boolean|undef
     pub firm: Option<bool>,
-    /// `itK`: number|undef
     pub itK: Option<f64>,
-    /// `launch`: object (sonradan eklenir)
     pub launch: Option<JOLaunch>,
-    /// `sYon`: number (sonradan eklenir)
     pub sYon: Option<f64>,
-    /// `savT`: number (sonradan eklenir)
     pub savT: Option<f64>,
-    /// `_sek`: number (sonradan eklenir)
     pub _sek: Option<f64>,
-    /// `tf`: number (sonradan eklenir)
     pub tf: Option<f64>,
-    /// `kh`: string (sonradan eklenir)
     pub kh: Option<String>,
-    /// `lf0`: object (sonradan eklenir)
-    pub lf0: Option<JOLf0>,
-    /// `siddet`: number (sonradan eklenir)
+    pub lf0: Option<JOLaunch>,
     pub siddet: Option<f64>,
-    /// `asim`: number (sonradan eklenir)
     pub asim: Option<f64>,
-    /// `kendine`: boolean
     pub kendine: bool,
-    /// `lead`: object (sonradan eklenir)
-    pub lead: Option<JOLead>,
-    /// `hold`: number (sonradan eklenir)
+    pub lead: Option<Nokta>,
     pub hold: Option<f64>,
     /// (mac) maçın yazdığı / okuduğu, taslakta olmayan alanlar
     pub savW: Option<f64>,
     pub savU: Option<f64>,
     pub ot: Option<f64>,
     pub noErr: bool,
-    pub why: Option<String>,
     pub devam: Option<f64>,
-    pub wp: Option<JOTo>,
-    pub wp1: Option<JOTo>,
     pub show: Option<crate::mac::gecici_dis::FakeShow>,
     /// (mac) kafa günlüğü için seçeneğin kimliği (JS nesne kimliği)
     pub _kafaId: Option<u64>,
-    /// `shot`: string (sonradan eklenir)
     pub shot: Option<String>,
+    // --- Kafa 2'nin tartısının yazdıkları ---
+    pub kE: Option<f64>,
+    pub bekci: Option<f64>,
+    pub asan: Option<f64>,
+    pub _at: Option<Nokta>,
+    pub _w: Option<std::sync::Arc<Vec<std::sync::Arc<Oyuncu>>>>,
+    pub _T: Option<f64>,
+    pub _wE: Option<std::sync::Arc<Vec<std::sync::Arc<Oyuncu>>>>,
+    pub _en: Option<f64>,
+    pub _enB: Option<f64>,
+    pub _enR: Option<f64>,
+    pub _enS: Option<f64>,
+    pub look: Option<f64>,
+    pub next: Option<f64>,
+    pub hw: Option<SecHw>,
+    pub amac: Option<SecAmac>,
+    pub sonra: Option<String>,
+    pub geri: Option<f64>,
+    pub ust: Option<f64>,
+    pub cek: Option<f64>,
+    pub why: Option<String>,
+    pub riskCay: Option<f64>,
+    pub zaman: Option<f64>,
+    pub yerlesme: Option<f64>,
+    pub drk: Option<f64>,
+    pub calim: bool,
+    pub wp: Option<Nokta>,
+    pub wp1: Option<Nokta>,
+}
+
+/// JS `o.dok`: değer dökümü (anahtar sırası JS ekleme sırası) ve `sonra` yazısı.
+#[derive(Clone, Debug, Default)]
+pub struct Dok {
+    pub k: Vec<(String, f64)>,
+    pub sonra: Option<String>,
+}
+impl Dok {
+    pub fn al(&self, k: &str) -> Option<f64> {
+        self.k.iter().find(|x| x.0 == k).map(|x| x.1)
+    }
+    /// JS `t[k] = v`
+    pub fn koy(&mut self, k: &str, v: f64) {
+        match self.k.iter_mut().find(|x| x.0 == k) {
+            Some(x) => x.1 = v,
+            None => self.k.push((k.to_string(), v)),
+        }
+    }
+    pub fn yeni(kv: &[(&str, f64)]) -> Dok {
+        let mut d = Dok::default();
+        for (k, v) in kv {
+            d.koy(k, *v);
+        }
+        d
+    }
+}
+
+/// JS `o.hw` (beklemenin hayali dünyası)
+#[derive(Clone, Debug, Default)]
+pub struct SecHw {
+    pub kayip: bool,
+    pub tik: Option<f64>,
+    pub T: f64,
+    pub v: Option<f64>,
+    pub sonra: Option<String>,
+    pub sonraP: Option<f64>,
+    pub Pk: Option<f64>,
+}
+
+/// JS `o.amac`
+#[derive(Clone, Debug, Default)]
+pub struct SecAmac {
+    pub il: f64,
+    pub ac: f64,
+    pub gec: f64,
+    pub n0: f64,
+    pub n1: f64,
+    pub bekle: bool,
 }
 
 /// JS `p.slot`
@@ -1854,33 +1914,27 @@ pub struct JODok {
     pub gol: f64,
 }
 
-/// JS `o.det`
+/// JS `o.det`: hayalin sonucu (imagine) ya da tartının {P, ch}. Kafa 2 düzeltti: alanlar isteğe bağlı.
 #[derive(Clone, Debug, Default)]
 pub struct JODet {
-    /// `P`: number
-    pub P: f64,
-    /// `ch`: number
-    pub ch: f64,
-    /// `Pk`: number
-    pub Pk: f64,
-    /// `Pl`: number
-    pub Pl: f64,
-    /// `end`: object
-    pub end: JODetEnd,
-    /// `endM`: object
-    pub endM: JODetEndM,
-    /// `endO`: object
-    pub endO: JODetEndO,
-    /// `Ps`: number
-    pub Ps: f64,
-    /// `endS`: object
-    pub endS: JODetEndS,
-    /// `endD`: object
-    pub endD: JODetEndD,
-    /// `Psek`: number
-    pub Psek: f64,
-    /// `endSek`: object
-    pub endSek: JODetEndSek,
+    pub P: Option<f64>,
+    pub ch: Option<f64>,
+    pub Pk: Option<f64>,
+    pub Pl: Option<f64>,
+    pub end: Option<Nokta>,
+    pub endM: Option<Nokta>,
+    pub endO: Option<Nokta>,
+    pub Ps: Option<f64>,
+    pub endS: Option<Nokta>,
+    pub endD: Option<Nokta>,
+    pub Psek: Option<f64>,
+    pub endSek: Option<Nokta>,
+    /// hayalin süresi (JS `det.T`)
+    pub T: Option<f64>,
+    /// holdWorld denemesi (JS `det.Psim`)
+    pub Psim: Option<f64>,
+    /// bakılacak arkadaş (JS `det.lookTo`)
+    pub lookTo: Option<Pid>,
 }
 
 /// JS `o.en`

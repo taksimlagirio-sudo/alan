@@ -48,7 +48,7 @@ pub fn slotBase0(m: &Mac, ps: &[Oyuncu], p: &Oyuncu, sl: Option<(f64, f64)>, ex:
     let bd = (ex - x0) * dir;
     let (back, len, wid, sh);
     if att {
-        back = cl(bd - 18.0 * GKX - 8.0 * (1.0 - tac.risk) * GKX, 10.0 * GKX, 62.0 * GKX);
+        back = cl(bd - 18.0 * GKX - 8.0 * (1.0 - tac.risk.unwrap_or(f64::NAN)) * GKX, 10.0 * GKX, 62.0 * GKX);
         let mut last = 0.0;
         for q in ps {
             if q.team != p.team && !q.bekci() {
@@ -57,10 +57,10 @@ pub fn slotBase0(m: &Mac, ps: &[Oyuncu], p: &Oyuncu, sl: Option<(f64, f64)>, ex:
         }
         let front = jmin(94.0 * GKX, jmax(back + 24.0 * GKX, last + 1.0));
         len = front - back;
-        wid = GEN(&tac.genislik).unwrap_or(38.0 * GKY);
+        wid = tac.genislik.as_deref().and_then(GEN).unwrap_or(38.0 * GKY);
         sh = 0.15;
     } else {
-        back = cl(jmin(BLOK(&tac.blok).unwrap_or(34.0 * GKX), bd - 6.0), 8.0 * GKX, 62.0 * GKX);
+        back = cl(jmin(tac.blok.as_deref().and_then(BLOK).unwrap_or(34.0 * GKX), bd - 6.0), 8.0 * GKX, 62.0 * GKX);
         len = 22.0 * GKX;
         wid = 26.0 * GKY;
         sh = 0.4;
@@ -102,7 +102,10 @@ pub struct Yer {
 pub fn slotBase(m: &Mac, ps: &[Oyuncu], p: &Oyuncu, ex: f64, ey: f64, att: bool) -> Yer {
     let b = slotBase0(m, ps, p, None, ex, ey, att);
     let t = p.takim();
-    let D = &m.tac[t as usize].durus;
+    let D = match m.tac.get(t as usize).and_then(|q| q.durus.as_ref()) {
+        Some(d) => d,
+        None => return Yer { x: b.0, y: b.1, el: None },
+    };
     let pl = if att { D.huc.iter().map(|v| v.iter().map(|q| (q.f, q.y)).collect::<Vec<_>>()).collect::<Vec<_>>() } else { D.sav.iter().map(|v| v.iter().map(|q| (q.f, q.y)).collect::<Vec<_>>()).collect::<Vec<_>>() };
     let x0 = ownX(t);
     let dir = dirOf(t);

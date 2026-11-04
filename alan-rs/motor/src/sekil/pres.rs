@@ -13,11 +13,11 @@ use super::*;
 /// JS macPres(m, t): yapay zekâ takımında skor/süreye göre presi artır (+1) ya da azalt (−1).
 pub fn macPres(c: &mut Mc, t: u8) -> f64 {
     match c.m.tac.get(t as usize) {
-        Some(tq) if tq.yz => {}
+        Some(tq) if tq.yz == Some(true) => {}
         _ => return 0.0,
     }
     let o = dis::macEff_macK(c, t);
-    let p0 = c.m.tac[t as usize].pres;
+    let p0 = c.m.tac[t as usize].pres.unwrap_or(1.0);
     match o {
         None => 0.0,
         Some(o) if o < 0.6 => {

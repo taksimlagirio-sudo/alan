@@ -244,7 +244,7 @@ pub fn teamV(c: &mut Mc, sn: &mut Vec<Varlik>, svi: Pid, att: u8, E: (f64, f64),
     for q in mates {
         crowd = jmin(crowd, hypot(q.0 - cc.x, q.1 - cc.y) / S.ayr);
     }
-    let sut = c.m.tac.get(att as usize).map(|t| t.sut).unwrap_or(0.5);
+    let sut = c.m.tac.get(att as usize).and_then(|t| t.sut).unwrap_or(0.5);
     let myOpt = |c: &mut Mc, w2: &[Varlik]| -> f64 {
         let ps = &*c.ps;
         let Vc = yerV(w2, ps, att, cc.x, cc.y, dis::recvCh(w2, ps, att, cc.x, cc.y, ch, p.map(|i| &ps[i])));

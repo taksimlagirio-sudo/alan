@@ -102,7 +102,7 @@ pub fn front(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64) -> f64 {
 pub fn dagin(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, vv: f64, y: f64) -> f64 {
     todo!("AlanDecide.dagin")
 }
-pub fn kayipYer(ps: &[Oyuncu], team: u8, ch: f64, h: &Oyuncu, tac: Option<&JMTacE>) -> KayipF {
+pub fn kayipYer(ps: &[Oyuncu], team: u8, ch: f64, h: &Oyuncu, tac: Option<&crate::mac::Tac>) -> KayipF {
     todo!("AlanDecide.kayipYer")
 }
 /// decide.js:6875 `PNC_GORUS`.

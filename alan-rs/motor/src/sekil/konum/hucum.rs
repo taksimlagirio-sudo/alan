@@ -121,7 +121,7 @@ impl Sv {
         let hang0: Vec<Pid> = (0..n).filter(|&q| c.ps[q].takim() == dt && !c.ps[q].bekci() && (c.ps[q].x - E.0) * dirOf(att) < -8.0).collect();
         let G = c.m.gc.as_ref().filter(|g| g.team == att as f64 && g.git).cloned();
         {
-            let risk = c.m.tac[att as usize].risk;
+            let risk = c.m.tac[att as usize].risk.unwrap_or(f64::NAN);
             let nG = jmax(0.0, if G.is_some() { jmin(hang0.len() as f64, if risk > 0.7 { 0.0 } else { 1.0 }) } else { hang0.len() as f64 - if risk > 0.7 { 1.0 } else { 0.0 } }) as usize;
             let mut pool: Vec<Pid> = self.atk.iter().copied().filter(|&q| !self.chase[q] && !G.as_ref().map(|g| g.on.contains(&c.ps[q].id)).unwrap_or(false) && rslotOf(&c.ps[q]).0 < 0.6).collect();
             pool.sort_by(|&u, &v| sira(rslotOf(&c.ps[u]).0 - rslotOf(&c.ps[v]).0));
@@ -158,12 +158,12 @@ impl Sv {
             }
         }
         let hk = Hk {
-            genisK: match c.m.tac.get(att as usize).map(|t| t.genislik.as_str()) {
+            genisK: match c.m.tac.get(att as usize).and_then(|t| t.genislik.as_deref()) {
                 Some("Geniş") => 1.3,
                 Some("Dar") => 0.7,
                 _ => 1.0,
             },
-            kaleOnu: match c.m.tac.get(att as usize).map(|t| t.kaleOnu.as_str()) {
+            kaleOnu: match c.m.tac.get(att as usize).and_then(|t| t.kaleOnu.as_deref()) {
                 Some("girme") => "girme",
                 Some("her") => "her",
                 _ => "firsat",
@@ -1032,7 +1032,7 @@ impl Sv {
         let b: Option<B> = match (&so, hS) {
             (Some((o, _)), Some(h)) if ["pas", "önüne", "kenardan", "gönder"].contains(&o.kind.as_str()) => {
                 let hp = &c.ps[h];
-                Some(B { x: hp.x, y: hp.y, vx: o.launch.vx, vy: o.launch.vy, recv: if o.kind == "gönder" { None } else { Some(o.q) }, gon: o.kind == "gönder", team: hp.takim(), from: Some(h), t: 0.0, done: false, defl: false, sap: false })
+                Some(B { x: hp.x, y: hp.y, vx: o.launch.as_ref().map_or(f64::NAN, |l| l.vx), vy: o.launch.as_ref().map_or(f64::NAN, |l| l.vy), recv: if o.kind == "gönder" { None } else { o.q }, gon: o.kind == "gönder", team: hp.takim(), from: Some(h), t: 0.0, done: false, defl: false, sap: false })
             }
             _ => c.ball.as_ref().map(|b| B { x: b.b.x, y: b.b.y, vx: b.b.vx, vy: b.b.vy, recv: b.t.recv, gon: b.t.gon, team: b.b.team, from: b.t.from, t: b.b.t, done: b.b.done.is_some(), defl: b.b.defl != 0.0, sap: b.t.sap }),
         };

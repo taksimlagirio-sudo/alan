@@ -9,9 +9,9 @@ use serde::Deserialize;
 #[derive(Clone, Debug, Default, Deserialize)]
 pub struct DurusN {
     #[serde(default)]
-    pub f: f64,
+    pub f: Option<f64>,
     #[serde(default)]
-    pub y: f64,
+    pub y: Option<f64>,
 }
 #[derive(Clone, Debug, Default, Deserialize)]
 pub struct Durus {

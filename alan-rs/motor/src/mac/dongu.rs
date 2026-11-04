@@ -194,7 +194,7 @@ pub fn take(m: &mut Mac, p: Pid, how: Option<String>) {
                 }
                 let ctrlBest = rc.opts.first().map_or(0.0, |o| o.v.unwrap_or(f64::NAN));
                 let b0 = rc.best.map(|i| rc.opts[i].clone());
-                m.ps[p]._plan = b0.as_ref().filter(|b| b.q.is_some() && b.to.is_some() && b.det.is_some() && matches!(b.kind.as_str(), "pas" | "önüne" | "kenardan")).map(|b| JP_plan { kind: b.kind.clone(), q: b.q.unwrap(), to: JP_planTo { x: b.to.as_ref().unwrap().x, y: b.to.as_ref().unwrap().y }, P: b.det.as_ref().unwrap().P, t: m.tick });
+                m.ps[p]._plan = b0.as_ref().filter(|b| b.q.is_some() && b.to.is_some() && b.det.is_some() && matches!(b.kind.as_str(), "pas" | "önüne" | "kenardan")).map(|b| JP_plan { kind: b.kind.clone(), q: b.q.unwrap(), to: JP_planTo { x: b.to.as_ref().unwrap().x, y: b.to.as_ref().unwrap().y }, P: b.det.as_ref().unwrap().P.unwrap_or(f64::NAN), t: m.tick });
                 if let Some(r) = r {
                     let gg = g0.as_deref().unwrap_or(&m.ps);
                     let a = r.v.unwrap_or(f64::NAN) + dis::secimN(m, p, &r, gg, rc.T);
@@ -1266,7 +1266,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
         let same = r.opts.iter().position(|x| x.kind == pl.kind && x.q == Some(pl.q) && x.to.as_ref().map_or(false, |t| hypot(t.x - pl.to.x, t.y - pl.to.y) < 4.0));
         if let Some(s) = same {
             let x = &r.opts[s];
-            if x.det.as_ref().map_or(false, |d| d.P >= pl.P - 0.15) && x.v.map_or(false, |v| v > 0.0) {
+            if x.det.as_ref().map_or(false, |d| d.P.unwrap_or(f64::NAN) >= pl.P - 0.15) && x.v.map_or(false, |v| v > 0.0) {
                 oi = s;
             }
         }
@@ -1287,11 +1287,11 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
         let opts = sira.iter().take(4).map(|&i| {
             let o = &r.opts[i];
             let it = if o.q == Some(h) && (o.kind == "pas" || o.kind == "önüne") { " · it" } else { "" };
-            let spr = o.spr.as_ref().map_or(false, super::vurus::js_dogru);
+            let spr = o.spr.map_or(false, crate::mat::dogru);
             let mut kind = format!("{}{}{}", o.kind, o.shot.as_ref().map_or(String::new(), |s| format!(" {s}")), it);
             if spr {
                 kind.push_str(" · tam hız");
-                let tw = r.opts.iter().enumerate().find(|(j, y)| *j != i && !y.spr.as_ref().map_or(false, super::vurus::js_dogru) && y.kind == o.kind && y.q == o.q && matches!((&y.to, &o.to), (Some(a), Some(b)) if hypot(a.x - b.x, a.y - b.y) < 0.01));
+                let tw = r.opts.iter().enumerate().find(|(j, y)| *j != i && !y.spr.map_or(false, crate::mat::dogru) && y.kind == o.kind && y.q == o.q && matches!((&y.to, &o.to), (Some(a), Some(b)) if hypot(a.x - b.x, a.y - b.y) < 0.01));
                 if let Some((_, tw)) = tw {
                     if let (Some(tv), Some(ov)) = (tw.v, o.v) {
                         kind.push_str(&format!(" ({}{:.3})", if ov >= tv { "+" } else { "" }, ov - tv));
@@ -1302,7 +1302,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
                 kind,
                 to: o.to.as_ref().map(|t| crate::model::JMLastDecOptsETo { x: t.x, y: t.y }),
                 q: o.q.map_or(String::new(), |q| m.ps[q].name.clone()),
-                P: o.det.as_ref().map_or(f64::NAN, |d| if o.kind == "gönder" { d.Pk } else { d.P - d.Ps }),
+                P: o.det.as_ref().map_or(f64::NAN, |d| if o.kind == "gönder" { d.Pk.unwrap_or(f64::NAN) } else { d.P.unwrap_or(f64::NAN) - d.Ps.unwrap_or(f64::NAN) }),
                 v: o.v.unwrap_or(f64::NAN),
                 sjK: o.sjK,
                 kh: o.kh.clone(),
@@ -1332,12 +1332,12 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
     } else {
         m.ps[h]._surK = None;
     }
-    m.ps[h]._sprIst = o.spr.as_ref().map_or(false, super::vurus::js_dogru);
+    m.ps[h]._sprIst = o.spr.map_or(false, crate::mat::dogru);
     kafaBasla(m, h, &mut o, false);
     {
         let s0 = m.ps[h].sarj;
         let sk = dis::sarjKarar(m, h, &gg, m.ch);
-        let tutS = o.kind == "tut" && o.det.as_ref().map_or(false, |d| d.ch > m.ch + 0.005) && m.ps[h].en.unwrap_or(1.0) >= 0.1;
+        let tutS = o.kind == "tut" && o.det.as_ref().map_or(false, |d| d.ch.unwrap_or(f64::NAN) > m.ch + 0.005) && m.ps[h].en.unwrap_or(1.0) >= 0.1;
         m.ps[h].sarj = sk || tutS;
         if m.ps[h].sarj && !s0 && !m.mac._lite {
             let n = m.ps[h].name.clone();
@@ -1355,7 +1355,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
             hp.ty = to.y;
             hp.drive = true;
         }
-        let spr = o.spr.as_ref().map_or(false, super::vurus::js_dogru);
+        let spr = o.spr.map_or(false, crate::mat::dogru);
         let hp = &m.ps[h];
         if spr && SPR_FAZ.ayir && hp._sf.is_none() && !hp.bekci() && hp.en.unwrap_or(1.0) >= ALAN_EN3_SGIR(hp, SBED()) {
             sprintBasla(m, h, None);

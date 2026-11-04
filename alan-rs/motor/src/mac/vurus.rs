@@ -66,7 +66,7 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
             if o.itK.is_some() && SPK() {
                 m.ps[h]._itK = o.itK;
             }
-            let spr = o.spr.as_ref().map_or(false, js_dogru);
+            let spr = o.spr.map_or(false, crate::mat::dogru);
             if spr && F.ayir && !m.ps[h].bekci() && m.ps[h].en.unwrap_or(1.0) >= ALAN_EN3_SGIR(&m.ps[h], SBED()) {
                 sprintBasla(m, h, Some(format!("{hname} topu önüne itti")));
             } else if !m.mac._lite {
@@ -160,7 +160,7 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
         let b = m.ball.as_mut().unwrap();
         b.tt.t.gon = true;
         m.st.shot[ti] += 1.0;
-        b.ek.shotPk = o.det.as_ref().map(|d| d.Pk);
+        b.ek.shotPk = o.det.as_ref().and_then(|d| d.Pk);
         let pk = b.ek.shotPk;
         // JS `!m.lite` (yazım: m.lite hiç yok) → her zaman
         let c = m.st.cal.get_or_insert_with(Default::default);
