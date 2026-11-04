@@ -1,6 +1,8 @@
 //! alan-kos: kayıttan maç oynat. Kullanım: alan-kos <kayit.json> <tik> [iz|ozet]
 //! iz: her tik bir satır (sina/istatistik.js okur); ozet: süre ve skor;
 //! kare <cikti.json>: izleme ekranı için bütün kareler (oyuncu yerleri, top, işler, olaylar).
+//! parmak: her tik bir satır, maçın gözlemlenebilir durumunun bit bit özeti (motor::parmak; sina/ayni.sh).
+//! Kayıt yerine anlar/ dosyası da verilebilir (içindeki `kurulum` kullanılır).
 use alan_motor::mac::motor::Motor;
 use alan_motor::oyun::MacMotoru;
 use std::io::Write;
@@ -13,6 +15,8 @@ fn main() {
     }
     let metin = std::fs::read_to_string(&a[1]).expect("kayıt okunamadı");
     let v: serde_json::Value = serde_json::from_str(&metin).expect("kayıt JSON değil");
+    // anlar/ dosyası: kurulum içinde
+    let v = match v.get("kurulum") { Some(k) if v.get("yeni").is_none() => k.clone(), _ => v };
     let tik: u32 = a[2].parse().expect("tik");
     let kip = a.get(3).map(|s| s.as_str()).unwrap_or("ozet");
     // paralel kafa (ALAN_ISCI=n): n-1 yardımcı iş parçacığı aynı maçı oynar, dalgaları bölüşür
@@ -53,6 +57,9 @@ fn main() {
         let s = mt.iz();
         if kip == "iz" {
             writeln!(out, "{}", s.json()).unwrap();
+        }
+        if kip == "parmak" {
+            writeln!(out, "{} {:016x}", mt.m.tick, alan_motor::parmak::parmak_izi(&mt.m)).unwrap();
         }
         if kip == "durum" {
             let m = &mt.m;
@@ -114,6 +121,11 @@ fn main() {
     }
     let m = &mt.m;
     eprintln!("tik {} · skor {}-{} · {:.1} sn ({:.2} ms/tik)", m.tick, m.score[0], m.score[1], dt, 1e3 * dt / (m.tick.max(1.0)));
+    if alan_motor::kafa::kafa2_zemin::onden_acik() {
+        let (o, k, t) = alan_motor::kafa::kafa2_zemin::onden_say();
+        let s = alan_motor::kafa::kafa2_zemin::onden_sn();
+        eprintln!("önceden hesaplama: {o} hücre, {k} tanesi sonra istendi (oran %{:.0}) · kararın istediği {t} hücreden önceden hazır olan: %{:.0} · toplu hesap {s:.2} sn (toplam sürenin %{:.0})", 100.0 * k as f64 / o.max(1) as f64, 100.0 * k as f64 / t.max(1) as f64, 100.0 * s / dt);
+    }
     alan_motor::kafa::kafa2_karar::dalga_olc_yaz();
     if std::env::var("ALAN_BEK_IZ").is_ok() {
         let (h, k) = alan_motor::sekil::yer::BEK_DER_SAY.with(|c| c.get());

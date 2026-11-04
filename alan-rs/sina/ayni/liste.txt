@@ -1,0 +1,5 @@
+# Birebir aynılık denetiminin maçları: anlar/ dosyası ve tik sayısı.
+# Farklı tohum ve durumlar: kontra, arkadaki koşu, top tutma.
+a-107-1-3464-kontra 900
+a-129-2-1563-arkadaki 900
+a-118-0-5091-tut 900

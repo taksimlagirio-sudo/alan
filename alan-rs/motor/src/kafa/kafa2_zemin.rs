@@ -31,10 +31,71 @@ pub struct KayipF {
     yq: Option<Vec<(Op, f64)>>,
     gB: Option<f64>,
     oB: f64,
+    /// Önceden hesaplama (deney, ALAN_KF_ONDEN): kararın ızgarasıysa takımı; istenen hücreler ve
+    /// önceden hesaplanıp henüz istenmemiş olanlar.
+    kayit: Option<usize>,
+    istenen: crate::HizliMap<u64, (f64, f64)>,
+    onden: crate::HizliMap<u64, ()>,
 }
 
 pub fn kayipF(k: &Kafa, src: Arc<Dunya>, team: f64, ch: f64, risk: f64) -> KayipF {
-    KayipF { src, team, risk, cc: dis::chKayip(k, ch), ot: 1.0 - team, c: Default::default(), yq: None, gB: k.D._gPr, oB: k.k2.IMK_OFS }
+    KayipF { src, team, risk, cc: dis::chKayip(k, ch), ot: 1.0 - team, c: Default::default(), yq: None, gB: k.D._gPr, oB: k.k2.IMK_OFS, kayit: None, istenen: Default::default(), onden: Default::default() }
+}
+
+// ------------------------------------------------------------------ kararın ızgarasını önceden hesaplama
+//
+// Ölçüm (2 maç × 300 tik): kararın kayıp ızgarası ~90–110 hücre ister (tam ızgara 231); art arda iki
+// kararda sonrakinin hücre süresinin ~%81–83'ü öncekinin kümesindedir, öncekinin ~%25'i boşa gider.
+// Kararın başında önceki kümenin topluca hesaplanması, hücreleri paralel dağıtmanın ilk adımıdır.
+// Hücreler sırasından bağımsızdır (ters sırayla ve önceden hesaplamayla 3 maç × 900 tik birebir aynı),
+// maç davranışı değişmez; tek çekirdekte yalnız boşa giden hücreler kadar pahalıdır. Varsayılan kapalı.
+// Sonuç (3 maç × 600 tik, duvar saati): bütün hücre hesabı sürenin %8–24'ü (callgrind'in %43'ü özyinelemeli
+// çağrılarda kapsayıcı maliyeti şişiriyordu), toplu hesaba düşen pay %5–16. 4 çekirdekle en çok %4–12 kazanç:
+// hücreleri paralel dağıtmak işçiler arası paketleme bedeline değmeyebilir.
+
+/// ALAN_KF_ONDEN açık mı (bir kez okunur; wasm'da kapalı).
+pub fn onden_acik() -> bool {
+    if cfg!(target_family = "wasm") {
+        return false;
+    }
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *A.get_or_init(|| std::env::var("ALAN_KF_ONDEN").is_ok())
+}
+
+thread_local! {
+    /// takım başına son kararın istediği hücreler
+    static SON_KUME: std::cell::RefCell<[Vec<(f64, f64)>; 2]> = Default::default();
+    /// [önceden hesaplanan, bunlardan istenen, kararda istenen bütün hücreler]
+    static ONDEN_SAY: std::cell::Cell<[u64; 3]> = const { std::cell::Cell::new([0; 3]) };
+    /// toplu hesaplamada geçen süre (sn)
+    static ONDEN_SN: std::cell::Cell<f64> = const { std::cell::Cell::new(0.0) };
+}
+
+/// Toplu (önceden) hücre hesabında geçen toplam süre, saniye: paralel dağıtılabilecek pay.
+pub fn onden_sn() -> f64 {
+    ONDEN_SN.with(|c| c.get())
+}
+
+/// Önceden hesaplama sayaçları: (önceden hesaplanan, bunlardan istenen, kararda istenen bütün hücreler).
+pub fn onden_say() -> (u64, u64, u64) {
+    let s = ONDEN_SAY.with(|c| c.get());
+    (s[0], s[1], s[2])
+}
+fn say_ekle(i: usize) {
+    ONDEN_SAY.with(|c| {
+        let mut s = c.get();
+        s[i] += 1;
+        c.set(s);
+    });
+}
+
+impl Drop for KayipF {
+    fn drop(&mut self) {
+        if let Some(t) = self.kayit {
+            let v: Vec<(f64, f64)> = self.istenen.values().copied().collect();
+            SON_KUME.with(|s| s.borrow_mut()[t] = v);
+        }
+    }
 }
 
 impl KayipF {
@@ -88,7 +149,45 @@ impl KayipF {
         }
         gam(k) * b
     }
+    /// Kararın ızgarası olarak işaretle: istenen hücreler kaydedilir ve (ALAN_KF_ONDEN) aynı takımın
+    /// önceki kararının hücreleri şimdi topluca hesaplanır.
+    pub fn karar_icin(&mut self, k: &mut Kafa) {
+        if !onden_acik() {
+            return;
+        }
+        let t = if self.team == 0.0 { 0 } else { 1 };
+        self.kayit = Some(t);
+        let kume = SON_KUME.with(|s| std::mem::take(&mut s.borrow_mut()[t]));
+        let t0 = std::time::Instant::now();
+        self.hucreler(k, &kume);
+        let dt = t0.elapsed().as_secs_f64();
+        ONDEN_SN.with(|c| c.set(c.get() + dt));
+    }
+    /// Verilen hücrelerin henüz hesaplanmamış olanlarını hesapla (paralel dağıtılacak toplu iş).
+    pub fn hucreler(&mut self, k: &mut Kafa, kume: &[(f64, f64)]) {
+        for &(X, Y) in kume {
+            let key = (1e3 * X + Y).to_bits();
+            if self.c.contains_key(&key) {
+                continue;
+            }
+            self.hucre_hesap(k, X, Y);
+            self.onden.insert(key, ());
+            say_ekle(0);
+        }
+    }
     fn hucre(&mut self, k: &mut Kafa, X: f64, Y: f64) -> f64 {
+        if self.kayit.is_some() {
+            let key = (1e3 * X + Y).to_bits();
+            if self.istenen.insert(key, (X, Y)).is_none() {
+                say_ekle(2);
+                if self.onden.remove(&key).is_some() {
+                    say_ekle(1);
+                }
+            }
+        }
+        self.hucre_hesap(k, X, Y)
+    }
+    fn hucre_hesap(&mut self, k: &mut Kafa, X: f64, Y: f64) -> f64 {
         let key = (1e3 * X + Y).to_bits();
         if let Some(v) = self.c.get(&key) {
             return *v;
