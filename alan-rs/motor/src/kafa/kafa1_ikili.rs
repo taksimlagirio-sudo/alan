@@ -507,8 +507,7 @@ impl Kafa {
             {
                 let (mut tx, mut ty);
                 if let Some(rol) = c.rol {
-                    let hv = s.hv.clone();
-                    let r0 = self.hedefQ(c, rol, &mut s.qv, &hv, t);
+                    let r0 = self.hedefQ(c, rol, &mut s.qv, &s.hv, t);
                     tx = r0.x;
                     ty = r0.y;
                 } else if g > 4.0 {
