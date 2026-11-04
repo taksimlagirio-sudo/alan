@@ -1,0 +1,317 @@
+//! Kafa1'in çağırdığı yabancı işlevler (AJAN.md madde 3). Birleştirmede gerçeklerine bağlanacak.
+//!
+//! İki tür var:
+//! 1. **Dış modüller** (maç, yerleşim, enerji/sprint): [`Dis`] özelliğinin yöntemleri. Gövdeleri
+//!    `todo!()`; maç modülü bu özelliği kendi bağlamında gerçekler. Sınamalar kendi kayıtlı
+//!    gerçeklemelerini verir (JS'ten kaydedilmiş değerler ya da sınamaya taşınmış küçük işlevler).
+//!    Kafa bunları `self.dis` üzerinden çağırır (gizli küresel yok).
+//! 2. **Kafa2'nin işlevleri** (decide.js 4717 sonrası): bu dosyanın sonundaki serbest işlevler,
+//!    `todo!()` gövdeli. Kafa2 bunları `impl Kafa` yöntemleri olarak yazacak; birleştirmede çağrılar
+//!    `self.X(...)`'e çevrilir.
+//!
+//! Her yöntemin başında JS kaynağı (dosya:satır, sade kaynakta) yazılı.
+#![allow(non_snake_case, unused_variables)]
+
+use super::kafa1_baglam::Kafa;
+use super::kafa1_js::{Nk, Op};
+use crate::model::{JMShGs, Oyuncu, Secenek};
+use crate::oyuncu::TepkiS;
+
+/// Yerleşimin geçiş tablosu (shape.js gecTabV dönüşü): oyuncunun dönüp hızlanma gecikmesi.
+#[derive(Clone, Debug, Default)]
+pub struct GecTab {
+    pub vx: f64,
+    pub vy: f64,
+    pub s0: f64,
+    pub x: f64,
+    pub y: f64,
+    /// 9 yön (cos = -1 … 1) için gecikme
+    pub t: Vec<f64>,
+    /// 9 yön için yol eğrisi (gecK'nın girdisi)
+    pub Y: Vec<std::sync::Arc<GecY>>,
+    pub vm: f64,
+}
+/// shape.js gecYk dönüşü: `g` gecikme, `m` 80 tiklik en çok yol (yok: AlanMatch.ivme yok).
+#[derive(Clone, Debug, Default)]
+pub struct GecY {
+    pub g: f64,
+    pub m: Option<Vec<f64>>,
+}
+
+/// Yerleşim parametreleri (shape.js `S`): kafanın okuduğu alanlar.
+#[derive(Clone, Debug)]
+pub struct ShapeS {
+    pub react: Option<f64>,
+    pub rcvBuf: f64,
+    pub marginT: f64,
+    pub markOff: Option<f64>,
+    pub bekOnce: Option<f64>,
+    pub bekSerbest: bool,
+}
+
+/// Yerleşimin algı parametreleri (shape.js `GR`).
+#[derive(Clone, Debug)]
+pub struct ShapeGR {
+    pub yasH: f64,
+}
+
+/// Maçın ikili parametreleri (match.js:1836 `IK`).
+#[derive(Clone, Copy, Debug)]
+pub struct Ik {
+    pub yerles: f64,
+    pub esnek: f64,
+    pub surt: f64,
+    pub dengeK: f64,
+    pub dolum: f64,
+    pub dolumS: f64,
+    pub yavas: f64,
+    pub sendele: f64,
+    pub sendT: f64,
+    pub sendCd: f64,
+    pub kalkan: f64,
+    pub kalkanR: f64,
+    pub pokeT: f64,
+    pub pokeK: f64,
+    pub pokeAc: f64,
+    pub pokeDn: f64,
+    pub omuzV: f64,
+}
+pub const IK_JS: Ik = Ik { yerles: 1.6, esnek: 0.15, surt: 0.12, dengeK: 3.2, dolum: 0.012, dolumS: 0.03, yavas: 0.35, sendele: 0.15, sendT: 12.0, sendCd: 40.0, kalkan: 0.7, kalkanR: 3.2, pokeT: 0.22, pokeK: 0.03, pokeAc: 0.5, pokeDn: 0.35, omuzV: 0.2 };
+
+/// Sprint evreleri (match.js:2110 `ALAN_SPR_FAZ`; sürekli koşuda değiştirilmiş kopyası).
+#[derive(Clone, Copy, Debug)]
+pub struct SprFaz {
+    pub ust: f64,
+    pub hkPay: f64,
+    pub tepeT: f64,
+    pub after: f64,
+    pub dolT: f64,
+    pub bedel: f64,
+    pub patT: f64,
+    pub frenT: f64,
+    pub patK: f64,
+    pub ayir: f64,
+    pub itKos: f64,
+    pub topla: f64,
+    pub toplaBos: f64,
+    /// `itBos` (tanımsız: 6 kullanılır), `peak` (tanımsız)
+    pub itBos: Option<f64>,
+    pub peak: Option<f64>,
+}
+
+/// Enerji 2.0 sabitleri (core.js:113 `ALAN_EN2`; `pat` sürekli koşuda 0).
+#[derive(Clone, Copy, Debug)]
+pub struct En2 {
+    pub tepe: f64,
+    pub pat: f64,
+    pub dinlen: f64,
+    pub tempoDol: f64,
+    pub yogK: f64,
+    pub yogMin: f64,
+}
+
+/// Enerji sabitleri (core.js:66 `ALAN_EN`, match.js'in değiştirdikleriyle).
+#[derive(Clone, Copy, Debug)]
+pub struct En {
+    pub dalis: f64,
+    pub dalisDolYok: f64,
+    pub sprEsik: f64,
+    pub ivme: f64,
+    pub surme: f64,
+    pub dolas: f64,
+    pub fake: f64,
+    pub kalkan: f64,
+    pub fizK: f64,
+}
+
+/// Top sürme dokunuşu (match.js:1430 `ALAN_DOKUNUS`).
+#[derive(Clone, Copy, Debug)]
+pub struct Dokunus {
+    pub close: f64,
+    pub closeS: f64,
+    pub lRun: f64,
+    pub lRunS: f64,
+    pub aMax: Option<f64>,
+    pub lMax: f64,
+    pub gor: Option<f64>,
+    pub bos: f64,
+    pub k: f64,
+    pub toplaG: Option<f64>,
+    pub topla: f64,
+    pub riskEski: bool,
+}
+
+/// Maçın pres tartısı (match.js `m._prT`): girEsik okur.
+#[derive(Clone, Debug, Default)]
+pub struct PrT {
+    pub team: f64,
+    pub hId: Option<f64>,
+    pub t: f64,
+    pub h: Option<f64>,
+    /// `hm` Map'i (oyuncu id → değer) ve `hm.k` kümesi
+    pub hm: Option<Vec<(f64, f64)>>,
+    pub hmk: Option<Vec<f64>>,
+}
+
+/// Yerleşimin tehlike yönü (shape.js tehlike dönüşü).
+#[derive(Clone, Debug, Default)]
+pub struct Tehlike {
+    pub an: f64,
+    pub w: f64,
+    pub w0: f64,
+    pub x: f64,
+    pub y: f64,
+    pub k: String,
+    pub L: f64,
+}
+
+/// Maç taktiğinin yerleşime verilen hali (match.js tacEff dönüşü): kafa yalnız taşır.
+#[derive(Clone, Debug, Default)]
+pub struct TacEff(pub Vec<(String, f64)>);
+
+/// Dış dünya: maç, yerleşim ve enerji modüllerinin kafaya açtığı işlevler.
+pub trait Dis {
+    // ---- enerji / sprint (core.js, match.js) ----
+    /// core.js:102 ALAN_SPRE(p): sprint evresinin etkin hız katı.
+    fn ALAN_SPRE(&self, p: &Oyuncu) -> f64 { todo!() }
+    /// match.js:2168 ALAN_SPR(p): sprint katı (sprint evresiyle).
+    fn ALAN_SPR(&self, p: &Oyuncu) -> f64 { todo!() }
+    /// match.js:2252 ALAN_SPR_HK(p)
+    fn ALAN_SPR_HK(&self, p: &Oyuncu) -> f64 { todo!() }
+    /// match.js:2110 ALAN_SPR_FAZ (sürekli koşuda kopyası)
+    fn ALAN_SPR_FAZ(&self) -> Option<SprFaz> { todo!() }
+    /// match.js:2262 ALAN_KOSU_T(p, d, v1): d yolunu koşma süresi (sprint profiliyle)
+    fn ALAN_KOSU_T(&self, p: &Oyuncu, d: f64, v1: f64) -> f64 { todo!() }
+    /// match.js:2268 ALAN_KOSU_M(p, t, v1): t tikte alınan yol
+    fn ALAN_KOSU_M(&self, p: &Oyuncu, t: f64, v1: f64) -> f64 { todo!() }
+    /// core.js:169 ALAN_EN3_KUL(p, e, bizde, bx, by): enerjinin kullanım değeri
+    fn ALAN_EN3_KUL(&self, p: &Oyuncu, e: f64, bizde: bool, bx: f64, by: f64) -> f64 { todo!() }
+    /// core.js:163 ALAN_EN3_SGIR(p, bed)
+    fn ALAN_EN3_SGIR(&self, p: &Oyuncu, bed: f64) -> f64 { todo!() }
+    /// core.js:191 ALAN_EN2_TS(p, e)
+    fn ALAN_EN2_TS(&self, p: &Oyuncu, e: Option<f64>) -> f64 { todo!() }
+    /// core.js:188 ALAN_EN2_SB(p)
+    fn ALAN_EN2_SB(&self, p: &Oyuncu) -> f64 { todo!() }
+    /// core.js:189 ALAN_EN2_SD(p)
+    fn ALAN_EN2_SD(&self, p: &Oyuncu) -> f64 { todo!() }
+    /// core.js:159 ALAN_EN3_DOL(p, sahip, nd, yerK)
+    fn ALAN_EN3_DOL(&self, p: &Oyuncu, sahip: bool, nd: f64, yerK: f64) -> f64 { todo!() }
+    /// core.js:154 ALAN_EN3_TEPE({en}, k)
+    fn ALAN_EN3_TEPE(&self, en: Option<f64>, k: f64) -> f64 { todo!() }
+    /// core.js:98 ALAN_EN_S(p)
+    fn ALAN_EN_S(&self, p: &Oyuncu) -> f64 { todo!() }
+    /// core.js:113 ALAN_EN2
+    fn ALAN_EN2(&self) -> En2 { todo!() }
+    /// core.js:66 ALAN_EN
+    fn ALAN_EN(&self) -> En { todo!() }
+    /// match.js:1418 ALAN_DENGE_KAYIP(p, t)
+    fn ALAN_DENGE_KAYIP(&self, p: &Oyuncu, t: f64) -> f64 { todo!() }
+    /// match.js:1430 ALAN_DOKUNUS
+    fn ALAN_DOKUNUS(&self) -> Option<Dokunus> { todo!() }
+    /// self.ALAN_YOL_VER_TEPKI (tanımsız: false)
+    fn ALAN_YOL_VER_TEPKI(&self) -> bool { todo!() }
+    /// self.ALAN_TASIYICI_SONRA_YAVAS (tanımsız: false)
+    fn ALAN_TASIYICI_SONRA_YAVAS(&self) -> bool { todo!() }
+
+    // ---- yerleşim (shape.js, window.AlanShape) ----
+    /// shape.js:11 tepki parametreleri (S.lag0, lagOk, react, reactLoose, reactLooseOk): ALAN_TEPKI'nin
+    fn tepki_s(&self) -> TepkiS { todo!() }
+    /// shape.js `S` (yoksa None)
+    fn S(&self) -> Option<ShapeS> { todo!() }
+    /// shape.js:321 `GR` (yoksa None)
+    fn GR(&self) -> Option<ShapeGR> { todo!() }
+    /// shape.js GR.yasHata(yas)
+    fn GR_yasHata(&self, yas: f64) -> f64 { todo!() }
+    /// shape.js:152 gecTab(o); `refsiz`: JS'te `ref: null`/`ref = undefined` verilmiş kopya (kendi yeri)
+    fn gecTab(&self, o: &Oyuncu, refsiz: bool) -> Option<GecTab> { todo!() }
+    /// shape.js:183 gecOf(G, x, y, s)
+    fn gecOf(&self, G: &GecTab, x: f64, y: f64, s: Option<f64>) -> f64 { todo!() }
+    /// shape.js:145 gec(o, x, y, s) (yoksa None)
+    fn gec(&self, o: &Oyuncu, x: f64, y: f64, s: Option<f64>) -> Option<f64> { todo!() }
+    /// shape.js:455 gside(a, t, off)
+    fn gside(&self, a: Nk, t: f64, off: f64) -> Nk { todo!() }
+    /// shape.js bekci(p, b, ...): Bekçi'nin yeri (yoksa None)
+    fn bekci(&self, p: &Oyuncu, b: Nk) -> Option<Nk> { todo!() }
+    /// shape.js:466 aliciDirenc(pts, p, rc, iMin, rP) (yoksa None)
+    fn aliciDirenc(&self, pts: &[Nk], p: &Oyuncu, rc: f64, iMin: f64, rP: f64) -> Option<Nk> { todo!() }
+    /// shape.js tehlike(m, h)
+    fn tehlike(&self, h: &Oyuncu) -> Vec<Tehlike> { todo!() }
+    /// shape.js:857 ilkPres(vm, qv, hx, team, TH, dtac, sh): qv.tx/ty'yi yazar. `tick`: vm.tick
+    fn ilkPres(&self, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[Tehlike], dtac: &TacEff, gs: &Option<JMShGs>) { todo!() }
+    /// AlanShape var mı, ilkPres var mı (presRol'ün koşulu)
+    fn AS_ilkPres_var(&self) -> bool { todo!() }
+
+    // ---- maç (match.js, window.AlanMatch) ----
+    /// match.js:1836 IK (yoksa None: ikili kafası kapalı)
+    fn IK(&self) -> Option<Ik> { todo!() }
+    /// match.js:1601 ivme(p, wx, wy, vmax)
+    fn ivme(&self, p: &mut Oyuncu, wx: f64, wy: f64, vmax: f64) { todo!() }
+    /// match.js:1857 kutle(p, h): `ayni` = (p === h)
+    fn kutle(&self, p: &Oyuncu, ayni: bool) -> f64 { todo!() }
+    /// match.js:1857 direnc(p, h): `ayni` = (p === h)
+    fn direnc(&self, p: &Oyuncu, ayni: bool) -> f64 { todo!() }
+    /// match.js:1856 omuzK(q)
+    fn omuzK(&self, q: &Oyuncu) -> f64 { todo!() }
+    /// match.js:1856 durtFark(q, h) (yoksa None)
+    fn durtFark(&self, q: &Oyuncu, h: &Oyuncu) -> Option<f64> { todo!() }
+    /// match.js:1961 sendS(p) (yoksa None)
+    fn sendS(&self, p: &Oyuncu) -> Option<f64> { todo!() }
+    /// match.js:1855 ikEn(p) (yoksa None)
+    fn ikEn(&self, p: &Oyuncu) -> Option<f64> { todo!() }
+    /// AlanMatch.BEKLE_BOZ (yoksa None)
+    fn BEKLE_BOZ(&self) -> Option<f64> { todo!() }
+
+    // ---- maçın durumu (D._mac) ----
+    /// D._mac var mı
+    fn mac_var(&self) -> bool { todo!() }
+    /// D._mac.ch
+    fn mac_ch(&self) -> Option<f64> { todo!() }
+    /// D._mac.holder: (id, team, x, y)
+    fn mac_holder(&self) -> Option<(f64, f64, f64, f64)> { todo!() }
+    /// D._mac.tac[team].enHarcama
+    fn tac_enHarcama(&self, team: f64) -> Option<f64> { todo!() }
+    /// siddetQ'nun ham değeri (decide.js:4644): m.tac[k].siddet ?? .5, yz ve macEff(m,k,{}).macK ?? 1 (macEff yoksa 1); None: maç/taktik yok
+    fn tac_siddet(&self, team: f64) -> Option<(Option<f64>, bool, f64)> { todo!() }
+    /// AlanMatch.tacEff(m, dt) (yoksa m.tac[dt])
+    fn tacEff(&self, team: f64) -> TacEff { todo!() }
+    /// D._mac.sh.gs
+    fn sh_gs(&self) -> Option<JMShGs> { todo!() }
+    /// D._mac._prT
+    fn prT(&self) -> Option<PrT> { todo!() }
+
+    // ---- algı kopyaları (shape.js seen) ----
+    /// algılanan oyuncunun konum hatası `__e` (gerçek oyuncu: None)
+    fn algi_e(&self, p: &Oyuncu) -> Option<f64> { todo!() }
+    /// algılanan oyuncunun yaşı `__yas` (gerçek oyuncu: None)
+    fn algi_yas(&self, p: &Oyuncu) -> Option<f64> { todo!() }
+}
+
+/// Gerçeklenmemiş dış dünya: her çağrı `todo!()`.
+pub struct GeciciDis;
+impl Dis for GeciciDis {}
+
+// ======================================================================
+// Kafa2'nin işlevleri (decide.js 4717 sonrası). Kafa2 bunları `impl Kafa` yöntemi olarak yazacak.
+// ======================================================================
+
+/// Kafa2'nin `predictWorld` dönüşündeki bir oyuncunun kestirilen yeri (null: değişmedi).
+pub type DunyaYer = Option<Nk>;
+
+/// decide.js:4920 predictWorld(src, team, B, T, cevapAyri, resp, pasta, tas): oyuncuların T tik
+/// sonraki yerleri (src sırasıyla; None: kestirilmedi).
+pub fn predictWorld(k: &Kafa, src: &[Op], team: f64, B: Nk, T: f64, cevapAyri: bool, pasta: bool) -> Vec<DunyaYer> { todo!() }
+/// decide.js:4789 bekSav(p, h, T, src): şut savrulurken Bekçi'nin yeri (kopya).
+pub fn bekSav(k: &Kafa, p: &Oyuncu, h: &Oyuncu, T: f64, src: &[Op]) -> Oyuncu { todo!() }
+/// decide.js:5454 bosluk(src, team, bx, by)
+pub fn bosluk(k: &Kafa, src: &[Op], team: f64, bx: f64, by: f64) -> f64 { todo!() }
+/// decide.js:5440 sutEngel(src, team, x, y)
+pub fn sutEngel(k: &Kafa, src: &[Op], team: f64, x: f64, y: f64) -> f64 { todo!() }
+/// decide.js:6773 yerDeger(w, team, x, y, ch)
+pub fn yerDeger(k: &Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64) -> f64 { todo!() }
+/// decide.js:5423 riskOf(h, tac)
+pub fn riskOf(k: &Kafa, h: &Oyuncu, tac: Option<&crate::model::JMTacE>) -> f64 { todo!() }
+/// decide.js:5639 sonraDeger(hc, w, ch, risk, kon): fake dünyasında taşıyıcının en iyi seçeneği.
+pub fn sonraDeger(k: &mut Kafa, hc: &Oyuncu, w: &[Op], ch: f64, risk: f64) -> Option<Secenek> { todo!() }
+/// decide.js:7306 dalgaKos(items, tart, src, h): bağımsız tartıları sırayla (ya da paralel) koşar.
+/// Kafa1'de yalnız fakeSecenek kullanır; burada dalga yerine sırayla çağrılır (sonuç sıradan bağımsız).
+pub fn dalgaKos_var(k: &Kafa) -> bool { todo!() }

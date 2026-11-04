@@ -715,7 +715,7 @@ pub struct KafaD {
     /// `_savCa`: undef
     pub _savCa: Option<f64>,
     /// `_kenar`: undef
-    pub _kenar: Option<JsDeger>,
+    pub _kenar: Option<bool>,
     /// `_kayipYap`: undef
     pub _kayipYap: Option<JsDeger>,
     /// `_gPr`: undef
@@ -736,6 +736,21 @@ pub struct KafaD {
     pub _gon: Option<bool>,
     /// `_sYon`: undef
     pub _sYon: Option<f64>,
+    /// `_noFake`: boolean (kafa1 ekledi: fakeSecenek'in iç dünyası)
+    pub _noFake: bool,
+    /// `_inLook`: boolean (kafa1 ekledi: lookAhead içi)
+    pub _inLook: bool,
+}
+
+/// (kafa1'in adı) JS `D._kanca`
+pub type JD_kanca = DKanca;
+
+/// JS `o.show` (kafa1 ekledi): fake'in gösterdiği vuruş: tür, hedef, inanılırlık.
+#[derive(Clone, Debug, Default)]
+pub struct JOShow {
+    pub k: String,
+    pub to: JOTo,
+    pub c: f64,
 }
 
 /// JS `D._kanca` (tek dokunuşun kancası: gelen topun savurması; maç kurar, kafa okur). Kafa 2 tipledi.
@@ -1935,6 +1950,10 @@ pub struct JODet {
     pub Psim: Option<f64>,
     /// bakılacak arkadaş (JS `det.lookTo`)
     pub lookTo: Option<Pid>,
+    /// `sonra`: string (kafa1 ekledi: fake'ten sonraki seçeneğin türü)
+    pub sonra: Option<String>,
+    /// `c`: number (kafa1 ekledi: fake'in inanılırlığı)
+    pub c: Option<f64>,
 }
 
 /// JS `o.en`
