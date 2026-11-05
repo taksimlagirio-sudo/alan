@@ -155,6 +155,8 @@ pub struct MacEk {
     /// zorla seçilir; sonuç `zorla_sonuc`'a yazılır. Maçta hep boş, davranışı etkilemez.
     pub zorla: Option<usize>,
     pub zorla_sonuc: Option<ZorlaSonuc>,
+    /// ölçüm (alan-kos dene): kararın r.opts[i] seçeneği zorla seçilir; sonuç zorla_sonuc'a (to yoksa (NaN,NaN))
+    pub zorla_i: Option<usize>,
 }
 
 /// Zorlanan sürmenin kafadaki kestirimi: hedef, tutma olasılığı, değer, kafa kendisi de seçer miydi, kaç sürme vardı.
@@ -165,6 +167,8 @@ pub struct ZorlaSonuc {
     pub v: f64,
     pub secilen: bool,
     pub n: usize,
+    /// seçeneğin türü ve alıcısı (dene kipi için)
+    pub tur: String,
 }
 
 // ---- küçük JS yardımcıları ----

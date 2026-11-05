@@ -53,6 +53,65 @@ fn main() {
     if kip == "durum" {
         writeln!(out, "{}", durum(&mt.m)).unwrap();
     }
+    // dene: <kayıt> <tik> dene [N] [süre]: tik'teki taşıyıcı kararının her seçeneği zorla seçilir, kopya maç N kez
+    // (karardan sonra zar dizisi değiştirilerek) süre tik doğal oynar; seçenek başına kafanın değeri/tutma kestirimi
+    // ve gerçekleşen: gol atma, gol yeme, top kaybı (süre içinde rakibe geçti mi), sonda top kimde.
+    // ALAN_DENE_KAFA: "kal" | "mek" (kopya maçların kafası; yoksa bugünkü kafa)
+    if kip == "dene" {
+        let n: u32 = a.get(4).and_then(|x| x.parse().ok()).unwrap_or(40);
+        let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(90);
+        let kafa = std::env::var("ALAN_DENE_KAFA").unwrap_or_default();
+        alan_motor::kafa::kafa1_ikili::KP_KAL_ZORLA.store(kafa == "kal", std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa1_ikili::MEKANIZMA_ZORLA.store(kafa == "mek", std::sync::atomic::Ordering::Relaxed);
+        while mt.tick() + 1 < tik && !mt.bitti() {
+            mt.adim();
+        }
+        let mut once = mt.m.clone();
+        once.mac.kafa = Default::default();
+        // seçenekler: önce hepsi bir kez zorlanır; ALAN_DENE_SEC=0,3,7 yalnız bunlar denenir, ALAN_DENE_LISTE seçenek sayısını yazar
+        let mut ad: Vec<(usize, alan_motor::model::Mac, alan_motor::mac::ZorlaSonuc)> = Vec::new();
+        let sec: Option<Vec<usize>> = std::env::var("ALAN_DENE_SEC").ok().map(|x| x.split(',').filter_map(|y| y.parse().ok()).collect());
+        for i in 0..64 {
+            let mut c = once.clone();
+            c.mac.zorla_i = Some(i);
+            alan_motor::mac::step(&mut c);
+            let Some(z) = c.mac.zorla_sonuc.take() else { break };
+            if sec.as_ref().map_or(true, |s| s.contains(&i)) { ad.push((i, c, z)); }
+        }
+        if std::env::var("ALAN_DENE_LISTE").is_ok() { println!("{}", ad.len()); return; }
+        {
+            {
+                for (i, c, z) in &ad {
+                    let h = c._sec.as_ref().map_or(0, |s| s.h);
+                    let tk = c.ps[h].team;
+                    let (mut gol, mut yedi, mut kayip, mut son_biz, mut son_rak) = (0u32, 0u32, 0u32, 0u32, 0u32);
+                    let mut kayip_t = 0.0;
+                    for d in 0..n {
+                        let mut k = c.clone();
+                        if d > 0 { k.r.s ^= (d as i32).wrapping_mul(-1640531527); }
+                        let s0 = k.score.clone();
+                        let mut kaybetti = false;
+                        for j in 0..sure {
+                            if k.over { break; }
+                            alan_motor::mac::step(&mut k);
+                            if !kaybetti && k.holder.map_or(false, |q| k.ps[q].team != tk) { kaybetti = true; kayip += 1; kayip_t += j as f64; }
+                            if k.score != s0 { break; }
+                        }
+                        let ti = tk as usize;
+                        if k.score[ti] > s0[ti] { gol += 1; }
+                        if k.score[1 - ti] > s0[1 - ti] { yedi += 1; }
+                        match k.holder { Some(q) if k.ps[q].team == tk => son_biz += 1, Some(_) => son_rak += 1, None => {} }
+                    }
+                    let f = |x: u32| x as f64 / n as f64;
+                    let l = format!("{:2} {:<28} ({:5.1},{:5.1}) v {:6.3} P {:5} {} | gol {:.2} yedi {:.2} kayıp {:.2} (ort {:4.0} tik) son biz {:.2} rakip {:.2}",
+                        i, z.tur, z.to.0, z.to.1, z.v, if z.P.is_finite() { format!("{:.2}", z.P) } else { "  -  ".into() }, if z.secilen { "*" } else { " " },
+                        f(gol), f(yedi), f(kayip), if kayip > 0 { kayip_t / kayip as f64 } else { f64::NAN }, f(son_biz), f(son_rak));
+                    println!("{l}");
+                }
+            }
+        }
+        return;
+    }
     // an: <kayıt> <t1,t2,…> an <önek> [süre]: maç bugünkü kafayla oynar; her ti'de kopya maç iki kez oynatılır
     // (bugünkü kafa / tutmayı gerçeğe yakın kestiren kafa), kareler <önek>-<ti>-{eski,yeni}.json (kare kipinin biçimi)
     if kip == "an" {
@@ -82,9 +141,28 @@ fn main() {
                     let mut isler2 = alan_motor::oyun::IsSozluk::default();
                     let (mut kr, mut ol) = (Vec::new(), Vec::new());
                     let mut osay = m2.m.ev_n;
+                    let karar_yaz = std::env::var("ALAN_AN_KARAR").is_ok();
+                    let mut son_k = None;
                     for _ in 0..sure {
                         if m2.bitti() { break; }
                         m2.adim();
+                        if karar_yaz {
+                            // ALAN_AN_KARAR: kopya maçtaki her yeni taşıyıcı kararı (kararlar kipinin biçimi, başta değişke) stderr'e
+                            let m = &m2.m;
+                            let t = m._sec.as_ref().map(|s| s.t);
+                            if t.is_some() && t != son_k {
+                                son_k = t;
+                                if let Some(d) = &m.lastDec {
+                                    let o: Vec<String> = d.opts.iter().map(|o| format!("[{},{},{:.3},{}]", serde_json::to_string(&o.kind).unwrap(), serde_json::to_string(&o.q).unwrap(), o.v, o.to.as_ref().map_or("-".to_string(), |t| format!("({:.1},{:.1})", t.x, t.y)))).collect();
+                                    // her türün en iyisi (bütün seçenekler)
+                                    let mut en: Vec<(String, f64, f64, f64)> = Vec::new();
+                                    if let Some(sc) = &m._sec { for e in &sc.o { match en.iter_mut().find(|x| x.0 == e.k) { Some(x) => if e.v > x.1 { *x = (e.k.clone(), e.v, e.x, e.y) }, None => en.push((e.k.clone(), e.v, e.x, e.y)) } } }
+                                    let en: Vec<String> = en.iter().map(|x| format!("{}={:.3}@({:.0},{:.0})", x.0, x.1, x.2, x.3)).collect();
+                                    let pp: Vec<String> = d.opts.iter().map(|o| format!("{:.2}", o.P)).collect();
+                                    eprintln!("KARAR {} {} {} {} ({:.1},{:.1}) {} | P {} | en {}", kip2, m.tick, d.name, d.team, d.x, d.y, o.join(" "), pp.join(","), en.join(" "));
+                                }
+                            }
+                        }
                         let k = m2.kare(&mut isler2);
                         let mut s = format!("[{},{},{},{},{},{}", k.tick, k.sahip, r2(k.top_x), r2(k.top_y), k.skor[0], k.skor[1]);
                         for o in &k.oyuncular {
