@@ -322,6 +322,18 @@ pub static YAN_SAY: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUs
 pub fn kafa_var() -> bool {
     KAFA.with(|c| c.borrow().is_some())
 }
+/// Maçın kendi kafasıyla çalış (açık bağlam, MIMARI.md Aşama 3): kafa maçın içinde (`m.mac.kafa`), iş
+/// parçacığına özel değişkenden aranmaz. Kafa yoksa ya da meşgulse eski yola düşer (ölçüm: 3 maç × 900 tikte
+/// hiç olmuyor; küresel kafa Aşama 3c'de kalkınca düşülmez).
+pub fn kafa_mac<R>(m: &Mac, f: impl FnOnce(&mut Kafa) -> R) -> R {
+    if let Some(k) = &m.mac.kafa.k {
+        if let Ok(mut b) = k.try_borrow_mut() {
+            let t = b.D._tick;
+            return crate::sekil::d_tick_ile(t, || f(&mut b));
+        }
+    }
+    kafa_ile(f)
+}
 pub fn kafa_ile<R>(f: impl FnOnce(&mut Kafa) -> R) -> R {
     let k = KAFA.with(|c| c.borrow().clone()).expect("kafa bağlamı kurulmadı (kafa_hazirla)");
     if let Ok(mut b) = k.try_borrow_mut() {
