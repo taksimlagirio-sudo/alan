@@ -1279,6 +1279,23 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
             }
         }
     }
+    // ölçüm (alan-kos tutma): kafanın sürme seçeneklerinden biri zorla seçilir
+    if let Some(sira) = m.mac.zorla.take() {
+        let ix: Vec<usize> = (0..r.opts.len()).filter(|&i| r.opts[i].kind == "sür" && r.opts[i].v.is_some() && r.opts[i].to.is_some()).collect();
+        if let Some(&i) = ix.get(sira) {
+            let o = &r.opts[i];
+            let to = o.to.as_ref().unwrap();
+            m.mac.zorla_sonuc = Some(super::ZorlaSonuc { to: (to.x, to.y), P: o.det.as_ref().and_then(|d| d.P).unwrap_or(f64::NAN), v: o.v.unwrap(), secilen: i == oi, n: ix.len() });
+            oi = i;
+        }
+    }
+    // ölçüm (ALAN_SECP_IZ): kararın bütün seçenekleri ve tutma olasılıkları, stderr'e tek satır JSON
+    if crate::iz_acik() && std::env::var("ALAN_SECP_IZ").is_ok() {
+        let hp = &m.ps[h];
+        let f = |v: Option<f64>| v.filter(|x| x.is_finite()).map_or("null".to_string(), |x| format!("{}", x));
+        let o: Vec<String> = r.opts.iter().enumerate().map(|(i, x)| format!("[{:?},{},{},{},{},{},{}]", x.kind, x.to.as_ref().map_or("null".into(), |t| format!("[{},{}]", t.x, t.y)), f(x.v), f(x.det.as_ref().and_then(|d| d.P)), f(x.det.as_ref().and_then(|d| d.Ps)), f(x._own), if i == oi { 1 } else { 0 })).collect();
+        eprintln!("SECP [{},{:?},{},{},{},[{}]]", m.tick, &*hp.name, hp.team, hp.x, hp.y, o.join(","));
+    }
     // m._sec ve m.lastDec (gösterim)
     {
         let hp = &m.ps[h];

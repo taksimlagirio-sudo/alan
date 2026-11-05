@@ -151,6 +151,20 @@ pub struct MacEk {
     pub prT_k: Option<crate::kafa::gecici_dis1::PrT>,
     /// maçın kafası (JS AlanDecide)
     pub kafa: kafa_dis::KafaKutu,
+    /// ölçüm (alan-kos tutma): bir sonraki taşıyıcı kararında kafanın kendi sürme seçeneklerinden `sira`'ıncısı
+    /// zorla seçilir; sonuç `zorla_sonuc`'a yazılır. Maçta hep boş, davranışı etkilemez.
+    pub zorla: Option<usize>,
+    pub zorla_sonuc: Option<ZorlaSonuc>,
+}
+
+/// Zorlanan sürmenin kafadaki kestirimi: hedef, tutma olasılığı, değer, kafa kendisi de seçer miydi, kaç sürme vardı.
+#[derive(Clone, Debug, Default)]
+pub struct ZorlaSonuc {
+    pub to: (f64, f64),
+    pub P: f64,
+    pub v: f64,
+    pub secilen: bool,
+    pub n: usize,
 }
 
 // ---- küçük JS yardımcıları ----
