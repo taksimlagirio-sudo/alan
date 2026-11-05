@@ -111,12 +111,12 @@ kodda çalıştığı için aşamalar küçük parçalarla ve sık `main`'e birl
 | # | Aşama | Ne | Bitti sayılır |
 |---|---|---|---|
 | 0 | Güvenlik ağı | Parmak izi (`motor/src/parmak.rs`), `alan-kos … parmak`, `sina/ayni.sh`, başvurular (`sina/ayni/`) | ✅ Başvurular oturum başındaki motorla (b711370) aynı: 4 Kasım'ın bütün hız işleri bit bit davranış korumuş |
-| 1 | Kural katmanı | Enerji/sprint/koşu, tepki, varış tabloları, ikili ve hareket fiziği → `kural/` (saf işlevler; oyuncu + `MacKural`/`&dyn Kural` girer) | a–c ✅ (PR #5): `kural/{enerji,gec,kos,ikili,hareket}.rs`, `sekil`'deki yinelenen kurallar teke indi, `sina/katman.sh` tutuyor. **1d** (kafanın bu kuralları `Dis` yerine doğrudan çağırması, `Dis` 66 → ~30) Aşama 6 kararına bağlı: sınamaların `KayitDis`'i bu yöntemlerle JS'ten kaydedilmiş değerleri veriyor |
+| 1 | Kural katmanı | Enerji/sprint/koşu, tepki, varış tabloları, ikili ve hareket fiziği → `kural/` (saf işlevler; oyuncu + `MacKural`/`&dyn Kural` girer). Kafa bunlara `Dis` yerine `KuralErisim` ile, maçın anlık görüntüsünden (`Dis::kural`) ulaşır | ✅ `kural/{enerji,gec,kos,ikili,hareket}.rs`; `sekil`'deki yinelenen kurallar teke indi; `Dis` 66 → 27 yöntem; `sina/katman.sh` tutuyor |
 | 2 | Değerlendirme katmanı | kafa1'in değerlendirme işlevleri + kafa2'den yerleşimin kullandıkları (`kayipYer`, `yerDeger`, `bekYol`) → `deger/` | `sekil` hiçbir şekilde kafa2'ye bağlı değil; `sekil/gecici_dis.rs` yalnız `deger` çağırır |
 | 3 | Açık bağlam | `Baglam`, `Ayar`, `MacAni`, `Onbellek`; `kafa_ile` ve `KAFA`/`DIS`/`YAN` kalkar. Önce `deger`, sonra `yerlesim`, sonra `karar` | `kafa_ile` 0; `thread_local` yalnız sayaç/iz için |
 | 4 | Tek dünya | `Dunya` + `Gorunum`; kimlik `Pid`; köprü çevirileri kalkar | `ow`, `op_dunya`, `dunya_kopya`, `Varlik` yok; `Arc::ptr_eq` yok |
 | 5 | Veri | `Oyuncu` → `OyuncuDurum` + `OyuncuGovde`; `KafaD` → `Ayar` + geçici durum; `JsDeger` ve gereksiz `Option`'lar | `Oyuncu` kopyası ~300 bayt; `model.rs` üretilmiş taslak değil |
-| 6 | JS bağı (karar gerekir) | Rust tek doğru kaynak olursa: JS ile bit bit aynılık kısıtı kalkar → Rust adlandırması, `f32` denemesi, sadeleştirme | Kullanıcı kararı |
+| 6 | JS bağı | **Karar (5 Kasım): Rust tek doğru kaynak.** JS ile bit bit aynılık kısıtı kalktı; doğrulama `sina/ayni.sh` ve maç istatistikleriyle. Kalan: JS karşılaştırma sınamalarının (`tests/kafa1.rs`, `kafa2_saf.rs` taklitleri, vektör üreticileri) temizliği, Rust adlandırması, sadeleştirme | Karar verildi; temizlik sürüyor |
 | 7 | Crate'ler | Katmanlar ayrı crate; döngüyü derleyici yasaklar | `cargo build` katman kuralını zorlar |
 
 Her aşamanın sonunda: `sina/ayni.sh` aynı, `cargo test` geçen sayısı düşmemiş, `alan-kos` hızı ölçülmüş

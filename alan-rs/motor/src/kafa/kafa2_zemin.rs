@@ -2,6 +2,7 @@
 //! (ileriKur, ileriTab, ileriDeger, ilerleme), zemin, sahiplik haritası (sahiplikKur, zeminS), yerDeger.
 #![allow(non_snake_case, clippy::too_many_arguments)]
 
+use crate::kafa::gecici_dis1::KuralErisim as _;
 use super::kafa2_bag as dis;
 use super::kafa2_baglam::*;
 use super::kafa2_dunya::{bekYerW, predictWorld};

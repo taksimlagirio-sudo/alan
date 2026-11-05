@@ -2,6 +2,7 @@
 //! runSut/tercihEk/dagin/V/V0/tekF/laneOk/respond, 3945–3966 zoneR/pressAt/freeAt/recvCh).
 #![allow(non_snake_case)]
 
+use crate::kafa::gecici_dis1::KuralErisim as _;
 use super::gecici_dis1::{bosluk, sutEngel};
 use super::kafa1_baglam::Kafa;
 use super::kafa1_js::*;

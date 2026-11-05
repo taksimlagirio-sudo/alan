@@ -96,39 +96,6 @@ struct SinamaDis {
     spr: RefCell<Vec<(f64, f64, f64)>>,
 }
 impl Dis for SinamaDis {
-    fn ALAN_SPR(&self, p: &Oyuncu) -> f64 {
-        if let Some(v) = self.spr.borrow().iter().find(|x| x.0 == p.id && x.1 == p.team).map(|x| x.2) {
-            return v;
-        }
-        alan_motor::yetenek::spr_h(p.yet.hiz)
-    }
-    fn ALAN_SPRE(&self, p: &Oyuncu) -> f64 {
-        let en = match p.en {
-            None => return self.ALAN_SPR(p),
-            Some(e) => e,
-        };
-        let sp = self.ALAN_SPR(p);
-        if !(sp > 1.0) {
-            return veya(sp, 1.0);
-        }
-        let en_s = 0.7 + 0.03 * dis::ALAN_Y(p, "barBoy");
-        let sb = jmax(0.5, jmin(1.6, 1.0 + 5.0 * (en_s - 1.0) / 3.0));
-        let ts = jmax(0.0, en * sb / (1.0 / 120.0));
-        if ts <= 0.0 {
-            return 1.0;
-        }
-        let b = 0.17 + 0.006 * p.hz();
-        let lr = 20.0;
-        let reach = b * sp * ts;
-        if lr <= reach {
-            return sp;
-        }
-        let t = ts + (lr - reach) / b;
-        lr / (b * t)
-    }
-    fn tepki_s(&self) -> TepkiS {
-        TepkiS::default()
-    }
 }
 fn kafa_kur() -> (Kafa, Arc<SinamaDis>) {
     let d = Arc::new(SinamaDis::default());

@@ -2,6 +2,7 @@
 //! sutHedef, 3769–3944 SHT/shotCell/shotTab/shotQ).
 #![allow(non_snake_case)]
 
+use crate::kafa::gecici_dis1::KuralErisim as _;
 use super::kafa1_baglam::Kafa;
 use super::kafa1_js::*;
 use super::kafa1_param::{BKS, BODY_R, SAV};

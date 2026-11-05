@@ -2,6 +2,7 @@
 //! reachSpeed/reachTime/siddetFor, 2663–2785 launchFor/solveTo/ucusYol/ucusT/ucusSure/bankSure/bankFor).
 #![allow(non_snake_case)]
 
+use crate::kafa::gecici_dis1::KuralErisim as _;
 use super::gecici_dis1::{bekSav, predictWorld};
 use super::kafa1_baglam::{Kafa, KuralK, UcusYol};
 use super::kafa1_js::*;

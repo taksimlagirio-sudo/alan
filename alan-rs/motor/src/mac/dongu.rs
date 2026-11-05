@@ -18,7 +18,7 @@ use crate::saha::{CY, H, KR, P as FZ};
 use crate::top::tahmin;
 use crate::yetenek::mek;
 
-pub const BEKLE_BOZ: f64 = 3.5;
+pub use crate::kural::BEKLE_BOZ;
 
 fn ts() -> TepkiS {
     TepkiS::default()
