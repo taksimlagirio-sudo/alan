@@ -293,7 +293,7 @@ davranış değişir).
 `sekil/konum.rs`'in geçmiş kaydında iki ödünç sırası). Ölçüm (m00, valgrind 300 tik): komutlar 35,86 → 34,65
 milyar (−%3,4), oyuncu kopyası %2,0 → %0,5; yazarken kopyalama tik başına ~44 `OyuncuMac` (önce tik başına ~500
 tam kopya). Duvar saati 13,40 → 12,57 ms/tik (**−%6,2**; küçük kopyalar önbelleğe sığıyor). Main ile 20 maç ×
-2700 tik aynı. Not: `sina/alan-envanter.sh` yalnız `Oyuncu`'nun kendi alanlarını sayar.
+2700 tik aynı. `sina/alan-envanter.sh` üç parçayı da sayar (alanın parçası yazılır; paylaşımlı bir parçaya kafa/karar yazıyorsa `!`: bugün yalnız `role`, kısmi bedenlerin kuruluşu).
 
 **5-2 ✅ gövde** (5 Kasım): 13 alan (`i, role, slot, name, a, yet, rslot, slot0, rslot0, rh, rs, tl, eg`)
 `OyuncuGovde`'ye, `Oyuncu::govde: Arc<OyuncuGovde>`; yazma `govde_mut()` (yalnız kurulum, rol atama, kayıt ve kısmi

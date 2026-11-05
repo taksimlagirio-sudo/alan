@@ -1,146 +1,150 @@
 # Oyuncu alan envanteri: 144 alan; tanınmayan hata 1
-# alan oku yaz(katman:sayı)
-id             oku= 194 yaz=dunya:1,kafa:5,sekil:1
-team           oku= 408 yaz=dunya:1,kafa:4,karar:1,mac:1
-i              oku=  14 yaz=kafa:1
-role           oku=   8 yaz=dunya:1,kafa:2
-slot           oku=  33 yaz=kafa:1,mac:2
-name           oku=  88 yaz=kafa:1,mac:1
-a              oku=   4 yaz=dunya:1,kafa:1,mac:1,sekil:1
-R              oku=  12 yaz=dunya:1,kafa:1,mac:1,sekil:1
-D              oku=  10 yaz=dunya:1,kafa:2,mac:4,sekil:1
-x              oku= 997 yaz=dunya:3,kafa:29,karar:6,mac:18,sekil:3,temel:donus.rs:1,temel:temas.rs:2,yerlesim:1
-y              oku= 959 yaz=dunya:3,kafa:29,karar:6,mac:18,sekil:3,temel:donus.rs:1,temel:temas.rs:2,yerlesim:1
-vx             oku= 164 yaz=dunya:2,kafa:26,karar:6,kural:2,mac:14,sekil:2,temel:temas.rs:1,yerlesim:1
-vy             oku= 162 yaz=dunya:2,kafa:26,karar:6,kural:2,mac:14,sekil:2,temel:temas.rs:1,yerlesim:1
-tx             oku=  75 yaz=kafa:1,mac:28,sekil:2,yerlesim:34
-ty             oku=  74 yaz=kafa:1,mac:29,sekil:2,yerlesim:34
-cd             oku=   2 yaz=kafa:1,mac:3
-en             oku=  61 yaz=kafa:2,karar:1,mac:10
-driveTo        oku=   1 yaz=mac:7
-_dur           oku=   0 yaz=mac:2,yerlesim:2
-_korT          oku=   5 yaz=mac:2
-bekBas         oku=   6 yaz=mac:4
-noTouch        oku=  94 yaz=karar:1,mac:1
-hist           oku=   4 yaz=yerlesim:1
-lock           oku=   1 yaz=yerlesim:5
-kapPrev        oku=   1 yaz=yerlesim:1
-zonePrev       oku=   2 yaz=yerlesim:2
-swPrev         oku=   3 yaz=yerlesim:1
-uaPrev         oku=   1 yaz=yerlesim:2
-rec            oku=   1 yaz=yerlesim:1
-tutQ           oku=   7 yaz=yerlesim:8
-sprint         oku=  13 yaz=kafa:1,mac:17,sekil:1,yerlesim:18
-press          oku=  10 yaz=dunya:1,mac:1,sekil:1,yerlesim:3
-job            oku=  26 yaz=mac:14,sekil:2,yerlesim:31
-otx            oku=   6 yaz=yerlesim:8
-_bk            oku=   3 yaz=sekil:2
-_ktB           oku=   2 yaz=mac:1
-_topSpr        oku=   4 yaz=mac:3
-_kosuK         oku=   0 yaz=mac:4
-_hizK          oku=   1 yaz=mac:3
-_evx           oku=   0 yaz=mac:1
-_evy           oku=   0 yaz=mac:1
-_yog           oku=   1 yaz=mac:1
-_D0            oku=   2 yaz=mac:1
-_Dl            oku=   3 yaz=mac:2
-_enOnce        oku=   1 yaz=mac:1
-ca             oku=  32 yaz=kafa:5,karar:1,mac:13
-_don           oku=   4 yaz=kafa:3,mac:1
-drive          oku=   1 yaz=mac:3
-_dke           oku=   7 yaz=kafa:2,mac:1
-rslot          oku=   9 yaz=kafa:1,mac:2
-slot0          oku=   3 yaz=kafa:1,mac:1
-rslot0         oku=   3 yaz=kafa:1,mac:1
-rh             oku=   2 yaz=kafa:1,mac:2
-rs             oku=   1 yaz=kafa:1,mac:2
-tl             oku=   6 yaz=kafa:1,mac:2
-markRef        oku=  14 yaz=mac:2,yerlesim:2
-eg             oku=   2 yaz=kafa:1,mac:1
-oty            oku=   5 yaz=yerlesim:2
-_otH           oku=   2 yaz=yerlesim:1
-_otB           oku=   2 yaz=yerlesim:1
-_otE           oku=   4 yaz=yerlesim:1
-_otF           oku=   2 yaz=yerlesim:1
-_kv            oku=   4 yaz=yerlesim:4
-_amacJob       oku=   1 yaz=yerlesim:3
-_kt            oku=   2 yaz=mac:2
-_hizF          oku=   0 yaz=mac:1
-kuyuT          oku=   5 yaz=mac:2
-sonuk          oku=  12 yaz=mac:2
-_kuyuCik       oku=   2 yaz=mac:3
-_yer           oku=   2 yaz=yerlesim:1
-_savT          oku=   1 yaz=yerlesim:1
-_savD          oku=   1 yaz=yerlesim:1
-_blokT         oku=   1 yaz=yerlesim:1
-past           oku=   1 yaz=yerlesim:1
-holdD          oku=   1 yaz=mac:5
-_plan          oku=   0 yaz=mac:2
-_surK          oku=   2 yaz=mac:2
-_sprIst        oku=   1 yaz=mac:1
-sarj           oku=   4 yaz=mac:3
-savur          oku=   6 yaz=mac:9
-lastWhy        oku=   1 yaz=mac:4
-amA            oku=   5 yaz=mac:6
-am             oku=   5 yaz=mac:6
-_rcvV          oku=   0 yaz=sekil:2
-_rcvB          oku=   5 yaz=sekil:1
-_rcvAbs        oku=   5 yaz=sekil:1
-_rcvX          oku=   2 yaz=sekil:1
-_rcvY          oku=   1 yaz=sekil:1
-chB            oku=   3 yaz=yerlesim:3
-_preB          oku=   1 yaz=mac:1
-_preT          oku=   1 yaz=mac:1
-_otA           oku=   2 yaz=mac:1
-_onH           oku=   2 yaz=mac:4
-_lc            oku=   0 yaz=mac:1
-_donDir        oku=   3 yaz=mac:1
-_donT          oku=   2 yaz=mac:1
-_omuzT         oku=   0 yaz=mac:2
-_sf            oku=  21 yaz=kafa:1,mac:4
-_savCar        oku=   0 yaz=yerlesim:1
-lockAt         oku=   1 yaz=yerlesim:1
-_lockH         oku=   1 yaz=yerlesim:1
-_presT         oku=   0 yaz=yerlesim:1
-_presH         oku=   0 yaz=yerlesim:1
-_onK           oku=   3 yaz=mac:1,sekil:1
-_omEv          oku=   2 yaz=mac:2
-fiskeCd        oku=   2 yaz=mac:2
-fiske          oku=   1 yaz=mac:2
-fiskeDir       oku=   2 yaz=mac:1
-_kal           oku=   2 yaz=mac:2
-_kalH          oku=   2 yaz=mac:1
-hamle          oku=  10 yaz=mac:7
-_dolYok        oku=   3 yaz=mac:2
-adandi         oku=  14 yaz=mac:3
-adT            oku=  12 yaz=mac:2
-_gvKaz         oku=   1 yaz=mac:1
-_winSeen       oku=   2 yaz=yerlesim:1
-son            oku=   0 yaz=mac:6
-den            oku=  45 yaz=kafa:9,mac:5
-_kh            oku=   1 yaz=sekil:1
-_khT           oku=   1 yaz=sekil:1
-_khQ           oku=   1 yaz=sekil:1
-_omuz          oku=   1 yaz=mac:1
-adNeden        oku=   2 yaz=mac:1
-pplan          oku=   4 yaz=kafa:2,sekil:1
-_kAn           oku=   1 yaz=sekil:1
-_kAnT          oku=   1 yaz=sekil:1
-okudu          oku=   0 yaz=mac:1
-_bosT          oku=   1 yaz=mac:1
-sendT          oku=   6 yaz=mac:1
-sendCd         oku=   2 yaz=mac:1
-stun           oku=   4 yaz=mac:1
-_itK           oku=   3 yaz=mac:2
-_koyEv         oku=   1 yaz=mac:1
-_dalis         oku=   3 yaz=mac:1,temel:temas.rs:2
-yet            oku= 186 yaz=dunya:1,kafa:1,mac:1,sekil:1
-slowT          oku=   2 yaz=mac:1
-__e            oku=   2 yaz=mac:1
-__yas          oku=   3 yaz=mac:1
-kenarW         oku=   1 yaz=mac:4
-fkBlock        oku=   1 yaz=mac:2
-fkCool         oku=   1 yaz=mac:1
-gvH            oku=   2 yaz=mac:3
-gvCd           oku=   1 yaz=mac:1
-kim            oku=   5 yaz=dunya:1
+# parça: yapı (kopyalanır), gövde (p.govde, paylaşımlı), hal (p.hal, paylaşımlı, yazarken kopyalanır)
+# alan parça oku yaz(katman:sayı)   ! = paylaşımlı parçaya kafa/karar yazıyor (kopyada yazarken kopyalama)
+# yapı: 23 alan, okuma 3426, yazma 549
+# gövde: 13 alan, okuma 349, yazma 22
+# hal: 108 alan, okuma 268, yazma 231
+ id             yapı  oku= 200 yaz=dunya:1,kafa:5,sekil:1
+ team           yapı  oku= 418 yaz=dunya:1,kafa:4,karar:1,mac:1
+ R              yapı  oku=  12 yaz=dunya:1,kafa:1,mac:1,sekil:1
+ D              yapı  oku=  10 yaz=dunya:1,kafa:2,mac:4,sekil:1
+ x              yapı  oku=1008 yaz=dunya:3,kafa:29,karar:6,mac:18,sekil:3,temel:donus.rs:1,temel:temas.rs:2,yerlesim:1
+ y              yapı  oku= 970 yaz=dunya:3,kafa:29,karar:6,mac:18,sekil:3,temel:donus.rs:1,temel:temas.rs:2,yerlesim:1
+ vx             yapı  oku= 166 yaz=dunya:2,kafa:26,karar:6,kural:2,mac:14,sekil:2,temel:temas.rs:1,yerlesim:1
+ vy             yapı  oku= 164 yaz=dunya:2,kafa:26,karar:6,kural:2,mac:14,sekil:2,temel:temas.rs:1,yerlesim:1
+ tx             yapı  oku=  75 yaz=kafa:1,mac:28,sekil:2,yerlesim:34
+ ty             yapı  oku=  74 yaz=kafa:1,mac:29,sekil:2,yerlesim:34
+ cd             yapı  oku=   2 yaz=kafa:1,mac:3
+ en             yapı  oku=  61 yaz=kafa:2,karar:1,mac:10
+ noTouch        yapı  oku=  95 yaz=karar:1,mac:1
+ sprint         yapı  oku=  13 yaz=kafa:1,mac:17,sekil:1,yerlesim:18
+ press          yapı  oku=  10 yaz=dunya:1,mac:1,sekil:1,yerlesim:3
+ job            yapı  oku=  26 yaz=mac:14,sekil:2,yerlesim:31
+ ca             yapı  oku=  33 yaz=kafa:5,karar:1,mac:13
+ _don           yapı  oku=   5 yaz=kafa:3,mac:1
+ _dke           yapı  oku=   7 yaz=kafa:2,mac:1
+ _sf            yapı  oku=  21 yaz=kafa:1,mac:4
+ den            yapı  oku=  47 yaz=kafa:9,mac:5
+ pplan          yapı  oku=   4 yaz=kafa:2,sekil:1
+ kim            yapı  oku=   5 yaz=dunya:1
+ i              gövde oku=  13 yaz=
+!role           gövde oku=   7 yaz=dunya:1,kafa:1
+ slot           gövde oku=  32 yaz=mac:2
+ name           gövde oku=  90 yaz=mac:1
+ a              gövde oku=   3 yaz=dunya:1,mac:1,sekil:1
+ rslot          gövde oku=   8 yaz=mac:2
+ slot0          gövde oku=   2 yaz=mac:1
+ rslot0         gövde oku=   2 yaz=mac:1
+ rh             gövde oku=   1 yaz=mac:2
+ rs             gövde oku=   0 yaz=mac:2
+ tl             gövde oku=   5 yaz=mac:2
+ eg             gövde oku=   1 yaz=mac:1
+ yet            gövde oku= 185 yaz=dunya:1,mac:1,sekil:1
+ driveTo        hal   oku=   1 yaz=mac:7
+ _dur           hal   oku=   0 yaz=mac:2,yerlesim:2
+ _korT          hal   oku=   5 yaz=mac:2
+ bekBas         hal   oku=   6 yaz=mac:4
+ hist           hal   oku=   4 yaz=yerlesim:1
+ lock           hal   oku=   1 yaz=yerlesim:5
+ kapPrev        hal   oku=   1 yaz=yerlesim:1
+ zonePrev       hal   oku=   2 yaz=yerlesim:2
+ swPrev         hal   oku=   3 yaz=yerlesim:1
+ uaPrev         hal   oku=   1 yaz=yerlesim:2
+ rec            hal   oku=   1 yaz=yerlesim:1
+ tutQ           hal   oku=   7 yaz=yerlesim:8
+ otx            hal   oku=   6 yaz=yerlesim:8
+ _bk            hal   oku=   3 yaz=sekil:2
+ _ktB           hal   oku=   2 yaz=mac:1
+ _topSpr        hal   oku=   4 yaz=mac:3
+ _kosuK         hal   oku=   0 yaz=mac:4
+ _hizK          hal   oku=   1 yaz=mac:3
+ _evx           hal   oku=   0 yaz=mac:1
+ _evy           hal   oku=   0 yaz=mac:1
+ _yog           hal   oku=   1 yaz=mac:1
+ _D0            hal   oku=   2 yaz=mac:1
+ _Dl            hal   oku=   3 yaz=mac:2
+ _enOnce        hal   oku=   1 yaz=mac:1
+ drive          hal   oku=   1 yaz=mac:3
+ markRef        hal   oku=  14 yaz=mac:2,yerlesim:2
+ oty            hal   oku=   5 yaz=yerlesim:2
+ _otH           hal   oku=   2 yaz=yerlesim:1
+ _otB           hal   oku=   2 yaz=yerlesim:1
+ _otE           hal   oku=   4 yaz=yerlesim:1
+ _otF           hal   oku=   2 yaz=yerlesim:1
+ _kv            hal   oku=   4 yaz=yerlesim:4
+ _amacJob       hal   oku=   1 yaz=yerlesim:3
+ _kt            hal   oku=   2 yaz=mac:2
+ _hizF          hal   oku=   0 yaz=mac:1
+ kuyuT          hal   oku=   5 yaz=mac:2
+ sonuk          hal   oku=  12 yaz=mac:2
+ _kuyuCik       hal   oku=   2 yaz=mac:3
+ _yer           hal   oku=   2 yaz=yerlesim:1
+ _savT          hal   oku=   1 yaz=yerlesim:1
+ _savD          hal   oku=   1 yaz=yerlesim:1
+ _blokT         hal   oku=   1 yaz=yerlesim:1
+ past           hal   oku=   1 yaz=yerlesim:1
+ holdD          hal   oku=   1 yaz=mac:5
+ _plan          hal   oku=   0 yaz=mac:2
+ _surK          hal   oku=   2 yaz=mac:2
+ _sprIst        hal   oku=   1 yaz=mac:1
+ sarj           hal   oku=   4 yaz=mac:3
+ savur          hal   oku=   6 yaz=mac:9
+ lastWhy        hal   oku=   1 yaz=mac:4
+ amA            hal   oku=   5 yaz=mac:6
+ am             hal   oku=   5 yaz=mac:6
+ _rcvV          hal   oku=   0 yaz=sekil:2
+ _rcvB          hal   oku=   5 yaz=sekil:1
+ _rcvAbs        hal   oku=   5 yaz=sekil:1
+ _rcvX          hal   oku=   2 yaz=sekil:1
+ _rcvY          hal   oku=   1 yaz=sekil:1
+ chB            hal   oku=   3 yaz=yerlesim:3
+ _preB          hal   oku=   1 yaz=mac:1
+ _preT          hal   oku=   1 yaz=mac:1
+ _otA           hal   oku=   2 yaz=mac:1
+ _onH           hal   oku=   2 yaz=mac:4
+ _lc            hal   oku=   0 yaz=mac:1
+ _donDir        hal   oku=   3 yaz=mac:1
+ _donT          hal   oku=   2 yaz=mac:1
+ _omuzT         hal   oku=   0 yaz=mac:2
+ _savCar        hal   oku=   0 yaz=yerlesim:1
+ lockAt         hal   oku=   1 yaz=yerlesim:1
+ _lockH         hal   oku=   1 yaz=yerlesim:1
+ _presT         hal   oku=   0 yaz=yerlesim:1
+ _presH         hal   oku=   0 yaz=yerlesim:1
+ _onK           hal   oku=   3 yaz=mac:1,sekil:1
+ _omEv          hal   oku=   2 yaz=mac:2
+ fiskeCd        hal   oku=   2 yaz=mac:2
+ fiske          hal   oku=   1 yaz=mac:2
+ fiskeDir       hal   oku=   2 yaz=mac:1
+ _kal           hal   oku=   2 yaz=mac:2
+ _kalH          hal   oku=   2 yaz=mac:1
+ hamle          hal   oku=  10 yaz=mac:7
+ _dolYok        hal   oku=   3 yaz=mac:2
+ adandi         hal   oku=  14 yaz=mac:3
+ adT            hal   oku=  12 yaz=mac:2
+ _gvKaz         hal   oku=   1 yaz=mac:1
+ _winSeen       hal   oku=   2 yaz=yerlesim:1
+ son            hal   oku=   0 yaz=mac:6
+ _kh            hal   oku=   1 yaz=sekil:1
+ _khT           hal   oku=   1 yaz=sekil:1
+ _khQ           hal   oku=   1 yaz=sekil:1
+ _omuz          hal   oku=   1 yaz=mac:1
+ adNeden        hal   oku=   2 yaz=mac:1
+ _kAn           hal   oku=   1 yaz=sekil:1
+ _kAnT          hal   oku=   1 yaz=sekil:1
+ okudu          hal   oku=   0 yaz=mac:1
+ _bosT          hal   oku=   1 yaz=mac:1
+ sendT          hal   oku=   6 yaz=mac:1
+ sendCd         hal   oku=   2 yaz=mac:1
+ stun           hal   oku=   4 yaz=mac:1
+ _itK           hal   oku=   3 yaz=mac:2
+ _koyEv         hal   oku=   1 yaz=mac:1
+ _dalis         hal   oku=   3 yaz=mac:1,temel:temas.rs:2
+ slowT          hal   oku=   2 yaz=mac:1
+ __e            hal   oku=   2 yaz=mac:1
+ __yas          hal   oku=   3 yaz=mac:1
+ kenarW         hal   oku=   1 yaz=mac:4
+ fkBlock        hal   oku=   1 yaz=mac:2
+ fkCool         hal   oku=   1 yaz=mac:1
+ gvH            hal   oku=   2 yaz=mac:3
+ gvCd           hal   oku=   1 yaz=mac:1
