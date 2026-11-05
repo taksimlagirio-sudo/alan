@@ -229,9 +229,25 @@ pub fn yolOlabilirB(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t0:
                 } else if let Some(hid) = at[pi] {
                     match src.iter().find(|o| o.team == team && o.id == hid) {
                         Some(h) => {
-                            let (hx, hy) = if Some(hid) == gonderen { (A.x, A.y) } else { (h.x, h.y) };
+                            // adamın vuruştaki yeri: gönderense A; değilse niyetine (tx, ty) doğru t0 boyunca koşmuş
+                            let (hx, hy) = if Some(hid) == gonderen {
+                                (A.x, A.y)
+                            } else {
+                                let vh = jmax(0.05, dis::AS_vSp(k, h));
+                                let (dx, dy) = (h.tx - h.x, h.ty - h.y);
+                                let Lh = hypot(dx, dy);
+                                let m = jmin(Lh, vh * t0);
+                                if Lh > 1e-6 { (h.x + dx / Lh * m, h.y + dy / Lh * m) } else { (h.x, h.y) }
+                            };
+                            // karşılayıcı adamının kale tarafına koşar: tepkisinden sonra t0'a dek gidebildiği kadar
                             let L = jmax(1e-6, hypot(gx - hx, GCY - hy));
-                            kxy(p, hx + (gx - hx) / L * 1.5, hy + (GCY - hy) / L * 1.5)
+                            let (gx2, gy2) = (hx + (gx - hx) / L * 1.5, hy + (GCY - hy) / L * 1.5);
+                            let vp = jmax(0.05, dis::AS_vSp(k, p));
+                            let rcp = jmax(0.0, dis::ALAN_TEPKI(k, p, "kovala"));
+                            let (dx, dy) = (gx2 - p.x, gy2 - p.y);
+                            let Lp = hypot(dx, dy);
+                            let m = jmin(Lp, vp * jmax(0.0, t0 - rcp));
+                            if Lp > 1e-6 { kxy(p, p.x + dx / Lp * m, p.y + dy / Lp * m) } else { p.clone() }
                         }
                         None => p.clone(),
                     }
@@ -970,6 +986,9 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
             o.v = Some(P * tH.v - (1.0 - P) * Lv);
             o.prensip = Some(if nd < 4.0 { "Kalkan" } else { "Bekle" }.into());
             let simdi = durumD(k, &mut cx, src, &h, nk(h.x, h.y), 0.0).v;
+            if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
+                eprintln!("TUTV {} {} Th {:.0} P {:.3} durum {:.3} (şut {:.3} zemin {:.3} pas {:.3} sür {:.3} {:?}) kayıp {:.3} v {:.3}", k.tick(), h.govde.name, Th, P, tH.v, tH.sut, tH.zem, tH.pas, tH.sur, tH.pasK, Lv, P * tH.v - (1.0 - P) * Lv);
+            }
             o.dok = Some(Dok::yeni(&[("tutar", P), ("durum", tH.v), ("simdi", simdi), ("kayip", -(1.0 - P) * Lv), ("sure", Th)]));
             o._pw = Some(wE);
             o._pT = Some(Th);
