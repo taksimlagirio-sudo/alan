@@ -303,6 +303,15 @@ alanının hepsini kopyalıyordu: artık paylaşıyor. **Boyut: `Oyuncu` 2704 �
 416, paylaşımlı). Ölçüm: komutlar 34,65 → 34,44 milyar, oyuncu kopyası %0,51 → %0,18; duvar saati 12,58 → 12,21
 ms/tik (−%2,9). 5-1 ile birlikte 13,40 → 12,21 (**−%8,9**). Main ile 20 maç × 2700 tik aynı.
 
+**5-3 ✅ ölü tipler ve alanlar** (5 Kasım): `model.rs` JS'in çalışma anı envanterinden üretilmiş taslaktı (328 tip,
+6015 satır). Hiç başvurulmayan 208 tip (çoğu iç içe anlık görüntü tipleri: `JMCtlRBest_pwE…`) yinelemeli olarak
+silindi. Alanlar derleyiciyle ölçüldü: bütün alanlar geçici kopyada yeniden adlandırılır, her hata bir kullanım yeri;
+bir zincirdeki ilk hata sonrakileri gizlediği için yalnız adaylar yeniden adlandırılarak sabit noktaya dek
+yinelenir; motor derlenemeyince `alan-kos`/wasm/sınamalar hiç denetlenmediği için onlarda adı geçen her aday
+korunur (ihtiyatlı). Hiç okunmayan ve yazılmayan ya da yalnız yapı ifadesinde kurulan alanlar silindi (kurulduğu
+ifadeler de). Sonuç: `model.rs` 6015 → 2379 satır, 328 → 120 tip. Davranış aynı (20 maç × 2700 tik). Yazılan ama
+okunmayan 57 alan (yazma deyimleri yan etkili olabilir) ayrı adımda.
+
 Sıra: (1) maç durumu (108 alan, ~500 yer, kafaya dokunmaz: yalnız `mac/`, `sekil/`, `temas`), (2) gövde
 (~1000 okuma, çoğu `p.yet`/`p.team`/`p.id`: düz değiştirme), her biri `sina/ayni.sh` + 20 maçlık parmak iziyle.
 

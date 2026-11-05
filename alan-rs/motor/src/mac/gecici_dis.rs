@@ -191,17 +191,14 @@ pub fn mac_gor(m: &Mac) -> crate::kafa::kafa2_baglam::MacGor {
                 risk: q.risk.unwrap_or(n),
                 tempo: q.tempo.unwrap_or(n),
                 kazaninca: q.kazaninca.unwrap_or_default(),
-                sistem: q.sistem.unwrap_or_default(),
                 siddet: q.siddet.unwrap_or(n),
                 savGen: q.savGen.unwrap_or(n),
-                kaleOnu: q.kaleOnu.unwrap_or_default(),
                 pasSurme: q.pasSurme.unwrap_or(n),
                 pasBoy: q.pasBoy.unwrap_or(n),
                 sabir: q.sabir.unwrap_or(n),
                 sut: q.sut.unwrap_or(n),
                 enDinlen: q.enDinlen.unwrap_or(n),
                 enYipratma: q.enYipratma.unwrap_or(n),
-                tetik: q.tetik.unwrap_or_default(),
                 yz: q.yz == Some(true),
                 ..Default::default()
             }
