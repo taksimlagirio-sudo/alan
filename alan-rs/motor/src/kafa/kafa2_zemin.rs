@@ -462,8 +462,7 @@ pub fn ileriTab(k: &mut Kafa) -> Option<Arc<IleriTab>> {
             // D'nin `_` alanları (_tick dışında) geçici olarak boşaltılır; D._mac sade maç görünümü.
             let sakla_d = k.bag.clone();
             super::kafa2_baglam::d_alt_bosalt(&mut k.bag);
-            let sakla_k2 = (k.k2._inLook, k.k2._noHold, k.k2._noFake, k.k2._dalgada, k.k2.zin.take());
-            k.k2._inLook = false;
+            let sakla_k2 = (k.k2._noHold, k.k2._noFake, k.k2._dalgada);
             k.k2._noHold = false;
             k.k2._noFake = false;
             k.k2._dalgada = false;
@@ -471,11 +470,9 @@ pub fn ileriTab(k: &mut Kafa) -> Option<Arc<IleriTab>> {
             let tab = ileriKur(k, &m).map(Arc::new);
             k.mac = sakla_mac;
             k.bag = sakla_d;
-            k.k2._inLook = sakla_k2.0;
-            k.k2._noHold = sakla_k2.1;
-            k.k2._noFake = sakla_k2.2;
-            k.k2._dalgada = sakla_k2.3;
-            k.k2.zin = sakla_k2.4;
+            k.k2._noHold = sakla_k2.0;
+            k.k2._noFake = sakla_k2.1;
+            k.k2._dalgada = sakla_k2.2;
             k.k2.IT = Some((m.tick, key, tab));
         } else {
             let (_, k0, tb) = eski.unwrap();

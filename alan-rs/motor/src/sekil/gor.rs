@@ -254,8 +254,3 @@ pub fn gorulen(c: &mut Mc, pi: Pid) -> Vec<Gorulen> {
     out
 }
 
-/// JS gercek(o): nesnenin alanlarındaki görülen kopyaları gerçeklerine çevirir. Rust'ta varlıklar oyuncuya
-/// sırasıyla (Pid) bağlıdır, kopyanın kimliği zaten gerçek oyuncu: dönüşüm yok.
-pub fn gercek<T>(o: T) -> T {
-    o
-}

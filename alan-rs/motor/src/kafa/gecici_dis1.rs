@@ -15,7 +15,7 @@ use std::sync::Arc;
 use crate::temas::Kural as _;
 use super::kafa1_baglam::Kafa;
 use super::kafa1_js::{Nk, Op};
-use crate::model::{JMShGs, Oyuncu, Secenek};
+use crate::model::{JMShGs, Oyuncu};
 use crate::oyuncu::TepkiS;
 
 /// Yerleşimin geçiş tablosu (shape.js gecTabV dönüşü): oyuncunun dönüp hızlanma gecikmesi.
@@ -177,13 +177,6 @@ pub struct Fm<'a> {
     pub holder: Option<&'a Oyuncu>,
 }
 
-/// holdWorld'ün hayali maçı (JS createMatch + kopya + kopyaDurum; yalnız eski kafa, ALAN_PRENSIP kapalı).
-pub struct HayaliMac {
-    pub ps: Vec<Op>,
-    /// topu tutan (ps sırası)
-    pub holder: Option<usize>,
-    pub ch: f64,
-}
 
 /// Dış dünya: maç, yerleşim ve enerji modüllerinin kafaya açtığı işlevler.
 pub trait Dis {
@@ -231,11 +224,6 @@ pub trait Dis {
     // ---- maç (match.js, window.AlanMatch) ----
     /// (birleştirmede eklendi; kafa2) match.js:939 tl(p, ev, k): takım talimatı (`null` → None)
     fn tl(&self, p: &Oyuncu, ev: &str, k: &str) -> Option<f64> { todo!() }
-    /// (birleştirmede eklendi; kafa2, yalnız eski kafa) holdWorld'ün hayali maçı: createMatch + kopya +
-    /// kopyaDurum (tohum, dünya, taşıyan, şarj, taktik)
-    fn hayaliMac(&self, k: &mut Kafa, tohum: f64, src: &[Op], hi: usize, ch: f64, tac: Option<&super::kafa2_baglam::Tac>) -> HayaliMac { todo!() }
-    /// (birleştirmede eklendi; kafa2, yalnız eski kafa) hayali maçta bir tik (JS M.step(m), m.decT = 99)
-    fn hayaliAdim(&self, k: &mut Kafa, m: &mut HayaliMac) { todo!() }
 
     // ---- maçın durumu (D._mac) ----
     /// D._mac var mı
@@ -302,10 +290,6 @@ pub trait KuralErisim: Dis {
     /// core.js:188 ALAN_EN2_SB(p)
     fn ALAN_EN2_SB(&self, p: &Oyuncu) -> f64 {
         crate::kural::enerji::ALAN_EN2_SB(p)
-    }
-    /// core.js:189 ALAN_EN2_SD(p)
-    fn ALAN_EN2_SD(&self, p: &Oyuncu) -> f64 {
-        crate::kural::enerji::ALAN_EN2_SD(p)
     }
     /// core.js:159 ALAN_EN3_DOL(p, sahip, nd, yerK)
     fn ALAN_EN3_DOL(&self, p: &Oyuncu, sahip: bool, nd: f64, yerK: f64) -> f64 {
@@ -456,9 +440,6 @@ fn gecTab_k(g: &crate::kural::gec::GecTab) -> GecTab {
     GecTab { vx: g.vx, vy: g.vy, s0: g.s0, x: g.x, y: g.y, t: g.tb.0.to_vec(), Y: g.tb.1.iter().map(gecY_k_arc).collect(), vm: g.vm }
 }
 
-/// Gerçeklenmemiş dış dünya: her çağrı `todo!()`.
-pub struct GeciciDis;
-impl Dis for GeciciDis {}
 
 // ======================================================================
 // Kafa2'nin işlevleri (decide.js 4717 sonrası): kafa2'nin gerçeklerine bağlı.
@@ -488,12 +469,4 @@ pub fn sutEngel(k: &Kafa, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
 /// decide.js:6773 yerDeger(w, team, x, y, ch)
 pub fn yerDeger(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64) -> f64 {
     super::kafa2_zemin::yerDeger(k, w, team, x, y, ch)
-}
-/// decide.js:5423 riskOf(h, tac)
-pub fn riskOf(k: &Kafa, h: &Oyuncu, tac: Option<&super::kafa2_baglam::Tac>) -> f64 {
-    super::kafa2_karar::riskOf(k, h, tac)
-}
-/// decide.js:5639 sonraDeger(hc, w, ch, risk): fake dünyasında taşıyıcının en iyi seçeneği.
-pub fn sonraDeger(k: &mut Kafa, hc: &Oyuncu, w: &[Op], ch: f64, risk: f64) -> Option<Secenek> {
-    super::kafa2_eski::sonraDeger(k, hc, w, ch, risk)
 }

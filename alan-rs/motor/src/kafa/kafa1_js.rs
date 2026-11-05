@@ -274,16 +274,6 @@ fn rem_pio2(x: f64) -> Option<(i32, f64, f64)> {
     None
 }
 
-/// JS `Math.max(...dizi)` (boşsa -Infinity).
-pub fn enb(v: impl Iterator<Item = f64>) -> f64 {
-    let mut m = f64::NEG_INFINITY;
-    for x in v {
-        m = crate::mat::jmax(m, x);
-    }
-    m
-}
 
 /// Dünyanın bir oyuncusu (kafa2 ile ortak): dünya kopyası yalnız değişen oyuncuyu kopyalar.
 pub type Op = std::sync::Arc<Oyuncu>;
-/// Hayali dünya.
-pub type Dunya = Vec<Op>;

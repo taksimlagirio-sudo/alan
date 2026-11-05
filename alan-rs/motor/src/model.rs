@@ -753,8 +753,6 @@ pub struct KafaBag {
     pub _sYon: Option<f64>,
     /// `_noFake`: boolean (kafa1 ekledi: fakeSecenek'in iç dünyası)
     pub _noFake: bool,
-    /// `_inLook`: boolean (kafa1 ekledi: lookAhead içi)
-    pub _inLook: bool,
 }
 
 /// (kafa1'in adı) JS `D._kanca`

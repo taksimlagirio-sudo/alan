@@ -195,7 +195,7 @@ pub fn bekci(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (
     bekci_an(p, ex + hh.vx * t, ey + hh.vy * t, m, k)
 }
 
-fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (f64, f64) {
+fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, _k: &dyn Kural) -> (f64, f64) {
     let gx = ownX(p.takim());
     let dx = ex - gx;
     let dy = ey - GCY;
@@ -552,7 +552,7 @@ impl YolBag {
 }
 
 /// yolBag/yolKesis'in taşıyıcı hız yanılgısı (görüşe bağlı, 15 tikte bir değişir).
-pub fn hizYanilgi(p: &Oyuncu, h: &Oyuncu, d: &KafaD, dtik: Option<f64>) -> f64 {
+pub fn hizYanilgi(p: &Oyuncu, h: &Oyuncu, _d: &KafaD, dtik: Option<f64>) -> f64 {
     let g = p.yet.ozk("gorus");
     let hs = sinh_k(12.9898 * (p.id + 1.0) + 4.1414 * (h.id + 1.0) + 78.233 * (dtik.filter(|t| *t != 0.0 && *t == *t).unwrap_or(0.0) / 15.0).floor());
     1.0 + (kesir(hs) - 0.5) * (20.0 - g) * 0.02

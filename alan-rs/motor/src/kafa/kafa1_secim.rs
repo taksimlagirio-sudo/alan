@@ -174,6 +174,3 @@ pub fn js_num(v: f64) -> String {
         format!("{}", v)
     }
 }
-fn js_dogru_d(v: &Option<crate::model::JsDeger>) -> bool {
-    super::kafa1_enerji::js_dogru(v)
-}

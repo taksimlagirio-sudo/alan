@@ -55,28 +55,6 @@ pub fn yerV(m: &Mac, w: &[Varlik], oy: &[Oyuncu], att: u8, x: f64, y: f64, ch: f
     dis::yerDeger(m, w, oy, att, x, y, ch)
 }
 
-/// JS teamBest(w2, att, E, mates, ch): taşıyıcının en iyi seçeneği (sür ya da pas).
-pub fn teamBest(m: &Mac, w2: &[Varlik], oy: &[Oyuncu], att: u8, E: (f64, f64), mates: &[(f64, f64)], ch: f64, k: &dyn Kural, d: &KafaD) -> f64 {
-    let gx = oppX(att);
-    let gd = {
-        let l = hypot(gx - E.0, GCY - E.1);
-        if l != 0.0 && l == l {
-            l
-        } else {
-            1.0
-        }
-    };
-    let st = jmin(6.0, jmax(0.0, gd - 6.0));
-    let F = (E.0 + (gx - E.0) / gd * st, E.1 + (GCY - E.1) / gd * st);
-    let mut best = yerV(m, w2, oy, att, E.0, E.1, ch);
-    if st > 0.0 {
-        best = jmax(best, laneOpen(m, w2, oy, att, E, F, Some(0.3), k, d) * yerV(m, w2, oy, att, F.0, F.1, ch) * S.W.tvDrive);
-    }
-    for q in mates {
-        best = jmax(best, yolP(m, w2, oy, att, E, *q, d) * yerV(m, w2, oy, att, q.0, q.1, dis::recvCh(w2, oy, att, q.0, q.1, ch, None)) * S.W.tvPass);
-    }
-    best
-}
 
 /// Taşıyıcının tehlikeli bir yönü (JS tehlike öğesi).
 #[derive(Clone, Debug)]
@@ -520,46 +498,6 @@ fn kpOf(c: &mut Mc, w2: &[Varlik], svi: Pid, cc: (f64, f64), q: Option<Pid>, yP:
     }
 }
 
-/// JS coverBoth(m, d, att, E, h): taşıyıcıya en yakın savunucunun iki seçeneği birden kapattığı yer.
-/// (Bugünkü maçta çağrılmaz: `!ONIS()` dalında; bütünlük için taşındı.)
-pub fn coverBoth(c: &mut Mc, di: Pid, att: u8, E: (f64, f64), h: Option<Pid>) -> Option<(f64, f64)> {
-    let okD = yerS(&c.ps[di]);
-    let w = cl((okD - 6.0) / 10.0, 0.0, 1.0);
-    if w <= 0.0 {
-        return None;
-    }
-    let sn = seen(c, di);
-    let k = c.k;
-    let d = c.d;
-    let ps = &*c.ps;
-    let atk: Vec<(f64, f64)> = ps.iter().enumerate().filter(|(i, q)| q.takim() == att && Some(*i) != h && !q.bekci() && hypot(q.tx - E.0, q.ty - E.1) < 22.0).map(|(_, q)| (q.x, q.y)).collect();
-    if atk.is_empty() {
-        return None;
-    }
-    let dp = &ps[di];
-    let me = (dp.x, dp.y);
-    let spots = coverSpots(me, att, E, &atk, S.W.defReach);
-    let ch = if c.m.ch != 0.0 && c.m.ch == c.m.ch { c.m.ch } else { 0.3 };
-    let mut w0: Vec<Varlik> = (*sn).clone();
-    for (i, q) in ps.iter().enumerate() {
-        if q.team == dp.team && i != di {
-            w0.push(Varlik::oyuncu(i, q));
-        }
-    }
-    let mut best = me;
-    let mut bv = 1e9;
-    for g in &spots {
-        let mut w2 = w0.clone();
-        w2.push(Varlik::kopya(di, dp, g.0, g.1, 0.0, 0.0));
-        let v = teamBest(&*c.m, &w2, ps, att, E, &atk, ch, k, d) + 0.004 * hypot(g.0 - me.0, g.1 - me.1);
-        if v < bv {
-            bv = v;
-            best = *g;
-        }
-    }
-    let g0 = gside(E.0, E.1, 1 - att, 2.2);
-    Some((g0.0 + (best.0 - g0.0) * w, g0.1 + (best.1 - g0.1) * w))
-}
 
 /// JS kapatHat(m, d, att, E, qo): markajcının hattı: adamının kale tarafı, adamına ve arkasındaki koşuya pas
 /// yolunu en çok kapatan noktaya (yerleşim yeteneğiyle) kayar. 4 tik önbellekli (`d._kh`).

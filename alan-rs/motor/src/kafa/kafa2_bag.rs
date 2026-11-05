@@ -22,7 +22,7 @@ use crate::oyuncu::Tepki;
 use std::borrow::Cow;
 use std::sync::Arc;
 
-pub use super::gecici_dis1::{Fm, GecTab, HayaliMac};
+pub use super::gecici_dis1::{Fm, GecTab};
 pub use super::kafa1_enerji::SarjTut as SarjT;
 pub use super::kafa1_savur::SavPlan;
 pub use super::kafa1_tehlike::{BosOy, SPT};
@@ -374,11 +374,6 @@ pub fn options(k: &Kafa, h: &Oyuncu, src: &[Op], ch: f64) -> Secenekler {
         tekC: if topla { Some(r.tekC.iter().map(|c| c.P).collect()) } else { None },
     }
 }
-/// JS fakeSecenek(h, src, ch, rnd, tac, opts, kon): `kon` kayıp yerinde rakibin kontrası (KF; None: yok).
-pub fn fakeSecenek(k: &mut Kafa, hi: Pid, src: &[Op], ch: f64, _rnd: &mut Zar, tac: Option<&Tac>, opts: &mut Vec<Secenek>, kon: &mut dyn FnMut(&mut Kafa, f64, f64) -> Option<f64>) {
-    let h = src[hi].clone();
-    k.fakeSecenek(&h, src, ch, tac, opts, kon)
-}
 pub fn bosOy(k: &Kafa, src: &[Op], team: f64, bx: f64, by: f64) -> BosOy {
     k.bosOy(src, team, bx, by)
 }
@@ -464,16 +459,6 @@ pub fn AM_spd(k: &Kafa, p: &Oyuncu) -> f64 {
 /// match.js:311 sprK(p) (enerjiyle kısılmış sprint katı)
 pub fn AM_sprK(k: &Kafa, p: &Oyuncu) -> f64 {
     k.dis.sprK(p)
-}
-/// holdWorld'ün hayali maçı (JS createMatch + kopya + kopyaDurum). Yalnız eski kafa (ALAN_PRENSIP kapalı).
-pub fn AM_hayali(k: &mut Kafa, tohum: f64, src: &[Op], hi: Pid, ch: f64, tac: Option<&Tac>) -> HayaliMac {
-    let d = k.dis.clone();
-    d.hayaliMac(k, tohum, src, hi, ch, tac)
-}
-/// JS M.step(m) (hayali maçta bir tik; m.decT = 99)
-pub fn AM_step(k: &mut Kafa, m: &mut HayaliMac) {
-    let d = k.dis.clone();
-    d.hayaliAdim(k, m)
 }
 
 /// JS vurTaban(p) (core.js:410): vuruşun taban enerjisi (kafa1'in top_yap'ındakiyle aynı).
