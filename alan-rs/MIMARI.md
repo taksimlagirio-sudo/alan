@@ -111,7 +111,7 @@ kodda çalıştığı için aşamalar küçük parçalarla ve sık `main`'e birl
 | # | Aşama | Ne | Bitti sayılır |
 |---|---|---|---|
 | 0 | Güvenlik ağı | Parmak izi (`motor/src/parmak.rs`), `alan-kos … parmak`, `sina/ayni.sh`, başvurular (`sina/ayni/`) | ✅ Başvurular oturum başındaki motorla (b711370) aynı: 4 Kasım'ın bütün hız işleri bit bit davranış korumuş |
-| 1 | Kural katmanı | Enerji/sprint/koşu (`mac/enerji`), tepki, varış tabloları (`sekil/gec`), hareket fiziği (ivme, kütle, direnç, omuz) → `kural/`; saf işlevler (oyuncu + ayar girer). `Dis`'in bunlara karşılık gelen yöntemleri doğrudan çağrı olur | `Dis` 66 → ~30 yöntem; `kural` yalnız `temel`'e bağlı |
+| 1 | Kural katmanı | Enerji/sprint/koşu, tepki, varış tabloları, ikili ve hareket fiziği → `kural/` (saf işlevler; oyuncu + `MacKural`/`&dyn Kural` girer) | a–c ✅ (PR #5): `kural/{enerji,gec,kos,ikili,hareket}.rs`, `sekil`'deki yinelenen kurallar teke indi, `sina/katman.sh` tutuyor. **1d** (kafanın bu kuralları `Dis` yerine doğrudan çağırması, `Dis` 66 → ~30) Aşama 6 kararına bağlı: sınamaların `KayitDis`'i bu yöntemlerle JS'ten kaydedilmiş değerleri veriyor |
 | 2 | Değerlendirme katmanı | kafa1'in değerlendirme işlevleri + kafa2'den yerleşimin kullandıkları (`kayipYer`, `yerDeger`, `bekYol`) → `deger/` | `sekil` hiçbir şekilde kafa2'ye bağlı değil; `sekil/gecici_dis.rs` yalnız `deger` çağırır |
 | 3 | Açık bağlam | `Baglam`, `Ayar`, `MacAni`, `Onbellek`; `kafa_ile` ve `KAFA`/`DIS`/`YAN` kalkar. Önce `deger`, sonra `yerlesim`, sonra `karar` | `kafa_ile` 0; `thread_local` yalnız sayaç/iz için |
 | 4 | Tek dünya | `Dunya` + `Gorunum`; kimlik `Pid`; köprü çevirileri kalkar | `ow`, `op_dunya`, `dunya_kopya`, `Varlik` yok; `Arc::ptr_eq` yok |
