@@ -58,20 +58,7 @@ pub const DU: Du = Du {
     oyalaD: 3.2,
 };
 
-/// Savurma (vuruş öncesi Çekirdeği döndürme) parametreleri (JS `SAV`).
-#[derive(Clone, Copy, Debug)]
-pub struct Sav {
-    pub a0: f64,
-    pub aSk: f64,
-    pub wMax0: f64,
-    pub wMaxSk: f64,
-    pub tau: f64,
-    pub ia0: f64,
-    pub iaSk: f64,
-    pub u0: f64,
-    pub uSk: f64,
-}
-pub const SAV: Sav = Sav { a0: 0.18, aSk: 0.012, wMax0: 2.3, wMaxSk: 0.03, tau: 0.08, ia0: 0.45, iaSk: 0.025, u0: 1.0, uSk: 0.03 };
+pub use crate::kural::sut::{Sav, SAV};
 
 /// Gönderme hatasının durum katları (JS `GON`).
 pub struct Gon {

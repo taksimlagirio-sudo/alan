@@ -83,8 +83,7 @@ pub fn rakipKovala(o: &mut Kov, bx: f64, by: f64, MD: f64) -> (f64, f64) {
 impl Kafa {
     /// Gövdenin verebileceği en büyük vuruş hızı (decide.js:561).
     pub fn govdeV(&self, h: &Oyuncu) -> f64 {
-        let G = h.yet.ozk("guc");
-        hypot((SAV.wMax0 + (G - 10.0) * SAV.wMaxSk) * Q.body, jmax(0.3, SAV.u0 + (G - 10.0) * SAV.uSk))
+        crate::kural::sut::govdeV(h)
     }
     /// Vuruş enerjisi katı (decide.js:564).
     pub fn vurE(&self, h: &Oyuncu, ch: Option<f64>, gon: bool) -> f64 {
@@ -106,11 +105,7 @@ impl Kafa {
     }
     /// decide.js:2497
     pub fn sutGuc(&self, h: &Oyuncu) -> f64 {
-        (1.0 + 0.013 * (h.yet.y(mek::SUT_GUCU) - 10.0))
-            * match h.den {
-                Some(d) if d < 1.0 && !h.bekci() => self.dengeK(Some(d)),
-                _ => 1.0,
-            }
+        crate::kural::sut::sutGuc(h)
     }
     /// Çekirdeğin açısı (decide.js:730).
     pub fn caOf(&self, h: &Oyuncu) -> f64 {

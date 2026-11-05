@@ -12,6 +12,7 @@
 //! `imagine/kenarIm` düz `src` ile çağrılır: burada da öyle.
 #![allow(non_snake_case, dead_code)]
 
+use crate::kafa::gecici_dis1::KuralErisim as _;
 use super::kafa1_js::Kc;
 use super::kafa1_ucus::{Ucus, UcusB0};
 use super::kafa2_baglam::*;

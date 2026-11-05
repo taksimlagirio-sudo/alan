@@ -158,119 +158,11 @@ impl KayitDis {
     }
 }
 impl Dis for KayitDis {
-    fn ALAN_SPRE(&self, p: &Oyuncu) -> f64 {
-        self.e(p).spre
-    }
-    fn ALAN_SPR(&self, p: &Oyuncu) -> f64 {
-        self.e(p).spr
-    }
-    fn ALAN_SPR_HK(&self, p: &Oyuncu) -> f64 {
-        self.e(p).sprhk
-    }
-    fn ALAN_SPR_FAZ(&self) -> Option<SprFaz> {
-        Some(SprFaz { ust: 1.0, hkPay: 0.4, tepeT: 45.0, after: 1.0, dolT: 0.0, bedel: 0.15, patT: 1.0, frenT: 4.0, patK: 1.0, ayir: 1.0, itKos: 1.0, topla: 1.0, toplaBos: 8.0, itBos: None, peak: None })
-    }
-    fn ALAN_KOSU_T(&self, p: &Oyuncu, d: f64, v1: f64) -> f64 {
-        match self.e(p).pr {
-            Some((Ts, k)) if d > 0.0 => {
-                let dS = v1 * Ts;
-                if d <= dS {
-                    d / v1
-                } else {
-                    Ts + (d - dS) / (v1 * k)
-                }
-            }
-            _ => d / v1,
-        }
-    }
-    fn ALAN_KOSU_M(&self, p: &Oyuncu, t: f64, v1: f64) -> f64 {
-        match self.e(p).pr {
-            Some((Ts, k)) if t > 0.0 => {
-                if t <= Ts {
-                    v1 * t
-                } else {
-                    v1 * Ts + v1 * k * (t - Ts)
-                }
-            }
-            _ => jmax(0.0, t) * v1,
-        }
-    }
-    fn ALAN_EN2(&self) -> En2 {
-        En2 { tepe: 1.0 / 120.0, pat: 0.0, dinlen: 1.0 / 180.0, tempoDol: 0.25, yogK: 0.6, yogMin: 0.4 }
-    }
-    fn ALAN_EN(&self) -> En {
-        En { dalis: 0.3, dalisDolYok: 45.0, sprEsik: 0.2, ivme: 0.1, surme: 0.002, dolas: 0.0025, fake: 0.03, kalkan: 0.0015, fizK: 1.5 }
-    }
-    fn ALAN_DENGE_KAYIP(&self, p: &Oyuncu, _t: f64) -> f64 {
-        self.e(p).dk
-    }
-    fn ALAN_DOKUNUS(&self) -> Option<Dokunus> {
-        None
-    }
-    fn ALAN_YOL_VER_TEPKI(&self) -> bool {
-        false
-    }
-    fn ALAN_TASIYICI_SONRA_YAVAS(&self) -> bool {
-        false
-    }
-    fn tepki_s(&self) -> TepkiS {
-        TepkiS::default()
-    }
     fn S(&self) -> Option<ShapeS> {
         Some(ShapeS { react: Some(0.5), rcvBuf: 3.0, marginT: 0.6, markOff: Some(2.5), bekOnce: Some(2.0), bekSerbest: true })
     }
     fn GR(&self) -> Option<ShapeGR> {
         Some(ShapeGR { yasH: 40.0 })
-    }
-    fn gecTab(&self, o: &Oyuncu, _refsiz: bool) -> Option<GecTab> {
-        let vx = z0(o.vx);
-        let vy = z0(o.vy);
-        let s0 = hypot(vx, vy);
-        let vm = self.vSp(o);
-        let r = jmin(1.0, s0 / vm);
-        let iv = self.ivk(o);
-        let z = s0 < 0.001;
-        let vmQ = jround(2e3 * vm) / 2e3;
-        let mut t = Vec::new();
-        let mut Y = Vec::new();
-        for k in 0..=8 {
-            let c = if z { 1.0 } else { (k as f64 - 4.0) / 4.0 };
-            let y = gecYk(r, c, vmQ, iv);
-            t.push(y.g);
-            Y.push(Arc::new(y));
-        }
-        Some(GecTab { vx, vy, s0, x: o.x, y: o.y, t, Y, vm })
-    }
-    fn gecOf(&self, G: &GecTab, x: f64, y: f64, s: Option<f64>) -> f64 {
-        let dx = x - G.x;
-        let dy = y - G.y;
-        let L = hypot(dx, dy);
-        if L < 0.5 {
-            return 0.0;
-        }
-        let c = if G.s0 < 0.001 { 1.0 } else { (G.vx * dx + G.vy * dy) / (G.s0 * L) };
-        let k = (jround(4.0 * jmax(-1.0, jmin(1.0, c))) + 4.0) as usize;
-        match s {
-            Some(s) => gecK(&G.Y[k], s, G.vm),
-            None => G.t[k],
-        }
-    }
-    fn gec(&self, o: &Oyuncu, x: f64, y: f64, s: Option<f64>) -> Option<f64> {
-        let vx = z0(o.vx);
-        let vy = z0(o.vy);
-        let s0 = hypot(vx, vy);
-        let dx = x - o.x;
-        let dy = y - o.y;
-        let L = hypot(dx, dy);
-        if L < 0.5 {
-            return Some(0.0);
-        }
-        let c = if s0 < 0.001 { 1.0 } else { (vx * dx + vy * dy) / (s0 * L) };
-        let Y = self.gecY(o, c);
-        Some(match s {
-            None => Y.g,
-            Some(s) => gecK(&Y, s, self.vSp(o)),
-        })
     }
     fn gside(&self, a: Nk, t: f64, off: f64) -> Nk {
         let gx = if t == 0.0 { 0.0 } else { 120.0 };
@@ -288,66 +180,6 @@ impl Dis for KayitDis {
     }
     fn AS_ilkPres_var(&self) -> bool {
         true
-    }
-    fn IK(&self) -> Option<Ik> {
-        Some(IK_JS)
-    }
-    fn ivme(&self, p: &mut Oyuncu, wx: f64, wy: f64, vmax: f64) {
-        let sp = hypot(p.vx, p.vy);
-        let k0 = 0.18;
-        let kH = k0 * ah(&p.yet);
-        if sp < 0.001 {
-            p.vx += (wx - p.vx) * kH;
-            p.vy += (wy - p.vy) * kH;
-            return;
-        }
-        let ux = p.vx / sp;
-        let uy = p.vy / sp;
-        let dvx = wx - p.vx;
-        let dvy = wy - p.vy;
-        let al = dvx * ux + dvy * uy;
-        let px = dvx - al * ux;
-        let py = dvy - al * uy;
-        let r = jmin(1.0, sp / jmax(0.05, vmax));
-        let ag = ag(&p.yet, p.den, p.bekci(), 0.35);
-        let kA = if al >= 0.0 { kH } else { k0 * ag * (1.0 - 0.55 * r) };
-        let kT = k0 * ag * (1.0 - 0.45 * r);
-        let mut ba = al * kA;
-        let mut tx = px * kT;
-        let mut ty = py * kT;
-        let bkA = if p.bekci() { 2.0 } else { 1.0 };
-        if ba < 0.0 {
-            ba = jmax(ba, -0.018 * ag * bkA);
-        }
-        let tl = hypot(tx, ty);
-        let tm = 0.021 * ag * bkA;
-        if tl > tm && sp > 0.1 {
-            tx *= tm / tl;
-            ty *= tm / tl;
-        }
-        p.vx += ux * ba + tx;
-        p.vy += uy * ba + ty;
-    }
-    fn kutle(&self, p: &Oyuncu, a: bool) -> f64 {
-        (1.0 + 0.05 * (p.yet.y(mek::KUTLE) - 10.0)) * if !a && hypot(z0(p.vx), z0(p.vy)) < 0.06 { 1.6 } else { 1.0 }
-    }
-    fn direnc(&self, p: &Oyuncu, a: bool) -> f64 {
-        (0.8 + 0.05 * (p.yet.y(if a { mek::TOPLU_DENGE } else { mek::DENGE_DIRENC }) - 10.0)) * if !a && hypot(z0(p.vx), z0(p.vy)) < 0.06 { 1.8 } else { 1.0 } * Self::ikEn0(p)
-    }
-    fn omuzK(&self, q: &Oyuncu) -> f64 {
-        (1.0 + 0.03 * (q.yet.y(mek::OMUZ) - 10.0)) * Self::ikEn0(q)
-    }
-    fn durtFark(&self, q: &Oyuncu, h: &Oyuncu) -> Option<f64> {
-        Some(q.yet.y(mek::DURTME) - h.yet.y(mek::DURTME_KORU))
-    }
-    fn sendS(&self, p: &Oyuncu) -> Option<f64> {
-        Some(jmax(2.0, jround(12.0 - 0.5 * (p.yet.y(mek::SENDELEME) - 10.0))))
-    }
-    fn ikEn(&self, p: &Oyuncu) -> Option<f64> {
-        Some(Self::ikEn0(p))
-    }
-    fn BEKLE_BOZ(&self) -> Option<f64> {
-        Some(3.5)
     }
     fn mac_var(&self) -> bool {
         self.mac.is_some()

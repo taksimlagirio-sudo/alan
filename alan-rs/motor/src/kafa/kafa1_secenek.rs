@@ -9,6 +9,7 @@
 //! oyuncu (takım, id) ile, nokta da üretildiği sıranın numarasıyla karşılaştırılır.
 #![allow(non_snake_case)]
 
+use crate::kafa::gecici_dis1::KuralErisim as _;
 use super::kafa1_baglam::Kafa;
 use super::kafa1_js::{nk, Nk};
 use super::kafa1_tehlike::kuyuD;

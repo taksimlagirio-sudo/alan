@@ -10,6 +10,7 @@
 //! - Kafa2'nin durumu: `mac` (JS `D._mac`), `prT` (JS `m._prT`), `k2` (önbellekler), `srcC_kc`.
 #![allow(non_snake_case)]
 
+use crate::kafa::gecici_dis1::KuralErisim as _;
 use super::gecici_dis1::{Dis, Ik, IK_JS};
 use super::kafa1_param::d_js;
 use super::kafa2_baglam::{Kafa2Durum, MacGor, PrT};

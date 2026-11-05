@@ -4,6 +4,7 @@
 //! `Dis`'e birleştirmede eklenen yöntemler (bekciFm, slotBase, S_prHat, tl, sprK) burada yerleşimin ve
 //! maçın gerçek işlevleriyle verilir. Vektörde maçın bütün durumu yok (sprint isteği, top uçuşu, kayıp
 //! zamanı…): sapmalar bu eksiklerden olabilir.
+use alan_motor::kafa::gecici_dis1::KuralErisim as _;
 use alan_motor::kafa::kafa2_baglam::*;
 use alan_motor::kafa::{kafa2_dunya, kafa2_imkan, kafa2_karar, kafa2_zemin};
 use alan_motor::model::{JMTacE, JPEg, JPTl, JP_kv, Oyuncu};
@@ -155,46 +156,16 @@ mod tdis {
         ps.iter().map(|p| (**p).clone()).collect()
     }
     impl Dis for TDis {
-    fn ALAN_SPRE(&self, p: &Oyuncu) -> f64 { self.m.ALAN_SPRE(p) }
-    fn ALAN_SPR(&self, p: &Oyuncu) -> f64 { self.m.ALAN_SPR(p) }
-    fn ALAN_SPR_HK(&self, p: &Oyuncu) -> f64 { self.m.ALAN_SPR_HK(p) }
-    fn ALAN_SPR_FAZ(&self) -> Option<SprFaz> { self.m.ALAN_SPR_FAZ() }
-    fn ALAN_KOSU_T(&self, p: &Oyuncu, d: f64, v1: f64) -> f64 { self.m.ALAN_KOSU_T(p, d, v1) }
-    fn ALAN_KOSU_M(&self, p: &Oyuncu, t: f64, v1: f64) -> f64 { self.m.ALAN_KOSU_M(p, t, v1) }
+    fn kural(&self) -> alan_motor::kural::enerji::MacKural { self.m.kural() }
     fn ALAN_EN3_KUL(&self, p: &Oyuncu, e: f64, bizde: bool, bx: f64, by: f64) -> f64 { self.m.ALAN_EN3_KUL(p, e, bizde, bx, by) }
-    fn ALAN_EN3_SGIR(&self, p: &Oyuncu, bed: f64) -> f64 { self.m.ALAN_EN3_SGIR(p, bed) }
-    fn ALAN_EN2_TS(&self, p: &Oyuncu, e: Option<f64>) -> f64 { self.m.ALAN_EN2_TS(p, e) }
-    fn ALAN_EN2_SB(&self, p: &Oyuncu) -> f64 { self.m.ALAN_EN2_SB(p) }
-    fn ALAN_EN2_SD(&self, p: &Oyuncu) -> f64 { self.m.ALAN_EN2_SD(p) }
-    fn ALAN_EN3_DOL(&self, p: &Oyuncu, sahip: bool, nd: f64, yerK: f64) -> f64 { self.m.ALAN_EN3_DOL(p, sahip, nd, yerK) }
-    fn ALAN_EN3_TEPE(&self, en: Option<f64>, k: f64) -> f64 { self.m.ALAN_EN3_TEPE(en, k) }
-    fn ALAN_EN_S(&self, p: &Oyuncu) -> f64 { self.m.ALAN_EN_S(p) }
-    fn ALAN_EN2(&self) -> En2 { self.m.ALAN_EN2() }
-    fn ALAN_EN(&self) -> En { self.m.ALAN_EN() }
-    fn ALAN_DENGE_KAYIP(&self, p: &Oyuncu, t: f64) -> f64 { self.m.ALAN_DENGE_KAYIP(p, t) }
-    fn ALAN_DOKUNUS(&self) -> Option<Dokunus> { self.m.ALAN_DOKUNUS() }
-    fn ALAN_YOL_VER_TEPKI(&self) -> bool { self.m.ALAN_YOL_VER_TEPKI() }
-    fn ALAN_TASIYICI_SONRA_YAVAS(&self) -> bool { self.m.ALAN_TASIYICI_SONRA_YAVAS() }
-    fn tepki_s(&self) -> TepkiS { self.m.tepki_s() }
     fn S(&self) -> Option<ShapeS> { self.m.S() }
     fn GR(&self) -> Option<ShapeGR> { self.m.GR() }
     fn GR_yasHata(&self, yas: f64) -> f64 { self.m.GR_yasHata(yas) }
-    fn gecTab(&self, o: &Oyuncu, refsiz: bool) -> Option<GecTab> { self.m.gecTab(o, refsiz) }
-    fn gecOf(&self, G: &GecTab, x: f64, y: f64, s: Option<f64>) -> f64 { self.m.gecOf(G, x, y, s) }
-    fn gec(&self, o: &Oyuncu, x: f64, y: f64, s: Option<f64>) -> Option<f64> { self.m.gec(o, x, y, s) }
     fn gside(&self, a: Nk, t: f64, off: f64) -> Nk { self.m.gside(a, t, off) }
     fn bekci(&self, p: &Oyuncu, b: Nk) -> Option<Nk> { self.m.bekci(p, b) }
     fn aliciDirenc(&self, pts: &[Nk], p: &Oyuncu, rc: f64, iMin: f64, rP: f64) -> Option<Nk> { self.m.aliciDirenc(pts, p, rc, iMin, rP) }
     fn tehlike(&self, h: &Oyuncu) -> Vec<Tehlike> { self.m.tehlike(h) }
     fn AS_ilkPres_var(&self) -> bool { self.m.AS_ilkPres_var() }
-    fn IK(&self) -> Option<Ik> { self.m.IK() }
-    fn kutle(&self, p: &Oyuncu, ayni: bool) -> f64 { self.m.kutle(p, ayni) }
-    fn direnc(&self, p: &Oyuncu, ayni: bool) -> f64 { self.m.direnc(p, ayni) }
-    fn omuzK(&self, q: &Oyuncu) -> f64 { self.m.omuzK(q) }
-    fn durtFark(&self, q: &Oyuncu, h: &Oyuncu) -> Option<f64> { self.m.durtFark(q, h) }
-    fn sendS(&self, p: &Oyuncu) -> Option<f64> { self.m.sendS(p) }
-    fn ikEn(&self, p: &Oyuncu) -> Option<f64> { self.m.ikEn(p) }
-    fn BEKLE_BOZ(&self) -> Option<f64> { self.m.BEKLE_BOZ() }
     fn mac_var(&self) -> bool { self.m.mac_var() }
     fn mac_ch(&self) -> Option<f64> { self.m.mac_ch() }
     fn mac_holder(&self) -> Option<(f64, f64, f64, f64)> { self.m.mac_holder() }
@@ -206,7 +177,6 @@ mod tdis {
     fn algi_e(&self, p: &Oyuncu) -> Option<f64> { self.m.algi_e(p) }
     fn algi_yas(&self, p: &Oyuncu) -> Option<f64> { self.m.algi_yas(p) }
     fn ilkPres(&self, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[Tehlike], dtac: &TacEff, gs: &Option<JMShGs>) { self.m.ilkPres(tick, qv, hx, team, TH, dtac, gs) }
-    fn ivme(&self, p: &mut Oyuncu, wx: f64, wy: f64, vmax: f64) { self.m.ivme(p, wx, wy, vmax) }
         fn bekciFm(&self, p: &Oyuncu, B: Nk, fm: &Fm) -> Nk {
             let ps = kisi(fm.ps);
             let ben = fm.ps.iter().position(|q| q.id == p.id && q.team == p.team);
@@ -224,9 +194,6 @@ mod tdis {
         }
         fn tl(&self, p: &Oyuncu, ev: &str, k: &str) -> Option<f64> {
             alan_motor::mac::kurulum::tl(p, ev, k)
-        }
-        fn sprK(&self, p: &Oyuncu) -> f64 {
-            alan_motor::mac::enerji::sprK(p, &self.m.kural.get())
         }
     }
 }
