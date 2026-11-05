@@ -161,13 +161,7 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
         b.tt.t.gon = true;
         m.m.st.shot[ti] += 1.0;
         b.ek.shotPk = o.det.as_ref().and_then(|d| d.Pk);
-        let pk = b.ek.shotPk;
         // JS `!m.lite` (yazım: m.lite hiç yok) → her zaman
-        let c = m.st.cal.get_or_insert_with(Default::default);
-        if let Some(pk) = pk {
-            c.n += 1.0;
-            c.pk += pk;
-        }
         let sh = o.shot.clone().unwrap_or_default();
         let ch = js_num(jround(100.0 * m.ch));
         ev(m, "gonder", t, format!("{hname} {sh} gönderdi{tk} · şarj %{ch}"));

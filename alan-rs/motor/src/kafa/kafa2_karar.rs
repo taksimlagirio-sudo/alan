@@ -272,7 +272,6 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
         let v = (if kE < 1.0 { P * (kE * vE - (1.0 - kE) * LH) } else { P * vE }) - (1.0 - P) * LH - bed;
         o.v = Some(v);
         if kE < 1.0 {
-            o.kE = Some(sabit(kE, 2));
         }
         if c.DOK {
             o.dok = Some(Dok::yeni(&[("konum", P * kE * vY), ("acti", P * kE * (vE - vY)), ("risk", -(1.0 - P) * LH - P * (1.0 - kE) * LH), ("enBiz", -bed)]));
@@ -553,7 +552,6 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
             let ileri = ((at.x - to.x) * launch.vx + (at.y - to.y) * launch.vy) / lvn;
             if ileri > k.D.asanPay {
                 v = None;
-                o.asan = Some(sabit(ileri, 1));
             }
         }
         o.v = v;
@@ -568,7 +566,6 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
                 let zx = Pd * tempo * k.D.bekTempo * (ek / 30.0);
                 o.v = Some(o.v.unwrap() - zx);
                 dis::dokEk(o, "zaman", -zx);
-                o.asim = Some(jround(ek));
             }
         }
         o.det = Some(im);
@@ -976,15 +973,12 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
                     dis::dokEk(o, "enBiz", eb);
                     dis::dokEk(o, "enRakip", ek - eb);
                     o._en = Some(veyo(o._en, 0.0) + ek);
-                    o._enB = Some(eb);
-                    o._enR = Some(ek - eb);
                 }
             }
         }
     }
     for o in ad.out.iter_mut() {
         if o._w.is_some() && o.q.is_some() {
-            o._wE = o._w.clone();
         }
         o._w = None;
         o._at = None;
@@ -1077,7 +1071,6 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
                     };
                     let im = dis::kenarIm(k, &h, src, dis::Top0 { x: h.x, y: h.y, vx: lf.vx, vy: lf.vy, ch, aim: Some(B) }, rnd, k.D.trials, Some(&h), Some(T));
                     let tf = dis::bankSure(k, &h, B, T, &lf, src, ch, None);
-                    let w = c.sonDunya(k, T, tf, "pass");
                     let imP = im.P.unwrap_or(f64::NAN);
                     let PdK = if im.Ps.is_some() { jmax(0.0, imP - im.Ps.unwrap()) } else { imP };
                     let rv = {
@@ -1096,7 +1089,6 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
                             oK.dok = Some(Dok::yeni(&[("konum", v - ac0 + PdK * RL - rk), ("acti", ac0), ("risk", rk - PdK * RL)]));
                         }
                     }
-                    oK._wE = Some(w);
                     ad.out.push(oK);
                 }
             }
@@ -1122,13 +1114,7 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
     }
     // eski kafa: taktik eğilimleri, yerleşme, fake
     for o in ad.out.iter_mut() {
-        o._wE = None;
-        if let Some(e) = o._en.take() {
-            o.enV = Some(e);
-            o._enB = None;
-            o._enR = None;
-            o._enS = None;
-        }
+        o._en = None;
         if DOK {
             if let Some(v) = o.v {
                 match o.dok.as_mut() {
@@ -1194,7 +1180,6 @@ fn bankBir(k: &mut Kafa, c: &mut Ctx0, it: &BankIt, rnd: &mut Zar) -> Option<Sec
     let lf = kancaK(k, &h, &src, ch, lf0)?;
     let im = dis::kenarIm(k, &h, &src, dis::Top0 { x: h.x, y: h.y, vx: lf.vx, vy: lf.vy, ch, aim: Some(B) }, rnd, k.D.trials, Some(&q), None);
     let tf = dis::bankSure(k, &h, B, nk(q.x, q.y), &lf, &src, ch, None);
-    let w = c.sonDunya(k, nk(q.x, q.y), tf, "pass");
     let imP = im.P.unwrap_or(f64::NAN);
     let sd = im.Ps.is_some();
     let Pd = if sd { jmax(0.0, imP - im.Ps.unwrap()) } else { imP };
@@ -1214,7 +1199,6 @@ fn bankBir(k: &mut Kafa, c: &mut Ctx0, it: &BankIt, rnd: &mut Zar) -> Option<Sec
             o.dok = Some(Dok::yeni(&[("konum", v - ac0 + Pd * RL - rk), ("acti", ac0), ("risk", rk - Pd * RL)]));
         }
     }
-    o._wE = Some(w);
     o.tf = Some(tf);
     Some(o)
 }

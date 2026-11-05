@@ -1,6 +1,6 @@
 //! Taktik (match.js 1–236, 894–938): takım talimatı (Tac), geçiş penceresi, karşı pres, maç durumu (macEff),
 //! yetişme uyumu (yzUyum), evre.
-use crate::mat::{dogru, hypot, js_num, to_fixed};
+use crate::mat::{dogru, hypot, js_num};
 use crate::model::*;
 use crate::oyuncu::oo;
 use crate::saha::{dirOf, ownX, KX, KY, SN, W};
@@ -98,7 +98,6 @@ pub fn gecisBasla(m: &mut Mac, pi: Pid) {
     let lz = 1.0 - pt;
     let geri = geriSay(m, lz, onRef(m, pt, px));
     m.hhKul = false;
-    m.gecisGeri = Some(geri);
     m.gc = None;
     m.kp = None;
     {
@@ -341,8 +340,6 @@ pub fn macEff(m: &mut Mac, t: f64, tq: Tac) -> Tac {
     let w = *c.entry(key).or_insert_with(|| macW(d, kal));
     let n = macW(0.0, m.len);
     let oran = jmax(MAC_UC[0], jmin(MAC_UC[1], w.c / jmax(0.001, w.g) / (n.c / jmax(0.001, n.g))));
-    let md = m.macDurum.get_or_insert_with(|| vec![None, None]);
-    md[ti] = Some(crate::model::JMMacDurumE { oran: to_fixed(oran, 2), g: to_fixed(w.g, 3), c: to_fixed(w.c, 3) });
     let birim = jmax(0.05, (w.g + w.c) / 2.0);
     Tac { macK: Some(oran), macZ: Some(MacZ { d, kal, birim }), ..tq }
 }
@@ -448,8 +445,6 @@ pub fn evreUygula(m: &mut Mac) {
                     }
                 }
             }
-            let ka = m.kosulAkt.get_or_insert_with(Default::default);
-            ka[ti] = akt;
         }
         m.tac[ti] = mg;
     }

@@ -222,7 +222,6 @@ pub fn take(m: &mut Mac, p: Pid, how: Option<String>) {
     } else {
         m.st.steal[pt as usize] += 1.0;
         m.winT = Some(m.tick);
-        m.winTeam = Some(pt);
         gecisBasla(m, p);
         let t = how.unwrap_or_else(|| format!("{} Çekirdeği aldı", m.ps[p].govde.name));
         ev(m, "kesme", pt, t);
@@ -506,7 +505,6 @@ pub fn _step(m: &mut Mac) {
     {
         let sw = dis::metrics_swarm(m);
         m.st.swarm += sw;
-        m.st.swN += 1.0;
     }
     if let Some(h) = m.holder {
         if tasiyici(m, h) {
@@ -1534,9 +1532,6 @@ fn bostaTop(m: &mut Mac) {
             m.score[sc as usize] += 1.0;
             kafaBitir(m, Son { gol: Some(sc), ..Default::default() });
             if pk.is_some() {
-                if let Some(c) = m.st.cal.as_mut() {
-                    c.g += 1.0;
-                }
             }
             let t = format!("SAYI · {} · {}–{}", from.map_or(String::new(), |f| m.ps[f].govde.name.to_string()), js_num(m.score[0]), js_num(m.score[1]));
             ev(m, "sayi", sc, t);

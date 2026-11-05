@@ -260,14 +260,11 @@ pub fn kafa_d() -> KafaD {
 pub fn d_alt_bosalt(d: &mut crate::model::KafaBag) {
     d._tekL = None;
     d._sut = None;
-    d._zin = None;
-    d._kuyruk = None;
     d._savT = None;
     d._savW = None;
     d._savU = None;
     d._savCa = None;
     d._kenar = None;
-    d._kayipYap = None;
     d._gPr = None;
     d._enWD = None;
     d._enTm = None;
