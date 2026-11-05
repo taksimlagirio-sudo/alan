@@ -19,6 +19,7 @@ use super::*;
 
 mod esles;
 mod hucum;
+pub use hucum::SEYREK_KAPALI;
 mod savunma;
 mod yardim;
 

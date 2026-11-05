@@ -171,6 +171,8 @@ pub struct SekilDurum {
     pub bkCik: Vec<Option<TopRef>>,
     /// JS `b._pc` (hayali maçta topun yolu): top, tik, yol
     pub pc: Option<(TopRef, f64, Arc<Vec<super::ucus::Nokta>>)>,
+    /// seyrek yerleşim: hücumcunun son tam hesabı (tik, tx, ty, job, sprint), oyuncu sırasıyla
+    pub seyrek: Vec<Option<(f64, f64, f64, Option<Arc<str>>, bool)>>,
 }
 
 /// Yerleşimin bağlamı: maç, oyuncular, top, kendi durumu, maçın kuralı (sprint katı), kafanın sabitleri.

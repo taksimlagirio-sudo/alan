@@ -247,8 +247,89 @@ impl Sv {
         let _ = (tick, k);
     }
 
-    /// Bir hücumcunun işi (JS `for (const p of atk) {…}` gövdesi).
+    /// Seyrek yerleşim (yalnız Rust, davranış değişir): topa SEYREK_R'den uzak hücumcunun işi 3 tikte bir
+    /// hesaplanır (oyuncular tiklere dağılır: (tik + id) % 3); aradaki tiklerde son hesabın hedefi, işi ve
+    /// sprinti kalır (en çok 2 tik eski). Kovalayan, güvence veren, taşıyıcı ve kafanın hayali maçı her tik.
+    /// Eskisi (her tik): ALAN_SEYREK_ESKI_IZ.
     fn hucumcu(&mut self, c: &mut Mc, hk: &Hk, p: Pid) {
+        if !seyrek_acik() || c.lite {
+            return self.hucumcu0(c, hk, p);
+        }
+        let tick = c.m.tick;
+        let n = c.ps.len();
+        if c.ek.seyrek.len() != n {
+            c.ek.seyrek = vec![None; n];
+        }
+        if self.chase[p] || self.guard[p].is_some() || Some(p) == self.h {
+            c.ek.seyrek[p] = None;
+            return self.hucumcu0(c, hk, p);
+        }
+        let uzak = hypot(c.ps[p].x - self.E.0, c.ps[p].y - self.E.1) > SEYREK_R;
+        let sira = (tick + c.ps[p].id) % 3.0;
+        // ara tik: arama gerekmiyorsa her zamanki ucuz yol (eskisiyle aynı); gerekiyorsa atlanmaz, ertelenir:
+        // otx silinir (bir sonraki hesap tikinde arama kesin yapılır), o zamana dek son hesabın hedefi kalır
+        if uzak && sira != 0.0 && sira == sira && self.arama_gerek(c, p) {
+            if let Some((t, tx, ty, job, sprint)) = c.ek.seyrek[p].clone() {
+                if tick - t <= 2.0 {
+                    let pp = &mut c.ps[p];
+                    pp.otx = None;
+                    pp.tx = tx;
+                    pp.ty = ty;
+                    pp.job = job;
+                    pp.sprint = sprint;
+                    return;
+                }
+            }
+        }
+        self.hucumcu0(c, hk, p);
+        let pp = &c.ps[p];
+        c.ek.seyrek[p] = Some((tick, pp.tx, pp.ty, pp.job.clone(), pp.sprint));
+    }
+
+    /// hucumcu0 bu tik boşluk araması yapacak mı (yan etkisiz; yalnız gerçek maç, lite değil): otx yok, pencere
+    /// açıldı, ya da eldeki hedefi tutma koşulları sağlanmıyor (hucumcu0'daki kalabalik/c2/c3/c4 ile aynı).
+    fn arama_gerek(&self, c: &Mc, p: Pid) -> bool {
+        let k = c.k;
+        let tick = c.m.tick;
+        let (att, E, h) = (self.att, self.E, self.h);
+        if self.win && c.ps[p]._winSeen != c.m.winT {
+            return true;
+        }
+        let otx = match c.ps[p].otx {
+            Some(x) => x,
+            None => return true,
+        };
+        let every = jmax(8.0, jround(24.0 - yerF(&c.ps[p])));
+        let fr_first = self.fr.as_ref().and_then(|f| f.first);
+        let oty = c.ps[p].oty.unwrap_or(f64::NAN);
+        let pp = &c.ps[p];
+        let kalabalik = self.atk.iter().any(|&q| q != p && Some(q) != h && !self.chase[q] && hypot(c.ps[q].tx - otx, c.ps[q].ty - oty) < S.ayr);
+        let c2 = match h {
+            Some(hh) if pp._otB.is_some() => {
+                let hb = BindH::of(&c.ps[hh], hh);
+                (otx - c.ps[hh].x) * dirOf(att) < S.bindOn || bindCak(pp, otx, oty, &hb, k) < S.bindYol
+            }
+            _ => false,
+        };
+        let c3 = match h {
+            Some(hh) if c.ps[hh].takim() == att && hh != p => {
+                let hb = BindH::of(&c.ps[hh], hh);
+                bindCak(pp, otx, oty, &hb, k) < S.bindYol
+            }
+            _ => false,
+        };
+        let c4 = (pp._otH == h
+            && (h.is_some() || (pp._otE.is_some() && pp._otF == fr_first && { let e = pp._otE.as_ref().unwrap(); hypot(E.0 - e.x, E.1 - e.y) < 8.0 }))
+            && hypot(otx - pp.x, oty - pp.y) > 1.5)
+            || {
+                let r = (tick + pp.id) % every;
+                r != 0.0 && r == r
+            };
+        !(!kalabalik && !c2 && !c3 && c4)
+    }
+
+    /// Bir hücumcunun işi (JS `for (const p of atk) {…}` gövdesi).
+    fn hucumcu0(&mut self, c: &mut Mc, hk: &Hk, p: Pid) {
         let k = c.k;
         let tick = c.m.tick;
         let (att, E, h) = (self.att, self.E, self.h);
@@ -1088,3 +1169,12 @@ impl Sv {
 fn _kullan() -> Arc<()> {
     Arc::new(())
 }
+
+/// Seyrek yerleşimin uzaklık eşiği (br): topa (E) bundan uzak hücumcunun işi 3 tikte bir hesaplanır.
+const SEYREK_R: f64 = 30.0;
+fn seyrek_acik() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    !SEYREK_KAPALI.load(std::sync::atomic::Ordering::Relaxed) && *A.get_or_init(|| !(crate::iz_acik() && std::env::var("ALAN_SEYREK_ESKI_IZ").is_ok()))
+}
+/// Tarayıcıda (ortam değişkeni yok) seyrek yerleşimi kapatmak için: rust-isci.js adreste seyrek=0 görürse kurar.
+pub static SEYREK_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);

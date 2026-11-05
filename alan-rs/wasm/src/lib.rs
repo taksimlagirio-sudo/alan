@@ -131,3 +131,9 @@ pub extern "C" fn metin_ptr() -> *const u8 {
 pub extern "C" fn metin_len() -> usize {
     D.with(|d| d.borrow().metin.len())
 }
+
+/// Seyrek yerleşim (uzak hücumcunun işi 3 tikte bir): 1 açık (varsayılan), 0 kapalı (eski davranış, her tik).
+#[no_mangle]
+pub extern "C" fn seyrek(acik: i32) {
+    alan_motor::sekil::konum::SEYREK_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
+}

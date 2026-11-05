@@ -2,11 +2,13 @@
    Motor alan-rs/ (Rust) altından derlenir: alan-v5/alan.wasm. İletiler mac-isci.js ile aynı: 'yeni' ile maç kurulur, 'basla' ve 60 tikte bir 'kare' gider (kare: 174 sayı, kaydet'in biçimi).
    Henüz yok: maç içi taktik değişikliği ('degistir'), anlar ('an'), kafa kartları (karar/kafa listeleri boş gider). */
 const ALAN_SURUM_Q = (v => v ? '?v=' + v[1] : '')(/[?&]v=(\w+)/.exec(self.location && self.location.search || ''));
+/* seyrek yerleşim (uzak hücumcunun işi 3 tikte bir; motorun varsayılanı): adreste seyrek=0 ise kapalı, eski davranış */
+const SEYREK = !/[?&]seyrek=0(&|$)/.test(self.location && self.location.search || '');
 let W = null, mem = null, gen = 0, len = 5400, dur = 5400, kosuyor = false, istek = null, buf = null, hazir = null;
 /* wasm'da panik geri sarılmaz: örnek bozuk kalır (Rust'taki kilit açık kalır, sonraki her çağrı düşer). Hatadan sonra örnek atılır, sonraki 'yeni' taze örnek kurar. */
 function birak() { hazir = null; W = null; mem = null; }
 const NF = 174, dek = new TextDecoder(), kod = new TextEncoder();
-function yukle() { if (!hazir) hazir = fetch('alan.wasm' + ALAN_SURUM_Q).then(r => { if (!r.ok) throw new Error('alan.wasm yüklenemedi (' + r.status + ')'); return r.arrayBuffer(); }).then(b => WebAssembly.instantiate(b, {})).then(r => { W = r.instance.exports; mem = W.memory; }); return hazir; }
+function yukle() { if (!hazir) hazir = fetch('alan.wasm' + ALAN_SURUM_Q).then(r => { if (!r.ok) throw new Error('alan.wasm yüklenemedi (' + r.status + ')'); return r.arrayBuffer(); }).then(b => WebAssembly.instantiate(b, {})).then(r => { W = r.instance.exports; mem = W.memory; if (W.seyrek) W.seyrek(SEYREK ? 1 : 0); }); return hazir; }
 const metin = n => dek.decode(new Uint8Array(mem.buffer, W.metin_ptr(), n));
 function yeniBuf() { return { kare: [], olay: [], karar: [], kafa: [], is: [] }; }
 function kaydet() { const p = W.kare(); const f = new Float32Array(NF); f.set(new Float32Array(mem.buffer, p, NF)); buf.kare.push([W.tik(), f]); const y = JSON.parse(metin(W.yenilikler())); for (const o of y.olay) buf.olay.push(o); for (const j of y.is) buf.is.push(j); }
