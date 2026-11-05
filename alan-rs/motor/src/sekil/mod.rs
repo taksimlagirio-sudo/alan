@@ -18,16 +18,16 @@ pub mod takim;
 pub mod konum;
 
 pub use gec::{gec, gecOf, gecTab, gecTabV, gecY, GecTab, GecY};
-pub use gor::{bak, gercek, gorulen, seen, Gorulen};
+pub use gor::{bak, gorulen, seen, Gorulen};
 pub use konum::position;
 pub use pres::{ilkPres, macPres, presLim};
 pub use sabit::*;
-pub use takim::{govdeF, kurO, yerV, yolP, KurO, TvAday, coverBoth, coverSpots, kapatHat, laneOpen, metrics, teamBest, teamV, tehlike, yolT, Metrik, Tehlike};
+pub use takim::{govdeF, kurO, yerV, yolP, KurO, TvAday, coverSpots, kapatHat, laneOpen, metrics, teamV, tehlike, yolT, Metrik, Tehlike};
 pub use ucus::{menzilO, menzilP, okuT, alici, aliciDirenc, flightRead, kendiTopu, Ar, Fr, Nokta};
 pub use varlik::*;
 pub use yer::{bekci, rslotOf, slotOf, BekM, Yer, ALAN_KOSU_TP, hizYanilgi, presKesisT, durusDef, durusW, gside, koyHedef, presKesis, slotBase, slotBase0, tasHamle, yolBag, yolKesis, Kesis, YolBag, Yon};
 
-use crate::mat::{hypot, jround, sin};
+use crate::mat::{jround, sin};
 use crate::model::Oyuncu;
 use crate::oyuncu::Tepki;
 use crate::yetenek::mek;
@@ -144,8 +144,3 @@ pub fn sinh_k(a: f64) -> f64 {
     43758.5453 * sin(a)
 }
 
-/// `Math.hypot` kısaltması.
-#[inline(always)]
-pub fn hy(x: f64, y: f64) -> f64 {
-    hypot(x, y)
-}

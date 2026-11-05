@@ -195,7 +195,7 @@ pub fn bekci(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (
     bekci_an(p, ex + hh.vx * t, ey + hh.vy * t, m, k)
 }
 
-fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (f64, f64) {
+fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, _k: &dyn Kural) -> (f64, f64) {
     let gx = ownX(p.takim());
     let dx = ex - gx;
     let dy = ey - GCY;

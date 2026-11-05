@@ -7,7 +7,7 @@ use crate::kafa::gecici_dis1::KuralErisim as _;
 use super::kafa1_baglam::Kafa;
 use super::kafa1_js::*;
 use crate::mat::{exp, hypot, jmax, jmin, sin};
-use crate::model::{JOEn, JP_sf, JsDeger, Oyuncu, Secenek};
+use crate::model::{JOEn, JP_sf, Oyuncu, Secenek};
 use crate::yetenek::{mek, spr_h, yum};
 use std::borrow::Cow;
 
@@ -18,16 +18,6 @@ pub struct SarjTut {
     pub bed: f64,
 }
 
-/// JS doğruluğu (karışık tip).
-pub fn js_dogru(v: &Option<JsDeger>) -> bool {
-    match v {
-        None | Some(JsDeger::Yok) => false,
-        Some(JsDeger::Sayi(x)) => *x != 0.0 && *x == *x,
-        Some(JsDeger::Metin(s)) => !s.is_empty(),
-        Some(JsDeger::Mantik(b)) => *b,
-        Some(_) => true,
-    }
-}
 
 impl Kafa {
     /// JS SPK(): sprint evreleri ayrık mı

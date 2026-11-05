@@ -509,7 +509,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
     }
     let mut cx = Cx { src: src.clone(), team, ch, kayip: lossAt.clone(), h: h.clone(), PW: Default::default(), PE: Default::default(), PV: Default::default(), PD: Default::default(), IM: None };
     let L = |k: &mut Kafa, x: f64, y: f64| kay(k, lossAt, x, y);
-    let mut govde = |k: &mut Kafa, mut cx: &mut Cx, o: &mut Secenek| {
+    let govde = |k: &mut Kafa, mut cx: &mut Cx, o: &mut Secenek| {
         let d = o.det.clone().unwrap_or_default();
         let kind = o.kind.as_str();
         if kind == "gönder" {
@@ -681,7 +681,6 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
         // dolu; "o olmasa" farkı iki taraf aynı biçimde hesaplanmazsa önbellek artığını ölçer
         let mut cx0 = Cx { src: cx.src.clone(), team: cx.team, ch: cx.ch, kayip: cx.kayip.clone(), h: cx.h.clone(), PW: Default::default(), PE: Default::default(), PV: Default::default(), PD: Default::default(), IM: None };
         let mac_var = k.mac.is_some();
-        let inL = k.k2._inLook;
         fn cx_siz<'a>(CXS: &'a mut Vec<(Op, Cx)>, cx: &Cx, d: &Op) -> &'a mut Cx {
             let i = match CXS.iter().position(|(z, _)| ayni_nesne(z, d)) {
                 Some(i) => i,
@@ -717,7 +716,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
             let Tk = dis::ucusT(k, jmax(5.0, hypot(kq.x - h.x, kq.y - h.y)), k.D.arriveFirm, None) + k.D.sutHazir;
             let vk = nodeV(k, if cxim_eski() { &mut cx } else { &mut cx0 }, kq, Tk, 0.0, None);
             tm.push((kq.id, vk));
-            if !inL && mac_var {
+            if mac_var {
                 for d in src.iter() {
                     if d.team == team || bekci(d) || d.noTouch {
                         continue;
@@ -739,7 +738,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                 }
             }
         }
-        let hm = if inL || !mac_var {
+        let hm = if !mac_var {
             None
         } else {
             let mut M: Vec<(f64, f64)> = Vec::new();

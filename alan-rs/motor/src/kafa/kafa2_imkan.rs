@@ -22,7 +22,6 @@ pub const IMK_KO: [f64; 9] = [-8.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 8.0];
 pub const IMK_KD: [f64; 3] = [-2.0, 0.0, 2.0];
 pub const IMK_CH: [f64; 4] = [0.1, 0.4, 0.7, 1.0];
 pub const IMK_L: [f64; 4] = [5.0, 10.0, 15.0, 20.0];
-pub const IMK_PARMAK: &str = "104b9sy";
 const TAB_BOY: usize = 9 * 7 * 9 * 3 * 4;
 /// 16 tablo (şutçu L × Bekçi L, sıra L[a]-L[b]), her biri DS×SY×KO×KD×CH, değer −1 (yok) ya da 0–100.
 static IMK_SUT: &[u8; 16 * TAB_BOY] = include_bytes!("kafa2_imk_sut.bin");

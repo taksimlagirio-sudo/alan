@@ -234,10 +234,7 @@ pub struct Kafa2Durum {
     pub IMK_INAN_T: f64,
     /// JS `self.__sahF` (görünüm için)
     pub sahF_iz: Option<(Option<f64>, f64, Arc<crate::kafa::kafa2_zemin::Sahiplik>)>,
-    /// D._zin (zincir haritası; eski kafa)
-    pub zin: Option<crate::kafa::kafa2_eski::Zincir>,
-    /// JS `_inLook` / `_noHold` / `_noFake` / `_dalgada` / `_kayipYap` (KafaD'de yok)
-    pub _inLook: bool,
+    /// JS `_noHold` / `_noFake` / `_dalgada` / `_kayipYap` (KafaD'de yok)
     pub _noHold: bool,
     pub _noFake: bool,
     pub _dalgada: bool,

@@ -11,7 +11,6 @@ pub mod gecici_dis1;
 pub mod kafa2_bag;
 pub mod kafa2_baglam;
 pub mod kafa2_dunya;
-pub mod kafa2_eski;
 pub mod kafa2_imkan;
 pub mod kafa2_karar;
 pub mod kafa2_tarti;

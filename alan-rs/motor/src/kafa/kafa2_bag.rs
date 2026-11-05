@@ -374,11 +374,6 @@ pub fn options(k: &Kafa, h: &Oyuncu, src: &[Op], ch: f64) -> Secenekler {
         tekC: if topla { Some(r.tekC.iter().map(|c| c.P).collect()) } else { None },
     }
 }
-/// JS fakeSecenek(h, src, ch, rnd, tac, opts, kon): `kon` kayıp yerinde rakibin kontrası (KF; None: yok).
-pub fn fakeSecenek(k: &mut Kafa, hi: Pid, src: &[Op], ch: f64, _rnd: &mut Zar, tac: Option<&Tac>, opts: &mut Vec<Secenek>, kon: &mut dyn FnMut(&mut Kafa, f64, f64) -> Option<f64>) {
-    let h = src[hi].clone();
-    k.fakeSecenek(&h, src, ch, tac, opts, kon)
-}
 pub fn bosOy(k: &Kafa, src: &[Op], team: f64, bx: f64, by: f64) -> BosOy {
     k.bosOy(src, team, bx, by)
 }

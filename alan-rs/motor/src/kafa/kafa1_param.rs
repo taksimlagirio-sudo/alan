@@ -68,13 +68,10 @@ pub struct Gon {
     pub guc: f64,
 }
 pub const GON: Gon = Gon { taban: 1.0, baski: 0.6, hareket: 0.4, guc: 0.3 };
-/// JS `PAS.baski`
-pub const PAS_BASKI: f64 = 1.5;
 pub const BODY_R: f64 = 1.0;
 pub const BODY_E: f64 = 0.35;
 pub const MIND: f64 = 1.7;
 pub const SECIM_P: f64 = 0.1;
-pub const EN_BAR_V: f64 = 0.1;
 pub const BKS: f64 = 0.12;
 /// Uçuş belirsizliğinin örnek noktaları (JS UC3, UC5): [z, ağırlık, hız z'si]
 pub const UC3: [[f64; 3]; 3] = [[0.0, 0.5833, 0.0], [0.632, 0.20835, 0.0], [-0.632, 0.20835, 0.0]];

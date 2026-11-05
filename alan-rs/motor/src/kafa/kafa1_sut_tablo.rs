@@ -1,7 +1,6 @@
 //! Gönderme tablosu (shot-table.js ALAN_SHT_VE, sürüm "v5-22 · vuruş enerjisi · direk 0.3"): hücre anahtarı (1e4·d + 100·a + c) → girme oranı.
 //! Üretildi: alan-v5/shot-table.js. Motor JS gibi önce bu tablodan okur.
 
-pub const SHT_SURUM: &str = "v5-22 · vuruş enerjisi · direk 0.3";
 pub const SHT_VE: [(i64, f64); 1120] = [
     (0, 0.98),
     (1, 0.98),

@@ -177,15 +177,6 @@ pub fn prHat(blok: &str) -> Option<f64> {
         _ => None,
     }
 }
-/// JS `S.pressR[blok]`.
-pub fn pressR(blok: &str) -> Option<f64> {
-    match blok {
-        "Düşük" => Some(12.0),
-        "Orta" => Some(20.0),
-        "Yüksek" => Some(32.0),
-        _ => None,
-    }
-}
 /// JS `BLOK[blok]`: savunma bloğunun derinliği.
 pub fn BLOK(blok: &str) -> Option<f64> {
     match blok {

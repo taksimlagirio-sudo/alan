@@ -33,7 +33,7 @@
 //! - ALAN_EN3_KUL      core.js:169     barın kullanım değeri
 #![allow(non_snake_case, unused_variables, non_upper_case_globals)]
 
-use crate::model::{JMTacE, Oyuncu};
+use crate::model::Oyuncu;
 
 use super::varlik::{KayipF, Mc, Varlik};
 
@@ -105,19 +105,11 @@ pub fn coreSide(h: &Oyuncu) -> (f64, f64) {
     let c = crate::kafa::kafa1_ikili::coreSide_p(h);
     (c.ux, c.uy)
 }
-/// Saf (kural katmanından).
-pub fn govdeV(h: &Oyuncu) -> f64 {
-    crate::kural::sut::govdeV(h)
-}
 /// Taşıyıcının şimdi çekebileceği en sert şutun hızı (tam şarj): kural katmanından, kafaya uğramadan
 /// (eskiden yerleşim → kafa iç içe çağrısıydı; yedek kafaya düşen çağrıların neredeyse hepsi buradandı).
 /// Maç kurulurken (kafa yokken) çağrılmaz: Bekçi'nin bağlamı (BekM::sut) bunu bilir.
 pub fn sutHiz(h: &Oyuncu) -> f64 {
     crate::kural::sut::sutHiz(h)
-}
-/// JS `savurPlan(h, {vx, vy}, ca0, w0, sYon, null, itme, E)` → `pl ? pl.T : None`.
-pub fn savurPlan(m: &crate::model::Mac, h: &Oyuncu, vx: f64, vy: f64, ca0: f64, w0: f64, sYon: f64, itme: bool, E: f64) -> Option<f64> {
-    crate::mac::kafa_dis::kafa_mac(m, |k| k.savurPlan(h, nk(vx, vy), ca0, w0, sYon, None, itme, E).map(|p| p.T))
 }
 pub fn topK(h: &Oyuncu) -> f64 {
     crate::kafa::kafa1_ikili::topK_p(h, crate::mac::kafa_dis::mac_dokunus())
@@ -184,7 +176,6 @@ pub fn kayipYer(m: &crate::model::Mac, ps: &[Oyuncu], team: u8, ch: f64, h: &Oyu
 pub const PNC_GORUS: f64 = 48.0;
 /// decide.js `DU.fakeT`, `DU.oyalaR`, `DU.engage`.
 pub const DU_fakeT: f64 = 9.0;
-pub const DU_oyalaR: f64 = 26.0;
 pub const DU_engage: f64 = 2.4;
 
 // ---- AlanMatch ----
