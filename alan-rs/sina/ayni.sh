@@ -34,7 +34,8 @@ for satir in "${maclar[@]}"; do
   elif cmp -s "$gec/$ad.pk" "sina/ayni/$ad.pk"; then
     echo "aynı: $ad ($tik tik)"
   else
-    ilk=$(diff "sina/ayni/$ad.pk" "$gec/$ad.pk" | grep '^<' | head -1 | awk '{print $2}')
+    # diff fark bulunca 1 döner, head boruyu erken kapatır: pipefail altında betik burada sessizce çıkmasın
+    ilk=$( (diff "sina/ayni/$ad.pk" "$gec/$ad.pk" || true) | awk '/^</ && !f {print $2; f=1}')
     echo "AYRIŞTI: $ad, ilk farklı tik $ilk"; hata=1
   fi
 done
