@@ -327,8 +327,11 @@ thread_local! {
     static BEK_DER: std::cell::RefCell<crate::HizliMap<[u64; 9], f64>> = std::cell::RefCell::new(Default::default());
     pub static BEK_DER_SAY: std::cell::Cell<(u64, u64)> = const { std::cell::Cell::new((0, 0)) };
     /// bek_derinlik0'ın şut yolu tamponu: (yollar (ux, uy, baş, son), noktalar (px, py, er), s'ler)
-    static BEK_YOL: std::cell::RefCell<(Vec<(f64, f64, usize, usize)>, Vec<(f64, f64, f64)>, Vec<f64>)> = const { std::cell::RefCell::new((Vec::new(), Vec::new(), Vec::new())) };
+    /// noktalar (px, py, er, er²·(1−δ), er²·(1+δ)): karekökü atlamak için erişimin karesinin bandı
+    static BEK_YOL: std::cell::RefCell<(Vec<(f64, f64, usize, usize)>, Vec<(f64, f64, f64, f64, f64)>, Vec<f64>)> = const { std::cell::RefCell::new((Vec::new(), Vec::new(), Vec::new())) };
 }
+/// Karekökü atlama bandı (göreli): yuvarlama hatalarının (~1e-16) çok üstünde.
+const KOK_PAY: f64 = 1e-12;
 #[allow(clippy::too_many_arguments)]
 #[inline(never)]
 fn bek_derinlik0(ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64, re: f64, dv: f64, dl: f64, adim: f64, r_simdi: f64) -> f64 {
@@ -357,7 +360,8 @@ fn bek_derinlik0(ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64,
             loop {
                 let t = s / vb;
                 let er = body + jmin(dl, dv * jmax(0.0, t - re));
-                pts.push((ex + ux * s, ey + uy * s, er));
+                let e2 = er * er;
+                pts.push((ex + ux * s, ey + uy * s, er, e2 * (1.0 - KOK_PAY), e2 * (1.0 + KOK_PAY)));
                 ss.push(s);
                 em = if er > em || er != er { er } else { em };
                 if s >= ld {
@@ -373,11 +377,17 @@ fn bek_derinlik0(ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64,
         // yol başına pencerenin başı: aday adım adım kaydığı için önceki yerden yürünür (sıralı s'lerde
         // partition_point(|s| s < lo) ile aynı yer)
         let mut gost: Vec<usize> = yollar.iter().map(|y| y.2).collect();
-        let mut kap = |r: f64| -> usize {
+        // `gerek`: adayın seçilebilmesi için kapatması gereken en az yol. Kalan yollar hepsini kapatsa bile
+        // yetişemeyecekse sayım bırakılır (dönen değer gerek'ten küçük: aday seçilmez, sonuç aynı).
+        let n_y = yollar.len();
+        let mut kap = |r: f64, gerek: usize| -> usize {
             let st = jmax(0.0, L - r);
             let (kx, ky) = (ex + bxu * st, ey + byu * st);
             let mut c = 0;
             for (yi, &(ux, uy, bas, son)) in yollar.iter().enumerate() {
+                if c + (n_y - yi) < gerek {
+                    return c;
+                }
                 let proj = (kx - ex) * ux + (ky - ey) * uy;
                 let (lo, hi) = (proj - EM, proj + EM);
                 let mut i0 = gost[yi];
@@ -388,7 +398,7 @@ fn bek_derinlik0(ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64,
                     i0 += 1;
                 }
                 gost[yi] = i0;
-                for (&s, &(px, py, er)) in ss[i0..son].iter().zip(&pts[i0..son]) {
+                for (&s, &(px, py, er, e2a, e2u)) in ss[i0..son].iter().zip(&pts[i0..son]) {
                     if s > hi {
                         break;
                     }
@@ -396,6 +406,19 @@ fn bek_derinlik0(ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64,
                     // hypot(ax, ay) >= |ax|, |ay| (IEEE): bunlardan biri er'i aşıyorsa uzak, hypot gereksiz
                     if ax.abs() > er || ay.abs() > er {
                         continue;
+                    }
+                    // hypot = sqrt(q), q = ax·ax + ay·ay (aynı işlemler). sqrt doğru yuvarlanır: q, er²'nin δ = 1e-12
+                    // bandının dışındaysa karşılaştırmanın sonucu karekök alınmadan bellidir (yuvarlama hatası
+                    // ~1e-16). Bandın içinde, NaN'da, sonsuzda ve er ≤ 0'da eski karşılaştırma.
+                    if er > 0.0 {
+                        let q = ax * ax + ay * ay;
+                        if q <= e2a {
+                            c += 1;
+                            break;
+                        }
+                        if q >= e2u {
+                            continue;
+                        }
                     }
                     if hypot(ax, ay) <= er {
                         c += 1;
@@ -416,7 +439,7 @@ fn bek_derinlik0(ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64,
             r += adim;
             continue;
         }
-        let k = kap(r);
+        let k = kap(r, if d < ed { ek } else { ek + 1 });
         if k > ek || (k == ek && d < ed) {
             eniyi = r;
             ek = k;
