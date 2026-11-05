@@ -260,6 +260,35 @@ nokta × yol sayısı ayırıyordu. Main'de m05'in bellek tepesi **12 GB** (16 G
 wasm'ın 4 GB sınırını aşar). Düzeltme (ayrı commit, varsayılan; eski davranış `ALAN_ENDD_ESKI`): `endD` sahadan
 uzaksa `endM` (mD ≈ 0'daki gibi). m05'in tepesi 186 MB. 20 maçta yalnız m05 değişti; başvuru maçları aynı.
 
+### 3.6 Aşama 5'in envanteri: `Oyuncu`'nun alanları (5 Kasım)
+
+`Oyuncu` 144 alan, **2704 bayt**; kafanın her kopyası (tik başına yüzlerce) bunun hepsini taşır. Envanter
+`sina/alan-envanter.sh` ile (geçici kopyada alanlar yeniden adlandırılır, derleyicinin her hatası bir kullanım
+yeri: ortak adlar, ör. `x`, başka yapılarınkiyle karışmaz); çıktı `sina/oyuncu-envanter.txt`. Gözden geçirilen
+kör noktalar: `ref mut` desen yok; yapı ifadesi yalnız `kurulum`'da; tek yanlış pozitif `motor.rs:153`
+(`== … =>` karşılaştırması).
+
+**Bulgu.** Kafa ve karar (kopyalar üzerinde) yalnız 13 alanı yazar: `x, y, vx, vy, en, den, ca, _don, _dke,
+pplan, _sf, sprint, noTouch`. Kafanın kimlik/yetenek alanlarına yazdığı yerlerin hepsi boştan kurulan kısmi
+bedenler (`hayal`, `govdeF`, `sahte`, `kafa2_zemin`'in `dinc`'i, `kafa1_sut`'un `hh`'si). Geri kalan 108 alanı
+yalnız maç ve yerleşim yazar.
+
+**Önerilen bölme** (alan sayısı; kullanım yeri okuma/yazma):
+
+| Parça | Alanlar | Yer | Kopyada |
+|---|---|---|---|
+| Anlık durum (yapının kendisinde) | 19: `x, y, vx, vy, tx, ty, en, den, ca, D, cd, sprint, press, noTouch, _don, _dke, _sf, pplan, job` — kafanın değiştirdikleri + her tik yazılan küçükler (`D` enerjiyle her tik ölçeklenir) | 2760 / 530 — **değişmez** (alanlar yerinde kalır) | 243 bayt kopyalanır |
+| Gövde (`Arc<OyuncuGovde>`) | 17: `id, team, i, role, slot, name, a, R, yet, rslot, slot0, rslot0, rh, rs, tl, eg, kim` — kurulumda (ve taktik değişiminde) yazılır | 978 / 54 → `p.govde.yet` | paylaşılır |
+| Maç durumu (`Arc<OyuncuMac>`, yazarken kopyala) | 108: işler, hamleler, sayaçlar, yerleşimin anıları (`hamle, savur, adandi, lock, tutQ, _kv` …) | 268 / 231 → `p.mac.hamle`, yazma `p.mac_mut().hamle` | paylaşılır |
+
+Kopya ~260 bayt (bugün 2704: ~10 kat küçük). Maç durumuna yazma, nesne o tik kafanın bir anlık görüntüsünde de
+duruyorsa bir kez kopyalar (oyuncu başına tik başına en çok bir); bu sayı uygulamada ölçülür. Kısmi bedenler
+kendi gövdesini kurar (bugünkü gibi; paylaşılan gövde onlara verilirse boş bıraktıkları alanlar dolu görünür ve
+davranış değişir).
+
+Sıra: (1) maç durumu (108 alan, ~500 yer, kafaya dokunmaz: yalnız `mac/`, `sekil/`, `temas`), (2) gövde
+(~1000 okuma, çoğu `p.yet`/`p.team`/`p.id`: düz değiştirme), her biri `sina/ayni.sh` + 20 maçlık parmak iziyle.
+
 ## 4. Dış kütüphaneler
 
 - **Bevy (ECS motoru):** motora gerek yok. ECS'in özü (veri bileşen dizilerinde, mantık işlevlerde) bu
