@@ -223,7 +223,7 @@ pub fn gorulen(c: &mut Mc, pi: Pid) -> Vec<Gorulen> {
         let (mut xs, mut ys, mut vxs, mut vys) = (x0, y0, r.vx * kk, r.vy * kk);
         if yas > 0.0 && q.bekci() && q.team != p.team {
             if let Some((tx, ty)) = top {
-                let bm = BekM { ps: crate::sekil::yer::BekPs::Duz(ps), holder: c.m.holder.map(|h| &ps[h]), sut: c.m.mac.kafa.k.is_some(), ben: Some(j) };
+                let bm = BekM { ps: crate::sekil::yer::BekPs::Duz(ps), holder: c.m.holder.map(|h| crate::dunya::Yerde::oyuncu(&ps[h])), sut: c.m.mac.kafa.k.is_some(), ben: Some(j) };
                 let hd = bekci(q, tx, ty, Some(&bm), k);
                 let vm = spd(q) * ALAN_SPRE(q, k);
                 let kH = 0.18 * crate::yetenek::ah(&q.yet);

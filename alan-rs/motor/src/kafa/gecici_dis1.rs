@@ -174,7 +174,7 @@ pub struct TacEff(pub Vec<(String, f64)>);
 pub struct Fm<'a> {
     pub tac: &'a [crate::model::JMTacE],
     pub ps: &'a [Op],
-    pub holder: Option<&'a Oyuncu>,
+    pub holder: Option<crate::dunya::Yerde<'a>>,
 }
 
 

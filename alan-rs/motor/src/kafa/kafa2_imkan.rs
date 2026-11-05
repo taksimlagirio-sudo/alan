@@ -196,17 +196,17 @@ pub fn sutTab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: Op
         Some(b) => b,
         None => {
             let tac = k.mac.as_ref().map(|m| m.tac.clone()).unwrap_or_default();
-            let hold = match sh {
+            // şutçu (x, y)'de: kopya yerine görünüm (yalnız yeri değişir)
+            match sh {
                 Some(s) => {
-                    let mut c = s.clone();
-                    c.x = x;
-                    c.y = y;
-                    c
+                    let fm = dis::Fm { tac: &tac, ps: w, holder: Some(crate::dunya::Yerde { govde: s, x, y }) };
+                    dis::AS_bekci(k, &bk, nk(x, y), Some(&fm))
                 }
-                None => sahte(team, x, y, -1.0),
-            };
-            let fm = dis::Fm { tac: &tac, ps: w, holder: Some(&hold) };
-            dis::AS_bekci(k, &bk, nk(x, y), Some(&fm))
+                None => sahte_ile(team, x, y, -1.0, |hold| {
+                    let fm = dis::Fm { tac: &tac, ps: w, holder: Some(crate::dunya::Yerde::oyuncu(hold)) };
+                    dis::AS_bekci(k, &bk, nk(x, y), Some(&fm))
+                }),
+            }
         }
     };
     let bkP = bkPos.unwrap_or(nk(bk.x, bk.y));
@@ -434,7 +434,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
                 let tr = rak.iter().map(|o| varB(k, o, x, y)).collect();
                 let yer = bk.as_ref().map(|b| {
                     sahte_ile(team, x, y, -1.0, |hold| {
-                        let fm = dis::Fm { tac: &tac, ps: w, holder: Some(hold) };
+                        let fm = dis::Fm { tac: &tac, ps: w, holder: Some(crate::dunya::Yerde::oyuncu(hold)) };
                         dis::AS_bekci(k, b, nk(x, y), Some(&fm))
                     })
                 });
@@ -489,7 +489,6 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
     };
     // o.ic: arkadaş × hücre
     let mut IC: Vec<Vec<Option<ImkE>>> = vec![vec![None; zs.len()]; biz.len()];
-    let hold_h: Option<Oyuncu> = h.cloned();
     // imk0
     let imk0 = |k: &mut Kafa, TY: &mut Vec<Option<TopYol>>, oi: usize, zi: usize| -> ImkE {
         let o = &biz[oi];
@@ -547,7 +546,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         let z = &zs[zi];
         let bas = match (&bk, q) {
             (Some(b), Some(q)) => {
-                let fm = dis::Fm { tac: &tac, ps: w, holder: hold_h.as_ref() };
+                let fm = dis::Fm { tac: &tac, ps: w, holder: h.map(crate::dunya::Yerde::oyuncu) };
                 dis::AS_bekci(k, b, q, Some(&fm))
             }
             (Some(b), None) => nk(b.x, b.y),

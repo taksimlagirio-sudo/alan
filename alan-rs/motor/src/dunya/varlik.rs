@@ -80,6 +80,22 @@ impl Varlik {
     }
 }
 
+/// Bir oyuncunun başka bir yerdeki görünümü (MIMARI.md 2.3 `Gorunum`'un en küçük biçimi): yeri burada,
+/// geri kalanı (hız, yetenek, denge, rol, takım) bedenden. Yalnız yeri değişen kopyanın yerine geçer.
+#[derive(Clone, Copy, Debug)]
+pub struct Yerde<'a> {
+    pub govde: &'a Oyuncu,
+    pub x: f64,
+    pub y: f64,
+}
+impl<'a> Yerde<'a> {
+    /// Oyuncunun kendi yerinde.
+    #[inline]
+    pub fn oyuncu(p: &'a Oyuncu) -> Yerde<'a> {
+        Yerde { govde: p, x: p.x, y: p.y }
+    }
+}
+
 /// Hayaletin bedeni (JS seen çıktısı: `{a, R, D, team, role, press}`; id/bar/sprint evresi yok).
 pub fn hayal(q: &Oyuncu) -> Oyuncu {
     let mut o = Oyuncu::bos();

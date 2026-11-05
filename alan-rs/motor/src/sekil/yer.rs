@@ -163,7 +163,7 @@ impl<'a> BekPs<'a> {
 pub struct BekM<'a> {
     pub ps: BekPs<'a>,
     /// JS `m.holder`: topu tutan (sahte de olabilir: kafa "top burada olsa" diye sorar)
-    pub holder: Option<&'a Oyuncu>,
+    pub holder: Option<crate::dunya::Yerde<'a>>,
     /// JS `q === p` için Bekçi'nin sırası
     pub ben: Option<Pid>,
     /// Taşıyıcının şut tehdidi tartılır mı: maç başladı, kafa kurulu (maç kurulurken hayır). Eskiden
@@ -176,11 +176,12 @@ pub struct BekM<'a> {
 /// gideceği yere göre yerleşir: yoksa vardığında açı çoktan kaymış olur, kapattığı açı yanlış açıdır.
 pub fn bekci(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (f64, f64) {
     let g0 = bekci_an(p, ex, ey, m, k);
-    let hh = match m.and_then(|m| m.holder).filter(|hh| hh.team != p.team) {
+    let hh = match m.and_then(|m| m.holder).filter(|hh| hh.govde.team != p.team) {
         Some(h) => h,
         None => return g0,
     };
-    let hv = hypot(hh.vx, hh.vy);
+    let (hvx, hvy) = (hh.govde.vx, hh.govde.vy);
+    let hv = hypot(hvx, hvy);
     if !(hv > 1e-9) {
         return g0;
     }
@@ -188,11 +189,11 @@ pub fn bekci(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (
     let mut t = bek_re(p) + hypot(g0.0 - p.x, g0.1 - p.y) / sp;
     // taşıyıcı kale çizgisini geçemez: öngörü çizgide kesilir
     let gx = ownX(p.takim());
-    let (dx0, dx1) = (ex - gx, ex + hh.vx * t - gx);
-    if dx0 * dx1 <= 0.0 && hh.vx.abs() > 1e-9 {
-        t = jmax(0.0, (gx - ex) / hh.vx);
+    let (dx0, dx1) = (ex - gx, ex + hvx * t - gx);
+    if dx0 * dx1 <= 0.0 && hvx.abs() > 1e-9 {
+        t = jmax(0.0, (gx - ex) / hvx);
     }
-    bekci_an(p, ex + hh.vx * t, ey + hh.vy * t, m, k)
+    bekci_an(p, ex + hvx * t, ey + hvy * t, m, k)
 }
 
 fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, _k: &dyn Kural) -> (f64, f64) {
@@ -216,7 +217,7 @@ fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, _k: &dyn Kural) -> (
         let l = nz(hypot(x, y));
         (x / l, y / l)
     };
-    let mut r = if let Some(vb) = m.filter(|m| m.sut).and_then(|m| m.holder).filter(|hh| hh.team != p.team).map(dis::sutHiz) {
+    let mut r = if let Some(vb) = m.filter(|m| m.sut).and_then(|m| m.holder).filter(|hh| hh.govde.team != p.team).map(|hh| dis::sutHiz(hh.govde)) {
         bek_derinlik(p, ex, ey, gx, L, bxu, byu, vb)
     } else {
         let cov = Q.bek_body + 0.8 * bek_dl(p);
@@ -240,7 +241,7 @@ fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, _k: &dyn Kural) -> (
     }
     if let Some(m) = m {
         if let Some(hh) = m.holder {
-            if hh.team != p.team && L < 30.0 {
+            if hh.govde.team != p.team && L < 30.0 {
                 let mut dmin = 1e9;
                 for qi in 0..m.ps.len() {
                     let q = m.ps.get(qi);
