@@ -209,7 +209,7 @@ impl Sv {
         }
         if let Some(hh) = h {
             if c.ps[hh].takim() == att {
-                c.ps[hh].otx = None;
+                c.ps[hh].hal_mut().otx = None;
             }
         }
         c.ek.kpC = None;
@@ -272,7 +272,7 @@ impl Sv {
             if let Some((t, tx, ty, job, sprint)) = c.ek.seyrek[p].clone() {
                 if tick - t <= 2.0 {
                     let pp = &mut c.ps[p];
-                    pp.otx = None;
+                    pp.hal_mut().otx = None;
                     pp.tx = tx;
                     pp.ty = ty;
                     pp.job = job;
@@ -292,20 +292,20 @@ impl Sv {
         let k = c.k;
         let tick = c.m.tick;
         let (att, E, h) = (self.att, self.E, self.h);
-        if self.win && c.ps[p]._winSeen != c.m.winT {
+        if self.win && c.ps[p].hal._winSeen != c.m.winT {
             return true;
         }
-        let otx = match c.ps[p].otx {
+        let otx = match c.ps[p].hal.otx {
             Some(x) => x,
             None => return true,
         };
         let every = jmax(8.0, jround(24.0 - yerF(&c.ps[p])));
         let fr_first = self.fr.as_ref().and_then(|f| f.first);
-        let oty = c.ps[p].oty.unwrap_or(f64::NAN);
+        let oty = c.ps[p].hal.oty.unwrap_or(f64::NAN);
         let pp = &c.ps[p];
         let kalabalik = self.atk.iter().any(|&q| q != p && Some(q) != h && !self.chase[q] && hypot(c.ps[q].tx - otx, c.ps[q].ty - oty) < S.ayr);
         let c2 = match h {
-            Some(hh) if pp._otB.is_some() => {
+            Some(hh) if pp.hal._otB.is_some() => {
                 let hb = BindH::of(&c.ps[hh], hh);
                 (otx - c.ps[hh].x) * dirOf(att) < S.bindOn || bindCak(pp, otx, oty, &hb, k) < S.bindYol
             }
@@ -318,8 +318,8 @@ impl Sv {
             }
             _ => false,
         };
-        let c4 = (pp._otH == h
-            && (h.is_some() || (pp._otE.is_some() && pp._otF == fr_first && { let e = pp._otE.as_ref().unwrap(); hypot(E.0 - e.x, E.1 - e.y) < 8.0 }))
+        let c4 = (pp.hal._otH == h
+            && (h.is_some() || (pp.hal._otE.is_some() && pp.hal._otF == fr_first && { let e = pp.hal._otE.as_ref().unwrap(); hypot(E.0 - e.x, E.1 - e.y) < 8.0 }))
             && hypot(otx - pp.x, oty - pp.y) > 1.5)
             || {
                 let r = (tick + pp.id) % every;
@@ -335,7 +335,7 @@ impl Sv {
         let (att, E, h) = (self.att, self.E, self.h);
         let lite = c.lite;
         if self.chase[p] {
-            c.ps[p].otx = None;
+            c.ps[p].hal_mut().otx = None;
             return;
         }
         if let Some(gq) = self.guard[p] {
@@ -344,28 +344,28 @@ impl Sv {
             pp.tx = g.0;
             pp.ty = g.1;
             pp.job = Some("güvence".into());
-            pp.otx = None;
+            pp.hal_mut().otx = None;
             return;
         }
         let every = jmax(8.0, jround(24.0 - yerF(&c.ps[p])));
-        if lite && c.ps[p].otx.is_none() {
+        if lite && c.ps[p].hal.otx.is_none() {
             let b = self.base[p].unwrap();
             let pp = &mut c.ps[p];
-            pp.otx = Some(b.x);
-            pp.oty = Some(b.y);
-            pp._kv = None;
+            pp.hal_mut().otx = Some(b.x);
+            pp.hal_mut().oty = Some(b.y);
+            pp.hal_mut()._kv = None;
         }
-        if self.win && c.ps[p]._winSeen != c.m.winT && !lite {
-            c.ps[p]._winSeen = c.m.winT;
-            c.ps[p].otx = None;
+        if self.win && c.ps[p].hal._winSeen != c.m.winT && !lite {
+            c.ps[p].hal_mut()._winSeen = c.m.winT;
+            c.ps[p].hal_mut().otx = None;
         }
         let fr_first = self.fr.as_ref().and_then(|f| f.first);
-        if let Some(otx) = c.ps[p].otx {
-            let oty = c.ps[p].oty.unwrap_or(f64::NAN);
+        if let Some(otx) = c.ps[p].hal.otx {
+            let oty = c.ps[p].hal.oty.unwrap_or(f64::NAN);
             let pp = &c.ps[p];
             let kalabalik = !lite && self.atk.iter().any(|&q| q != p && Some(q) != h && !self.chase[q] && hypot(c.ps[q].tx - otx, c.ps[q].ty - oty) < S.ayr);
             let c2 = match h {
-                Some(hh) if pp._otB.is_some() && !lite => {
+                Some(hh) if pp.hal._otB.is_some() && !lite => {
                     let hb = BindH::of(&c.ps[hh], hh);
                     (otx - c.ps[hh].x) * dirOf(att) < S.bindOn || bindCak(pp, otx, oty, &hb, k) < S.bindYol
                 }
@@ -379,8 +379,8 @@ impl Sv {
                 _ => false,
             };
             let c4 = lite
-                || (pp._otH == h
-                    && (h.is_some() || (pp._otE.is_some() && pp._otF == fr_first && { let e = pp._otE.as_ref().unwrap(); hypot(E.0 - e.x, E.1 - e.y) < 8.0 }))
+                || (pp.hal._otH == h
+                    && (h.is_some() || (pp.hal._otE.is_some() && pp.hal._otF == fr_first && { let e = pp.hal._otE.as_ref().unwrap(); hypot(E.0 - e.x, E.1 - e.y) < 8.0 }))
                     && hypot(otx - pp.x, oty - pp.y) > 1.5)
                 || {
                     let r = (tick + pp.id) % every;
@@ -391,15 +391,15 @@ impl Sv {
                 let pp = &mut c.ps[p];
                 pp.tx = otx;
                 pp.ty = oty;
-                if let Some(kv) = pp._kv.clone() {
+                if let Some(kv) = pp.hal._kv.clone() {
                     if hypot(kv.x - pp.x, kv.y - pp.y) < 1.2 || tick > kv.t {
-                        pp._kv = None;
+                        pp.hal_mut()._kv = None;
                     } else {
                         pp.tx = kv.x;
                         pp.ty = kv.y;
                     }
                 }
-                pp.job = Some(if runner { "kontra koşusu".into() } else { pp._amacJob.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| "boşluk".into()) });
+                pp.job = Some(if runner { "kontra koşusu".into() } else { pp.hal._amacJob.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| "boşluk".into()) });
                 pp.sprint = runner || hypot(pp.tx - pp.x, pp.ty - pp.y) > S.W.runSprint;
                 return;
             }
@@ -428,8 +428,8 @@ impl Sv {
         let mut sn: Vec<Varlik> = (*sn0).clone();
         let mut cands: Vec<Aday> = Vec::new();
         let pp = c.ps[p].clone();
-        if let Some(otx) = pp.otx {
-            cands.push(Aday::xy(otx, pp.oty.unwrap_or(f64::NAN)));
+        if let Some(otx) = pp.hal.otx {
+            cands.push(Aday::xy(otx, pp.hal.oty.unwrap_or(f64::NAN)));
         }
         cands.push(Aday::xy(pp.x, pp.y));
         cands.push(Aday::xy(bs.x, bs.y));
@@ -493,7 +493,7 @@ impl Sv {
             let mut kd: Option<usize> = None;
             let mut kdd = 6.0;
             for (oi, o) in sn.iter().enumerate() {
-                if o.bekci || o.r.is_none() || c.ps[o.r.unwrap()].tutQ != Some(p) {
+                if o.bekci || o.r.is_none() || c.ps[o.r.unwrap()].hal.tutQ != Some(p) {
                     continue;
                 }
                 let d = hypot(o.x - pp.x, o.y - pp.y);
@@ -531,7 +531,7 @@ impl Sv {
             if nV > 0 {
                 let mut vac: Vec<(f64, f64, f64)> = Vec::new();
                 for &d in &self.defs {
-                    let bd = c.ps[d].past.as_ref().filter(|v| v.len() >= 3).map(|v| (v[0].x, v[0].y));
+                    let bd = c.ps[d].hal.past.as_ref().filter(|v| v.len() >= 3).map(|v| (v[0].x, v[0].y));
                     let sd = sn.iter().find(|o| o.r == Some(d));
                     let (bd, sd) = match (bd, sd) {
                         (Some(b), Some(s)) => (b, s),
@@ -758,16 +758,16 @@ impl Sv {
         let genis = self.genis(c, p);
         let bdis = Self::blokDis(&sn, best.y);
         let pm = &mut c.ps[p];
-        pm.otx = Some(best.x);
-        pm.oty = Some(best.y);
-        pm._otH = h;
-        pm._otB = best.bh.map(|b| b.pid);
-        pm._otE = Some(JP_otE { x: E.0, y: E.1 });
-        pm._otF = if self.fr.is_some() { fr_first } else { None };
+        pm.hal_mut().otx = Some(best.x);
+        pm.hal_mut().oty = Some(best.y);
+        pm.hal_mut()._otH = h;
+        pm.hal_mut()._otB = best.bh.map(|b| b.pid);
+        pm.hal_mut()._otE = Some(JP_otE { x: E.0, y: E.1 });
+        pm.hal_mut()._otF = if self.fr.is_some() { fr_first } else { None };
         pm.tx = best.x;
         pm.ty = best.y;
-        pm._kv = best.kv.map(|kv| JP_kv { x: kv.0, y: kv.1, t: tick + 40.0 });
-        if let Some(kv) = &pm._kv {
+        pm.hal_mut()._kv = best.kv.map(|kv| JP_kv { x: kv.0, y: kv.1, t: tick + 40.0 });
+        if let Some(kv) = &pm.hal._kv {
             pm.tx = kv.x;
             pm.ty = kv.y;
         }
@@ -779,7 +779,7 @@ impl Sv {
                 _ => "boşluk".into(),
             }
         });
-        pm._amacJob = None;
+        pm.hal_mut()._amacJob = None;
         let ad = |c: &Mc, q: Pid| c.ps[q].name.clone();
         let yeni: Option<String> = if let Some(ck) = bestCk.filter(|ck| ck.0 >= S.cekEtiket) {
             Some(format!("açma · {} · {}", ad(c, ck.1), ad(c, ck.2)))
@@ -800,7 +800,7 @@ impl Sv {
         let pm = &mut c.ps[p];
         if let Some(j) = yeni {
             pm.job = Some(j.into());
-            pm._amacJob = pm.job.clone();
+            pm.hal_mut()._amacJob = pm.job.clone();
         }
         pm.sprint = hypot(pm.tx - pm.x, pm.ty - pm.y) > S.W.runSprint;
     }
@@ -851,7 +851,7 @@ impl Sv {
                 continue;
             }
             let dist = hypot(o.x - pp.x, o.y - pp.y);
-            if ((c.ps[o.r.unwrap()].tutQ == Some(p) && dist < 12.0) || dist < 5.0) && dist < dd {
+            if ((c.ps[o.r.unwrap()].hal.tutQ == Some(p) && dist < 12.0) || dist < 5.0) && dist < dd {
                 dd = dist;
                 d = Some(oi);
             }
@@ -1009,12 +1009,12 @@ impl Sv {
                             let pp = &mut c.ps[p];
                             pp.tx = bL.0;
                             pp.ty = bL.1;
-                            pp.otx = None;
-                            pp._kv = None;
+                            pp.hal_mut().otx = None;
+                            pp.hal_mut()._kv = None;
                             pp.sprint = bd > 3.0;
                             let j = format!("yol kes · {}", nm);
                             pp.job = Some(j.into());
-                            pp._amacJob = pp.job.clone();
+                            pp.hal_mut()._amacJob = pp.job.clone();
                         }
                     }
                 }
@@ -1041,7 +1041,7 @@ impl Sv {
             pp.job = Some("Bekçi".into());
             let db = hypot(b.x - pp.x, b.y - pp.y);
             pp.sprint = db > 1.2;
-            pp._yer = hypot(pp.vx, pp.vy) < 0.05 && db < 1.0;
+            pp.hal_mut()._yer = hypot(pp.vx, pp.vy) < 0.05 && db < 1.0;
             let gx0 = ownX(pp.takim());
             let ux = E.0 - gx0;
             let uy = E.1 - GCY;
@@ -1090,7 +1090,7 @@ impl Sv {
     /// JS yol ver: pas/şut yolundaki takım arkadaşı yana çekilir.
     fn yolVer(&mut self, c: &mut Mc) {
         let hS = c.m.holder;
-        let so = hS.and_then(|h| c.ps[h].savur.as_ref().map(|s| (s.o.clone(), s.t0)));
+        let so = hS.and_then(|h| c.ps[h].hal.savur.as_ref().map(|s| (s.o.clone(), s.t0)));
         if let (Some(h), Some((_, t0))) = (hS, &so) {
             c.ek.sh.yvBas = Some((h, *t0));
         }

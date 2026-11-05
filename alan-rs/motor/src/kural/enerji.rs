@@ -176,7 +176,7 @@ pub struct MacKural {
 impl MacKural {
     /// JS sprKar(m, p)
     pub fn sprKar(&self, p: &Oyuncu) -> bool {
-        p._sprIst && (self.holder == Some(kim(p)) || (self.holder.is_none() && self.flq == Some(kim(p))))
+        p.hal._sprIst && (self.holder == Some(kim(p)) || (self.holder.is_none() && self.flq == Some(kim(p))))
     }
 }
 
@@ -281,7 +281,7 @@ pub fn kosuPr(p: &Oyuncu, k: &MacKural) -> Option<KosuPr> {
     if p._sf.is_none() && matches!(niyet, Some((false, _))) {
         return None;
     }
-    let kar = niyet.is_some() || k.sprKar(p) || p._topSpr;
+    let kar = niyet.is_some() || k.sprKar(p) || p.hal._topSpr;
     let ts = if let Some(s) = &p._sf {
         if s.f != "patlama" && s.f != "tepe" {
             return None;

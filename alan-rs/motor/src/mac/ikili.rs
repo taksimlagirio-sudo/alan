@@ -171,17 +171,17 @@ pub fn govdeAyir(ps: &mut [Oyuncu], h: HArg, bag: &mut IkBag) {
 pub fn denge(m: &mut Mac) {
     for pi in 0..m.ps.len() {
         let Some(den) = m.ps[pi].den else { continue };
-        let sd = gt(m.ps[pi].sendT, m.tick);
+        let sd = gt(m.ps[pi].hal.sendT, m.tick);
         let yeni = jmin(1.0, den + (if sd { IK.dolumS } else { IK.dolum }) * dengeDolumK(&m.ps[pi]));
         m.ps[pi].den = Some(yeni);
-        if !sd && yeni < IK.sendele && m.tick > oo(m.ps[pi].sendCd) {
+        if !sd && yeni < IK.sendele && m.tick > oo(m.ps[pi].hal.sendCd) {
             let s = sendS(&m.ps[pi]);
             let tick = m.tick;
             {
                 let p = &mut m.ps[pi];
-                p.sendT = Some(tick + s);
-                p.sendCd = Some(tick + IK.sendCd);
-                p.stun = Some(jmax(oo(p.stun), tick + s));
+                p.hal_mut().sendT = Some(tick + s);
+                p.hal_mut().sendCd = Some(tick + IK.sendCd);
+                p.hal_mut().stun = Some(jmax(oo(p.hal.stun), tick + s));
             }
             if m.holder == Some(pi) {
                 let p = &m.ps[pi];
@@ -203,13 +203,13 @@ pub fn denge(m: &mut Mac) {
                 m.ball = Some(top);
                 m.holder = None;
                 m.fl = None;
-                m.ps[pi].savur = None;
+                m.ps[pi].hal_mut().savur = None;
                 m.st.loose[pt as usize] += 1.0;
                 if let Some(o) = o {
                     let ot = m.ps[o].team as usize;
-                    if m.ps[pi]._omuz.as_ref().map_or(false, |x| x.t >= m.tick - 3.0) {
+                    if m.ps[pi].hal._omuz.as_ref().map_or(false, |x| x.t >= m.tick - 3.0) {
                         m.st.duelW[ot] += 1.0;
-                        if let Some(s) = m.ps[o].son.as_mut() {
+                        if let Some(s) = m.ps[o].hal_mut().son.as_mut() {
                             s.ok = true;
                         }
                     } else if od < 3.0 {
@@ -236,7 +236,7 @@ pub fn dengeHiz(m: &Mac, pi: Pid) -> f64 {
         return 1.0;
     }
     let dn = p.den.unwrap_or(1.0);
-    let mut f = if oo(p.sendT) > m.tick { 0.3 } else { 1.0 };
+    let mut f = if oo(p.hal.sendT) > m.tick { 0.3 } else { 1.0 };
     if dn < IK.yavas {
         f *= 0.45 + 0.55 * dn / IK.yavas;
     }

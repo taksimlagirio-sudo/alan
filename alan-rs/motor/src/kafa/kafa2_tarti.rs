@@ -588,7 +588,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
             o._pw = Some(wE);
             o._pT = Some(Ts);
             dok_dk(&tE, o);
-        } else if kind == "tut" && bekci(&h) && h.bekBas.is_some() && veyo(o.hold, 15.0) >= 90.0 - (k.tick() - h.bekBas.unwrap()) - 4.0 {
+        } else if kind == "tut" && bekci(&h) && h.hal.bekBas.is_some() && veyo(o.hold, 15.0) >= 90.0 - (k.tick() - h.hal.bekBas.unwrap()) - 4.0 {
             let v = -L(k, h.x, h.y);
             o.v = Some(v);
             o.prensip = Some("Bekle".into());

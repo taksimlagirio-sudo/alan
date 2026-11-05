@@ -161,7 +161,7 @@ impl Sv {
         let mut cost: f64 = 0.0;
         for &q in &self.atk {
             let qp = &c.ps[q];
-            if hypot(qp.x - bs.x, qp.y - bs.y) < 9.0 || p.tutQ == Some(q) {
+            if hypot(qp.x - bs.x, qp.y - bs.y) < 9.0 || p.hal.tutQ == Some(q) {
                 cost = jmax(cost, dis::threat(self.att, qp.x, qp.y) * (0.3 + 0.7 * dis::laneOk0(&*c.m, w, c.ps, self.att, (hp.x, hp.y), (qp.x, qp.y))));
             }
         }
@@ -182,7 +182,7 @@ impl Sv {
             let eP = p.en.unwrap_or(1.0);
             dis::ALAN_EN3_KUL(hp, eH, true, hp.x, hp.y, c.k) - dis::ALAN_EN3_KUL(hp, eH - dH, true, hp.x, hp.y, c.k) - (dis::ALAN_EN3_KUL(p, eP, false, hp.x, hp.y, c.k) - dis::ALAN_EN3_KUL(p, eP - cP, false, hp.x, hp.y, c.k))
         };
-        let adP = if p.markRef != Some(h) { 0.0 } else { tl0(p, "sav", "adam") * gainH * hatK };
+        let adP = if p.hal.markRef != Some(h) { 0.0 } else { tl0(p, "sav", "adam") * gainH * hatK };
         let cc = cost * S.prCost * (1.4 - 0.8 * sdp);
         PrV { P, v: P * (gainH * hatK + enV + adP) - cc, c: cc, tR }
     }
@@ -194,9 +194,9 @@ impl Sv {
         {
             let p = &mut c.ps[pi];
             if !kilitli(p, tick) {
-                p.lock = Some(tick + S.lock);
-                p.lockAt = Some(tick + 0.01 * kk as f64);
-                p._lockH = Some(h);
+                p.hal_mut().lock = Some(tick + S.lock);
+                p.hal_mut().lockAt = Some(tick + 0.01 * kk as f64);
+                p.hal_mut()._lockH = Some(h);
             }
             p.press = true;
             p.sprint = true;
@@ -346,14 +346,14 @@ impl Sv {
             (Some(T0), Some(hh)) if T0.team == att as f64 && c.ps[hh].takim() == att && tick - T0.t <= 20.0 => Some(TP { m: T0.m.clone(), mm: T0.mm.clone(), hm: T0.hm.clone(), h: if T0.h == T0.h { Some(T0.h) } else { None } }),
             _ => None,
         };
-        let mkRef0: Vec<Pid> = self.free.iter().filter(|&&p| tl0(&c.ps[p], "sav", "adam") >= 0.5 && c.ps[p].markRef.map(|r| c.ps[r].takim() == att).unwrap_or(false)).map(|&p| c.ps[p].markRef.unwrap()).collect();
-        let swPrevS: Vec<Pid> = self.defs.iter().filter_map(|&p| c.ps[p].swPrev).collect();
+        let mkRef0: Vec<Pid> = self.free.iter().filter(|&&p| tl0(&c.ps[p], "sav", "adam") >= 0.5 && c.ps[p].hal.markRef.map(|r| c.ps[r].takim() == att).unwrap_or(false)).map(|&p| c.ps[p].hal.markRef.unwrap()).collect();
+        let swPrevS: Vec<Pid> = self.defs.iter().filter_map(|&p| c.ps[p].hal.swPrev).collect();
         let gE = self.gD(E.0, E.1);
         let mut deepA: Vec<Pid> = Vec::new();
         for &q in &self.atk.clone() {
             let qp = &c.ps[q];
             let ia = ileriP(qp, self.Tt);
-            let onde = self.defs.iter().any(|&o| !self.sweep[o] && (c.ps[o].kapPrev == Some(q) || c.ps[o].zonePrev == Some(q)) && self.gD(c.ps[o].x, c.ps[o].y) < self.gD(qp.x, qp.y) + 2.0);
+            let onde = self.defs.iter().any(|&o| !self.sweep[o] && (c.ps[o].hal.kapPrev == Some(q) || c.ps[o].hal.zonePrev == Some(q)) && self.gD(c.ps[o].x, c.ps[o].y) < self.gD(qp.x, qp.y) + 2.0);
             if self.gD(ia.0, ia.1) < gE + if swPrevS.contains(&q) { 4.0 } else { 0.0 } && !onde && !(h.map(|hh| qp.id == c.ps[hh].id).unwrap_or(false)) && !mkRef0.contains(&q) && hypot(qp.x - E.0, qp.y - E.1) > 3.0 {
                 deepA.push(q);
             }
@@ -450,16 +450,16 @@ impl Sv {
         let still = {
             let hp = &mut c.ps[h];
             if hypot(hp.vx, hp.vy) < 0.04 {
-                let d = *hp._dur.get_or_insert(tick);
+                let d = *hp.hal_mut()._dur.get_or_insert(tick);
                 tick - d
             } else {
-                hp._dur = None;
+                hp.hal_mut()._dur = None;
                 0.0
             }
         };
         let sd = jmin(1.0, self.dtac.t.siddet.unwrap_or(0.5) + if mp > 0.0 { 0.25 } else { 0.0 });
         let hp = c.ps[h].clone();
-        let gecikme = match &hp.savur {
+        let gecikme = match &hp.hal.savur {
             Some(s) => (s.g + s.rem) / jmax(0.1, (s.w + s.wMax) / 2.0),
             None => match self.KT {
                 Some((q, t)) if q == h => t,
@@ -469,7 +469,7 @@ impl Sv {
         let Th = (S.prT0 + gecikme + still * S.prStill) * (0.6 + 0.8 * sd);
         let gainH = 0.4 + dis::threat(att, hp.x, hp.y);
         let mut cand: Vec<Pid> = self.defs.iter().copied().filter(|&p| !self.up[p] || self.upBas(c, p)).collect();
-        let adamH = |p: Pid| -> f64 { if c.ps[p].markRef == Some(h) && tl0(&c.ps[p], "sav", "adam") >= 0.5 { 1.0 } else { 0.0 } };
+        let adamH = |p: Pid| -> f64 { if c.ps[p].hal.markRef == Some(h) && tl0(&c.ps[p], "sav", "adam") >= 0.5 { 1.0 } else { 0.0 } };
         cand.sort_by(|&u, &v| sira(1e4 * (adamH(v) - adamH(u)) + 1e3 * (tl0(&c.ps[v], "sav", "pres") - tl0(&c.ps[u], "sav", "pres")) + hypot(c.ps[u].x - hp.x, c.ps[u].y - hp.y) - hypot(c.ps[v].x - hp.x, c.ps[v].y - hp.y)));
         let dG = (hp.x - ownX(dt)).abs();
         let hat = prHat(BL[bi]).unwrap_or(62.0);
@@ -530,13 +530,13 @@ impl Sv {
             let tt = |q: Pid| { let qp = &c.ps[q]; hypot(qp.x - g0.0, qp.y - g0.1) / vSp(qp, k) + gec(qp, g0.0, g0.1, None, k) };
             self.press.sort_by(|&u, &v| sira(tt(u) - tt(v)));
         }
-        if hp.bekci() && hp._korT.map(|t| t > tick).unwrap_or(false) {
+        if hp.bekci() && hp.hal._korT.map(|t| t > tick).unwrap_or(false) {
             self.PRS = None;
             self.press.clear();
         }
         for &p in &self.defs {
             if !self.press.contains(&p) {
-                c.ps[p].lock = Some(0.0);
+                c.ps[p].hal_mut().lock = Some(0.0);
             }
         }
     }
@@ -607,7 +607,7 @@ impl Sv {
                     en = Some(per);
                 }
             }
-            let eski: Vec<Option<Pid>> = swL.iter().map(|&p| c.ps[p].swPrev.filter(|q| bos.contains(q))).collect();
+            let eski: Vec<Option<Pid>> = swL.iter().map(|&p| c.ps[p].hal.swPrev.filter(|q| bos.contains(q))).collect();
             if eski.iter().all(|x| x.is_some()) {
                 let ev0 = olc(&eski);
                 if ev0 <= 1.15 * ev {
@@ -625,7 +625,7 @@ impl Sv {
             }
         }
         for &p in &swL {
-            if let Some(o) = c.ps[p].swPrev {
+            if let Some(o) = c.ps[p].hal.swPrev {
                 if bos.contains(&o) {
                     self.swT[p] = Some(Some(o));
                     sil(&mut bos, o);
@@ -682,7 +682,7 @@ impl Sv {
                         .map(|(j, &q)| {
                             let s0 = sv.iter().find(|o| o.r == Some(q)).map(|o| (o.x, o.y)).unwrap_or((c.ps[q].x, c.ps[q].y));
                             let g = gside(s0.0, s0.1, dt, yada(S.markOff, 2.5));
-                            let t = hypot(g.0 - pp.x, g.1 - pp.y) / v - if pp.markRef == Some(q) { rc } else { 0.0 };
+                            let t = hypot(g.0 - pp.x, g.1 - pp.y) / v - if pp.hal.markRef == Some(q) { rc } else { 0.0 };
                             DG[j] * jmax(0.0, jmin(1.0, (TQ[j] + SH - t) / SH))
                         })
                         .collect(),
@@ -695,7 +695,7 @@ impl Sv {
                     let j = best[i];
                     if j >= 0 {
                         let q = At[j as usize];
-                        c.ps[p].markRef = Some(q);
+                        c.ps[p].hal_mut().markRef = Some(q);
                         self.mark[p] = Some(q);
                         taken[p] = true;
                     }

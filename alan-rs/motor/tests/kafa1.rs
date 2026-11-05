@@ -113,12 +113,12 @@ fn oyuncu(v: &Value) -> Oyuncu {
     p.en = ho(&v["en"]);
     p.den = ho(&v["den"]);
     p.noTouch = v["noTouch"].as_bool().unwrap();
-    p.sonuk = v["sonuk"].as_bool().unwrap();
-    p.kuyuT = ho(&v["kuyuT"]);
+    p.hal_mut().sonuk = v["sonuk"].as_bool().unwrap();
+    p.hal_mut().kuyuT = ho(&v["kuyuT"]);
     p.R = ho(&v["R"]).unwrap_or(0.0);
     p.D = ho(&v["D"]).unwrap_or(1.0);
-    p.amA = v["amA"].as_bool().unwrap();
-    p.am = ho(&v["am"]);
+    p.hal_mut().amA = v["amA"].as_bool().unwrap();
+    p.hal_mut().am = ho(&v["am"]);
     p.ca = ho(&v["ca"]);
     p._don = ho(&v["don"]);
     p._dke = ho(&v["dke"]);
@@ -126,21 +126,21 @@ fn oyuncu(v: &Value) -> Oyuncu {
     p.job = v["job"].as_str().map(|s| s.into());
     p.press = v["press"].as_bool().unwrap();
     p._sf = if v["sf"].is_null() { None } else { Some(JP_sf { t0: h(&v["sf"]["t0"]), f: v["sf"]["f"].as_str().unwrap().into() }) };
-    p._korT = ho(&v["korT"]);
-    p.hamle = if v["hamle"].is_null() { None } else { Some(JPHamle { k: v["hamle"]["k"].as_str().unwrap().into(), hid: v["hamle"]["hid"].as_f64().unwrap(), t0: h(&v["hamle"]["t0"]), W: h(&v["hamle"]["W"]) }) };
+    p.hal_mut()._korT = ho(&v["korT"]);
+    p.hal_mut().hamle = if v["hamle"].is_null() { None } else { Some(JPHamle { k: v["hamle"]["k"].as_str().unwrap().into(), hid: v["hamle"]["hid"].as_f64().unwrap(), t0: h(&v["hamle"]["t0"]), W: h(&v["hamle"]["W"]) }) };
     p.pplan = v["pplan"].as_str().map(|k| JPPplan { k: k.into(), ..Default::default() });
-    p._gvKaz = if v["gvKaz"].is_null() { None } else { Some(JP_gvKaz { h: h(&v["gvKaz"][0]), t: h(&v["gvKaz"][1]), kaz: h(&v["gvKaz"][2]) }) };
-    p.fiskeCd = ho(&v["fiskeCd"]);
-    p.sendT = ho(&v["sendT"]);
-    p.sendCd = ho(&v["sendCd"]);
-    p.stun = ho(&v["stun"]);
-    p.adandi = ho(&v["adandi"]);
-    p._kal = v["kal"].as_bool().unwrap();
-    p._kalH = v["kalH"].as_u64().map(|x| x as usize);
-    p.tutQ = v["tutQ"].as_u64().map(|x| x as usize);
-    p.markRef = v["markRef"].as_u64().map(|x| x as usize);
-    p.sarj = Some(v["sarj"].as_bool().unwrap_or(true));
-    p._yer = v["yer"].as_bool().unwrap();
+    p.hal_mut()._gvKaz = if v["gvKaz"].is_null() { None } else { Some(JP_gvKaz { h: h(&v["gvKaz"][0]), t: h(&v["gvKaz"][1]), kaz: h(&v["gvKaz"][2]) }) };
+    p.hal_mut().fiskeCd = ho(&v["fiskeCd"]);
+    p.hal_mut().sendT = ho(&v["sendT"]);
+    p.hal_mut().sendCd = ho(&v["sendCd"]);
+    p.hal_mut().stun = ho(&v["stun"]);
+    p.hal_mut().adandi = ho(&v["adandi"]);
+    p.hal_mut()._kal = v["kal"].as_bool().unwrap();
+    p.hal_mut()._kalH = v["kalH"].as_u64().map(|x| x as usize);
+    p.hal_mut().tutQ = v["tutQ"].as_u64().map(|x| x as usize);
+    p.hal_mut().markRef = v["markRef"].as_u64().map(|x| x as usize);
+    p.hal_mut().sarj = Some(v["sarj"].as_bool().unwrap_or(true));
+    p.hal_mut()._yer = v["yer"].as_bool().unwrap();
     p
 }
 

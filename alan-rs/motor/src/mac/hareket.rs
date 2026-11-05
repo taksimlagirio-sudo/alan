@@ -16,7 +16,7 @@ pub use crate::kural::hareket::ivme;
 pub fn topHiz(m: &Mac, p: &Oyuncu) -> f64 {
     let s = p.yet.y(mek::TOPLU_KOSU);
     let k = jmin(1.0, 0.68 + 0.02 * s);
-    let sl = if oo(p.slowT) > m.tick { jmax(0.4, jmin(0.85, dis::DU::slowK + 0.025 * (s - 10.0))) } else { 1.0 };
+    let sl = if oo(p.hal.slowT) > m.tick { jmax(0.4, jmin(0.85, dis::DU::slowK + 0.025 * (s - 10.0))) } else { 1.0 };
     k * sl
 }
 
@@ -56,8 +56,8 @@ pub fn dolan(m: &mut Mac) {
         let py = fx / fdd;
         let sg = if px * bx + py * by >= 0.0 { 1.0 } else { -1.0 };
         let mut a = atan2(py * sg, px * sg);
-        if p._kAnT == Some(m.tick) {
-            let ka = p._kAn.unwrap_or(f64::NAN);
+        if p.hal._kAnT == Some(m.tick) {
+            let ka = p.hal._kAn.unwrap_or(f64::NAN);
             let dv = atan2(sin(a - ka), cos(a - ka));
             let mx = acos(1.2 / r0);
             if dv.abs() > mx {
@@ -239,11 +239,11 @@ pub fn perde(m: &mut Mac) {
 /// JS otAkil(m, q, b): tek dokunuşu düşünür mü (topa bir kez zar).
 pub fn otAkil(m: &mut Mac, q: Pid, b: crate::model::TopRef) -> bool {
     let p = &m.ps[q];
-    if p._otA.as_ref().map_or(true, |a| a.b != b) {
+    if p.hal._otA.as_ref().map_or(true, |a| a.b != b) {
         let ok = zar(p.id, m.tick, 11.0) < kademe(p.yet.y(mek::TEK_DOKUNUS_DUSUN), dis::D::otOk);
-        m.ps[q]._otA = Some(crate::model::JP_otA { b, ok });
+        m.ps[q].hal_mut()._otA = Some(crate::model::JP_otA { b, ok });
     }
-    m.ps[q]._otA.as_ref().unwrap().ok
+    m.ps[q].hal._otA.as_ref().unwrap().ok
 }
 
 /// JS yanil(m, p, hedef, neden): oyuncu yanlış yöne adanır.
@@ -252,10 +252,10 @@ pub fn yanil(m: &mut Mac, pi: Pid, hx: f64, hy: f64, neden: &str) {
     let p = &mut m.ps[pi];
     let ok = p.yet.y(mek::FAKE_KAN);
     let cv = p.yet.ceviklik - 10.0;
-    p.adandi = Some(jmax(oo(p.adandi), tick + jmax(3.0, jround(3.0 + 0.45 * jmax(0.0, 20.0 - ok) - 0.2 * cv))));
-    p.adT = Some(crate::model::JPAdT { x: hx, y: hy });
-    p.adNeden = Some(neden.into());
-    p.cd = jmax(or0(p.cd), p.adandi.unwrap());
+    p.hal_mut().adandi = Some(jmax(oo(p.hal.adandi), tick + jmax(3.0, jround(3.0 + 0.45 * jmax(0.0, 20.0 - ok) - 0.2 * cv))));
+    p.hal_mut().adT = Some(crate::model::JPAdT { x: hx, y: hy });
+    p.hal_mut().adNeden = Some(neden.into());
+    p.cd = jmax(or0(p.cd), p.hal.adandi.unwrap());
 }
 
 /// JS fakeBasla(m, h, o)
@@ -281,7 +281,7 @@ pub fn fakeBasla(m: &mut Mac, h: Pid, o: &Secenek) {
             let t = dis::fakeHedef(m, pi, h, &sh);
             tg.push((id, t));
             yanil(m, pi, t.0, t.1, "aldandı");
-            ra.push((id, m.ps[pi].adandi.unwrap_or(0.0)));
+            ra.push((id, m.ps[pi].hal.adandi.unwrap_or(0.0)));
         }
     }
     let v = EN.fake * m.ps[h].yet.verim(mek::FAKE_BEDEL);
@@ -301,9 +301,9 @@ pub fn fakeBasla(m: &mut Mac, h: Pid, o: &Secenek) {
     let tick = m.tick;
     {
         let hp = &mut m.ps[h];
-        hp.fkBlock = true;
-        hp.fkCool = Some(tick + T + 45.0);
-        hp.driveTo = None;
+        hp.hal_mut().fkBlock = true;
+        hp.hal_mut().fkCool = Some(tick + T + 45.0);
+        hp.hal_mut().driveTo = None;
         hp.tx = hp.x;
         hp.ty = hp.y;
     }
@@ -317,8 +317,8 @@ pub fn fakeBasla(m: &mut Mac, h: Pid, o: &Secenek) {
 /// JS fakeYonet(m)
 pub fn fakeYonet(m: &mut Mac) {
     for p in m.ps.iter_mut() {
-        if p.fkBlock && m.tick > oo(p.fkCool) {
-            p.fkBlock = false;
+        if p.hal.fkBlock && m.tick > oo(p.hal.fkCool) {
+            p.hal_mut().fkBlock = false;
         }
     }
     let Some(f) = m.mac.fake.as_ref() else { return };
@@ -332,7 +332,7 @@ pub fn fakeYonet(m: &mut Mac) {
     if hid == Some(f.hid) && m.tick <= f.until {
         let mut f = m.mac.fake.take().unwrap();
         let hp = &mut m.ps[h];
-        hp.driveTo = None;
+        hp.hal_mut().driveTo = None;
         let fz = (m.tick - f.t0) / jmax(1.0, f.until - f.t0);
         let su = atan2(f.to.1 - hp.y, f.to.0 - hp.x);
         if f.k == "gövde" {
@@ -396,7 +396,7 @@ pub fn topaYigilma(m: &mut Mac) {
 /// JS korumaBaski(m): koruma süresindeki Bekçi'nin çevresine rakip giremez.
 pub fn korumaBaski(m: &mut Mac) {
     let Some(h) = m.holder else { return };
-    if !(m.ps[h].bekci() && gt(m.ps[h]._korT, m.tick)) {
+    if !(m.ps[h].bekci() && gt(m.ps[h].hal._korT, m.tick)) {
         return;
     }
     let r = super::ikili::IK.kalkanR;
@@ -417,7 +417,7 @@ pub fn korumaBaski(m: &mut Mac) {
         let l = { let l = hypot(dx, dy); if dogru(l) { l } else { 1.0 } };
         p.tx = cl(hx + dx / l * r, 1.0, W - 1.0);
         p.ty = cl(hy + dy / l * r, 1.0, H - 1.0);
-        p.hamle = None;
+        p.hal_mut().hamle = None;
     }
 }
 
@@ -485,8 +485,8 @@ pub fn savurBasla(m: &mut Mac, h: Pid, mut o: Secenek, w0: f64, sYon: f64, uIn: 
             let tick = m.tick;
             let hp = &mut m.ps[h];
             hp.ca = Some(ca0);
-            hp.savur = Some(JPSavur { t0: tick, o: Box::new(o), s: pl2.s, a: pl2.a, wMax: pl2.wMax, wR: pl2.wR, rem: pl2.A, w: pl2.w0, g: pl2.P, u: pl2.uSh, dur: 0.0 });
-            hp.holdD = false;
+            hp.hal_mut().savur = Some(JPSavur { t0: tick, o: Box::new(o), s: pl2.s, a: pl2.a, wMax: pl2.wMax, wR: pl2.wR, rem: pl2.A, w: pl2.w0, g: pl2.P, u: pl2.uSh, dur: 0.0 });
+            hp.hal_mut().holdD = false;
             m.decT = 99.0;
             return;
         }
@@ -500,8 +500,8 @@ pub fn savurBasla(m: &mut Mac, h: Pid, mut o: Secenek, w0: f64, sYon: f64, uIn: 
     let hp = &mut m.ps[h];
     hp.ca = Some(ca0);
     let wR = pl.wR * jmin(1.0, k / if dogru(pl.k) { pl.k } else { 1.0 });
-    hp.savur = Some(JPSavur { t0: tick, o: Box::new(o), s: pl.s, a: pl.a, wMax: pl.wMax, wR, rem: pl.A, w: pl.w0, g: pl.P, u: pl.uSh, dur: 0.0 });
-    hp.holdD = false;
+    hp.hal_mut().savur = Some(JPSavur { t0: tick, o: Box::new(o), s: pl.s, a: pl.a, wMax: pl.wMax, wR, rem: pl.A, w: pl.w0, g: pl.P, u: pl.uSh, dur: 0.0 });
+    hp.hal_mut().holdD = false;
     m.decT = 99.0;
 }
 
@@ -510,7 +510,7 @@ pub fn savurAdim(m: &mut Mac, h: Pid) -> bool {
     let b = Q.body;
     let cr = TQ.min_d / 2.0 + 0.3;
     let (hx, hy, ht, hca) = (m.ps[h].x, m.ps[h].y, m.ps[h].team, m.ps[h].ca.unwrap_or(f64::NAN));
-    let s = m.ps[h].savur.as_mut().unwrap();
+    let s = m.ps[h].hal_mut().savur.as_mut().unwrap();
     let geri = s.g > 1e-9;
     s.w = if geri { jmin(jmin(s.w + s.a, s.wMax), (2.0 * s.a * s.g).sqrt()) } else { jmin(jmin(s.w + s.a, s.wMax), (s.wR * s.wR + 2.0 * s.a * s.rem).sqrt()) };
     let st = jmin(s.w, if geri { s.g } else { s.rem });
@@ -519,13 +519,13 @@ pub fn savurAdim(m: &mut Mac, h: Pid) -> bool {
     let cy = hy + sin(ca1) * b;
     let carp = m.ps.iter().find(|q| q.team != ht && !q.noTouch && hypot(cx - q.x, cy - q.y) < cr).map(|q| q.name.clone());
     if let Some(ad) = carp {
-        let o = m.ps[h].savur.take().unwrap().o;
+        let o = m.ps[h].hal_mut().savur.take().unwrap().o;
         super::kafa_bag::kafaNot(m, &o, &format!("savururken {ad}'e çarptı"));
         m.decT = if m.mac._lite { 99.0 } else { 1.0 };
         return false;
     }
     m.ps[h].ca = Some(ca1);
-    let s = m.ps[h].savur.as_mut().unwrap();
+    let s = m.ps[h].hal_mut().savur.as_mut().unwrap();
     if geri {
         s.g -= st;
         if s.g <= 1e-9 {
@@ -538,7 +538,7 @@ pub fn savurAdim(m: &mut Mac, h: Pid) -> bool {
     if s.rem > 1e-9 {
         return false;
     }
-    let s = m.ps[h].savur.take().unwrap();
+    let s = m.ps[h].hal_mut().savur.take().unwrap();
     let mut o = *s.o;
     o.savW = Some(s.w);
     o.savU = Some(s.u);
@@ -557,11 +557,11 @@ pub fn onHareket(m: &mut Mac) {
         return;
     }
     let bk = b.kimlik();
-    if m.ps[q]._onH.as_ref().map_or(false, |h| h.b != bk) {
-        m.ps[q]._onH = None;
+    if m.ps[q].hal._onH.as_ref().map_or(false, |h| h.b != bk) {
+        m.ps[q].hal_mut()._onH = None;
     }
-    let pre_ok = m.pre.as_ref().map_or(false, |p| p.b == bk && p.q == q) && m.ps[q]._rcvB == Some(bk);
-    if m.ps[q]._onH.is_none() && pre_ok && otAkil(m, q, bk) {
+    let pre_ok = m.pre.as_ref().map_or(false, |p| p.b == bk && p.q == q) && m.ps[q].hal._rcvB == Some(bk);
+    if m.ps[q].hal._onH.is_none() && pre_ok && otAkil(m, q, bk) {
         let pre = m.pre.as_ref().unwrap();
         let vB = pre.r.best.map_or(-1e9, |i| pre.r.opts[i].v.unwrap_or(f64::NAN));
         let o = pre.r.opts.iter().find(|x| x.v.is_some() && x.launch.is_some() && matches!(x.kind.as_str(), "pas" | "önüne" | "kenardan" | "gönder")).cloned();
@@ -572,14 +572,14 @@ pub fn onHareket(m: &mut Mac) {
                 let vE = dis::vurE(m, q, ch, gon);
                 let l = o.launch.as_ref().unwrap();
                 if let Some(pl) = dis::onPlan(m, q, (l.vx, l.vy), gon && o.shot.as_deref() == Some("plase"), vE) {
-                    let tArr = m.ps[q]._rcvAbs.unwrap_or(f64::NAN);
-                    m.ps[q]._onH = Some(JP_onH { b: bk, tArr, w: 0.0, ..pl });
+                    let tArr = m.ps[q].hal._rcvAbs.unwrap_or(f64::NAN);
+                    m.ps[q].hal_mut()._onH = Some(JP_onH { b: bk, tArr, w: 0.0, ..pl });
                 }
             }
         }
     }
     let tick = m.tick;
-    if let Some(hh) = m.ps[q]._onH.as_mut() {
+    if let Some(hh) = m.ps[q].hal_mut()._onH.as_mut() {
         if tick >= hh.tArr - hh.Tsw {
             hh.w = jmin(hh.wS, hh.w + hh.a);
         }
@@ -627,7 +627,7 @@ pub fn r#move(m: &mut Mac) {
     let kk = MacKural::of(m);
     let hizi = |m: &Mac, qi: Pid| -> f64 {
         let q = &m.ps[qi];
-        spd(q) * vK(q, mH == Some(qi), mt, &kk) * (if m.holder == Some(qi) { topHiz(m, q) * if q.savur.is_some() { 0.5 } else { 1.0 } } else { 1.0 }) * dengeHiz(m, qi)
+        spd(q) * vK(q, mH == Some(qi), mt, &kk) * (if m.holder == Some(qi) { topHiz(m, q) * if q.hal.savur.is_some() { 0.5 } else { 1.0 } } else { 1.0 }) * dengeHiz(m, qi)
     };
     let ist: Vec<(f64, f64, f64, f64)> = (0..m.ps.len()).map(|qi| {
         let q = &m.ps[qi];
@@ -729,7 +729,7 @@ pub fn r#move(m: &mut Mac) {
             }
         }
         if let (Some(b), Some(fl)) = (m.ball.as_ref(), m.fl.as_ref()) {
-            if fl.q == Some(i) && m.holder.is_none() && !(dogru(b.defl) || b.defl_b) && b.done.is_none() && p._rcvB == Some(b.kimlik()) && p._rcvAbs.is_some() {
+            if fl.q == Some(i) && m.holder.is_none() && !(dogru(b.defl) || b.defl_b) && b.done.is_none() && p.hal._rcvB == Some(b.kimlik()) && p.hal._rcvAbs.is_some() {
                 let bs = hypot(b.vx, b.vy);
                 if bs > 0.05 {
                     let ux = b.vx / bs;
@@ -737,7 +737,7 @@ pub fn r#move(m: &mut Mac) {
                     let vt = -(wx * ux + wy * uy);
                     let v0 = jmax(0.0, -(or0(p.vx) * ux + or0(p.vy) * uy));
                     let tc = jmax(0.0, hypot(b.x - p.x, b.y - p.y) - crate::temas::menzil(p, super::ikili::IK.yavas)) / jmax(0.05, bs + v0);
-                    let cap = IN.v_set + 0.018 * ag(&p.yet, p.den, p.bekci(), super::ikili::IK.yavas) * jmax(0.0, jmin(tc, p._rcvAbs.unwrap() - m.tick) - 1.0);
+                    let cap = IN.v_set + 0.018 * ag(&p.yet, p.den, p.bekci(), super::ikili::IK.yavas) * jmax(0.0, jmin(tc, p.hal._rcvAbs.unwrap() - m.tick) - 1.0);
                     if vt > cap {
                         wx += (vt - cap) * ux;
                         wy += (vt - cap) * uy;
@@ -781,7 +781,7 @@ pub fn r#move(m: &mut Mac) {
         }
     }
     if let Some(h) = m.holder {
-        if m.ps[h].ca.is_some() && m.ps[h].savur.is_none() {
+        if m.ps[h].ca.is_some() && m.ps[h].hal.savur.is_none() {
             let b = Q.body;
             let mr = 0.46;
             let hp = &mut m.ps[h];
@@ -852,16 +852,16 @@ pub fn r#move(m: &mut Mac) {
                 if gA >= 0.95 * gB {
                     a.vx += 0.03 * nx;
                     a.vy += 0.03 * ny;
-                    a._omuzT = Some(tick);
+                    a.hal_mut()._omuzT = Some(tick);
                 }
                 if gB >= 0.95 * gA {
                     b.vx -= 0.03 * nx;
                     b.vy -= 0.03 * ny;
-                    b._omuzT = Some(tick);
+                    b.hal_mut()._omuzT = Some(tick);
                 }
-                if !m.mac._lite && lat.abs() < bd + 0.05 && (gA - gB).abs() > 0.05 * jmax(gA, gB) && oo(a._omEv) < tick && oo(b._omEv) < tick {
-                    a._omEv = Some(tick + 80.0);
-                    b._omEv = Some(tick + 80.0);
+                if !m.mac._lite && lat.abs() < bd + 0.05 && (gA - gB).abs() > 0.05 * jmax(gA, gB) && oo(a.hal._omEv) < tick && oo(b.hal._omEv) < tick {
+                    a.hal_mut()._omEv = Some(tick + 80.0);
+                    b.hal_mut()._omEv = Some(tick + 80.0);
                     let (g, z) = if gA > gB { (i, j) } else { (j, i) };
                     let (gt_, gn, zn) = (m.ps[g].team, m.ps[g].name.clone(), m.ps[z].name.clone());
                     ev(m, "pas", gt_, format!("{gn} omuz omuza {zn}'i yolundan itti"));

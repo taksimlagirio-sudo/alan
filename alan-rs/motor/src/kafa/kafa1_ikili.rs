@@ -456,11 +456,11 @@ impl Kafa {
                 }
             }
         }
-        let hm = match &q.hamle {
+        let hm = match &q.hal.hamle {
             Some(hm) if hm.hid == h.id => Some(Hm { tr: jmax(0.0, hm.t0 + hm.W - t0), pc: 1.0, omuz: hm.k == "omuz" }),
             _ => None,
         };
-        let kalS = q._kal && q._kalH.and_then(|i| src.get(i)).map_or(false, |x| x.id == h.id && x.team == h.team);
+        let kalS = q.hal._kal && q.hal._kalH.and_then(|i| src.get(i)).map_or(false, |x| x.id == h.id && x.team == h.team);
         let mut s = Kd {
             hv,
             qv,
@@ -470,11 +470,11 @@ impl Kafa {
             qMin: 1.0,
             fk: 0.0,
             fkD: 0.0,
-            fkOk: !(h.fiskeCd.map_or(false, |f| f > t0)) && !h.bekci(),
+            fkOk: !(h.hal.fiskeCd.map_or(false, |f| f > t0)) && !h.bekci(),
             hm,
             ad: None,
-            qS: z0(q.sendT.unwrap_or(0.0)) - t0,
-            qCd: z0(q.sendCd.unwrap_or(0.0)) - t0,
+            qS: z0(q.hal.sendT.unwrap_or(0.0)) - t0,
+            qCd: z0(q.hal.sendCd.unwrap_or(0.0)) - t0,
             kalS,
         };
         let mut son = 0.0;
@@ -857,7 +857,7 @@ impl Kafa {
         }
         self.keepP_son.set(f64::INFINITY);
         if h.bekci() {
-            if let Some(k) = h._korT {
+            if let Some(k) = h.hal._korT {
                 if k - self.tick() >= T {
                     return 1.0;
                 }
@@ -920,7 +920,7 @@ impl Kafa {
                     _ => None,
                 };
                 let pv = self.govdeVurP(q, h, side, false);
-                let gk = match &q._gvKaz {
+                let gk = match &q.hal._gvKaz {
                     Some(g) if g.h == h.id && tick0 - g.t <= 4.0 => g.kaz,
                     _ => 1.0,
                 };
@@ -946,7 +946,7 @@ impl Kafa {
                             qs.y = q.y + sy * a;
                             let ks0 = KS_IZ.with(|f| f.get());
                             KS_IZ.with(|f| f.set(ks0 || (KIZ && sx == 1.0 && sy == 1.0 && !h.sprint)));
-                            if KIZ && sx == 1.0 && sy == 1.0 && !h.sprint { eprintln!("    QS ic={} {} {} {} {} yas {:?} job {:?} pplan {}", ks0, qs.x, qs.y, qs.vx, qs.vy, qs.__yas, qs.job, qs.pplan.is_some()); }
+                            if KIZ && sx == 1.0 && sy == 1.0 && !h.sprint { eprintln!("    QS ic={} {} {} {} {} yas {:?} job {:?} pplan {}", ks0, qs.x, qs.y, qs.vx, qs.vy, qs.hal.__yas, qs.job, qs.pplan.is_some()); }
                             let kk = self.kesisK(h, &qs, di, T, src, hypot(h.x - qs.x, h.y - qs.y), rl);
                             KS_IZ.with(|f| f.set(ks0));
                             k4 += kk;
@@ -1066,10 +1066,10 @@ impl Kafa {
                 kd = Some(d1.omuz);
                 sd0 = d1.son;
             }
-            let HS = q.hamle.as_ref().map_or(false, |hm| hm.hid == h.id);
+            let HS = q.hal.hamle.as_ref().map_or(false, |hm| hm.hid == h.id);
             let trK = if HS { tries - 1.0 } else { tries };
             if HS {
-                let hk = q.hamle.as_ref().unwrap().k == "omuz";
+                let hk = q.hal.hamle.as_ref().unwrap().k == "omuz";
                 keep *= 1.0 - self.duelP_k(q, h, src, Some(hk)).P * self.kWof(Some(hk), h, q, src, ikK);
                 if trK <= 0.0 {
                     continue;

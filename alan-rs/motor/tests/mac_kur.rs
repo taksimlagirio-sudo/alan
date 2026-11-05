@@ -73,7 +73,7 @@ fn kayittan_kurulum_js_ile_ayni() {
             f("eg", ik(p.eg.as_ref().map(|r| (r.ps, r.rk)), &pj["eg"]));
             f("rh", p.rh.as_deref() == pj["rh"].as_str());
             f("rs", p.rs.as_deref() == pj["rs"].as_str());
-            f("markRef", p.markRef == pj["markRef"].as_u64().map(|x| x as usize));
+            f("markRef", p.hal.markRef == pj["markRef"].as_u64().map(|x| x as usize));
             match (&p.tl, pj["tl"].is_null()) {
                 (None, true) => {}
                 (Some(t), false) => {
@@ -96,7 +96,7 @@ fn kayittan_kurulum_js_ile_ayni() {
                     "tx" => Some(p.tx),
                     "ty" => Some(p.ty),
                     "en" => p.en,
-                    _ => p._korT,
+                    _ => p.hal._korT,
                 };
                 f(n, ayni_o(r, &pj["n"][n]));
             }

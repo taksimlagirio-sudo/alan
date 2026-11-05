@@ -174,7 +174,7 @@ pub fn ALAN_KOSU_PR(p: &Oyuncu, k: &dyn crate::temas::Kural) -> Option<KosuPr> {
 }
 /// JS `p.slowT || 0`.
 pub fn slowT(p: &Oyuncu) -> f64 {
-    p.slowT.unwrap_or(0.0)
+    p.hal.slowT.unwrap_or(0.0)
 }
 
 // ---- core.js enerji ----

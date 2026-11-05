@@ -432,7 +432,7 @@ impl Kafa {
         let err = (20.0 - h.yet.y(mek::ALGI_HATA)) * D.errOk * D.errPos;
         let mut ad: Vec<UA> = Vec::new();
         for (i, p) in src.iter().enumerate() {
-            if p.noTouch && (p.team == team || !(p.stun.map_or(false, |s| s > tick) || p.adandi.map_or(false, |s| s > tick))) {
+            if p.noTouch && (p.team == team || !(p.hal.stun.map_or(false, |s| s > tick) || p.hal.adandi.map_or(false, |s| s > tick))) {
                 continue;
             }
             let rakip = p.team != team;
@@ -533,7 +533,7 @@ impl Kafa {
             A.tau = if sdW != 0.0 { hypot(1.5 + eJ / v * 0.5, sdW) } else { 1.5 + if rakip { eJ / v * 0.5 } else { 0.0 } };
             A.ben = ph;
             A.bk0 = p.bekci();
-            A.gvT = if rakip && !bek && h.id >= 0.0 { jmax(jmax(0.0, z0(p.adandi.unwrap_or(0.0)) - tick), z0(p.stun.unwrap_or(0.0)) - tick) } else { 0.0 };
+            A.gvT = if rakip && !bek && h.id >= 0.0 { jmax(jmax(0.0, z0(p.hal.adandi.unwrap_or(0.0)) - tick), z0(p.hal.stun.unwrap_or(0.0)) - tick) } else { 0.0 };
             ad.push(A);
         }
         let mut Wt = 0.0;
@@ -661,7 +661,7 @@ impl Kafa {
                         A.kt = None;
                         A.kj = None;
                         let p: &Oyuncu = &A.p;
-                        let tq = p.tutQ.and_then(|t| src.get(t));
+                        let tq = p.hal.tutQ.and_then(|t| src.get(t));
                         let tqOk = match (tq, qqI) {
                             (Some(tq), Some(qi)) => tq.name == src[qi].name && tq.team == src[qi].team && oEk < n as f64,
                             _ => false,

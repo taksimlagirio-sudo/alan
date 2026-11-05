@@ -72,7 +72,7 @@ pub fn dengeKayip(p: &Oyuncu, t: f64) -> f64 {
     let mut l = 0.0;
     let dm = dengeDolumK(p);
     for k in 0..150 {
-        let sd = oo(p.sendT) > t + k as f64;
+        let sd = oo(p.hal.sendT) > t + k as f64;
         if !sd && dn >= IK.yavas {
             break;
         }

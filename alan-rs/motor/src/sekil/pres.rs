@@ -183,7 +183,7 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
             // girmek mi yolu kesmek mi: taşıyıcı başına bir kez karar verilir (o ikili boyunca sürer); taşıyıcı değişince
             // yeniden tartılır. Eşikte her tik yeniden tartmak oyuncuyu ikisi arasında titretiyor, hiçbirini yapmıyordu
             let tik = c.m.tick;
-            let suren = c.ps[pi]._onK.as_ref().filter(|o| o.h == h.id).map(|o| o.koy);
+            let suren = c.ps[pi].hal._onK.as_ref().filter(|o| o.h == h.id).map(|o| o.koy);
             let _ = (tik, Tepki::Karar);
             let koy = if let (Some(kk), true) = (suren, c.rnd.is_some()) {
                 kk
@@ -193,10 +193,10 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
                     (dis::duelP(&*c.m, &ps[pi], &h, ps), dis::girThr(&*c.m, &ps[pi], &h, ps))
                 };
                 let koy = !(Pd >= th);
-                c.ps[pi]._onK = Some(JP_onK { h: h.id, koy, t: tik });
+                c.ps[pi].hal_mut()._onK = Some(JP_onK { h: h.id, koy, t: tik });
                 koy
             } else {
-                c.ps[pi]._onK.as_ref().map_or(false, |o| o.h == h.id && o.koy)
+                c.ps[pi].hal._onK.as_ref().map_or(false, |o| o.h == h.id && o.koy)
             };
             if koy {
                 let an = match &T1 {
@@ -270,8 +270,8 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
             None => atan2(GCY - h.y, ownX(dt) - h.x),
         };
         let p = &mut c.ps[pi];
-        p._kAn = Some(an0);
-        p._kAnT = Some(tick);
+        p.hal_mut()._kAn = Some(an0);
+        p.hal_mut()._kAnT = Some(tick);
         let rx = p.tx - h.x;
         let ry = p.ty - h.y;
         let r = jmax(1.3, hypot(rx, ry));

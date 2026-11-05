@@ -1051,7 +1051,7 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
                 };
                 for T in Ts {
                     let tk = k.tick();
-                    if opp.iter().any(|q| segD(nk(q.x, q.y), hp, T) < 2.0 || (q.adT.is_some() && veyo(q.adandi, 0.0) > tk && segD(nk(q.adT.as_ref().unwrap().x, q.adT.as_ref().unwrap().y), hp, T) < 2.0)) {
+                    if opp.iter().any(|q| segD(nk(q.x, q.y), hp, T) < 2.0 || (q.hal.adT.is_some() && veyo(q.hal.adandi, 0.0) > tk && segD(nk(q.hal.adT.as_ref().unwrap().x, q.hal.adT.as_ref().unwrap().y), hp, T) < 2.0)) {
                         continue;
                     }
                     let Ty = if wy == 0.0 { -T.y } else { 2.0 * GH - T.y };
@@ -1100,8 +1100,8 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
     }
     // çalım (topu rakibin yanından duvara vurup arkasında almak)
     calim(k, &mut c, &mut ad, src, hi, rnd);
-    if bekci(&h) && h.bekBas.is_some() {
-        let kal = 150.0 - (k.tick() - h.bekBas.unwrap());
+    if bekci(&h) && h.hal.bekBas.is_some() {
+        let kal = 150.0 - (k.tick() - h.hal.bekBas.unwrap());
         for o in ad.out.iter_mut() {
             if o.kind != "tut" && o.kind != "fake" {
                 continue;
@@ -1246,10 +1246,10 @@ fn calim(k: &mut Kafa, c: &mut Ctx0, ad: &mut dis::Secenekler, src: &Arc<Dunya>,
         _ => return,
     };
     let tk0 = k.tick();
-    let adK = |q: &Oyuncu| jmax(0.0, veyo(q.adandi, 0.0) - tk0);
+    let adK = |q: &Oyuncu| jmax(0.0, veyo(q.hal.adandi, 0.0) - tk0);
     let qP = |q: &Oyuncu| -> Nokta {
         if adK(q) > 0.0 {
-            if let Some(a) = &q.adT {
+            if let Some(a) = &q.hal.adT {
                 return nk(a.x, a.y);
             }
         }
@@ -1288,15 +1288,15 @@ fn calim(k: &mut Kafa, c: &mut Ctx0, ad: &mut dis::Secenekler, src: &Arc<Dunya>,
                 let B = nk(hc.x + (T.x - hc.x) * tt, if wy == 0.0 { 0.8 } else { GH8 });
                 let A = nk(hc.x, hc.y);
                 let yolGovde = |q: &Oyuncu| -> f64 {
-                    let kal = jmax(0.0, veyo(q.adandi, 0.0) - tk0);
+                    let kal = jmax(0.0, veyo(q.hal.adandi, 0.0) - tk0);
                     let mut mn: f64 = 1e9;
                     for kk in 0..=8 {
                         let u = kk as f64 / 8.0;
                         let x = A.x + (B.x - A.x) * u;
                         let y = A.y + (B.y - A.y) * u;
                         let tb = hypot(x - A.x, y - A.y) / 0.9;
-                        let f = if kal > 0.0 && q.adT.is_some() { jmin(1.0, tb / kal) } else { 0.0 };
-                        let (ax, ay) = match &q.adT {
+                        let f = if kal > 0.0 && q.hal.adT.is_some() { jmin(1.0, tb / kal) } else { 0.0 };
+                        let (ax, ay) = match &q.hal.adT {
                             Some(a) => (a.x, a.y),
                             None => (q.x, q.y),
                         };
@@ -1329,10 +1329,10 @@ fn calim(k: &mut Kafa, c: &mut Ctx0, ad: &mut dis::Secenekler, src: &Arc<Dunya>,
                     let n = jmin(18.0, pts.len() as f64) as usize;
                     'dis: for kk in 1..n {
                         for q in &opp {
-                            let kal = jmax(0.0, veyo(q.adandi, 0.0) - tk0);
+                            let kal = jmax(0.0, veyo(q.hal.adandi, 0.0) - tk0);
                             let (qx, qy);
-                            if kal > 0.0 && q.adT.is_some() {
-                                let a = q.adT.as_ref().unwrap();
+                            if kal > 0.0 && q.hal.adT.is_some() {
+                                let a = q.hal.adT.as_ref().unwrap();
                                 let f = jmin(1.0, kk as f64 / kal);
                                 qx = q.x + (a.x - q.x) * f;
                                 qy = q.y + (a.y - q.y) * f;

@@ -64,7 +64,7 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
             }
         } else {
             if o.itK.is_some() && SPK() {
-                m.ps[h]._itK = o.itK;
+                m.ps[h].hal_mut()._itK = o.itK;
             }
             let spr = o.spr.map_or(false, crate::mat::dogru);
             if spr && F.ayir && !m.ps[h].bekci() && m.ps[h].en.unwrap_or(1.0) >= ALAN_EN3_SGIR(&m.ps[h], SBED()) {
@@ -179,7 +179,7 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
         let wp = o.wp.clone().unwrap_or_default();
         let (x, y) = o.wp1.as_ref().map_or((wp.x, wp.y), |w| (w.x, w.y));
         let sonra = o.wp1.as_ref().map(|_| (wp.x, wp.y));
-        m.ps[h].kenarW = Some(KenarW { x, y, sonra, until: m.tick + 60.0 });
+        m.ps[h].hal_mut().kenarW = Some(KenarW { x, y, sonra, until: m.tick + 60.0 });
         ev(m, "pas", t, format!("{hname} kenardan çalım"));
     } else {
         m.st.pass[ti] += 1.0;

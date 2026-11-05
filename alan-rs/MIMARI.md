@@ -286,6 +286,13 @@ duruyorsa bir kez kopyalar (oyuncu başına tik başına en çok bir); bu sayı 
 kendi gövdesini kurar (bugünkü gibi; paylaşılan gövde onlara verilirse boş bıraktıkları alanlar dolu görünür ve
 davranış değişir).
 
+**5-1 ✅ maç durumu** (5 Kasım): 108 alan `OyuncuMac`'e, `Oyuncu::hal: Arc<OyuncuMac>`; okuma `p.hal.f`, yazma
+`p.hal_mut().f` (`Arc::make_mut`). Yerler derleyicinin hatalarından düzenlendi (~600 yer, 42 dosya; elle yalnız
+`sekil/konum.rs`'in geçmiş kaydında iki ödünç sırası). Ölçüm (m00, valgrind 300 tik): komutlar 35,86 → 34,65
+milyar (−%3,4), oyuncu kopyası %2,0 → %0,5; yazarken kopyalama tik başına ~44 `OyuncuMac` (önce tik başına ~500
+tam kopya). Duvar saati 13,40 → 12,57 ms/tik (**−%6,2**; küçük kopyalar önbelleğe sığıyor). Main ile 20 maç ×
+2700 tik aynı. Not: `sina/alan-envanter.sh` yalnız `Oyuncu`'nun kendi alanlarını sayar.
+
 Sıra: (1) maç durumu (108 alan, ~500 yer, kafaya dokunmaz: yalnız `mac/`, `sekil/`, `temas`), (2) gövde
 (~1000 okuma, çoğu `p.yet`/`p.team`/`p.id`: düz değiştirme), her biri `sina/ayni.sh` + 20 maçlık parmak iziyle.
 

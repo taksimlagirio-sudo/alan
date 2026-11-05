@@ -208,7 +208,7 @@ pub fn pwKos(k: &mut Kafa, p: &Op, gx0: f64, gy0: f64, sw0: Option<Sw>, vmax: f6
 
 /// JS adamMi (predictWorld): adam adama savunan
 fn adamMi(k: &Kafa, p: &Oyuncu) -> bool {
-    p.markRef.is_some() && dis::AM_tl(k, p, "sav", "adam") >= 0.5
+    p.hal.markRef.is_some() && dis::AM_tl(k, p, "sav", "adam") >= 0.5
 }
 
 /// JS predictWorld(src, team, B, T, cevapAyri, resp, pasta, tas) (decide.js:4920): top B'deyken T tik
@@ -248,8 +248,8 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
             Some(i) if uz(src[i].x, src[i].y, B.x, B.y) < 2.5 => Some(src[i].id),
             _ => None,
         };
-        let mr_id = |k: &Kafa, p: &Oyuncu| ref_nesne(k, src, p.markRef.unwrap()).id;
-        let acik: Vec<Op> = basan.iter().filter(|&&i| adamMi(k, &src[i]) && Some(mr_id(k, &src[i])) != tid).map(|&i| ref_bul(k, src, src[i].markRef.unwrap())).collect();
+        let mr_id = |k: &Kafa, p: &Oyuncu| ref_nesne(k, src, p.hal.markRef.unwrap()).id;
+        let acik: Vec<Op> = basan.iter().filter(|&&i| adamMi(k, &src[i]) && Some(mr_id(k, &src[i])) != tid).map(|&i| ref_bul(k, src, src[i].hal.markRef.unwrap())).collect();
         let mut alinan: Vec<Op> = Vec::new();
         if !acik.is_empty() && tid.is_some() {
             for fi in 0..n_src {
@@ -289,7 +289,7 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
         let mut sw: Option<Sw> = None;
         let pm;
         if p.team != team {
-            let iq: Option<Op> = match p.tutQ {
+            let iq: Option<Op> = match p.hal.tutQ {
                 Some(tq) if !near_has(i) && devir[i].is_none() => {
                     let tqr = ref_nesne(k, src, tq);
                     let job = p.job.as_deref().unwrap_or("");
@@ -323,8 +323,8 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
                     let mr: Option<Op> = match &devir[i] {
                         Some(d) => Some(d.clone()),
                         None => {
-                            if p.markRef.is_some() && dis::AM_tl(k, p, "sav", "adam") >= 0.5 {
-                                Some(ref_bul(k, src, p.markRef.unwrap()))
+                            if p.hal.markRef.is_some() && dis::AM_tl(k, p, "sav", "adam") >= 0.5 {
+                                Some(ref_bul(k, src, p.hal.markRef.unwrap()))
                             } else {
                                 None
                             }
@@ -337,8 +337,8 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
                         let L = veya(hypot(gxk - mx, GCY - my), 1.0);
                         gx = mx + (gxk - mx) / L * 1.6;
                         gy = my + (GCY - my) / L * 1.6;
-                        if let (Some(kv_), Some(otx)) = (&mr._kv, mr.otx) {
-                            let oty = mr.oty.unwrap_or(f64::NAN);
+                        if let (Some(kv_), Some(otx)) = (&mr.hal._kv, mr.hal.otx) {
+                            let oty = mr.hal.oty.unwrap_or(f64::NAN);
                             let L2 = veya(hypot(gxk - otx, GCY - oty), 1.0);
                             let t1 = hypot(kv_.x - mr.x, kv_.y - mr.y) / ((0.17 + 0.006 * ALAN_HZ(&mr)) * dis::ALAN_SPRE(k, &mr));
                             let lag = jmax(1.0, jround(dis::ALAN_TEPKI(k, p, "algi"))) * 0.5;
@@ -384,8 +384,8 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
             gx = p.tx;
             gy = p.ty;
             pm = true;
-            if let (Some(_), Some(otx)) = (&p._kv, p.otx) {
-                sw = Some(Sw { yer: true, t: None, x: otx, y: p.oty.unwrap_or(f64::NAN) });
+            if let (Some(_), Some(otx)) = (&p.hal._kv, p.hal.otx) {
+                sw = Some(Sw { yer: true, t: None, x: otx, y: p.hal.oty.unwrap_or(f64::NAN) });
             }
         }
         let rk = p.team != team;

@@ -33,13 +33,13 @@ pub(super) fn nz1(l: f64) -> f64 {
 /// JS `p.lock > t`.
 #[inline]
 pub(super) fn kilitli(p: &Oyuncu, t: f64) -> bool {
-    p.lock.map(|l| l > t).unwrap_or(false)
+    p.hal.lock.map(|l| l > t).unwrap_or(false)
 }
 /// JS `(u.lock > t ? u.lockAt : t)`.
 #[inline]
 pub(super) fn kilitAn(p: &Oyuncu, t: f64) -> f64 {
     if kilitli(p, t) {
-        p.lockAt.unwrap_or(f64::NAN)
+        p.hal.lockAt.unwrap_or(f64::NAN)
     } else {
         t
     }

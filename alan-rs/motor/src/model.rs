@@ -74,6 +74,56 @@ pub struct Oyuncu {
     pub cd: f64,
     /// `en`: number (sonradan eklenir)
     pub en: Option<f64>,
+    /// `noTouch`: boolean
+    pub noTouch: bool,
+    /// `sprint`: boolean
+    pub sprint: bool,
+    /// `press`: boolean
+    pub press: bool,
+    /// `job`: string (sonradan eklenir)
+    pub job: Option<std::sync::Arc<str>>,
+    /// `ca`: number (sonradan eklenir)
+    pub ca: Option<f64>,
+    /// `_don`: number (sonradan eklenir)
+    pub _don: Option<f64>,
+    /// `_dke`: number (sonradan eklenir)
+    pub _dke: Option<f64>,
+    /// `rslot`: object (sonradan eklenir)
+    pub rslot: Option<JPRslot>,
+    /// `slot0`: object (sonradan eklenir)
+    pub slot0: Option<JPSlot0>,
+    /// `rslot0`: object (sonradan eklenir)
+    pub rslot0: Option<JPRslot0>,
+    /// `rh`: string (sonradan eklenir)
+    pub rh: Option<std::sync::Arc<str>>,
+    /// `rs`: string (sonradan eklenir)
+    pub rs: Option<std::sync::Arc<str>>,
+    /// `tl`: object (sonradan eklenir)
+    pub tl: Option<std::sync::Arc<JPTl>>,
+    /// `eg`: object (sonradan eklenir)
+    pub eg: Option<JPEg>,
+    /// `_sf`: null|object
+    pub _sf: Option<JP_sf>,
+    /// `den`: number (sonradan eklenir)
+    pub den: Option<f64>,
+    /// `pplan`: object (sonradan eklenir)
+    pub pplan: Option<JPPplan>,
+    /// (Rust) yetenek satırı: `a`dan maç başında kurulur (ALAN_Y)
+    /// paylaşımlı: maç içinde değişmez, kopyası yalnız sayaç (her oyuncu kopyasında sözlük kurulmasın)
+    #[serde(with = "crate::paket::yet_kod")]
+    pub yet: std::sync::Arc<crate::yetenek::Yetenek>,
+    /// Varlık kimliği (MIMARI.md 3.2, 4c-2): gerçek oyuncu ve kopyaları aynı, hayalet kendi gerçek oyuncusundan
+    /// ayrı; sahte/boş oyuncuda yok (o zaman yalnız nesne kimliği). Kopyayla taşınır; kayda girmez.
+    #[serde(skip)]
+    pub kim: Kim,
+    /// Maç durumu (MIMARI.md 3.6): yalnız maç ve yerleşimin yazdığı alanlar; kopyalar paylaşır,
+    /// yazma `hal_mut()` ile (paylaşılıyorsa önce kopyalar).
+    pub hal: std::sync::Arc<OyuncuMac>,
+}
+
+/// Oyuncunun maç durumu (MIMARI.md 3.6): işler, hamleler, sayaçlar, yerleşimin anıları. Kafa bunlara yazmaz.
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+pub struct OyuncuMac {
     /// `driveTo`: null|object
     pub driveTo: Option<JPDriveTo>,
     /// `_dur`: null|number
@@ -82,8 +132,6 @@ pub struct Oyuncu {
     pub _korT: Option<f64>,
     /// `bekBas`: null|number
     pub bekBas: Option<f64>,
-    /// `noTouch`: boolean
-    pub noTouch: bool,
     /// `hist`: dizi (sonradan eklenir)
     pub hist: Option<std::sync::Arc<Vec<JPHistE>>>,
     /// `lock`: number (sonradan eklenir)
@@ -100,12 +148,6 @@ pub struct Oyuncu {
     pub rec: Option<f64>,
     /// `tutQ`: OYUNCU|null
     pub tutQ: Option<Pid>,
-    /// `sprint`: boolean
-    pub sprint: bool,
-    /// `press`: boolean
-    pub press: bool,
-    /// `job`: string (sonradan eklenir)
-    pub job: Option<std::sync::Arc<str>>,
     /// `otx`: null|number
     pub otx: Option<f64>,
     /// `_bk`: dizi (sonradan eklenir)
@@ -130,30 +172,10 @@ pub struct Oyuncu {
     pub _Dl: Option<f64>,
     /// `_enOnce`: number (sonradan eklenir)
     pub _enOnce: Option<f64>,
-    /// `ca`: number (sonradan eklenir)
-    pub ca: Option<f64>,
-    /// `_don`: number (sonradan eklenir)
-    pub _don: Option<f64>,
     /// `drive`: boolean
     pub drive: bool,
-    /// `_dke`: number (sonradan eklenir)
-    pub _dke: Option<f64>,
-    /// `rslot`: object (sonradan eklenir)
-    pub rslot: Option<JPRslot>,
-    /// `slot0`: object (sonradan eklenir)
-    pub slot0: Option<JPSlot0>,
-    /// `rslot0`: object (sonradan eklenir)
-    pub rslot0: Option<JPRslot0>,
-    /// `rh`: string (sonradan eklenir)
-    pub rh: Option<std::sync::Arc<str>>,
-    /// `rs`: string (sonradan eklenir)
-    pub rs: Option<std::sync::Arc<str>>,
-    /// `tl`: object (sonradan eklenir)
-    pub tl: Option<std::sync::Arc<JPTl>>,
     /// `markRef`: OYUNCU (sonradan eklenir)
     pub markRef: Option<Pid>,
-    /// `eg`: object (sonradan eklenir)
-    pub eg: Option<JPEg>,
     /// `oty`: number (sonradan eklenir)
     pub oty: Option<f64>,
     /// `_otH`: OYUNCU|null
@@ -235,8 +257,6 @@ pub struct Oyuncu {
     pub _donT: Option<f64>,
     /// `_omuzT`: number (sonradan eklenir)
     pub _omuzT: Option<f64>,
-    /// `_sf`: null|object
-    pub _sf: Option<JP_sf>,
     /// `_savCar`: number (sonradan eklenir)
     pub _savCar: Option<f64>,
     /// `lockAt`: number (sonradan eklenir)
@@ -275,8 +295,6 @@ pub struct Oyuncu {
     pub _winSeen: Option<f64>,
     /// `son`: object (sonradan eklenir)
     pub son: Option<JPSon>,
-    /// `den`: number (sonradan eklenir)
-    pub den: Option<f64>,
     /// `_kh`: object (sonradan eklenir)
     pub _kh: Option<JP_kh>,
     /// `_khT`: number (sonradan eklenir)
@@ -287,8 +305,6 @@ pub struct Oyuncu {
     pub _omuz: Option<JP_omuz>,
     /// `adNeden`: string (sonradan eklenir)
     pub adNeden: Option<std::sync::Arc<str>>,
-    /// `pplan`: object (sonradan eklenir)
-    pub pplan: Option<JPPplan>,
     /// `_kAn`: number (sonradan eklenir)
     pub _kAn: Option<f64>,
     /// `_kAnT`: number (sonradan eklenir)
@@ -309,10 +325,6 @@ pub struct Oyuncu {
     pub _koyEv: Option<f64>,
     /// `_dalis`: number (sonradan eklenir)
     pub _dalis: Option<f64>,
-    /// (Rust) yetenek satırı: `a`dan maç başında kurulur (ALAN_Y)
-    /// paylaşımlı: maç içinde değişmez, kopyası yalnız sayaç (her oyuncu kopyasında sözlük kurulmasın)
-    #[serde(with = "crate::paket::yet_kod")]
-    pub yet: std::sync::Arc<crate::yetenek::Yetenek>,
     /// (mac) `slowT`: omuzla yavaşlama bitişi
     pub slowT: Option<f64>,
     /// (yerleşim) görülen kopyanın konum hatası `__e` ve yaşı `__yas` (gerçek oyuncuda yok)
@@ -326,10 +338,6 @@ pub struct Oyuncu {
     /// (mac) `gvH`, `gvCd`: gövdeyle vurma hamlesi
     pub gvH: Option<JPHamle>,
     pub gvCd: Option<f64>,
-    /// Varlık kimliği (MIMARI.md 3.2, 4c-2): gerçek oyuncu ve kopyaları aynı, hayalet kendi gerçek oyuncusundan
-    /// ayrı; sahte/boş oyuncuda yok (o zaman yalnız nesne kimliği). Kopyayla taşınır; kayda girmez.
-    #[serde(skip)]
-    pub kim: Kim,
 }
 
 /// JS `b`
