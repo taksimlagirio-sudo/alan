@@ -57,6 +57,7 @@ Aşama 7'ye kaldı, kural `sina/katman.sh`'ta):
 | Katman | Dosyalar |
 |---|---|
 | kural | `kural/*` |
+| dunya | `dunya/*` (`Varlik`, `Beden`, `Op`, `Dunya` ve aralarındaki çeviriler) |
 | deger | `kafa/kafa1_*`, `kafa/kafa2_{zemin,imkan,dunya,bag}`, `sekil/{yer,pres,takim,ucus,gor,varlik,sabit,gecici_dis}` |
 | yerlesim | `sekil/konum.rs`, `sekil/konum/*` |
 | karar | `kafa/kafa2_{karar,tarti,eski}` |
@@ -154,7 +155,8 @@ kodda çalıştığı için aşamalar küçük parçalarla ve sık `main`'e birl
 | 3e-3 ✅ | `KafaD`'nin 22 `_` alanı (geçici bağlam: `_tick`, `_gPr`, `_sav*`, `_kenar` …) ayrı yapıya (`Kafa::bag`); `KafaD` yalnız değişmez ayar | Saf değerlendirmeler (`pressAt_d` …) ve yerleşimin `c.d`'si gerçekten değişmez ayarı görsün; "geçici değiştir, geri koy" kalıpları görünür olsun | `KafaD`'de `_` alanı yok (geçici bağlam `KafaBag`, `Kafa::bag`; ayarın hiçbir alanı yazılmıyor: kaydet/geri koy yalnız bağlamı korur) |
 | 4a ✅ | Kimlik envanteri: 46 `ayni` (`Arc::ptr_eq`) yerinin anlamı (gerçek oyuncu mu, kopyası mı, aynı dünyada mı) | 4b/4c'den önce: paylaşım ve görünümler kimliği bozmasın | Her yer belgeli ve sınıflı (3.2), adlar anlamı söylüyor (`ayni_nesne`, `ayni_oyuncu`, `ayni_secenek`). Sıraya (`Pid`) çeviri 4c'de: kafanın dünyasındaki oyuncular (`Op`) bugün sıra taşımıyor |
 | 4b ✅ (yeniden kapsamlandı) | Ölçüm (5 Kasım, 60 tik): oyuncu kopyası artık sürenin yalnız %2,4'ü (önceden ~%6; davranış oturumunun hız işleri en sıcak yerleri temizledi), yarısı `ow` çevirisi (4c'nin konusu). 35 yere tek tek görünüm koymak ~%1 getirir: yapılmadı. Yapılan: B sınıfı "değişti mi" soruları nesne kimliğinden bağımsız: `bekKay_d` (Bekçi yer değiştirdiyse `Some`), `respond_d` (değişen oyuncuların açık listesi) | 4c dünyanın gösterimini değiştirince kimliğe dayanan bu sorular kırılmasın | B sınıfının 10 yeri (çalışmayan 7'si dahil) `ayni_nesne` kullanmıyor |
-| 4c | Tek dünya: yerleşimin `Varlik`'i ile kafanın `Dunya`'sı birleşir; `ow`, `op_dunya`, `dunya_kopya`, `hafif` çevirileri ve tamponları (`OW`, `DUNYA_KOPYA`, `ILK_TAMPON`) kalkar | 4a–b'nin üstüne | Çeviri yok; `Dis`'in yerleşim yöntemleri doğrudan çağrı |
+| 4c-1 ✅ | Dünya katmanı: `Varlik`/`Beden`/`hayal`, `Op`/`Dunya` ve dört çeviri (`op_dunya`, `ow_kur`/`ow`/`ow_paylas`, `dunya_kopya`) `dunya/`'da; kimlik kuralı orada belgeli; `sina/katman.sh`'a kural | Çeviriler tek yerde, kimlik kuralı açık | `dunya` üst katmanlara bağlı değil |
+| 4c-2 (kapsam kararı) | Kafanın `Op` yerine görünüm (`Varlik`) üzerinde çalışması; çevirilerin kalkması | Ölçüm: çeviriler artık sürenin ~%1,5'i; kafanın ~14 bin satırı `&[Op]` üzerinden alanlara doğrudan erişiyor: çok günlük iş. Ayrıca çeviriler arasında nesne paylaşmak `dolanma`'nın davranışını değiştirir (3.2 C): önce o davranış kararı | Kullanıcı kararı |
 | 3e-4 | Kafanın önbellekleri ömürlerine göre (`Onbellek`: tik ömürlü `ge`, `rnb`, `keepP_son` …; saf kalıcı `ucus`, `suty` …), tik başında açıkça temizlenir | 4c'den sonra: anahtarlar artık işaretçi değil | `Kafa`'da dağınık `RefCell` önbellek yok |
 
 Kalan `thread_local`'lar (13): saf önbellekler (`GEC`, `GTB`, `GECY_K`, `BEK_DER`, `BEK_YOL`: değer yalnız anahtardan,

@@ -276,4 +276,4 @@ fn rem_pio2(x: f64) -> Option<(i32, f64, f64)> {
 
 
 /// Dünyanın bir oyuncusu (kafa2 ile ortak): dünya kopyası yalnız değişen oyuncuyu kopyalar.
-pub type Op = std::sync::Arc<Oyuncu>;
+pub use crate::dunya::Op;
