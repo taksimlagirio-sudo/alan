@@ -418,7 +418,12 @@ pub fn durumD(k: &mut Kafa, cx: &mut Cx, w: &[Op], q: &Oyuncu, at: Nokta, T0: f6
     r.vx = 0.0;
     r.vy = 0.0;
     let T0v = veya(T0, 0.0);
-    let sut = sutS(k, &wb, team, at.x, at.y, ch, Some(q), Some(T0v)) * sutVakit(k, &wb, team, at.x, at.y, Some(q));
+    let sS = sutS(k, &wb, team, at.x, at.y, ch, Some(q), Some(T0v));
+    let sV = sutVakit(k, &wb, team, at.x, at.y, Some(q));
+    let sut = sS * sV;
+    if crate::iz_acik() && std::env::var("ALAN_SURD_IZ").ok().as_deref() == Some(&*q.name) {
+        eprintln!("DURUM {} {} ({:.1},{:.1}) T0 {:.0} şutS {:.3} vakit {:.3}", k.tick(), q.name, at.x, at.y, T0v, sS, sV);
+    }
     let z0 = zeminH(k, &wb, team, at.x, at.y, ch, Some(&r), Some(cx), Some(T0));
     let sur = gam(k) * surD(k, &wb, team, &r, at, ch, &kayip, Some(cx), Some(T0));
     let ip = enIyiPas(k, cx, w, at, T0, q.id, 1.0);
