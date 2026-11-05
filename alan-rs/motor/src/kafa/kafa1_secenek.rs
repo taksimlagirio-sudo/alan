@@ -19,7 +19,7 @@ use crate::oyuncu::Tepki;
 use crate::saha::{CY as GCY, H as GH, W as GW};
 
 /// Hayali dünyanın oyuncusu (kafa2 ile ortak tip; birleştirmede tek tanım).
-pub type Op = std::sync::Arc<Oyuncu>;
+pub use crate::dunya::Op;
 
 /// options'ın dönüşü: seçenekler ve JS dizisine asılı yan bilgiler (out.tekH, out.tekS, out.tekC).
 #[derive(Clone, Debug, Default)]

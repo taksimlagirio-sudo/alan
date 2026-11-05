@@ -12,8 +12,7 @@ use crate::model::{JMTacE, KafaD, Oyuncu};
 
 use std::sync::Arc;
 
-pub type Op = Arc<Oyuncu>;
-pub type Dunya = Vec<Op>;
+pub use crate::dunya::{Dunya, Op};
 pub type Pid = usize;
 
 /// Zar (JS `rnd`: maçın zar dizisi ya da hayali dünyanın zarı).

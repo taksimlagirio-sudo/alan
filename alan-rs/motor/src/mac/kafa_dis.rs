@@ -11,6 +11,9 @@ use crate::mac::MacKural;
 use crate::model::{JMShGs, Mac, Oyuncu};
 use crate::sekil;
 use std::sync::Arc;
+use crate::dunya::dunya_kopya;
+/// Maçın dünyasını kafanın biçimine çevir (dünya katmanında).
+pub use crate::dunya::op_dunya;
 
 /// Kararın başındaki maç görüntüsü.
 pub struct MacDis {
@@ -277,35 +280,6 @@ struct IlkTampon {
 thread_local! {
     static ILK_TAMPON: std::cell::RefCell<IlkTampon> = std::cell::RefCell::new(IlkTampon::default());
 }
-thread_local! {
-    /// Kafa dünyasının (Arc'lı oyuncular, değişmez) düz kopyası: aynı dünya için yeniden kopyalanmaz.
-    /// Anahtar oyuncu nesnelerinin kendisi (Arc'lar tutulduğu için başka dünyayla karışmaz).
-    static DUNYA_KOPYA: std::cell::RefCell<(Vec<crate::kafa::kafa1_js::Op>, Vec<Oyuncu>)> = const { std::cell::RefCell::new((Vec::new(), Vec::new())) };
-}
-/// `src`'nin düz kopyasıyla `f`'i çalıştır (dünya aynıysa önceki kopya).
-fn dunya_kopya<R>(src: &[crate::kafa::kafa1_js::Op], f: impl FnOnce(&[Oyuncu]) -> R) -> R {
-    DUNYA_KOPYA.with(|c| {
-        let ayni = {
-            let c = c.borrow();
-            c.0.len() == src.len() && c.0.iter().zip(src).all(|(a, b)| Arc::ptr_eq(a, b))
-        };
-        if !ayni {
-            match c.try_borrow_mut() {
-                Ok(mut c) => {
-                    c.0 = src.to_vec();
-                    c.1 = src.iter().map(|q| (**q).clone()).collect();
-                }
-                // iç içe çağrıda (kopya ödünçteyken) başka dünya: geçici kopya
-                Err(_) => {
-                    let ps: Vec<Oyuncu> = src.iter().map(|q| (**q).clone()).collect();
-                    return f(&ps);
-                }
-            }
-        }
-        let c = c.borrow();
-        f(&c.1)
-    })
-}
 /// Maçın dokunuş ayarı (JS ALAN_DOKUNUS): bugün kapalı (maç taşımadı)
 pub fn mac_dokunus() -> Option<d1::Dokunus> {
     None
@@ -320,10 +294,6 @@ pub fn kafa_mac<R>(m: &Mac, f: impl FnOnce(&mut Kafa) -> R) -> R {
     f(&mut b)
 }
 
-/// Dünyayı kafanın biçimine çevir.
-pub fn op_dunya(ps: &[Oyuncu]) -> Vec<crate::kafa::kafa1_js::Op> {
-    ps.iter().map(|p| Arc::new(p.clone())).collect()
-}
 
 /// JS `m._prT`: kafa kararda yazar (D._mac === m). Rust'ta kafa kendinde tutar; karardan hemen sonra
 /// maça (yerleşim okur) ve kafa1'in dış dünyasına (girEsik okur) aktarılır.

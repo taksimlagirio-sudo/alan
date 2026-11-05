@@ -39,51 +39,8 @@ use super::varlik::{KayipF, Mc, Varlik};
 
 // ---- AlanDecide ----
 use crate::kafa::kafa1_js::{nk, Op};
-/// Yerleşimin dünyasını kafanın dünyasına çevir (varlık: konum/hız kendinde, beden oyuncudan).
-fn ow_kur(w: &[Varlik], oy: &[Oyuncu]) -> Vec<Op> {
-    w.iter()
-        .map(|v| {
-            let mut o = v.govde(oy).clone();
-            o.x = v.x;
-            o.y = v.y;
-            o.vx = v.vx;
-            o.vy = v.vy;
-            std::sync::Arc::new(o)
-        })
-        .collect()
-}
-thread_local! {
-    /// ow_paylas kapsamındaki dünya: (w adresi, w uzunluğu, oy adresi, çevrilmiş dünya — ilk istekte kurulur)
-    static OW: std::cell::RefCell<Option<(usize, usize, usize, Option<std::rc::Rc<Vec<Op>>>)>> = const { std::cell::RefCell::new(None) };
-}
-/// `f` boyunca (w, oy) dünyasının kafa çevirisini paylaştırır: aynı dünyayı soran her çağrı bir kez kurulmuş
-/// çeviriyi alır. Kapsam boyunca w ve oy paylaşımlı ödünçte (değişemez), bu yüzden sonuç her seferinde
-/// kurulanla birebir aynıdır. Dünyayı değiştirebilecek çağrılar (ör. &mut Mc alanlar) kapsam dışında kalmalı.
-pub fn ow_paylas<R>(w: &[Varlik], oy: &[Oyuncu], f: impl FnOnce() -> R) -> R {
-    let eski = OW.with(|o| o.replace(Some((w.as_ptr() as usize, w.len(), oy.as_ptr() as usize, None))));
-    let r = f();
-    OW.with(|o| *o.borrow_mut() = eski);
-    r
-}
-fn ow(w: &[Varlik], oy: &[Oyuncu]) -> std::rc::Rc<Vec<Op>> {
-    let a = (w.as_ptr() as usize, w.len(), oy.as_ptr() as usize);
-    let hazir = OW.with(|o| match &*o.borrow() {
-        Some((wp, wl, op, Some(v))) if (*wp, *wl, *op) == a => Some(v.clone()),
-        _ => None,
-    });
-    if let Some(v) = hazir {
-        return v;
-    }
-    let v = std::rc::Rc::new(ow_kur(w, oy));
-    OW.with(|o| {
-        if let Some((wp, wl, op, slot)) = &mut *o.borrow_mut() {
-            if (*wp, *wl, *op) == a && w.len() > 0 {
-                *slot = Some(v.clone());
-            }
-        }
-    });
-    v
-}
+use crate::dunya::ow;
+pub use crate::dunya::ow_paylas;
 fn ops(ps: &[Oyuncu]) -> Vec<Op> {
     crate::mac::kafa_dis::op_dunya(ps)
 }
