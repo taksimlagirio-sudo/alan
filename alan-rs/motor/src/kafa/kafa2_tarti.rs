@@ -78,9 +78,17 @@ pub fn tekSutDeger(k: &mut Kafa, cx: &mut Cx, A: Nokta, B: Nokta, tv: f64, ta: f
     let src = cx.src.clone();
     let kr = k.dis.kural();
     let mut fB = 1.0;
-    for p in src.iter() {
+    let atama = if atama_acik() { Some(savunmaAtama(k, &src, cx.team)) } else { None };
+    for (pi, p) in src.iter().enumerate() {
         if p.team == cx.team || p.noTouch || bekci(p) {
             continue;
+        }
+        if let Some(at) = &atama {
+            if let Some(hid) = at[pi] {
+                if hid != rq.id {
+                    continue;
+                }
+            }
         }
         let G = dis::AS_gecTab(k, p);
         let v = jmax(0.05, dis::AS_vSp(k, p));
@@ -96,7 +104,7 @@ pub fn tekSutDeger(k: &mut Kafa, cx: &mut Cx, A: Nokta, B: Nokta, tv: f64, ta: f
     let mut yl: f64 = 0.0;
     for a in [0.0, 0.6, -0.6] {
         let G = nk(gx, GCY + a * crate::saha::MOUTH);
-        yl = jmax(yl, yolOlabilirB(k, &src, cx.team, B, G, T0, tv, None, false, false));
+        yl = jmax(yl, yolOlabilirB(k, &src, cx.team, B, G, T0, tv, None, Some(rq.id), false, false));
     }
     let tab = sutTab_k(k, &wT, cx.team, B.x, B.y, cx.ch, Some(rq));
     if crate::iz_acik() && std::env::var("ALAN_ENIYI_IZ").ok().as_deref() == Some(&*rq.govde.name) {
@@ -127,6 +135,43 @@ pub fn olabTau(k: &Kafa, p: &Oyuncu, v: f64, rc: f64, t: f64) -> f64 {
     hypot(1.5 + e / jmax(0.05, v) * 0.5, rc * crate::core_sabit::IN.tepki_z / 2.449 / 1.814)
 }
 
+/// Deney (ALAN_ATAMA_IZ; ölçümde ATAMA_ZORLA): olabilirlikte bir savunmacı iki yerde olamaz: savunmacılar şimdiden
+/// (topu ve oyuncuları görerek) hareket eder, ama her biri bir hücumcuyu karşılar (en tehlikeli hücumcuya en erken
+/// yetişen); bir yolu yalnız boşta kalanlar, Bekçi, gönderenin ve alıcının karşılayıcısı kesebilir.
+pub static ATAMA_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn atama_acik() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    ATAMA_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_ATAMA_IZ").is_ok())
+}
+/// Savunmacı (src sırası) → karşıladığı hücumcunun kimliği (None: boşta). Hücumcular tehlikesine göre sırayla en erken
+/// yetişen boştaki savunmacıyı alır (imkân haritasının açgözlü eşlemesi gibi).
+pub fn savunmaAtama(k: &mut Kafa, src: &[Op], team: f64) -> Vec<Option<f64>> {
+    let kr = k.dis.kural();
+    let mut atk: Vec<(f64, usize)> = src.iter().enumerate().filter(|(_, p)| p.team == team && !bekci(p) && !p.noTouch).map(|(i, p)| (crate::kafa::kafa1_tehlike::threat_d(&k.D, team, p.x, p.y), i)).collect();
+    atk.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
+    let mut out: Vec<Option<f64>> = vec![None; src.len()];
+    let mut bos: Vec<usize> = (0..src.len()).filter(|&i| src[i].team != team && !bekci(&src[i]) && !src[i].noTouch).collect();
+    for (_, ai) in atk {
+        let a = &src[ai];
+        let mut en: Option<(usize, f64)> = None;
+        for (bi, &di) in bos.iter().enumerate() {
+            let p = &src[di];
+            let G = dis::AS_gecTab(k, p);
+            let v = jmax(0.05, dis::AS_vSp(k, p));
+            let d = jmax(0.0, hypot(p.x - a.x, p.y - a.y) - 2.0);
+            let t = jmax(0.0, dis::ALAN_TEPKI(k, p, "kovala")) + dis::AS_gecOf(k, &G, a.x, a.y, d) + crate::kural::enerji::ALAN_KOSU_T(p, d, v, &kr);
+            if en.map_or(true, |e| t < e.1) {
+                en = Some((bi, t));
+            }
+        }
+        if let Some((bi, _)) = en {
+            let di = bos.remove(bi);
+            out[di] = Some(a.id);
+        }
+    }
+    out
+}
+
 /// Deney (ALAN_YOL_OLABILIR_IZ; ölçümde YOL_OLABILIR_ZORLA)
 pub static YOL_OLABILIR_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn yol_olabilir() -> bool {
@@ -138,16 +183,18 @@ pub fn yol_olabilir() -> bool {
 /// dahil) pas vurulunca (t0) tepki verir, kararın dünyasındaki yerinden yolun her noktasına en erken ne zaman yetişebilir
 /// (tepki + dönüş gecikmesi + koşu, menzil kadar yakına) ve top o noktaya ne zaman varır; alıcı o noktaya daha önce
 /// gelebiliyorsa top onundur. Yetişme olasılığı zamanla büyüyen belirsizlikle; rakip başına yolun en kötü noktası.
-pub fn yolOlabilir(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t0: f64, alici: Option<&Oyuncu>, iz: bool) -> f64 {
-    yolOlabilirB(k, src, team, A, B, t0, t0, alici, true, iz)
+pub fn yolOlabilir(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t0: f64, alici: Option<&Oyuncu>, gonderen: Option<f64>, iz: bool) -> f64 {
+    yolOlabilirB(k, src, team, A, B, t0, t0, alici, gonderen, true, iz)
 }
 /// yolOlabilir'in genişi: top A'dan `t0`'da çıkar, rakipler `tt`'de tepki vermeye başlar; `bek`: Bekçi de sayılır mı
 /// (şut yolunda Bekçi şut tablosunda zaten var: sayılmaz).
-pub fn yolOlabilirB(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t0: f64, tt: f64, alici: Option<&Oyuncu>, bek_dahil: bool, iz: bool) -> f64 {
+pub fn yolOlabilirB(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t0: f64, tt: f64, alici: Option<&Oyuncu>, gonderen: Option<f64>, bek_dahil: bool, iz: bool) -> f64 {
     let L = hypot(B.x - A.x, B.y - A.y);
     if L < 0.5 {
         return 1.0;
     }
+    let atama = if atama_acik() { Some(savunmaAtama(k, src, team)) } else { None };
+    let alici_id = alici.map(|q| q.id);
     let kr = k.dis.kural();
     // alıcı yolun bir noktasına topla buluşmaya gelebilir: savunmacı oradan ancak alıcıdan önce varırsa keser
     let al = alici.map(|q| {
@@ -162,6 +209,39 @@ pub fn yolOlabilirB(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t0:
         if p.team == team || p.noTouch || (!bek_dahil && bekci(p)) {
             continue;
         }
+        if let Some(at) = &atama {
+            let pi = src.iter().position(|o| std::ptr::eq(&**o, &**p)).unwrap_or(0);
+            if let Some(hid) = at[pi] {
+                if Some(hid) != alici_id && Some(hid) != gonderen {
+                    continue; // başka bir hücumcuyu karşılıyor
+                }
+            }
+        }
+        // vuruş anındaki görev yeri (ALAN_ATAMA_IZ): karşılayıcı adamının kale tarafında, Bekçi topun o anki yerine
+        // (A) göre idealinde, boştaki yerinde; tepki vuruştan (tt) başlar
+        let pb: Op = match &atama {
+            Some(at) => {
+                let pi = src.iter().position(|o| std::ptr::eq(&**o, &**p)).unwrap_or(0);
+                let gx = if p.team == 0.0 { 0.0 } else { GW };
+                if bekci(p) {
+                    let g = dis::AS_bekci(k, p, A, None);
+                    kxy(p, g.x, g.y)
+                } else if let Some(hid) = at[pi] {
+                    match src.iter().find(|o| o.team == team && o.id == hid) {
+                        Some(h) => {
+                            let (hx, hy) = if Some(hid) == gonderen { (A.x, A.y) } else { (h.x, h.y) };
+                            let L = jmax(1e-6, hypot(gx - hx, GCY - hy));
+                            kxy(p, hx + (gx - hx) / L * 1.5, hy + (GCY - hy) / L * 1.5)
+                        }
+                        None => p.clone(),
+                    }
+                } else {
+                    p.clone()
+                }
+            }
+            None => p.clone(),
+        };
+        let p = &pb;
         let G = dis::AS_gecTab(k, p);
         let v = jmax(0.05, dis::AS_vSp(k, p));
         let bek = bekci(p);
@@ -584,7 +664,7 @@ pub fn enIyiPas(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f6
             // ALAN_YOL_OLABILIR_IZ: yolun açıklığı donmuş öngörü dünyasından değil, kararın dünyasından (cx.src):
             // her savunmacı (ve Bekçi) karar anındaki yerinden, tepkisi ve dönüş gecikmesiyle top geçmeden yola
             // yetişebilir mi
-            (yolOlabilir(k, &cx.src.clone(), cx.team, A, P.B, T + lag, Some(&**kq), iz), 1.0)
+            (yolOlabilir(k, &cx.src.clone(), cx.team, A, P.B, T + lag, Some(&**kq), Some(haric), iz), 1.0)
         } else {
             (dis::laneOk(k, w, cx.team, A, P.B, Some(k.D.arriveFirm), Some(lag)), bekYol(k, w, cx.team, A, P.B, Some(lag)))
         };
