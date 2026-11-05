@@ -21,6 +21,20 @@ use std::sync::Arc;
 pub const PNC_DILIM: f64 = 12.0;
 pub const PNC_UFUK: f64 = 120.0;
 pub const PNC_GORUS: f64 = 48.0;
+/// Deney (ALAN_TEK_SUT_IZ, ölçümde TEK_SUT_ZORLA): pasın değerinde alıcının tek dokunuş şutu.
+pub static TEK_SUT_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn tek_sut() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    TEK_SUT_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_TEK_SUT_IZ").is_ok())
+}
+/// Deney (ALAN_GORUS_IZ, ölçümde GORUS_ZORLA): görüş ufku (PNC_GORUS) her alıcının topu alacağı andan sayılır;
+/// eskisi kararın anından sayar, uzun pasın alıcısının sonraki hamlesi hiç görülmez (belirsizlik zaten
+/// exp(-T/IMK_INAN_T) indirimiyle tartılıyor).
+pub static GORUS_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn gorus_goreli() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    GORUS_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_GORUS_IZ").is_ok())
+}
 
 pub type KayipRef = Rc<RefCell<KayipF>>;
 /// JS `lossAt(x, y)` / `kayip(x, y)`
@@ -188,6 +202,8 @@ pub fn surD(k: &mut Kafa, w: &[Op], team: f64, kq: &Oyuncu, at: Nokta, ch: f64, 
     }
     let mut best = -1e9;
     let T0v = veyo(T0, 0.0);
+    // ALAN_SURD_IZ=<ad>: o oyuncunun sürme değeri hesabı (parça parça), stderr'e
+    let iz_ad: Option<String> = if crate::iz_acik() { std::env::var("ALAN_SURD_IZ").ok() } else { None };
     for (u, gol) in dirs {
         let mut Lm = SUR_BOS;
         Lm = if gol { jmin(Lm, dg - 1.5) } else { jmin(Lm, if t0(team) { GW - 2.0 - at.x } else { at.x - 2.0 }) };
@@ -211,6 +227,9 @@ pub fn surD(k: &mut Kafa, w: &[Op], team: f64, kq: &Oyuncu, at: Nokta, ch: f64, 
             let p = crate::kafa::kafa1_ikili::kp_kal(jmax(0.0, jmin(1.0, dis::keepP(k, &r, &ww, Some(u), Ts0))));
             let pr = k.keepP_son.get();
             let adv = if pr < seg { jmax(0.0, pr) } else { seg };
+            if iz_ad.as_deref() == Some(&*kq.govde.name) {
+                eprintln!("SURD   parça ({:.1},{:.1}) seg {:.1} Ts {:.0} p {:.3} ilerleme {:.1} Pc {:.3}", pos.x, pos.y, seg, Ts0, p, adv, Pc * p);
+            }
             kayv += Pc * (1.0 - p) * kay(k, kayip, pos.x + u.x * adv / 2.0, pos.y + u.y * adv / 2.0);
             Pc *= p;
             if adv < 1.0 {
@@ -236,6 +255,9 @@ pub fn surD(k: &mut Kafa, w: &[Op], team: f64, kq: &Oyuncu, at: Nokta, ch: f64, 
             None => 0.0,
         };
         let v = Pc * jmax(jmax(sE, 0.0), sonra) - kayv;
+        if iz_ad.as_deref() == Some(&*kq.govde.name) {
+            eprintln!("SURD {} {} ({:.1},{:.1})->({:.1},{:.1}) gol {} T0 {:.0} T {:.0} Pc {:.3} şut {:.3} sonra {:.3} kayıp {:.3} v {:.3}", k.tick(), kq.govde.name, at.x, at.y, pos.x, pos.y, gol, T0v, T, Pc, sE, sonra, kayv, v);
+        }
         if v > best {
             best = v;
         }
@@ -314,7 +336,8 @@ pub fn enIyiPas(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f6
             continue;
         }
         let tf = dis::ucusT(k, L0, k.D.arriveFirm, None);
-        if T + tf > PNC_GORUS {
+        let goreli = gorus_goreli();
+        if if goreli { tf } else { T + tf } > PNC_GORUS {
             continue;
         }
         let P0 = pencere(k, cx, kq, T + tf, None);
@@ -343,7 +366,7 @@ pub fn enIyiPas(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f6
                     s += 1.0;
                 }
                 if R.is_some() {
-                    if T + tR > PNC_GORUS {
+                    if if goreli { tR } else { T + tR } > PNC_GORUS {
                         continue;
                     }
                     P = pencere(k, cx, kq, T + tR, R);
@@ -401,7 +424,12 @@ pub fn durumD(k: &mut Kafa, cx: &mut Cx, w: &[Op], q: &Oyuncu, at: Nokta, T0: f6
     r.vx = 0.0;
     r.vy = 0.0;
     let T0v = veya(T0, 0.0);
-    let sut = sutS(k, &wb, team, at.x, at.y, ch, Some(q), Some(T0v)) * sutVakit(k, &wb, team, at.x, at.y, Some(q));
+    let sS = sutS(k, &wb, team, at.x, at.y, ch, Some(q), Some(T0v));
+    let sV = sutVakit(k, &wb, team, at.x, at.y, Some(q));
+    let sut = sS * sV;
+    if crate::iz_acik() && std::env::var("ALAN_SURD_IZ").ok().as_deref() == Some(&*q.govde.name) {
+        eprintln!("DURUM {} {} ({:.1},{:.1}) T0 {:.0} şutS {:.3} vakit {:.3}", k.tick(), q.govde.name, at.x, at.y, T0v, sS, sV);
+    }
     let z0 = zeminH(k, &wb, team, at.x, at.y, ch, Some(&r), Some(cx), Some(T0));
     let sur = gam(k) * surD(k, &wb, team, &r, at, ch, &kayip, Some(cx), Some(T0));
     let ip = enIyiPas(k, cx, w, at, T0, q.id, 1.0);
@@ -554,7 +582,45 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                     c.vy = 0.0;
                     let kA = jmax(0.0, jmin(1.0, dis::keepP(k, &c, &wE, None, k.D.recvKeepT)));
                     let lv = kay(k, &cx.kayip.clone(), at.x, at.y);
-                    (kA * r.v - (1.0 - kA) * lv, r, kA)
+                    let mut v = kA * r.v - (1.0 - kA) * lv;
+                    // ALAN_TEK_SUT_IZ: alıcı tek dokunuşla vurabilir: topu tutması ve şuta hazırlanması gerekmez,
+                    // kaleci de topun geldiği andaki (benzetilen dünyadaki) yerindedir; şutun ayrıca yerleşmiş
+                    // kaleciye göre tartılması (durumD) tek dokunuşun kazancını görmez.
+                    if tek_sut() && !bekci(rq) {
+                        // topun alıcıya varışı: ucusSure'nin topu yerleştirme payı (4 tik) tek dokunuşta yok
+                        let T0 = jmax(1.0, veya(tf, 0.0) - 4.0);
+                        let wT = pDunya(k, cx, at, T0, "pass", Some(&**rq));
+                        let mut wT: Vec<Op> = wT.to_vec();
+                        // kaleci: o anki yerinden, topun her tikteki yerine göre ideal yerine doğru kayar (maçta
+                        // kaleci topu izler; topun gideceği yerin idealine dosdoğru gitmez)
+                        if let Some(bi) = wT.iter().position(|z| z.team != cx.team && bekci(z) && !z.noTouch) {
+                            if let Some(b0) = cx.src.iter().find(|z| z.team == wT[bi].team && z.id == wT[bi].id) {
+                                let hb = nk(cx.h.x, cx.h.y);
+                                let vb = (0.17 + 0.006 * ALAN_HZ(b0)) * dis::ALAN_SPRE(k, b0) * crate::temas::bek_kay(b0);
+                                let mut bp = nk(b0.x, b0.y);
+                                let mut t = 1.0;
+                                while t <= T0 {
+                                    let f = t / T0;
+                                    let top = nk(hb.x + (at.x - hb.x) * f, hb.y + (at.y - hb.y) * f);
+                                    let g = dis::AS_bekci(k, &kxy(b0, bp.x, bp.y), top, None);
+                                    let (dx, dy) = (g.x - bp.x, g.y - bp.y);
+                                    let L = hypot(dx, dy);
+                                    if L > 1e-6 {
+                                        let m = jmin(L, vb);
+                                        bp = nk(bp.x + dx / L * m, bp.y + dy / L * m);
+                                    }
+                                    t += 1.0;
+                                }
+                                wT[bi] = kxy(b0, bp.x, bp.y);
+                            }
+                        }
+                        let ts = sutS(k, &wT, cx.team, at.x, at.y, cx.ch, Some(rq), Some(T0)) * exp(-jmax(0.0, T0) / k.k2.IMK_INAN_T);
+                        if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
+                            eprintln!("TEKSUT {} → {} ({:.1},{:.1}) T {:.0} tek {:.3} tutup {:.3}", k.tick(), rq.govde.name, at.x, at.y, T0, ts, v);
+                        }
+                        v = jmax(v, ts);
+                    }
+                    (v, r, kA)
                 }
             });
             let tS = 0.0;
@@ -562,7 +628,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
             let Lv = L(k, eO.x, eO.y);
             o.v = Some(Pd * tA.0 + Ps * tS - Pl * Lv);
             if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
-                eprintln!("PASV {} {} ->({:.1},{:.1}) Pd {:.3} alici {:.3} durum {:.3} Ps {:.3} Pl {:.3} kayip {:.3} v {:.3}", k.tick(), h.govde.name, at.x, at.y, Pd, tA.2, tA.1.v, Ps, Pl, Lv, Pd * tA.0 + Ps * tS - Pl * Lv);
+                eprintln!("PASV {} {} [{}{}→{} hız {:?}] ->({:.1},{:.1}) Pd {:.3} alici {:.3} durum {:.3} Ps {:.3} Pl {:.3} kayip {:.3} v {:.3} | şut {:.3} zemin {:.3} pas {:.3} sür {:.3} {:?} T {:.0}", k.tick(), h.govde.name, o.kind, if o.tek.map_or(false, crate::mat::dogru) { "·tek" } else { "" }, rq.govde.name, o.launch.as_ref().map(|l| ((l.vx * 100.0).round() / 100.0, (l.vy * 100.0).round() / 100.0)), at.x, at.y, Pd, tA.2, tA.1.v, Ps, Pl, Lv, Pd * tA.0 + Ps * tS - Pl * Lv, tA.1.sut, tA.1.zem, tA.1.pas, tA.1.sur, tA.1.pasK, tf);
             }
             o.prensip = Some(if adv >= 6.0 { "İlerlet" } else if nd < 4.0 { "Güvene al" } else { "Çevir" }.into());
             o.dok = Some(Dok::yeni(&[("tutar", Pd), ("alici", tA.2), ("durum", tA.1.v), ("sekme", Ps * tS), ("kayip", -Pl * Lv), ("sure", tf)]));
@@ -590,6 +656,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
             o.v = Some(P * tE.v - (1.0 - P) * Lv);
             if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
                 eprintln!("SURV {} {} ({:.1},{:.1})->({:.1},{:.1}) spr {} gec {:.0} Ts {:.0} P {:.3} durum {:.3} kayip {:.3} v {:.3}", k.tick(), h.govde.name, h.x, h.y, E.x, E.y, o.spr.map_or(false, crate::mat::dogru), o.sendGec.unwrap_or(0.0), Ts, P, tE.v, Lv, P * tE.v - (1.0 - P) * Lv);
+                eprintln!("     şut {:.3} zemin {:.3} pas {:.3} sür {:.3} {:?}", tE.sut, tE.zem, tE.pas, tE.sur, tE.pasK);
             }
             o.prensip = Some(if kind == "çalım" { "Çalım" } else if adv > 3.0 { "Alana sür" } else { "Sür (yana/geri)" }.into());
             o.dok = Some(Dok::yeni(&[("tutar", P), ("durum", tE.v), ("kayip", -(1.0 - P) * Lv), ("sure", Ts)]));

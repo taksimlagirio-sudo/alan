@@ -517,6 +517,10 @@ impl Sv {
                 }
                 c.ps[p].tx = g.0;
                 c.ps[p].ty = g.1;
+                if J.bul && crate::iz_acik() && std::env::var("ALAN_BUL_IZ").is_ok() {
+                    let pp = &c.ps[p];
+                    eprintln!("BULJ {} {} yer ({:.1},{:.1}) J.g ({:.1},{:.1}) hedef ({:.1},{:.1}) job {}", tick, pp.govde.name, pp.x, pp.y, J.g.0, J.g.1, g.0, g.1, J.job);
+                }
                 if J.derin && !J.bul && J.job.starts_with("arkada · ") {
                     let dB = self.base[p].map(|b| self.gD(b.x, b.y)).unwrap_or(1e9);
                     let dJ = self.gD(J.g.0, J.g.1);
