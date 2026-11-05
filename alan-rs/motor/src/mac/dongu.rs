@@ -1037,7 +1037,15 @@ fn hamleler(m: &mut Mac, h: Pid, kk: &MacKural) -> bool {
         };
         m.st.duel[qt as usize] += 1.0;
         m.ps[qi].son = Some(JPSon { k: hm.k.clone(), t: m.tick, ok: false, x: kx, y: ky });
-        if yet && m.r.sonraki() < P {
+        // zar yalnız erişince çekilir (özgün kısa devreyle aynı sıra)
+        let zr = if yet { m.r.sonraki() } else { 1.0 };
+        // ölçüm (ALAN_DUEL_IZ): gerçek kapma girişimi: tik, taşıyıcı, kaleye uzaklık, omuz mu, erişti mi, P, kazandı mı, taşıyıcının açıklığı, dengesi, hızı
+        if crate::iz_acik() && std::env::var("ALAN_DUEL_IZ").is_ok() && !m.mac._lite {
+            let hp = &m.ps[h];
+            let gx = if hp.team == 0.0 { W } else { 0.0 };
+            eprintln!("DUEL [{},{:?},{:.2},{},{},{:.4},{},{:.4},{:.4},{:.4},{:.4}]", m.tick, &*hp.name, hypot(gx - hp.x, H / 2.0 - hp.y), omuz, yet, P, yet && zr < P, acik, hp.den.unwrap_or(1.0), hypot(or0(hp.vx), or0(hp.vy)), oo(hp._don));
+        }
+        if yet && zr < P {
             m.st.duelW[qt as usize] += 1.0;
             m.ps[qi].son.as_mut().unwrap().ok = true;
             if omuz {

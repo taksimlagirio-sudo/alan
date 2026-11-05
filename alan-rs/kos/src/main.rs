@@ -81,7 +81,12 @@ fn main() {
                         let t0 = c.tick;
                         let mut sonuc = "tuttu";
                         let mut j = 0.0;
+                        // ALAN_TUTMA_KILIT: taşıyıcı sürme boyunca yeniden karar vermez (kafanın keepP tanımına en yakın ölçü)
+                        let kilit = std::env::var("ALAN_TUTMA_KILIT").is_ok();
                         while j < T && !c.over {
+                            if kilit && c.holder == Some(h) {
+                                c.decT = T - j + 1.0;
+                            }
                             alan_motor::mac::step(&mut c);
                             j += 1.0;
                             match c.holder {
