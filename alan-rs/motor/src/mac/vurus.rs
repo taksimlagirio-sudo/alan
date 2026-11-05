@@ -45,7 +45,7 @@ pub fn makeBall(m: &mut Mac, o: TopIstek) -> MacTop {
     b.defl = o.defl;
     m.mac.topSay += 1;
     let t = TopTemas { kimlik: m.mac.topSay, from: o.from, recv: o.recv, ..Default::default() };
-    MacTop { tt: TopT { b, t }, ek: TopEk { vur: o.vur, ..Default::default() } }
+    MacTop { tt: TopT { b, t }, ek: TopEk { ..Default::default() } }
 }
 
 fn etkiler(m: &Mac) -> Vec<Etki> {

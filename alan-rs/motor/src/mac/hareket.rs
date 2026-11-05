@@ -482,7 +482,7 @@ pub fn savurBasla(m: &mut Mac, h: Pid, mut o: Secenek, w0: f64, sYon: f64, uIn: 
             let tick = m.tick;
             let hp = &mut m.ps[h];
             hp.ca = Some(ca0);
-            hp.hal_mut().savur = Some(JPSavur { t0: tick, o: Box::new(o), s: pl2.s, a: pl2.a, wMax: pl2.wMax, wR: pl2.wR, rem: pl2.A, w: pl2.w0, g: pl2.P, u: pl2.uSh, dur: 0.0 });
+            hp.hal_mut().savur = Some(JPSavur { t0: tick, o: Box::new(o), s: pl2.s, a: pl2.a, wMax: pl2.wMax, wR: pl2.wR, rem: pl2.A, w: pl2.w0, g: pl2.P, u: pl2.uSh, });
             hp.hal_mut().holdD = false;
             m.decT = 99.0;
             return;
@@ -497,7 +497,7 @@ pub fn savurBasla(m: &mut Mac, h: Pid, mut o: Secenek, w0: f64, sYon: f64, uIn: 
     let hp = &mut m.ps[h];
     hp.ca = Some(ca0);
     let wR = pl.wR * jmin(1.0, k / if dogru(pl.k) { pl.k } else { 1.0 });
-    hp.hal_mut().savur = Some(JPSavur { t0: tick, o: Box::new(o), s: pl.s, a: pl.a, wMax: pl.wMax, wR, rem: pl.A, w: pl.w0, g: pl.P, u: pl.uSh, dur: 0.0 });
+    hp.hal_mut().savur = Some(JPSavur { t0: tick, o: Box::new(o), s: pl.s, a: pl.a, wMax: pl.wMax, wR, rem: pl.A, w: pl.w0, g: pl.P, u: pl.uSh, });
     hp.hal_mut().holdD = false;
     m.decT = 99.0;
 }

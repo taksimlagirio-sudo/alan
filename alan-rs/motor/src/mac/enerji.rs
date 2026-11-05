@@ -353,7 +353,7 @@ pub fn frTop(m: &Mac) -> Option<crate::model::JMShFr> {
     }
     let fr = sh.fr.as_ref()?;
     Some(crate::model::JMShFr {
-        arr: fr.arr.iter().enumerate().map(|(i, a)| (i, crate::model::JMShFrArrV { t: a.t, x: a.x, y: a.y, est: a.est, fren: a.fren, direnc: a.direnc, ..Default::default() })).collect(),
+        arr: fr.arr.iter().enumerate().map(|(i, a)| (i, crate::model::JMShFrArrV { t: a.t, x: a.x, y: a.y, est: a.est, direnc: a.direnc, ..Default::default() })).collect(),
         first: fr.first.unwrap_or(0),
         pts: fr.pts.iter().map(|q| crate::model::JMShFrPtsE { x: q.x, y: q.y, e: q.e, ..Default::default() }).collect(),
     })

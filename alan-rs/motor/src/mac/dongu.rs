@@ -334,7 +334,7 @@ pub fn _step(m: &mut Mac) {
                 crate::mac::kafa_dis::prT_esitle(m);
                         if r.best.is_some() {
                             karar_gercek(&mut r);
-                            m.pre = Some(JMPre { b: bk, q, r, x: hc.x, y: hc.y, nd, t: 0.0 });
+                            m.pre = Some(JMPre { b: bk, q, r, x: hc.x, y: hc.y, t: 0.0 });
                         }
                     });
                 }
@@ -1344,7 +1344,6 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
                 q: o.q.map_or(String::new(), |q| m.ps[q].govde.name.to_string()),
                 P: o.det.as_ref().map_or(f64::NAN, |d| if o.kind == "gönder" { d.Pk.unwrap_or(f64::NAN) } else { d.P.unwrap_or(f64::NAN) - d.Ps.unwrap_or(f64::NAN) }),
                 v: o.v.unwrap_or(f64::NAN),
-                sjK: o.sjK,
                 kh: o.kh.clone(),
                 devam: o.devam,
                 ..Default::default()

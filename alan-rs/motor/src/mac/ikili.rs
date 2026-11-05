@@ -114,12 +114,12 @@ pub fn govdeAyir(ps: &mut [Oyuncu], h: HArg, bag: &mut IkBag) {
                 let ux = if d > 1e-4 { dx / d } else { 1.0 };
                 let uy = if d > 1e-4 { dy / d } else { 0.0 };
                 if ikOn() && ps[i].team != ps[j].team {
-                    let jt = ikiliTemas(ps, i, j, ux, uy, bd - d, it == 0, h, bag);
+                    ikiliTemas(ps, i, j, ux, uy, bd - d, it == 0, h, bag);
                     if it == 0 {
                         if let Some(l) = bag.ikl.as_mut() {
                             let iA = 1.0 / kutle(&ps[i], esit(h, i));
                             let iB = 1.0 / kutle(&ps[j], esit(h, j));
-                            l.push(JM_temaslarLE { i: i as f64, j: j as f64, J: if dogru(jt) { jt } else { 0.0 }, o: bd - d, s: 2.0 * iA / (iA + iB) - 1.0 });
+                            l.push(JM_temaslarLE { i: i as f64, j: j as f64, o: bd - d, s: 2.0 * iA / (iA + iB) - 1.0 });
                         }
                     }
                     for k in [i, j] {

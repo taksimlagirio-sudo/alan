@@ -1410,7 +1410,7 @@ fn calim(k: &mut Kafa, c: &mut Ctx0, ad: &mut dis::Secenekler, src: &Arc<Dunya>,
                     i += 3;
                 }
                 if let Some((v, pw, pt, kon)) = best {
-                    let mut oC = Secenek { kind: "çalım".into(), calim: true, to: Some(pt), wp: Some(Wp), wp1: Some(W1), q: Some(hi), launch: Some(lf), v: Some(v), det: Some(JODet { P: Some(pw), ..Default::default() }), ..Default::default() };
+                    let mut oC = Secenek { kind: "çalım".into(), to: Some(pt), wp: Some(Wp), wp1: Some(W1), q: Some(hi), launch: Some(lf), v: Some(v), det: Some(JODet { P: Some(pw), ..Default::default() }), ..Default::default() };
                     if c.DOK {
                         oC.dok = Some(Dok::yeni(&[("konum", kon), ("risk", v - kon)]));
                     }
