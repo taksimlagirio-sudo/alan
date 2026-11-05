@@ -1213,6 +1213,10 @@ impl Kafa {
         let mut endS = if sk > 1e-9 { nk(sx / sk, sy / sk) } else { end };
         let mD = m - Ps;
         let endD = if mD > 1e-9 { nk((mx - sx) / Wt / mD, (my - sy) / Wt / mD) } else { endM };
+        // endD işaretli ağırlıkların (m − s) ortası: s bir yerde m'yi aşınca ağırlık eksi olur, orta sahadan
+        // binlerce (bir kez 160 milyon) br uzağa düşer; arkasındaki kaleci derinliği hesabı belleği tüketiyordu.
+        // Sahadan uzak bir ortanın anlamı yok: mD ≈ 0'daki gibi endM. Eski davranış ALAN_ENDD_ESKI ile.
+        let endD = if endd_sinirla() && !(endD.x.abs() < 3.0 * GW && endD.y.abs() < 3.0 * GH) { endM } else { endD };
         if pre < 1.0 {
             m = pre * m + 0.35 * (1.0 - pre);
             o = pre * o + 0.65 * (1.0 - pre);
@@ -1232,4 +1236,13 @@ impl Kafa {
 #[inline(always)]
 fn dogru0(v: f64) -> bool {
     v != 0.0 && v == v
+}
+
+/// `endD` sahadan uzaksa `endM` (varsayılan). ALAN_ENDD_ESKI: sınırsız (eski davranış; yalnız yerelde).
+fn endd_sinirla() -> bool {
+    if cfg!(target_family = "wasm") {
+        return true;
+    }
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *A.get_or_init(|| std::env::var("ALAN_ENDD_ESKI").is_err())
 }

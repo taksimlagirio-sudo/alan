@@ -157,6 +157,9 @@ kodda çalıştığı için aşamalar küçük parçalarla ve sık `main`'e birl
 | 4b ✅ (yeniden kapsamlandı) | Ölçüm (5 Kasım, 60 tik): oyuncu kopyası artık sürenin yalnız %2,4'ü (önceden ~%6; davranış oturumunun hız işleri en sıcak yerleri temizledi), yarısı `ow` çevirisi (4c'nin konusu). 35 yere tek tek görünüm koymak ~%1 getirir: yapılmadı. Yapılan: B sınıfı "değişti mi" soruları nesne kimliğinden bağımsız: `bekKay_d` (Bekçi yer değiştirdiyse `Some`), `respond_d` (değişen oyuncuların açık listesi) | 4c dünyanın gösterimini değiştirince kimliğe dayanan bu sorular kırılmasın | B sınıfının 10 yeri (çalışmayan 7'si dahil) `ayni_nesne` kullanmıyor |
 | 4c-1 ✅ | Dünya katmanı: `Varlik`/`Beden`/`hayal`, `Op`/`Dunya` ve dört çeviri (`op_dunya`, `ow_kur`/`ow`/`ow_paylas`, `dunya_kopya`) `dunya/`'da; kimlik kuralı orada belgeli; `sina/katman.sh`'a kural | Çeviriler tek yerde, kimlik kuralı açık | `dunya` üst katmanlara bağlı değil |
 | 4c-2 (kapsam kararı) | Kafanın `Op` yerine görünüm (`Varlik`) üzerinde çalışması; çevirilerin kalkması | Ölçüm: çeviriler artık sürenin ~%1,5'i; kafanın ~14 bin satırı `&[Op]` üzerinden alanlara doğrudan erişiyor: çok günlük iş. Ayrıca çeviriler arasında nesne paylaşmak `dolanma`'nın davranışını değiştirir (3.2 C): önce o davranış kararı | Kullanıcı kararı |
+| 4c-2a ✅ | Varlık kimliği `Oyuncu::kim` (gerçek oyuncu ve kopyaları: `id`; hayalet: `HAYALET + id`; sahte/boş: yok). `ayni_nesne`'nin 19 yeri `ayni_varlik`'e (aynı nesne ya da aynı kim) | Çevirilerin nesne paylaşabilmesi ve görünümler için kimlik dünyanın gösteriminden bağımsız olmalı | Ölçüm: işaretçi ile kim yalnız `dolanma`'da ayrışıyor; orada anlam birebir korundu (takım + id; sahte oyuncular kim taşımadan gerçek id taşır). `ayni_nesne` yalnız `dolanma`'nın eski yolunda. Main ile 20 maç × 2700 tik aynı |
+| 4c-2b | Kalan işaretçi/adres anahtarları (D sınıfı: `OW`, `DUNYA_KOPYA`, `kafa2_dunya` tutma önbelleği) dünya sürümüyle; `op_dunya` tik başına bir kez | Kimlik artık değer: çeviriler paylaşılabilir | `as_ptr() as usize` ve `Arc::ptr_eq` anahtarı yok |
+| 4c-2c | Kafanın `&[Op]` yerine görünüm üzerinde çalışması (dosya dosya; çeviri katmanı inceldikçe) | En büyük iş; 4c-2b'den sonra çeviriler zaten ucuz | `ow`, `op_dunya`, `dunya_kopya` yok |
 | 3e-4 | Kafanın önbellekleri ömürlerine göre (`Onbellek`: tik ömürlü `ge`, `rnb`, `keepP_son` …; saf kalıcı `ucus`, `suty` …), tik başında açıkça temizlenir | 4c'den sonra: anahtarlar artık işaretçi değil | `Kafa`'da dağınık `RefCell` önbellek yok |
 
 Kalan `thread_local`'lar (13): saf önbellekler (`GEC`, `GTB`, `GECY_K`, `BEK_DER`, `BEK_YOL`: değer yalnız anahtardan,
@@ -246,6 +249,16 @@ standart hatanın dışına çıkmıyor; bayrak maçı ilk ~40 tikte ayırıyor 
 ölçülebilir biçimde değiştirmiyor. Hız farkı da maçların ayrı yollardan gitmesinden; dolanma döngüsünün
 maliyeti değişmiyor. Sonuç: düzeltme güvenli ve doğru (kopya kendi gövdesini engel saymamalı); varsayılan
 yapıldı (kullanıcı kararı, 5 Kasım); 4c-2'nin önü açık.
+
+### 3.5 Bulgu: `kenardan` pasının `endD`'si ve 12 GB (5 Kasım)
+
+4c-2a ölçülürken bir maç (m05, 2700 tik) belleği tüketti. Kaynak `kafa1_ucus`'ta pasın varış ortası `endD`:
+işaretli ağırlıkların (m − s) ortası, s bir yerde m'yi aşınca sahadan binlerce, bir kez 160 milyon br uzağa
+düşüyordu (2000 tikte 1–6 kez, çoğu `kenardan`). Bu nokta şut yeri olarak `sutTab` → `bekci` → `bek_derinlik0`'a
+gidiyor; kalecinin şut yolu taraması yol boyunu topun hızıyla adımladığı için 160 milyon br'lik yol ~30 milyon
+nokta × yol sayısı ayırıyordu. Main'de m05'in bellek tepesi **12 GB** (16 GB'lık makinede sağ kalıyor; tarayıcıda
+wasm'ın 4 GB sınırını aşar). Düzeltme (ayrı commit, varsayılan; eski davranış `ALAN_ENDD_ESKI`): `endD` sahadan
+uzaksa `endM` (mD ≈ 0'daki gibi). m05'in tepesi 186 MB. 20 maçta yalnız m05 değişti; başvuru maçları aynı.
 
 ## 4. Dış kütüphaneler
 
