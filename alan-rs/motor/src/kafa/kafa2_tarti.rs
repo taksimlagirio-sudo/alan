@@ -21,6 +21,12 @@ use std::sync::Arc;
 pub const PNC_DILIM: f64 = 12.0;
 pub const PNC_UFUK: f64 = 120.0;
 pub const PNC_GORUS: f64 = 48.0;
+/// Deney (ALAN_ZEMIN_YARIS_IZ, ölçümde ZEMIN_YARIS_ZORLA)
+pub static ZEMIN_YARIS_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn zemin_yaris() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    ZEMIN_YARIS_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_ZEMIN_YARIS_IZ").is_ok())
+}
 /// Deney (ALAN_TEK_SUT_IZ, ölçümde TEK_SUT_ZORLA): pasın değerinde alıcının tek dokunuş şutu.
 pub static TEK_SUT_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn tek_sut() -> bool {
@@ -160,7 +166,7 @@ pub fn zeminH(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Op
     let cx = match cx {
         None => {
             let a = imkan(k, w, team, nk(x, y), kq, ch);
-            let b = zeminS(k, w, team, x, y, ch, kq);
+            let b = if zemin_yaris() { 0.0 } else { zeminS(k, w, team, x, y, ch, kq) };
             return jmax(a, b);
         }
         Some(c) => c,
@@ -184,7 +190,9 @@ pub fn zeminH(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Op
     k.k2.IMK_OFS = veyo(T, 0.0);
     let v = imkan(k, w, team, nk(x, y), kq, ch);
     k.k2.IMK_OFS = o0;
-    let zs = zeminS(k, w, team, x, y, ch, kq);
+    // ALAN_ZEMIN_YARIS_IZ: kaleye yakın bölgede zemin yalnız imkân (varış yarışı); sahiplik haritasının
+    // donuk dünyalı, en iyisini yayan değeri katılmaz
+    let zs = if zemin_yaris() { 0.0 } else { zeminS(k, w, team, x, y, ch, kq) };
     if crate::iz_acik() && kq.map_or(false, |q| std::env::var("ALAN_SURD_IZ").ok().as_deref() == Some(&*q.govde.name)) {
         eprintln!("ZEMIN ({:.1},{:.1}) T {:.0} imkan {:.3} zeminS {:.3}", x, y, veyo(T, 0.0), v, zs);
     }
@@ -339,14 +347,18 @@ pub fn enIyiPas(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f6
             None => kq.clone(),
         };
         let L0 = hypot(k0.x - A.x, k0.y - A.y);
+        let iz = crate::iz_acik() && std::env::var("ALAN_ENIYI_IZ").ok().as_deref() == Some(&*kq.govde.name);
         if L0 < 5.0 || L0 > dis::pasMax(k) {
+            if iz { eprintln!("ENIYI A ({:.1},{:.1}) T {:.0} → {} ({:.1},{:.1}) L {:.1} pasMax {:.1}: uzaklık dışı", A.x, A.y, T, kq.govde.name, k0.x, k0.y, L0, dis::pasMax(k)); }
             continue;
         }
         let tf = dis::ucusT(k, L0, k.D.arriveFirm, None);
         let goreli = gorus_goreli();
         if if goreli { tf } else { T + tf } > PNC_GORUS {
+            if iz { eprintln!("ENIYI A ({:.1},{:.1}) T {:.0} → {} L {:.1} tf {:.0}: ufuk dışı", A.x, A.y, T, kq.govde.name, L0, tf); }
             continue;
         }
+        if iz { eprintln!("ENIYI A ({:.1},{:.1}) T {:.0} → {} ({:.1},{:.1}) L {:.1} tf {:.0}: aday", A.x, A.y, T, kq.govde.name, k0.x, k0.y, L0, tf); }
         let P0 = pencere(k, cx, kq, T + tf, None);
         let mut P = P0.clone();
         let mut tR = tf;
@@ -381,17 +393,34 @@ pub fn enIyiPas(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f6
             }
         }
         let L = hypot(P.B.x - A.x, P.B.y - A.y);
+        let iz = crate::iz_acik() && std::env::var("ALAN_ENIYI_IZ").ok().as_deref() == Some(&*kq.govde.name);
         if L < 5.0 || L > dis::pasMax(k) {
+            if iz { eprintln!("ENIYI   x A ({:.1},{:.1}) T {:.0} → {} alış ({:.1},{:.1}) L {:.1}: alış uzaklık dışı", A.x, A.y, T, kq.govde.name, P.B.x, P.B.y, L); }
             continue;
         }
         let lag = k.D.sutHazir;
-        let Lo = dis::laneOk(k, w, cx.team, A, P.B, Some(k.D.arriveFirm), Some(lag)) * bekYol(k, w, cx.team, A, P.B, Some(lag));
+        let lo1 = dis::laneOk(k, w, cx.team, A, P.B, Some(k.D.arriveFirm), Some(lag));
+        let lo2 = bekYol(k, w, cx.team, A, P.B, Some(lag));
+        let Lo = lo1 * lo2;
         if Lo < 0.05 {
+            if iz {
+                let L = veya(hypot(P.B.x - A.x, P.B.y - A.y), 1.0);
+                let (ux, uy) = ((P.B.x - A.x) / L, (P.B.y - A.y) / L);
+                let yak: Vec<String> = w.iter().filter(|o| o.team != cx.team && !o.noTouch).filter_map(|o| {
+                    let al = (o.x - A.x) * ux + (o.y - A.y) * uy;
+                    let pe = (-(o.x - A.x) * uy + (o.y - A.y) * ux).abs();
+                    if (bekci(o) || pe < 6.0) && al > -2.0 && al < L + 2.0 { Some(format!("{}({:.1},{:.1}) yan {:.1}", o.govde.name, o.x, o.y, pe)) } else { None }
+                }).collect();
+                eprintln!("ENIYI   x A ({:.1},{:.1}) T {:.0} → {} alış ({:.1},{:.1}) yol {:.3} bekçi {:.3}: yol kapalı | {:?}", A.x, A.y, T, kq.govde.name, P.B.x, P.B.y, lo1, lo2, yak);
+            }
             continue;
         }
         let nv = nodeV(k, cx, kq, T + tR, der, R);
         let kayip = cx.kayip.clone();
         let e = Lo * nv - (1.0 - Lo) * kay(k, &kayip, (A.x + P.B.x) / 2.0, (A.y + P.B.y) / 2.0);
+        if crate::iz_acik() && std::env::var("ALAN_ENIYI_IZ").ok().as_deref() == Some(&*kq.govde.name) {
+            eprintln!("ENIYI   = A ({:.1},{:.1}) T {:.0} → {} alış ({:.1},{:.1}) tR {:.0} yol {:.3} düğüm {:.3} e {:.3} | pencere tut {:.3} şut {:.3} zemin {:.3} sür {:.3}", A.x, A.y, T, kq.govde.name, P.B.x, P.B.y, tR, Lo, nv, e, P.kA, P.sut, P.zem, P.sur);
+        }
         if e > best {
             best = e;
             bk = Some(P);
