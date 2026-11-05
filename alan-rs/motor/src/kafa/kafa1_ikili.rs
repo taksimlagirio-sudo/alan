@@ -11,6 +11,7 @@ use super::kafa1_param::{DU, MIND};
 use super::kafa1_tehlike::{ox_of, GH8, GW8};
 use crate::core_sabit::{Q, TQ};
 use crate::donus::{flick_miss, flick_w, omega, shielded};
+use crate::oyuncu::Tepki;
 macro_rules! kp_yaz {
     ($dis:expr, $e:expr) => {
         if $dis {
@@ -109,6 +110,8 @@ struct Kd {
     qS: f64,
     qCd: f64,
     kalS: bool,
+    /// taşıyıcının ilk sendelediği an (ALAN_SEND_YARIS_IZ): serbest top yarışının olasılığı (rakip kazanır)
+    sendY: Option<f64>,
 }
 /// kesisK'nın sabitleri.
 struct Kc<'a> {
@@ -475,6 +478,7 @@ impl Kafa {
             qS: z0(q.sendT.unwrap_or(0.0)) - t0,
             qCd: z0(q.sendCd.unwrap_or(0.0)) - t0,
             kalS,
+            sendY: None,
         };
         let mut son = 0.0;
         let mut bolundu = false;
@@ -658,6 +662,44 @@ impl Kafa {
                     s.dMin = jmin(s.dMin, s.hv.den.unwrap());
                     s.qMin = jmin(s.qMin, s.qv.den.unwrap());
                 }
+                // maçın kuralı (mac/ikili.rs): taşıyıcı sendeleyince Çekirdek çekirdeğin yerinden taşıyıcının hızının
+                // yarısıyla serbest kalır, taşıyıcı sendS boyunca hareketsiz; kim önce yetişirse top onun.
+                if send_yaris() && s.sendY.is_none() && s.hv.den.unwrap() < IK.sendele {
+                    let ca = s.hv.ca.unwrap();
+                    let (bx, by) = (s.hv.x + cos(ca) * B + 6.0 * (0.5 * s.hv.vx + 0.14 * cos(ca)), s.hv.y + sin(ca) * B + 6.0 * (0.5 * s.hv.vy + 0.14 * sin(ca)));
+                    let var = |p: &Oyuncu, x: f64, y: f64, bek: f64| bek + jmax(0.0, self.TEPKI(p, Tepki::BosTop)) + jmax(0.0, hypot(bx - x, by - y) - Q.reach) / jmax(0.05, self.spd(p));
+                    // bizim taraf: sendeleyen taşıyıcı (sendS boyunca hareketsiz) ve takım arkadaşları (dünyadaki yerlerinden, t tik ilerlemiş)
+                    let mut tBiz = self.dis.sendS(h).unwrap_or(IK.sendT) + hypot(bx - s.hv.x, by - s.hv.y) / jmax(0.05, self.spd(h));
+                    // rakip taraf: benzetimdeki savunmacı (sendeliyorsa kalan süresi) ve öteki rakipler
+                    // maçta Çekirdek'in `from`'u en yakın rakip: ilk 8 tik ona dokunamaz (temas.rs)
+                    let dq = hypot(s.qv.x - s.hv.x, s.qv.y - s.hv.y);
+                    let mut yakin_o: Option<usize> = None;
+                    let mut yd = dq;
+                    for (oi, o) in c.src.iter().enumerate() {
+                        if o.team != h.team && !(o.team == c.q.team && o.id == c.q.id) {
+                            let d = hypot(o.x - s.hv.x, o.y - s.hv.y);
+                            if d < yd {
+                                yd = d;
+                                yakin_o = Some(oi);
+                            }
+                        }
+                    }
+                    let mut tRak = var(c.q, s.qv.x, s.qv.y, jmax(if yakin_o.is_none() { 8.0 } else { 0.0 }, s.qS - t));
+                    for (oi, o) in c.src.iter().enumerate() {
+                        if o.noTouch || o.bekci() || (o.team == h.team && o.id == h.id) || (o.team == c.q.team && o.id == c.q.id) {
+                            continue;
+                        }
+                        let to = jmax(if yakin_o == Some(oi) { 8.0 } else { 0.0 }, var(o, o.x, o.y, 0.0) - t);
+                        if o.team == h.team {
+                            tBiz = jmin(tBiz, to);
+                        } else {
+                            tRak = jmin(tRak, to);
+                        }
+                    }
+                    s.sendY = Some(1.0 / (1.0 + exp((tRak - tBiz) / 5.0)));
+                    // maçta sürme burada biter (top serbest): benzetim de biter
+                    break;
+                }
                 if !sd && s.qv.den.unwrap() < IK.sendele && t > s.qCd {
                     s.qS = t + self.dis.sendS(c.q).unwrap_or(IK.sendT);
                     s.qCd = t + IK.sendCd;
@@ -780,7 +822,9 @@ impl Kafa {
                         let yet = if hm.omuz { g < MD + 0.45 } else { hypot(s.qv.x - s.hv.x - cos(ca) * B, s.qv.y - s.hv.y - sin(ca) * B) < Q.reach + 1.0 };
                         if yet {
                             let d = self.duelP_k(&s.qv, &s.hv, c.src, Some(hm.omuz));
-                            let dus = hm.pc * d.P * self.kWof(Some(hm.omuz), h, c.q, c.src, true);
+                            // omuz: maçta yalnız dengeyi düşürür, top sendelemeden sonraki serbest top yarışıyla gider
+                            // (ALAN_SEND_YARIS_IZ açıkken doğrudan kayıp yok; yarış sendeleme anında)
+                            let dus = if hm.omuz && send_yaris() { 0.0 } else { hm.pc * d.P * self.kWof(Some(hm.omuz), h, c.q, c.src, true) };
                             s.keep *= 1.0 - dus;
                             KES_SAY.with(|k| { let v = k.get(); k.set((v.0, v.1, v.2 + 1)); });
                             if KP_DER.with(|c| c.get()) == 1 {
@@ -850,12 +894,14 @@ impl Kafa {
         let pS = cl1((IK.sendele + 0.1 - s.dMin) / 0.2);
         let pQ = cl1((IK.sendele + 0.1 - s.qMin) / 0.2);
         *son = (s.hv.x - h.x) * dir.x + (s.hv.y - h.y) * dir.y;
-        let son_k = match kes_send() {
-            Some(ks) => s.keep * (1.0 - pS * ks),
-            None => s.keep * (1.0 - pS * (1.0 - 0.5 * pQ)),
+        let son_k = match (s.sendY, kes_send()) {
+            // sendelemeyle biten benzetim: o anki tutma × yarışı bizim kazanmamız (sondaki en düşük denge çarpanı yok)
+            (Some(py), _) => s.keep * (1.0 - py),
+            (None, Some(ks)) => s.keep * (1.0 - pS * ks),
+            (None, None) => s.keep * (1.0 - pS * (1.0 - 0.5 * pQ)),
         };
-        if son_k < 0.1 && KP_DER.with(|c| c.get()) == 1 && crate::iz_acik() && std::env::var("ALAN_KES_IZ").is_ok() {
-            eprintln!("KES [{:.4},{:.4},{:.4},{:.4},{:.4},{:.2},{}]", son_k, s.keep, pS, s.dMin, pQ, hypot(h.x - c.q.x, h.y - c.q.y), KES_SAY.with(|k| { let v = k.get(); k.set((0, 0, 0)); format!("[{},{},{}]", v.0, v.1, v.2) }));
+        if son_k < 0.6 && KP_DER.with(|c| c.get()) == 1 && crate::iz_acik() && std::env::var("ALAN_KES_IZ").is_ok() {
+            eprintln!("KES [{:.4},{:.4},{:.4},{:.4},{:.4},{:.2},{},{}]", son_k, s.keep, pS, s.dMin, pQ, hypot(h.x - c.q.x, h.y - c.q.y), s.sendY.map_or(-1.0, |v| v), KES_SAY.with(|k| { let v = k.get(); k.set((0, 0, 0)); format!("[{},{},{}]", v.0, v.1, v.2) }));
         }
         son_k
     }
@@ -1515,4 +1561,11 @@ fn dolanma_kimlik() -> bool {
     }
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     *A.get_or_init(|| std::env::var("ALAN_DOLANMA_KIMLIK").is_ok())
+}
+
+/// Deney (varsayılan kapalı, ALAN_SEND_YARIS_IZ): benzetimde taşıyıcı sendeleyince maçın kuralıyla serbest top yarışı
+/// (Çekirdek çekirdeğin yerinden çıkar, taşıyıcı sendS boyunca hareketsiz); özgünü: sondaki en düşük dengeye göre kayıp.
+fn send_yaris() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SEND_YARIS_IZ").is_ok())
 }

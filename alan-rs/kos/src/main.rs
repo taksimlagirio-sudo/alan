@@ -81,6 +81,7 @@ fn main() {
                         let t0 = c.tick;
                         let mut sonuc = "tuttu";
                         let mut j = 0.0;
+                        let mut den_min: f64 = c.ps[h].den.unwrap_or(1.0);
                         // ALAN_TUTMA_KILIT: taşıyıcı sürme boyunca yeniden karar vermez (kafanın keepP tanımına en yakın ölçü)
                         let kilit = std::env::var("ALAN_TUTMA_KILIT").is_ok();
                         while j < T && !c.over {
@@ -89,6 +90,7 @@ fn main() {
                             }
                             alan_motor::mac::step(&mut c);
                             j += 1.0;
+                            den_min = den_min.min(c.ps[h].den.unwrap_or(1.0));
                             match c.holder {
                                 Some(q) if c.ps[q].team != hp.team => { sonuc = "kayip"; break; }
                                 Some(q) if q != h => { sonuc = "birakti"; break; }
@@ -96,7 +98,7 @@ fn main() {
                                 _ => {}
                             }
                         }
-                        writeln!(out, "[{},{},{:.2},{},{},{},{},{},[{},{}],{:?},{}]", m.tick, serde_json::to_string(&*hp.name).unwrap(), dk, sira, z.n, if z.P.is_finite() { format!("{}", z.P) } else { "null".into() }, z.v, z.secilen, z.to.0, z.to.1, sonuc, j).unwrap();
+                        writeln!(out, "[{},{},{:.2},{},{},{},{},{},[{},{}],{:?},{},{:.3}]", m.tick, serde_json::to_string(&*hp.name).unwrap(), dk, sira, z.n, if z.P.is_finite() { format!("{}", z.P) } else { "null".into() }, z.v, z.secilen, z.to.0, z.to.1, sonuc, j, den_min).unwrap();
                     }
                 }
             }
