@@ -208,7 +208,7 @@ pub fn surD(k: &mut Kafa, w: &[Op], team: f64, kq: &Oyuncu, at: Nokta, ch: f64, 
             r.vx = if yol > 0.0 { u.x * vK } else { 0.0 };
             r.vy = if yol > 0.0 { u.y * vK } else { 0.0 };
             let Ts0 = jmax(4.0, dis::surSure(k, &r, seg, Some(u), None));
-            let p = jmax(0.0, jmin(1.0, dis::keepP(k, &r, &ww, Some(u), Ts0)));
+            let p = crate::kafa::kafa1_ikili::kp_kal(jmax(0.0, jmin(1.0, dis::keepP(k, &r, &ww, Some(u), Ts0))));
             let pr = k.keepP_son.get();
             let adv = if pr < seg { jmax(0.0, pr) } else { seg };
             kayv += Pc * (1.0 - p) * kay(k, kayip, pos.x + u.x * adv / 2.0, pos.y + u.y * adv / 2.0);
@@ -561,6 +561,9 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
             let eO = d.endO.or(d.end).unwrap_or(at);
             let Lv = L(k, eO.x, eO.y);
             o.v = Some(Pd * tA.0 + Ps * tS - Pl * Lv);
+            if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
+                eprintln!("PASV {} {} ->({:.1},{:.1}) Pd {:.3} alici {:.3} durum {:.3} Ps {:.3} Pl {:.3} kayip {:.3} v {:.3}", k.tick(), h.name, at.x, at.y, Pd, tA.2, tA.1.v, Ps, Pl, Lv, Pd * tA.0 + Ps * tS - Pl * Lv);
+            }
             o.prensip = Some(if adv >= 6.0 { "İlerlet" } else if nd < 4.0 { "Güvene al" } else { "Çevir" }.into());
             o.dok = Some(Dok::yeni(&[("tutar", Pd), ("alici", tA.2), ("durum", tA.1.v), ("sekme", Ps * tS), ("kayip", -Pl * Lv), ("sure", tf)]));
             o._pw = Some(wE);
@@ -575,14 +578,19 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
             });
             let P = match d.P {
                 Some(p) => p,
-                None => dis::keepP(k, &h, src, o.dir, Ts),
+                None => crate::kafa::kafa1_ikili::kp_kal(dis::keepP(k, &h, src, o.dir, Ts)),
             };
             let adv = (E.x - h.x) * dir;
-            let pw = pDunya(k, &mut cx, E, Ts, "drive", Some(&h));
+            // ALAN_SEND_GEC_IZ: sendelemeyle kesilen sürmede varış, topu geri alana dek sonrasının dünyası
+            let TsD = Ts + o.sendGec.unwrap_or(0.0);
+            let pw = pDunya(k, &mut cx, E, TsD, "drive", Some(&h));
             let wE = dis::enW(k, &pw, o);
-            let tE = en_gec(k, &mut cx, &h.clone(), &wE, |k, cx, hq| durumD(k, cx, &wE, hq, E, Ts));
+            let tE = en_gec(k, &mut cx, &h.clone(), &wE, |k, cx, hq| durumD(k, cx, &wE, hq, E, TsD));
             let Lv = L(k, (h.x + E.x) / 2.0, (h.y + E.y) / 2.0);
             o.v = Some(P * tE.v - (1.0 - P) * Lv);
+            if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
+                eprintln!("SURV {} {} ({:.1},{:.1})->({:.1},{:.1}) spr {} gec {:.0} Ts {:.0} P {:.3} durum {:.3} kayip {:.3} v {:.3}", k.tick(), h.name, h.x, h.y, E.x, E.y, o.spr.map_or(false, crate::mat::dogru), o.sendGec.unwrap_or(0.0), Ts, P, tE.v, Lv, P * tE.v - (1.0 - P) * Lv);
+            }
             o.prensip = Some(if kind == "çalım" { "Çalım" } else if adv > 3.0 { "Alana sür" } else { "Sür (yana/geri)" }.into());
             o.dok = Some(Dok::yeni(&[("tutar", P), ("durum", tE.v), ("kayip", -(1.0 - P) * Lv), ("sure", Ts)]));
             o._pw = Some(wE);

@@ -43,6 +43,9 @@ pub struct Kafa {
     pub keepP_son: Cell<f64>,
     /// JS `kesisK.son`
     pub kesisK_son: Cell<f64>,
+    /// sendelemeyle biten benzetimde topu geri almaya dek beklenen süre (tik); keepP_gec: ilk kesişmenin ki
+    pub kesisK_gec: Cell<f64>,
+    pub keepP_gec: Cell<f64>,
     /// JS `UCUS`: varış hızı (bit) → uzunluk (1..80) → yol
     pub(crate) ucus: RefCell<crate::HizliMap<u64, Vec<Option<Arc<UcusYol>>>>>,
     /// JS `SUTY`: hız (1/20) → yol birikimi
@@ -73,6 +76,8 @@ impl Kafa {
             SAH_F: None,
             keepP_son: Cell::new(f64::INFINITY),
             kesisK_son: Cell::new(0.0),
+            kesisK_gec: Cell::new(0.0),
+            keepP_gec: Cell::new(0.0),
             ucus: RefCell::new(Default::default()),
             suty: RefCell::new(Default::default()),
             ge: RefCell::new((None, Default::default(), Default::default())),

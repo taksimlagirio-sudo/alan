@@ -836,6 +836,8 @@ pub struct Secenek {
     pub duvar: bool,
     pub toE: Option<Nokta>,
     pub TsE: Option<f64>,
+    /// sendelemeyle kesilen sürmede topu geri almaya dek beklenen süre (ALAN_SEND_GEC_IZ)
+    pub sendGec: Option<f64>,
     /// değer (JS null → None)
     pub v: Option<f64>,
     pub dok: Option<Dok>,
