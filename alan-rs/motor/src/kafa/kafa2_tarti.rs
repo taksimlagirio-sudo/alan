@@ -177,6 +177,13 @@ pub fn gorevYeri(k: &mut Kafa, src: &[Op], team: f64, p: &Op, hid: Option<f64>, 
     if Lp > 1e-6 { kxy(p, p.x + dx / Lp * m, p.y + dy / Lp * m) } else { p.clone() }
 }
 
+/// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
+/// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
+pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn iki_hamle() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    IKI_HAMLE_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_IKI_HAMLE_IZ").is_ok())
+}
 /// Deney (ALAN_SECIM_BEKLENEN_IZ; ölçümde SECIM_BEKLENEN_ZORLA): gelecekteki kararın değeri, maçtaki gürültülü
 /// seçimle (her adaya genişliği `w` üçgen gürültü, en yükseği seçilir) seçilenin beklenen gerçek değeri.
 pub static SECIM_BEKLENEN_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
@@ -816,7 +823,9 @@ pub fn durumD(k: &mut Kafa, cx: &mut Cx, w: &[Op], q: &Oyuncu, at: Nokta, T0: f6
     }
     let z0 = zeminH(k, &wb, team, at.x, at.y, ch, Some(&r), Some(cx), Some(T0));
     let sur = gam(k) * surD(k, &wb, team, &r, at, ch, &kayip, Some(cx), Some(T0));
-    let ip = enIyiPas(k, cx, w, at, T0, q.id, 1.0);
+    // ALAN_IKI_HAMLE_IZ: plan en çok iki top hareketi: q'nun pası alıcının durumuyla biter (alıcının pası yok)
+    let der = if iki_hamle() { 0.0 } else { 1.0 };
+    let ip = enIyiPas(k, cx, w, at, T0, q.id, der);
     let pas = gam(k) * ip.0;
     let mut v0 = jmax(jmax(jmax(sut, gam(k) * z0), pas), sur);
     if secim_beklenen() {
