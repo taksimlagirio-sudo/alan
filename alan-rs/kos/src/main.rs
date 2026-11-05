@@ -139,8 +139,11 @@ fn main() {
                     let erken: u32 = std::env::var("ALAN_DENE_ERKEN").ok().and_then(|x| x.parse().ok()).unwrap_or(15);
                     let (mut erk, mut send) = (0u32, 0u32);
                     // ALAN_DENE_YAZ=<önek>: her seçeneğin ilk denemesinin kareleri <önek>-<i>.json (kare kipinin biçimi)
-                    if let Ok(onek) = std::env::var("ALAN_DENE_YAZ") {
-                        let mut m2 = Motor::yeni(c.clone());
+                    let yaz_n: u32 = if std::env::var("ALAN_DENE_YAZ_HEPSI").is_ok() { n } else { 1 };
+                    if let Ok(onek) = std::env::var("ALAN_DENE_YAZ") { for d in 0..yaz_n {
+                        let mut c0 = c.clone();
+                        if d > 0 { c0.r.s ^= (d as i32).wrapping_mul(-1640531527); }
+                        let mut m2 = Motor::yeni(c0);
                         let mut isler2 = alan_motor::oyun::IsSozluk::default();
                         let (mut kr, mut ol) = (Vec::<String>::new(), Vec::<String>::new());
                         let mut osay = m2.m.ev_n;
@@ -163,8 +166,9 @@ fn main() {
                         let rl: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.govde.role).unwrap()).collect();
                         let is: Vec<String> = isler2.yazilar.iter().map(|j| serde_json::to_string(j).unwrap()).collect();
                         let j = format!("{{\"motor\":\"Rust motoru\",\"ad\":[{}],\"takim\":[{}],\"rol\":[{}],\"isler\":[{}],\"olay\":[{}],\"k\":[{}]}}", adl.join(","), tkl.join(","), rl.join(","), is.join(","), ol.join(","), kr.join(","));
-                        std::fs::write(format!("{}-{}.json", onek, i), j).expect("yazılamadı");
-                    }
+                        let ad = if yaz_n > 1 { format!("{}-{}-{}.json", onek, i, d) } else { format!("{}-{}.json", onek, i) };
+                        std::fs::write(ad, j).expect("yazılamadı");
+                    } }
                     for d in 0..n {
                         let mut k = c.clone();
                         if d > 0 { k.r.s ^= (d as i32).wrapping_mul(-1640531527); }

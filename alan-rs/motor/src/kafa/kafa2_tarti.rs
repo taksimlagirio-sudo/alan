@@ -83,13 +83,18 @@ pub fn tekSutDeger(k: &mut Kafa, cx: &mut Cx, A: Nokta, B: Nokta, tv: f64, ta: f
         if p.team == cx.team || p.noTouch || bekci(p) {
             continue;
         }
-        if let Some(at) = &atama {
+        let pb: Op;
+        let p = if let Some(at) = &atama {
             if let Some(hid) = at[pi] {
                 if hid != rq.id {
                     continue;
                 }
             }
-        }
+            pb = gorevYeri(k, &src, cx.team, p, at[pi], A, None, tv);
+            &pb
+        } else {
+            p
+        };
         let G = dis::AS_gecTab(k, p);
         let v = jmax(0.05, dis::AS_vSp(k, p));
         let rc = jmax(0.0, dis::ALAN_TEPKI(k, p, "kovala"));
@@ -107,7 +112,7 @@ pub fn tekSutDeger(k: &mut Kafa, cx: &mut Cx, A: Nokta, B: Nokta, tv: f64, ta: f
         yl = jmax(yl, yolOlabilirB(k, &src, cx.team, B, G, T0, tv, None, Some(rq.id), false, false));
     }
     let tab = sutTab_k(k, &wT, cx.team, B.x, B.y, cx.ch, Some(rq));
-    if crate::iz_acik() && std::env::var("ALAN_ENIYI_IZ").ok().as_deref() == Some(&*rq.govde.name) {
+    if crate::iz_acik() && eniyi_iz(&rq.govde.name) {
         eprintln!("ENIYI     tek parçalar {} ({:.1},{:.1}) tablo {:.3} yakın {:.3} yol {:.3} güven {:.3}", rq.govde.name, B.x, B.y, tab, fB, yl, guven(k, T0));
     }
     tab * fB * yl * guven(k, T0)
@@ -133,6 +138,43 @@ pub fn olabTau(k: &Kafa, p: &Oyuncu, v: f64, rc: f64, t: f64) -> f64 {
     }
     let e = k.dis.algi_e(p).unwrap_or(0.0);
     hypot(1.5 + e / jmax(0.05, v) * 0.5, rc * crate::core_sabit::IN.tepki_z / 2.449 / 1.814)
+}
+
+/// ALAN_ENIYI_IZ=<ad> ya da * : enIyiPas dökümü
+fn eniyi_iz(ad: &str) -> bool {
+    match std::env::var("ALAN_ENIYI_IZ") {
+        Ok(v) => v == "*" || v == ad,
+        Err(_) => false,
+    }
+}
+/// Savunmacının vuruş anındaki (şimdiden t0 tik sonra) görev yeri (ALAN_ATAMA_IZ): Bekçi topun yerine (A) göre
+/// idealinde; bir hücumcuyu karşılıyorsa (hid) adamının (gönderense A'da, değilse niyetine t0 boyunca koşmuş)
+/// kale tarafına tepkisinden sonra yetişebildiği kadar; boştaysa yerinde.
+pub fn gorevYeri(k: &mut Kafa, src: &[Op], team: f64, p: &Op, hid: Option<f64>, A: Nokta, gonderen: Option<f64>, t0: f64) -> Op {
+    let gx = if p.team == 0.0 { 0.0 } else { GW };
+    if bekci(p) {
+        let g = dis::AS_bekci(k, p, A, None);
+        return kxy(p, g.x, g.y);
+    }
+    let Some(hid) = hid else { return p.clone() };
+    let Some(h) = src.iter().find(|o| o.team == team && o.id == hid) else { return p.clone() };
+    let (hx, hy) = if Some(hid) == gonderen {
+        (A.x, A.y)
+    } else {
+        let vh = jmax(0.05, dis::AS_vSp(k, h));
+        let (dx, dy) = (h.tx - h.x, h.ty - h.y);
+        let Lh = hypot(dx, dy);
+        let m = jmin(Lh, vh * t0);
+        if Lh > 1e-6 { (h.x + dx / Lh * m, h.y + dy / Lh * m) } else { (h.x, h.y) }
+    };
+    let L = jmax(1e-6, hypot(gx - hx, GCY - hy));
+    let (gx2, gy2) = (hx + (gx - hx) / L * 1.5, hy + (GCY - hy) / L * 1.5);
+    let vp = jmax(0.05, dis::AS_vSp(k, p));
+    let rcp = jmax(0.0, dis::ALAN_TEPKI(k, p, "kovala"));
+    let (dx, dy) = (gx2 - p.x, gy2 - p.y);
+    let Lp = hypot(dx, dy);
+    let m = jmin(Lp, vp * jmax(0.0, t0 - rcp));
+    if Lp > 1e-6 { kxy(p, p.x + dx / Lp * m, p.y + dy / Lp * m) } else { p.clone() }
 }
 
 /// Deney (ALAN_SECIM_BEKLENEN_IZ; ölçümde SECIM_BEKLENEN_ZORLA): gelecekteki kararın değeri, maçtaki gürültülü
@@ -199,6 +241,9 @@ pub fn savunmaAtama(k: &mut Kafa, src: &[Op], team: f64) -> Vec<Option<f64>> {
         if let Some((bi, _)) = en {
             let di = bos.remove(bi);
             out[di] = Some(a.id);
+            if crate::iz_acik() && std::env::var("ALAN_ATAMA_DOK").is_ok() {
+                eprintln!("ATAMA {} {} ({:.0},{:.0}) ← {} ({:.0},{:.0})", k.tick(), a.govde.name, a.x, a.y, src[di].govde.name, src[di].x, src[di].y);
+            }
         }
     }
     out
@@ -254,38 +299,7 @@ pub fn yolOlabilirB(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t0:
         let pb: Op = match &atama {
             Some(at) => {
                 let pi = src.iter().position(|o| std::ptr::eq(&**o, &**p)).unwrap_or(0);
-                let gx = if p.team == 0.0 { 0.0 } else { GW };
-                if bekci(p) {
-                    let g = dis::AS_bekci(k, p, A, None);
-                    kxy(p, g.x, g.y)
-                } else if let Some(hid) = at[pi] {
-                    match src.iter().find(|o| o.team == team && o.id == hid) {
-                        Some(h) => {
-                            // adamın vuruştaki yeri: gönderense A; değilse niyetine (tx, ty) doğru t0 boyunca koşmuş
-                            let (hx, hy) = if Some(hid) == gonderen {
-                                (A.x, A.y)
-                            } else {
-                                let vh = jmax(0.05, dis::AS_vSp(k, h));
-                                let (dx, dy) = (h.tx - h.x, h.ty - h.y);
-                                let Lh = hypot(dx, dy);
-                                let m = jmin(Lh, vh * t0);
-                                if Lh > 1e-6 { (h.x + dx / Lh * m, h.y + dy / Lh * m) } else { (h.x, h.y) }
-                            };
-                            // karşılayıcı adamının kale tarafına koşar: tepkisinden sonra t0'a dek gidebildiği kadar
-                            let L = jmax(1e-6, hypot(gx - hx, GCY - hy));
-                            let (gx2, gy2) = (hx + (gx - hx) / L * 1.5, hy + (GCY - hy) / L * 1.5);
-                            let vp = jmax(0.05, dis::AS_vSp(k, p));
-                            let rcp = jmax(0.0, dis::ALAN_TEPKI(k, p, "kovala"));
-                            let (dx, dy) = (gx2 - p.x, gy2 - p.y);
-                            let Lp = hypot(dx, dy);
-                            let m = jmin(Lp, vp * jmax(0.0, t0 - rcp));
-                            if Lp > 1e-6 { kxy(p, p.x + dx / Lp * m, p.y + dy / Lp * m) } else { p.clone() }
-                        }
-                        None => p.clone(),
-                    }
-                } else {
-                    p.clone()
-                }
+                gorevYeri(k, src, team, p, at[pi], A, gonderen, t0)
             }
             None => p.clone(),
         };
@@ -666,7 +680,7 @@ fn enIyiPas0(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f64, 
             None => kq.clone(),
         };
         let L0 = hypot(k0.x - A.x, k0.y - A.y);
-        let iz = crate::iz_acik() && std::env::var("ALAN_ENIYI_IZ").ok().as_deref() == Some(&*kq.govde.name);
+        let iz = crate::iz_acik() && eniyi_iz(&kq.govde.name);
         if L0 < 5.0 || L0 > dis::pasMax(k) {
             if iz { eprintln!("ENIYI A ({:.1},{:.1}) T {:.0} → {} ({:.1},{:.1}) L {:.1} pasMax {:.1}: uzaklık dışı", A.x, A.y, T, kq.govde.name, k0.x, k0.y, L0, dis::pasMax(k)); }
             continue;
@@ -712,7 +726,7 @@ fn enIyiPas0(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f64, 
             }
         }
         let L = hypot(P.B.x - A.x, P.B.y - A.y);
-        let iz = crate::iz_acik() && std::env::var("ALAN_ENIYI_IZ").ok().as_deref() == Some(&*kq.govde.name);
+        let iz = crate::iz_acik() && eniyi_iz(&kq.govde.name);
         if L < 5.0 || L > dis::pasMax(k) {
             if iz { eprintln!("ENIYI   x A ({:.1},{:.1}) T {:.0} → {} alış ({:.1},{:.1}) L {:.1}: alış uzaklık dışı", A.x, A.y, T, kq.govde.name, P.B.x, P.B.y, L); }
             continue;
@@ -744,7 +758,7 @@ fn enIyiPas0(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f64, 
         if tek_sut() && !bekci(kq) {
             // alıcının tek dokunuş şutu: pas T'de A'dan vurulur, top T + tR'de P.B'de
             let ts = tekSutDeger(k, cx, A, P.B, T, T + tR, kq);
-            if crate::iz_acik() && std::env::var("ALAN_ENIYI_IZ").ok().as_deref() == Some(&*kq.govde.name) {
+            if crate::iz_acik() && eniyi_iz(&kq.govde.name) {
                 eprintln!("ENIYI     tek dokunuş {} ({:.1},{:.1}) T {:.0} tek {:.3} düğüm {:.3}", kq.govde.name, P.B.x, P.B.y, T + tR, ts, nv);
             }
             nv = jmax(nv, ts);
@@ -752,7 +766,7 @@ fn enIyiPas0(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f64, 
         let kayip = cx.kayip.clone();
         let e = Lo * nv - (1.0 - Lo) * kay(k, &kayip, (A.x + P.B.x) / 2.0, (A.y + P.B.y) / 2.0);
         adaylar.push(e);
-        if crate::iz_acik() && std::env::var("ALAN_ENIYI_IZ").ok().as_deref() == Some(&*kq.govde.name) {
+        if crate::iz_acik() && eniyi_iz(&kq.govde.name) {
             eprintln!("ENIYI   = A ({:.1},{:.1}) T {:.0} → {} alış ({:.1},{:.1}) tR {:.0} yol {:.3} düğüm {:.3} e {:.3} | pencere tut {:.3} şut {:.3} zemin {:.3} sür {:.3}", A.x, A.y, T, kq.govde.name, P.B.x, P.B.y, tR, Lo, nv, e, P.kA, P.sut, P.zem, P.sur);
         }
         if e > best {
