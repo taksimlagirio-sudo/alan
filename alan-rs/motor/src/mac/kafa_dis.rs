@@ -80,6 +80,12 @@ impl Dis for MacDis {
     fn kural(&self) -> MacKural {
         self.kural.get()
     }
+    fn niyet_koy(&self, n: Option<(f64, f64, bool, Option<f64>)>) -> Option<(f64, f64, bool, Option<f64>)> {
+        let mut k = self.kural.get();
+        let eski = std::mem::replace(&mut k.niyet, n);
+        self.kural.set(k);
+        eski
+    }
     // ---- enerji / sprint ----
     fn ALAN_EN3_KUL(&self, p: &Oyuncu, e: f64, bizde: bool, bx: f64, by: f64) -> f64 {
         en::ALAN_EN3_KUL(p, e, bizde, Some((bx, by)), &self.kural.get())
@@ -117,7 +123,7 @@ impl Dis for MacDis {
             .map(|t| d1::Tehlike { an: t.an, w: t.w, w0: t.w0, x: t.x, y: t.y, k: t.k, L: t.L })
             .collect()
     }
-    fn ilkPres(&self, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[d1::Tehlike], _dtac: &d1::TacEff, gs: &Option<JMShGs>) {
+    fn ilkPres(&self, dtik: f64, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[d1::Tehlike], _dtac: &d1::TacEff, gs: &Option<JMShGs>) {
         use sekil::varlik::{Gs, Mc};
         // JS ilkPres(vm, …): vm yalnız tik taşır; yerleşimin pres hesabı maçtan yalnız tiki okur.
         // Boş maç ve yerleşim durumu her çağrıda kurulmaz (kesişme döngüsünde çok sık çağrılır).
@@ -138,7 +144,7 @@ impl Dis for MacDis {
             let dtac = self.takim_tac(team);
             let d = crate::mac::gecici_dis::kafa_d();
             let kural = self.kural.get();
-            let mut c = Mc { m, ps, ball: None, ek, k: &kural, d, lite: true, rnd: None };
+            let mut c = Mc { m, ps, ball: None, ek, k: &kural, d, lite: true, rnd: None, dtik: Some(dtik) };
             sekil::pres::ilkPres_h(&mut c, 0, hx, if team == 1.0 { 1 } else { 0 }, Some(&th), dtac);
             // sonuç (tx, ty, job dahil) qv'ye geri döner; tamponda eski hâli kalır, bir sonraki çağrıda üzerine yazılır
             std::mem::swap(qv, &mut ps[0]);
@@ -311,8 +317,7 @@ pub fn mac_dokunus() -> Option<d1::Dokunus> {
 pub fn kafa_mac<R>(m: &Mac, f: impl FnOnce(&mut Kafa) -> R) -> R {
     let k = m.mac.kafa.k.as_ref().expect("kafa_mac: maçın kafası kurulmadı (kafa_hazirla) ya da hafif kopyadan çağrıldı");
     let mut b = k.try_borrow_mut().expect("kafa_mac: iç içe kafa çağrısı (kafa meşgulken yerleşimden kafaya dönüldü)");
-    let t = b.D._tick;
-    crate::sekil::d_tick_ile(t, || f(&mut b))
+    f(&mut b)
 }
 
 /// Dünyayı kafanın biçimine çevir.

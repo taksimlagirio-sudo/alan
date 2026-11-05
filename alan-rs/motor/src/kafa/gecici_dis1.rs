@@ -192,6 +192,12 @@ pub trait Dis {
     fn kural(&self) -> crate::kural::enerji::MacKural {
         Default::default()
     }
+    /// Tartı süresince taşıyıcının sprint niyetini anlık görüntüye koy; öncekini döndür (geri koymak için).
+    /// Anlık görüntüsü olmayan dış dünyada (sınama) yok sayılır.
+    fn niyet_koy(&self, n: Option<(f64, f64, bool, Option<f64>)>) -> Option<(f64, f64, bool, Option<f64>)> {
+        let _ = n;
+        None
+    }
     // ---- enerji / sprint (core.js, match.js) ----
     /// core.js:169 ALAN_EN3_KUL(p, e, bizde, bx, by): enerjinin kullanım değeri
     fn ALAN_EN3_KUL(&self, p: &Oyuncu, e: f64, bizde: bool, bx: f64, by: f64) -> f64 { todo!() }
@@ -211,8 +217,8 @@ pub trait Dis {
     fn aliciDirenc(&self, pts: &[Nk], p: &Oyuncu, rc: f64, iMin: f64, rP: f64) -> Option<Nk> { todo!() }
     /// shape.js tehlike(m, h)
     fn tehlike(&self, h: &Oyuncu) -> Vec<Tehlike> { todo!() }
-    /// shape.js:857 ilkPres(vm, qv, hx, team, TH, dtac, sh): qv.tx/ty'yi yazar. `tick`: vm.tick
-    fn ilkPres(&self, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[Tehlike], dtac: &TacEff, gs: &Option<JMShGs>) { todo!() }
+    /// shape.js:857 ilkPres(vm, qv, hx, team, TH, dtac, sh): qv.tx/ty'yi yazar. `tick`: vm.tick, `dtik`: kafanın karar tiki (D._tick)
+    fn ilkPres(&self, dtik: f64, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[Tehlike], dtac: &TacEff, gs: &Option<JMShGs>) { todo!() }
     /// AlanShape var mı, ilkPres var mı (presRol'ün koşulu)
     fn AS_ilkPres_var(&self) -> bool { todo!() }
     /// (birleştirmede eklendi; kafa2) shape.js bekci(p, B, m): `m` verili maç görünümüyle (fm)

@@ -474,7 +474,7 @@ impl Kafa {
     fn hedefQ(&self, c: &Kc, rol: &PresRol, qv: &mut Oyuncu, hx: &Oyuncu, t: f64) -> Nk {
         match rol {
             PresRol::Ilk { TH, dtac, gs } => {
-                crate::sekil::d_tick_ile(Some(c.t0), || self.dis.ilkPres(c.t0 + t, qv, hx, c.q.team, TH, dtac, gs));
+                self.dis.ilkPres(c.t0, c.t0 + t, qv, hx, c.q.team, TH, dtac, gs);
                 nk(qv.tx, qv.ty)
             }
             PresRol::An { an, r } => nk(hx.x + cos(*an) * r, hx.y + sin(*an) * r),

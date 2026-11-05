@@ -25,7 +25,7 @@ impl Kural for MacKural {
 
 impl MacKural {
     pub fn of(m: &Mac) -> MacKural {
-        MacKural { mh: m.mac.__mH, tick: m.tick, holder: m.holder.map(|h| kim(&m.ps[h])), flq: m.fl.as_ref().and_then(|f| f.q).map(|q| kim(&m.ps[q])) }
+        MacKural { niyet: None, mh: m.mac.__mH, tick: m.tick, holder: m.holder.map(|h| kim(&m.ps[h])), flq: m.fl.as_ref().and_then(|f| f.q).map(|q| kim(&m.ps[q])) }
     }
 }
 

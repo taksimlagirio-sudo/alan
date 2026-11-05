@@ -6,7 +6,7 @@
 //! Bugünkü bayraklar: Enerji 2/3 açık, sürekli koşu açık (ALAN_SUREKLI), sprint evresi açık (SPR_FAZ),
 //! dokunuşla sürme kapalı.
 //!
-//! Gizli durum: `SF_NIYET` (kafanın tartı sırasında yazdığı sprint niyeti) — MIMARI.md Aşama 3'te açık bağlama geçer.
+//! Kafanın tartı sırasında verdiği sprint niyeti `MacKural::niyet`'te (açık bağlam).
 use crate::mat::{dogru, jmax, jmin, pow};
 use crate::model::Oyuncu;
 use crate::oyuncu::kim;
@@ -168,6 +168,10 @@ pub struct MacKural {
     pub holder: Option<(f64, f64)>,
     /// JS _mM.fl.q (team, id)
     pub flq: Option<(f64, f64)>,
+    /// Kafanın bir seçeneği tartarken taşıyıcıya verdiği sprint niyeti (id, team, sprint mi, itK); tartı
+    /// süresince dış dünyanın anlık görüntüsünde durur (JS `h._sfNiyet`, kopyaları da görür). Eskiden iş
+    /// parçacığına özel bir değişkendi (SF_NIYET).
+    pub niyet: Option<(f64, f64, bool, Option<f64>)>,
 }
 impl MacKural {
     /// JS sprKar(m, p)
@@ -185,20 +189,14 @@ pub fn hkK(_p: &Oyuncu, k: f64) -> f64 {
     1.0 + (k - 1.0) * SPR_FAZ.hkPay
 }
 
-thread_local! {
-    /// JS `h._sfNiyet` / `h._sfNiyetK`: kafa bir seçeneği tartarken taşıyıcıya yazdığı sprint niyeti
-    /// (id, team, sprint mi, itK). JS'te oyuncunun üstünde durur, kopyaları da görür; burada kimliğiyle eşlenir.
-    pub static SF_NIYET: std::cell::RefCell<Option<(f64, f64, bool, Option<f64>)>> = const { std::cell::RefCell::new(None) };
-}
-/// Taşıyıcının tartı süresince sprint niyeti (yoksa None): (sprint mi, itK)
-pub fn sf_niyet(p: &Oyuncu) -> Option<(bool, Option<f64>)> {
-    SF_NIYET.with(|n| n.borrow().as_ref().and_then(|&(id, t, s, k)| if id == p.id && t == p.team { Some((s, k)) } else { None }))
+pub fn sf_niyet(p: &Oyuncu, k: &MacKural) -> Option<(bool, Option<f64>)> {
+    k.niyet.and_then(|(id, t, s, ik)| if id == p.id && t == p.team { Some((s, ik)) } else { None })
 }
 /// JS ALAN_SPR (match.js sarması): sprint evresine göre koşu katı.
 pub fn ALAN_SPR(p: &Oyuncu, k: &MacKural) -> f64 {
     let F = &SPR_FAZ;
     if p._sf.is_none() {
-        if let Some((spr, itK)) = sf_niyet(p) {
+        if let Some((spr, itK)) = sf_niyet(p, k) {
             return if spr { sfPk(p) } else { itK.unwrap_or_else(|| hkK(p, SPR0(p))) };
         }
     }
@@ -279,7 +277,7 @@ pub fn kosuPr(p: &Oyuncu, k: &MacKural) -> Option<KosuPr> {
     }
     let tk = k.tick;
     let T = F.patT + F.tepeT;
-    let niyet = sf_niyet(p);
+    let niyet = sf_niyet(p, k);
     if p._sf.is_none() && matches!(niyet, Some((false, _))) {
         return None;
     }

@@ -192,6 +192,9 @@ pub struct Mc<'a> {
     pub lite: bool,
     /// JS `m.r` (maçın zarı); yoksa 0,5
     pub rnd: Option<&'a mut dyn FnMut() -> f64>,
+    /// Kafanın karar tiki (JS `AlanDecide.D._tick`): gerçek maçta maçın tiki, kafanın ileri bakışında kararın
+    /// verildiği tik (benzetilen tik `m.tick`'ten farklı). Eskiden iş parçacığına özel bir değişkendi (D_TICK).
+    pub dtik: Option<f64>,
 }
 
 impl<'a> Mc<'a> {

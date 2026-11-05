@@ -136,11 +136,31 @@ kodda çalıştığı için aşamalar küçük parçalarla ve sık `main`'e birl
 | 0 | Güvenlik ağı | Parmak izi (`motor/src/parmak.rs`), `alan-kos … parmak`, `sina/ayni.sh`, başvurular (`sina/ayni/`) | ✅ Başvurular oturum başındaki motorla (b711370) aynı: 4 Kasım'ın bütün hız işleri bit bit davranış korumuş |
 | 1 | Kural katmanı | Enerji/sprint/koşu, tepki, varış tabloları, ikili ve hareket fiziği → `kural/` (saf işlevler; oyuncu + `MacKural`/`&dyn Kural` girer). Kafa bunlara `Dis` yerine `KuralErisim` ile, maçın anlık görüntüsünden (`Dis::kural`) ulaşır | ✅ `kural/{enerji,gec,kos,ikili,hareket}.rs`; `sekil`'deki yinelenen kurallar teke indi; `Dis` 66 → 27 yöntem; `sina/katman.sh` tutuyor |
 | 2 | Değerlendirme katmanı | Yerleşim → kafa iç içe çağrısını kaldırmak; yerleşimin ve değerlendirmenin karar dosyalarına bağını kesmek; katman eşlemesi | ✅ Şut gücü `kural/sut.rs`'e (yedek kafaya düşen çağrı 300 tikte yüz binlerce → 0); `kayipYer`, `riskOf`, `bekYol` `kafa2_zemin`'e; `sina/katman.sh` 4 kural tutuyor. Kalan `Dis` yerleşim yöntemleri (`bekciFm`, `slotBase`, `ilkPres` …) dünya çevirisi gerektirdiği için Aşama 4'te kalkar |
-| 3 | Açık bağlam | Kafa iş parçacığına özel değişkenden değil, maçın kutusundan (`m.mac.kafa`) alınır; kafanın durumuna bağlı olmayan değerlendirmeler saf işlev (ayarı açıkça alır) | **3a–d ✅**: maç ve yerleşim köprüleri `kafa_mac(m, …)`; `pressAt`/`freeAt`/`oppAt`/`frenT`/`dagin`/`recvCh`/`govdeV` saf; kayıp haritası maçı çağrı anında alır; Bekçi'nin şut tartısı `BekM::sut`. `KAFA`/`DIS`/`YAN`, `kafa_ile`, `kafa_var`, `kafa_bagla` silindi. Tek statik döngü (kafa → `ilkPres` → `girThr`) yapı gereği çalışmaz: kafa yerleşimi zarsız bağlamla çağırır, ikili tartısı zar ister; `kafa_mac` iç içe çağrıda açık hatayla durur (5 maç × 900 tik + tam maç + 4 işçi: hiç). **Kalan 3e**: `Kafa`'nın önbellekleri katmanlara göre (`Onbellek`), `KafaD` ayar + geçici bağlam; kalan 15 `thread_local` (önbellek ve iz) |
+| 3 | Açık bağlam | Kafa iş parçacığına özel değişkenden değil, maçın kutusundan (`m.mac.kafa`) alınır; kafanın durumuna bağlı olmayan değerlendirmeler saf işlev; gizli bağlam (sprint niyeti, kafanın tiki) açık alan | **3a–d ✅**, **3e-1 ✅** `SF_NIYET` → `MacKural::niyet`, **3e-2 ✅** `D_TICK` → `Mc::dtik`. Kalan 3e-3/3e-4: bkz. 3.1 |
 | 4 | Tek dünya | `Dunya` + `Gorunum`; kimlik `Pid`; köprü çevirileri kalkar | `ow`, `op_dunya`, `dunya_kopya`, `Varlik` yok; `Arc::ptr_eq` yok |
 | 5 | Veri | `Oyuncu` → `OyuncuDurum` + `OyuncuGovde`; `KafaD` → `Ayar` + geçici durum; `JsDeger` ve gereksiz `Option`'lar | `Oyuncu` kopyası ~300 bayt; `model.rs` üretilmiş taslak değil |
 | 6 | JS bağı | **Karar (5 Kasım): Rust tek doğru kaynak.** JS ile bit bit aynılık kısıtı kalktı; doğrulama `sina/ayni.sh` ve maç istatistikleriyle. Kalan: JS karşılaştırma sınamalarının (`tests/kafa1.rs`, `kafa2_saf.rs` taklitleri, vektör üreticileri) temizliği, Rust adlandırması, sadeleştirme | Karar verildi; temizlik sürüyor |
 | 7 | Crate'ler | Katmanlar ayrı crate; döngüyü derleyici yasaklar | `cargo build` katman kuralını zorlar |
+
+### 3.1 Aşama 3e ve 4'ün birlikte planı (5 Kasım)
+
+3e (kafanın içindeki gizli durum) ile 4 (tek dünya) iç içe: kafanın önbelleklerinin çoğu dünyanın gösterimine
+(kopya `Op`'lar, işaretçi kimliği) bağlı. Sıra, her adımın bir sonrakini küçültmesine göre:
+
+| Adım | Ne | Neden bu sırada | Bitti sayılır |
+|---|---|---|---|
+| 3e-1 ✅ | Sprint niyeti `SF_NIYET` → `MacKural::niyet` (kafa tartı süresince dış dünyasının anlık görüntüsüne koyar) | Davranışı etkileyen gizli durum; küçük | `SF_NIYET` yok; yol çalışıyor (900 tikte 93 konur, 37 816 okunur) |
+| 3e-2 ✅ | Kafanın tiki `D_TICK` → `Mc::dtik` (pres → `presKesis` → `yolBag` → `hizYanilgi` boyunca parametre) | Davranışı etkileyen gizli durum; küçük | `D_TICK`, `d_tick_ile` yok |
+| 3e-3 | `KafaD`'nin 22 `_` alanı (geçici bağlam: `_tick`, `_gPr`, `_sav*`, `_kenar` …) ayrı yapıya (`Kafa::bag`); `KafaD` yalnız değişmez ayar | Saf değerlendirmeler (`pressAt_d` …) ve yerleşimin `c.d`'si gerçekten değişmez ayarı görsün; "geçici değiştir, geri koy" kalıpları görünür olsun | `KafaD`'de `_` alanı yok |
+| 4a | Kimlik envanteri: 46 `ayni` (`Arc::ptr_eq`) yerinin anlamı (gerçek oyuncu mu, kopyası mı, aynı dünyada mı) | 4b/4c'den önce: paylaşım ve görünümler kimliği bozmasın | Her yer belgeli; `Pid` ile karşılaştırılabilenler çevrilmiş |
+| 4b | `Gorunum` (taban dünya + değişen oyuncu konumları): yalnız `x, y, vx, vy` değiştiren 35 kopya yeri | Kopya maliyetinin çoğu; kimlik 4a ile güvende | 35 yerde `Oyuncu` kopyası yok |
+| 4c | Tek dünya: yerleşimin `Varlik`'i ile kafanın `Dunya`'sı birleşir; `ow`, `op_dunya`, `dunya_kopya`, `hafif` çevirileri ve tamponları (`OW`, `DUNYA_KOPYA`, `ILK_TAMPON`) kalkar | 4a–b'nin üstüne | Çeviri yok; `Dis`'in yerleşim yöntemleri doğrudan çağrı |
+| 3e-4 | Kafanın önbellekleri ömürlerine göre (`Onbellek`: tik ömürlü `ge`, `rnb`, `keepP_son` …; saf kalıcı `ucus`, `suty` …), tik başında açıkça temizlenir | 4c'den sonra: anahtarlar artık işaretçi değil | `Kafa`'da dağınık `RefCell` önbellek yok |
+
+Kalan `thread_local`'lar (13): saf önbellekler (`GEC`, `GTB`, `GECY_K`, `BEK_DER`, `BEK_YOL`: değer yalnız anahtardan,
+sıradan bağımsız; iş parçacığı başına kabul edilir), tamponlar (`OW`, `DUNYA_KOPYA`, `ILK_TAMPON`, `SAHTE`, `SABLON`: 4c'de
+çoğu kalkar), sayaç/iz ve deney (`*_SAY`, `*_OLC`, `SON_KUME`, `ONDEN_SAY`), paralel işçi durumu (`DAG`, `ICTE`, `TABLO`).
+Davranışı etkileyen gizli durum yok.
 
 Her aşamanın sonunda: `sina/ayni.sh` aynı, `cargo test` geçen sayısı düşmemiş, `alan-kos` hızı ölçülmüş
 (hız hedef değil, ama yapı değişikliği yavaşlatmamalı), wasm kareleri sitedekiyle aynı.

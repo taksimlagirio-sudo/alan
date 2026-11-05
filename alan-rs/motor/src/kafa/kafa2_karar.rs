@@ -977,11 +977,11 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
             if nY {
                 k.k2.sfNiyet = Some((h.id, h.team, if o.spr.map(dogru).unwrap_or(false) { "sprint".into() } else { "yok".into() }, o.itK));
             }
-            let n0 = if nY { crate::mac::enerji::SF_NIYET.with(|n| n.replace(Some((h.id, h.team, o.spr.map(dogru).unwrap_or(false), o.itK)))) } else { None };
+            let n0 = if nY { k.dis.niyet_koy(Some((h.id, h.team, o.spr.map(dogru).unwrap_or(false), o.itK))) } else { None };
             tartG(k, &mut c, o, r, rnd);
             if nY {
                 k.k2.sfNiyet = None;
-                crate::mac::enerji::SF_NIYET.with(|n| *n.borrow_mut() = n0);
+                k.dis.niyet_koy(n0);
             }
         };
         let mut bekle: Option<Vec<(usize, Secenek)>> = Some(Vec::new());

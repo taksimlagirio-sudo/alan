@@ -193,7 +193,7 @@ fn kur(c: &Value) -> Kur {
 }
 impl Kur {
     fn mc(&mut self) -> Mc<'_> {
-        Mc { m: &mut self.m, ps: &mut self.ps, ball: self.ball.as_mut(), ek: &mut self.ek, k: &self.kk, d: &self.d, lite: false, rnd: None }
+        Mc { m: &mut self.m, ps: &mut self.ps, ball: self.ball.as_mut(), ek: &mut self.ek, k: &self.kk, d: &self.d, lite: false, rnd: None, dtik: None }
     }
 }
 
