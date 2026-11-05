@@ -401,13 +401,15 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         }
     }
     const IMK_BLOK: f64 = 2.4;
+    // maçın kural görüntüsü imkân boyunca değişmez: bir kez alınır (varış başına kopyalanmaz)
+    let kr = k.dis.kural();
     let varB = |k: &Kafa, o: &ImkO, x: f64, y: f64| -> f64 {
         let d = jmax(0.0, hypot(o.p.x - x, o.p.y - y) - IMK_BLOK);
-        o.rc + dis::AS_gecOf(k, &o.G, x, y, d) + dis::ALAN_KOSU_T(k, &o.p, d, o.v)
+        o.rc + dis::AS_gecOf(k, &o.G, x, y, d) + crate::kural::enerji::ALAN_KOSU_T(&o.p, d, o.v, &kr)
     };
     let var_ = |k: &Kafa, o: &ImkO, x: f64, y: f64, rc: f64| -> f64 {
         let d = jmax(0.0, hypot(o.p.x - x, o.p.y - y) - o.R);
-        rc + dis::AS_gecOf(k, &o.G, x, y, d) + dis::ALAN_KOSU_T(k, &o.p, d, o.v)
+        rc + dis::AS_gecOf(k, &o.G, x, y, d) + crate::kural::enerji::ALAN_KOSU_T(&o.p, d, o.v, &kr)
     };
     let rakVar = |k: &Kafa, x: f64, y: f64| -> f64 {
         let mut t = 1e9;

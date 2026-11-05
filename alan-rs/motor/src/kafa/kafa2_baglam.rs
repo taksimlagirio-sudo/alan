@@ -145,7 +145,7 @@ impl std::fmt::Debug for Tac {
 pub struct MacGor {
     pub tick: f64,
     pub len: f64,
-    pub tac: Vec<JMTacE>,
+    pub tac: std::sync::Arc<[JMTacE]>,
     pub ps: Dunya,
     /// topu tutan (sıra)
     pub holder: Option<Pid>,
