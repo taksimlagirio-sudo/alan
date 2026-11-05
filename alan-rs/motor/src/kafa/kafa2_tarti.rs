@@ -97,8 +97,8 @@ pub fn pDunya(k: &mut Kafa, cx: &mut Cx, B: Nokta, T: f64, kind: &str, q: Option
     let src = cx.src.clone();
     let team = cx.team;
     let W: Arc<Dunya> = if T > 0.0 {
-        let Rw = dis::respond(k, &src, team, B, T, kind);
-        let resp: Vec<usize> = (0..src.len()).filter(|&i| !ayni_nesne(&Rw[i], &src[i])).collect();
+        let (Rw, degisti) = dis::respond_d(k, &src, team, B, T, kind);
+        let resp: Vec<usize> = (0..degisti.len()).filter(|&i| degisti[i]).collect();
         let tas = if kind == "drive" { q.map(|q| nk(q.x, q.y)) } else { None };
         let Pw = predictWorld(k, &src, team, B, T, true, Some(&resp), false, tas);
         let mut tekC: isize = -1;
@@ -114,7 +114,7 @@ pub fn pDunya(k: &mut Kafa, cx: &mut Cx, B: Nokta, T: f64, kind: &str, q: Option
             (0..src.len())
                 .map(|i| {
                     let p = &src[i];
-                    if !ayni_nesne(&Rw[i], p) && (tekC < 0 || i as isize == tekC) {
+                    if degisti[i] && (tekC < 0 || i as isize == tekC) {
                         let mut c = (*Rw[i]).clone();
                         c.vx = 0.0;
                         c.vy = 0.0;

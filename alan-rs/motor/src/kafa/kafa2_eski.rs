@@ -110,8 +110,7 @@ impl KontraF {
             let Tk = dis::ucusT(k, jmax(1.0, hypot(kq.x - self.h.x, kq.y - self.h.y)), k.D.arriveFirm, None);
             let mut wk = dis::respond(k, &src, opp, nk(kq.x, kq.y), Tk, "pass");
             if let Some(bi) = wk.iter().position(|o| o.team == self.team && bekci(o) && !o.noTouch) {
-                let b2 = bekKay(k, &wk[bi], nk(kq.x, kq.y), Tk);
-                if !ayni_nesne(&b2, &wk[bi]) {
+                if let Some(b2) = super::kafa2_dunya::bekKay_d(k, &wk[bi], nk(kq.x, kq.y), Tk) {
                     wk[bi] = b2;
                 }
             }
@@ -642,8 +641,7 @@ pub fn sonraDeger(k: &mut Kafa, hc0: &Oyuncu, w: &[Op], ch: f64, risk: f64) -> O
         let mut wv = wr.clone();
         if let Some(bi) = bi {
             let Tb = if tpk { Tu } else { dis::ucusT(k, hypot(at.x - hc.x, at.y - hc.y), k.D.arriveFirm, None) };
-            let b2 = bekKay(k, &wr[bi], at, Tb);
-            if !ayni_nesne(&b2, &wr[bi]) {
+            if let Some(b2) = super::kafa2_dunya::bekKay_d(k, &wr[bi], at, Tb) {
                 wv[bi] = b2;
             }
         }
@@ -848,11 +846,11 @@ pub fn sonraDeger(k: &mut Kafa, hc0: &Oyuncu, w: &[Op], ch: f64, risk: f64) -> O
             let P = dis::keepP(k, &hc, w, Some(nk(ux, uy)), Ts);
             let son = k.keepP_son.get();
             let to = if son < Ls { nk(hc.x + ux * jmax(0.0, son), hc.y + uy * jmax(0.0, son)) } else { to0 };
-            let Rw = dis::respond(k, w, team, to, Ts, "drive");
-            let resp: Vec<usize> = (0..w.len()).filter(|&i| !ayni_nesne(&Rw[i], &w[i])).collect();
+            let (Rw, degisti) = dis::respond_d(k, w, team, to, Ts, "drive");
+            let resp: Vec<usize> = (0..degisti.len()).filter(|&i| degisti[i]).collect();
             let Pw = super::kafa2_dunya::predictWorld(k, w, team, to, Ts, true, Some(&resp), false, None);
             let w2: Dunya = (0..w.len())
-                .map(|i| if !ayni_nesne(&Rw[i], &w[i]) { Rw[i].clone() } else if Some(i) == ix { kxy(&hc, to.x, to.y) } else { Pw[i].clone() })
+                .map(|i| if degisti[i] { Rw[i].clone() } else if Some(i) == ix { kxy(&hc, to.x, to.y) } else { Pw[i].clone() })
                 .collect();
             let c2 = jmin(1.0, ch + dis::chargeRate(k, &hc, w, 0.0, ch) * Ts);
             let mut Vs = jmax(dis::V(k, &w2, team, to.x, to.y, c2), if k.D.useSpace { dis::runOn(k, &w2, team, &hc, to) } else { 0.0 });

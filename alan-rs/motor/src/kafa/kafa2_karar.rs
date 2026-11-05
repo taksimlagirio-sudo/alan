@@ -7,7 +7,7 @@ pub use super::kafa2_zemin::{kayipYer, riskOf};
 use super::kafa2_bag as dis;
 use super::kafa2_bag::{ALAN_HZ, ALAN_Y};
 use super::kafa2_baglam::*;
-use super::kafa2_dunya::{bekKay, predictWorld};
+use super::kafa2_dunya::{bekKay_d, predictWorld};
 use super::kafa2_eski as eski;
 use super::kafa2_imkan::tasima;
 use super::kafa2_tarti::{kay, prensipDegerle, KayipRef};
@@ -222,13 +222,13 @@ impl<'a> Ctx0<'a> {
             return w.clone();
         }
         let src = self.src.clone();
-        let Rw = dis::respond(k, &src, self.team, D0, Topt, kind);
-        let resp: Vec<usize> = (0..src.len()).filter(|&i| !ayni_nesne(&Rw[i], &src[i])).collect();
+        let (Rw, degisti) = dis::respond_d(k, &src, self.team, D0, Topt, kind);
+        let resp: Vec<usize> = (0..degisti.len()).filter(|&i| degisti[i]).collect();
         let Pw = predictWorld(k, &src, self.team, D0, Topt, true, Some(&resp), false, None);
         let w: Arc<Dunya> = Arc::new(
             (0..src.len())
                 .map(|i| {
-                    if !ayni_nesne(&Rw[i], &src[i]) {
+                    if degisti[i] {
                         Rw[i].clone()
                     } else if i == self.hi {
                         if kind == "drive" {
@@ -308,8 +308,7 @@ impl<'a> Ctx0<'a> {
             let Tk = dis::ucusT(k, L, k.D.arriveFirm, None);
             let mut wk = dis::respond(k, w, team, nk(kq.x, kq.y), Tk, "pass");
             if let Some(bi) = wk.iter().position(|o| o.team != team && bekci(o) && !o.noTouch) {
-                let b2 = bekKay(k, &wk[bi], nk(kq.x, kq.y), Tk);
-                if !ayni_nesne(&b2, &wk[bi]) {
+                if let Some(b2) = bekKay_d(k, &wk[bi], nk(kq.x, kq.y), Tk) {
                     wk[bi] = b2;
                 }
             }

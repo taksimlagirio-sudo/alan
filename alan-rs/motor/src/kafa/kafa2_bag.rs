@@ -210,11 +210,18 @@ pub fn sutKapali(k: &Kafa, src: &[Op], team: f64, x: f64, y: f64, ch: f64) -> f6
 }
 /// JS respond(src, team, at, T, kind): sonuç dünyası (değişen oyuncular yeni `Arc`, JS `{...p, x, y}`).
 pub fn respond(k: &Kafa, src: &[Op], team: f64, at: Nokta, T: f64, kind: &str) -> Dunya {
+    respond_d(k, src, team, at, T, kind).0
+}
+/// `respond` ve hangi oyuncunun değiştiği (yeni yere gidip yeni kopya olduğu): "değişti mi" nesne kimliğinden
+/// değil açıkça (MIMARI.md 3.2 B).
+pub fn respond_d(k: &Kafa, src: &[Op], team: f64, at: Nokta, T: f64, kind: &str) -> (Dunya, Vec<bool>) {
     let r = k.respond(src, team, at, T, kind);
-    src.iter().zip(r).map(|(p, y)| match y {
+    let degisti: Vec<bool> = r.iter().map(|y| y.is_some()).collect();
+    let w = src.iter().zip(r).map(|(p, y)| match y {
         Some(n) => kxy(p, n.x, n.y),
         None => p.clone(),
-    }).collect()
+    }).collect();
+    (w, degisti)
 }
 pub fn oppAt(k: &Kafa, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
     k.oppAt(src, team, x, y)

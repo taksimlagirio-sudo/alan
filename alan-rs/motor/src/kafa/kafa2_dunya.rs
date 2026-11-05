@@ -34,23 +34,28 @@ pub fn ref_bul0(k: &Kafa, src: &[Op], pid: Pid) -> Option<Op> {
 }
 
 /// JS bekKay(p, B, T) (decide.js:4824): Bekçi'nin topa göre yeri, T + sutHazir tikte varabildiği kadar.
-pub fn bekKay(k: &Kafa, p: &Op, B: Nokta, T: f64) -> Op {
+/// Bekçi yer değiştirdiyse yeni yeri (yeni kopya), değiştirmediyse `None`: "değişti mi" açıkça (MIMARI.md 3.2 B).
+pub fn bekKay_d(k: &Kafa, p: &Op, B: Nokta, T: f64) -> Option<Op> {
     if p.noTouch {
-        return p.clone();
+        return None;
     }
     let g = dis::AS_bekci(k, p, B, None);
     let dx = g.x - p.x;
     let dy = g.y - p.y;
     let L = hypot(dx, dy);
     if L < 0.05 {
-        return p.clone();
+        return None;
     }
     let mv = jmin(L, (T + k.D.sutHazir) * (0.17 + 0.006 * ALAN_HZ(p)) * dis::ALAN_SPRE(k, p) * crate::temas::bek_kay(p));
     if mv > 0.0 {
-        kxy(p, p.x + dx / L * mv, p.y + dy / L * mv)
+        Some(kxy(p, p.x + dx / L * mv, p.y + dy / L * mv))
     } else {
-        p.clone()
+        None
     }
+}
+/// JS bekKay(p, B, T): değişmediyse aynı nesne.
+pub fn bekKay(k: &Kafa, p: &Op, B: Nokta, T: f64) -> Op {
+    bekKay_d(k, p, B, T).unwrap_or_else(|| p.clone())
 }
 
 /// JS bekSav(p, h, T, src) (decide.js:4789): Bekçi T tik boyunca topu taşıyanın (h, hızıyla ilerler)
@@ -406,8 +411,7 @@ pub fn bekYerW(k: &Kafa, w: &[Op], team: f64, B: Nokta, T: Option<f64>) -> Dunya
     let i = w.iter().position(|z| z.team != team && bekci(z) && !z.noTouch);
     let mut w2 = w.to_vec();
     if let Some(i) = i {
-        let b2 = bekKay(k, &w[i], B, T.unwrap_or(30.0));
-        if !ayni_nesne(&b2, &w[i]) {
+        if let Some(b2) = bekKay_d(k, &w[i], B, T.unwrap_or(30.0)) {
             w2[i] = b2;
         }
     }
