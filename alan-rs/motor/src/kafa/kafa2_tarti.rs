@@ -71,7 +71,7 @@ pub fn tekSutDeger(k: &mut Kafa, cx: &mut Cx, A: Nokta, B: Nokta, tv: f64, ta: f
         }
     }
     if !yol_olabilir() {
-        return sutS(k, &wT, cx.team, B.x, B.y, cx.ch, Some(rq), Some(T0)) * exp(-T0 / k.k2.IMK_INAN_T);
+        return sutS(k, &wT, cx.team, B.x, B.y, cx.ch, Some(rq), Some(T0)) * guven(k, T0);
     }
     // ALAN_YOL_OLABILIR_IZ: yakın rakip ve şut yolu da olabilirlikle: rakipler pas vurulunca (tv) tepki verir;
     // varışa (T0) dek şutçunun dibine (2.4 br) ya da şut yoluna yetişebilir mi (kuyu kuralıyla)
@@ -90,7 +90,7 @@ pub fn tekSutDeger(k: &mut Kafa, cx: &mut Cx, A: Nokta, B: Nokta, tv: f64, ta: f
         if !crate::temas::kuyu_girer(p, B.x, B.y, tp, false, &kr) {
             continue;
         }
-        fB *= 1.0 - imkSg((T0 - tp) / imkTau(T0));
+        fB *= 1.0 - imkSg((T0 - tp) / olabTau(k, p, v, rc, T0));
     }
     let gx = if t0(cx.team) { GW } else { 0.0 };
     let mut yl: f64 = 0.0;
@@ -100,9 +100,31 @@ pub fn tekSutDeger(k: &mut Kafa, cx: &mut Cx, A: Nokta, B: Nokta, tv: f64, ta: f
     }
     let tab = sutTab_k(k, &wT, cx.team, B.x, B.y, cx.ch, Some(rq));
     if crate::iz_acik() && std::env::var("ALAN_ENIYI_IZ").ok().as_deref() == Some(&*rq.govde.name) {
-        eprintln!("ENIYI     tek parçalar {} ({:.1},{:.1}) tablo {:.3} yakın {:.3} yol {:.3} güven {:.3}", rq.govde.name, B.x, B.y, tab, fB, yl, exp(-T0 / k.k2.IMK_INAN_T));
+        eprintln!("ENIYI     tek parçalar {} ({:.1},{:.1}) tablo {:.3} yakın {:.3} yol {:.3} güven {:.3}", rq.govde.name, B.x, B.y, tab, fB, yl, guven(k, T0));
     }
-    tab * fB * yl * exp(-T0 / k.k2.IMK_INAN_T)
+    tab * fB * yl * guven(k, T0)
+}
+
+/// Deney (ALAN_BELIRSIZ_KAYNAK_IZ; ölçümde BELIRSIZ_KAYNAK_ZORLA): belirsizlik kaynağından: uzak geleceğe güven
+/// indirimi yok (riskler adım adım zaten çarpılıyor), olabilirlikteki zaman payı zamanla büyüyen tablo yerine
+/// rakibin tepki zarından ve görenin onu görme hatasından (kafa1_ucus'taki alıcı/rakip payıyla aynı biçim).
+pub static BELIRSIZ_KAYNAK_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn belirsiz_kaynak() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    BELIRSIZ_KAYNAK_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_BELIRSIZ_KAYNAK_IZ").is_ok())
+}
+/// Uzak geleceğe güven: bugün exp(−T / IMK_INAN_T); ALAN_BELIRSIZ_KAYNAK_IZ ile 1.
+pub fn guven(k: &Kafa, T: f64) -> f64 {
+    if belirsiz_kaynak() { 1.0 } else { exp(-T / k.k2.IMK_INAN_T) }
+}
+/// Olabilirlikte yetişme olasılığının zaman payı (tik): bugün imkTau(t); ALAN_BELIRSIZ_KAYNAK_IZ ile rakibin tepki
+/// zarı (rc · tepki_z, düzgün zarın ölçünü) ve görme hatası (algi_e / hız).
+pub fn olabTau(k: &Kafa, p: &Oyuncu, v: f64, rc: f64, t: f64) -> f64 {
+    if !belirsiz_kaynak() {
+        return imkTau(t);
+    }
+    let e = k.dis.algi_e(p).unwrap_or(0.0);
+    hypot(1.5 + e / jmax(0.05, v) * 0.5, rc * crate::core_sabit::IN.tepki_z / 2.449 / 1.814)
 }
 
 /// Deney (ALAN_YOL_OLABILIR_IZ; ölçümde YOL_OLABILIR_ZORLA)
@@ -166,7 +188,7 @@ pub fn yolOlabilirB(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t0:
                 s += 1.5;
                 continue;
             }
-            let pk = imkSg((jmin(tb, tq) - tp) / imkTau(tb));
+            let pk = imkSg((jmin(tb, tq) - tp) / olabTau(k, p, v, rc, tb));
             if pk > en {
                 en = pk;
             }
@@ -612,7 +634,7 @@ pub fn nodeV(k: &mut Kafa, cx: &mut Cx, kq: &Op, T: f64, der: f64, R: Option<Nok
     }
     let pas = if der > 0.0 { gam(k) * enIyiPas(k, cx, &e.W, e.B, e.tb, kq.id, der - 1.0).0 } else { 0.0 };
     let kayip = cx.kayip.clone();
-    let v = e.kA * jmax(e.b, pas) * exp(-jmax(0.0, veya(T, 0.0)) / k.k2.IMK_INAN_T) - (1.0 - e.kA) * kay(k, &kayip, e.B.x, e.B.y);
+    let v = e.kA * jmax(e.b, pas) * guven(k, jmax(0.0, veya(T, 0.0))) - (1.0 - e.kA) * kay(k, &kayip, e.B.x, e.B.y);
     cx.PV.insert(key, v);
     v
 }
@@ -644,7 +666,7 @@ pub fn durumD(k: &mut Kafa, cx: &mut Cx, w: &[Op], q: &Oyuncu, at: Nokta, T0: f6
     let ip = enIyiPas(k, cx, w, at, T0, q.id, 1.0);
     let pas = gam(k) * ip.0;
     let v0 = jmax(jmax(jmax(sut, gam(k) * z0), pas), sur);
-    let v = v0 * exp(-jmax(0.0, T0v) / k.k2.IMK_INAN_T);
+    let v = v0 * guven(k, jmax(0.0, T0v));
     let pasK = ip.1.as_ref().map(|P| format!("{} ({},{}) +{}t", P.k.govde.name, to_fixed(P.B.x, 0), to_fixed(P.B.y, 0), js_sayi(P.tb)));
     let res = Arc::new(DurumR { v, sut, zem: z0, pas, sur, pasK });
     cx.PD.insert(key, res.clone());

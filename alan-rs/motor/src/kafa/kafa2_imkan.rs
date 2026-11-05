@@ -382,6 +382,9 @@ pub fn imkSap(t: f64) -> f64 {
 }
 /// JS imkInan(t) (decide.js:6267): uzak geleceğe güven azalır
 pub fn imkInan(k: &Kafa, t: f64) -> f64 {
+    if crate::kafa::kafa2_tarti::belirsiz_kaynak() {
+        return 1.0;
+    }
     exp(-(veya(t, 0.0) + k.k2.IMK_OFS) / k.k2.IMK_INAN_T)
 }
 /// JS imkTau(t)
