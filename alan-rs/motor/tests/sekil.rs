@@ -471,7 +471,7 @@ fn js_ile_bit_bit_ayni() {
             }
             let lo = &c["lo"];
             let w = K.mc().dunya();
-            let r = laneOpen(&w, &K.ps, lo["att"].as_u64().unwrap() as u8, xy(&lo["A"]), xy(&lo["B"]), Some(h(&lo["v"])), &K.kk, &K.d);
+            let r = laneOpen(&K.m, &w, &K.ps, lo["att"].as_u64().unwrap() as u8, xy(&lo["A"]), xy(&lo["B"]), Some(h(&lo["v"])), &K.kk, &K.d);
             chk(&mut hata, format!("t{tk} laneOpen"), r, h(&lo["r"]));
             let yt = &c["yt"];
             let pi = yt["p"].as_u64().unwrap() as usize;

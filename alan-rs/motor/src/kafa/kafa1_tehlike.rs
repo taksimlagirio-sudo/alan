@@ -123,6 +123,33 @@ pub fn pressAt_d<'a>(d: &crate::model::KafaD, src: impl IntoIterator<Item = &'a 
 pub fn freeAt_d<'a>(d: &crate::model::KafaD, src: impl IntoIterator<Item = &'a Oyuncu>, team: f64, x: f64, y: f64) -> f64 {
     exp(1.6 * -pressAt_d(d, src, team, x, y))
 }
+/// Rakiplerin dağınıklığı (saf): (x, y)'den kaleye daha yakın rakip sayısıyla.
+pub fn dagin_p<'a>(src: impl IntoIterator<Item = &'a Oyuncu>, team: f64, x: f64, vv: f64, y: Option<f64>) -> f64 {
+    let gx = gx_of(team);
+    let dB = match y {
+        Some(y) => hypot(x - gx, y - GCY),
+        None => 0.0,
+    };
+    let mut n = 0;
+    for o in src {
+        if o.team != team && !o.bekci() {
+            let ic = match y {
+                Some(_) => hypot(o.x - gx, o.y - GCY) < dB,
+                None => (o.x - gx).abs() < (x - gx).abs(),
+            };
+            if ic {
+                n += 1;
+            }
+        }
+    }
+    let kat = match n {
+        0 => 1.6,
+        1 => 1.3,
+        2 => 1.1,
+        _ => 1.0,
+    };
+    1.0 - pow(jmax(0.0, 1.0 - jmin(1.0, vv)), kat)
+}
 /// Alıcının şarjı (decide.js:3962; tek enerji açık: max(.05, ch)).
 pub fn recvCh_p(ch: f64) -> f64 {
     jmax(0.05, ch)
@@ -331,30 +358,7 @@ impl Kafa {
     }
     /// Savunma dağınıksa değer büyür (decide.js:3659).
     pub fn dagin(&self, src: &[Op], team: f64, x: f64, vv: f64, y: Option<f64>) -> f64 {
-        let gx = gx_of(team);
-        let dB = match y {
-            Some(y) => hypot(x - gx, y - GCY),
-            None => 0.0,
-        };
-        let mut n = 0;
-        for o in src {
-            if o.team != team && !o.bekci() {
-                let ic = match y {
-                    Some(_) => hypot(o.x - gx, o.y - GCY) < dB,
-                    None => (o.x - gx).abs() < (x - gx).abs(),
-                };
-                if ic {
-                    n += 1;
-                }
-            }
-        }
-        let kat = match n {
-            0 => 1.6,
-            1 => 1.3,
-            2 => 1.1,
-            _ => 1.0,
-        };
-        1.0 - pow(jmax(0.0, 1.0 - jmin(1.0, vv)), kat)
+        dagin_p(src.iter().map(|p| &**p), team, x, vv, y)
     }
     /// Yerin değeri (decide.js:3666).
     pub fn V(&self, src: &[Op], team: f64, x: f64, y: f64, ch: f64) -> f64 {
