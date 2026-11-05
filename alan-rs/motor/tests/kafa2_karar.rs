@@ -219,7 +219,7 @@ fn mac_tac(v: &Value) -> alan_motor::mac::Tac {
 
 fn kafa(g: &Value) -> Kafa {
     // vektörün dünyasından maç: oyuncular, tik, topu tutan, şarj, taktik
-    let mut m = alan_motor::model::Mac::default();
+    let mut m = alan_motor::mac::MacTam::default();
     if let Some(src) = g["src"].as_array() {
         m.ps = src.iter().map(oyuncu).collect();
     }

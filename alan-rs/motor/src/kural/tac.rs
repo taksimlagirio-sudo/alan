@@ -448,7 +448,7 @@ pub fn evreUygula(m: &mut Mac) {
                     }
                 }
             }
-            let ka = m.mac.kosulAkt.get_or_insert_with(Default::default);
+            let ka = m.kosulAkt.get_or_insert_with(Default::default);
             ka[ti] = akt;
         }
         m.tac[ti] = mg;

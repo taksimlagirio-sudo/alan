@@ -317,8 +317,8 @@ pub fn fakeBasla(m: &mut Mac, h: Pid, o: &Secenek) {
 
 /// JS fakeYonet(m)
 pub fn fakeYonet(m: &mut Mac) {
-    for p in m.ps.iter_mut() {
-        if p.hal.fkBlock && m.tick > oo(p.hal.fkCool) {
+    for p in m.m.ps.iter_mut() {
+        if p.hal.fkBlock && m.m.tick > oo(p.hal.fkCool) {
             p.hal_mut().fkBlock = false;
         }
     }
@@ -332,9 +332,9 @@ pub fn fakeYonet(m: &mut Mac) {
     let h = h.unwrap();
     if hid == Some(f.hid) && m.tick <= f.until {
         let mut f = m.mac.fake.take().unwrap();
-        let hp = &mut m.ps[h];
+        let hp = &mut m.m.ps[h];
         hp.hal_mut().driveTo = None;
-        let fz = (m.tick - f.t0) / jmax(1.0, f.until - f.t0);
+        let fz = (m.m.tick - f.t0) / jmax(1.0, f.until - f.t0);
         let su = atan2(f.to.1 - hp.y, f.to.0 - hp.x);
         if f.k == "gövde" {
             if f.ax.is_none() {
@@ -845,7 +845,7 @@ pub fn r#move(m: &mut Mac) {
                 let gA = kutle(a, m.holder == Some(i)) * omuzK(a);
                 let gB = kutle(b, m.holder == Some(j)) * omuzK(b);
                 let tick = m.tick;
-                let (a, b) = iki(&mut m.ps, i, j);
+                let (a, b) = iki(&mut m.m.ps, i, j);
                 if gA >= 0.95 * gB {
                     a.vx += 0.03 * nx;
                     a.vy += 0.03 * ny;
@@ -869,8 +869,8 @@ pub fn r#move(m: &mut Mac) {
     {
         let lite = m.mac._lite;
         let h = m.holder;
-        let mut bag = IkBag { ikt: None, ikm: Some(IkHedef { st: &mut m.st, lite }), ikl: if lite { None } else { Some(vec![]) } };
-        govdeAyir(&mut m.ps, Some(h), &mut bag);
+        let mut bag = IkBag { ikt: None, ikm: Some(IkHedef { st: &mut m.m.st, lite }), ikl: if lite { None } else { Some(vec![]) } };
+        govdeAyir(&mut m.m.ps, Some(h), &mut bag);
         let (ikl, ikt) = (bag.ikl.take(), bag.ikt.take());
         if let Some(l) = ikl {
             m._temaslar = Some(crate::model::JM_temaslar { t: m.tick, L: l });
@@ -890,13 +890,13 @@ fn topGovdeIt(m: &mut Mac) {
     if m.holder.is_some() {
         return;
     }
-    let Some(b) = m.ball.as_mut() else { return };
+    let Some(b) = m.m.ball.as_mut() else { return };
     if b.done.is_some() {
         return;
     }
     let from = b.tt.t.from;
     let bt = b.t;
-    let ps = &m.ps;
+    let ps = &m.m.ps;
     let skip = |pi: usize| {
         let p = &ps[pi];
         (Some(pi) == from && or0(bt) < 4.0) || (p.bekci() && hypot(p.x - if p.team == 0.0 { 0.0 } else { W }, p.y - CY) < KR)

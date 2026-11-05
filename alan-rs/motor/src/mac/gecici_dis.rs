@@ -34,7 +34,8 @@
 pub use crate::kafa::kafa2_baglam::kafa_tac;
 pub use crate::mac_veri::{FakeShow, Karar};
 use crate::kafa::gecici_dis1::KuralErisim as _;
-use crate::model::{Mac, Oyuncu, Pid, Secenek, JP_onH};
+use crate::model::{Oyuncu, Pid, Secenek, JP_onH};
+use crate::mac::MacTam as Mac;
 use crate::rng::Rng;
 
 
@@ -108,7 +109,7 @@ pub fn mc_ile<T>(m: &mut Mac, f: impl FnOnce(&mut crate::sekil::varlik::Mc) -> T
         // JS D._tick: gerçek maçın adımı yazar (match.js step). Kafanın hayali maçı (JS m._lite) Rust'ta kurulmaz.
         debug_assert!(!lite, "hayali maç (_lite) Rust'ta kurulmaz");
         let dt = Some(m.tick);
-        let mut c = Mc { m: &mut *m, ps: &mut ps, ball: ball.as_mut(), ek: &mut ek, k: &kural, d, lite, rnd: Some(&mut zar), dtik: dt };
+        let mut c = Mc { m: &mut m.m, ps: &mut ps, ball: ball.as_mut(), ek: &mut ek, kafa: m.mac.kafa.k.as_deref(), k: &kural, d, lite, rnd: Some(&mut zar), dtik: dt };
         f(&mut c)
     };
     m.ps = ps;

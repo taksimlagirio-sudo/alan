@@ -157,9 +157,9 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
     m.ball = Some(b);
     let ti = t as usize;
     if gon {
-        let b = m.ball.as_mut().unwrap();
+        let b = m.m.ball.as_mut().unwrap();
         b.tt.t.gon = true;
-        m.st.shot[ti] += 1.0;
+        m.m.st.shot[ti] += 1.0;
         b.ek.shotPk = o.det.as_ref().and_then(|d| d.Pk);
         let pk = b.ek.shotPk;
         // JS `!m.lite` (yazım: m.lite hiç yok) → her zaman

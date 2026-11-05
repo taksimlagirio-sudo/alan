@@ -2,7 +2,7 @@
 mod mac_yardim;
 use alan_motor::mac::hareket::ivme;
 use alan_motor::mac::ikili::*;
-use alan_motor::model::Mac;
+use alan_motor::mac::MacTam as Mac;
 use mac_yardim::*;
 
 #[test]

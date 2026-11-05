@@ -1,7 +1,7 @@
 //! Maç motoru (oyun arayüzü `MacMotoru`): kayıttan kurulan maçı tik tik oynatır.
 #![allow(non_snake_case)]
 
-use crate::model::Mac;
+use crate::mac::MacTam as Mac;
 use crate::oyun::{bar_ort, IsSozluk, IzSatiri, Kare, MacMotoru};
 
 pub struct Motor {

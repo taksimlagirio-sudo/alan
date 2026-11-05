@@ -161,8 +161,8 @@ pub fn take(m: &mut Mac, p: Pid, how: Option<String>) {
     if m.pre.as_ref().map_or(false, |pr| Some(pr.b) != gk) {
         m.pre = None;
     }
-    if let Some(pr) = m.pre.as_mut().filter(|pr| pr.q == p) {
-        pr.t = m.tick;
+    if let Some(pr) = m.m.pre.as_mut().filter(|pr| pr.q == p) {
+        pr.t = m.m.tick;
         m.decT = 1.0;
     }
     m.fl = None;
@@ -441,8 +441,8 @@ pub fn _step(m: &mut Mac) {
             }
             let d = jmax(1.0, tepki(&m.ps[pi], Tepki::YeniTop, &ts));
             let tau = {
-                let b = m.ball.as_mut().unwrap();
-                crate::temas::oku_t(&mut b.tt, pi, &m.ps, d, false)
+                let b = m.m.ball.as_mut().unwrap();
+                crate::temas::oku_t(&mut b.tt, pi, &m.m.ps, d, false)
             };
             let (_, _, _, bt, btp, _) = bb.unwrap();
             let p = &mut m.ps[pi];
@@ -1012,8 +1012,8 @@ fn hamleler(m: &mut Mac, h: Pid, kk: &MacKural) -> bool {
             }
             {
                 let lite = m.mac._lite;
-                let mut bag = IkBag { ikt: None, ikm: Some(IkHedef { st: &mut m.st, lite }), ikl: None };
-                ikiliTemas(&mut m.ps, qi, h, ux, uy, jmax(0.0, TQ.min_d - nl), true, Some(Some(h)), &mut bag);
+                let mut bag = IkBag { ikt: None, ikm: Some(IkHedef { st: &mut m.m.st, lite }), ikl: None };
+                ikiliTemas(&mut m.m.ps, qi, h, ux, uy, jmax(0.0, TQ.min_d - nl), true, Some(Some(h)), &mut bag);
             }
             m.ps[h].hal_mut()._omuz = Some(crate::model::JP_omuz { t: m.tick, q: m.ps[qi].id });
             let hd = m.ps[h].den.unwrap();
@@ -1313,7 +1313,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
     }
     // m._sec ve m.lastDec (gösterim)
     {
-        let hp = &m.ps[h];
+        let hp = &m.m.ps[h];
         let o: Vec<crate::model::JM_secOE> = r.opts.iter().enumerate().filter(|(_, x)| x.v.is_some() && x.kind != "tut" && x.kind != "fake" && (x.to.is_some() || x.q.is_some())).take(14).map(|(i, x)| {
             let at = match x.q {
                 Some(q) if q != h && x.kind == "pas" => (m.ps[q].x, m.ps[q].y),
@@ -1322,7 +1322,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
             crate::model::JM_secOE { k: x.kind.clone(), x: at.0, y: at.1, v: x.v.unwrap(), dv: if Some(i) == dvC { 1.0 } else { 0.0 } }
         }).collect();
         let tut = r.opts.iter().find(|x| x.kind == "tut" && x.v.is_some()).map_or(0.0, |x| x.v.unwrap());
-        m._sec = Some(crate::model::JM_sec { h, t: m.tick, o, tut });
+        m.m._sec = Some(crate::model::JM_sec { h, t: m.m.tick, o, tut });
         let sira: Vec<usize> = if oi != 0 { std::iter::once(oi).chain((0..r.opts.len()).filter(|&i| i != oi)).collect() } else { (0..r.opts.len()).collect() };
         let opts = sira.iter().take(4).map(|&i| {
             let o = &r.opts[i];
@@ -1350,7 +1350,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
                 ..Default::default()
             }
         }).collect();
-        m.lastDec = Some(crate::model::JMLastDec { name: hp.govde.name.to_string(), team: ht, x: hp.x, y: hp.y, opts });
+        m.m.lastDec = Some(crate::model::JMLastDec { name: hp.govde.name.to_string(), team: ht, x: hp.x, y: hp.y, opts });
     }
     let z = m.r.sonraki();
     m.decT = jround(5.0 + 8.0 * (1.0 - m.tac[ht as usize].tempo.unwrap_or(f64::NAN)) + 3.0 * z);
@@ -1466,8 +1466,8 @@ fn bostaTop(m: &mut Mac) {
             let z = m.r.sonraki();
             let kk = MacKural::of(m);
             let cp = {
-                let b = m.ball.as_mut().unwrap();
-                crate::temas::ctrl_p(&mut b.tt, best, &m.ps, None, &kk)
+                let b = m.m.ball.as_mut().unwrap();
+                crate::temas::ctrl_p(&mut b.tt, best, &m.m.ps, None, &kk)
             };
             if z < cp {
                 let n = m.ps[best].govde.name.clone();
@@ -1487,8 +1487,8 @@ fn bostaTop(m: &mut Mac) {
             if let Some(d) = m.ps[pi].hal._dalis.filter(|&d| dogru(d)) {
                 let f = jmin(1.0, d);
                 enHarca(m, pi, "dalış", EN.dalis * f);
-                let p = &mut m.ps[pi];
-                p.hal_mut()._dolYok = Some(jmax(oo(p.hal._dolYok), m.tick + jround(EN.dalisDolYok * f)));
+                let p = &mut m.m.ps[pi];
+                p.hal_mut()._dolYok = Some(jmax(oo(p.hal._dolYok), m.m.tick + jround(EN.dalisDolYok * f)));
                 p.hal_mut()._dalis = Some(0.0);
             }
         }
@@ -1507,11 +1507,11 @@ fn bostaTop(m: &mut Mac) {
         }
         let took = r.as_ref().map_or(false, |r| r.took);
         if !took && m.ball.as_ref().unwrap().done.is_none() && r.is_none() {
-            let b = m.ball.as_mut().unwrap();
+            let b = m.m.ball.as_mut().unwrap();
             let from = b.tt.t.from;
             let bt = b.t;
             let skip = |pi: usize| Some(pi) == from && or0(bt) < 4.0;
-            crate::temas::govde(&mut b.tt, bx0, by0, &m.ps, &skip, super::vurus::BODY_R, super::vurus::BODY_E);
+            crate::temas::govde(&mut b.tt, bx0, by0, &m.m.ps, &skip, super::vurus::BODY_R, super::vurus::BODY_E);
         }
         if let Some(r) = r.as_ref().filter(|r| r.took) {
             let fl = m.fl.as_ref();
@@ -1522,8 +1522,8 @@ fn bostaTop(m: &mut Mac) {
             return;
         }
         if r.is_some() {
-            if let Some(fl) = m.fl.as_mut() {
-                let b = m.ball.as_ref().unwrap();
+            if let Some(fl) = m.m.fl.as_mut() {
+                let b = m.m.ball.as_ref().unwrap();
                 fl.end = crate::model::JMFlEnd { x: b.x, y: b.y };
             }
         }
@@ -1543,8 +1543,8 @@ fn bostaTop(m: &mut Mac) {
             ev(m, "sayi", sc, t);
             super::kurulum::kickoff(m, 1.0 - sc);
         } else if dn == Some("durdu") {
-            if let Some(fl) = m.fl.as_mut() {
-                let b = m.ball.as_ref().unwrap();
+            if let Some(fl) = m.m.fl.as_mut() {
+                let b = m.m.ball.as_ref().unwrap();
                 fl.end = crate::model::JMFlEnd { x: b.x, y: b.y };
             }
         }

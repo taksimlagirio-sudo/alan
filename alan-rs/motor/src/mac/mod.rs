@@ -6,6 +6,29 @@
 #![allow(non_snake_case, clippy::too_many_arguments)]
 
 pub use crate::mac_veri::{KenarW, Olay, Perde};
+
+/// Maç katmanının maçı (MIMARI.md 3.8): temel veri modeli (`model::Mac`: oyuncular, top, skor …) ve üst
+/// katmanların durumu (`mac`: kafa kutusu, yerleşimin belleği, kafanın pres tablosu …). Temel model üst katmanları
+/// tanımaz; maç katmanında `Mac` bu tiptir ve temel alanlara `Deref` ile ulaşır (`m.tick`, `m.ps`), alt katmanlara
+/// `&Mac` olarak geçer (`&*m` / kendiliğinden).
+#[derive(Clone, Debug, Default)]
+pub struct MacTam {
+    pub m: crate::model::Mac,
+    pub mac: MacEk,
+}
+impl std::ops::Deref for MacTam {
+    type Target = crate::model::Mac;
+    #[inline(always)]
+    fn deref(&self) -> &crate::model::Mac {
+        &self.m
+    }
+}
+impl std::ops::DerefMut for MacTam {
+    #[inline(always)]
+    fn deref_mut(&mut self) -> &mut crate::model::Mac {
+        &mut self.m
+    }
+}
 pub use crate::mat::{js_num, to_fixed};
 pub use crate::saha::{dirOf, ownX, KX, KY, SN};
 pub mod dongu;
@@ -29,7 +52,8 @@ pub use kurulum::{assignRoles, createMatch, dizSlots, dizUygula, kickoff, Diz, D
 pub use tac::{macEff, tacEff, MacW, MacZ, Tac};
 
 use crate::mat::{dogru, hypot};
-use crate::model::{Mac, Oyuncu, Pid};
+use crate::model::{Oyuncu, Pid};
+use crate::mac::MacTam as Mac;
 use crate::saha::W;
 
 
@@ -114,8 +138,6 @@ pub struct MacEk {
     pub fake: Option<Fake>,
     /// JS `m._perdeQ`: id → tik
     pub _perdeQ: Vec<(f64, f64)>,
-    /// JS `m.kosulAkt`
-    pub kosulAkt: Option<[Vec<String>; 2]>,
     /// oyuncuların ham özellikleri (JS `p.a`, sırayla); Pid sırası
     pub ham: Vec<HamA>,
     /// top kimliği sayacı (JS nesne kimliği)
