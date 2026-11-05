@@ -93,11 +93,14 @@ pub fn threat(team: u8, x: f64, y: f64) -> f64 {
     // saf: kafa bağlamı aranmaz (kesişme döngüsünde milyonlarca kez çağrılır)
     crate::kafa::kafa1_tehlike::threat_d(crate::mac::gecici_dis::kafa_d(), team as f64, x, y)
 }
+/// Saf (yetenek ve kuraldan): kafaya uğramaz.
 pub fn frenT(p: &Oyuncu, x: f64, y: f64, R: f64, T: f64, v: f64) -> f64 {
-    kafa_ile(|k| k.frenT(p, x, y, R, T, v))
+    crate::kafa::kafa1_varis::frenT_p(p, x, y, R, T, v)
 }
+/// Saf (ayardan): kafaya uğramaz.
 pub fn freeAt(w: &[Varlik], oy: &[Oyuncu], team: f64, x: f64, y: f64) -> f64 {
-    kafa_ile(|k| k.freeAt(&ow(w, oy), team, x, y))
+    let o = ow(w, oy);
+    crate::kafa::kafa1_tehlike::freeAt_d(crate::kafa::kafa2_baglam::ayar(), o.iter().map(|p| &**p), team, x, y)
 }
 pub fn coreSide(h: &Oyuncu) -> (f64, f64) {
     let c = crate::kafa::kafa1_ikili::coreSide_p(h);
@@ -152,12 +155,9 @@ pub fn yerDeger(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64, ch: f64) 
     kafa_ile(|k| crate::kafa::kafa2_zemin::yerDeger(k, &ow(w, oy), team as f64, x, y, ch))
 }
 pub fn recvCh(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64, ch: f64, q: Option<&Oyuncu>) -> f64 {
-    // kafanın recvCh'i dünyayı okumaz: köprü kurulmaz
-    let _ = (w, oy);
-    kafa_ile(|k| match q {
-        Some(q) => k.recvCh(&[], team as f64, x, y, ch, q),
-        None => k.recvCh(&[], team as f64, x, y, ch, &Oyuncu::bos()),
-    })
+    // saf: dünyayı ve kafayı okumaz
+    let _ = (w, oy, team, x, y, q);
+    crate::kafa::kafa1_tehlike::recvCh_p(ch)
 }
 pub fn keepP(h: &Oyuncu, w: &[Varlik], oy: &[Oyuncu], dir: Option<(f64, f64)>, T: f64) -> f64 {
     kafa_ile(|k| k.keepP(h, &ow(w, oy), dir.map(|d| nk(d.0, d.1)), T))

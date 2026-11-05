@@ -86,6 +86,48 @@ pub struct BosOy {
     pub t: Vec<i8>,
 }
 
+// ---- saf değerlendirmeler (MIMARI.md Aşama 3): kafanın durumuna değil, yalnız değişmez ayara (KafaD) bağlı.
+// Kafa, yerleşim ve maç aynı işlevi çağırır; dünya kopyalanmaz (oyuncular üzerinde dolaşılır).
+
+/// Rakip etkisinin toplamı (decide.js:140).
+pub fn oppAt_p<'a>(src: impl IntoIterator<Item = &'a Oyuncu>, team: f64, x: f64, y: f64) -> f64 {
+    let mut s = 0.0;
+    for p in src {
+        if p.team != team {
+            s += p.etki().infl(x, y);
+        }
+    }
+    s
+}
+/// Bölge katı (decide.js:3945): kaleye yakınlıkla baskının menzili daralır.
+pub fn zoneR_d(d: &crate::model::KafaD, team: f64, x: f64, y: f64) -> f64 {
+    let gx = gx_of(team);
+    let r = hypot(gx - x, GCY - y);
+    d.zoneMin + (1.0 - d.zoneMin) * jmin(1.0, jmax(0.0, (r - 8.0) / d.zoneD))
+}
+/// Baskı (decide.js:3949).
+pub fn pressAt_d<'a>(d: &crate::model::KafaD, src: impl IntoIterator<Item = &'a Oyuncu>, team: f64, x: f64, y: f64) -> f64 {
+    let z = zoneR_d(d, team, x, y);
+    let mut s = 0.0;
+    for p in src {
+        if p.team == team || p.noTouch {
+            continue;
+        }
+        let d = hypot(p.x - x, p.y - y) / z;
+        let r = 0.55 * ya(p.R, 8.0);
+        s += ya(p.D, 1.0) * exp(-d * d / (r * r));
+    }
+    s
+}
+/// Boşluk (decide.js:3959).
+pub fn freeAt_d<'a>(d: &crate::model::KafaD, src: impl IntoIterator<Item = &'a Oyuncu>, team: f64, x: f64, y: f64) -> f64 {
+    exp(1.6 * -pressAt_d(d, src, team, x, y))
+}
+/// Alıcının şarjı (decide.js:3962; tek enerji açık: max(.05, ch)).
+pub fn recvCh_p(ch: f64) -> f64 {
+    jmax(0.05, ch)
+}
+
 impl Kafa {
     /// JS pasMax()
     pub fn pasMax(&self) -> f64 {
@@ -98,13 +140,7 @@ impl Kafa {
     }
     /// Rakip alanı (decide.js:140).
     pub fn oppAt(&self, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
-        let mut s = 0.0;
-        for p in src {
-            if p.team != team {
-                s += p.etki().infl(x, y);
-            }
-        }
-        s
+        oppAt_p(src.iter().map(|p| &**p), team, x, y)
     }
     /// decide.js:145
     pub fn holdVal(&self, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
@@ -113,31 +149,19 @@ impl Kafa {
 
     /// decide.js:3945
     pub fn zoneR(&self, team: f64, x: f64, y: f64) -> f64 {
-        let gx = gx_of(team);
-        let d = hypot(gx - x, GCY - y);
-        self.D.zoneMin + (1.0 - self.D.zoneMin) * jmin(1.0, jmax(0.0, (d - 8.0) / self.D.zoneD))
+        zoneR_d(&self.D, team, x, y)
     }
     /// Baskı (decide.js:3949).
     pub fn pressAt(&self, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
-        let z = self.zoneR(team, x, y);
-        let mut s = 0.0;
-        for p in src {
-            if p.team == team || p.noTouch {
-                continue;
-            }
-            let d = hypot(p.x - x, p.y - y) / z;
-            let r = 0.55 * ya(p.R, 8.0);
-            s += ya(p.D, 1.0) * exp(-d * d / (r * r));
-        }
-        s
+        pressAt_d(&self.D, src.iter().map(|p| &**p), team, x, y)
     }
     /// decide.js:3959
     pub fn freeAt(&self, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
-        exp(1.6 * -self.pressAt(src, team, x, y))
+        freeAt_d(&self.D, src.iter().map(|p| &**p), team, x, y)
     }
     /// decide.js:3962 (tek enerji açık: max(.05, ch))
     pub fn recvCh(&self, _src: &[Op], _team: f64, _x: f64, _y: f64, ch: f64, _q: &Oyuncu) -> f64 {
-        jmax(0.05, ch)
+        recvCh_p(ch)
     }
 
     /// decide.js:3492 (useCurve, useValTab kapalı)

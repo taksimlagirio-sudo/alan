@@ -133,8 +133,7 @@ pub fn mc_ile<T>(m: &mut Mac, f: impl FnOnce(&mut crate::sekil::varlik::Mc) -> T
 
 /// Kafanın sabitleri (JS AlanDecide.D)
 pub fn kafa_d() -> &'static crate::model::KafaD {
-    static D: std::sync::OnceLock<crate::model::KafaD> = std::sync::OnceLock::new();
-    D.get_or_init(crate::kafa::kafa2_baglam::kafa_d)
+    crate::kafa::kafa2_baglam::ayar()
 }
 
 /// Oyuncunun yerleşimdeki yeri (E: topun yeri, att: hücumda mı)
@@ -240,11 +239,13 @@ fn rng_fn(r: &mut Rng) -> impl FnMut() -> f64 + '_ {
     move || r.sonraki()
 }
 
+/// Saf (ayardan): kafaya uğramaz, dünya kopyalanmaz.
 pub fn pressAt(ps: &[Oyuncu], team: f64, x: f64, y: f64) -> f64 {
-    kafa_ile(|k| k.pressAt(&op_dunya(ps), team, x, y))
+    crate::kafa::kafa1_tehlike::pressAt_d(kafa_d(), ps, team, x, y)
 }
+/// Saf: kafaya uğramaz, dünya kopyalanmaz.
 pub fn oppAt(ps: &[Oyuncu], team: f64, x: f64, y: f64) -> f64 {
-    kafa_ile(|k| k.oppAt(&op_dunya(ps), team, x, y))
+    crate::kafa::kafa1_tehlike::oppAt_p(ps, team, x, y)
 }
 pub fn threat(team: f64, x: f64, y: f64) -> f64 {
     // saf: kafa bağlamı aranmaz
