@@ -522,6 +522,42 @@ impl Kafa {
                     }
                 }
             }
+            // Kale önünde ön eleme (yarış × sahiplik) kaleye doğru noktaları hep eliyordu: savunmanın yoğun olduğu
+            // yer düşük puan alır, köşeler/taç çizgisi kalır (kaleye 12–20 br'deki kararların %38'inde kaleye tek
+            // sürme seçeneği yoktu). Kaleye 35 br'den yakınken, kaleye en az 3 br yaklaştıran en iyi iki aday da
+            // değerlendirmeye girer; kararı tartı verir. Deney, varsayılan kapalı: ALAN_SUR_KALE_IZ.
+            let dK0 = hypot(gx - h.x, GCY - h.y);
+            if sur_kale_acik() && !h.bekci() && dK0 < 35.0 {
+                let mut eklenen = 0;
+                for c in &C3 {
+                    if eklenen >= 2 {
+                        break;
+                    }
+                    let dK1 = hypot(gx - c.P.x, GCY - c.P.y);
+                    if !(c.s > 0.0) || dK0 - dK1 < 3.0 || dK1 < crate::saha::KR + 0.5 || secS.iter().any(|P| hypot(P.x - c.P.x, P.y - c.P.y) < 2.5) {
+                        continue;
+                    }
+                    secS.push(c.P);
+                    eklenen += 1;
+                    let duvar = c.P.y < 2.6 || c.P.y > GH - 2.6;
+                    let sur = |own: f64, spr: bool| {
+                        let mut o = yeni("sür");
+                        o.to = Some(Nokta { x: c.P.x, y: c.P.y });
+                        o.dir = Some(Nokta { x: c.u.x, y: c.u.y });
+                        o._own = Some(own);
+                        if spr {
+                            o.spr = Some(1.0);
+                        }
+                        o.uzun = if c.r >= 12.0 { Some(c.r) } else { None };
+                        o.duvar = duvar;
+                        o
+                    };
+                    res.out.push(sur(c.own, false));
+                    if let Some(s) = c.ownS {
+                        res.out.push(sur(s, true));
+                    }
+                }
+            }
             res.tekS = secS;
             res.tekC = C3;
         } else {
@@ -684,4 +720,11 @@ impl Kafa {
         }
         res
     }
+}
+
+/// Deney (varsayılan kapalı, ALAN_SUR_KALE_IZ): kale önünde kaleye doğru sürme adayları ön elemeden geçer.
+/// 32 maçta şut/gol değişmedi, kayıp/dk %10 arttı (5,00 → 5,49): asıl sorun tutma kestirimi, gönderilmedi.
+fn sur_kale_acik() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SUR_KALE_IZ").is_ok())
 }
