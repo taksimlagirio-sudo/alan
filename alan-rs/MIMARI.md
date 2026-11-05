@@ -196,7 +196,7 @@ Bilerek ertelenen işler; her biri bir karar ya da uygun bir an bekliyor:
 
 | Konu | Neden ertelendi | Ne zaman |
 |---|---|---|
-| **`dolanma` davranışı** (3.2 C): hayali bir kopya oyuncu, dünyadaki kendi gerçek gövdesinin etrafından dolanmaya çalışıyor (2 maç × 2700 tikte ~4 milyon kez). JS'ten gelen davranış, büyük olasılıkla hata | Düzeltmek davranış değişikliği: iş bölümüne göre davranış oturumunun kararı (bayrak arkasında, ayrı commit, `sina/ayni.sh --yaz`) | Davranış oturumu ele aldığında; 4c-2'den önce |
+| **`dolanma` davranışı** (3.2 C): hayali bir kopya oyuncu, dünyadaki kendi gerçek gövdesinin etrafından dolanmaya çalışıyor (2 maç × 2700 tikte ~4 milyon kez). JS'ten gelen davranış, büyük olasılıkla hata | Düzeltme bayrak arkasında: `ALAN_DOLANMA_KIMLIK` (kopya, aslını oyuncu kimliğiyle tanıyıp atlar; varsayılan kapalı). Ölçüm (3.4): 20 maçta istatistik farkı gürültü içinde | Varsayılan yapmak davranış oturumunun kararı (`sina/ayni.sh --yaz` ile); 4c-2'den önce |
 | **4c-2: tek dünya** (kafanın `Op` yerine görünüm `Varlik` üzerinde çalışması, çevirilerin kalkması) | Çeviriler artık sürenin ~%1,5'i; kafanın ~14 bin satırı `&[Op]` üzerinden alanlara doğrudan erişiyor (çok günlük iş, davranış oturumuyla sürekli çakışır); çeviriler arasında nesne paylaşmak `dolanma`'yı değiştirir | `dolanma` kararından sonra, kafa kodu durulduğunda |
 | **Rust adlandırması** (JS adları: `ALAN_SPR`, `decide0K`, `non_snake_case` izinleri) | Binlerce satıra dokunur; davranış oturumuyla sürekli çakışır; değeri okunurluk | Aşama 7 (crate'lere bölme) ile birlikte |
 | **Aşama 5: veri** (`Oyuncu` sıcak/soğuk, `JsDeger`, gereksiz `Option`'lar) | Kopya maliyeti %2,4'e indi; `model.rs` her katmanın ortak tipi, bölmesi 4c-2'ye bağlı | 4c-2 ile |
@@ -204,6 +204,48 @@ Bilerek ertelenen işler; her biri bir karar ya da uygun bir an bekliyor:
 
 Her aşamanın sonunda: `sina/ayni.sh` aynı, `cargo test` geçen sayısı düşmemiş, `alan-kos` hızı ölçülmüş
 (hız hedef değil, ama yapı değişikliği yavaşlatmamalı), wasm kareleri sitedekiyle aynı.
+
+### 3.4 Ölçüm: mimari değişikliğin ve `dolanma` bayrağının etkisi (5 Kasım)
+
+Taban `1cd1dde` (mimari çalışmadan önceki main), şimdi `fe295eb` (Aşama 0–6 + davranış oturumunun ölçüm
+commit'leri). 10 farklı kayıtlı maç kurulumu ve her birinin tohum+1000 eşi: 20 maç × 2700 tik.
+
+**Davranış:** 20 maçın 54 000 tikinin hepsinde parmak izi taban ile bit bit aynı. Mimari değişiklik maçı
+değiştirmedi.
+
+**Hız** (tek iş parçacığı, sırayla, dönüşümlü, 2700 tik; ms/tik):
+
+| | Taban | Şimdi |
+|---|---|---|
+| m00 (3 tekrar) | 13,99 / 13,67 / 13,96 | 14,77 / 14,65 / 14,46 |
+| m10 (3 tekrar) | 11,91 / 11,99 / 11,80 | 12,34 / 12,28 / 12,34 |
+| 4 maç ortalaması | 13,50 | 14,15 |
+
+Duvar saatinde %3–6 yavaş. Ama işin kendisi azaldı (valgrind, m00 300 tik): komut sayısı 34,66 → 34,20
+milyar (−%1,3); önbellek benzetiminde (150 tik) I1 ıska 16,4 → 15,3 M, LL veri ıskası 1,08 → 0,60 M, dal
+yanlış tahmini 79,6 → 75,1 M (dolaylı dallar 5,9 → 3,0 M). Benzetim her ölçüde yeniyi iyi gösteriyor; gerçek
+işlemcideki fark büyük olasılıkla kod yerleşiminden (hizalama, sıcak döngülerin yeri). Yapıdan gelen bir
+iş artışı yok. İzlenecek: Aşama 7'de (crate'lere bölme) yeniden ölçülmeli; gerekirse PGO.
+
+**Kod:** motor 39 231 → 37 898 satır (davranış oturumunun eklemeleriyle birlikte; mimari tarafı ~1700
+ölü satır sildi). `Dis` 66 → 27 yöntem; `kafa_ile` 51 çağrı → 0; `thread_local` 21 → 13; uyarılar 0;
+katman kuralları (`sina/katman.sh`) 5/5; testler 13 geçen, 0 kalan, 12 JS karşılaştırması `ignore`.
+
+**`ALAN_DOLANMA_KIMLIK`** (aynı 20 maç, kapalı / açık; maç başı ortalama, eşleşmiş fark ± standart hata):
+
+| | Kapalı | Açık | Fark/maç | Artan/azalan maç |
+|---|---|---|---|---|
+| Gol | 1,25 | 1,10 | −0,15 ± 0,29 | 6/9 |
+| Pas | 41,35 | 42,60 | +1,25 ± 1,52 | 11/8 |
+| Pas isabeti (%) | 84,8 | 84,3 | −0,5 ± 1,8 | 8/12 |
+| Şut | 4,10 | 4,10 | 0,00 ± 0,52 | 7/8 |
+| Top kaybı | 7,50 | 8,05 | +0,55 ± 0,94 | 12/8 |
+
+Rakibe giden pas %7,9 → %9,5; sahiplik ve enerji (bar ortalaması 0,778 → 0,793) yakın. Hiçbir fark bir
+standart hatanın dışına çıkmıyor; bayrak maçı ilk ~40 tikte ayırıyor (kaos), ama maçın istatistiğini
+ölçülebilir biçimde değiştirmiyor. Hız farkı da maçların ayrı yollardan gitmesinden; dolanma döngüsünün
+maliyeti değişmiyor. Sonuç: düzeltme güvenli ve doğru (kopya kendi gövdesini engel saymamalı); varsayılan
+yapmak davranış oturumunun kararı, 4c-2'nin önünü açar.
 
 ## 4. Dış kütüphaneler
 

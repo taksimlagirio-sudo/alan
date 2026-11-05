@@ -238,8 +238,12 @@ impl Kafa {
             return 0.0;
         }
         let mut ek = 0.0;
+        let kimlik = dolanma_kimlik();
+        // Bayrak açıkken varsayımsal kopya (p ya da skip src'deki aslının kopyası) kendi aslını engel saymaz.
+        // Hayaletlerin id'si NaN: NaN == NaN yanlış, onlara dokunmaz.
+        let ayni = |c: &Op, o: &Oyuncu| ayni_nesne(c, o) || (kimlik && c.team == o.team && c.id == o.id);
         for c in src {
-            if ayni_nesne(c, p) || skip.map_or(false, |s| ayni_nesne(c, s)) || c.noTouch {
+            if ayni(c, p) || skip.map_or(false, |s| ayni(c, s)) || c.noTouch {
                 continue;
             }
             let u = ((c.x - p.x) * ax + (c.y - p.y) * ay) / (L * L);
@@ -1462,4 +1466,14 @@ pub fn topK_p(h: &Oyuncu, dk: Option<crate::kafa::gecici_dis1::Dokunus>) -> f64 
         }
         None => jmin(1.0, 0.68 + 0.02 * s),
     }
+}
+
+/// MIMARI.md 3.3 "dolanma": ALAN_DOLANMA_KIMLIK açıkken dolanma, kopyanın kendi aslını da atlar
+/// (nesne kimliği yerine oyuncu kimliği). Varsayılan kapalı; tarayıcıda hep kapalı.
+fn dolanma_kimlik() -> bool {
+    if cfg!(target_family = "wasm") {
+        return false;
+    }
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *A.get_or_init(|| std::env::var("ALAN_DOLANMA_KIMLIK").is_ok())
 }
