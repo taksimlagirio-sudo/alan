@@ -109,7 +109,7 @@ impl Kafa {
     }
     /// Çekirdeğin açısı (decide.js:730).
     pub fn caOf(&self, h: &Oyuncu) -> f64 {
-        if let Some(k) = &self.D._kanca {
+        if let Some(k) = &self.bag._kanca {
             if let Some(ca) = k.ca {
                 return ca;
             }

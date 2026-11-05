@@ -866,9 +866,9 @@ pub fn sutEngel(k: &Kafa, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
 
 /// JS bskTab(team, bk) (decide.js:5427): boşluk noktalarının şut değeri önbelleği (tik başına).
 fn bskTab<'a>(k: &'a mut Kafa, team: f64, bk: Option<&Oyuncu>) -> &'a mut Vec<f64> {
-    if k.k2.BSKt != k.D._tick || k.k2.BSKt.is_none() {
+    if k.k2.BSKt != k.bag._tick || k.k2.BSKt.is_none() {
         k.k2.BSK.clear();
-        k.k2.BSKt = k.D._tick;
+        k.k2.BSKt = k.bag._tick;
     }
     let key = match bk {
         Some(b) => format!("{}|{}|{:?}|{}", team, b.id, b.en, if b._yer { 1 } else { 0 }),

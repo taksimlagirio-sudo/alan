@@ -258,7 +258,7 @@ pub fn kafa_hazirla(m: &mut Mac) -> Rc<RefCell<Kafa>> {
     }
     let k = m.mac.kafa.k.clone().unwrap();
     if let Ok(mut kk) = k.try_borrow_mut() {
-        kk.D._tick = Some(m.tick);
+        kk.bag._tick = Some(m.tick);
         // JS D._mac = m (kafaAc): kafa maçı her an görür (ileri tablosu ilk okunduğunda kurulur)
         if kk.mac.as_ref().map_or(true, |g| g.tick != m.tick) {
             kk.mac = Some(crate::mac::gecici_dis::mac_gor(m));

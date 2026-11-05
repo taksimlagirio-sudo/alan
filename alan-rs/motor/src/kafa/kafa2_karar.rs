@@ -30,17 +30,17 @@ pub fn otFactor(k: &Kafa, p: &Oyuncu, inSp: f64) -> f64 {
 
 /// JS decideOT(h, src, ch, rnd, tac, ot) (decide.js:5255): tek dokunuşla oynanacak en iyi vuruş.
 pub fn decideOT(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar, tac: Option<&Tac>, ot: f64) -> Option<Secenek> {
-    let ot0 = k.D._ot;
-    let td0 = k.D._tekD;
-    k.D._ot = Some(ot);
-    k.D._tekD = true;
+    let ot0 = k.bag._ot;
+    let td0 = k.bag._tekD;
+    k.bag._ot = Some(ot);
+    k.bag._tekD = true;
     let r = decide(k, hi, src, ch, rnd, tac);
     let opts: Vec<Secenek> = r.opts.into_iter().filter(|o| o.kind != "sür" && o.kind != "tut" && o.launch.is_some()).collect();
     let s = dis::secim(k, &src[hi], opts, r.T, src);
     // JS finally: D._ot = 0; D._tekD = false (öncekine dönmez)
     let _ = (ot0, td0);
-    k.D._ot = Some(0.0);
-    k.D._tekD = false;
+    k.bag._ot = Some(0.0);
+    k.bag._tekD = false;
     s
 }
 
@@ -56,10 +56,10 @@ pub struct Karar {
 /// JS decide(h, src, ch, rnd, tac) (decide.js:7293): topu tutan h'nin seçenekleri ve en iyisi.
 /// `hi`: h'nin dünyadaki sırası; seçeneklerin `q`'su da bu dünyadaki sıra.
 pub fn decide(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar, tac: Option<&Tac>) -> Karar {
-    let tL0 = k.D._tekL;
-    k.D._tekL = if dis::depoOn() && tac.map(|t| t.kontra).unwrap_or(false) { Some(k.D.kontraL) } else { None };
+    let tL0 = k.bag._tekL;
+    k.bag._tekL = if dis::depoOn() && tac.map(|t| t.kontra).unwrap_or(false) { Some(k.D.kontraL) } else { None };
     let r = decide0(k, hi, src, ch, rnd, tac);
-    k.D._tekL = tL0;
+    k.bag._tekL = tL0;
     r
 }
 
@@ -69,7 +69,7 @@ pub fn decide0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar, 
     if !k.k2._inLook {
         let h = src[hi].clone();
         let f = Arc::new(sahiplikKur(k, src, h.team, ch, Some(nk(h.x, h.y))));
-        k.k2.sahF_iz = Some((k.D._tick, h.team, f.clone()));
+        k.k2.sahF_iz = Some((k.bag._tick, h.team, f.clone()));
         k.SAH_F = Some(f);
     }
     // JS decide0K: srcC = Object.assign(src.slice(), {_kc: new Map}) (kararın K önbelleği)
@@ -127,17 +127,18 @@ pub struct DalgaR {
 
 /// D'nin `_` alanlarının anlık görüntüsü (dalgaKos'un geri'si)
 struct DAnlik {
-    D: crate::model::KafaD,
+    /// geçici bağlam (ayar değişmez, saklanmaz)
+    bag: crate::model::KafaBag,
     inLook: bool,
     noHold: bool,
     noFake: bool,
     zin: Option<eski::Zincir>,
 }
 fn d_al(k: &Kafa) -> DAnlik {
-    DAnlik { D: k.D.clone(), inLook: k.k2._inLook, noHold: k.k2._noHold, noFake: k.k2._noFake, zin: k.k2.zin.clone() }
+    DAnlik { bag: k.bag.clone(), inLook: k.k2._inLook, noHold: k.k2._noHold, noFake: k.k2._noFake, zin: k.k2.zin.clone() }
 }
 fn d_geri(k: &mut Kafa, a: &DAnlik) {
-    k.D = a.D.clone();
+    k.bag = a.bag.clone();
     k.k2._inLook = a.inLook;
     k.k2._noHold = a.noHold;
     k.k2._noFake = a.noFake;
@@ -340,14 +341,14 @@ fn sabit(x: f64, n: i32) -> f64 {
 
 /// savurmanın kancası (JS `D._kanca`): (w0, s)
 fn kanca_w0(k: &Kafa) -> f64 {
-    k.D._kanca.as_ref().map(|c| c.w0).unwrap_or(0.0)
+    k.bag._kanca.as_ref().map(|c| c.w0).unwrap_or(0.0)
 }
 fn kanca_s(k: &Kafa) -> f64 {
-    k.D._kanca.as_ref().map(|c| c.s).unwrap_or(0.0)
+    k.bag._kanca.as_ref().map(|c| c.s).unwrap_or(0.0)
 }
 /// JS `D._kanca && null != D._kanca.u && !D._kanca.on`
 fn kanca_u(k: &Kafa) -> Option<f64> {
-    match &k.D._kanca {
+    match &k.bag._kanca {
         Some(c) if !c.on => c.u,
         _ => None,
     }
@@ -495,15 +496,15 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
         let L = veya(hypot(dx, dy), 1.0);
         let v0 = o.v.unwrap_or(f64::NAN) * crate::top::chg_mul(ch) * dis::sutGuc(k, &h);
         let mut launch = JOLaunch { vx: dx / L * v0, vy: dy / L * v0, ok: false };
-        let ot0 = k.D._ot;
-        let g0 = k.D._gon;
-        let s0 = k.D._sut.clone();
+        let ot0 = k.bag._ot;
+        let g0 = k.bag._gon;
+        let s0 = k.bag._sut.clone();
         let ks = kanca_s(k);
-        if o.sYon.map(dogru).unwrap_or(false) && k.D._kanca.is_some() && dogru(ks) && o.sYon != Some(ks) {
+        if o.sYon.map(dogru).unwrap_or(false) && k.bag._kanca.is_some() && dogru(ks) && o.sYon != Some(ks) {
             o.v = None;
             return;
         }
-        let syO = if k.D._kanca.is_some() && dogru(ks) { ks } else { veyo(o.sYon, 0.0) };
+        let syO = if k.bag._kanca.is_some() && dogru(ks) { ks } else { veyo(o.sYon, 0.0) };
         let plase = o.shot.as_deref() == Some("plase");
         {
             let vE = dis::vurE(k, &h, Some(ch), true);
@@ -535,9 +536,9 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
                 launch = JOLaunch { vx: launch.vx * sv.k, vy: launch.vy * sv.k, ok: false };
             }
             o.savT = Some(sv.T);
-            k.D._savW = Some(sv.wRel);
-            k.D._savU = Some(sv.uSh);
-            k.D._itme = Some(plase);
+            k.bag._savW = Some(sv.wRel);
+            k.bag._savU = Some(sv.uSh);
+            k.bag._itme = Some(plase);
             if let Some(u) = kanca_u(k) {
                 if sv.T >= 1.0 {
                     let vO = hypot(launch.vx, launch.vy);
@@ -552,8 +553,8 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
                         };
                         if let Some(s2) = s2 {
                             o.savT = Some(s2.T);
-                            k.D._savW = Some(s2.wRel);
-                            k.D._savU = Some(s2.uSh);
+                            k.bag._savW = Some(s2.wRel);
+                            k.bag._savU = Some(s2.uSh);
                         }
                     }
                 }
@@ -561,19 +562,19 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
         }
         o.launch = Some(launch.clone());
         let shot = o.shot.clone().unwrap_or_default();
-        k.D._ot = Some(veyo(ot0, 1.0) * dis::gonEk(k, &h, &src, &shot));
-        k.D._gon = Some(true);
-        k.D._sut = Some(crate::model::JsDeger::Metin(shot));
-        k.D._sYon = Some(syO);
+        k.bag._ot = Some(veyo(ot0, 1.0) * dis::gonEk(k, &h, &src, &shot));
+        k.bag._gon = Some(true);
+        k.bag._sut = Some(crate::model::JsDeger::Metin(shot));
+        k.bag._sYon = Some(syO);
         let tr = if k.k2._inLook { 2.0 } else { 6.0 };
         let im = dis::imagine(k, &h, &src, dis::Top0 { x: h.x, y: h.y, vx: launch.vx, vy: launch.vy, ch, aim: None }, rnd, tr, None, None);
-        k.D._sYon = Some(0.0);
-        k.D._ot = ot0;
-        k.D._gon = g0;
-        k.D._sut = s0;
-        k.D._savW = None;
-        k.D._savU = None;
-        k.D._itme = None;
+        k.bag._sYon = Some(0.0);
+        k.bag._ot = ot0;
+        k.bag._gon = g0;
+        k.bag._sut = s0;
+        k.bag._savW = None;
+        k.bag._savU = None;
+        k.bag._itme = None;
         let e = im.endO.or(im.end).unwrap_or_default();
         let rk = -im.Pl.unwrap_or(f64::NAN) * c.loss(k, e.x, e.y);
         let Pk = im.Pk.unwrap_or(f64::NAN);
@@ -596,7 +597,7 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
         }
         o.launch = Some(lf.clone());
         let ks = kanca_s(k);
-        let kS = if k.D._kanca.is_some() && dogru(ks) { ks } else { 0.0 };
+        let kS = if k.bag._kanca.is_some() && dogru(ks) { ks } else { 0.0 };
         let o0 = if dogru(kS) || o.sYon.map(dogru).unwrap_or(false) { None } else { Some(o.clone()) };
         let vE = dis::vurE(k, &h, Some(ch), false);
         let ca = dis::caOf(k, &h);
@@ -625,10 +626,10 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
             launch = JOLaunch { vx: lf.vx * sv.k, vy: lf.vy * sv.k, ok: lf.ok };
         }
         o.savT = Some(sv.T);
-        k.D._savT = Some(sv.T);
-        k.D._savW = Some(sv.wRel);
-        k.D._savU = Some(sv.uSh);
-        k.D._savCa = Some(sv.caR);
+        k.bag._savT = Some(sv.T);
+        k.bag._savW = Some(sv.wRel);
+        k.bag._savU = Some(sv.uSh);
+        k.bag._savCa = Some(sv.caR);
         if let Some(u) = kanca_u(k) {
             if sv.T >= 1.0 {
                 let vO = hypot(launch.vx, launch.vy);
@@ -644,10 +645,10 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
                     if let Some(s2) = s2 {
                         sv = s2;
                         o.savT = Some(s2.T);
-                        k.D._savT = Some(s2.T);
-                        k.D._savW = Some(s2.wRel);
-                        k.D._savU = Some(s2.uSh);
-                        k.D._savCa = Some(s2.caR);
+                        k.bag._savT = Some(s2.T);
+                        k.bag._savW = Some(s2.wRel);
+                        k.bag._savU = Some(s2.uSh);
+                        k.bag._savCa = Some(s2.caR);
                     }
                 }
             }
@@ -658,10 +659,10 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
         let q: Option<Oyuncu> = o.q.map(|i| (*src[i]).clone());
         let tr = if k.k2._inLook { 1.0 } else { k.D.trials };
         let im = dis::imagine(k, &h, &src, dis::Top0 { x: h.x, y: h.y, vx: launch.vx, vy: launch.vy, ch, aim: Some(to) }, rnd, tr, q.as_ref(), if onune { Some(to) } else { None });
-        k.D._savT = None;
-        k.D._savW = None;
-        k.D._savU = None;
-        k.D._savCa = None;
+        k.bag._savT = None;
+        k.bag._savW = None;
+        k.bag._savU = None;
+        k.bag._savCa = None;
         let imP = im.P.unwrap_or(f64::NAN);
         let sd = im.Ps.is_some();
         let Pd = if sd { jmax(0.0, imP - im.Ps.unwrap()) } else { imP };
@@ -802,7 +803,7 @@ fn bankHedef(ad: &dis::Secenekler, src: &[Op], team: f64, qi: Pid) -> Vec<(Nokta
 /// JS decide0K(h, src, ch, rnd, tac) (decide.js:7402): adayları kurar, budar, tartar; kenardan ve
 /// çalım adaylarını ekler; enerji muhasebesi; prensip tartısı. Sonuç değere göre sıralı.
 pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar, tac: Option<&Tac>) -> Karar {
-    k.D._sut = Some(crate::model::JsDeger::Sayi(tac.and_then(|t| t.sut).unwrap_or(0.5)));
+    k.bag._sut = Some(crate::model::JsDeger::Sayi(tac.and_then(|t| t.sut).unwrap_or(0.5)));
     let h = src[hi].clone();
     let PR = !k.k2._inLook;
     let team = h.team;
@@ -1100,7 +1101,7 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
         }
     }
     // tek dokunuşla şut (eski kafa)
-    if !PR && k.D._gon != Some(true) {
+    if !PR && k.bag._gon != Some(true) {
         eski::tekSut(k, &h, src, ch, rnd, &mut ad.out, &mut |k, x, y| c.loss(k, x, y));
     }
     let basR = {

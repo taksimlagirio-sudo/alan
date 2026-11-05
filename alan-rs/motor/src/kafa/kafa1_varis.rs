@@ -791,7 +791,7 @@ impl Kafa {
             let rc = if lane.map_or(false, |l| l.loose) {
                 jmax(0.0, self.TEPKI(p, Tepki::BosTop))
             } else {
-                jmax(0.0, self.TEPKI(p, Tepki::Kovala) - z0(t0) + lane.map_or(0.0, |l| l.lag)) - self.D._savT.map_or(0.0, z0)
+                jmax(0.0, self.TEPKI(p, Tepki::Kovala) - z0(t0) + lane.map_or(0.0, |l| l.lag)) - self.bag._savT.map_or(0.0, z0)
             };
             let v = self.vS(p);
             let (px, py) = (p.x, p.y);

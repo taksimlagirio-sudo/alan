@@ -357,10 +357,10 @@ pub fn decideOT(m: &Mac, p: &Oyuncu, g: &[Oyuncu], ch: f64, r: &mut Rng, tE: &cr
     let mg = mac_gor(m);
     kafa_mac(m, |k| {
         k.mac = Some(mg);
-        let k0 = k.D._kanca.take();
-        k.D._kanca = kanca.map(|c| crate::model::DKanca { w0: c.w0, s: c.s, ca: Some(c.ca), u: Some(c.u), on: c.on });
+        let k0 = k.bag._kanca.take();
+        k.bag._kanca = kanca.map(|c| crate::model::DKanca { w0: c.w0, s: c.s, ca: Some(c.ca), u: Some(c.u), on: c.on });
         let o = crate::kafa::kafa2_karar::decideOT(k, hi, &src, ch, &mut rng_fn(r), Some(&tac), ot);
-        k.D._kanca = k0;
+        k.bag._kanca = k0;
         o
     })
 }

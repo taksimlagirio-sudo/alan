@@ -233,7 +233,7 @@ fn kafa(g: &Value) -> Kafa {
     };
     let md = alan_motor::mac::kafa_dis::MacDis::kur(&mut m);
     let mut k = Kafa::yeni(Arc::new(tdis::TDis { m: md }));
-    k.D._tick = ho(&g["D"]["_tick"]);
+    k.bag._tick = ho(&g["D"]["_tick"]);
     if !g["mac"].is_null() {
         let m = &g["mac"];
         k.mac = Some(MacGor { tick: m["tick"].as_f64().unwrap_or(0.0), len: 9000.0, tac: m["tac"].as_array().map(|a| a.iter().map(tac_e).collect()).unwrap_or_default(), ps: if src_var { dunya(&g["src"]) } else { Vec::new() }, holder: m["holder"].as_u64().map(|x| x as usize) });

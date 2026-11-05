@@ -140,9 +140,9 @@ fn kos_adim(k: &Kafa, q: &mut Oyuncu, t: usize, gx: &mut f64, gy: &mut f64, sw: 
 /// JS pwKos(p, gx0, gy0, sw0, vmax, rc, n, IV) (decide.js:4838): oyuncunun hedefe koşusu, n tik
 /// (tik başına önbellekli: aynı oyuncu nesnesi ve aynı koşu → kaldığı yerden sürer).
 pub fn pwKos(k: &mut Kafa, p: &Op, gx0: f64, gy0: f64, sw0: Option<Sw>, vmax: f64, rc: f64, n: usize) -> Op {
-    if k.k2.PWT != k.D._tick {
+    if k.k2.PWT != k.bag._tick {
         k.k2.PWM.clear();
-        k.k2.PWT = k.D._tick;
+        k.k2.PWT = k.bag._tick;
     }
     let anahtar = Arc::as_ptr(p) as usize;
     let mut L = match k.k2.PWM.remove(&anahtar) {
@@ -515,7 +515,7 @@ pub fn paylastir(k: &Kafa, W: &[Op], team: f64, T: f64, haric: &[usize]) -> Duny
 pub fn holdWorld(k: &mut Kafa, hi: Pid, src: &[Op], ch: f64, tac: Option<&Tac>, T: f64, rnd: &mut Zar, to: Option<Nokta>) -> HoldW {
     if to.is_none() {
         if let Some((h, sp, cT, ct, cch, r)) = &k.k2.hold_c {
-            if ayni(h, &src[hi]) && *sp == src.as_ptr() as usize && *cT == T && *ct == k.D._tick && *cch == ch {
+            if ayni(h, &src[hi]) && *sp == src.as_ptr() as usize && *cT == T && *ct == k.bag._tick && *cch == ch {
                 return r.clone();
             }
         }
@@ -524,7 +524,7 @@ pub fn holdWorld(k: &mut Kafa, hi: Pid, src: &[Op], ch: f64, tac: Option<&Tac>, 
     let mut m = dis::AM_hayali(k, tohum, src, hi, ch, tac);
     let x0 = src[hi].x;
     let y0 = src[hi].y;
-    let (i0, n0, t0_) = (k.k2._inLook, k.k2._noHold, k.D._tick);
+    let (i0, n0, t0_) = (k.k2._inLook, k.k2._noHold, k.bag._tick);
     k.k2._inLook = true;
     k.k2._noHold = true;
     let mut lost = false;
@@ -556,10 +556,10 @@ pub fn holdWorld(k: &mut Kafa, hi: Pid, src: &[Op], ch: f64, tac: Option<&Tac>, 
     }
     k.k2._inLook = i0;
     k.k2._noHold = n0;
-    k.D._tick = t0_;
+    k.bag._tick = t0_;
     let r = HoldW { lost, lostT, ps: Arc::new(m.ps), ch: m.ch };
     if to.is_none() {
-        k.k2.hold_c = Some((src[hi].clone(), src.as_ptr() as usize, T, k.D._tick, ch, r.clone()));
+        k.k2.hold_c = Some((src[hi].clone(), src.as_ptr() as usize, T, k.bag._tick, ch, r.clone()));
     }
     r
 }

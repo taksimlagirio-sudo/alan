@@ -340,8 +340,8 @@ impl Kafa {
             Some(en) if !en.per.is_empty() => &en.per,
             _ => return Cow::Borrowed(w),
         };
-        let wD = jmax(0.0, self.D._enWD.unwrap_or(0.0));
-        let tm = self.D._enTm;
+        let wD = jmax(0.0, self.bag._enWD.unwrap_or(0.0));
+        let tm = self.bag._enTm;
         let mut deg = false;
         let r: Vec<Op> = w
             .iter()

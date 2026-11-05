@@ -702,10 +702,17 @@ pub struct KafaD {
     pub tSut: f64,
     /// `tSab`: number
     pub tSab: f64,
-    /// `_tick`: number (sonradan eklenir)
-    pub _tick: Option<f64>,
     /// `imkEski`: boolean
     pub imkEski: bool,
+}
+
+/// Kafanın geçici bağlamı (JS `D`'nin `_` alanları): bir hesabın süresince kurulup geri alınan değerler
+/// (`_tick`, `_gPr`, `_sav*`, `_kenar` …). Değişmez ayar (`KafaD`) bundan ayrıldı (MIMARI.md 3e-3):
+/// saf değerlendirmeler ve yerleşim yalnız ayarı görür, geçici bağlam kafanın kendisinde (`Kafa::bag`).
+#[derive(Clone, Debug, Default)]
+pub struct KafaBag {
+    /// `_tick`: number (sonradan eklenir)
+    pub _tick: Option<f64>,
     /// `_tekL`: undef
     pub _tekL: Option<f64>,
     /// `_sut`: number (sonradan eklenir)
