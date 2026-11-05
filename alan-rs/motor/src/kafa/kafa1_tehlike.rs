@@ -436,7 +436,9 @@ impl Kafa {
                 continue;
             }
             let pres = p.press || is_bas(&p.job, &["pres"]);
-            let mr = p.hal.markRef.and_then(|k| src.get(k));
+            // ALAN_TUTAN_KALIR_IZ: maçta savunmacının işi bir hücumcuyu tutmaksa (`tutQ`: arkada, adam) görevinde
+            // kalır (sekil/konum/esles.rs); kafa yalnız markRef'e bakıyordu, tutan savunmacı alıcıya koşuyordu
+            let mr = p.hal.markRef.or_else(|| if tutan_kalir() { p.hal.tutQ } else { None }).and_then(|k| src.get(k));
             if let Some(mr) = mr {
                 if hypot(mr.x - at.x, mr.y - at.y) > 4.0 && self.threat(team, mr.x, mr.y) > tAt && !pres {
                     continue;
@@ -493,4 +495,11 @@ pub fn threat_d(D: &crate::model::KafaD, team: f64, x: f64, y: f64) -> f64 {
     let gx = gx_of(team);
     let d = hypot(x - gx, y - GCY);
     exp(-d / D.threatK) * (1.0 - D.sideK * (y - GCY).abs() / GCY)
+}
+
+/// Deney bayrağı (ALAN_TUTAN_KALIR_IZ; ölçümde TUTAN_KALIR_ZORLA)
+pub static TUTAN_KALIR_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn tutan_kalir() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    TUTAN_KALIR_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_TUTAN_KALIR_IZ").is_ok())
 }

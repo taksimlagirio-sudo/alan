@@ -91,6 +91,7 @@ fn main() {
         alan_motor::kafa::kafa1_ucus::BEK_DALIS_ZORLA.store(ek.split(',').any(|x| x == "dalis"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_imkan::SUT_GERCEK_ZORLA.store(ek.split(',').any(|x| x == "sutgercek"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::ZEMIN_YARIS_ZORLA.store(ek.split(',').any(|x| x == "yaris"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa1_tehlike::TUTAN_KALIR_ZORLA.store(ek.split(',').any(|x| x == "tutan"), std::sync::atomic::Ordering::Relaxed);
         let mut once = mt.m.clone();
         once.mac.kafa = Default::default();
         // seçenekler: önce hepsi bir kez zorlanır; ALAN_DENE_SEC=0,3,7 yalnız bunlar denenir, ALAN_DENE_LISTE seçenek sayısını yazar
@@ -230,6 +231,7 @@ fn main() {
                     alan_motor::kafa::kafa1_ucus::BEK_DALIS_ZORLA.store(acik && ek.split(',').any(|x| x == "dalis"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_imkan::SUT_GERCEK_ZORLA.store(acik && ek.split(',').any(|x| x == "sutgercek"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::ZEMIN_YARIS_ZORLA.store(acik && ek.split(',').any(|x| x == "yaris"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa1_tehlike::TUTAN_KALIR_ZORLA.store(acik && ek.split(',').any(|x| x == "tutan"), std::sync::atomic::Ordering::Relaxed);
                     let mut m2 = Motor::yeni(once.clone());
                     let mut isler2 = alan_motor::oyun::IsSozluk::default();
                     let (mut kr, mut ol) = (Vec::new(), Vec::new());
@@ -283,6 +285,7 @@ fn main() {
                 alan_motor::kafa::kafa1_ucus::BEK_DALIS_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa2_imkan::SUT_GERCEK_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa2_tarti::ZEMIN_YARIS_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kafa::kafa1_tehlike::TUTAN_KALIR_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
             }
             mt.adim();
         }
