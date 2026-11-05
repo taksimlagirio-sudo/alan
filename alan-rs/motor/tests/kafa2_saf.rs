@@ -150,7 +150,7 @@ fn js_ile_bit_bit_ayni() {
     };
     for a in v["anlar"].as_array().unwrap() {
         let tk = a["tick"].as_u64().unwrap();
-        k.D._tick = Some(tk as f64);
+        k.bag._tick = Some(tk as f64);
         let ps: Dunya = a["ps"].as_array().unwrap().iter().map(|p| Arc::new(oyuncu(p))).collect();
         // maçın sprint katı (match.js sarmalı) JS'ten
         *sd.spr.borrow_mut() = a["per"].as_array().unwrap().iter().enumerate().map(|(i, e)| (ps[i].id, ps[i].team, h(&e[1]))).collect();

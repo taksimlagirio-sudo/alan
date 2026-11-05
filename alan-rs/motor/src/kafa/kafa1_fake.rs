@@ -139,7 +139,7 @@ impl Kafa {
     /// Fake seçenekleri (decide.js:334): `opts`'a ekler. `kon`: kayıp yerinin değeri (kafa2'nin KF'si).
     #[allow(clippy::too_many_arguments)]
     pub fn fakeSecenek(&mut self, h: &Oyuncu, src: &[Op], ch: f64, tac: Option<&Tac>, opts: &mut Vec<Secenek>, kon: &mut dyn FnMut(&mut Kafa, f64, f64) -> Option<f64>) {
-        if self.D._noFake || self.D._inLook || h.bekci() {
+        if self.bag._noFake || self.bag._inLook || h.bekci() {
             return;
         }
         let team = h.team;

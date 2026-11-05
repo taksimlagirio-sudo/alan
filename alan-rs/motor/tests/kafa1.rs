@@ -313,13 +313,13 @@ fn js_ile_bit_bit_ayni() {
         }
         let dis = Arc::new(KayitDis { oy: oy.clone(), mac: None });
         let mut k = Kafa::yeni(dis);
-        k.D._tick = Some(tk);
-        k.D._gon = Some(false);
-        k.D._sut = Some(alan_motor::model::JsDeger::Sayi(0.5));
-        k.D._ot = Some(1.0);
-        k.D._savT = Some(0.0);
-        k.D._sYon = Some(0.0);
-        k.D._kenar = Some(false);
+        k.bag._tick = Some(tk);
+        k.bag._gon = Some(false);
+        k.bag._sut = Some(alan_motor::model::JsDeger::Sayi(0.5));
+        k.bag._ot = Some(1.0);
+        k.bag._savT = Some(0.0);
+        k.bag._sYon = Some(0.0);
+        k.bag._kenar = Some(false);
         let hi = c["h"].as_u64().unwrap() as usize;
         let hh: &Oyuncu = &ps[hi];
         let team = hh.team;
@@ -390,11 +390,11 @@ fn js_ile_bit_bit_ayni() {
         for u in c["uf"].as_array().unwrap() {
             let gon = u["gon"].as_bool().unwrap();
             let b = &u["b0"];
-            k.D._gon = Some(gon);
-            k.D._sut = Some(if gon { alan_motor::model::JsDeger::Metin("güçlü".into()) } else { alan_motor::model::JsDeger::Sayi(0.5) });
+            k.bag._gon = Some(gon);
+            k.bag._sut = Some(if gon { alan_motor::model::JsDeger::Metin("güçlü".into()) } else { alan_motor::model::JsDeger::Sayi(0.5) });
             let r = k.ucusFormul(hh, &ps, UcusB0 { x: h(&b[0]), y: h(&b[1]), vx: h(&b[2]), vy: h(&b[3]), ch: h(&b[4]), aim: None }, None, None, None);
-            k.D._gon = Some(false);
-            k.D._sut = Some(alan_motor::model::JsDeger::Sayi(0.5));
+            k.bag._gon = Some(false);
+            k.bag._sut = Some(alan_motor::model::JsDeger::Sayi(0.5));
             let rv = [r.P, r.Pk, r.Pl, r.end.x, r.end.y, r.endM.x, r.endM.y, r.endO.x, r.endO.y, r.Ps, r.endS.x, r.endS.y, r.endD.x, r.endD.y, r.Psek, r.endSek.x, r.endSek.y];
             let ad = if gon { "ucusFormul(şut)" } else { "ucusFormul(pas)" };
             for (i, x) in rv.iter().enumerate() {
@@ -527,7 +527,7 @@ fn js_ile_bit_bit_ayni() {
             let dis2 = Arc::new(KayitDis { oy: oy.clone(), mac: Some(MacK { ch: ho(&mj["ch"]), gs, tac, prT }) });
             let k2 = Kafa::yeni(dis2);
             let mut k2 = k2;
-            k2.D._tick = Some(c["mtick"].as_f64().unwrap() + 0.5);
+            k2.bag._tick = Some(c["mtick"].as_f64().unwrap() + 0.5);
             for e in mj["vk"].as_array().unwrap() {
                 k2.ge_vk_koy(e[0].as_str().unwrap().into(), h(&e[1]));
             }

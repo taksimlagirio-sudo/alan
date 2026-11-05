@@ -426,16 +426,16 @@ pub fn prGam(k: &Kafa, h: &Oyuncu, tac: Option<&Tac>) -> f64 {
 
 /// JS prensipDegerle(h, src, ch, team, opts, lossAt, T, tac) (decide.js:7109)
 pub fn prensipDegerle(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f64, opts: &mut Vec<Secenek>, lossAt: &KayipRef, T: f64, tac: Option<&Tac>) {
-    let g0 = k.D._gPr;
-    let w0 = k.D._enWD;
-    let t0_ = k.D._enTm;
-    k.D._gPr = Some(prGam(k, &src[hi], tac));
-    k.D._enWD = Some(veyo(tac.and_then(|t| t.enDinlen), 0.0));
-    k.D._enTm = Some(team);
+    let g0 = k.bag._gPr;
+    let w0 = k.bag._enWD;
+    let t0_ = k.bag._enTm;
+    k.bag._gPr = Some(prGam(k, &src[hi], tac));
+    k.bag._enWD = Some(veyo(tac.and_then(|t| t.enDinlen), 0.0));
+    k.bag._enTm = Some(team);
     prensipDegerle0(k, hi, src, ch, team, opts, lossAt, T);
-    k.D._gPr = g0;
-    k.D._enWD = w0;
-    k.D._enTm = t0_;
+    k.bag._gPr = g0;
+    k.bag._enWD = w0;
+    k.bag._enTm = t0_;
 }
 
 /// JS enGec(q, w, f): q'nun barı dünyadakine çekilerek f (tartının bağlamında q da değişir).
@@ -731,7 +731,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                     if uzak_iz() {
                         // atamadaki yetişme olasılığının yaklaşığı (esles: 1/(1+e^((t−TW)/5)), t ≈ uzaklık/hız, TW ≈ Tk)
                         let kp = 1.0 / (1.0 + exp((uz / crate::kafa::kafa1_js::ya(k.vS(d), 0.05) - Tk) / 5.0));
-                        eprintln!("UZAK {:.2} {:.6} t={:?} kq={} d={} dx={:.0} dy={:.0} kx={:.0} kp={:.6}", uz, jmax(0.0, v2 - vk), k.D._tick, kq.id, d.id, d.x, d.y, kq.x, kp);
+                        eprintln!("UZAK {:.2} {:.6} t={:?} kq={} d={} dx={:.0} dy={:.0} kx={:.0} kp={:.6}", uz, jmax(0.0, v2 - vk), k.bag._tick, kq.id, d.id, d.x, d.y, kq.x, kp);
                     }
                     if v2 > vk {
                         mm.push((format!("{}|{}", js_sayi(kq.id), js_sayi(d.id)), v2 - vk));
@@ -779,7 +779,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
         };
         if mac_var {
             let hv = nodeV(k, &mut cx, &h, k.D.sutHazir, 0.0, None);
-            k.prT = Some(PrT { team, hId: h.id, t: k.D._tick, m: tm, mm, hm, h: hv });
+            k.prT = Some(PrT { team, hId: h.id, t: k.bag._tick, m: tm, mm, hm, h: hv });
         }
     }
 }

@@ -273,7 +273,7 @@ pub fn kafa_d() -> KafaD {
 }
 
 /// D'nin `_` alanlarını (`_tick` dışında) boşaltır (JS: `for (k of Object.keys(D)) if (k[0] === "_" && k !== "_tick") delete D[k]`).
-pub fn d_alt_bosalt(d: &mut KafaD) {
+pub fn d_alt_bosalt(d: &mut crate::model::KafaBag) {
     d._tekL = None;
     d._sut = None;
     d._zin = None;

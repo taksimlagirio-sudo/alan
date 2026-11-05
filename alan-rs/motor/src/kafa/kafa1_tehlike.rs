@@ -320,7 +320,7 @@ impl Kafa {
     }
     /// Bekçi yerine geçtikten sonra şutun açıklığı (decide.js:3634; JS gibi tik başına önbellekli).
     pub fn runSut(&self, team: f64, bk: &Oyuncu, x: f64, y: f64) -> f64 {
-        let t = self.D._tick;
+        let t = self.bag._tick;
         {
             let mut c = self.rnb.borrow_mut();
             if c.0 != t || (c.0.is_none() && t.is_none() && false) {
@@ -387,7 +387,7 @@ impl Kafa {
         let mut kk = Kaynak::Sec(&et);
         let k = crate::alan::k(&mut kk, x, y, team as u8);
         let e = jmax(P.tek_taban, ch);
-        let L = yao(self.D._tekL, 18.0);
+        let L = yao(self.bag._tekL, 18.0);
         let need = L * P.tek_s * (P.attn + jmax(0.0, -k) * P.drain * P.tek_drain * (1.0 - P.pierce * e));
         jmax(0.4, jmin(1.0, 0.55 + (e - need) / 0.3))
     }

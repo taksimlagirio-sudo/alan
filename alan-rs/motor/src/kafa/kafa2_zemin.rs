@@ -20,7 +20,7 @@ use std::sync::Arc;
 /// JS gam() (decide.js:5939): sonraki adımın indirimi (prensip tartısında D._gPr)
 #[inline(always)]
 pub fn gam(k: &Kafa) -> f64 {
-    k.D._gPr.unwrap_or(k.D.combo)
+    k.bag._gPr.unwrap_or(k.D.combo)
 }
 
 /// JS kayipF(src, team, ch, risk) (decide.js:5867): top (x, y)'de kaybedilirse rakibin kazancı:
@@ -43,7 +43,7 @@ pub struct KayipF {
 }
 
 pub fn kayipF(k: &Kafa, src: Arc<Dunya>, team: f64, ch: f64, risk: f64) -> KayipF {
-    KayipF { src, team, risk, cc: dis::chKayip(k, ch), ot: 1.0 - team, c: Default::default(), yq: None, gB: k.D._gPr, oB: k.k2.IMK_OFS, kayit: None, istenen: Default::default(), onden: Default::default() }
+    KayipF { src, team, risk, cc: dis::chKayip(k, ch), ot: 1.0 - team, c: Default::default(), yq: None, gB: k.bag._gPr, oB: k.k2.IMK_OFS, kayit: None, istenen: Default::default(), onden: Default::default() }
 }
 
 // ------------------------------------------------------------------ kararın ızgarasını önceden hesaplama
@@ -196,11 +196,11 @@ impl KayipF {
         if let Some(v) = self.c.get(&key) {
             return *v;
         }
-        let g1 = k.D._gPr;
+        let g1 = k.bag._gPr;
         let o1 = k.k2.IMK_OFS;
         let ba = g1 != self.gB || o1 != self.oB;
         if ba {
-            k.D._gPr = self.gB;
+            k.bag._gPr = self.gB;
             k.k2.IMK_OFS = self.oB;
         }
         let a = self.kazanImk(k, X, Y);
@@ -208,7 +208,7 @@ impl KayipF {
         let c = self.pasR(k, X, Y);
         let v = jmax(jmax(a, b), c);
         if ba {
-            k.D._gPr = g1;
+            k.bag._gPr = g1;
             k.k2.IMK_OFS = o1;
         }
         self.c.insert(key, v);
@@ -460,8 +460,8 @@ pub fn ileriTab(k: &mut Kafa) -> Option<Arc<IleriTab>> {
         };
         if degisti {
             // D'nin `_` alanları (_tick dışında) geçici olarak boşaltılır; D._mac sade maç görünümü.
-            let sakla_d = k.D.clone();
-            super::kafa2_baglam::d_alt_bosalt(&mut k.D);
+            let sakla_d = k.bag.clone();
+            super::kafa2_baglam::d_alt_bosalt(&mut k.bag);
             let sakla_k2 = (k.k2._inLook, k.k2._noHold, k.k2._noFake, k.k2._dalgada, k.k2.zin.take());
             k.k2._inLook = false;
             k.k2._noHold = false;
@@ -470,7 +470,7 @@ pub fn ileriTab(k: &mut Kafa) -> Option<Arc<IleriTab>> {
             let sakla_mac = k.mac.replace(MacGor { tick: 0.0, len: m.len, tac: m.tac.clone(), ps: m.ps.clone(), holder: None });
             let tab = ileriKur(k, &m).map(Arc::new);
             k.mac = sakla_mac;
-            k.D = sakla_d;
+            k.bag = sakla_d;
             k.k2._inLook = sakla_k2.0;
             k.k2._noHold = sakla_k2.1;
             k.k2._noFake = sakla_k2.2;

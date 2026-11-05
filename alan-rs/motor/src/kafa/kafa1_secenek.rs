@@ -134,6 +134,7 @@ impl Kafa {
         let team = h.team;
         let gx = if team == 0.0 { GW } else { 0.0 };
         let D = &self.D;
+        let B = &self.bag;
         let saf = self.SAH_F.clone().expect("options: SAH_F (kafa her kararda kurar)");
         let SAH = |t: f64, x: f64, y: f64| -> f64 { saf.oku(t, x, y) };
         let TOPLA = h.id >= 0.0;
@@ -393,7 +394,7 @@ impl Kafa {
         }
         // ---- şut ----
         let gd = hypot(gx - h.x, GCY - h.y);
-        if gd < D.shotRange * (0.75 + 0.5 * match &D._sut { Some(JsDeger::Sayi(v)) => *v, _ => 0.5 }) {
+        if gd < D.shotRange * (0.75 + 0.5 * match &B._sut { Some(JsDeger::Sayi(v)) => *v, _ => 0.5 }) {
             for ty in self.sutHedef(h, src, gx) {
                 for sy in [1.0, -1.0] {
                     let mut o = yeni("gönder");

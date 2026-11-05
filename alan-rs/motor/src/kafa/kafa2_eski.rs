@@ -464,43 +464,43 @@ pub fn tekSut(k: &mut Kafa, h: &Op, src: &[Op], ch: f64, rnd: &mut Zar, opts: &m
             let dy = ty - at.y;
             let l = veya(hypot(dx, dy), 1.0);
             let v0 = dis::sutV(k, &q0) * crate::top::chg_mul(c2) * dis::sutGuc(k, &q0);
-            let ot0 = k.D._ot;
-            let g0 = k.D._gon;
-            let s0 = k.D._sut.clone();
-            k.D._ot = Some(veyo(ot0, 1.0) * dis::gonEk(k, &hS, &srcS, "güçlü") * 1.2);
-            k.D._gon = Some(true);
-            k.D._sut = Some(crate::model::JsDeger::Metin("güçlü".into()));
-            let kc0 = k.D._kanca.clone();
+            let ot0 = k.bag._ot;
+            let g0 = k.bag._gon;
+            let s0 = k.bag._sut.clone();
+            k.bag._ot = Some(veyo(ot0, 1.0) * dis::gonEk(k, &hS, &srcS, "güçlü") * 1.2);
+            k.bag._gon = Some(true);
+            k.bag._sut = Some(crate::model::JsDeger::Metin("güçlü".into()));
+            let kc0 = k.bag._kanca.clone();
             let mut vS = v0;
             {
                 let B = crate::core_sabit::Q.body;
                 let uin = jmax(0.3, 0.7 * hypot(launch.vx, launch.vy));
                 let ca = atan2(h.y - at.y, h.x - at.x);
-                k.D._kanca = Some(crate::model::DKanca { w0: uin / B, s: 0.0, ca: Some(ca), u: None, on: false });
+                k.bag._kanca = Some(crate::model::DKanca { w0: uin / B, s: 0.0, ca: Some(ca), u: None, on: false });
                 let vE = dis::vurE(k, &q0, Some(c2), true);
                 let sv = dis::savurPlan(k, &hS, dx / l * v0, dy / l * v0, ca, uin / B, 0.0, &srcS, false, vE);
-                k.D._savW = sv.map(|s| s.wRel);
-                k.D._savU = sv.map(|s| s.uSh);
+                k.bag._savW = sv.map(|s| s.wRel);
+                k.bag._savU = sv.map(|s| s.uSh);
                 if let Some(sv) = sv {
                     if sv.T >= 1.0 {
                         let mx = uin * (1.0 - 0.35 * jmin(1.0, sv.A / crate::mat::PI)) + 0.4;
                         if v0 > mx {
                             vS = mx;
                             let s2 = dis::savurPlan(k, &hS, dx / l * vS, dy / l * vS, ca, uin / B, 0.0, &srcS, false, vE);
-                            k.D._savW = s2.map(|s| s.wRel);
-                            k.D._savU = s2.map(|s| s.uSh);
+                            k.bag._savW = s2.map(|s| s.wRel);
+                            k.bag._savU = s2.map(|s| s.uSh);
                         }
                     }
                 }
             }
             let tr = if k.k2._inLook { 1.0 } else { 3.0 };
             let im2 = dis::imagine(k, &hS, &srcS, dis::Top0 { x: at.x, y: at.y, vx: dx / l * vS, vy: dy / l * vS, ch: c2, aim: None }, rnd, tr, None, None);
-            k.D._ot = ot0;
-            k.D._gon = g0;
-            k.D._sut = s0;
-            k.D._kanca = kc0;
-            k.D._savW = None;
-            k.D._savU = None;
+            k.bag._ot = ot0;
+            k.bag._gon = g0;
+            k.bag._sut = s0;
+            k.bag._kanca = kc0;
+            k.bag._savW = None;
+            k.bag._savU = None;
             if im2.Pk.unwrap_or(f64::NAN) > best {
                 best = im2.Pk.unwrap();
             }

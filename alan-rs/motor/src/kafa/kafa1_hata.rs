@@ -35,7 +35,7 @@ impl Kafa {
     }
     /// D._sut'un metin hâli (şutun türü: "güçlü"/"plase"); sayıysa (taktik) yok.
     pub fn d_sut_tur(&self) -> Option<String> {
-        match &self.D._sut {
+        match &self.bag._sut {
             Some(JsDeger::Metin(s)) => Some(s.clone()),
             _ => None,
         }
@@ -92,7 +92,7 @@ impl Kafa {
         }
     }
     fn hata_ortak(&self, h: &Oyuncu, gon: bool, src: Option<&[Op]>, tur: Option<&str>, kenar: Option<bool>, ot: f64) -> (bool, HataF) {
-        let g = gon || self.D._gon.unwrap_or(false);
+        let g = gon || self.bag._gon.unwrap_or(false);
         let st = self.d_sut_tur();
         let tur = match tur {
             Some(t) => Some(t.to_string()),
@@ -104,8 +104,8 @@ impl Kafa {
                 }
             }
         };
-        let kenar = kenar.or(self.D._kenar).unwrap_or(false);
-        let lk = ya(ya(ot, self.D._ot.unwrap_or(0.0)), 1.0);
+        let kenar = kenar.or(self.bag._kenar).unwrap_or(false);
+        let lk = ya(ya(ot, self.bag._ot.unwrap_or(0.0)), 1.0);
         (g, self.hataF(h, src, g, tur.as_deref(), kenar, lk))
     }
     /// Savurmalı vuruşun hatası (decide.js:763): hız vektörünü döndürür ve ölçekler.
