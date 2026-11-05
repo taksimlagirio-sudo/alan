@@ -223,12 +223,12 @@ impl<'a> Ctx0<'a> {
         }
         let src = self.src.clone();
         let Rw = dis::respond(k, &src, self.team, D0, Topt, kind);
-        let resp: Vec<usize> = (0..src.len()).filter(|&i| !ayni(&Rw[i], &src[i])).collect();
+        let resp: Vec<usize> = (0..src.len()).filter(|&i| !ayni_nesne(&Rw[i], &src[i])).collect();
         let Pw = predictWorld(k, &src, self.team, D0, Topt, true, Some(&resp), false, None);
         let w: Arc<Dunya> = Arc::new(
             (0..src.len())
                 .map(|i| {
-                    if !ayni(&Rw[i], &src[i]) {
+                    if !ayni_nesne(&Rw[i], &src[i]) {
                         Rw[i].clone()
                     } else if i == self.hi {
                         if kind == "drive" {
@@ -309,7 +309,7 @@ impl<'a> Ctx0<'a> {
             let mut wk = dis::respond(k, w, team, nk(kq.x, kq.y), Tk, "pass");
             if let Some(bi) = wk.iter().position(|o| o.team != team && bekci(o) && !o.noTouch) {
                 let b2 = bekKay(k, &wk[bi], nk(kq.x, kq.y), Tk);
-                if !ayni(&b2, &wk[bi]) {
+                if !ayni_nesne(&b2, &wk[bi]) {
                     wk[bi] = b2;
                 }
             }

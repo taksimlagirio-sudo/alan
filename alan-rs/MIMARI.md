@@ -152,7 +152,7 @@ kodda çalıştığı için aşamalar küçük parçalarla ve sık `main`'e birl
 | 3e-1 ✅ | Sprint niyeti `SF_NIYET` → `MacKural::niyet` (kafa tartı süresince dış dünyasının anlık görüntüsüne koyar) | Davranışı etkileyen gizli durum; küçük | `SF_NIYET` yok; yol çalışıyor (900 tikte 93 konur, 37 816 okunur) |
 | 3e-2 ✅ | Kafanın tiki `D_TICK` → `Mc::dtik` (pres → `presKesis` → `yolBag` → `hizYanilgi` boyunca parametre) | Davranışı etkileyen gizli durum; küçük | `D_TICK`, `d_tick_ile` yok |
 | 3e-3 ✅ | `KafaD`'nin 22 `_` alanı (geçici bağlam: `_tick`, `_gPr`, `_sav*`, `_kenar` …) ayrı yapıya (`Kafa::bag`); `KafaD` yalnız değişmez ayar | Saf değerlendirmeler (`pressAt_d` …) ve yerleşimin `c.d`'si gerçekten değişmez ayarı görsün; "geçici değiştir, geri koy" kalıpları görünür olsun | `KafaD`'de `_` alanı yok (geçici bağlam `KafaBag`, `Kafa::bag`; ayarın hiçbir alanı yazılmıyor: kaydet/geri koy yalnız bağlamı korur) |
-| 4a | Kimlik envanteri: 46 `ayni` (`Arc::ptr_eq`) yerinin anlamı (gerçek oyuncu mu, kopyası mı, aynı dünyada mı) | 4b/4c'den önce: paylaşım ve görünümler kimliği bozmasın | Her yer belgeli; `Pid` ile karşılaştırılabilenler çevrilmiş |
+| 4a ✅ | Kimlik envanteri: 46 `ayni` (`Arc::ptr_eq`) yerinin anlamı (gerçek oyuncu mu, kopyası mı, aynı dünyada mı) | 4b/4c'den önce: paylaşım ve görünümler kimliği bozmasın | Her yer belgeli ve sınıflı (3.2), adlar anlamı söylüyor (`ayni_nesne`, `ayni_oyuncu`, `ayni_secenek`). Sıraya (`Pid`) çeviri 4c'de: kafanın dünyasındaki oyuncular (`Op`) bugün sıra taşımıyor |
 | 4b | `Gorunum` (taban dünya + değişen oyuncu konumları): yalnız `x, y, vx, vy` değiştiren 35 kopya yeri | Kopya maliyetinin çoğu; kimlik 4a ile güvende | 35 yerde `Oyuncu` kopyası yok |
 | 4c | Tek dünya: yerleşimin `Varlik`'i ile kafanın `Dunya`'sı birleşir; `ow`, `op_dunya`, `dunya_kopya`, `hafif` çevirileri ve tamponları (`OW`, `DUNYA_KOPYA`, `ILK_TAMPON`) kalkar | 4a–b'nin üstüne | Çeviri yok; `Dis`'in yerleşim yöntemleri doğrudan çağrı |
 | 3e-4 | Kafanın önbellekleri ömürlerine göre (`Onbellek`: tik ömürlü `ge`, `rnb`, `keepP_son` …; saf kalıcı `ucus`, `suty` …), tik başında açıkça temizlenir | 4c'den sonra: anahtarlar artık işaretçi değil | `Kafa`'da dağınık `RefCell` önbellek yok |
@@ -161,6 +161,32 @@ Kalan `thread_local`'lar (13): saf önbellekler (`GEC`, `GTB`, `GECY_K`, `BEK_DE
 sıradan bağımsız; iş parçacığı başına kabul edilir), tamponlar (`OW`, `DUNYA_KOPYA`, `ILK_TAMPON`, `SAHTE`, `SABLON`: 4c'de
 çoğu kalkar), sayaç/iz ve deney (`*_SAY`, `*_OLC`, `SON_KUME`, `ONDEN_SAY`), paralel işçi durumu (`DAG`, `ICTE`, `TABLO`).
 Davranışı etkileyen gizli durum yok.
+
+### 3.2 Kimlik envanteri (Aşama 4a, 5 Kasım)
+
+Kodda üç ayrı "aynı mı" sorusu var; 4a'dan önce üçü de `ayni` adını taşıyordu, artık adları anlamlarını söylüyor:
+
+| İşlev | Anlam | JS |
+|---|---|---|
+| `ayni_nesne` (`kafa1_js`; `kafa2_baglam` yeniden dışa açar) | Aynı nesne mi: bir oyuncunun kopyası aslıyla aynı değil; kimlik numarası `NaN` olan hayalet yalnız kendisiyle aynı | `a === b` |
+| `ayni_oyuncu` (`kafa1_secenek`) | Aynı takımın aynı numaralı oyuncusu mu: kopyası da sayılır | `a.team === b.team && a.id === b.id` |
+| `ayni_secenek` (`mac/kafa_bag`) | Seçenek kafanın şu an yürüttüğü karar mı (`_kafaId`); oyuncu kimliğiyle ilgisi yok | |
+
+**Ölçüm.** Her çağrı yerinde nesne kimliği ile oyuncu kimliğinin ne sıklıkla ayrıştığı sayıldı
+(`#[track_caller]` ile geçici ölçüm; 3 maç × 600 tik ve 2 maç × 2700 tik):
+
+| Sınıf | Yerler | Ayrışma | 4b/4c'de |
+|---|---|---|---|
+| **A. Dünyadaki kendisi mi** (taşıyıcıyı/alıcıyı dünyada bulmak ya da dışlamak) | `kafa1_js::sira`, `kafa1_enerji` 262/275, `kafa1_savur` 282/334, `kafa1_ikili:1206` (kütle: `p === h`), `kafa1_secenek` (5 yer, oyuncu kimliği), `kafa2_tarti` 263/451/456/547/714, `kafa2_zemin:401` | Hiç | Sıra (`Pid`) ile: karşılaştırılan hep dünyanın kendi öğesi |
+| **A'. Kendisi mi, ama karşılaştırılan hayalet olabilir** | `kafa1_ikili` 272/1379 | Yalnız nesne eşit: hayaletler (`NaN`) 7–566 bin | Hayaletin sırası yok (`Pid` = yok); oyuncu kimliği kullanılamaz |
+| **B. Değişti mi** (cevap dünyasında hangi oyuncu yeni kopya) | `kafa2_dunya:410` (Bekçi'nin yerleşmiş kopyası), `kafa2_tarti` 101/117 (cevap dünyası `Rw` ile `src`); çalışmayan aynı kalıp: `kafa2_karar` 226/231/312, `kafa2_eski` 114/646/852/855 | Yalnız oyuncu eşit: kopyalar, 114–330 bin | Görünümde değişenler açık liste (`Gorunum::degisen`): kimlik sorusu kalkar |
+| **C. Kopya dünyada kendi aslını atlamamak** | `kafa1_ikili:235` (`dolanma`: yoldaki gövdelerin etrafından dolanma) | İkisi de: kopyalar 4 milyon, hayaletler 2,8 milyon | **Bulgu**: `p` hayali bir kopyayken dünyadaki asıl gövdesi atlanmıyor, oyuncu kendi gerçek gövdesinin etrafından dolanmaya çalışıyor (JS'ten gelen davranış). Düzeltmek davranış değişikliği: davranış oturumunun kararı. 4b/4c bu yerde nesne kimliğini korur |
+| **D. Önbellek/dünya anahtarı** | `kafa2_dunya:518` (taşıyıcının tutma önbelleği: aynı nesne + dünya adresi), `kafa2_tarti` 686/693/695 (`o olmasa` dünyaları), `mac/kafa_dis` `DUNYA_KOPYA` (`Arc::ptr_eq`) | Hiç (tarti) | 4c'de dünya sürümü/kimliği; işaretçi ve adres anahtarı kalkar |
+| **Çalışmayan** | `kafa2_eski` (7 yer), `kafa2_karar` 226/231/312, `kafa2_dunya` 259/518 | 2 × 2700 tikte hiç çağrılmadı | Ölü mü, nadir mi: 4c öncesi bakılmalı |
+
+Sonuç: 4b/4c'de kimlik **sıra (`Pid`) + kaynak** (gerçek oyuncu / kopya / hayalet) olarak taşınır. A sınıfı sırayla
+karşılaştırılır, B sınıfı görünümün değişen listesinden okunur, C sınıfı (tek yer) kopyanın aslından ayrı olduğunu
+açıkça bilir, D sınıfı dünya sürümüyle anahtarlanır.
 
 Her aşamanın sonunda: `sina/ayni.sh` aynı, `cargo test` geçen sayısı düşmemiş, `alan-kos` hızı ölçülmüş
 (hız hedef değil, ama yapı değişikliği yavaşlatmamalı), wasm kareleri sitedekiyle aynı.
