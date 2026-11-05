@@ -71,19 +71,26 @@ fn main() {
         let mut once = mt.m.clone();
         once.mac.kafa = Default::default();
         // seçenekler: önce hepsi bir kez zorlanır; ALAN_DENE_SEC=0,3,7 yalnız bunlar denenir, ALAN_DENE_LISTE seçenek sayısını yazar
-        let mut ad: Vec<(usize, alan_motor::model::Mac, alan_motor::mac::ZorlaSonuc)> = Vec::new();
         let sec: Option<Vec<usize>> = std::env::var("ALAN_DENE_SEC").ok().map(|x| x.split(',').filter_map(|y| y.parse().ok()).collect());
-        for i in 0..64 {
+        // kopyalar teker teker kurulur (hepsini birden tutmak belleği doldurur)
+        let kur = |i: usize| -> Option<(alan_motor::model::Mac, alan_motor::mac::ZorlaSonuc)> {
             let mut c = once.clone();
             c.mac.zorla_i = Some(i);
             alan_motor::mac::step(&mut c);
-            let Some(z) = c.mac.zorla_sonuc.take() else { break };
-            if sec.as_ref().map_or(true, |s| s.contains(&i)) { ad.push((i, c, z)); }
+            let z = c.mac.zorla_sonuc.take()?;
+            Some((c, z))
+        };
+        if std::env::var("ALAN_DENE_LISTE").is_ok() {
+            let c = { let mut c = once.clone(); c.mac.zorla_i = Some(0); alan_motor::mac::step(&mut c); c.mac.zorla_sonuc.take().map_or(0, |z| z.n) };
+            println!("{c}");
+            return;
         }
-        if std::env::var("ALAN_DENE_LISTE").is_ok() { println!("{}", ad.len()); return; }
         {
             {
-                for (i, c, z) in &ad {
+                for i in 0..64usize {
+                    if !sec.as_ref().map_or(true, |s| s.contains(&i)) { continue; }
+                    let Some((c, z)) = kur(i) else { break };
+                    let (c, z) = (&c, &z);
                     let h = c._sec.as_ref().map_or(0, |s| s.h);
                     let tk = c.ps[h].team;
                     let (mut gol, mut yedi, mut kayip, mut son_biz, mut son_rak) = (0u32, 0u32, 0u32, 0u32, 0u32);
