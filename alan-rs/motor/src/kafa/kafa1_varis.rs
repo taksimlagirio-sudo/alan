@@ -42,7 +42,7 @@ pub fn vurus_oku_al(b: &mut TopT, p: &Oyuncu, from: Option<&Oyuncu>, bek0: bool)
     let mut on = 0.0;
     if let Some(f0) = from {
         if b.t.cue > 0.0 {
-            let f = kis(0.5 + IN.sez * (p.yet.y(mek::VURUS_SEZ) - 10.0) - IN.giz * (f0.yet.y(mek::VURUS_GIZLE) - 10.0), 0.05, 0.95);
+            let f = kis(0.5 + IN.sez * (p.govde.yet.y(mek::VURUS_SEZ) - 10.0) - IN.giz * (f0.govde.yet.y(mek::VURUS_GIZLE) - 10.0), 0.05, 0.95);
             on = b.t.cue * f * if bek { (IN.u_a + IN.u_b) / 2.0 } else { IN.u_a + (IN.u_b - IN.u_a) * zar(a, k, 29.0) };
         }
     }
@@ -55,7 +55,7 @@ pub fn kap_al(b: &mut TopT, p: &Oyuncu, from: Option<&Oyuncu>, ps: &[Op], k: &dy
     let mate = p.takim() == b.b.team;
     let bek = p.bekci();
     let mut ark_k = 0.0;
-    let mut sk = if bek { p.yet.y(mek::TUT_CEL) } else if mate { p.yet.y(mek::KONTROL_KAP) } else { p.yet.y(mek::KESME_KAP) };
+    let mut sk = if bek { p.govde.yet.y(mek::TUT_CEL) } else if mate { p.govde.yet.y(mek::KONTROL_KAP) } else { p.govde.yet.y(mek::KESME_KAP) };
     let mut pr = 0.0;
     for o in ps {
         if o.team != p.team {
@@ -70,20 +70,20 @@ pub fn kap_al(b: &mut TopT, p: &Oyuncu, from: Option<&Oyuncu>, ps: &[Op], k: &dy
             let rl = hyp(rx, ry);
             let ak = if rl > 1e-6 { jmax(0.0, (rx * p.vx + ry * p.vy) / (rl * ps0)) * jmin(1.0, ps0 / (p.taban_hiz() * k.spr(p))) } else { 0.0 };
             if ak > 0.0 {
-                sk += IN.ark_w * ak * (p.yet.ozk("ceviklik") - sk);
+                sk += IN.ark_w * ak * (p.govde.yet.ozk("ceviklik") - sk);
                 ark_k = IN.ark_k * ak;
             }
         }
     }
     let o = vurus_oku_al(b, p, from, false);
-    let ok = if !bek { p.yet.y(mek::HAZIRLIK) } else { p.yet.ozk("refleks") };
+    let ok = if !bek { p.govde.yet.y(mek::HAZIRLIK) } else { p.govde.yet.ozk("refleks") };
     let tau = jmax(1.0, Q.tepki0 - ok * Q.tepki_ok) * o.map(|x| x.0).unwrap_or(1.0);
     let haz = jmin(1.0, (b.b.tp.unwrap_or(b.b.t) + o.map(|x| x.1).unwrap_or(0.0)) / tau);
     let pr_k = 1.0 - exp(-jmax(0.0, pr - 0.4) * Q.press_k / Q.press_max);
     let ch_t = if b.b.alive { b.b.ch * Q.cap_ch } else { 0.0 };
     let har = jmin(1.0, hypot(z0(p.vx), z0(p.vy)) / (p.taban_hiz() * p.spr0()));
     let cap = if !bek {
-        let alis = DK_ALIS.b * yum(&p.yet, "B") * pr_k + DK_ALIS.d * (1.0 - p.den.unwrap_or(1.0)) + if mate { DK_ALIS.h * har * yum(&p.yet, "H") } else { 0.0 };
+        let alis = DK_ALIS.b * yum(&p.govde.yet, "B") * pr_k + DK_ALIS.d * (1.0 - p.den.unwrap_or(1.0)) + if mate { DK_ALIS.h * har * yum(&p.govde.yet, "H") } else { 0.0 };
         Q.cap0 + (sk - 10.0) * Q.cap_sk - ch_t - Q.cap_pr * alis - ark_k
     } else {
         Q.cap0 + (sk - 10.0) * Q.cap_sk - ch_t - Q.cap_pr * pr_k - ark_k
@@ -273,12 +273,12 @@ pub fn frenT_p(p: &Oyuncu, x: f64, y: f64, R: f64, T: f64, v: f64) -> f64 {
     let dy = y - p.y;
     let xa = dx * ux + dy * uy;
     let xl = (-dx * uy + dy * ux).abs();
-    let ag = crate::yetenek::ag(&p.yet, p.den, p.bekci(), crate::kural::ikili::IK.yavas);
+    let ag = crate::yetenek::ag(&p.govde.yet, p.den, p.bekci(), crate::kural::ikili::IK.yavas);
     let aB = 0.018 * ag;
     let aL = 0.021 * ag;
     let tS = s0 / aB;
     let aMin = if T <= tS { s0 * T - aB * T * T / 2.0 } else { s0 * tS / 2.0 - jmin(v * (T - tS), 0.025 * (T - tS) * (T - tS)) };
-    let aMax = s0 * T + jmin((v - s0) * T, 0.18 * v * 0.5 * crate::yetenek::ah(&p.yet) * T * T);
+    let aMax = s0 * T + jmin((v - s0) * T, 0.18 * v * 0.5 * crate::yetenek::ah(&p.govde.yet) * T * T);
     let rA = jmax(jmax(0.0, aMin - xa), xa - aMax);
     let rL = jmax(0.0, xl - jmin(v * T, aL * T * T / 2.0));
     let def = hypot(rA, rL) - R;
@@ -295,7 +295,7 @@ impl Kafa {
         let S = self.dis.S();
         let bekOnce = S.as_ref().and_then(|s| s.bekOnce).unwrap_or(2.0);
         let marginT = S.as_ref().map_or(0.6, |s| s.marginT);
-        hypot(X - ox_of(bk.team), Y - GCY) <= KR || tB + bekOnce + (20.0 - bk.yet.y(mek::CIKIS)) * marginT < tm
+        hypot(X - ox_of(bk.team), Y - GCY) <= KR || tB + bekOnce + (20.0 - bk.govde.yet.y(mek::CIKIS)) * marginT < tm
     }
     /// Kale önündeki sekmede topun bizde kalma payı (decide.js:1363).
     pub fn rbAt(&self, src: &[Op], team: f64, P: Nk) -> f64 {
@@ -333,7 +333,7 @@ impl Kafa {
     /// Kaçan topu arkadaşın alma payı (decide.js:1610).
     pub fn kacanAl(&self, p: &Oyuncu, ad: &[UA], P: Nk, bvx: f64, bvy: f64, Tb: f64) -> f64 {
         let sp = hypot(bvx, bvy);
-        let cdT = jmax(Q.cd_min, jround((Q.cd - 0.5 * (p.yet.y(mek::YENIDEN_DOKUN) - 10.0)) * jmin(1.0, sp / Q.cd_v)));
+        let cdT = jmax(Q.cd_min, jround((Q.cd - 0.5 * (p.govde.yet.y(mek::YENIDEN_DOKUN) - 10.0)) * jmin(1.0, sp / Q.cd_v)));
         let mut tO: f64 = 1e9;
         for A in ad {
             if A.rakip && !A.bek {
@@ -833,7 +833,7 @@ impl Kafa {
             let best = mine.iter().fold(f64::INFINITY, |m, a| jmin(m, a.1.t));
             for &&(pi, g, hit) in &mine {
                 let p = &ps[pi];
-                if g.t <= best + 0.6 * (20.0 - p.yet.y(mek::ALGI_HATA)) + 1.0 || (lane.is_some() && hit) {
+                if g.t <= best + 0.6 * (20.0 - p.govde.yet.y(mek::ALGI_HATA)) + 1.0 || (lane.is_some() && hit) {
                     out.push((pi, g));
                 }
             }

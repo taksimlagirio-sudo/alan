@@ -294,7 +294,7 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
                     let tqr = ref_nesne(k, src, tq);
                     let job = p.job.as_deref().unwrap_or("");
                     let job_pres = p.job.as_deref().unwrap_or("undefined").starts_with("pres");
-                    if job.contains(&*tqr.name) && !job_pres {
+                    if job.contains(&*tqr.govde.name) && !job_pres {
                         ref_bul0(k, src, tq)
                     } else {
                         None

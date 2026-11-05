@@ -139,7 +139,7 @@ kodda çalıştığı için aşamalar küçük parçalarla ve sık `main`'e birl
 | 2 | Değerlendirme katmanı | Yerleşim → kafa iç içe çağrısını kaldırmak; yerleşimin ve değerlendirmenin karar dosyalarına bağını kesmek; katman eşlemesi | ✅ Şut gücü `kural/sut.rs`'e (yedek kafaya düşen çağrı 300 tikte yüz binlerce → 0); `kayipYer`, `riskOf`, `bekYol` `kafa2_zemin`'e; `sina/katman.sh` 4 kural tutuyor. Kalan `Dis` yerleşim yöntemleri (`bekciFm`, `slotBase`, `ilkPres` …) dünya çevirisi gerektirdiği için Aşama 4'te kalkar |
 | 3 | Açık bağlam | Kafa iş parçacığına özel değişkenden değil, maçın kutusundan (`m.mac.kafa`) alınır; kafanın durumuna bağlı olmayan değerlendirmeler saf işlev; gizli bağlam (sprint niyeti, kafanın tiki) açık alan | **3a–d ✅**, **3e-1 ✅** `SF_NIYET` → `MacKural::niyet`, **3e-2 ✅** `D_TICK` → `Mc::dtik`, **3e-3 ✅** `KafaD` yalnız değişmez ayar, geçici bağlam `KafaBag`. Kalan 3e-4: bkz. 3.1 |
 | 4 | Tek dünya | `Dunya` + `Gorunum`; kimlik `Pid`; köprü çevirileri kalkar | `ow`, `op_dunya`, `dunya_kopya`, `Varlik` yok; `Arc::ptr_eq` yok |
-| 5 | Veri | `Oyuncu` → `OyuncuDurum` + `OyuncuGovde`; `KafaD` → `Ayar` + geçici durum; `JsDeger` ve gereksiz `Option`'lar | `Oyuncu` kopyası ~300 bayt; `model.rs` üretilmiş taslak değil |
+| 5 | Veri | **5-1, 5-2 ✅** (3.6: `Oyuncu` 2704 → 288 bayt). `Oyuncu` → `OyuncuDurum` + `OyuncuGovde`; `KafaD` → `Ayar` + geçici durum; `JsDeger` ve gereksiz `Option`'lar | `Oyuncu` kopyası ~300 bayt; `model.rs` üretilmiş taslak değil |
 | 6 | JS bağı | **Karar (5 Kasım): Rust tek doğru kaynak.** JS ile bit bit aynılık kısıtı kalktı; doğrulama `sina/ayni.sh` ve maç istatistikleriyle | ✅ Temizlik: JS vektörüne bağlı 12 sınama gerekçeli `#[ignore]` (vektör üretilince `--ignored` ile çalışır; temiz klonda düşen ya da sessizce geçen sınama kalmadı); `tests/ayni.rs` `cargo test`'in kendisinde parmak izi başvurusunu denetler; `tests/kafa1.rs`'in JS taklit artıkları silindi; motor ve sınamalar uyarısız. Rust adlandırması ertelendi (bkz. Geri dönülecekler) |
 | 7 | Crate'ler | Katmanlar ayrı crate; döngüyü derleyici yasaklar | `cargo build` katman kuralını zorlar |
 
@@ -292,6 +292,14 @@ davranış değişir).
 milyar (−%3,4), oyuncu kopyası %2,0 → %0,5; yazarken kopyalama tik başına ~44 `OyuncuMac` (önce tik başına ~500
 tam kopya). Duvar saati 13,40 → 12,57 ms/tik (**−%6,2**; küçük kopyalar önbelleğe sığıyor). Main ile 20 maç ×
 2700 tik aynı. Not: `sina/alan-envanter.sh` yalnız `Oyuncu`'nun kendi alanlarını sayar.
+
+**5-2 ✅ gövde** (5 Kasım): 13 alan (`i, role, slot, name, a, yet, rslot, slot0, rslot0, rh, rs, tl, eg`)
+`OyuncuGovde`'ye, `Oyuncu::govde: Arc<OyuncuGovde>`; yazma `govde_mut()` (yalnız kurulum, rol atama, kayıt ve kısmi
+bedenler). Önerideki `id, team, kim` yapıda kaldı: ~600 sıcak karşılaştırmada (`c.team == o.team && c.id == o.id`)
+ek bir işaretçi atlaması olmasın diye (18 bayt); `R` de (her tik yazılıyor). `kafa2_zemin`'in `dinc`'i gövdenin 13
+alanının hepsini kopyalıyordu: artık paylaşıyor. **Boyut: `Oyuncu` 2704 → 288 bayt** (`OyuncuMac` 2024, `OyuncuGovde`
+416, paylaşımlı). Ölçüm: komutlar 34,65 → 34,44 milyar, oyuncu kopyası %0,51 → %0,18; duvar saati 12,58 → 12,21
+ms/tik (−%2,9). 5-1 ile birlikte 13,40 → 12,21 (**−%8,9**). Main ile 20 maç × 2700 tik aynı.
 
 Sıra: (1) maç durumu (108 alan, ~500 yer, kafaya dokunmaz: yalnız `mac/`, `sekil/`, `temas`), (2) gövde
 (~1000 okuma, çoğu `p.yet`/`p.team`/`p.id`: düz değiştirme), her biri `sina/ayni.sh` + 20 maçlık parmak iziyle.

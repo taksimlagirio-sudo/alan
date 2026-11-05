@@ -385,14 +385,14 @@ pub fn decide(m: &Mac, p: &Oyuncu, g: &[Oyuncu], ch: f64, r: &mut Rng, tE: &crat
         }
         let r = crate::kafa::kafa2_karar::decide(k, hi, &src, ch, &mut rng_fn(r), Some(&tac));
         if crate::iz_acik() && std::env::var("ALAN_KARAR_IZ").ok().map_or(false, |v| v == "hepsi" || v == format!("{}", m.tick)) {
-            eprintln!("tik {}\ndecide {} opts {}", m.tick, p.name, r.opts.len());
+            eprintln!("tik {}\ndecide {} opts {}", m.tick, p.govde.name, r.opts.len());
             for q in g {
-                eprintln!("  dunya {} {} {} {} {} {:?} {:?}", q.name, q.x, q.y, q.vx, q.vy, q.hal.__e, q.hal.__yas);
+                eprintln!("  dunya {} {} {} {} {} {:?} {:?}", q.govde.name, q.x, q.y, q.vx, q.vy, q.hal.__e, q.hal.__yas);
             }
             let mut o: Vec<&crate::model::Secenek> = r.opts.iter().collect();
             o.sort_by(|a, b| b.v.unwrap_or(f64::NAN).partial_cmp(&a.v.unwrap_or(f64::NAN)).unwrap_or(std::cmp::Ordering::Equal));
             for o in o {
-                eprintln!("  {:<34} {:<8} v={:.6} to={}", o.kind, o.q.map_or(String::new(), |q| g[q].name.to_string()), o.v.unwrap_or(f64::NAN), o.to.as_ref().map_or("-".into(), |t| format!("{:.3},{:.3}", t.x, t.y)));
+                eprintln!("  {:<34} {:<8} v={:.6} to={}", o.kind, o.q.map_or(String::new(), |q| g[q].govde.name.to_string()), o.v.unwrap_or(f64::NAN), o.to.as_ref().map_or("-".into(), |t| format!("{:.3},{:.3}", t.x, t.y)));
             }
         }
         if crate::iz_acik() && std::env::var("ALAN_SUR_IZ").ok().map_or(false, |v| v == format!("{}", m.tick)) {

@@ -99,7 +99,7 @@ impl Kafa {
     pub fn vmaxOf(&self, h: Option<&Oyuncu>) -> f64 {
         self.D.vmax
             * match h {
-                Some(h) if !(h.id < 0.0) => 0.8 + 0.02 * h.yet.y(mek::PAS_SERT),
+                Some(h) if !(h.id < 0.0) => 0.8 + 0.02 * h.govde.yet.y(mek::PAS_SERT),
                 _ => 1.0,
             }
     }
@@ -123,7 +123,7 @@ impl Kafa {
     pub fn savurPlan(&self, h: &Oyuncu, V: Nk, ca0: f64, w0: f64, sYon: f64, src: Option<&[Op]>, itme: bool, E: f64) -> Option<SavPlan> {
         let B = Q.body;
         let v = ya(hypot(V.x, V.y), 1e-9) / ya(E, 1.0);
-        let G = h.yet.ozk("guc");
+        let G = h.govde.yet.ozk("guc");
         let a = jmax(0.08, SAV.ia0 + (G - 10.0) * SAV.iaSk);
         let wMax = SAV.wMax0 + (G - 10.0) * SAV.wMaxSk;
         let uMax = jmax(0.3, SAV.u0 + (G - 10.0) * SAV.uSk);
@@ -212,7 +212,7 @@ impl Kafa {
     pub fn onPlan(&self, h: &Oyuncu, V: Nk, b: Nk, itme: bool, E: f64) -> Option<OnPlan> {
         let B = Q.body;
         let v = ya(hypot(V.x, V.y), 1e-9) / ya(E, 1.0);
-        let G = h.yet.ozk("guc");
+        let G = h.govde.yet.ozk("guc");
         let a = jmax(0.08, SAV.ia0 + (G - 10.0) * SAV.iaSk);
         let wMax = SAV.wMax0 + (G - 10.0) * SAV.wMaxSk;
         let uMax = jmax(0.3, SAV.u0 + (G - 10.0) * SAV.uSk);

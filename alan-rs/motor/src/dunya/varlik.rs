@@ -99,12 +99,12 @@ impl<'a> Yerde<'a> {
 /// Hayaletin bedeni (JS seen çıktısı: `{a, R, D, team, role, press}`; id/bar/sprint evresi yok).
 pub fn hayal(q: &Oyuncu) -> Oyuncu {
     let mut o = Oyuncu::bos();
-    o.a = q.a.clone();
-    o.yet = q.yet.clone();
+    o.govde_mut().a = q.govde.a.clone();
+    o.govde_mut().yet = q.govde.yet.clone();
     o.R = q.R;
     o.D = q.D;
     o.team = q.team;
-    o.role = q.role.clone();
+    o.govde_mut().role = q.govde.role.clone();
     o.press = q.press;
     o.id = f64::NAN;
     o.kim = crate::model::Kim::hayalet(q.kim);

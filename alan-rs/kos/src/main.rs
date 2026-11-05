@@ -71,19 +71,26 @@ fn main() {
         let mut once = mt.m.clone();
         once.mac.kafa = Default::default();
         // seçenekler: önce hepsi bir kez zorlanır; ALAN_DENE_SEC=0,3,7 yalnız bunlar denenir, ALAN_DENE_LISTE seçenek sayısını yazar
-        let mut ad: Vec<(usize, alan_motor::model::Mac, alan_motor::mac::ZorlaSonuc)> = Vec::new();
         let sec: Option<Vec<usize>> = std::env::var("ALAN_DENE_SEC").ok().map(|x| x.split(',').filter_map(|y| y.parse().ok()).collect());
-        for i in 0..64 {
+        // kopyalar teker teker kurulur (hepsini birden tutmak belleği doldurur)
+        let kur = |i: usize| -> Option<(alan_motor::model::Mac, alan_motor::mac::ZorlaSonuc)> {
             let mut c = once.clone();
             c.mac.zorla_i = Some(i);
             alan_motor::mac::step(&mut c);
-            let Some(z) = c.mac.zorla_sonuc.take() else { break };
-            if sec.as_ref().map_or(true, |s| s.contains(&i)) { ad.push((i, c, z)); }
+            let z = c.mac.zorla_sonuc.take()?;
+            Some((c, z))
+        };
+        if std::env::var("ALAN_DENE_LISTE").is_ok() {
+            let c = { let mut c = once.clone(); c.mac.zorla_i = Some(0); alan_motor::mac::step(&mut c); c.mac.zorla_sonuc.take().map_or(0, |z| z.n) };
+            println!("{c}");
+            return;
         }
-        if std::env::var("ALAN_DENE_LISTE").is_ok() { println!("{}", ad.len()); return; }
         {
             {
-                for (i, c, z) in &ad {
+                for i in 0..64usize {
+                    if !sec.as_ref().map_or(true, |s| s.contains(&i)) { continue; }
+                    let Some((c, z)) = kur(i) else { break };
+                    let (c, z) = (&c, &z);
                     let h = c._sec.as_ref().map_or(0, |s| s.h);
                     let tk = c.ps[h].team;
                     let (mut gol, mut yedi, mut kayip, mut son_biz, mut son_rak) = (0u32, 0u32, 0u32, 0u32, 0u32);
@@ -129,9 +136,9 @@ fn main() {
         let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(120);
         let son = *tikler.iter().max().unwrap_or(&0);
         let yaz = |m: &alan_motor::model::Mac, kareler: &Vec<String>, olaylar: &Vec<String>, isler: &alan_motor::oyun::IsSozluk, yol: &str| {
-            let ad: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.name).unwrap()).collect();
+            let ad: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.govde.name).unwrap()).collect();
             let tk: Vec<String> = m.ps.iter().map(|p| format!("{}", p.team)).collect();
-            let rl: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.role).unwrap()).collect();
+            let rl: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.govde.role).unwrap()).collect();
             let is: Vec<String> = isler.yazilar.iter().map(|j| serde_json::to_string(j).unwrap()).collect();
             let j = format!("{{\"motor\":\"Rust motoru\",\"ad\":[{}],\"takim\":[{}],\"rol\":[{}],\"isler\":[{}],\"olay\":[{}],\"k\":[{}]}}", ad.join(","), tk.join(","), rl.join(","), is.join(","), olaylar.join(","), kareler.join(","));
             std::fs::write(yol, j).expect("yazılamadı");
@@ -244,7 +251,7 @@ fn main() {
                                 _ => {}
                             }
                         }
-                        writeln!(out, "[{},{},{:.2},{},{},{},{},{},[{},{}],{:?},{},{:.3}]", m.tick, serde_json::to_string(&*hp.name).unwrap(), dk, sira, z.n, if z.P.is_finite() { format!("{}", z.P) } else { "null".into() }, z.v, z.secilen, z.to.0, z.to.1, sonuc, j, den_min).unwrap();
+                        writeln!(out, "[{},{},{:.2},{},{},{},{},{},[{},{}],{:?},{},{:.3}]", m.tick, serde_json::to_string(&*hp.govde.name).unwrap(), dk, sira, z.n, if z.P.is_finite() { format!("{}", z.P) } else { "null".into() }, z.v, z.secilen, z.to.0, z.to.1, sonuc, j, den_min).unwrap();
                     }
                 }
             }
@@ -293,15 +300,15 @@ fn main() {
     let dt = t0.elapsed().as_secs_f64();
     if kip == "boyut" {
         for p in mt.m.ps.iter().take(3) {
-            eprintln!("{} hist {:?} past {:?} _bk {:?} job {:?} _lc {} sizeof {}", p.name, p.hal.hist.as_ref().map(|v| v.len()), p.hal.past.as_ref().map(|v| v.len()), p.hal._bk.as_ref().map(|v| v.len()), p.job.as_ref().map(|j| j.len()), p.hal._lc.is_some(), std::mem::size_of::<alan_motor::model::Oyuncu>());
+            eprintln!("{} hist {:?} past {:?} _bk {:?} job {:?} _lc {} sizeof {}", p.govde.name, p.hal.hist.as_ref().map(|v| v.len()), p.hal.past.as_ref().map(|v| v.len()), p.hal._bk.as_ref().map(|v| v.len()), p.job.as_ref().map(|j| j.len()), p.hal._lc.is_some(), std::mem::size_of::<alan_motor::model::Oyuncu>());
         }
         let t = std::time::Instant::now();
         let mut n = 0usize;
-        for _ in 0..100000 { let c = mt.m.ps[3].clone(); n += c.name.len(); }
+        for _ in 0..100000 { let c = mt.m.ps[3].clone(); n += c.govde.name.len(); }
         eprintln!("klon 100k: {:?} ({})", t.elapsed(), n);
         let mut q = mt.m.ps[3].clone(); q.hal_mut().hist = None; q.hal_mut().past = None; q.hal_mut()._bk = None;
         let t = std::time::Instant::now();
-        for _ in 0..100000 { let c = q.clone(); n += c.name.len(); }
+        for _ in 0..100000 { let c = q.clone(); n += c.govde.name.len(); }
         eprintln!("klon hist/past/_bk yok 100k: {:?} ({})", t.elapsed(), n);
     }
     if kip == "karar" {
@@ -315,15 +322,15 @@ fn main() {
     if kip == "oyuncu" {
         let k: usize = a[4].parse().unwrap();
         let mut p = mt.m.ps[k].clone();
-        p.yet = Default::default();
+        p.govde_mut().yet = Default::default();
         println!("{:#?}", p);
     }
     if kip == "kare" {
         let m = &mt.m;
         let yol = a.get(4).expect("kare <cikti.json>");
-        let ad: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.name).unwrap()).collect();
+        let ad: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.govde.name).unwrap()).collect();
         let tk: Vec<String> = m.ps.iter().map(|p| format!("{}", p.team)).collect();
-        let rl: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.role).unwrap()).collect();
+        let rl: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.govde.role).unwrap()).collect();
         let is: Vec<String> = isler.yazilar.iter().map(|j| serde_json::to_string(j).unwrap()).collect();
         let j = format!("{{\"motor\":\"Rust motoru\",\"ad\":[{}],\"takim\":[{}],\"rol\":[{}],\"isler\":[{}],\"olay\":[{}],\"k\":[{}]}}", ad.join(","), tk.join(","), rl.join(","), is.join(","), olaylar.join(","), kareler.join(","));
         std::fs::write(yol, j).expect("yazılamadı");

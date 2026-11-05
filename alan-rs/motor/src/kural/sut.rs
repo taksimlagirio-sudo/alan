@@ -25,12 +25,12 @@ pub const SAV: Sav = Sav { a0: 0.18, aSk: 0.012, wMax0: 2.3, wMaxSk: 0.03, tau: 
 
 /// Gövdenin verebileceği en büyük vuruş hızı (decide.js:561).
 pub fn govdeV(h: &Oyuncu) -> f64 {
-    let G = h.yet.ozk("guc");
+    let G = h.govde.yet.ozk("guc");
     hypot((SAV.wMax0 + (G - 10.0) * SAV.wMaxSk) * Q.body, jmax(0.3, SAV.u0 + (G - 10.0) * SAV.uSk))
 }
 /// Şut gücü katı (decide.js:2497): yetenek, dengesi bozuksa denge katı.
 pub fn sutGuc(h: &Oyuncu) -> f64 {
-    (1.0 + 0.013 * (h.yet.y(mek::SUT_GUCU) - 10.0))
+    (1.0 + 0.013 * (h.govde.yet.y(mek::SUT_GUCU) - 10.0))
         * match h.den {
             Some(d) if d < 1.0 && !h.bekci() => denge_k(Some(d), IK.yavas),
             _ => 1.0,

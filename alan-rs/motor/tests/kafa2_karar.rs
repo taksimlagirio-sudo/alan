@@ -45,37 +45,37 @@ fn oyuncu(v: &Value) -> Oyuncu {
         let x = h(&e[1]);
         a.v.insert(k.to_string(), x);
         let f = match k {
-            "hiz" => &mut p.a.hiz,
-            "ceviklik" => &mut p.a.ceviklik,
-            "guc" => &mut p.a.guc,
-            "uzanma" => &mut p.a.uzanma,
-            "alan" => &mut p.a.alan,
-            "kontrol" => &mut p.a.kontrol,
-            "surme" => &mut p.a.surme,
-            "pas" => &mut p.a.pas,
-            "gonderme" => &mut p.a.gonderme,
-            "yukleme" => &mut p.a.yukleme,
-            "tepki" => &mut p.a.tepki,
-            "gorus" => &mut p.a.gorus,
-            "yeralma" => &mut p.a.yeralma,
-            "sogukkanlilik" => &mut p.a.sogukkanlilik,
-            "kesme" => &mut p.a.kesme,
-            "refleks" => &mut p.a.refleks,
-            "yerlesim" => &mut p.a.yerlesim,
-            "hakimiyet" => &mut p.a.hakimiyet,
-            "enerji" => &mut p.a.enerji,
-            "govde" => &mut p.a.govde,
-            "caliskanlik" => &mut p.a.caliskanlik,
+            "hiz" => &mut p.govde_mut().a.hiz,
+            "ceviklik" => &mut p.govde_mut().a.ceviklik,
+            "guc" => &mut p.govde_mut().a.guc,
+            "uzanma" => &mut p.govde_mut().a.uzanma,
+            "alan" => &mut p.govde_mut().a.alan,
+            "kontrol" => &mut p.govde_mut().a.kontrol,
+            "surme" => &mut p.govde_mut().a.surme,
+            "pas" => &mut p.govde_mut().a.pas,
+            "gonderme" => &mut p.govde_mut().a.gonderme,
+            "yukleme" => &mut p.govde_mut().a.yukleme,
+            "tepki" => &mut p.govde_mut().a.tepki,
+            "gorus" => &mut p.govde_mut().a.gorus,
+            "yeralma" => &mut p.govde_mut().a.yeralma,
+            "sogukkanlilik" => &mut p.govde_mut().a.sogukkanlilik,
+            "kesme" => &mut p.govde_mut().a.kesme,
+            "refleks" => &mut p.govde_mut().a.refleks,
+            "yerlesim" => &mut p.govde_mut().a.yerlesim,
+            "hakimiyet" => &mut p.govde_mut().a.hakimiyet,
+            "enerji" => &mut p.govde_mut().a.enerji,
+            "govde" => &mut p.govde_mut().a.govde,
+            "caliskanlik" => &mut p.govde_mut().a.caliskanlik,
             _ => continue,
         };
         *f = x;
     }
     p.id = v["id"].as_f64().unwrap_or(f64::NAN); // kısmi nesne (JS {...}, id yok)
     p.team = v["team"].as_f64().unwrap_or(0.0);
-    p.i = v["i"].as_f64().unwrap_or(0.0);
-    p.role = v["role"].as_str().unwrap_or("").into();
-    p.name = v["name"].as_str().unwrap_or("").into();
-    p.yet = if a.v.is_empty() { Yetenek::bos().into() } else { Yetenek::kur(&a).into() };
+    p.govde_mut().i = v["i"].as_f64().unwrap_or(0.0);
+    p.govde_mut().role = v["role"].as_str().unwrap_or("").into();
+    p.govde_mut().name = v["name"].as_str().unwrap_or("").into();
+    p.govde_mut().yet = if a.v.is_empty() { Yetenek::bos().into() } else { Yetenek::kur(&a).into() };
     p.x = h(&v["x"]);
     p.y = h(&v["y"]);
     p.vx = ho(&v["vx"]).unwrap_or(0.0);
@@ -101,9 +101,9 @@ fn oyuncu(v: &Value) -> Oyuncu {
     p.hal_mut().adT = nok(&v["adT"]).map(|n| alan_motor::model::JPAdT { x: n.x, y: n.y });
     p.hal_mut()._yer = v["yer"].as_bool().unwrap_or(false);
     if let Some(s) = v["slot"].as_object() {
-        p.slot.role = s["role"].as_str().unwrap_or("").into();
-        p.slot.d = h(&s["d"]);
-        p.slot.l = h(&s["l"]);
+        p.govde_mut().slot.role = s["role"].as_str().unwrap_or("").into();
+        p.govde_mut().slot.d = h(&s["d"]);
+        p.govde_mut().slot.l = h(&s["l"]);
     }
     if let Some(t) = v["tl"].as_object() {
         let mut tl = JPTl::default();
@@ -120,10 +120,10 @@ fn oyuncu(v: &Value) -> Oyuncu {
             tl.sav.insert("adam".into(), sv.get("adam").map(h).unwrap_or(0.0));
             tl.sav.insert("pres".into(), sv.get("pres").map(h).unwrap_or(0.0));
         }
-        p.tl = Some(tl.into());
+        p.govde_mut().tl = Some(tl.into());
     }
     if !v["eg"].is_null() {
-        p.eg = Some(JPEg { ps: h(&v["eg"]["ps"]), rk: h(&v["eg"]["rk"]) });
+        p.govde_mut().eg = Some(JPEg { ps: h(&v["eg"]["ps"]), rk: h(&v["eg"]["rk"]) });
     }
     if let Some(sf) = v["sf"].as_object() {
         p._sf = Some(alan_motor::model::JP_sf { t0: h(&sf["t0"]), f: sf["f"].as_str().unwrap_or("").into() });

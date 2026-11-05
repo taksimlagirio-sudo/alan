@@ -57,9 +57,9 @@ fn hamV(v: &serde_json::Value) -> Option<HamV> {
 /// JS egUy(m, R): oyuncu eğilimleri
 pub fn egUy(m: &mut Mac, r: &Roller) {
     for p in m.ps.iter_mut() {
-        let e = r.get(p.team as usize).cloned().flatten().and_then(|v| v.get((p.i as i64 - 1) as usize).cloned().flatten()).and_then(|x| x.eg);
+        let e = r.get(p.team as usize).cloned().flatten().and_then(|v| v.get((p.govde.i as i64 - 1) as usize).cloned().flatten()).and_then(|x| x.eg);
         if let Some(e) = e {
-            p.eg = Some(crate::model::JPEg { ps: e.ps, rk: e.rk });
+            p.govde_mut().eg = Some(crate::model::JPEg { ps: e.ps, rk: e.rk });
         }
     }
 }
@@ -73,9 +73,9 @@ pub fn kurUygula(m: &mut Mac, d: &Kayit, dis: &mut dyn KurDis) {
                 if m.ps[pi].team != t as f64 {
                     continue;
                 }
-                let Some(Some(o)) = a.get(m.ps[pi].i as usize) else { continue };
+                let Some(Some(o)) = a.get(m.ps[pi].govde.i as usize) else { continue };
                 if let Some(ad) = &o.ad {
-                    m.ps[pi].name = ad.as_str().into();
+                    m.ps[pi].govde_mut().name = ad.as_str().into();
                 }
                 let mut h = m.mac.ham[pi].clone();
                 for (k, v) in &o.a {

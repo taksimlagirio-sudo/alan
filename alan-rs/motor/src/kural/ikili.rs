@@ -41,29 +41,29 @@ pub fn ikEn(p: &Oyuncu) -> f64 {
 }
 
 pub fn omuzK(q: &Oyuncu) -> f64 {
-    (1.0 + 0.03 * (q.yet.y(mek::OMUZ) - 10.0)) * ikEn(q)
+    (1.0 + 0.03 * (q.govde.yet.y(mek::OMUZ) - 10.0)) * ikEn(q)
 }
 
 pub fn durtFark(q: &Oyuncu, h: &Oyuncu) -> f64 {
-    q.yet.y(mek::DURTME) - h.yet.y(mek::DURTME_KORU)
+    q.govde.yet.y(mek::DURTME) - h.govde.yet.y(mek::DURTME_KORU)
 }
 
 /// JS kutle(p, h): ph = (p === h); yerinde duran (taşıyıcı dışı) daha ağır.
 pub fn kutle(p: &Oyuncu, ph: bool) -> f64 {
-    (1.0 + 0.05 * (p.yet.y(mek::KUTLE) - 10.0)) * if !ph && hypot(or0(p.vx), or0(p.vy)) < 0.06 { IK.yerles } else { 1.0 }
+    (1.0 + 0.05 * (p.govde.yet.y(mek::KUTLE) - 10.0)) * if !ph && hypot(or0(p.vx), or0(p.vy)) < 0.06 { IK.yerles } else { 1.0 }
 }
 
 pub fn direnc(p: &Oyuncu, ph: bool) -> f64 {
-    (0.8 + 0.05 * (p.yet.y(if ph { mek::TOPLU_DENGE } else { mek::DENGE_DIRENC }) - 10.0)) * if !ph && hypot(or0(p.vx), or0(p.vy)) < 0.06 { 1.8 } else { 1.0 } * ikEn(p)
+    (0.8 + 0.05 * (p.govde.yet.y(if ph { mek::TOPLU_DENGE } else { mek::DENGE_DIRENC }) - 10.0)) * if !ph && hypot(or0(p.vx), or0(p.vy)) < 0.06 { 1.8 } else { 1.0 } * ikEn(p)
 }
 
 /// Sendeleme süresi (tik).
 pub fn sendS(p: &Oyuncu) -> f64 {
-    jmax(2.0, jround(IK.sendT - 0.5 * (p.yet.y(mek::SENDELEME) - 10.0)))
+    jmax(2.0, jround(IK.sendT - 0.5 * (p.govde.yet.y(mek::SENDELEME) - 10.0)))
 }
 
 pub(crate) fn dengeDolumK(p: &Oyuncu) -> f64 {
-    1.0 + 0.0625 * (p.yet.y(mek::DENGE_DOLUM) - 10.0)
+    1.0 + 0.0625 * (p.govde.yet.y(mek::DENGE_DOLUM) - 10.0)
 }
 
 /// JS dengeKayip(p, t): dengesizliğin önümüzdeki tiklerde götüreceği koşu (tik cinsinden).

@@ -27,7 +27,7 @@ pub fn sHash(s: &str) -> f64 {
 impl Kafa {
     /// Kenardan pası düşünür mü (decide.js:155).
     pub fn kenarAkil(&self, h: &Oyuncu) -> bool {
-        zar(h.id, (self.tick() / 20.0).floor(), 13.0) < kademe(h.yet.y(mek::KENAR_PAS_DUSUN), self.D.bankOk)
+        zar(h.id, (self.tick() / 20.0).floor(), 13.0) < kademe(h.govde.yet.y(mek::KENAR_PAS_DUSUN), self.D.bankOk)
     }
     /// Seçeneğin imzası (decide.js:156); `src`: seçeneklerin dünyası (o.q'nun sırası).
     pub fn sigY(&self, o: &Secenek, src: &[Op]) -> String {
@@ -58,7 +58,7 @@ impl Kafa {
                 }
             }
         };
-        self.D.otMargin * (20.0 - h.yet.y(m) + 10.0 * DK_SUT.b * B * yum(&h.yet, "B")) / 10.0
+        self.D.otMargin * (20.0 - h.govde.yet.y(m) + 10.0 * DK_SUT.b * B * yum(&h.govde.yet, "B")) / 10.0
     }
     /// Seçeneğin gürültüsü (decide.js:162).
     pub fn secimZ(&self, h: &Oyuncu, o: &Secenek, w: f64, src: &[Op]) -> f64 {
@@ -123,7 +123,7 @@ impl Kafa {
                 }
             }
         };
-        (dt / (T * jmax(1.0, h.yet.y(mek::ILERI_BAKIS)) / 10.0)).sqrt()
+        (dt / (T * jmax(1.0, h.govde.yet.y(mek::ILERI_BAKIS)) / 10.0)).sqrt()
     }
     /// Tek seçeneğin gürültüsü (decide.js:183).
     pub fn secimN(&self, h: &Oyuncu, o: Option<&Secenek>, src: &[Op], T: f64) -> f64 {

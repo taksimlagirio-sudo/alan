@@ -298,7 +298,7 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
             let gx = if h.team == 0.0 { GW } else { 0.0 };
             if hypot(gx - h.x, GCY - h.y) < 35.0 {
                 let q: Vec<String> = v.iter().map(|e| format!("[{:?},{:.2},{:.1},{:.5},{}]", e.0, e.1, e.2, e.3, e.4)).collect();
-                eprintln!("KPQ [{},{:?},{:.2},{:.2},[{:.2},{:.2}],{},{:.1},{:.4},[{}]]", k.tick(), &*h.name, h.x, h.y, to.x, to.y, o.spr.map_or(false, dogru), Ts, P, q.join(","));
+                eprintln!("KPQ [{},{:?},{:.2},{:.2},[{:.2},{:.2}],{},{:.1},{:.4},[{}]]", k.tick(), &*h.govde.name, h.x, h.y, to.x, to.y, o.spr.map_or(false, dogru), Ts, P, q.join(","));
             }
         }
         let pr = k.keepP_son.get();
@@ -652,7 +652,7 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
     let team = h.team;
     let mut ad = dis::options(k, &h, src, ch);
     let risk = riskOf(k, &h, tac);
-    let htempo = h.tl.as_ref().and_then(|t| t.huc.get("tempo").copied()).unwrap_or(0.5);
+    let htempo = h.govde.tl.as_ref().and_then(|t| t.huc.get("tempo").copied()).unwrap_or(0.5);
     let T = jround(10.0 + 14.0 * (1.0 - jmax(0.0, jmin(1.0, tac.and_then(|t| t.tempo).unwrap_or(0.5) + 0.6 * (htempo - 0.5)))) + 3.0);
     let DOK = !k.k2._noHold && !k.k2._noFake;
     let mut c = Ctx0 {

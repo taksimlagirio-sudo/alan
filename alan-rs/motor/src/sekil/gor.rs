@@ -40,7 +40,7 @@ pub fn seen(c: &mut Mc, pi: Pid) -> Arc<Vec<Varlik>> {
     let k = c.k;
     let ps = &*c.ps;
     let p = &ps[pi];
-    let e = (20.0 - p.yet.y(mek::ALGI_HATA)) * S.errPos;
+    let e = (20.0 - p.govde.yet.y(mek::ALGI_HATA)) * S.errPos;
     let dl = jmax(1.0, jround(TEPKI(p, Tepki::Algi, k)));
     let la = dl + (niyet(p) - 6.0) * S.look;
     let b = (t / 20.0).floor();
@@ -66,7 +66,7 @@ pub fn seen(c: &mut Mc, pi: Pid) -> Arc<Vec<Varlik>> {
     let B = if !c.lite { p.hal._bk.as_ref() } else { None };
     match B {
         Some(B) if B.len() == n => {
-            let eg = (20.0 - p.yet.y(mek::ALGI_HATA)) * GR.hata;
+            let eg = (20.0 - p.govde.yet.y(mek::ALGI_HATA)) * GR.hata;
             let a = 100.0 * p.team + p.id;
             let kz = (tohum(c.m.seed) % 9973) as f64 * 1.618;
             let la2 = (niyet(p) - 6.0) * S.look;
@@ -209,7 +209,7 @@ pub fn gorulen(c: &mut Mc, pi: Pid) -> Vec<Gorulen> {
                 continue;
             }
         };
-        let e = (20.0 - p.yet.y(mek::ALGI_HATA)) * GR.hata;
+        let e = (20.0 - p.govde.yet.y(mek::ALGI_HATA)) * GR.hata;
         let a = 100.0 * p.team + p.id;
         let kz = (tohum(c.m.seed) % 9973) as f64 * 1.618;
         let yas = t - r.t;
@@ -226,7 +226,7 @@ pub fn gorulen(c: &mut Mc, pi: Pid) -> Vec<Gorulen> {
                 let bm = BekM { ps: crate::sekil::yer::BekPs::Duz(ps), holder: c.m.holder.map(|h| crate::dunya::Yerde::oyuncu(&ps[h])), sut: c.m.mac.kafa.k.is_some(), ben: Some(j) };
                 let hd = bekci(q, tx, ty, Some(&bm), k);
                 let vm = spd(q) * ALAN_SPRE(q, k);
-                let kH = 0.18 * crate::yetenek::ah(&q.yet);
+                let kH = 0.18 * crate::yetenek::ah(&q.govde.yet);
                 let (mut x, mut y, mut vx, mut vy) = (r.x, r.y, r.vx, r.vy);
                 let mut u = 0.0;
                 while u < jmin(yas, GR.yasH) {

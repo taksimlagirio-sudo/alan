@@ -98,7 +98,7 @@ pub fn take(m: &mut Mac, p: Pid, how: Option<String>) {
     let g = gor(m, p);
     m.ps[p].hal_mut().sarj = Some(dis::sarjKarar(m, p, g.as_deref().unwrap_or(&m.ps), m.ch));
     let pp = &m.ps[p];
-    let son = Son { kim: Some(pp.name.to_string()), kimId: Some(pp.id), kimT: Some(pp.team), x: k3(Some(pp.x)), y: k3(Some(pp.y)), ..Default::default() };
+    let son = Son { kim: Some(pp.govde.name.to_string()), kimId: Some(pp.id), kimT: Some(pp.team), x: k3(Some(pp.x)), y: k3(Some(pp.y)), ..Default::default() };
     kafaBitir(m, son);
     m._gelenB = m.ball.clone().map(Box::new);
     if let Some(gb) = &m.ball {
@@ -224,7 +224,7 @@ pub fn take(m: &mut Mac, p: Pid, how: Option<String>) {
         m.winT = Some(m.tick);
         m.winTeam = Some(pt);
         gecisBasla(m, p);
-        let t = how.unwrap_or_else(|| format!("{} Çekirdeği aldı", m.ps[p].name));
+        let t = how.unwrap_or_else(|| format!("{} Çekirdeği aldı", m.ps[p].govde.name));
         ev(m, "kesme", pt, t);
     }
 }
@@ -307,7 +307,7 @@ pub fn _step(m: &mut Mac) {
                     let z = m.r.sonraki();
                     m.ps[q].hal_mut()._preT = Some(jmax(2.0, jround(tepki(&m.ps[q], Tepki::Karar, &ts) + 3.0 * z)));
                 }
-                let ek = if otAkil(m, q, bk) { jmax(0.0, jround(0.5 * (m.ps[q].yet.y(mek::ON_HAREKET) - 10.0))) } else { 0.0 };
+                let ek = if otAkil(m, q, bk) { jmax(0.0, jround(0.5 * (m.ps[q].govde.yet.y(mek::ON_HAREKET) - 10.0))) } else { 0.0 };
                 if m.ps[q].hal._rcvAbs.unwrap_or(f64::NAN) - m.tick <= m.ps[q].hal._preT.unwrap_or(f64::NAN) + ek {
                     amYok(m, |m| {
                         let b = m.ball.as_ref().unwrap();
@@ -344,12 +344,12 @@ pub fn _step(m: &mut Mac) {
     onHareket(m);
     for p in m.ps.iter_mut() {
         if !p.bekci() {
-            let al = p.yet.y(mek::ALAN_MENZIL);
-            let ak = p.yet.y(mek::ALAN_KUVVET);
+            let al = p.govde.yet.y(mek::ALAN_MENZIL);
+            let ak = p.govde.yet.y(mek::ALAN_KUVVET);
             p.R = 8.0 + (al - 10.0) * 0.25;
             p.D = 1.0 + (ak - 10.0) * 0.03;
         } else {
-            p.D = 1.2 * (1.0 + (p.yet.y(mek::BEKCI_ALAN) - 10.0) * 0.03);
+            p.D = 1.2 * (1.0 + (p.govde.yet.y(mek::BEKCI_ALAN) - 10.0) * 0.03);
         }
     }
     gecisGuncelle(m);
@@ -363,7 +363,7 @@ pub fn _step(m: &mut Mac) {
             }
             if m.tick - m.ps[h].hal.bekBas.unwrap() >= 90.0 {
                 m.ps[h].hal_mut().bekBas = None;
-                let (t, ad) = (m.ps[h].team, m.ps[h].name.clone());
+                let (t, ad) = (m.ps[h].team, m.ps[h].govde.name.clone());
                 ev(m, "kesme", 1.0 - t, format!("{ad} süreyi aştı · santra rakipte"));
                 super::kurulum::kickoff(m, 1.0 - t);
                 return;
@@ -577,7 +577,7 @@ fn tasiyici(m: &mut Mac, h: Pid) -> bool {
         });
         if let Some(q) = q {
             m.ps[q].hal_mut()._koyEv = Some(tick + 60.0);
-            let (qt, qn, hn) = (m.ps[q].team, m.ps[q].name.clone(), m.ps[h].name.clone());
+            let (qt, qn, hn) = (m.ps[q].team, m.ps[q].govde.name.clone(), m.ps[h].govde.name.clone());
             ev(m, "pas", qt, format!("{qn} gövdesini koydu, {hn} durdu"));
         }
     }
@@ -643,7 +643,7 @@ fn donus(m: &mut Mac, h: Pid, kk: &MacKural) -> bool {
     let yakin4 = nq.is_some() && nd < 4.0;
     if let Some(q) = nq.filter(|_| nd < 6.0) {
         let qp = &m.ps[q];
-        let la = 2.0 + 0.4 * hp.yet.y(mek::KALKAN);
+        let la = 2.0 + 0.4 * hp.govde.yet.y(mek::KALKAN);
         let aw = atan2(hp.y - (qp.y + or0(qp.vy) * la), hp.x - (qp.x + or0(qp.vx) * la));
         pa = Some(w0(aw + PI));
         ta = if sp > 0.04 { mv + 0.7 * cl(w0(aw - mv), -1.0, 1.0) } else { aw };
@@ -741,16 +741,16 @@ fn donus(m: &mut Mac, h: Pid, kk: &MacKural) -> bool {
                     let hp = &m.ps[h];
                     let o = TopIstek { x: hp.x + cos(a) * Q.body, y: hp.y + sin(a) * Q.body, vx: 0.35 * cos(a), vy: 0.35 * sin(a), team: ht, ch: Some(m.ch), from: Some(h), defl: 1.0, ..Default::default() };
                     bosaDus(m, o, ht);
-                    let n = m.ps[h].name.clone();
+                    let n = m.ps[h].govde.name.clone();
                     ev(m, "kesme", ht, format!("{n} fiskeyi kaçırdı"));
                     return true;
                 }
                 let fw = flick_w(&m.ps[h]);
                 m.ps[h].hal_mut().fiske = Some(tick + (arc / fw).ceil());
-                let v = EN.fiske * m.ps[h].yet.verim(mek::FAKE_BEDEL);
+                let v = EN.fiske * m.ps[h].govde.yet.verim(mek::FAKE_BEDEL);
                 enHarca(m, h, "fake", v);
                 w = flick_w(&m.ps[h]);
-                let n = m.ps[h].name.clone();
+                let n = m.ps[h].govde.name.clone();
                 ev(m, "pas", ht, format!("{n} fiske"));
                 m.ps[h].hal_mut().fiskeDir = Some(dir);
             }
@@ -764,7 +764,7 @@ fn donus(m: &mut Mac, h: Pid, kk: &MacKural) -> bool {
     let cx1 = hx + cos(ca1) * b;
     let cy1 = hy + sin(ca1) * b;
     if yakin4 && !fiskede(&m.ps[h]) {
-        let v = EN.dolas * jmin(1.0, w0(ca1 - ca0).abs() / jmax(0.01, omega(&m.ps[h], true, IK.yavas))) * m.ps[h].yet.verim(mek::DONDURME_BEDEL);
+        let v = EN.dolas * jmin(1.0, w0(ca1 - ca0).abs() / jmax(0.01, omega(&m.ps[h], true, IK.yavas))) * m.ps[h].govde.yet.verim(mek::DONDURME_BEDEL);
         enHarca(m, h, "ikili", v);
     }
     let carp = (0..m.ps.len()).find(|&qi| {
@@ -790,7 +790,7 @@ fn donus(m: &mut Mac, h: Pid, kk: &MacKural) -> bool {
                 m.ps[h].hal_mut().fiskeCd = Some(tick + 30.0);
                 let o = TopIstek { x: cx0, y: cy0, vx, vy, team: ht, ch: Some(m.ch), from: Some(c), defl: 1.0, ..Default::default() };
                 bosaDus(m, o, ht);
-                let (ct, hn, cn) = (m.ps[c].team, m.ps[h].name.clone(), m.ps[c].name.clone());
+                let (ct, hn, cn) = (m.ps[c].team, m.ps[h].govde.name.clone(), m.ps[c].govde.name.clone());
                 ev(m, "kesme", ct, format!("{hn}'in fiskesi {cn}'e çarptı"));
                 return true;
             }
@@ -912,12 +912,12 @@ fn govdeVur(m: &mut Mac, h: Pid, kk: &MacKural) -> bool {
             m.st.loose[ht as usize] += 1.0;
             m.st.duelW[qt] += 1.0;
             m.ps[qi].hal_mut().son.as_mut().unwrap().ok = true;
-            let (qn, hn) = (m.ps[qi].name.clone(), m.ps[h].name.clone());
+            let (qn, hn) = (m.ps[qi].govde.name.clone(), m.ps[h].govde.name.clone());
             ev(m, "kesme", qt as f64, format!("{qn} gövdesiyle {yon} vurdu, Çekirdek {hn}'den koptu"));
             return true;
         }
         m.ps[qi].hal_mut().adandi = Some(m.tick + 4.0);
-        let (qn, hn) = (m.ps[qi].name.clone(), m.ps[h].name.clone());
+        let (qn, hn) = (m.ps[qi].govde.name.clone(), m.ps[h].govde.name.clone());
         ev(m, "pas", ht, if P > 0.0 { format!("{hn} Çekirdeği korudu, {qn} boşa vurdu") } else { format!("{hn} Çekirdeği gövdesinin arkasına aldı, {qn} boşa vurdu") });
     }
     let (hx, hy) = (m.ps[h].x, m.ps[h].y);
@@ -929,7 +929,7 @@ fn govdeVur(m: &mut Mac, h: Pid, kk: &MacKural) -> bool {
         if hypot(q.x - hx, q.y - hy) > dis::DU::engage + 0.6 {
             continue;
         }
-        let W0 = jmax(2.0, jround(4.0 - 0.15 * (q.yet.y(mek::HAMLE) - 10.0)));
+        let W0 = jmax(2.0, jround(4.0 - 0.15 * (q.govde.yet.y(mek::HAMLE) - 10.0)));
         if hypot(q.x - kx, q.y - ky) > Q.reach + 0.3 * W0 {
             continue;
         }
@@ -986,7 +986,7 @@ fn hamleler(m: &mut Mac, h: Pid, kk: &MacKural) -> bool {
         let q = &m.ps[qi];
         let yet = if omuz { hypot(q.x - hx, q.y - hy) < TQ.min_d + 0.45 } else { hypot(q.x - kx, q.y - ky) < Q.reach + 1.0 };
         let qt = q.team;
-        let (qn, hn) = (q.name.clone(), m.ps[h].name.clone());
+        let (qn, hn) = (q.govde.name.clone(), m.ps[h].govde.name.clone());
         if ikOn() && omuz {
             m.st.duel[qt as usize] += 1.0;
             m.ps[qi].hal_mut().son = Some(JPSon { k: "omuz".into(), t: m.tick, ok: false, x: kx, y: ky });
@@ -1031,7 +1031,7 @@ fn hamleler(m: &mut Mac, h: Pid, kk: &MacKural) -> bool {
         let P = if yet && ikOn() && !omuz {
             cl(IK.pokeT + durtFark(&m.ps[qi], hp) * IK.pokeK + acik * IK.pokeAc + (1.0 - hp.den.unwrap_or(1.0)) * IK.pokeDn, 0.05, 0.95)
         } else if yet {
-            dis::duelP(m, qi, h) * if omuz { 0.7 + 0.03 * (m.ps[qi].yet.ozk("guc") - hp.yet.ozk("guc")) } else { 1.0 }
+            dis::duelP(m, qi, h) * if omuz { 0.7 + 0.03 * (m.ps[qi].govde.yet.ozk("guc") - hp.govde.yet.ozk("guc")) } else { 1.0 }
         } else {
             0.0
         };
@@ -1043,7 +1043,7 @@ fn hamleler(m: &mut Mac, h: Pid, kk: &MacKural) -> bool {
         if crate::iz_acik() && std::env::var("ALAN_DUEL_IZ").is_ok() && !m.mac._lite {
             let hp = &m.ps[h];
             let gx = if hp.team == 0.0 { W } else { 0.0 };
-            eprintln!("DUEL [{},{:?},{:.2},{},{},{:.4},{},{:.4},{:.4},{:.4},{:.4}]", m.tick, &*hp.name, hypot(gx - hp.x, H / 2.0 - hp.y), omuz, yet, P, yet && zr < P, acik, hp.den.unwrap_or(1.0), hypot(or0(hp.vx), or0(hp.vy)), oo(hp._don));
+            eprintln!("DUEL [{},{:?},{:.2},{},{},{:.4},{},{:.4},{:.4},{:.4},{:.4}]", m.tick, &*hp.govde.name, hypot(gx - hp.x, H / 2.0 - hp.y), omuz, yet, P, yet && zr < P, acik, hp.den.unwrap_or(1.0), hypot(or0(hp.vx), or0(hp.vy)), oo(hp._don));
         }
         if yet && zr < P {
             m.st.duelW[qt as usize] += 1.0;
@@ -1104,7 +1104,7 @@ fn hamleler(m: &mut Mac, h: Pid, kk: &MacKural) -> bool {
                 }
                 if let Some(bm) = bm {
                     let ta = atan2(m.ps[bm].y - ky, m.ps[bm].x - kx);
-                    let ok2 = jmax(0.0, jmin(1.0, m.ps[qi].yet.y(mek::DURTME) / 20.0));
+                    let ok2 = jmax(0.0, jmin(1.0, m.ps[qi].govde.yet.y(mek::DURTME) / 20.0));
                     let df = w0(ta - a);
                     a += df * ok2 * 0.8;
                 }
@@ -1161,7 +1161,7 @@ fn ikiliGiris(m: &mut Mac, h: Pid) {
         let z = m.r.sonraki();
         let q = &m.ps[qi];
         let kaz = m.tac.get(q.team as usize).and_then(|t| t.kazaninca.clone());
-        let est = P + (z - 0.5) * (20.0 - q.yet.y(mek::IKILI_KARAR)) * 0.03 + dis::D::sarjKap * jmax(0.0, m.ch - 0.3) * if kaz.as_deref() == Some("Kontra") { 1.0 } else { 0.5 } + dis::enIkiliEk(m, qi, h);
+        let est = P + (z - 0.5) * (20.0 - q.govde.yet.y(mek::IKILI_KARAR)) * 0.03 + dis::D::sarjKap * jmax(0.0, m.ch - 0.3) * if kaz.as_deref() == Some("Kontra") { 1.0 } else { 0.5 } + dis::enIkiliEk(m, qi, h);
         let tick = m.tick;
         let (hx, hy) = (m.ps[h].x, m.ps[h].y);
         {
@@ -1182,7 +1182,7 @@ fn ikiliGiris(m: &mut Mac, h: Pid) {
         };
         {
             let ge = dis::girEsik(m, qi, h, m.ch);
-            if crate::iz_acik() && &*m.ps[qi].name == "Cansu" && std::env::var("ALAN_EN_IZ").ok().and_then(|x| x.parse::<f64>().ok()) == Some(m.tick) { eprintln!("IKE P {} est {} ge {:?} thr0 {} enEk {} ch {}", P, est, ge, thr0, dis::enIkiliEk(m, qi, h), m.ch); }
+            if crate::iz_acik() && &*m.ps[qi].govde.name == "Cansu" && std::env::var("ALAN_EN_IZ").ok().and_then(|x| x.parse::<f64>().ok()) == Some(m.tick) { eprintln!("IKE P {} est {} ge {:?} thr0 {} enEk {} ch {}", P, est, ge, thr0, dis::enIkiliEk(m, qi, h), m.ch); }
             let gec = match ge {
                 Some(g) => est < g,
                 None => est < thr0 + (if oya { if thr0 >= dis::DU::thrLast { dis::DU::oyala } else { dis::DU::oyalaC } } else { 0.0 }) - 0.2 * (sdq - 0.5),
@@ -1193,7 +1193,7 @@ fn ikiliGiris(m: &mut Mac, h: Pid) {
         }
         let q = &m.ps[qi];
         let shd = shielded(hx, hy, q.x, q.y, kx, ky);
-        let cv = 0.25 * (q.yet.y(mek::HAMLE) - 10.0);
+        let cv = 0.25 * (q.govde.yet.y(mek::HAMLE) - 10.0);
         let W0 = jmax(2.0, jround((if shd { 4.0 } else { 5.0 }) - cv));
         {
             let q = &mut m.ps[qi];
@@ -1204,7 +1204,7 @@ fn ikiliGiris(m: &mut Mac, h: Pid) {
             }
         }
         if m.ps[qi].en.is_some() {
-            let v = EN.ikili * EN.fizK * m.ps[qi].yet.verim(mek::TEMAS_BEDEL);
+            let v = EN.ikili * EN.fizK * m.ps[qi].govde.yet.verim(mek::TEMAS_BEDEL);
             enHarca(m, qi, "ikili", v);
         }
         {
@@ -1213,8 +1213,8 @@ fn ikiliGiris(m: &mut Mac, h: Pid) {
             q.hal_mut().adandi = Some(tick + W0 + jmax(3.0, jround(8.0 - cv)));
             q.hal_mut().adT = Some(crate::model::JPAdT { x: q.x + 1.6 * (kx - q.x), y: q.y + 1.6 * (ky - q.y) });
         }
-        let okH = m.ps[h].yet.y(mek::IKILI_KARAR);
-        let okQ = m.ps[qi].yet.y(mek::IKILI_KARAR);
+        let okH = m.ps[h].govde.yet.y(mek::IKILI_KARAR);
+        let okQ = m.ps[qi].govde.yet.y(mek::IKILI_KARAR);
         if m.r.sonraki() < jmax(0.1, jmin(0.9, 0.35 + 0.04 * (okH - okQ) + 0.02 * (okH - 10.0))) {
             m.decT = jmin(m.decT, 1.0);
             m.ps[h].hal_mut().okudu = Some(m.ps[qi].id);
@@ -1300,7 +1300,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
     if let Some(i) = m.mac.zorla_i.take() {
         if let Some(o) = r.opts.get(i) {
             let to = o.to.as_ref().map_or((f64::NAN, f64::NAN), |t| (t.x, t.y));
-            m.mac.zorla_sonuc = Some(super::ZorlaSonuc { to, P: o.det.as_ref().and_then(|d| d.P).unwrap_or(f64::NAN), v: o.v.unwrap_or(f64::NAN), secilen: i == oi, n: r.opts.len(), tur: format!("{}{}{}{}", o.kind, o.shot.as_ref().map_or(String::new(), |s| format!(" {s}")), if o.spr.map_or(false, crate::mat::dogru) { " ·hız" } else { "" }, o.q.filter(|&q| q != h).map_or(String::new(), |q| format!("→{}", m.ps[q].name))), dok: o.dok.as_ref().map_or(String::new(), |d| d.k.iter().map(|(a, b)| format!("{a}={b:.3}")).collect::<Vec<_>>().join(" ")) });
+            m.mac.zorla_sonuc = Some(super::ZorlaSonuc { to, P: o.det.as_ref().and_then(|d| d.P).unwrap_or(f64::NAN), v: o.v.unwrap_or(f64::NAN), secilen: i == oi, n: r.opts.len(), tur: format!("{}{}{}{}", o.kind, o.shot.as_ref().map_or(String::new(), |s| format!(" {s}")), if o.spr.map_or(false, crate::mat::dogru) { " ·hız" } else { "" }, o.q.filter(|&q| q != h).map_or(String::new(), |q| format!("→{}", m.ps[q].govde.name))), dok: o.dok.as_ref().map_or(String::new(), |d| d.k.iter().map(|(a, b)| format!("{a}={b:.3}")).collect::<Vec<_>>().join(" ")) });
             oi = i;
         }
     }
@@ -1309,7 +1309,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
         let hp = &m.ps[h];
         let f = |v: Option<f64>| v.filter(|x| x.is_finite()).map_or("null".to_string(), |x| format!("{}", x));
         let o: Vec<String> = r.opts.iter().enumerate().map(|(i, x)| format!("[{:?},{},{},{},{},{},{}]", x.kind, x.to.as_ref().map_or("null".into(), |t| format!("[{},{}]", t.x, t.y)), f(x.v), f(x.det.as_ref().and_then(|d| d.P)), f(x.det.as_ref().and_then(|d| d.Ps)), f(x._own), if i == oi { 1 } else { 0 })).collect();
-        eprintln!("SECP [{},{:?},{},{},{},[{}]]", m.tick, &*hp.name, hp.team, hp.x, hp.y, o.join(","));
+        eprintln!("SECP [{},{:?},{},{},{},[{}]]", m.tick, &*hp.govde.name, hp.team, hp.x, hp.y, o.join(","));
     }
     // m._sec ve m.lastDec (gösterim)
     {
@@ -1341,7 +1341,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
             crate::model::JMLastDecOptsE {
                 kind,
                 to: o.to.as_ref().map(|t| crate::model::JMLastDecOptsETo { x: t.x, y: t.y }),
-                q: o.q.map_or(String::new(), |q| m.ps[q].name.to_string()),
+                q: o.q.map_or(String::new(), |q| m.ps[q].govde.name.to_string()),
                 P: o.det.as_ref().map_or(f64::NAN, |d| if o.kind == "gönder" { d.Pk.unwrap_or(f64::NAN) } else { d.P.unwrap_or(f64::NAN) - d.Ps.unwrap_or(f64::NAN) }),
                 v: o.v.unwrap_or(f64::NAN),
                 sjK: o.sjK,
@@ -1350,7 +1350,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
                 ..Default::default()
             }
         }).collect();
-        m.lastDec = Some(crate::model::JMLastDec { name: hp.name.to_string(), team: ht, x: hp.x, y: hp.y, opts });
+        m.lastDec = Some(crate::model::JMLastDec { name: hp.govde.name.to_string(), team: ht, x: hp.x, y: hp.y, opts });
     }
     let z = m.r.sonraki();
     m.decT = jround(5.0 + 8.0 * (1.0 - m.tac[ht as usize].tempo.unwrap_or(f64::NAN)) + 3.0 * z);
@@ -1380,7 +1380,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
         let tutS = o.kind == "tut" && o.det.as_ref().map_or(false, |d| d.ch.unwrap_or(f64::NAN) > m.ch + 0.005) && m.ps[h].en.unwrap_or(1.0) >= 0.1;
         m.ps[h].hal_mut().sarj = Some(sk || tutS);
         if m.ps[h].hal.sarj == Some(true) && !s0 && !m.mac._lite {
-            let n = m.ps[h].name.clone();
+            let n = m.ps[h].govde.name.clone();
             let ch = js_num(jround(100.0 * m.ch));
             ev(m, "sarj", ht, format!("{n} şarj ediyor · %{ch}"));
         }
@@ -1416,7 +1416,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
             m.ps[h].hal_mut().holdD = true;
         }
         let lw = m.ps[h].hal.lastWhy.clone();
-        let n = m.ps[h].name.clone();
+        let n = m.ps[h].govde.name.clone();
         let look = o.det.as_ref().and_then(|_| dis_lookTo(m, &o));
         if o.why.as_deref() == Some("çek") && lw.as_deref() != Some("çek") {
             ev(m, "pas", ht, format!("{n} rakibi üstüne çekiyor{}", look.as_ref().map_or(String::new(), |l| format!(" · {l} açılacak"))));
@@ -1470,7 +1470,7 @@ fn bostaTop(m: &mut Mac) {
                 crate::temas::ctrl_p(&mut b.tt, best, &m.ps, None, &kk)
             };
             if z < cp {
-                let n = m.ps[best].name.clone();
+                let n = m.ps[best].govde.name.clone();
                 take(m, best, Some(format!("{n} boştaki Çekirdeği aldı")));
             }
         }
@@ -1501,7 +1501,7 @@ fn bostaTop(m: &mut Mac) {
                     m.st.direk = vec![0.0, 0.0];
                 }
                 m.st.direk[bt as usize] += 1.0;
-                let t = format!("{}Direkten sekti", from.map_or(String::new(), |f| format!("{} · ", m.ps[f].name)));
+                let t = format!("{}Direkten sekti", from.map_or(String::new(), |f| format!("{} · ", m.ps[f].govde.name)));
                 ev(m, "direk", bt, t);
             }
         }
@@ -1516,7 +1516,7 @@ fn bostaTop(m: &mut Mac) {
         if let Some(r) = r.as_ref().filter(|r| r.took) {
             let fl = m.fl.as_ref();
             let rp = r.p;
-            let n = m.ps[rp].name.clone();
+            let n = m.ps[rp].govde.name.clone();
             let t = if fl.map_or(false, |f| f.kind == "gönder") && m.ps[rp].bekci() { format!("{n} göndermeyi tuttu") } else { format!("{n} aktarımı kesti") };
             take(m, rp, Some(t));
             return;
@@ -1539,7 +1539,7 @@ fn bostaTop(m: &mut Mac) {
                     c.g += 1.0;
                 }
             }
-            let t = format!("SAYI · {} · {}–{}", from.map_or(String::new(), |f| m.ps[f].name.to_string()), js_num(m.score[0]), js_num(m.score[1]));
+            let t = format!("SAYI · {} · {}–{}", from.map_or(String::new(), |f| m.ps[f].govde.name.to_string()), js_num(m.score[0]), js_num(m.score[1]));
             ev(m, "sayi", sc, t);
             super::kurulum::kickoff(m, 1.0 - sc);
         } else if dn == Some("durdu") {

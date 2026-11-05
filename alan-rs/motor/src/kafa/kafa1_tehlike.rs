@@ -208,7 +208,7 @@ impl Kafa {
                 o.t[k] = if !p.bekci() && hypot(p.x - bx, p.y - by) > 1.5 { 1 } else { 0 };
             } else {
                 o.t[k] = -1;
-                o.a[k] = 0.3 * p.yet.ozk("tepki");
+                o.a[k] = 0.3 * p.govde.yet.ozk("tepki");
             }
         }
         o

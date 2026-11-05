@@ -56,7 +56,7 @@ pub fn enSay_p(st: &mut JMSt, lite: bool, team: f64, pi: Pid, k: &str, v: f64) {
     ekle(st.enP.entry(pi).or_default(), k, v);
 }
 pub fn enSay(m: &mut Mac, pi: Pid, k: &str, v: f64) {
-    if crate::iz_acik() && !m.mac._lite && v > 0.0 && &*m.ps[pi].name == "Cansu" && std::env::var("ALAN_EN_IZ").ok().and_then(|x| x.parse::<f64>().ok()).map_or(false, |x| m.tick >= x - 1.0 && m.tick <= x) { eprintln!("EN {} {} {} {}", m.tick, m.ps[pi].name, k, v); }
+    if crate::iz_acik() && !m.mac._lite && v > 0.0 && &*m.ps[pi].govde.name == "Cansu" && std::env::var("ALAN_EN_IZ").ok().and_then(|x| x.parse::<f64>().ok()).map_or(false, |x| m.tick >= x - 1.0 && m.tick <= x) { eprintln!("EN {} {} {} {}", m.tick, m.ps[pi].govde.name, k, v); }
     let t = m.ps[pi].team;
     enSay_p(&mut m.st, m.mac._lite, t, pi, k, v);
 }
@@ -65,7 +65,7 @@ pub fn enSay(m: &mut Mac, pi: Pid, k: &str, v: f64) {
 pub fn verim(p: &Oyuncu, oz: &[&str]) -> f64 {
     let mut s = 0.0;
     for o in oz {
-        s += p.yet.ozk(o);
+        s += p.govde.yet.ozk(o);
     }
     jmax(0.5, jmin(1.4, 1.0 - 0.04 * (s / oz.len() as f64 - 10.0)))
 }
@@ -81,7 +81,7 @@ pub fn enHarca_p(st: &mut JMSt, lite: bool, p: &mut Oyuncu, pi: Pid, k: &str, v:
     p.en = Some(en - d);
 }
 pub fn enHarca(m: &mut Mac, pi: Pid, k: &str, v: f64) {
-    if crate::iz_acik() && !m.mac._lite && &*m.ps[pi].name == "Cansu" && std::env::var("ALAN_EN_IZ").ok().and_then(|x| x.parse::<f64>().ok()).map_or(false, |x| m.tick >= x - 1.0 && m.tick <= x) { eprintln!("ENH {} {} {} {} en {:?}", m.tick, m.ps[pi].name, k, v, m.ps[pi].en); }
+    if crate::iz_acik() && !m.mac._lite && &*m.ps[pi].govde.name == "Cansu" && std::env::var("ALAN_EN_IZ").ok().and_then(|x| x.parse::<f64>().ok()).map_or(false, |x| m.tick >= x - 1.0 && m.tick <= x) { eprintln!("ENH {} {} {} {} en {:?}", m.tick, m.ps[pi].govde.name, k, v, m.ps[pi].en); }
     let lite = m.mac._lite;
     enHarca_p(&mut m.st, lite, &mut m.ps[pi], pi, k, v);
 }
@@ -103,7 +103,7 @@ pub fn enerji2(m: &mut Mac) {
         let vy = or0(p.vy);
         let v = hypot(vx, vy);
         let b = spd(p);
-        let vmx = b * ALAN_SPR_H(p.yet.hiz);
+        let vmx = b * ALAN_SPR_H(p.govde.yet.hiz);
         let mut d = 0.0;
         let mut st_ek: Vec<(&str, f64)> = vec![];
         if v > b {
@@ -161,7 +161,7 @@ pub fn enerji2(m: &mut Mac) {
             p.hal_mut()._enOnce = Some(en);
             if bos {
                 p.hal_mut()._bosT = Some(tick);
-                let (t, ad, bek) = (p.team, p.name.clone(), p.bekci());
+                let (t, ad, bek) = (p.team, p.govde.name.clone(), p.bekci());
                 ev(m, "pas", t, if bek { format!("Bekçi'nin barı boş · {ad}") } else { format!("Barı boş · {ad}") });
             }
         } else if p.hal._Dl.is_some() && Some(p.D) == p.hal._Dl {
@@ -195,7 +195,7 @@ pub fn enCal(m: &mut Mac, kaz: Pid, kay: Pid, sert: f64) {
     enSay(m, kaz, "caldi", al);
     let t = m.ps[kaz].team;
     if !m.mac._lite {
-        let (a, b) = (m.ps[kaz].name.clone(), m.ps[kay].name.clone());
+        let (a, b) = (m.ps[kaz].govde.name.clone(), m.ps[kay].govde.name.clone());
         ev(m, "pas", t, format!("{a}, {b}'den bar çaldı"));
     }
     if m.st.enCal.is_empty() {
@@ -216,7 +216,7 @@ const ALAN_YON: f64 = 2.0;
 pub fn alanYz(m: &Mac, pi: Pid, t0: f64) -> (f64, f64) {
     let p = &m.ps[pi];
     let bb = jmin(1.0, gecici_dis::pressAt(&m.ps, p.team, p.x, p.y));
-    let w = ALAN_YON * (20.0 - p.yet.y(mek::ALAN_YON) + 10.0 * crate::yetenek::DK_SUT.b * bb * crate::yetenek::yum(&p.yet, "B")) / 10.0;
+    let w = ALAN_YON * (20.0 - p.govde.yet.y(mek::ALAN_YON) + 10.0 * crate::yetenek::DK_SUT.b * bb * crate::yetenek::yum(&p.govde.yet, "B")) / 10.0;
     if !(w > 0.0) {
         return (0.0, 0.0);
     }
@@ -318,7 +318,7 @@ pub fn alanSec(m: &mut Mac) {
         let f = p.etki().infl(bx, by);
         let s = if am > 0.0 { sp } else { sn };
         let pay = if s > 0.0 { dS(s) / s } else { 1.0 };
-        let c = EN.alan * f * pay / ALAN_EN2_SB(p) * p.yet.verim(mek::ALAN_BEDEL);
+        let c = EN.alan * f * pay / ALAN_EN2_SB(p) * p.govde.yet.verim(mek::ALAN_BEDEL);
         let e = p.en.unwrap_or(1.0);
         enSay(m, pi, "alan", jmin(e, c));
         m.ps[pi].en = Some(jmax(0.0, e - c));
@@ -435,7 +435,7 @@ pub fn sprintKarar3(m: &mut Mac) {
         }
         let b = spd(p);
         let Sb = ALAN_EN2_SB(p);
-        let vm = b * ALAN_SPR_H(p.yet.hiz);
+        let vm = b * ALAN_SPR_H(p.govde.yet.hiz);
         let hk = hkK(p, SPR0(p));
         let pat = SBED();
         let e = jmax(0.0, jmin(1.0, p.en.unwrap_or(1.0)));

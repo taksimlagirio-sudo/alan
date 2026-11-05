@@ -128,7 +128,7 @@ pub fn kafaBasla(m: &mut Mac, h: Pid, o: &mut Secenek, ot: bool) {
     o._kafaId = Some(oid);
     let hp = &m.ps[h];
     let d = o.det.as_ref();
-    let q = o.q.filter(|&q| !m.ps[q].name.is_empty());
+    let q = o.q.filter(|&q| !m.ps[q].govde.name.is_empty());
     let e: Option<(f64, f64)> = if let Some(d) = d.and_then(|d| d.endM.as_ref()).filter(|e| e.x.is_finite()) {
         Some((d.x, d.y))
     } else if o.kind == "sür" || o.kind == "önüne" {
@@ -140,12 +140,12 @@ pub fn kafaBasla(m: &mut Mac, h: Pid, o: &mut Secenek, ot: bool) {
     };
     let r = KafaKayit {
         t: m.tick,
-        ad: hp.name.to_string(),
+        ad: hp.govde.name.to_string(),
         id: hp.id,
         team: hp.team,
         kind: o.kind.clone(),
         kendine: o.kendine,
-        q: q.filter(|&q| q != h).map(|q| m.ps[q].name.to_string()),
+        q: q.filter(|&q| q != h).map(|q| m.ps[q].govde.name.to_string()),
         qid: q.map(|q| m.ps[q].id),
         shot: o.shot.clone(),
         ot,

@@ -40,11 +40,11 @@ fn kc(k: &Kafa) -> Kc<'_> {
 
 /// JS ALAN_Y(p, k) (yetenek.js:322): mekanik adıyla.
 pub fn ALAN_Y(p: &Oyuncu, k: &str) -> f64 {
-    p.yet.y(super::kafa1_secim::mek_sira(k))
+    p.govde.yet.y(super::kafa1_secim::mek_sira(k))
 }
 /// JS ALAN_OZ(p, k) (core.js:30)
 pub fn ALAN_OZ(p: &Oyuncu, k: &str) -> f64 {
-    p.yet.ozk(k)
+    p.govde.yet.ozk(k)
 }
 /// JS ALAN_HZ (core.js:104): Enerji 3.0 açık → ham Hız.
 pub fn ALAN_HZ(p: &Oyuncu) -> f64 {
@@ -463,7 +463,7 @@ pub fn AM_sprK(k: &Kafa, p: &Oyuncu) -> f64 {
 
 /// JS vurTaban(p) (core.js:410): vuruşun taban enerjisi (kafa1'in top_yap'ındakiyle aynı).
 pub fn vurTaban(p: &Oyuncu) -> f64 {
-    crate::saha::P.tek_taban * jmax(0.5, jmin(1.5, 1.0 + 0.05 * (p.yet.y(crate::yetenek::mek::VURUS_TABAN) - 10.0)))
+    crate::saha::P.tek_taban * jmax(0.5, jmin(1.5, 1.0 + 0.05 * (p.govde.yet.y(crate::yetenek::mek::VURUS_TABAN) - 10.0)))
 }
 
 /// JMTacE'yi kullanmayan uyarıyı susturur (tip, imzalarda görünür)

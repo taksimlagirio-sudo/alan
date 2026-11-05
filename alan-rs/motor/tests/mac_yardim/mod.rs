@@ -39,8 +39,8 @@ pub fn vektor() -> Option<Value> {
 /// JS ser(p) → Oyuncu
 pub fn oyuncu(v: &Value) -> Oyuncu {
     let mut p = Oyuncu::default();
-    p.name = v["name"].as_str().unwrap_or("").into();
-    p.role = v["role"].as_str().unwrap_or("").into();
+    p.govde_mut().name = v["name"].as_str().unwrap_or("").into();
+    p.govde_mut().role = v["role"].as_str().unwrap_or("").into();
     p.job = v["job"].as_str().map(|s| s.into());
     let mut a = HamA::default();
     for (k, x) in v["a"].as_object().unwrap() {
@@ -60,7 +60,7 @@ pub fn oyuncu(v: &Value) -> Oyuncu {
         match k.as_str() {
             "id" => p.id = x,
             "team" => p.team = x,
-            "i" => p.i = x,
+            "i" => p.govde_mut().i = x,
             "R" => p.R = x,
             "D" => p.D = x,
             "x" => p.x = x,

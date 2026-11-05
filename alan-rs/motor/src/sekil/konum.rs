@@ -148,7 +148,7 @@ pub fn position(c: &mut Mc) {
             p.hal_mut().swPrev = None;
             p.hal_mut().uaPrev = None;
             p.hal_mut().rec = Some(if fresh && p.takim() != att && !p.bekci() && (p.x - E.0) * dirOf(p.takim()) > 2.0 {
-                tick + jmax(2.0, jround(26.0 - p.yet.y(mek::PRES_BASLA) * S.recOk))
+                tick + jmax(2.0, jround(26.0 - p.govde.yet.y(mek::PRES_BASLA) * S.recOk))
             } else {
                 0.0
             });
@@ -336,11 +336,11 @@ fn kovala(c: &mut Mc, fr: Option<&Fr>, att: u8, top_id: Option<TopRef>, chase: &
                             oE = rq2.est;
                         }
                     }
-                    if r.est + S.bekOnce + (20.0 - c.ps[pi].yet.y(mek::CIKIS)) * S.marginT >= oE {
+                    if r.est + S.bekOnce + (20.0 - c.ps[pi].govde.yet.y(mek::CIKIS)) * S.marginT >= oE {
                         continue;
                     }
                 }
-                let esik = (if pb { bestE } else { bestS }) + if pb { if bkCik { S.bekCikPay } else { 0.0 } } else { (20.0 - c.ps[pi].yet.y(mek::ALGI_HATA)) * S.marginT + 1.0 };
+                let esik = (if pb { bestE } else { bestS }) + if pb { if bkCik { S.bekCikPay } else { 0.0 } } else { (20.0 - c.ps[pi].govde.yet.y(mek::ALGI_HATA)) * S.marginT + 1.0 };
                 if recv || bkIc || (loose && !pb && hypot(r.x - ownX(pteam), r.y - GCY) < 25.0 && r.est <= oEk + 4.0) || r.est <= esik {
                     chase[pi] = true;
                     let p = &mut c.ps[pi];

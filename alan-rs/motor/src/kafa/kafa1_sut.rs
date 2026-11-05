@@ -76,7 +76,7 @@ pub fn triF(u: f64, A: f64) -> f64 {
 pub fn top_yap(x: f64, y: f64, vx: f64, vy: f64, team: f64, ch: Option<f64>, vur: Option<&Oyuncu>) -> Top {
     let P = crate::saha::P;
     let taban = match vur {
-        Some(p) => P.tek_taban * jmax(0.5, jmin(1.5, 1.0 + 0.05 * (p.yet.y(crate::yetenek::mek::VURUS_TABAN) - 10.0))),
+        Some(p) => P.tek_taban * jmax(0.5, jmin(1.5, 1.0 + 0.05 * (p.govde.yet.y(crate::yetenek::mek::VURUS_TABAN) - 10.0))),
         None => P.tek_taban,
     };
     Top::yeni(x, y, vx, vy, team as u8, ch, taban)
@@ -143,7 +143,7 @@ impl Kafa {
         hh.y = y;
         hh.team = team;
         hh.id = -9.0;
-        hh.role = "".into();
+        hh.govde_mut().role = "".into();
         hh.vx = 0.0;
         hh.vy = 0.0;
         hh.D = 1.0;
@@ -175,7 +175,7 @@ impl Kafa {
                     let hm = bek_har(bk, x, y, ux, uy, &kr);
                     let re = bek_re(bk) + Q.bek_har_t * hm - bek_oku_e(bk, &hh, IN.cue0);
                     let Rk = Q.bek_body + jmin(bek_dl(bk) * (1.0 - Q.bek_har_d * hm), jmax(0.0, ts - re) * bek_dv(bk)) + jmax(0.0, ts - re - 2.0) * (0.17 + 0.006 * (bk.hz() - 10.0 + 10.0)) * self.dis.ALAN_SPR(bk) * bek_kay(bk);
-                    let th = jmax(0.0, jmin(Q.thru_max * Q.bek_thru, (v0 - Q.thru_v) * Q.thru_k - 0.02 * (bk.yet.ozk("kesme") - 10.0)));
+                    let th = jmax(0.0, jmin(Q.thru_max * Q.bek_thru, (v0 - Q.thru_v) * Q.thru_k - 0.02 * (bk.govde.yet.ozk("kesme") - 10.0)));
                     kur = sgm((jmax(Rk, 1.15) - pd) / BKS) * if pd < BODY_R { 1.0 } else { 1.0 - th * bek_uc(pd, Rk) };
                 }
             }

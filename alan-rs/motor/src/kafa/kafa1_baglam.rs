@@ -131,11 +131,11 @@ impl Kafa {
     }
     /// JS ALAN_AG(p)
     pub fn AG(&self, p: &Oyuncu) -> f64 {
-        crate::yetenek::ag(&p.yet, p.den, p.bekci(), self.yavas())
+        crate::yetenek::ag(&p.govde.yet, p.den, p.bekci(), self.yavas())
     }
     /// JS ALAN_AH(p)
     pub fn AH(&self, p: &Oyuncu) -> f64 {
-        crate::yetenek::ah(&p.yet)
+        crate::yetenek::ah(&p.govde.yet)
     }
     /// JS ALAN_DURUM.dengeK(den)
     pub fn dengeK(&self, den: Option<f64>) -> f64 {
@@ -143,7 +143,7 @@ impl Kafa {
     }
     /// JS ALAN_DURUM.har(p): hızın tepe hızına oranı
     pub fn har(&self, p: &Oyuncu) -> f64 {
-        crate::mat::jmin(1.0, crate::mat::hypot(super::kafa1_js::z0(p.vx), super::kafa1_js::z0(p.vy)) / (self.spd(p) * crate::yetenek::spr_h(p.yet.hiz)))
+        crate::mat::jmin(1.0, crate::mat::hypot(super::kafa1_js::z0(p.vx), super::kafa1_js::z0(p.vy)) / (self.spd(p) * crate::yetenek::spr_h(p.govde.yet.hiz)))
     }
     /// JS `K.menzil(p, Q)`
     pub fn menzil(&self, p: &Oyuncu) -> f64 {

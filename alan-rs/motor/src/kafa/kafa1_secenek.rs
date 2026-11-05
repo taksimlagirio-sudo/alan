@@ -491,7 +491,7 @@ impl Kafa {
             }
             C3.sort_by(|a, b| b.s.partial_cmp(&a.s).unwrap_or(std::cmp::Ordering::Equal));
             if crate::iz_acik() && std::env::var("ALAN_C3_IZ").ok().map_or(false, |v| v == format!("{}", self.tick())) {
-                eprintln!("  C3 {} vH {} n {}", h.name, vH, C3.len());
+                eprintln!("  C3 {} vH {} n {}", h.govde.name, vH, C3.len());
                 for c in C3.iter().take(12) {
                     eprintln!("    P {:.3} {:.3} r {} own {:.6} ownS {} s {:.6} sah {:.6}", c.P.x, c.P.y, c.r, c.own, c.ownS.map_or("-".into(), |v| format!("{:.6}", v)), c.s, c.s / jmax(c.own, c.ownS.unwrap_or(0.0)));
                 }
