@@ -328,6 +328,9 @@ impl Sv {
                 return None;
             }
             let r = fr.arr[fq];
+            if crate::iz_acik() && std::env::var("ALAN_BUL_IZ").is_ok() {
+                eprintln!("BUL {} alıcı {} buluşma ({:.1},{:.1}) est {:.1} top ({:.1},{:.1})", c.m.tick, c.ps[fq].name, r.x, r.y, r.est, b.b.x, b.b.y);
+            }
             Some((fq, r.x, r.y, r.est))
         })();
         self.Eb = match self.bul {
