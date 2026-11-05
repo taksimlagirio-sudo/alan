@@ -176,7 +176,7 @@ mod tdis {
     fn prT(&self) -> Option<PrT> { self.m.prT() }
     fn algi_e(&self, p: &Oyuncu) -> Option<f64> { self.m.algi_e(p) }
     fn algi_yas(&self, p: &Oyuncu) -> Option<f64> { self.m.algi_yas(p) }
-    fn ilkPres(&self, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[Tehlike], dtac: &TacEff, gs: &Option<JMShGs>) { self.m.ilkPres(tick, qv, hx, team, TH, dtac, gs) }
+    fn ilkPres(&self, dtik: f64, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[Tehlike], dtac: &TacEff, gs: &Option<JMShGs>) { self.m.ilkPres(dtik, tick, qv, hx, team, TH, dtac, gs) }
         fn bekciFm(&self, p: &Oyuncu, B: Nk, fm: &Fm) -> Nk {
             let ps = kisi(fm.ps);
             let ben = fm.ps.iter().position(|q| q.id == p.id && q.team == p.team);

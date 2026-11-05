@@ -217,8 +217,8 @@ pub trait Dis {
     fn aliciDirenc(&self, pts: &[Nk], p: &Oyuncu, rc: f64, iMin: f64, rP: f64) -> Option<Nk> { todo!() }
     /// shape.js tehlike(m, h)
     fn tehlike(&self, h: &Oyuncu) -> Vec<Tehlike> { todo!() }
-    /// shape.js:857 ilkPres(vm, qv, hx, team, TH, dtac, sh): qv.tx/ty'yi yazar. `tick`: vm.tick
-    fn ilkPres(&self, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[Tehlike], dtac: &TacEff, gs: &Option<JMShGs>) { todo!() }
+    /// shape.js:857 ilkPres(vm, qv, hx, team, TH, dtac, sh): qv.tx/ty'yi yazar. `tick`: vm.tick, `dtik`: kafanın karar tiki (D._tick)
+    fn ilkPres(&self, dtik: f64, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[Tehlike], dtac: &TacEff, gs: &Option<JMShGs>) { todo!() }
     /// AlanShape var mı, ilkPres var mı (presRol'ün koşulu)
     fn AS_ilkPres_var(&self) -> bool { todo!() }
     /// (birleştirmede eklendi; kafa2) shape.js bekci(p, B, m): `m` verili maç görünümüyle (fm)

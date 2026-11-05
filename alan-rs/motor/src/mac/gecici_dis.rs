@@ -117,10 +117,11 @@ pub fn mc_ile<T>(m: &mut Mac, f: impl FnOnce(&mut crate::sekil::varlik::Mc) -> T
     let d = kafa_d();
     let v = {
         let mut zar = || r.sonraki();
-        // JS D._tick: yalnız gerçek maçın adımı yazar (match.js step, !m._lite); ileri bakış kopyaları kafanınkini görür
-        let dt = if lite { crate::sekil::D_TICK.with(|t| t.get()) } else { Some(m.tick) };
-        let mut c = Mc { m: &mut *m, ps: &mut ps, ball: ball.as_mut(), ek: &mut ek, k: &kural, d, lite, rnd: Some(&mut zar) };
-        crate::sekil::d_tick_ile(dt, || f(&mut c))
+        // JS D._tick: gerçek maçın adımı yazar (match.js step). Kafanın hayali maçı (JS m._lite) Rust'ta kurulmaz.
+        debug_assert!(!lite, "hayali maç (_lite) Rust'ta kurulmaz");
+        let dt = Some(m.tick);
+        let mut c = Mc { m: &mut *m, ps: &mut ps, ball: ball.as_mut(), ek: &mut ek, k: &kural, d, lite, rnd: Some(&mut zar), dtik: dt };
+        f(&mut c)
     };
     m.ps = ps;
     if let (Some(b), Some(t)) = (m.ball.as_mut(), ball) {
