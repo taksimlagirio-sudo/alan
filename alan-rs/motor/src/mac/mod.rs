@@ -171,6 +171,8 @@ pub struct ZorlaSonuc {
     pub tur: String,
     /// seçeneğin değer dökümü (dok)
     pub dok: String,
+    /// tartının süresi (o._pT)
+    pub T: f64,
 }
 
 // ---- küçük JS yardımcıları ----

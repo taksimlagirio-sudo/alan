@@ -1293,14 +1293,14 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
         if let Some(&i) = ix.get(sira) {
             let o = &r.opts[i];
             let to = o.to.as_ref().unwrap();
-            m.mac.zorla_sonuc = Some(super::ZorlaSonuc { to: (to.x, to.y), P: o.det.as_ref().and_then(|d| d.P).unwrap_or(f64::NAN), v: o.v.unwrap(), secilen: i == oi, n: ix.len(), tur: String::new(), dok: String::new() });
+            m.mac.zorla_sonuc = Some(super::ZorlaSonuc { to: (to.x, to.y), P: o.det.as_ref().and_then(|d| d.P).unwrap_or(f64::NAN), v: o.v.unwrap(), secilen: i == oi, n: ix.len(), tur: String::new(), dok: String::new(), T: f64::NAN });
             oi = i;
         }
     }
     if let Some(i) = m.mac.zorla_i.take() {
         if let Some(o) = r.opts.get(i) {
             let to = o.to.as_ref().map_or((f64::NAN, f64::NAN), |t| (t.x, t.y));
-            m.mac.zorla_sonuc = Some(super::ZorlaSonuc { to, P: o.det.as_ref().and_then(|d| d.P).unwrap_or(f64::NAN), v: o.v.unwrap_or(f64::NAN), secilen: i == oi, n: r.opts.len(), tur: format!("{}{}{}{}", o.kind, o.shot.as_ref().map_or(String::new(), |s| format!(" {s}")), if o.spr.map_or(false, crate::mat::dogru) { " ·hız" } else { "" }, o.q.filter(|&q| q != h).map_or(String::new(), |q| format!("→{}", m.ps[q].name))), dok: o.dok.as_ref().map_or(String::new(), |d| d.k.iter().map(|(a, b)| format!("{a}={b:.3}")).collect::<Vec<_>>().join(" ")) });
+            m.mac.zorla_sonuc = Some(super::ZorlaSonuc { to, P: o.det.as_ref().and_then(|d| d.P).unwrap_or(f64::NAN), v: o.v.unwrap_or(f64::NAN), secilen: i == oi, n: r.opts.len(), tur: format!("{}{}{}{}", o.kind, o.shot.as_ref().map_or(String::new(), |s| format!(" {s}")), if o.spr.map_or(false, crate::mat::dogru) { " ·hız" } else { "" }, o.q.filter(|&q| q != h).map_or(String::new(), |q| format!("→{}", m.ps[q].name))), dok: o.dok.as_ref().map_or(String::new(), |d| d.k.iter().map(|(a, b)| format!("{a}={b:.3}")).collect::<Vec<_>>().join(" ")), T: o._pT.unwrap_or(f64::NAN) });
             oi = i;
         }
     }
