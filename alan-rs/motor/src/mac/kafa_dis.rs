@@ -38,7 +38,12 @@ fn hafif(m: &mut Mac) -> Mac {
     let ev = std::mem::take(&mut m.events);
     let kg = m.mac._kafa.take();
     let ps = std::mem::take(&mut m.ps);
+    // maçın kafa kutusu da kopyalanmaz: içindeki dış dünya (MacDis) bir önceki tikin hafif kopyasını tutar,
+    // kopyaya geçerse her tik bir öncekini tutan bir zincir oluşur ve hiçbiri bırakılmaz (maç boyunca
+    // ~330 MB / 1000 tik; tarayıcıda 2 GB'ı aşıp işçiyi düşürüyordu: "byteOffset cannot be negative")
+    let kk = std::mem::take(&mut m.mac.kafa);
     let mut c = m.clone();
+    m.mac.kafa = kk;
     m.events = ev;
     m.mac._kafa = kg;
     c.ps = ps.clone();
@@ -88,7 +93,12 @@ fn gecY_k_arc(y: &Arc<sekil::gec::GecY>) -> Arc<d1::GecY> {
             return d.clone();
         }
         let d = gecY_k(y);
-        c.borrow_mut().insert(k, (y.clone(), d.clone()));
+        let mut c = c.borrow_mut();
+        // sınırsız büyüyordu; ayna saf dönüşüm, temizlenince aynısı yeniden kurulur
+        if c.len() >= 20_000 {
+            c.clear();
+        }
+        c.insert(k, (y.clone(), d.clone()));
         d
     })
 }

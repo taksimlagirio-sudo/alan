@@ -129,9 +129,20 @@ fn gecYk(r: f64, c: f64, vm: f64, iv: [f64; 2]) -> Arc<GecY> {
         m[n + 1] = jmax(m[n], d - e.abs());
     }
     let y = Arc::new(GecY { g: jmax(0.0, 80.0 - (d - e.abs()) / vm), m });
-    GEC.with(|g| g.borrow_mut().insert(key, y.clone()));
+    GEC.with(|g| {
+        let mut g = g.borrow_mut();
+        // sınırsız büyüyordu (maç sonunda ~800 bin eğri, tarayıcıda 2 GB'ı aşıp işçiyi düşürüyordu).
+        // Değer yalnız anahtardan hesaplanır (saf): temizlemek sonucu değiştirmez.
+        if g.len() >= GEC_SINIR {
+            g.clear();
+        }
+        g.insert(key, y.clone());
+    });
     y
 }
+/// Varış tablosu önbelleklerinin üst sınırı (girdi): aşılınca temizlenir (değerler saf, maç aynı kalır).
+const GEC_SINIR: usize = 100_000;
+const GTB_SINIR: usize = 20_000;
 
 /// JS gecK: `s` yol için gecikme (eğriden ara değer).
 pub fn gecK(Y: &GecY, s: f64, vm: f64) -> f64 {
@@ -212,7 +223,13 @@ pub fn gecTabV(r0: &Oyuncu, vm0: Option<f64>, k: &dyn Kural) -> GecTab {
                 y
             });
             let v = Arc::new((t, ys));
-            GTB.with(|g| g.borrow_mut().insert(key, v.clone()));
+            GTB.with(|g| {
+                let mut g = g.borrow_mut();
+                if g.len() >= GTB_SINIR {
+                    g.clear();
+                }
+                g.insert(key, v.clone());
+            });
             v
         }
     };
