@@ -6,10 +6,9 @@ use alan_motor::kafa::kafa1_js::{nk, Nk, Op};
 use alan_motor::kafa::kafa1_ucus::UcusB0;
 use alan_motor::kafa::kafa1_varis::Lane;
 use alan_motor::kafa::Kafa;
-use alan_motor::mat::{hypot, jmax, jmin, jround};
+use alan_motor::mat::hypot;
 use alan_motor::model::{JMShGs, JPHamle, JPPplan, JP_gvKaz, JP_sf, Oyuncu};
-use alan_motor::oyuncu::TepkiS;
-use alan_motor::yetenek::{ag, ah, mek, Ham, Yetenek};
+use alan_motor::yetenek::{Ham, Yetenek};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -30,22 +29,7 @@ fn ho(v: &Value) -> Option<f64> {
 fn ayni(a: f64, b: f64) -> bool {
     a.to_bits() == b.to_bits() || (a != a && b != b)
 }
-fn z0(v: f64) -> f64 {
-    if v != 0.0 && v == v {
-        v
-    } else {
-        0.0
-    }
-}
 
-#[derive(Clone)]
-struct Ext {
-    spre: f64,
-    spr: f64,
-    sprhk: f64,
-    dk: f64,
-    pr: Option<(f64, f64)>,
-}
 #[derive(Clone)]
 struct MacK {
     ch: Option<f64>,
@@ -54,108 +38,7 @@ struct MacK {
     prT: Option<PrT>,
 }
 struct KayitDis {
-    oy: HashMap<(i64, i64), Ext>,
     mac: Option<MacK>,
-}
-impl KayitDis {
-    fn e(&self, p: &Oyuncu) -> &Ext {
-        &self.oy[&(p.team as i64, p.id as i64)]
-    }
-    fn vSp(&self, p: &Oyuncu) -> f64 {
-        (0.17 + 0.006 * p.hz()) * self.e(p).spre
-    }
-    fn ikEn0(p: &Oyuncu) -> f64 {
-        match p.en {
-            None => 1.0,
-            Some(e) => 1.15 * (0.5 + 0.5 * jmax(0.0, jmin(1.0, e))),
-        }
-    }
-}
-// shape.js gec* (sınama için taşındı)
-fn ivme_iv(vx: &mut f64, vy: &mut f64, iv: (f64, f64), wx: f64, wy: f64, vmax: f64) {
-    let sp = hypot(*vx, *vy);
-    let k0 = 0.18;
-    let kH = k0 * iv.0;
-    if sp < 0.001 {
-        *vx += (wx - *vx) * kH;
-        *vy += (wy - *vy) * kH;
-        return;
-    }
-    let ux = *vx / sp;
-    let uy = *vy / sp;
-    let dvx = wx - *vx;
-    let dvy = wy - *vy;
-    let al = dvx * ux + dvy * uy;
-    let px = dvx - al * ux;
-    let py = dvy - al * uy;
-    let r = jmin(1.0, sp / jmax(0.05, vmax));
-    let ag = iv.1;
-    let kA = if al >= 0.0 { kH } else { k0 * ag * (1.0 - 0.55 * r) };
-    let kT = k0 * ag * (1.0 - 0.45 * r);
-    let mut ba = al * kA;
-    let mut tx = px * kT;
-    let mut ty = py * kT;
-    if ba < 0.0 {
-        ba = jmax(ba, -0.018 * ag);
-    }
-    let tl = hypot(tx, ty);
-    let tm = 0.021 * ag;
-    if tl > tm && sp > 0.1 {
-        tx *= tm / tl;
-        ty *= tm / tl;
-    }
-    *vx += ux * ba + tx;
-    *vy += uy * ba + ty;
-}
-fn gecYk(r: f64, c: f64, vm: f64, iv: (f64, f64)) -> GecY {
-    let rr = jround(10.0 * r) / 10.0;
-    let cc = jround(4.0 * c) / 4.0;
-    let (mut vx, mut vy) = (rr * vm, 0.0);
-    let ux = cc;
-    let uy = jmax(0.0, 1.0 - cc * cc).sqrt();
-    let mut m = vec![0.0];
-    let (mut d, mut e) = (0.0, 0.0);
-    for n in 0..80 {
-        ivme_iv(&mut vx, &mut vy, iv, ux * vm, uy * vm, vm);
-        d += vx * ux + vy * uy;
-        e += vx * uy - vy * ux;
-        let v = jmax(m[n], d - f64::abs(e));
-        m.push(v);
-    }
-    GecY { g: jmax(0.0, 80.0 - (d - e.abs()) / vm), m: Some(m) }
-}
-fn gecK(Y: &GecY, s: f64, vm: f64) -> f64 {
-    if !(s > 0.0) {
-        return 0.0;
-    }
-    let m = match &Y.m {
-        Some(m) => m,
-        None => return Y.g,
-    };
-    if s >= m[80] {
-        return Y.g;
-    }
-    let (mut lo, mut hi) = (0usize, 80usize);
-    while hi - lo > 1 {
-        let md = (lo + hi) >> 1;
-        if m[md] >= s {
-            hi = md;
-        } else {
-            lo = md;
-        }
-    }
-    jmax(0.0, lo as f64 + (s - m[lo]) / jmax(1e-9, m[hi] - m[lo]) - s / vm)
-}
-impl KayitDis {
-    fn ivk(&self, p: &Oyuncu) -> (f64, f64) {
-        (jround(1e4 * ah(&p.yet)) / 1e4, jround(100.0 * ag(&p.yet, p.den, p.bekci(), 0.35)) / 100.0)
-    }
-    fn gecY(&self, o: &Oyuncu, c: f64) -> GecY {
-        let s0 = hypot(z0(o.vx), z0(o.vy));
-        let vm = self.vSp(o);
-        let r = jmin(1.0, s0 / vm);
-        gecYk(r, c, jround(2e3 * vm) / 2e3, self.ivk(o))
-    }
 }
 impl Dis for KayitDis {
     fn S(&self) -> Option<ShapeS> {
@@ -289,6 +172,7 @@ impl Hata {
 }
 
 #[test]
+#[ignore = "JS karşılaştırması: vektör sina/kafa1-vektor.js ile üretilince `cargo test --release -- --ignored`; Rust tek doğru kaynak (MIMARI.md Aşama 6)"]
 fn js_ile_bit_bit_ayni() {
     let yol = concat!(env!("CARGO_MANIFEST_DIR"), "/../sina/kafa1-vektor.json");
     let s = match std::fs::read_to_string(yol) {
@@ -304,14 +188,7 @@ fn js_ile_bit_bit_ayni() {
         let tk = c["tick"].as_f64().unwrap();
         let pj = c["ps"].as_array().unwrap();
         let ps: Vec<Op> = pj.iter().map(|x| Arc::new(oyuncu(x))).collect();
-        let mut oy = HashMap::new();
-        for x in pj {
-            oy.insert(
-                (x["team"].as_i64().unwrap(), x["id"].as_i64().unwrap()),
-                Ext { spre: h(&x["spre"]), spr: h(&x["spr"]), sprhk: h(&x["sprhk"]), dk: h(&x["dk"]), pr: if x["pr"].is_null() { None } else { Some((h(&x["pr"][0]), h(&x["pr"][1]))) } },
-            );
-        }
-        let dis = Arc::new(KayitDis { oy: oy.clone(), mac: None });
+        let dis = Arc::new(KayitDis { mac: None });
         let mut k = Kafa::yeni(dis);
         k.bag._tick = Some(tk);
         k.bag._gon = Some(false);
@@ -524,7 +401,7 @@ fn js_ile_bit_bit_ayni() {
             };
             let gs = if mj["gs"].is_null() { None } else { Some(JMShGs { t: h(&mj["gs"]["t"]), dt: mj["gs"]["dt"].as_f64().unwrap(), oy: mj["gs"]["oy"].as_bool().unwrap(), ..Default::default() }) };
             let tac = mj["tac"].as_array().unwrap().iter().map(|t| (ho(&t[0]), t[1].as_bool().unwrap(), h(&t[2]))).collect();
-            let dis2 = Arc::new(KayitDis { oy: oy.clone(), mac: Some(MacK { ch: ho(&mj["ch"]), gs, tac, prT }) });
+            let dis2 = Arc::new(KayitDis { mac: Some(MacK { ch: ho(&mj["ch"]), gs, tac, prT }) });
             let k2 = Kafa::yeni(dis2);
             let mut k2 = k2;
             k2.bag._tick = Some(c["mtick"].as_f64().unwrap() + 0.5);

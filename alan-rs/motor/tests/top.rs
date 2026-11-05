@@ -26,6 +26,7 @@ fn karsila(ad: &str, t: &Top, v: &Value) -> Result<(), String> {
 }
 
 #[test]
+#[ignore = "JS karşılaştırması: vektör sina/top-vektor.js ile üretilince `cargo test --release -- --ignored`; Rust tek doğru kaynak (MIMARI.md Aşama 6)"]
 fn js_ile_bit_bit_ayni() {
     let s = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../sina/top-vektor.json")).expect("önce: node sina/top-vektor.js ../alan-v5 sina/top-vektor.json");
     let v: Value = serde_json::from_str(&s).unwrap();

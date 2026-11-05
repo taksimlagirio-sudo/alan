@@ -204,6 +204,7 @@ struct Say {
 }
 
 #[test]
+#[ignore = "JS karşılaştırması: vektör sina/sekil-vektor.js ile üretilince `cargo test --release -- --ignored`; Rust tek doğru kaynak (MIMARI.md Aşama 6)"]
 fn js_ile_bit_bit_ayni() {
     let yol = concat!(env!("CARGO_MANIFEST_DIR"), "/../sina/sekil-vektor.json");
     let s = match std::fs::read_to_string(yol) {
