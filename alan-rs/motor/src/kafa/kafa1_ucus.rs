@@ -508,7 +508,9 @@ impl Kafa {
             } else {
                 0.0
             };
-            let hmA = if bek { bek_har(p, o0.x, o0.y, b0.vx, b0.vy, &kr) } else { 0.0 };
+            // ALAN_BEK_DALIS_IZ: maçın dalış modeli (temas::bek_dalis): hareket cezası yok, Bekçi tepki süresince
+            // kendi hareketini sürdürür (aşağıda yeri hızıyla ilerletilir)
+            let hmA = if bek && !bek_dalis_k() { bek_har(p, o0.x, o0.y, b0.vx, b0.vy, &kr) } else { 0.0 };
             let fO = if OK1 && rakip && !bek { jmax(0.05, jmin(0.95, 0.5 + IN.sez * (p.yet.y(mek::VURUS_SEZ) - 10.0) - IN.giz * giz1)) } else { 0.0 };
             let onE = cue1 * fO * uM1;
             let sdW = if fO != 0.0 { hypot(rc * IN.tepki_z / 2.449, cue1 * fO * (IN.u_b - IN.u_a) / 3.464) / 1.814 } else { 0.0 };
@@ -594,18 +596,23 @@ impl Kafa {
         let mut okc: crate::HizliMap<i64, (f64, f64)> = Default::default();
         let hfrom: Option<&Oyuncu> = Some(h);
         // ALAN_UCUS_IZ=<alıcı>: o alıcıya pasın top yolu boyunca kim ne olasılıkla alıyor (yalnız en dış benzetim, ilk yol)
-        let ucus_iz = crate::iz_acik() && !gon && qqI.map_or(false, |i| std::env::var("ALAN_UCUS_IZ").ok().as_deref() == Some(&*src[i].name));
+        let ucus_iz = crate::iz_acik() && ((!gon && qqI.map_or(false, |i| std::env::var("ALAN_UCUS_IZ").ok().as_deref() == Some(&*src[i].name)))
+            || (gon && std::env::var("ALAN_UCUS_SUT_IZ").ok().as_deref() == Some(&*h.name)));
         let _ucd = UcIzDer::gir();
         let mut ucus_iz = ucus_iz;
         if ucus_iz {
-            eprintln!("UCUS {} {} -> {} hedef {:?} hız ({:.2},{:.2}) gecik {}", self.tick(), h.name, src[qqI.unwrap()].name, to.map(|t| (t.x, t.y)), b0.vx, b0.vy, gecik);
+            eprintln!("UCUS {} {} -> {} hedef {:?} hız ({:.2},{:.2}) gecik {} çıkış ({:.1},{:.1})", self.tick(), h.name, qqI.map_or("ŞUT".to_string(), |i| src[i].name.to_string()), to.map(|t| (t.x, t.y)), b0.vx, b0.vy, gecik, o0.x, o0.y);
+            for p in src.iter().filter(|p| p.bekci() && p.team != team) {
+                eprintln!("UCUS   bekçi {} ({:.1},{:.1}) hız ({:.2},{:.2})", p.name, p.x, p.y, z0(p.vx), z0(p.vy));
+            }
         }
         let mut uc_yol = 0;
+        let sut_hep = gon && std::env::var("ALAN_UCUS_SUT_IZ").is_ok();
         let alis_kume = alis_kume();
         let (mut kmA, mut kmX, mut kmY) = (0.0f64, 0.0f64, 0.0f64);
         for &(z, w, zs, yol) in &UCsY {
             uc_yol += 1;
-            if uc_yol > 1 { ucus_iz = false; }
+            if uc_yol > 1 && !sut_hep { ucus_iz = false; }
             let an = z * Ah;
             let c = cos(an);
             let s = sin(an);
@@ -853,6 +860,14 @@ impl Kafa {
                     let mut zz;
                     if A.bek {
                         let mut ddB = dd;
+                        if bek_dalis_k() {
+                            let tE = jmin(Tb, jmax(0.0, A.rc));
+                            let qx = p.x + z0(p.vx) * tE;
+                            let qy = p.y + z0(p.vy) * tE;
+                            let u0 = if sl > 1e-12 { ((qx - Pp.x) * bvx + (qy - Pp.y) * bvy) / sl } else { 1.0 };
+                            let uu = if u0 < 0.0 { 0.0 } else if u0 > 1.0 { 1.0 } else { u0 };
+                            ddB = hypot(Pp.x + bvx * uu - qx, Pp.y + bvy * uu - qy);
+                        }
                         if A.hm > 0.0 {
                             let tE = if BSV { jmax(0.0, jmin(Tb - gecik, Q.bek_har_t * A.hm)) } else { jmin(Tb, gecik + Q.bek_har_t * A.hm) };
                             let qx = p.x + z0(p.vx) * tE;
@@ -873,6 +888,9 @@ impl Kafa {
                         let kay = jmax(0.0, (if BSV { Tb - gecik } else { Tb }) - kayT) * A.v * A.kay;
                         zz = (R + kay - ddB) / BKS;
                         KF[j] = Some(bek_uc(ddB - kay, R));
+                        if ucus_iz && UC_IZ_DER.with(|c| c.get()) == 1 && uc_yol == 2 {
+                            eprintln!("UCUS   ~bek i {} {} top ({:.1},{:.1}) dd {:.2} R {:.2} kay {:.2} zz {:.2} | rc {:.1} dMax {:.2} dV {:.3} hm {:.2} tpE {:.1} kayT {:.1} v {:.3} kayK {:.3}", i, A.p.name, P.x, P.y, ddB, R, kay, zz, A.rc, A.dMax, A.dV, A.hm, tpE, kayT, A.v, A.kay);
+                        }
                     } else {
                         let t = if A.rakip && A.kov == Some(false) && !gon {
                             1e9
@@ -1156,6 +1174,9 @@ impl Kafa {
                 S -= cik;
                 i += 1;
             }
+            if ucus_iz && UC_IZ_DER.with(|c| c.get()) == 1 {
+                eprintln!("UCUS   yol sonu ({:.1},{:.1}) n {} bitiş {:?} kalan S {:.3} (yol {:?})", pts[n - 1].x, pts[n - 1].y, n, end.done, S, (z, w, zs, yol));
+            }
             if S > 0.003 {
                 let Pn = pts[n - 1];
                 match end.done {
@@ -1275,6 +1296,11 @@ impl Kafa {
     }
 }
 
+pub static BEK_DALIS_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn bek_dalis_k() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    BEK_DALIS_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_BEK_DALIS_IZ").is_ok())
+}
 pub static ALIS_KUME_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn alis_kume() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
