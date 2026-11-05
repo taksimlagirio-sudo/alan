@@ -7,6 +7,29 @@ use crate::yetenek::{mek, spr_h, Yetenek};
 
 pub use crate::model::Oyuncu;
 
+/// JS `x || 0`
+#[inline(always)]
+pub fn or0(x: f64) -> f64 {
+    if crate::mat::dogru(x) {
+        x
+    } else {
+        0.0
+    }
+}
+/// JS `o || 0` (Option)
+#[inline(always)]
+pub fn oo(x: Option<f64>) -> f64 {
+    match x {
+        Some(v) if crate::mat::dogru(v) => v,
+        _ => 0.0,
+    }
+}
+/// Oyuncunun kimliği (team, id): Kural yalnız `&Oyuncu` görür.
+#[inline(always)]
+pub fn kim(p: &Oyuncu) -> (f64, f64) {
+    (p.team, p.id)
+}
+
 impl Oyuncu {
     pub fn bekci(&self) -> bool {
         &*self.role == "Bekçi"

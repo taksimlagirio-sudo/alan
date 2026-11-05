@@ -9,7 +9,7 @@
 pub mod gecici_dis;
 pub mod sabit;
 pub mod varlik;
-pub mod gec;
+pub use crate::kural::gec;
 pub mod gor;
 pub mod ucus;
 pub mod yer;
@@ -27,10 +27,9 @@ pub use ucus::{menzilO, menzilP, okuT, alici, aliciDirenc, flightRead, kendiTopu
 pub use varlik::*;
 pub use yer::{bekci, rslotOf, slotOf, BekM, Yer, ALAN_KOSU_TP, hizYanilgi, presKesisT, durusDef, durusW, gside, koyHedef, presKesis, slotBase, slotBase0, tasHamle, yolBag, yolKesis, Kesis, YolBag, Yon};
 
-use crate::mat::{hypot, jmax, jmin, jround, sin};
+use crate::mat::{hypot, jround, sin};
 use crate::model::Oyuncu;
-use crate::oyuncu::{tepki as tepki_k, Tepki};
-use crate::temas::Kural;
+use crate::oyuncu::Tepki;
 use crate::yetenek::mek;
 
 /// JS `cl(v, a, b)`: `v < a ? a : v > b ? b : v` (NaN olduğu gibi kalır).
@@ -98,68 +97,9 @@ pub fn tohum(seed: f64) -> u32 {
     js_uint32(if seed != 0.0 && seed == seed { seed } else { 1.0 })
 }
 
-/// Temel koşu hızı (JS `spd`).
-#[inline(always)]
-pub fn spd(p: &Oyuncu) -> f64 {
-    0.17 + 0.006 * p.hz()
-}
-
-/// JS ALAN_SPRE (core.js): barlı oyuncuda (Enerji 2/3 açık) sprintin süresi bara bağlı (EN2_SPRE), barsızda
-/// maçın sprint katı (ALAN_SPR = `k.spr`). Not: core.js'in enerji parçası; burada yerleşimin ihtiyacı kadarı.
-pub fn ALAN_SPRE(p: &Oyuncu, k: &dyn Kural) -> f64 {
-    let sp = k.spr(p);
-    if p.en.is_none() {
-        return sp;
-    }
-    if !(sp > 1.0) {
-        return if sp != 0.0 && sp == sp { sp } else { 1.0 };
-    }
-    let ts = EN2_TS(p, None);
-    if ts <= 0.0 {
-        return 1.0;
-    }
-    let b = spd(p);
-    let lr = 20.0;
-    let reach = b * sp * ts;
-    if lr <= reach {
-        return sp;
-    }
-    let t = ts + (lr - reach) / b;
-    lr / (b * t)
-}
-/// JS ALAN_EN_S: bar boyu.
-pub fn EN_S(p: &Oyuncu) -> f64 {
-    0.7 + 0.03 * p.yet.y(mek::BAR_BOY)
-}
-/// JS ALAN_EN2_SB.
-pub fn EN2_SB(p: &Oyuncu) -> f64 {
-    jmax(0.5, jmin(1.6, 1.0 + 5.0 * (EN_S(p) - 1.0) / 3.0))
-}
-/// JS ALAN_EN2_TS(p, e): barın sprinte yettiği süre.
-pub fn EN2_TS(p: &Oyuncu, e: Option<f64>) -> f64 {
-    jmax(0.0, e.or(p.en).unwrap_or(1.0) * EN2_SB(p) / (1.0 / 120.0))
-}
-
-/// JS `vSp(p)`: sprintle koşu hızı (br/tik).
-#[inline]
-pub fn vSp(p: &Oyuncu, k: &dyn Kural) -> f64 {
-    spd(p) * ALAN_SPRE(p, k)
-}
-
-/// JS ALAN_TEPKI(p, k) (Enerji 3 katıyla).
-#[inline]
-pub fn TEPKI(p: &Oyuncu, t: Tepki, k: &dyn Kural) -> f64 {
-    tepki_k(p, t, &k.tepki_s())
-}
-
-/// JS AlanShape.tepki: algı gecikmesi + kovalama tepkisi.
-pub fn tepki(o: &Oyuncu, k: &dyn Kural) -> f64 {
-    jmax(1.0, jround(TEPKI(o, Tepki::Algi, k))) + jmax(0.0, TEPKI(o, Tepki::Kovala, k))
-}
-/// JS `lagOf`.
-pub fn lagOf(o: &Oyuncu, k: &dyn Kural) -> f64 {
-    jmax(1.0, jround(TEPKI(o, Tepki::Algi, k)))
-}
+// Koşu, sprint ve tepki kuralları kural katmanında (MIMARI.md Aşama 1); eski adlarıyla buradan da görünür.
+pub use crate::kural::enerji::{spd, ALAN_EN2_SB as EN2_SB, ALAN_EN2_TS as EN2_TS, ALAN_EN_S as EN_S};
+pub use crate::kural::kos::{lagOf, spre_k as ALAN_SPRE, tepki, vSp, TEPKI};
 
 // Yetenek kısayolları (ALAN_YET.acik(5/6/8) açık: hep yeni mekanikler).
 #[inline(always)]

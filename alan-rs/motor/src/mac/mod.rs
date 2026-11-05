@@ -186,23 +186,8 @@ pub fn ownX(t: f64) -> f64 {
 pub fn SN() -> f64 {
     TPS
 }
-/// JS `x || 0`
-#[inline(always)]
-pub fn or0(x: f64) -> f64 {
-    if dogru(x) {
-        x
-    } else {
-        0.0
-    }
-}
-/// JS `o || 0` (Option)
-#[inline(always)]
-pub fn oo(x: Option<f64>) -> f64 {
-    match x {
-        Some(v) if dogru(v) => v,
-        _ => 0.0,
-    }
-}
+pub use crate::oyuncu::or0;
+pub use crate::oyuncu::oo;
 /// JS `a > b` (a undefined → false)
 #[inline(always)]
 pub fn gt(a: Option<f64>, b: f64) -> bool {
@@ -212,11 +197,7 @@ pub fn gt(a: Option<f64>, b: f64) -> bool {
 pub fn mesafe(p: &Oyuncu, q: &Oyuncu) -> f64 {
     hypot(q.x - p.x, q.y - p.y)
 }
-/// Oyuncunun kimliği (team, id): Kural yalnız `&Oyuncu` görür.
-#[inline(always)]
-pub fn kim(p: &Oyuncu) -> (f64, f64) {
-    (p.team, p.id)
-}
+pub use crate::oyuncu::kim;
 pub fn bas(j: &str, ler: &[&str]) -> bool {
     ler.iter().any(|x| j.starts_with(x))
 }
