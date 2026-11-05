@@ -508,7 +508,9 @@ impl Kafa {
             } else {
                 0.0
             };
-            let hmA = if bek { bek_har(p, o0.x, o0.y, b0.vx, b0.vy, &kr) } else { 0.0 };
+            // ALAN_BEK_DALIS_IZ: maçın dalış modeli (temas::bek_dalis): hareket cezası yok, Bekçi tepki süresince
+            // kendi hareketini sürdürür (aşağıda yeri hızıyla ilerletilir)
+            let hmA = if bek && !bek_dalis_k() { bek_har(p, o0.x, o0.y, b0.vx, b0.vy, &kr) } else { 0.0 };
             let fO = if OK1 && rakip && !bek { jmax(0.05, jmin(0.95, 0.5 + IN.sez * (p.govde.yet.y(mek::VURUS_SEZ) - 10.0) - IN.giz * giz1)) } else { 0.0 };
             let onE = cue1 * fO * uM1;
             let sdW = if fO != 0.0 { hypot(rc * IN.tepki_z / 2.449, cue1 * fO * (IN.u_b - IN.u_a) / 3.464) / 1.814 } else { 0.0 };
@@ -593,7 +595,24 @@ impl Kafa {
         }
         let mut okc: crate::HizliMap<i64, (f64, f64)> = Default::default();
         let hfrom: Option<&Oyuncu> = Some(h);
+        // ALAN_UCUS_IZ=<alıcı>: o alıcıya pasın top yolu boyunca kim ne olasılıkla alıyor (yalnız en dış benzetim, ilk yol)
+        let ucus_iz = crate::iz_acik() && ((!gon && qqI.map_or(false, |i| std::env::var("ALAN_UCUS_IZ").ok().as_deref() == Some(&*src[i].govde.name)))
+            || (gon && std::env::var("ALAN_UCUS_SUT_IZ").ok().as_deref() == Some(&*h.govde.name)));
+        let _ucd = UcIzDer::gir();
+        let mut ucus_iz = ucus_iz;
+        if ucus_iz {
+            eprintln!("UCUS {} {} -> {} hedef {:?} hız ({:.2},{:.2}) gecik {} çıkış ({:.1},{:.1})", self.tick(), h.govde.name, qqI.map_or("ŞUT".to_string(), |i| src[i].govde.name.to_string()), to.map(|t| (t.x, t.y)), b0.vx, b0.vy, gecik, o0.x, o0.y);
+            for p in src.iter().filter(|p| p.bekci() && p.team != team) {
+                eprintln!("UCUS   bekçi {} ({:.1},{:.1}) hız ({:.2},{:.2})", p.govde.name, p.x, p.y, z0(p.vx), z0(p.vy));
+            }
+        }
+        let mut uc_yol = 0;
+        let sut_hep = gon && std::env::var("ALAN_UCUS_SUT_IZ").is_ok();
+        let alis_kume = alis_kume();
+        let (mut kmA, mut kmX, mut kmY) = (0.0f64, 0.0f64, 0.0f64);
         for &(z, w, zs, yol) in &UCsY {
+            uc_yol += 1;
+            if uc_yol > 1 && !sut_hep { ucus_iz = false; }
             let an = z * Ah;
             let c = cos(an);
             let s = sin(an);
@@ -768,6 +787,8 @@ impl Kafa {
             let mut CX = vec![0.0; na];
             let mut CY = vec![0.0; na];
             let mut S = 1.0;
+            // ALAN_ALIS_KUME_IZ: bu yolda alıcının doğrudan alışları (kütle, yer) sırayla
+            let mut dAl: Vec<(f64, f64, f64)> = Vec::new();
             let (mut m1, mut o1, mut k1, mut mx1, mut my1, mut ox1, mut oy1, mut son, mut s1, mut sx1, mut sy1, mut d1, mut dx1, mut dy1) = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0usize, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
             let mut F = vec![0.0; na];
             let mut i = 1;
@@ -839,6 +860,14 @@ impl Kafa {
                     let mut zz;
                     if A.bek {
                         let mut ddB = dd;
+                        if bek_dalis_k() {
+                            let tE = jmin(Tb, jmax(0.0, A.rc));
+                            let qx = p.x + z0(p.vx) * tE;
+                            let qy = p.y + z0(p.vy) * tE;
+                            let u0 = if sl > 1e-12 { ((qx - Pp.x) * bvx + (qy - Pp.y) * bvy) / sl } else { 1.0 };
+                            let uu = if u0 < 0.0 { 0.0 } else if u0 > 1.0 { 1.0 } else { u0 };
+                            ddB = hypot(Pp.x + bvx * uu - qx, Pp.y + bvy * uu - qy);
+                        }
                         if A.hm > 0.0 {
                             let tE = if BSV { jmax(0.0, jmin(Tb - gecik, Q.bek_har_t * A.hm)) } else { jmin(Tb, gecik + Q.bek_har_t * A.hm) };
                             let qx = p.x + z0(p.vx) * tE;
@@ -859,6 +888,9 @@ impl Kafa {
                         let kay = jmax(0.0, (if BSV { Tb - gecik } else { Tb }) - kayT) * A.v * A.kay;
                         zz = (R + kay - ddB) / BKS;
                         KF[j] = Some(bek_uc(ddB - kay, R));
+                        if ucus_iz && UC_IZ_DER.with(|c| c.get()) == 1 && uc_yol == 2 {
+                            eprintln!("UCUS   ~bek i {} {} top ({:.1},{:.1}) dd {:.2} R {:.2} kay {:.2} zz {:.2} | rc {:.1} dMax {:.2} dV {:.3} hm {:.2} tpE {:.1} kayT {:.1} v {:.3} kayK {:.3}", i, A.p.govde.name, P.x, P.y, ddB, R, kay, zz, A.rc, A.dMax, A.dV, A.hm, tpE, kayT, A.v, A.kay);
+                        }
                     } else {
                         let t = if A.rakip && A.kov == Some(false) && !gon {
                             1e9
@@ -879,6 +911,9 @@ impl Kafa {
                             jmax(A.rc + A.G.as_ref().map_or(0.0, |G| self.dis.gecOf(G, cx, cy, Some(dd - R))) + jmax(0.0, dd - R) / A.v, if A.rakip { 0.0 } else { self.frenT(&A.p, cx, cy, R, Tb - A.rc, A.v) })
                         };
                         zz = (Tb - t - if !A.rakip { rcvB } else { 0.0 }) / A.tau;
+                        if ucus_iz && !A.rakip && UC_IZ_DER.with(|c| c.get()) == 1 && Tb < 40.0 {
+                            eprintln!("UCUS   ~ i {:3} {:8} Tb {:.0} t {:.1} rcvB {:.1} tau {:.2} zz {:.2} dd {:.1} R {:.2} v {:.3} rc {:.1} gec {:.1} fren {:.1} yer ({:.1},{:.1}) hız ({:.2},{:.2}) iv {:?} vm {:.3}", i, &*A.p.govde.name, Tb, t, rcvB, A.tau, zz, dd, R, A.v, A.rc, A.G.as_ref().map_or(0.0, |G| self.dis.gecOf(G, cx, cy, Some(dd - R))), self.frenT(&A.p, cx, cy, R, Tb - A.rc, A.v), A.p.x, A.p.y, z0(A.p.vx), z0(A.p.vy), crate::kural::gec::IVK(&A.p, &kr), A.G.as_ref().map_or(f64::NAN, |G| G.vm));
+                        }
                         let p: &Oyuncu = &A.p;
                         if OK1 {
                             RR[j] = R;
@@ -989,6 +1024,9 @@ impl Kafa {
                         }
                     };
                     ad[j].pT = pT;
+                    if ucus_iz && UC_IZ_DER.with(|c| c.get()) == 1 {
+                        eprintln!("UCUS   i {:3} top ({:.1},{:.1}) hız {:.2} S {:.3} | {:8} {} yer ({:.1},{:.1}) F {:.3} dP {:.3} Pc {:.3}", i, P.x, P.y, hypot(bvx, bvy), S, &*ad[j].p.govde.name, if rakip { "R" } else { "B" }, CX[j], CY[j], F[j], dP, Pc);
+                    }
                     let p: &Oyuncu = &ad[j].p;
                     let pdx = atan2(p.y - CY[j], p.x - CX[j]);
                     if !rakip && !yv {
@@ -1023,6 +1061,12 @@ impl Kafa {
                         ox1 += oo * rkX;
                         oy1 += oo * rkY;
                         let BENF = ad[j].ben && !(qqI.is_some() && ad[j].pi == qqI);
+                        if alis_kume {
+                            let kcd = if BENF { mm } else if !yv { dP * (1.0 - Pc) * rk } else { 0.0 };
+                            if mm - kcd > 1e-12 {
+                                dAl.push((mm - kcd, P.x, P.y));
+                            }
+                        }
                         if BENF || !yv {
                             let kc_ = if BENF { dP * (Pc + (1.0 - Pc) * rk) } else { dP * (1.0 - Pc) * rk };
                             s1 += kc_;
@@ -1130,6 +1174,9 @@ impl Kafa {
                 S -= cik;
                 i += 1;
             }
+            if ucus_iz && UC_IZ_DER.with(|c| c.get()) == 1 {
+                eprintln!("UCUS   yol sonu ({:.1},{:.1}) n {} bitiş {:?} kalan S {:.3} (yol {:?})", pts[n - 1].x, pts[n - 1].y, n, end.done, S, (z, w, zs, yol));
+            }
             if S > 0.003 {
                 let Pn = pts[n - 1];
                 match end.done {
@@ -1180,6 +1227,21 @@ impl Kafa {
                     }
                 }
             }
+            if alis_kume {
+                let dt: f64 = dAl.iter().map(|x| x.0).sum();
+                if dt > 1e-9 {
+                    let mut c = 0.0;
+                    for &(a, x, y) in &dAl {
+                        c += a;
+                        if c >= 0.5 * dt {
+                            kmA += w * dt;
+                            kmX += w * dt * x;
+                            kmY += w * dt * y;
+                            break;
+                        }
+                    }
+                }
+            }
             let tot = ya(m1 + o1 + k1, 1.0);
             Wt += w;
             m += w * m1;
@@ -1212,7 +1274,12 @@ impl Kafa {
         let mut Ps = sk / Wt;
         let mut endS = if sk > 1e-9 { nk(sx / sk, sy / sk) } else { end };
         let mD = m - Ps;
-        let endD = if mD > 1e-9 { nk((mx - sx) / Wt / mD, (my - sy) / Wt / mD) } else { endM };
+        let mut endD = if mD > 1e-9 { nk((mx - sx) / Wt / mD, (my - sy) / Wt / mD) } else { endM };
+        // ALAN_ALIS_KUME_IZ: alış yeri, alışların ortalaması değil ortancası (yol boyunca alışların yarısının
+        // toplandığı nokta): erken alış ile top kaçarsa çok sonraki alışın ortalaması kimsenin almadığı bir yerdir.
+        if alis_kume && kmA > 1e-9 && mD > 1e-9 {
+            endD = nk(kmX / kmA, kmY / kmA);
+        }
         // endD işaretli ağırlıkların (m − s) ortası: s bir yerde m'yi aşınca ağırlık eksi olur, orta sahadan
         // binlerce (bir kez 160 milyon) br uzağa düşer; arkasındaki kaleci derinliği hesabı belleği tüketiyordu.
         // Sahadan uzak bir ortanın anlamı yok: mD ≈ 0'daki gibi endM. Eski davranış ALAN_ENDD_ESKI ile.
@@ -1231,6 +1298,26 @@ impl Kafa {
         let endSek = if dk > 1e-9 { nk(dxs / dk, dys / dk) } else { end };
         Ucus { P: m, Pk: k, Pl: o, end, endM, endO, Ps, endS, endD, Psek, endSek }
     }
+}
+
+pub static BEK_DALIS_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn bek_dalis_k() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    BEK_DALIS_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_BEK_DALIS_IZ").is_ok())
+}
+pub static ALIS_KUME_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn alis_kume() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    ALIS_KUME_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_ALIS_KUME_IZ").is_ok())
+}
+
+thread_local! { static UC_IZ_DER: std::cell::Cell<u32> = const { std::cell::Cell::new(0) }; }
+struct UcIzDer;
+impl UcIzDer {
+    fn gir() -> UcIzDer { UC_IZ_DER.with(|c| c.set(c.get() + 1)); UcIzDer }
+}
+impl Drop for UcIzDer {
+    fn drop(&mut self) { UC_IZ_DER.with(|c| c.set(c.get() - 1)); }
 }
 
 #[inline(always)]

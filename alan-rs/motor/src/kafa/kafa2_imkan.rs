@@ -741,7 +741,15 @@ pub fn sutS(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Opti
         }
     }
     let r = sutTab(k, w, team, x, y, ch, kq, None, None, None, None);
-    fB * (r * sutYol(k, w, team, x, y, tS))
+    let yl = sutYol(k, w, team, x, y, tS);
+    if let Some(q) = kq {
+        if crate::iz_acik() && std::env::var("ALAN_SURD_IZ").ok().as_deref() == Some(&*q.govde.name) {
+            let bk = w.iter().find(|p| p.team != team && bekci(p)).map(|b| (b.x, b.y));
+            let ra: Vec<String> = w.iter().filter(|p| p.team != team && !bekci(p) && !p.noTouch && hypot(p.x - x, p.y - y) < 8.0).map(|p| format!("{}({:.1},{:.1})", p.govde.name, p.x, p.y)).collect();
+            eprintln!("SUTS ({:.1},{:.1}) tS {:?} fB {:.3} tablo {:.3} yol {:.3} bekçi {:?} yakın {:?}", x, y, tS, fB, r, yl, bk, ra);
+        }
+    }
+    fB * (r * yl)
 }
 
 /// JS sutVakit(w, team, x, y, k) (decide.js:5805): şuta hazırlanacak vakit (sutHazir tik topu tutma);

@@ -324,6 +324,18 @@ valgrind komut sayar; sıcak hesaplarda komut sayısı ile süre ayrışıyor. S
 
 Gecikme tabloları (`gecOf` + `gecYk` + `gecTabV`) birlikte **~%20**: en büyük hedef.
 
+**Gecikme tabloları ✅** (5 Kasım; davranış aynı, 20 maç × 2700 tik). Ölçüm (m00, 900 tik): `gecOf` 31,5 milyon
+çağrı, `gecYk` 617 bin çağrı / 318 bin hesap (100 binlik önbellek 3 kez toptan temizleniyor; sınırsızda bile 264 bin
+farklı eğri: azami hız enerjiyle kayıyor, anahtar hep yeni). İki değişiklik:
+(1) `gecK`'nın araması: eğrinin başında 11'lik özet (`m[0], m[8], …, m[80]`); önce özette, sonra tek 8'lik blokta.
+`m` azalmayan ve NaN'sızsa (`temiz`) ikili aramanın bulduğu sıra tektir (m[lo] < s ≤ m[lo+1]); NaN'lı eğride eski
+arama. Eğrinin ~6 önbellek satırı yerine 2: `gecOf`+`gecK` %10,3 → %7,9.
+(2) `gecTabV`'nin 9 yönü birlikte: her eğri 80 adımlık bir zincir (her adım öncekinin hızını bekler; süre `sqrt`/`div`
+gecikmesinde); 9 bağımsız zincir aynı adımda ilerleyince işlemci üst üste yürütür (`gec_egriler<N>`). Her zincirin
+işlemleri ve sırası tek başınakiyle aynı. Eğri hesabı %7,5 → ~%5.
+Süre: örneklemede 24 328 → 22 246 örnek (m00 900 tik, −%8,6); duvar saati m00 −%7, m05 −%4, m15 −%1 (eğri hesabının
+çok olduğu maçta çok).
+
 **Denendi, alınmadı: `bek_derinlik0`'ın sayım önbelleği.** Adayların kapattığı yol sayısı Bekçi'nin şimdiki
 derinliğine bağlı değil (yalnız eşitlikte seçer): 118 bin hesabın 55,5 binde farklı (top yeri, adım) var. Sayımı
 bunlarla önbelleğe almak komutları −%4,2 indirdi (işlevin kendi payı −%43), davranış aynıydı (20 maç). Ama süre:

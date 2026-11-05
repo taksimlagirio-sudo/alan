@@ -111,6 +111,13 @@ pub fn seen(c: &mut Mc, pi: Pid) -> Arc<Vec<Varlik>> {
     out
 }
 
+/// Deney bayrağı (ALAN_ARKADAS_NIYET_IZ; ölçümde ARKADAS_NIYET_ZORLA)
+pub static ARKADAS_NIYET_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn arkadas_niyet() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    ARKADAS_NIYET_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_ARKADAS_NIYET_IZ").is_ok())
+}
+
 /// JS bak(m): her oyuncu ötekilerin algı gecikmesi kadar eski karesini aklına yazar (`p._bk`); topu
 /// tutmayan takımın markajdan kurtulan oyuncusu (markajKurtul > görenin niyetSez) daha da geç görülür.
 pub fn bak(c: &mut Mc) {
@@ -247,6 +254,32 @@ pub fn gorulen(c: &mut Mc, pi: Pid) -> Vec<Gorulen> {
                 vxs = vx;
                 vys = vy;
             }
+        }
+        // Deney (ALAN_ARKADAS_NIYET_IZ): takım arkadaşının koşusu bilinir; eski kaydı sabit hızla değil,
+        // arkadaşın hedefine (tx, ty) maçın koşusuyla (mac/hareket.rs) yaş kadar ilerletilir.
+        if yas > 0.0 && q.team == p.team && !q.bekci() && arkadas_niyet() && (q.tx != 0.0 || q.ty != 0.0) {
+            let vm = spd(q) * ALAN_SPRE(q, k);
+            let mut g = q.clone();
+            g.x = r.x;
+            g.y = r.y;
+            g.vx = r.vx;
+            g.vy = r.vy;
+            let mut u = 0.0;
+            while u < jmin(yas, GR.yasH) {
+                let dx = q.tx - g.x;
+                let dy = q.ty - g.y;
+                let l = hypot(dx, dy);
+                let want = if l < 0.3 { 0.0 } else { jmin(vm, 0.25 * l) };
+                let (wx, wy) = if l > 1e-9 { (dx / l * want, dy / l * want) } else { (0.0, 0.0) };
+                crate::kural::hareket::ivme(&mut g, wx, wy, vm);
+                g.x += g.vx;
+                g.y += g.vy;
+                u += 1.0;
+            }
+            xs = g.x;
+            ys = g.y;
+            vxs = g.vx;
+            vys = g.vy;
         }
         let v = Varlik::kopya(j, q, xs + (2.0 * zar(a, b, r.z + 31.0 + kz) - 1.0) * s, ys + (2.0 * zar(b, a, r.z + 37.0 + kz) - 1.0) * s, vxs, vys);
         out.push(Gorulen { v, yas: Some(yas), e: Some(s) });

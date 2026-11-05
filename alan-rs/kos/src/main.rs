@@ -64,14 +64,35 @@ fn main() {
         while mt.tick() + 1 < tik && !mt.bitti() {
             mt.adim();
         }
+        // ALAN_DENE_ILK: tik karar tiki değilse ilk taşıyıcı kararına dek ilerle (en çok 90 tik)
+        if std::env::var("ALAN_DENE_ILK").is_ok() {
+            for _ in 0..90 {
+                let mut c = mt.m.clone();
+                c.mac.kafa = Default::default();
+                c.mac.zorla_i = Some(0);
+                alan_motor::mac::step(&mut c);
+                if c.mac.zorla_sonuc.is_some() { break; }
+                mt.adim();
+            }
+            let h = { let mut c = mt.m.clone(); c.mac.kafa = Default::default(); alan_motor::mac::step(&mut c); c._sec.as_ref().map(|s| s.h) };
+            eprintln!("KARAR_TIK {} {}", mt.tick() + 1, h.map_or("-".to_string(), |h| mt.m.ps[h].govde.name.to_string()));
+        }
         // maç karara kadar bugünkü kafayla oynar; kopyalar seçilen kafayla
         alan_motor::kafa::kafa1_ikili::KP_KAL_ZORLA.store(kafa == "kal", std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa1_ikili::MEKANIZMA_ZORLA.store(kafa.starts_with("mek"), std::sync::atomic::Ordering::Relaxed);
-        alan_motor::kafa::kafa1_ikili::SEND_GEC_ZORLA.store(kafa == "mekg", std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa1_ikili::SEND_GEC_ZORLA.store(kafa.starts_with("mekg"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa2_tarti::GORUS_ZORLA.store(kafa == "mekgu", std::sync::atomic::Ordering::Relaxed);
+        // ALAN_EK=donus[,tek]: kopyaların kafasına ek deneyler
+        let ek = std::env::var("ALAN_EK").unwrap_or_default();
+        alan_motor::kural::gec::GEC_DONUS_ZORLA.store(ek.split(',').any(|x| x == "donus"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::sekil::gor::ARKADAS_NIYET_ZORLA.store(ek.split(',').any(|x| x == "niyet"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa1_ucus::ALIS_KUME_ZORLA.store(ek.split(',').any(|x| x == "kume"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa2_tarti::TEK_SUT_ZORLA.store(ek.split(',').any(|x| x == "tek"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa1_ucus::BEK_DALIS_ZORLA.store(ek.split(',').any(|x| x == "dalis"), std::sync::atomic::Ordering::Relaxed);
         let mut once = mt.m.clone();
         once.mac.kafa = Default::default();
         // seçenekler: önce hepsi bir kez zorlanır; ALAN_DENE_SEC=0,3,7 yalnız bunlar denenir, ALAN_DENE_LISTE seçenek sayısını yazar
-        let sec: Option<Vec<usize>> = std::env::var("ALAN_DENE_SEC").ok().map(|x| x.split(',').filter_map(|y| y.parse().ok()).collect());
+        let mut sec: Option<Vec<usize>> = std::env::var("ALAN_DENE_SEC").ok().map(|x| x.split(',').filter_map(|y| y.parse().ok()).collect());
         // kopyalar teker teker kurulur (hepsini birden tutmak belleği doldurur)
         let kur = |i: usize| -> Option<(alan_motor::model::Mac, alan_motor::mac::ZorlaSonuc)> {
             let mut c = once.clone();
@@ -80,6 +101,18 @@ fn main() {
             let z = c.mac.zorla_sonuc.take()?;
             Some((c, z))
         };
+        // ALAN_DENE_UST=K: kafanın değerine göre ilk K seçenek (seçilen her zaman içinde)
+        if let Some(K) = std::env::var("ALAN_DENE_UST").ok().and_then(|x| x.parse::<usize>().ok()) {
+            let mut v: Vec<(usize, f64, bool)> = Vec::new();
+            for i in 0..64usize {
+                let Some((_, z)) = kur(i) else { break };
+                v.push((i, if z.v.is_finite() { z.v } else { -1e9 }, z.secilen));
+            }
+            v.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
+            let mut ust: Vec<usize> = v.iter().take(K).map(|x| x.0).collect();
+            if let Some(x) = v.iter().find(|x| x.2) { if !ust.contains(&x.0) { ust.push(x.0); } }
+            sec = Some(ust);
+        }
         if std::env::var("ALAN_DENE_LISTE").is_ok() {
             let c = { let mut c = once.clone(); c.mac.zorla_i = Some(0); alan_motor::mac::step(&mut c); c.mac.zorla_sonuc.take().map_or(0, |z| z.n) };
             println!("{c}");
@@ -98,6 +131,33 @@ fn main() {
                     let hh = &h;
                     let erken: u32 = std::env::var("ALAN_DENE_ERKEN").ok().and_then(|x| x.parse().ok()).unwrap_or(15);
                     let (mut erk, mut send) = (0u32, 0u32);
+                    // ALAN_DENE_YAZ=<önek>: her seçeneğin ilk denemesinin kareleri <önek>-<i>.json (kare kipinin biçimi)
+                    if let Ok(onek) = std::env::var("ALAN_DENE_YAZ") {
+                        let mut m2 = Motor::yeni(c.clone());
+                        let mut isler2 = alan_motor::oyun::IsSozluk::default();
+                        let (mut kr, mut ol) = (Vec::<String>::new(), Vec::<String>::new());
+                        let mut osay = m2.m.ev_n;
+                        for _ in 0..sure {
+                            if m2.bitti() { break; }
+                            m2.adim();
+                            let kk = m2.kare(&mut isler2);
+                            let mut t = format!("[{},{},{},{},{},{}", kk.tick, kk.sahip, r2(kk.top_x), r2(kk.top_y), kk.skor[0], kk.skor[1]);
+                            for o in &kk.oyuncular { t.push_str(&format!(",{},{},{},{}", r2(o.x), r2(o.y), o.is, r2(o.en))); }
+                            t.push(']');
+                            kr.push(t);
+                            let m = &m2.m;
+                            let yeni = ((m.ev_n - osay) as usize).min(m.events.len());
+                            for e in m.events.iter().take(yeni).rev() { ol.push(format!("[{},{},{}]", m.tick, e.team, serde_json::to_string(&e.text).unwrap())); }
+                            osay = m.ev_n;
+                        }
+                        let m = &m2.m;
+                        let adl: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.govde.name).unwrap()).collect();
+                        let tkl: Vec<String> = m.ps.iter().map(|p| format!("{}", p.team)).collect();
+                        let rl: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.govde.role).unwrap()).collect();
+                        let is: Vec<String> = isler2.yazilar.iter().map(|j| serde_json::to_string(j).unwrap()).collect();
+                        let j = format!("{{\"motor\":\"Rust motoru\",\"ad\":[{}],\"takim\":[{}],\"rol\":[{}],\"isler\":[{}],\"olay\":[{}],\"k\":[{}]}}", adl.join(","), tkl.join(","), rl.join(","), is.join(","), ol.join(","), kr.join(","));
+                        std::fs::write(format!("{}-{}.json", onek, i), j).expect("yazılamadı");
+                    }
                     for d in 0..n {
                         let mut k = c.clone();
                         if d > 0 { k.r.s ^= (d as i32).wrapping_mul(-1640531527); }
@@ -108,6 +168,8 @@ fn main() {
                         for j in 0..sure {
                             if k.over { break; }
                             alan_motor::mac::step(&mut k);
+                            // gol olunca santra topu rakibe verir: kayıp sayılmaz
+                            if k.score != s0 { break; }
                             if !kaybetti && k.holder.map_or(false, |q| k.ps[q].team != tk) { kaybetti = true; kayip += 1; kayip_t += j as f64; if j < erken { erk += 1; } }
                             if !sendeledi && j < erken && k.ps[*hh].hal.sendT.map_or(false, |s| s > t0 as f64 + 0.5) { sendeledi = true; send += 1; }
                             if k.score != s0 { break; }
@@ -121,7 +183,7 @@ fn main() {
                     let l = format!("{:2} {:<28} ({:5.1},{:5.1}) v {:6.3} P {:5} {} | gol {:.2} yedi {:.2} kayıp {:.2} (ort {:4.0} tik) son biz {:.2} rakip {:.2}",
                         i, z.tur, z.to.0, z.to.1, z.v, if z.P.is_finite() { format!("{:.2}", z.P) } else { "  -  ".into() }, if z.secilen { "*" } else { " " },
                         f(gol), f(yedi), f(kayip), if kayip > 0 { kayip_t / kayip as f64 } else { f64::NAN }, f(son_biz), f(son_rak));
-                    let l = format!("{l} | ilk {erken} tikte kayıp {:.2} sendeleme {:.2}", f(erk), f(send));
+                    let l = format!("{l} | ilk {erken} tikte kayıp {:.2} sendeleme {:.2} | T {:.0}", f(erk), f(send), z.T);
                     println!("{l}");
                 }
             }
@@ -151,11 +213,19 @@ fn main() {
                 // ALAN_AN_YENI: "kal" (varsayılan: tutma kestirimi ölçülen gerçeğe eşlenir) | "mek" (sendeleme yarışı + dolanma) | "mekg" (mek + sendeleme gecikmesi)
                 let an_yeni = std::env::var("ALAN_AN_YENI").unwrap_or_default();
                 let mek = an_yeni.starts_with("mek");
-                let mekg = an_yeni == "mekg";
+                let mekg = an_yeni.starts_with("mekg");
+                let mekgu = an_yeni == "mekgu";
                 for (kip2, acik) in [("eski", false), ("yeni", true)] {
                     alan_motor::kafa::kafa1_ikili::KP_KAL_ZORLA.store(acik && !mek, std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa1_ikili::MEKANIZMA_ZORLA.store(acik && mek, std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa1_ikili::SEND_GEC_ZORLA.store(acik && mekg, std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa2_tarti::GORUS_ZORLA.store(acik && mekgu, std::sync::atomic::Ordering::Relaxed);
+                    let ek = std::env::var("ALAN_EK").unwrap_or_default();
+                    alan_motor::kural::gec::GEC_DONUS_ZORLA.store(acik && ek.split(',').any(|x| x == "donus"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::sekil::gor::ARKADAS_NIYET_ZORLA.store(acik && ek.split(',').any(|x| x == "niyet"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa1_ucus::ALIS_KUME_ZORLA.store(acik && ek.split(',').any(|x| x == "kume"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa2_tarti::TEK_SUT_ZORLA.store(acik && ek.split(',').any(|x| x == "tek"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa1_ucus::BEK_DALIS_ZORLA.store(acik && ek.split(',').any(|x| x == "dalis"), std::sync::atomic::Ordering::Relaxed);
                     let mut m2 = Motor::yeni(once.clone());
                     let mut isler2 = alan_motor::oyun::IsSozluk::default();
                     let (mut kr, mut ol) = (Vec::new(), Vec::new());
@@ -201,6 +271,12 @@ fn main() {
                 alan_motor::kafa::kafa1_ikili::KP_KAL_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa1_ikili::MEKANIZMA_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa1_ikili::SEND_GEC_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kafa::kafa2_tarti::GORUS_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kural::gec::GEC_DONUS_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::sekil::gor::ARKADAS_NIYET_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kafa::kafa1_ucus::ALIS_KUME_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kafa::kafa2_tarti::TEK_SUT_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kafa::kafa1_ucus::BEK_DALIS_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
             }
             mt.adim();
         }
