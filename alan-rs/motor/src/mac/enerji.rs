@@ -25,7 +25,7 @@ impl Kural for MacKural {
 
 impl MacKural {
     pub fn of(m: &Mac) -> MacKural {
-        MacKural { mh: m.mac.__mH, tick: m.tick, holder: m.holder.map(|h| kim(&m.ps[h])), flq: m.fl.as_ref().and_then(|f| f.q).map(|q| kim(&m.ps[q])) }
+        MacKural { niyet: None, mh: m.mac.__mH, tick: m.tick, holder: m.holder.map(|h| kim(&m.ps[h])), flq: m.fl.as_ref().and_then(|f| f.q).map(|q| kim(&m.ps[q])) }
     }
 }
 
@@ -422,7 +422,7 @@ pub fn sprintKarar3(m: &mut Mac) {
         } else if bizde {
             if let Some(h) = h {
                 let hp = &m.ps[h];
-                tD = jmax(0.0, oo(Some(m.decT))) + gecici_dis::ucusT(hypot(hp.x - tx, hp.y - ty), aF);
+                tD = jmax(0.0, oo(Some(m.decT))) + gecici_dis::ucusT(m, hypot(hp.x - tx, hp.y - ty), aF);
             }
         } else {
             for q in &m.ps {

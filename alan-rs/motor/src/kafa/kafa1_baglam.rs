@@ -35,6 +35,8 @@ pub type SahF = Arc<super::kafa2_zemin::Sahiplik>;
 
 pub struct Kafa {
     pub D: KafaD,
+    /// geçici bağlam (JS `D`'nin `_` alanları)
+    pub bag: crate::model::KafaBag,
     pub dis: Arc<dyn Dis>,
     pub SAH_F: Option<SahF>,
     /// JS `keepP.son`: tutmanın son ilerleyişi (ilk kesişmeye dek)
@@ -66,6 +68,7 @@ impl Kafa {
     pub fn yeni(dis: Arc<dyn Dis>) -> Kafa {
         Kafa {
             D: d_js(),
+            bag: Default::default(),
             dis,
             SAH_F: None,
             keepP_son: Cell::new(f64::INFINITY),
@@ -85,12 +88,12 @@ impl Kafa {
     /// JS `D._tick || 0`
     #[inline(always)]
     pub fn tick(&self) -> f64 {
-        super::kafa1_js::yao(self.D._tick, 0.0)
+        super::kafa1_js::yao(self.bag._tick, 0.0)
     }
     /// JS `D._tick ?? 0`
     #[inline(always)]
     pub fn tick0(&self) -> f64 {
-        self.D._tick.unwrap_or(0.0)
+        self.bag._tick.unwrap_or(0.0)
     }
     /// Maçın IK'sı ya da JS değerleri (ikKafa kapalıysa çağıran ayrıca sorar).
     pub fn ik(&self) -> Ik {

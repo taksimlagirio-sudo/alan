@@ -4,6 +4,7 @@
 //! `Dis`'e birleştirmede eklenen yöntemler (bekciFm, slotBase, S_prHat, tl, sprK) burada yerleşimin ve
 //! maçın gerçek işlevleriyle verilir. Vektörde maçın bütün durumu yok (sprint isteği, top uçuşu, kayıp
 //! zamanı…): sapmalar bu eksiklerden olabilir.
+#![allow(non_snake_case)]
 use alan_motor::kafa::gecici_dis1::KuralErisim as _;
 use alan_motor::kafa::kafa2_baglam::*;
 use alan_motor::kafa::{kafa2_dunya, kafa2_imkan, kafa2_karar, kafa2_zemin};
@@ -148,8 +149,7 @@ mod tdis {
     use alan_motor::kafa::kafa1_js::{nk, Nk, Op};
     use alan_motor::mac::kafa_dis::MacDis;
     use alan_motor::model::{JMShGs, Oyuncu};
-    use alan_motor::oyuncu::TepkiS;
-    pub struct TDis {
+        pub struct TDis {
         pub m: MacDis,
     }
     fn kisi(ps: &[Op]) -> Vec<Oyuncu> {
@@ -176,11 +176,11 @@ mod tdis {
     fn prT(&self) -> Option<PrT> { self.m.prT() }
     fn algi_e(&self, p: &Oyuncu) -> Option<f64> { self.m.algi_e(p) }
     fn algi_yas(&self, p: &Oyuncu) -> Option<f64> { self.m.algi_yas(p) }
-    fn ilkPres(&self, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[Tehlike], dtac: &TacEff, gs: &Option<JMShGs>) { self.m.ilkPres(tick, qv, hx, team, TH, dtac, gs) }
+    fn ilkPres(&self, dtik: f64, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[Tehlike], dtac: &TacEff, gs: &Option<JMShGs>) { self.m.ilkPres(dtik, tick, qv, hx, team, TH, dtac, gs) }
         fn bekciFm(&self, p: &Oyuncu, B: Nk, fm: &Fm) -> Nk {
             let ps = kisi(fm.ps);
             let ben = fm.ps.iter().position(|q| q.id == p.id && q.team == p.team);
-            let bm = alan_motor::sekil::yer::BekM { ps: alan_motor::sekil::yer::BekPs::Duz(&ps), holder: fm.holder, ben };
+            let bm = alan_motor::sekil::yer::BekM { ps: alan_motor::sekil::yer::BekPs::Duz(&ps), holder: fm.holder, ben, sut: true };
             let (x, y) = alan_motor::sekil::yer::bekci(p, B.x, B.y, Some(&bm), &self.m.kural.get());
             nk(x, y)
         }
@@ -233,13 +233,11 @@ fn kafa(g: &Value) -> Kafa {
     };
     let md = alan_motor::mac::kafa_dis::MacDis::kur(&mut m);
     let mut k = Kafa::yeni(Arc::new(tdis::TDis { m: md }));
-    k.D._tick = ho(&g["D"]["_tick"]);
+    k.bag._tick = ho(&g["D"]["_tick"]);
     if !g["mac"].is_null() {
         let m = &g["mac"];
         k.mac = Some(MacGor { tick: m["tick"].as_f64().unwrap_or(0.0), len: 9000.0, tac: m["tac"].as_array().map(|a| a.iter().map(tac_e).collect()).unwrap_or_default(), ps: if src_var { dunya(&g["src"]) } else { Vec::new() }, holder: m["holder"].as_u64().map(|x| x as usize) });
     }
-    // yerleşimden kafaya dönen çağrılar (govdeV, threat …) için kapsamlı bağlam
-    alan_motor::mac::kafa_dis::kafa_bagla(k.dis.clone(), k.D._tick);
     k
 }
 fn vektor() -> Option<Value> {

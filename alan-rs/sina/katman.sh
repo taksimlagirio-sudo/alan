@@ -23,6 +23,9 @@ denetle() {
 # 1. kural katmanı yalnız temele bağlı
 denetle "kural → üst katmanlar yok" "$(find kural -name '*.rs')" \
   'crate::(mac|sekil|kafa|paralel|paket|oyun)\b'
+# 1b. dünya katmanı yalnız temele bağlı
+denetle "dunya → üst katmanlar yok" "$(find dunya -name '*.rs')" \
+  'crate::(mac|sekil|kafa|kural|paralel|paket|oyun)\b'
 # 2. yerleşim ve değerlendirme kararın dosyalarına bağlanmaz (Aşama 2).
 #    Henüz istisna: kafa2_baglam (önbellek tipleri, Aşama 3), gecici_dis1 (Dis köprüsü), kafa/mod.rs.
 degerlendirme="$(find sekil -name '*.rs') $(ls kafa/kafa1_*.rs) kafa/kafa2_zemin.rs kafa/kafa2_imkan.rs kafa/kafa2_dunya.rs kafa/kafa2_bag.rs"

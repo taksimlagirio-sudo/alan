@@ -34,23 +34,28 @@ pub fn ref_bul0(k: &Kafa, src: &[Op], pid: Pid) -> Option<Op> {
 }
 
 /// JS bekKay(p, B, T) (decide.js:4824): Bekçi'nin topa göre yeri, T + sutHazir tikte varabildiği kadar.
-pub fn bekKay(k: &Kafa, p: &Op, B: Nokta, T: f64) -> Op {
+/// Bekçi yer değiştirdiyse yeni yeri (yeni kopya), değiştirmediyse `None`: "değişti mi" açıkça (MIMARI.md 3.2 B).
+pub fn bekKay_d(k: &Kafa, p: &Op, B: Nokta, T: f64) -> Option<Op> {
     if p.noTouch {
-        return p.clone();
+        return None;
     }
     let g = dis::AS_bekci(k, p, B, None);
     let dx = g.x - p.x;
     let dy = g.y - p.y;
     let L = hypot(dx, dy);
     if L < 0.05 {
-        return p.clone();
+        return None;
     }
     let mv = jmin(L, (T + k.D.sutHazir) * (0.17 + 0.006 * ALAN_HZ(p)) * dis::ALAN_SPRE(k, p) * crate::temas::bek_kay(p));
     if mv > 0.0 {
-        kxy(p, p.x + dx / L * mv, p.y + dy / L * mv)
+        Some(kxy(p, p.x + dx / L * mv, p.y + dy / L * mv))
     } else {
-        p.clone()
+        None
     }
+}
+/// JS bekKay(p, B, T): değişmediyse aynı nesne.
+pub fn bekKay(k: &Kafa, p: &Op, B: Nokta, T: f64) -> Op {
+    bekKay_d(k, p, B, T).unwrap_or_else(|| p.clone())
 }
 
 /// JS bekSav(p, h, T, src) (decide.js:4789): Bekçi T tik boyunca topu taşıyanın (h, hızıyla ilerler)
@@ -140,9 +145,9 @@ fn kos_adim(k: &Kafa, q: &mut Oyuncu, t: usize, gx: &mut f64, gy: &mut f64, sw: 
 /// JS pwKos(p, gx0, gy0, sw0, vmax, rc, n, IV) (decide.js:4838): oyuncunun hedefe koşusu, n tik
 /// (tik başına önbellekli: aynı oyuncu nesnesi ve aynı koşu → kaldığı yerden sürer).
 pub fn pwKos(k: &mut Kafa, p: &Op, gx0: f64, gy0: f64, sw0: Option<Sw>, vmax: f64, rc: f64, n: usize) -> Op {
-    if k.k2.PWT != k.D._tick {
+    if k.k2.PWT != k.bag._tick {
         k.k2.PWM.clear();
-        k.k2.PWT = k.D._tick;
+        k.k2.PWT = k.bag._tick;
     }
     let anahtar = Arc::as_ptr(p) as usize;
     let mut L = match k.k2.PWM.remove(&anahtar) {
@@ -256,7 +261,7 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
                 let mut bq: Option<&Op> = None;
                 let mut bd = 1e9;
                 for q in &acik {
-                    if alinan.iter().any(|a| ayni(a, q)) {
+                    if alinan.iter().any(|a| ayni_nesne(a, q)) {
                         continue;
                     }
                     let d = uz(q.x, q.y, f.x, f.y);
@@ -406,8 +411,7 @@ pub fn bekYerW(k: &Kafa, w: &[Op], team: f64, B: Nokta, T: Option<f64>) -> Dunya
     let i = w.iter().position(|z| z.team != team && bekci(z) && !z.noTouch);
     let mut w2 = w.to_vec();
     if let Some(i) = i {
-        let b2 = bekKay(k, &w[i], B, T.unwrap_or(30.0));
-        if !ayni(&b2, &w[i]) {
+        if let Some(b2) = bekKay_d(k, &w[i], B, T.unwrap_or(30.0)) {
             w2[i] = b2;
         }
     }
@@ -510,56 +514,3 @@ pub fn paylastir(k: &Kafa, W: &[Op], team: f64, T: f64, haric: &[usize]) -> Duny
     W2
 }
 
-/// JS holdWorld(h, src, ch, tac, T, rnd, to) (decide.js:4717; yalnız eski kafa): hayali maçta topu
-/// T tik tut (ya da `to`'ya sür); kaybedildi mi.
-pub fn holdWorld(k: &mut Kafa, hi: Pid, src: &[Op], ch: f64, tac: Option<&Tac>, T: f64, rnd: &mut Zar, to: Option<Nokta>) -> HoldW {
-    if to.is_none() {
-        if let Some((h, sp, cT, ct, cch, r)) = &k.k2.hold_c {
-            if ayni(h, &src[hi]) && *sp == src.as_ptr() as usize && *cT == T && *ct == k.D._tick && *cch == ch {
-                return r.clone();
-            }
-        }
-    }
-    let tohum = (1e9 * rnd()).floor();
-    let mut m = dis::AM_hayali(k, tohum, src, hi, ch, tac);
-    let x0 = src[hi].x;
-    let y0 = src[hi].y;
-    let (i0, n0, t0_) = (k.k2._inLook, k.k2._noHold, k.D._tick);
-    k.k2._inLook = true;
-    k.k2._noHold = true;
-    let mut lost = false;
-    let mut lostT = None;
-    let mut t = 0usize;
-    while (t as f64) < T {
-        {
-            let hc = Arc::make_mut(&mut m.ps[hi]);
-            match to {
-                Some(to) => {
-                    hc.driveTo = Some(crate::model::JPDriveTo { x: to.x, y: to.y });
-                    hc.tx = to.x;
-                    hc.ty = to.y;
-                    hc.drive = true;
-                }
-                None => {
-                    hc.tx = x0;
-                    hc.ty = y0;
-                }
-            }
-        }
-        dis::AM_step(k, &mut m);
-        if m.holder != Some(hi) {
-            lost = true;
-            lostT = Some((t + 1) as f64);
-            break;
-        }
-        t += 1;
-    }
-    k.k2._inLook = i0;
-    k.k2._noHold = n0;
-    k.D._tick = t0_;
-    let r = HoldW { lost, lostT, ps: Arc::new(m.ps), ch: m.ch };
-    if to.is_none() {
-        k.k2.hold_c = Some((src[hi].clone(), src.as_ptr() as usize, T, k.D._tick, ch, r.clone()));
-    }
-    r
-}

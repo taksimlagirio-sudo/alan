@@ -109,7 +109,7 @@ impl Kafa {
     }
     /// Çekirdeğin açısı (decide.js:730).
     pub fn caOf(&self, h: &Oyuncu) -> f64 {
-        if let Some(k) = &self.D._kanca {
+        if let Some(k) = &self.bag._kanca {
             if let Some(ca) = k.ca {
                 return ca;
             }
@@ -279,7 +279,7 @@ impl Kafa {
         let MD = TQ.min_d;
         let mut qs: Vec<Kov> = Vec::new();
         for q in src {
-            if q.team == h.team || q.noTouch || ayni(q, h) {
+            if q.team == h.team || q.noTouch || ayni_nesne(q, h) {
                 continue;
             }
             let d = hypot(q.x - h.x, q.y - h.y);
@@ -331,7 +331,7 @@ impl Kafa {
         let B = Q.body;
         let CR = TQ.min_d / 2.0 + 0.3;
         for q in src {
-            if q.team == h.team || q.noTouch || ayni(q, h) {
+            if q.team == h.team || q.noTouch || ayni_nesne(q, h) {
                 continue;
             }
             let d = hypot(q.x - h.x, q.y - h.y);

@@ -8,10 +8,11 @@ use crate::oyuncu::Tepki;
 use crate::temas::Kural;
 
 use super::gecici_dis as dis;
+use crate::model::Mac;
 use super::*;
 
 /// JS laneOpen(w, att, A, B, v): A→B pas yolunun açıklığı (rakiplerin uzanmasıyla).
-pub fn laneOpen(w: &[Varlik], oy: &[Oyuncu], att: u8, A: (f64, f64), B: (f64, f64), v: Option<f64>, k: &dyn Kural, d: &KafaD) -> f64 {
+pub fn laneOpen(m: &Mac, w: &[Varlik], oy: &[Oyuncu], att: u8, A: (f64, f64), B: (f64, f64), v: Option<f64>, k: &dyn Kural, d: &KafaD) -> f64 {
     let uc = v.map(|v| v == 0.0 || v != v).unwrap_or(true);
     let v = match v {
         Some(v) if v != 0.0 && v == v => v,
@@ -38,44 +39,22 @@ pub fn laneOpen(w: &[Varlik], oy: &[Oyuncu], att: u8, A: (f64, f64), B: (f64, f6
         }
         let g = o.govde(oy);
         let pe = (-(o.x - A.0) * uy + (o.y - A.1) * ux).abs();
-        let tb = if uc { dis::ucusT(L, d.arrive, Some(al)) } else { al / v };
+        let tb = if uc { dis::ucusT(m, L, d.arrive, Some(al)) } else { al / v };
         let R = 1.6 + jmax(0.0, tb - TEPKI(g, Tepki::Kovala, k)) * spd(g) * ALAN_SPRE(g, k);
         open *= 1.0 - 1.0 / (1.0 + exp((pe - R) / 0.5));
     }
     open
 }
 
-/// JS yolP(w, att, A, B) (ALAN_PRENSIP açık, bekYol var): kafanın pas yolu × Bekçi'nin yolu.
-pub fn yolP(w: &[Varlik], oy: &[Oyuncu], att: u8, A: (f64, f64), B: (f64, f64), d: &KafaD) -> f64 {
-    dis::laneOk(w, oy, att, A, B, d.arriveFirm, Some(d.sutHazir)) * dis::bekYol(w, oy, att, A, B, d.sutHazir)
+/// JS yolP(m, w, att, A, B) (ALAN_PRENSIP açık, bekYol var): kafanın pas yolu × Bekçi'nin yolu.
+pub fn yolP(m: &Mac, w: &[Varlik], oy: &[Oyuncu], att: u8, A: (f64, f64), B: (f64, f64), d: &KafaD) -> f64 {
+    dis::laneOk(m, w, oy, att, A, B, d.arriveFirm, Some(d.sutHazir)) * dis::bekYol(m, w, oy, att, A, B, d.sutHazir)
 }
-/// JS yerV(w, att, x, y, ch): yerin değeri (kafanın yerDeger'i).
-pub fn yerV(w: &[Varlik], oy: &[Oyuncu], att: u8, x: f64, y: f64, ch: f64) -> f64 {
-    dis::yerDeger(w, oy, att, x, y, ch)
+/// JS yerV(m, w, att, x, y, ch): yerin değeri (kafanın yerDeger'i).
+pub fn yerV(m: &Mac, w: &[Varlik], oy: &[Oyuncu], att: u8, x: f64, y: f64, ch: f64) -> f64 {
+    dis::yerDeger(m, w, oy, att, x, y, ch)
 }
 
-/// JS teamBest(w2, att, E, mates, ch): taşıyıcının en iyi seçeneği (sür ya da pas).
-pub fn teamBest(w2: &[Varlik], oy: &[Oyuncu], att: u8, E: (f64, f64), mates: &[(f64, f64)], ch: f64, k: &dyn Kural, d: &KafaD) -> f64 {
-    let gx = oppX(att);
-    let gd = {
-        let l = hypot(gx - E.0, GCY - E.1);
-        if l != 0.0 && l == l {
-            l
-        } else {
-            1.0
-        }
-    };
-    let st = jmin(6.0, jmax(0.0, gd - 6.0));
-    let F = (E.0 + (gx - E.0) / gd * st, E.1 + (GCY - E.1) / gd * st);
-    let mut best = yerV(w2, oy, att, E.0, E.1, ch);
-    if st > 0.0 {
-        best = jmax(best, laneOpen(w2, oy, att, E, F, Some(0.3), k, d) * yerV(w2, oy, att, F.0, F.1, ch) * S.W.tvDrive);
-    }
-    for q in mates {
-        best = jmax(best, yolP(w2, oy, att, E, *q, d) * yerV(w2, oy, att, q.0, q.1, dis::recvCh(w2, oy, att, q.0, q.1, ch, None)) * S.W.tvPass);
-    }
-    best
-}
 
 /// Taşıyıcının tehlikeli bir yönü (JS tehlike öğesi).
 #[derive(Clone, Debug)]
@@ -265,16 +244,16 @@ pub fn teamV(c: &mut Mc, sn: &mut Vec<Varlik>, svi: Pid, att: u8, E: (f64, f64),
         let (Vc, yP, kA, ro) = {
             let ps = &*c.ps;
             dis::ow_paylas(w2, ps, || {
-                let Vc = yerV(w2, ps, att, cc.x, cc.y, dis::recvCh(w2, ps, att, cc.x, cc.y, ch, p.map(|i| &ps[i])));
+                let Vc = yerV(&*c.m, w2, ps, att, cc.x, cc.y, dis::recvCh(w2, ps, att, cc.x, cc.y, ch, p.map(|i| &ps[i])));
                 match p {
-                    None => (Vc, yolP(w2, ps, att, E, (cc.x, cc.y), d), 1.0, Vc),
+                    None => (Vc, yolP(&*c.m, w2, ps, att, E, (cc.x, cc.y), d), 1.0, Vc),
                     Some(_) => {
                         let (r, kos, kux, kuy) = rK.as_ref().unwrap();
                         let (r, kos, kux, kuy) = (r, *kos, *kux, *kuy);
                         let sutM = hypot(cc.x - oppX(att), cc.y - GCY) < d.shotRange * (0.75 + 0.5 * sut);
-                        let kA = dis::keepP(r, w2, ps, if kos && kux * dirOf(att) > -0.3 { Some((kux, kuy)) } else { None }, if sutM { d.sutHazir } else { d.recvKeepT });
-                        let yP = yolP(w2, ps, att, E, (cc.x, cc.y), d);
-                        let ro = if d.useSpace { jmax(Vc, dis::runOn(w2, ps, att, r, (cc.x, cc.y))) } else { Vc };
+                        let kA = dis::keepP(&*c.m, r, w2, ps, if kos && kux * dirOf(att) > -0.3 { Some((kux, kuy)) } else { None }, if sutM { d.sutHazir } else { d.recvKeepT });
+                        let yP = yolP(&*c.m, w2, ps, att, E, (cc.x, cc.y), d);
+                        let ro = if d.useSpace { jmax(Vc, dis::runOn(&*c.m, w2, ps, att, r, (cc.x, cc.y))) } else { Vc };
                         (Vc, yP, kA, ro)
                     }
                 }
@@ -408,9 +387,9 @@ pub fn teamV(c: &mut Mc, sn: &mut Vec<Varlik>, svi: Pid, att: u8, E: (f64, f64),
         let ps = &*c.ps;
         let hR = hR.as_ref().unwrap();
         dis::ow_paylas(w2, ps, || {
-            let Vh = yerV(w2, ps, att, E.0, E.1, ch);
+            let Vh = yerV(&*c.m, w2, ps, att, E.0, E.1, ch);
             if d.recvKeepT != 0.0 {
-                dis::keepP(hR, w2, ps, None, d.recvKeepT) * if d.useSpace { jmax(Vh, dis::runOn(w2, ps, att, hR, E)) } else { Vh }
+                dis::keepP(&*c.m, hR, w2, ps, None, d.recvKeepT) * if d.useSpace { jmax(Vh, dis::runOn(&*c.m, w2, ps, att, hR, E)) } else { Vh }
             } else {
                 d.recvKeepT
             }
@@ -463,8 +442,8 @@ pub fn teamV(c: &mut Mc, sn: &mut Vec<Varlik>, svi: Pid, att: u8, E: (f64, f64),
     }
     let opened = if d.useSpace && okP > 0.0 {
         let ps = &*c.ps;
-        let vv = jmax(dis::space(sn, ps, att, cc.x, cc.y), dis::front(sn, ps, att, cc.x, cc.y));
-        yolP(sn, ps, att, E, (cc.x, cc.y), d) * dis::dagin(sn, ps, att, cc.x, vv, cc.y) * S.W.tvPass
+        let vv = jmax(dis::space(&*c.m, sn, ps, att, cc.x, cc.y), dis::front(&*c.m, sn, ps, att, cc.x, cc.y));
+        yolP(&*c.m, sn, ps, att, E, (cc.x, cc.y), d) * dis::dagin(sn, ps, att, cc.x, vv, cc.y) * S.W.tvPass
     } else {
         0.0
     };
@@ -491,13 +470,13 @@ fn kpOf(c: &mut Mc, w2: &[Varlik], svi: Pid, cc: (f64, f64), q: Option<Pid>, yP:
     let kp = c.ek.kpC.as_mut().unwrap();
     let mut kT = |T: f64| -> f64 {
         if kp.mut_ != 0 {
-            return cl(dis::keepP(&kp.Hr, w2, ps, None, T), 0.0, 1.0);
+            return cl(dis::keepP(&*c.m, &kp.Hr, w2, ps, None, T), 0.0, 1.0);
         }
         let key = (svi, T.to_bits());
         if let Some(v) = kp.kc.get(&key) {
             return *v;
         }
-        let v = cl(dis::keepP(&kp.Hr, w2, ps, None, T), 0.0, 1.0);
+        let v = cl(dis::keepP(&*c.m, &kp.Hr, w2, ps, None, T), 0.0, 1.0);
         kp.kc.insert(key, v);
         v
     };
@@ -515,50 +494,10 @@ fn kpOf(c: &mut Mc, w2: &[Varlik], svi: Pid, cc: (f64, f64), q: Option<Pid>, yP:
     } else if kat <= 0.0 {
         ust
     } else {
-        jmax(0.0, (1.0 - k2) * LE - ((1.0 - k1) * LE + k1 * ((1.0 - yP) * LE + yP * (1.0 - cl(kA, 0.0, 1.0)) * (kp.L)(cc.0, cc.1))))
+        jmax(0.0, (1.0 - k2) * LE - ((1.0 - k1) * LE + k1 * ((1.0 - yP) * LE + yP * (1.0 - cl(kA, 0.0, 1.0)) * (kp.L)(&*c.m, cc.0, cc.1))))
     }
 }
 
-/// JS coverBoth(m, d, att, E, h): taşıyıcıya en yakın savunucunun iki seçeneği birden kapattığı yer.
-/// (Bugünkü maçta çağrılmaz: `!ONIS()` dalında; bütünlük için taşındı.)
-pub fn coverBoth(c: &mut Mc, di: Pid, att: u8, E: (f64, f64), h: Option<Pid>) -> Option<(f64, f64)> {
-    let okD = yerS(&c.ps[di]);
-    let w = cl((okD - 6.0) / 10.0, 0.0, 1.0);
-    if w <= 0.0 {
-        return None;
-    }
-    let sn = seen(c, di);
-    let k = c.k;
-    let d = c.d;
-    let ps = &*c.ps;
-    let atk: Vec<(f64, f64)> = ps.iter().enumerate().filter(|(i, q)| q.takim() == att && Some(*i) != h && !q.bekci() && hypot(q.tx - E.0, q.ty - E.1) < 22.0).map(|(_, q)| (q.x, q.y)).collect();
-    if atk.is_empty() {
-        return None;
-    }
-    let dp = &ps[di];
-    let me = (dp.x, dp.y);
-    let spots = coverSpots(me, att, E, &atk, S.W.defReach);
-    let ch = if c.m.ch != 0.0 && c.m.ch == c.m.ch { c.m.ch } else { 0.3 };
-    let mut w0: Vec<Varlik> = (*sn).clone();
-    for (i, q) in ps.iter().enumerate() {
-        if q.team == dp.team && i != di {
-            w0.push(Varlik::oyuncu(i, q));
-        }
-    }
-    let mut best = me;
-    let mut bv = 1e9;
-    for g in &spots {
-        let mut w2 = w0.clone();
-        w2.push(Varlik::kopya(di, dp, g.0, g.1, 0.0, 0.0));
-        let v = teamBest(&w2, ps, att, E, &atk, ch, k, d) + 0.004 * hypot(g.0 - me.0, g.1 - me.1);
-        if v < bv {
-            bv = v;
-            best = *g;
-        }
-    }
-    let g0 = gside(E.0, E.1, 1 - att, 2.2);
-    Some((g0.0 + (best.0 - g0.0) * w, g0.1 + (best.1 - g0.1) * w))
-}
 
 /// JS kapatHat(m, d, att, E, qo): markajcının hattı: adamının kale tarafı, adamına ve arkasındaki koşuya pas
 /// yolunu en çok kapatan noktaya (yerleşim yeteneğiyle) kayar. 4 tik önbellekli (`d._kh`).
@@ -620,7 +559,7 @@ pub fn kapatHat(c: &mut Mc, di: Pid, att: u8, E: (f64, f64), qo: &Varlik) -> (f6
         sn[gi].y = g.1;
         let mut v: f64 = 0.0;
         for P in T {
-            v = jmax(v, yolP(&sn, ps, att, E, P, d) * yerV(&sn, ps, att, P.0, P.1, dis::recvCh(&sn, ps, att, P.0, P.1, ch, None)));
+            v = jmax(v, yolP(&*c.m, &sn, ps, att, E, P, d) * yerV(&*c.m, &sn, ps, att, P.0, P.1, dis::recvCh(&sn, ps, att, P.0, P.1, ch, None)));
         }
         v += 0.004 * hypot(g.0 - dx0, g.1 - dy0);
         if v < bv {

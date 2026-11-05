@@ -3,7 +3,7 @@
 
 use crate::alan::Etki;
 use crate::mat::{jmax, jmin};
-use crate::yetenek::{mek, spr_h, Yetenek};
+use crate::yetenek::{mek, spr_h};
 
 pub use crate::model::Oyuncu;
 

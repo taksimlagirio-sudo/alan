@@ -200,7 +200,7 @@ impl Sv {
                     Some(z) => z,
                     None => continue,
                 };
-                let TZ = dis::ucusT(hypot(Z.x - E.0, Z.y - E.1), aFs, None) + SHs;
+                let TZ = dis::ucusT(&*c.m, hypot(Z.x - E.0, Z.y - E.1), aFs, None) + SHs;
                 let mut r: f64 = 0.0;
                 let mut rq = Vec::new();
                 for &q in &AQ {
@@ -232,7 +232,7 @@ impl Sv {
             .iter()
             .map(|J| {
                 let b = if J.bul { self.bul.map(|b| b.3) } else { None };
-                b.unwrap_or_else(|| { let q = qxy(J); dis::ucusT(hypot(q.0 - E.0, q.1 - E.1), aFs, None) }) + SHs
+                b.unwrap_or_else(|| { let q = qxy(J); dis::ucusT(&*c.m, hypot(q.0 - E.0, q.1 - E.1), aFs, None) }) + SHs
             })
             .collect();
         {

@@ -2,8 +2,6 @@
 use alan_motor::kafa::gecici_dis1::Dis;
 use alan_motor::kafa::kafa2_bag as dis;
 use alan_motor::kafa::kafa2_baglam::*;
-use alan_motor::mat::{jmax, jmin};
-use alan_motor::oyuncu::TepkiS;
 use std::cell::RefCell;
 use alan_motor::kafa::{kafa2_dunya, kafa2_imkan, kafa2_karar, kafa2_tarti};
 use alan_motor::model::{JPEg, JPTl, Oyuncu};
@@ -114,6 +112,7 @@ fn vektor() -> Option<Value> {
 }
 
 #[test]
+#[ignore = "JS karşılaştırması: vektör sina/kafa2-vektor.js ile üretilince `cargo test --release -- --ignored`; Rust tek doğru kaynak (MIMARI.md Aşama 6)"]
 fn imk_egrileri() {
     let v = match vektor() {
         Some(v) => v,
@@ -134,6 +133,7 @@ fn imk_egrileri() {
 }
 
 #[test]
+#[ignore = "JS karşılaştırması: vektör sina/kafa2-vektor.js ile üretilince `cargo test --release -- --ignored`; Rust tek doğru kaynak (MIMARI.md Aşama 6)"]
 fn js_ile_bit_bit_ayni() {
     let v = match vektor() {
         Some(v) => v,
@@ -150,7 +150,7 @@ fn js_ile_bit_bit_ayni() {
     };
     for a in v["anlar"].as_array().unwrap() {
         let tk = a["tick"].as_u64().unwrap();
-        k.D._tick = Some(tk as f64);
+        k.bag._tick = Some(tk as f64);
         let ps: Dunya = a["ps"].as_array().unwrap().iter().map(|p| Arc::new(oyuncu(p))).collect();
         // maçın sprint katı (match.js sarmalı) JS'ten
         *sd.spr.borrow_mut() = a["per"].as_array().unwrap().iter().enumerate().map(|(i, e)| (ps[i].id, ps[i].team, h(&e[1]))).collect();

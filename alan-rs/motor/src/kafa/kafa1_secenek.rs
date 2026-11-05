@@ -19,7 +19,7 @@ use crate::oyuncu::Tepki;
 use crate::saha::{CY as GCY, H as GH, W as GW};
 
 /// Hayali dünyanın oyuncusu (kafa2 ile ortak tip; birleştirmede tek tanım).
-pub type Op = std::sync::Arc<Oyuncu>;
+pub use crate::dunya::Op;
 
 /// options'ın dönüşü: seçenekler ve JS dizisine asılı yan bilgiler (out.tekH, out.tekS, out.tekC).
 #[derive(Clone, Debug, Default)]
@@ -44,7 +44,9 @@ pub struct TekC {
 }
 
 #[inline(always)]
-fn ayni(a: &Oyuncu, b: &Oyuncu) -> bool {
+/// Oyuncu kimliği: aynı takımın aynı numaralı oyuncusu mu (kopyası da sayılır). Nesne kimliğinden farklı:
+/// MIMARI.md 3.2.
+fn ayni_oyuncu(a: &Oyuncu, b: &Oyuncu) -> bool {
     a.team == b.team && a.id == b.id
 }
 #[inline(always)]
@@ -134,11 +136,12 @@ impl Kafa {
         let team = h.team;
         let gx = if team == 0.0 { GW } else { 0.0 };
         let D = &self.D;
+        let B = &self.bag;
         let saf = self.SAH_F.clone().expect("options: SAH_F (kafa her kararda kurar)");
         let SAH = |t: f64, x: f64, y: f64| -> f64 { saf.oku(t, x, y) };
         let TOPLA = h.id >= 0.0;
         let mut res = Secenekler::default();
-        let hi = src.iter().position(|q| ayni(q, h));
+        let hi = src.iter().position(|q| ayni_oyuncu(q, h));
         let qid = |a: Al| -> Option<Pid> {
             match a {
                 Al::Src(i) => Some(i),
@@ -150,7 +153,7 @@ impl Kafa {
         // arkadaşlar (pas alıcıları): yolun rakipsizliği × sahiplik değeri, en iyi nMates
         let mut mates: Vec<(usize, f64)> = Vec::new();
         for (i, q) in src.iter().enumerate() {
-            if q.team != team || ayni(q, h) || q.bekci() {
+            if q.team != team || ayni_oyuncu(q, h) || q.bekci() {
                 continue;
             }
             let d = hypot(q.x - h.x, q.y - h.y);
@@ -163,7 +166,7 @@ impl Kafa {
         mates.truncate(D.nMates as usize);
         let mut mates: Vec<usize> = mates.into_iter().map(|m| m.0).collect();
         if !h.bekci() {
-            if let Some(ki) = src.iter().position(|q| q.team == team && q.bekci() && !ayni(q, h) && !q.noTouch) {
+            if let Some(ki) = src.iter().position(|q| q.team == team && q.bekci() && !ayni_oyuncu(q, h) && !q.noTouch) {
                 let kp = &src[ki];
                 let dk = hypot(kp.x - h.x, kp.y - h.y);
                 if dk >= 4.0 && dk <= jmin(passMaxF, 40.0 * GW / 100.0) && (h.x - if team == 0.0 { 0.0 } else { GW }).abs() <= GW / 2.0 {
@@ -186,7 +189,7 @@ impl Kafa {
                 alicilar.push(Al::H);
             }
             for (i, q) in src.iter().enumerate() {
-                if q.team != team || ayni(q, h) || q.bekci() || q.noTouch || alicilar.iter().any(|a| matches!(a, Al::Src(j) if *j == i)) {
+                if q.team != team || ayni_oyuncu(q, h) || q.bekci() || q.noTouch || alicilar.iter().any(|a| matches!(a, Al::Src(j) if *j == i)) {
                     continue;
                 }
                 let d = hypot(q.x - h.x, q.y - h.y);
@@ -199,7 +202,7 @@ impl Kafa {
                     Al::Src(i) => &src[i],
                     Al::H => h,
                 };
-                let qH = matches!(a, Al::H) || ayni(q, h);
+                let qH = matches!(a, Al::H) || ayni_oyuncu(q, h);
                 let mut dirs: Vec<Nk> = Vec::new();
                 let ek = |dirs: &mut Vec<Nk>, x: f64, y: f64, esik: f64| {
                     let l = hypot(x, y);
@@ -393,7 +396,7 @@ impl Kafa {
         }
         // ---- şut ----
         let gd = hypot(gx - h.x, GCY - h.y);
-        if gd < D.shotRange * (0.75 + 0.5 * match &D._sut { Some(JsDeger::Sayi(v)) => *v, _ => 0.5 }) {
+        if gd < D.shotRange * (0.75 + 0.5 * match &B._sut { Some(JsDeger::Sayi(v)) => *v, _ => 0.5 }) {
             for ty in self.sutHedef(h, src, gx) {
                 for sy in [1.0, -1.0] {
                     let mut o = yeni("gönder");

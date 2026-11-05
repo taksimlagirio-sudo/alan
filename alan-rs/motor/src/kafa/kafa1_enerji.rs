@@ -7,7 +7,7 @@ use crate::kafa::gecici_dis1::KuralErisim as _;
 use super::kafa1_baglam::Kafa;
 use super::kafa1_js::*;
 use crate::mat::{exp, hypot, jmax, jmin, sin};
-use crate::model::{JOEn, JP_sf, JsDeger, Oyuncu, Secenek};
+use crate::model::{JOEn, JP_sf, Oyuncu, Secenek};
 use crate::yetenek::{mek, spr_h, yum};
 use std::borrow::Cow;
 
@@ -18,16 +18,6 @@ pub struct SarjTut {
     pub bed: f64,
 }
 
-/// JS doğruluğu (karışık tip).
-pub fn js_dogru(v: &Option<JsDeger>) -> bool {
-    match v {
-        None | Some(JsDeger::Yok) => false,
-        Some(JsDeger::Sayi(x)) => *x != 0.0 && *x == *x,
-        Some(JsDeger::Metin(s)) => !s.is_empty(),
-        Some(JsDeger::Mantik(b)) => *b,
-        Some(_) => true,
-    }
-}
 
 impl Kafa {
     /// JS SPK(): sprint evreleri ayrık mı
@@ -259,7 +249,7 @@ impl Kafa {
                 }
             };
             let mut de;
-            if bizden && !ayni(p, h) && dw < 0.3 {
+            if bizden && !ayni_nesne(p, h) && dw < 0.3 {
                 let sx = bit.map_or(0.0, |b| 0.5 * (b.x - h.x));
                 let sy = bit.map_or(0.0, |b| 0.5 * (b.y - h.y));
                 let L = hypot(p.tx + sx - p.x, p.ty + sy - p.y);
@@ -272,7 +262,7 @@ impl Kafa {
                 let need = dw / jmax(1.0, T);
                 de = if need > b { harR(p, need, b, vm) * T } else { -dR(need / b) * T };
             }
-            if ayni(p, h) {
+            if ayni_nesne(p, h) {
                 if let Some(o) = o {
                     let mut ek = 0.0;
                     if let Some(st) = o.savT {
@@ -340,8 +330,8 @@ impl Kafa {
             Some(en) if !en.per.is_empty() => &en.per,
             _ => return Cow::Borrowed(w),
         };
-        let wD = jmax(0.0, self.D._enWD.unwrap_or(0.0));
-        let tm = self.D._enTm;
+        let wD = jmax(0.0, self.bag._enWD.unwrap_or(0.0));
+        let tm = self.bag._enTm;
         let mut deg = false;
         let r: Vec<Op> = w
             .iter()

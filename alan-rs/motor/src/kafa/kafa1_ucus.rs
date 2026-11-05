@@ -325,12 +325,12 @@ impl Kafa {
     pub fn imagine(&mut self, h: &Oyuncu, src: &[Op], b0: UcusB0, q: Option<&Oyuncu>, to: Option<Nk>, kc: Kc) -> Ucus {
         self.ucusFormul(h, src, b0, q, to, kc)
     }
-    /// Kenardan sektirme denemesi (decide.js:2315): D._kenar açıkken imagine.
+    /// Kenardan sektirme denemesi (decide.js:2315): B._kenar açıkken imagine.
     pub fn kenarIm(&mut self, h: &Oyuncu, src: &[Op], b0: UcusB0, q: Option<&Oyuncu>, to: Option<Nk>, kc: Kc) -> Ucus {
-        let k0 = self.D._kenar;
-        self.D._kenar = Some(true);
+        let k0 = self.bag._kenar;
+        self.bag._kenar = Some(true);
         let r = self.imagine(h, src, b0, q, to, kc);
-        self.D._kenar = k0;
+        self.bag._kenar = k0;
         r
     }
 
@@ -339,8 +339,10 @@ impl Kafa {
         // D ve dış dünya yerel kopyadan okunur: keepP / predictWorld `&mut self` ister (kafa2'nin önbellekleri)
         let D0 = self.D.clone();
         let D = &D0;
+        let B0 = self.bag.clone();
+        let B = &B0;
         let team = h.team;
-        let gon = D._gon.unwrap_or(false);
+        let gon = B._gon.unwrap_or(false);
         let dis0 = self.dis.clone();
         let kr = KuralK(&*dis0);
         let S_ = self.dis.S();
@@ -349,23 +351,23 @@ impl Kafa {
         let qqI: Option<usize> = q.and_then(|q| bul_i(src0, q));
         let kendi = qqI.map_or(false, |i| src0[i].id == h.id);
         let hI0 = sira(src0, h);
-        let lk = ya(D._ot.unwrap_or(0.0), 1.0) * 1.0;
+        let lk = ya(B._ot.unwrap_or(0.0), 1.0) * 1.0;
         let tur = if gon { self.d_sut_tur() } else { None };
-        let YF = self.hataF(h, Some(src0), gon, tur.as_deref(), D._kenar.unwrap_or(false), lk);
-        let mut gecik = D._savT.unwrap_or(0.0);
-        let mut caR = D._savCa;
-        let mut savW = D._savW;
-        let mut savU = D._savU;
-        if D._savT.is_none() && h.id >= 0.0 {
-            let ks = D._kanca.as_ref().map(|k| k.s).filter(|s| *s != 0.0 && *s == *s);
+        let YF = self.hataF(h, Some(src0), gon, tur.as_deref(), B._kenar.unwrap_or(false), lk);
+        let mut gecik = B._savT.unwrap_or(0.0);
+        let mut caR = B._savCa;
+        let mut savW = B._savW;
+        let mut savU = B._savU;
+        if B._savT.is_none() && h.id >= 0.0 {
+            let ks = B._kanca.as_ref().map(|k| k.s).filter(|s| *s != 0.0 && *s == *s);
             let pl = self.savurPlan(
                 h,
                 nk(b0in.vx, b0in.vy),
                 self.caOf(h),
-                D._kanca.as_ref().map_or(0.0, |k| k.w0),
-                ks.unwrap_or(yao(D._sYon, 0.0)),
+                B._kanca.as_ref().map_or(0.0, |k| k.w0),
+                ks.unwrap_or(yao(B._sYon, 0.0)),
                 if gon { None } else { Some(src0) },
-                gon && D._itme.unwrap_or(false),
+                gon && B._itme.unwrap_or(false),
                 self.vurE(h, Some(b0in.ch), gon),
             );
             if let Some(pl) = pl {
@@ -391,7 +393,7 @@ impl Kafa {
         let kc: Kc = if BSV { None } else { kc0 };
         let hI = hI0;
         let OK1 = h.id >= 0.0;
-        let cue1 = if OK1 { (if D._tekD { IN.cue_ot } else { IN.cue0 }) + gecik } else { 0.0 };
+        let cue1 = if OK1 { (if B._tekD { IN.cue_ot } else { IN.cue0 }) + gecik } else { 0.0 };
         let uM1 = (IN.u_a + IN.u_b) / 2.0;
         let giz1 = if OK1 { h.yet.y(mek::VURUS_GIZLE) - 10.0 } else { 0.0 };
         let hIc = h.id >= 0.0 && hI.is_some();

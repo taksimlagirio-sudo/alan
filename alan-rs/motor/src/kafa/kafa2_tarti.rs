@@ -97,8 +97,8 @@ pub fn pDunya(k: &mut Kafa, cx: &mut Cx, B: Nokta, T: f64, kind: &str, q: Option
     let src = cx.src.clone();
     let team = cx.team;
     let W: Arc<Dunya> = if T > 0.0 {
-        let Rw = dis::respond(k, &src, team, B, T, kind);
-        let resp: Vec<usize> = (0..src.len()).filter(|&i| !ayni(&Rw[i], &src[i])).collect();
+        let (Rw, degisti) = dis::respond_d(k, &src, team, B, T, kind);
+        let resp: Vec<usize> = (0..degisti.len()).filter(|&i| degisti[i]).collect();
         let tas = if kind == "drive" { q.map(|q| nk(q.x, q.y)) } else { None };
         let Pw = predictWorld(k, &src, team, B, T, true, Some(&resp), false, tas);
         let mut tekC: isize = -1;
@@ -114,7 +114,7 @@ pub fn pDunya(k: &mut Kafa, cx: &mut Cx, B: Nokta, T: f64, kind: &str, q: Option
             (0..src.len())
                 .map(|i| {
                     let p = &src[i];
-                    if !ayni(&Rw[i], p) && (tekC < 0 || i as isize == tekC) {
+                    if degisti[i] && (tekC < 0 || i as isize == tekC) {
                         let mut c = (*Rw[i]).clone();
                         c.vx = 0.0;
                         c.vy = 0.0;
@@ -260,7 +260,7 @@ pub fn pencere(k: &mut Kafa, cx: &mut Cx, kq: &Op, T: f64, R: Option<Nokta>) -> 
     let B = match R {
         Some(r) => r,
         None => {
-            if tb == 0.0 || ayni(kq, &cx.h) {
+            if tb == 0.0 || ayni_nesne(kq, &cx.h) {
                 nk(kq.x, kq.y)
             } else {
                 let src = cx.src.clone();
@@ -426,16 +426,16 @@ pub fn prGam(k: &Kafa, h: &Oyuncu, tac: Option<&Tac>) -> f64 {
 
 /// JS prensipDegerle(h, src, ch, team, opts, lossAt, T, tac) (decide.js:7109)
 pub fn prensipDegerle(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f64, opts: &mut Vec<Secenek>, lossAt: &KayipRef, T: f64, tac: Option<&Tac>) {
-    let g0 = k.D._gPr;
-    let w0 = k.D._enWD;
-    let t0_ = k.D._enTm;
-    k.D._gPr = Some(prGam(k, &src[hi], tac));
-    k.D._enWD = Some(veyo(tac.and_then(|t| t.enDinlen), 0.0));
-    k.D._enTm = Some(team);
+    let g0 = k.bag._gPr;
+    let w0 = k.bag._enWD;
+    let t0_ = k.bag._enTm;
+    k.bag._gPr = Some(prGam(k, &src[hi], tac));
+    k.bag._enWD = Some(veyo(tac.and_then(|t| t.enDinlen), 0.0));
+    k.bag._enTm = Some(team);
     prensipDegerle0(k, hi, src, ch, team, opts, lossAt, T);
-    k.D._gPr = g0;
-    k.D._enWD = w0;
-    k.D._enTm = t0_;
+    k.bag._gPr = g0;
+    k.bag._enWD = w0;
+    k.bag._enTm = t0_;
 }
 
 /// JS enGec(q, w, f): q'nun barı dünyadakine çekilerek f (tartının bağlamında q da değişir).
@@ -448,12 +448,12 @@ fn en_gec<R>(k: &mut Kafa, cx: &mut Cx, q: &Op, w: &[Op], f: impl FnOnce(&mut Ka
             let q2 = Arc::new(c);
             let eski_src = cx.src.clone();
             let eski_h = cx.h.clone();
-            if let Some(i) = cx.src.iter().position(|z| ayni(z, q)) {
+            if let Some(i) = cx.src.iter().position(|z| ayni_nesne(z, q)) {
                 let mut s = (*cx.src).clone();
                 s[i] = q2.clone();
                 cx.src = Arc::new(s);
             }
-            if ayni(&cx.h, q) {
+            if ayni_nesne(&cx.h, q) {
                 cx.h = q2.clone();
             }
             let r = f(k, cx, &q2);
@@ -509,7 +509,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
     }
     let mut cx = Cx { src: src.clone(), team, ch, kayip: lossAt.clone(), h: h.clone(), PW: Default::default(), PE: Default::default(), PV: Default::default(), PD: Default::default(), IM: None };
     let L = |k: &mut Kafa, x: f64, y: f64| kay(k, lossAt, x, y);
-    let mut govde = |k: &mut Kafa, mut cx: &mut Cx, o: &mut Secenek| {
+    let govde = |k: &mut Kafa, mut cx: &mut Cx, o: &mut Secenek| {
         let d = o.det.clone().unwrap_or_default();
         let kind = o.kind.as_str();
         if kind == "gönder" {
@@ -544,7 +544,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
             let wE = dis::enW(k, &pw, o);
             let tA = en_gec(k, &mut cx, &rq, &wE, |k, cx, rq| {
                 let r = durumD(k, cx, &wE, rq, at, veya(tf, 0.0));
-                if ayni(rq, &cx.h) {
+                if ayni_nesne(rq, &cx.h) {
                     (r.v, r, 1.0)
                 } else {
                     let mut c = (**rq).clone();
@@ -681,18 +681,17 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
         // dolu; "o olmasa" farkı iki taraf aynı biçimde hesaplanmazsa önbellek artığını ölçer
         let mut cx0 = Cx { src: cx.src.clone(), team: cx.team, ch: cx.ch, kayip: cx.kayip.clone(), h: cx.h.clone(), PW: Default::default(), PE: Default::default(), PV: Default::default(), PD: Default::default(), IM: None };
         let mac_var = k.mac.is_some();
-        let inL = k.k2._inLook;
         fn cx_siz<'a>(CXS: &'a mut Vec<(Op, Cx)>, cx: &Cx, d: &Op) -> &'a mut Cx {
-            let i = match CXS.iter().position(|(z, _)| ayni(z, d)) {
+            let i = match CXS.iter().position(|(z, _)| ayni_nesne(z, d)) {
                 Some(i) => i,
                 None => {
                     let c = Cx {
                         // sıra korunur (kafada sırayla tutulan bir şey kaymasın): çıkarılan savunmacı silinmez, etkisizleşir
                         // (dokunamaz ve sahanın çok dışında). Eskisi (listeden silmek): ALAN_CXIM_ESKI_IZ
                         src: Arc::new(if cxim_eski() {
-                            cx.src.iter().filter(|z| !ayni(z, d)).cloned().collect()
+                            cx.src.iter().filter(|z| !ayni_nesne(z, d)).cloned().collect()
                         } else {
-                            cx.src.iter().map(|z| if ayni(z, d) { let mut o = (**z).clone(); o.noTouch = true; o.x = -1000.0; o.y = -1000.0; o.vx = 0.0; o.vy = 0.0; Arc::new(o) } else { z.clone() }).collect()
+                            cx.src.iter().map(|z| if ayni_nesne(z, d) { let mut o = (**z).clone(); o.noTouch = true; o.x = -1000.0; o.y = -1000.0; o.vx = 0.0; o.vy = 0.0; Arc::new(o) } else { z.clone() }).collect()
                         }),
                         team: cx.team,
                         ch: cx.ch,
@@ -711,13 +710,13 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
             &mut CXS[i].1
         }
         for kq in src.iter() {
-            if kq.team != team || ayni(kq, &h) || kq.noTouch || bekci(kq) {
+            if kq.team != team || ayni_nesne(kq, &h) || kq.noTouch || bekci(kq) {
                 continue;
             }
             let Tk = dis::ucusT(k, jmax(5.0, hypot(kq.x - h.x, kq.y - h.y)), k.D.arriveFirm, None) + k.D.sutHazir;
             let vk = nodeV(k, if cxim_eski() { &mut cx } else { &mut cx0 }, kq, Tk, 0.0, None);
             tm.push((kq.id, vk));
-            if !inL && mac_var {
+            if mac_var {
                 for d in src.iter() {
                     if d.team == team || bekci(d) || d.noTouch {
                         continue;
@@ -731,7 +730,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                     if uzak_iz() {
                         // atamadaki yetişme olasılığının yaklaşığı (esles: 1/(1+e^((t−TW)/5)), t ≈ uzaklık/hız, TW ≈ Tk)
                         let kp = 1.0 / (1.0 + exp((uz / crate::kafa::kafa1_js::ya(k.vS(d), 0.05) - Tk) / 5.0));
-                        eprintln!("UZAK {:.2} {:.6} t={:?} kq={} d={} dx={:.0} dy={:.0} kx={:.0} kp={:.6}", uz, jmax(0.0, v2 - vk), k.D._tick, kq.id, d.id, d.x, d.y, kq.x, kp);
+                        eprintln!("UZAK {:.2} {:.6} t={:?} kq={} d={} dx={:.0} dy={:.0} kx={:.0} kp={:.6}", uz, jmax(0.0, v2 - vk), k.bag._tick, kq.id, d.id, d.x, d.y, kq.x, kp);
                     }
                     if v2 > vk {
                         mm.push((format!("{}|{}", js_sayi(kq.id), js_sayi(d.id)), v2 - vk));
@@ -739,7 +738,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                 }
             }
         }
-        let hm = if inL || !mac_var {
+        let hm = if !mac_var {
             None
         } else {
             let mut M: Vec<(f64, f64)> = Vec::new();
@@ -779,7 +778,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
         };
         if mac_var {
             let hv = nodeV(k, &mut cx, &h, k.D.sutHazir, 0.0, None);
-            k.prT = Some(PrT { team, hId: h.id, t: k.D._tick, m: tm, mm, hm, h: hv });
+            k.prT = Some(PrT { team, hId: h.id, t: k.bag._tick, m: tm, mm, hm, h: hv });
         }
     }
 }

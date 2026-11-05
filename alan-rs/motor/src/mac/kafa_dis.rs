@@ -11,6 +11,9 @@ use crate::mac::MacKural;
 use crate::model::{JMShGs, Mac, Oyuncu};
 use crate::sekil;
 use std::sync::Arc;
+use crate::dunya::dunya_kopya;
+/// Maçın dünyasını kafanın biçimine çevir (dünya katmanında).
+pub use crate::dunya::op_dunya;
 
 /// Kararın başındaki maç görüntüsü.
 pub struct MacDis {
@@ -80,6 +83,12 @@ impl Dis for MacDis {
     fn kural(&self) -> MacKural {
         self.kural.get()
     }
+    fn niyet_koy(&self, n: Option<(f64, f64, bool, Option<f64>)>) -> Option<(f64, f64, bool, Option<f64>)> {
+        let mut k = self.kural.get();
+        let eski = std::mem::replace(&mut k.niyet, n);
+        self.kural.set(k);
+        eski
+    }
     // ---- enerji / sprint ----
     fn ALAN_EN3_KUL(&self, p: &Oyuncu, e: f64, bizde: bool, bx: f64, by: f64) -> f64 {
         en::ALAN_EN3_KUL(p, e, bizde, Some((bx, by)), &self.kural.get())
@@ -117,7 +126,7 @@ impl Dis for MacDis {
             .map(|t| d1::Tehlike { an: t.an, w: t.w, w0: t.w0, x: t.x, y: t.y, k: t.k, L: t.L })
             .collect()
     }
-    fn ilkPres(&self, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[d1::Tehlike], _dtac: &d1::TacEff, gs: &Option<JMShGs>) {
+    fn ilkPres(&self, dtik: f64, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[d1::Tehlike], _dtac: &d1::TacEff, gs: &Option<JMShGs>) {
         use sekil::varlik::{Gs, Mc};
         // JS ilkPres(vm, …): vm yalnız tik taşır; yerleşimin pres hesabı maçtan yalnız tiki okur.
         // Boş maç ve yerleşim durumu her çağrıda kurulmaz (kesişme döngüsünde çok sık çağrılır).
@@ -138,7 +147,7 @@ impl Dis for MacDis {
             let dtac = self.takim_tac(team);
             let d = crate::mac::gecici_dis::kafa_d();
             let kural = self.kural.get();
-            let mut c = Mc { m, ps, ball: None, ek, k: &kural, d, lite: true, rnd: None };
+            let mut c = Mc { m, ps, ball: None, ek, k: &kural, d, lite: true, rnd: None, dtik: Some(dtik) };
             sekil::pres::ilkPres_h(&mut c, 0, hx, if team == 1.0 { 1 } else { 0 }, Some(&th), dtac);
             // sonuç (tx, ty, job dahil) qv'ye geri döner; tamponda eski hâli kalır, bir sonraki çağrıda üzerine yazılır
             std::mem::swap(qv, &mut ps[0]);
@@ -187,7 +196,7 @@ impl Dis for MacDis {
     fn bekciFm(&self, p: &Oyuncu, B: Nk, fm: &d1::Fm) -> Nk {
         // dünya kopyalanmaz: Bekçi oyuncuların yalnız yerini ve takımını okur
         let ben = fm.ps.iter().position(|q| q.id == p.id && q.team == p.team);
-        let bm = sekil::yer::BekM { ps: sekil::yer::BekPs::Pay(fm.ps), holder: fm.holder, ben };
+        let bm = sekil::yer::BekM { ps: sekil::yer::BekPs::Pay(fm.ps), holder: fm.holder, ben, sut: true };
         let (x, y) = sekil::yer::bekci(p, B.x, B.y, Some(&bm), &self.kural.get());
         nk(x, y)
     }
@@ -227,11 +236,8 @@ impl std::fmt::Debug for KafaKutu {
     }
 }
 
-thread_local! {
-    static KAFA: RefCell<Option<Rc<RefCell<Kafa>>>> = const { RefCell::new(None) };
-}
-
-/// Maçın kafasını bu tik için hazırla (yoksa kur) ve kapsamlı bağlama koy.
+/// Maçın kafasını bu tik için hazırla (yoksa kur). Kafa maçın kutusunda (`m.mac.kafa`) durur; çağıranlar onu
+/// maçtan alır (`kafa_mac`). İş parçacığına özel kafa yok (MIMARI.md Aşama 3).
 pub fn kafa_hazirla(m: &mut Mac) -> Rc<RefCell<Kafa>> {
     if m.mac.kafa.k.is_none() {
         let d = Arc::new(MacDis::kur(m));
@@ -255,29 +261,15 @@ pub fn kafa_hazirla(m: &mut Mac) -> Rc<RefCell<Kafa>> {
     }
     let k = m.mac.kafa.k.clone().unwrap();
     if let Ok(mut kk) = k.try_borrow_mut() {
-        kk.D._tick = Some(m.tick);
+        kk.bag._tick = Some(m.tick);
         // JS D._mac = m (kafaAc): kafa maçı her an görür (ileri tablosu ilk okunduğunda kurulur)
         if kk.mac.as_ref().map_or(true, |g| g.tick != m.tick) {
             kk.mac = Some(crate::mac::gecici_dis::mac_gor(m));
         }
     }
-    if let Ok(kk) = k.try_borrow() {
-        let v = (kk.dis.clone(), kk.D._tick);
-        DIS.with(|d| *d.borrow_mut() = Some(v));
-    }
-    KAFA.with(|c| *c.borrow_mut() = Some(k.clone()));
     k
 }
 
-thread_local! {
-    /// bu tikin dış dünyası ve tiki (yedek kafalar için)
-    static DIS: RefCell<Option<(Arc<dyn crate::kafa::gecici_dis1::Dis>, Option<f64>)>> = const { RefCell::new(None) };
-    /// iç içe çağrılar için yedek kafalar (kafa → dış dünya → yerleşim → kafa)
-    static YAN: RefCell<Vec<Rc<RefCell<Kafa>>>> = const { RefCell::new(Vec::new()) };
-}
-
-/// Kapsamdaki kafayla çalış (yerleşimin ve maçın kafa çağrıları). Kafa o an başka bir çağrının
-/// içindeyse (iç içe) aynı dış dünyalı yedek bir kafa kullanılır.
 /// ilkPres köprüsünün yeniden kullanılan tamponu (maç yalnız tik taşır)
 #[derive(Default)]
 struct IlkTampon {
@@ -288,80 +280,25 @@ struct IlkTampon {
 thread_local! {
     static ILK_TAMPON: std::cell::RefCell<IlkTampon> = std::cell::RefCell::new(IlkTampon::default());
 }
-thread_local! {
-    /// Kafa dünyasının (Arc'lı oyuncular, değişmez) düz kopyası: aynı dünya için yeniden kopyalanmaz.
-    /// Anahtar oyuncu nesnelerinin kendisi (Arc'lar tutulduğu için başka dünyayla karışmaz).
-    static DUNYA_KOPYA: std::cell::RefCell<(Vec<crate::kafa::kafa1_js::Op>, Vec<Oyuncu>)> = const { std::cell::RefCell::new((Vec::new(), Vec::new())) };
-}
-/// `src`'nin düz kopyasıyla `f`'i çalıştır (dünya aynıysa önceki kopya).
-fn dunya_kopya<R>(src: &[crate::kafa::kafa1_js::Op], f: impl FnOnce(&[Oyuncu]) -> R) -> R {
-    DUNYA_KOPYA.with(|c| {
-        let ayni = {
-            let c = c.borrow();
-            c.0.len() == src.len() && c.0.iter().zip(src).all(|(a, b)| Arc::ptr_eq(a, b))
-        };
-        if !ayni {
-            match c.try_borrow_mut() {
-                Ok(mut c) => {
-                    c.0 = src.to_vec();
-                    c.1 = src.iter().map(|q| (**q).clone()).collect();
-                }
-                // iç içe çağrıda (kopya ödünçteyken) başka dünya: geçici kopya
-                Err(_) => {
-                    let ps: Vec<Oyuncu> = src.iter().map(|q| (**q).clone()).collect();
-                    return f(&ps);
-                }
-            }
-        }
-        let c = c.borrow();
-        f(&c.1)
-    })
-}
 /// Maçın dokunuş ayarı (JS ALAN_DOKUNUS): bugün kapalı (maç taşımadı)
 pub fn mac_dokunus() -> Option<d1::Dokunus> {
     None
 }
-/// Yedek kafaya düşülen çağrı sayısı (sınama)
-pub static YAN_SAY: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
-/// Kafa bağlamı kurulu mu (maç kurulumunda henüz değil)
-pub fn kafa_var() -> bool {
-    KAFA.with(|c| c.borrow().is_some())
-}
-pub fn kafa_ile<R>(f: impl FnOnce(&mut Kafa) -> R) -> R {
-    let k = KAFA.with(|c| c.borrow().clone()).expect("kafa bağlamı kurulmadı (kafa_hazirla)");
-    if let Ok(mut b) = k.try_borrow_mut() {
-        let t = b.D._tick;
-        return crate::sekil::d_tick_ile(t, || f(&mut b));
-    }
-    YAN_SAY.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-    if crate::iz_acik() && std::env::var("ALAN_YAN_IZ").is_ok() { eprintln!("YAN {}", std::backtrace::Backtrace::force_capture().to_string().lines().filter(|l| l.contains("alan_motor::")).take(8).map(|l| l.trim().replace("alan_motor::", "")).collect::<Vec<_>>().join(" < ")); }
-    let (dis, tick) = DIS.with(|d| d.borrow().clone()).expect("kafa dış dünyası kurulmadı");
-    let yan = YAN.with(|y| {
-        let mut y = y.borrow_mut();
-        if let Some(q) = y.iter().find(|q| q.try_borrow_mut().is_ok()) {
-            return q.clone();
-        }
-        let q = Rc::new(RefCell::new(Kafa::yeni(dis.clone())));
-        y.push(q.clone());
-        q
-    });
-    let mut b = yan.borrow_mut();
-    if !Arc::ptr_eq(&b.dis, &dis) {
-        b.dis = dis;
-    }
-    b.D._tick = tick;
-    crate::sekil::d_tick_ile(tick, || f(&mut b))
+/// Maçın kendi kafasıyla çalış (açık bağlam, MIMARI.md Aşama 3): kafa maçın kutusunda (`m.mac.kafa`).
+/// İç içe çağrı (kafa meşgulken yerleşimden kafaya dönüş) yapı gereği olmaz: kafa yerleşimin hizmetlerini
+/// zarsız bağlamla çağırır, o bağlamda yerleşim kafaya dönmez (sekil::pres'in ikili tartısı `c.rnd` ister).
+/// Olursa yapı bozulmuştur: açık hatayla durulur (eskiden yedek kafaya düşülürdü; 5 maç × 900 tikte hiç olmadı).
+pub fn kafa_mac<R>(m: &Mac, f: impl FnOnce(&mut Kafa) -> R) -> R {
+    let k = m.mac.kafa.k.as_ref().expect("kafa_mac: maçın kafası kurulmadı (kafa_hazirla) ya da hafif kopyadan çağrıldı");
+    let mut b = k.try_borrow_mut().expect("kafa_mac: iç içe kafa çağrısı (kafa meşgulken yerleşimden kafaya dönüldü)");
+    f(&mut b)
 }
 
-/// Dünyayı kafanın biçimine çevir.
-pub fn op_dunya(ps: &[Oyuncu]) -> Vec<crate::kafa::kafa1_js::Op> {
-    ps.iter().map(|p| Arc::new(p.clone())).collect()
-}
 
 /// JS `m._prT`: kafa kararda yazar (D._mac === m). Rust'ta kafa kendinde tutar; karardan hemen sonra
 /// maça (yerleşim okur) ve kafa1'in dış dünyasına (girEsik okur) aktarılır.
 pub fn prT_esitle(m: &mut Mac) {
-    let p = KAFA.with(|c| c.borrow().clone()).and_then(|k| k.try_borrow().ok().and_then(|k| k.prT.clone()));
+    let p = m.mac.kafa.k.as_ref().and_then(|k| k.try_borrow().ok().and_then(|k| k.prT.clone()));
     if let Some(p) = p {
         let (hm, _) = p.hm.clone().unwrap_or_default();
         m._prT = Some(crate::model::JM_prT { team: p.team, hId: p.hId, t: p.t.unwrap_or(f64::NAN), m: p.m.clone(), mm: p.mm.clone(), hm, h: p.h });
@@ -369,13 +306,6 @@ pub fn prT_esitle(m: &mut Mac) {
     }
 }
 
-/// Maçsız kullanım (sınamalar): dış dünyası verili bir kafayı kapsamlı bağlama koy.
-pub fn kafa_bagla(dis: Arc<dyn crate::kafa::gecici_dis1::Dis>, tick: Option<f64>) {
-    let mut k = Kafa::yeni(dis.clone());
-    k.D._tick = tick;
-    KAFA.with(|c| *c.borrow_mut() = Some(Rc::new(RefCell::new(k))));
-    DIS.with(|d| *d.borrow_mut() = Some((dis, tick)));
-}
 
 /// JS'in canlı okuduğu sprint bağlamı (self.__mH, taşıyıcı, alıcı, tik): kafa çağrılmadan hemen önce.
 pub fn kural_tazele(m: &Mac) {

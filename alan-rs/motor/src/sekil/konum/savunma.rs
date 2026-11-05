@@ -162,7 +162,7 @@ impl Sv {
         for &q in &self.atk {
             let qp = &c.ps[q];
             if hypot(qp.x - bs.x, qp.y - bs.y) < 9.0 || p.tutQ == Some(q) {
-                cost = jmax(cost, dis::threat(self.att, qp.x, qp.y) * (0.3 + 0.7 * dis::laneOk0(w, c.ps, self.att, (hp.x, hp.y), (qp.x, qp.y))));
+                cost = jmax(cost, dis::threat(self.att, qp.x, qp.y) * (0.3 + 0.7 * dis::laneOk0(&*c.m, w, c.ps, self.att, (hp.x, hp.y), (qp.x, qp.y))));
             }
         }
         let enV = {
@@ -313,7 +313,7 @@ impl Sv {
             }
             let pp = &c.ps[p];
             self.base[p] = Some(if pp.bekci() {
-                let bm = BekM { ps: crate::sekil::yer::BekPs::Duz(c.ps), holder: c.m.holder.map(|h| &c.ps[h]), ben: Some(p) };
+                let bm = BekM { ps: crate::sekil::yer::BekPs::Duz(c.ps), holder: c.m.holder.map(|h| &c.ps[h]), sut: c.m.mac.kafa.k.is_some(), ben: Some(p) };
                 let b = bekci(pp, E.0, E.1, Some(&bm), k);
                 Yer { x: b.0, y: b.1, el: None }
             } else {
@@ -668,7 +668,7 @@ impl Sv {
         if !Mk.is_empty() && !At.is_empty() {
             let aF = c.d.arriveFirm;
             let SH = jmax(1.0, yada(c.d.sutHazir, 1.0));
-            let TQ: Vec<f64> = At.iter().map(|&q| dis::ucusT(hypot(c.ps[q].x - E.0, c.ps[q].y - E.1), aF, None)).collect();
+            let TQ: Vec<f64> = At.iter().map(|&q| dis::ucusT(&*c.m, hypot(c.ps[q].x - E.0, c.ps[q].y - E.1), aF, None)).collect();
             let DG: Vec<f64> = At.iter().map(|&q| jmax(0.0, self.dng(c, q))).collect();
             let mut B: Vec<Vec<f64>> = Vec::new();
             for &p in &Mk {

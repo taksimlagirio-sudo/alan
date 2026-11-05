@@ -57,6 +57,7 @@ Aşama 7'ye kaldı, kural `sina/katman.sh`'ta):
 | Katman | Dosyalar |
 |---|---|
 | kural | `kural/*` |
+| dunya | `dunya/*` (`Varlik`, `Beden`, `Op`, `Dunya` ve aralarındaki çeviriler) |
 | deger | `kafa/kafa1_*`, `kafa/kafa2_{zemin,imkan,dunya,bag}`, `sekil/{yer,pres,takim,ucus,gor,varlik,sabit,gecici_dis}` |
 | yerlesim | `sekil/konum.rs`, `sekil/konum/*` |
 | karar | `kafa/kafa2_{karar,tarti,eski}` |
@@ -136,11 +137,70 @@ kodda çalıştığı için aşamalar küçük parçalarla ve sık `main`'e birl
 | 0 | Güvenlik ağı | Parmak izi (`motor/src/parmak.rs`), `alan-kos … parmak`, `sina/ayni.sh`, başvurular (`sina/ayni/`) | ✅ Başvurular oturum başındaki motorla (b711370) aynı: 4 Kasım'ın bütün hız işleri bit bit davranış korumuş |
 | 1 | Kural katmanı | Enerji/sprint/koşu, tepki, varış tabloları, ikili ve hareket fiziği → `kural/` (saf işlevler; oyuncu + `MacKural`/`&dyn Kural` girer). Kafa bunlara `Dis` yerine `KuralErisim` ile, maçın anlık görüntüsünden (`Dis::kural`) ulaşır | ✅ `kural/{enerji,gec,kos,ikili,hareket}.rs`; `sekil`'deki yinelenen kurallar teke indi; `Dis` 66 → 27 yöntem; `sina/katman.sh` tutuyor |
 | 2 | Değerlendirme katmanı | Yerleşim → kafa iç içe çağrısını kaldırmak; yerleşimin ve değerlendirmenin karar dosyalarına bağını kesmek; katman eşlemesi | ✅ Şut gücü `kural/sut.rs`'e (yedek kafaya düşen çağrı 300 tikte yüz binlerce → 0); `kayipYer`, `riskOf`, `bekYol` `kafa2_zemin`'e; `sina/katman.sh` 4 kural tutuyor. Kalan `Dis` yerleşim yöntemleri (`bekciFm`, `slotBase`, `ilkPres` …) dünya çevirisi gerektirdiği için Aşama 4'te kalkar |
-| 3 | Açık bağlam | `Baglam`, `Ayar`, `MacAni`, `Onbellek`; `kafa_ile` ve `KAFA`/`DIS`/`YAN` kalkar. Önce `deger`, sonra `yerlesim`, sonra `karar` | `kafa_ile` 0; `thread_local` yalnız sayaç/iz için |
+| 3 | Açık bağlam | Kafa iş parçacığına özel değişkenden değil, maçın kutusundan (`m.mac.kafa`) alınır; kafanın durumuna bağlı olmayan değerlendirmeler saf işlev; gizli bağlam (sprint niyeti, kafanın tiki) açık alan | **3a–d ✅**, **3e-1 ✅** `SF_NIYET` → `MacKural::niyet`, **3e-2 ✅** `D_TICK` → `Mc::dtik`, **3e-3 ✅** `KafaD` yalnız değişmez ayar, geçici bağlam `KafaBag`. Kalan 3e-4: bkz. 3.1 |
 | 4 | Tek dünya | `Dunya` + `Gorunum`; kimlik `Pid`; köprü çevirileri kalkar | `ow`, `op_dunya`, `dunya_kopya`, `Varlik` yok; `Arc::ptr_eq` yok |
 | 5 | Veri | `Oyuncu` → `OyuncuDurum` + `OyuncuGovde`; `KafaD` → `Ayar` + geçici durum; `JsDeger` ve gereksiz `Option`'lar | `Oyuncu` kopyası ~300 bayt; `model.rs` üretilmiş taslak değil |
-| 6 | JS bağı | **Karar (5 Kasım): Rust tek doğru kaynak.** JS ile bit bit aynılık kısıtı kalktı; doğrulama `sina/ayni.sh` ve maç istatistikleriyle. Kalan: JS karşılaştırma sınamalarının (`tests/kafa1.rs`, `kafa2_saf.rs` taklitleri, vektör üreticileri) temizliği, Rust adlandırması, sadeleştirme | Karar verildi; temizlik sürüyor |
+| 6 | JS bağı | **Karar (5 Kasım): Rust tek doğru kaynak.** JS ile bit bit aynılık kısıtı kalktı; doğrulama `sina/ayni.sh` ve maç istatistikleriyle | ✅ Temizlik: JS vektörüne bağlı 12 sınama gerekçeli `#[ignore]` (vektör üretilince `--ignored` ile çalışır; temiz klonda düşen ya da sessizce geçen sınama kalmadı); `tests/ayni.rs` `cargo test`'in kendisinde parmak izi başvurusunu denetler; `tests/kafa1.rs`'in JS taklit artıkları silindi; motor ve sınamalar uyarısız. Rust adlandırması ertelendi (bkz. Geri dönülecekler) |
 | 7 | Crate'ler | Katmanlar ayrı crate; döngüyü derleyici yasaklar | `cargo build` katman kuralını zorlar |
+
+### 3.1 Aşama 3e ve 4'ün birlikte planı (5 Kasım)
+
+3e (kafanın içindeki gizli durum) ile 4 (tek dünya) iç içe: kafanın önbelleklerinin çoğu dünyanın gösterimine
+(kopya `Op`'lar, işaretçi kimliği) bağlı. Sıra, her adımın bir sonrakini küçültmesine göre:
+
+| Adım | Ne | Neden bu sırada | Bitti sayılır |
+|---|---|---|---|
+| 3e-1 ✅ | Sprint niyeti `SF_NIYET` → `MacKural::niyet` (kafa tartı süresince dış dünyasının anlık görüntüsüne koyar) | Davranışı etkileyen gizli durum; küçük | `SF_NIYET` yok; yol çalışıyor (900 tikte 93 konur, 37 816 okunur) |
+| 3e-2 ✅ | Kafanın tiki `D_TICK` → `Mc::dtik` (pres → `presKesis` → `yolBag` → `hizYanilgi` boyunca parametre) | Davranışı etkileyen gizli durum; küçük | `D_TICK`, `d_tick_ile` yok |
+| 3e-3 ✅ | `KafaD`'nin 22 `_` alanı (geçici bağlam: `_tick`, `_gPr`, `_sav*`, `_kenar` …) ayrı yapıya (`Kafa::bag`); `KafaD` yalnız değişmez ayar | Saf değerlendirmeler (`pressAt_d` …) ve yerleşimin `c.d`'si gerçekten değişmez ayarı görsün; "geçici değiştir, geri koy" kalıpları görünür olsun | `KafaD`'de `_` alanı yok (geçici bağlam `KafaBag`, `Kafa::bag`; ayarın hiçbir alanı yazılmıyor: kaydet/geri koy yalnız bağlamı korur) |
+| 4a ✅ | Kimlik envanteri: 46 `ayni` (`Arc::ptr_eq`) yerinin anlamı (gerçek oyuncu mu, kopyası mı, aynı dünyada mı) | 4b/4c'den önce: paylaşım ve görünümler kimliği bozmasın | Her yer belgeli ve sınıflı (3.2), adlar anlamı söylüyor (`ayni_nesne`, `ayni_oyuncu`, `ayni_secenek`). Sıraya (`Pid`) çeviri 4c'de: kafanın dünyasındaki oyuncular (`Op`) bugün sıra taşımıyor |
+| 4b ✅ (yeniden kapsamlandı) | Ölçüm (5 Kasım, 60 tik): oyuncu kopyası artık sürenin yalnız %2,4'ü (önceden ~%6; davranış oturumunun hız işleri en sıcak yerleri temizledi), yarısı `ow` çevirisi (4c'nin konusu). 35 yere tek tek görünüm koymak ~%1 getirir: yapılmadı. Yapılan: B sınıfı "değişti mi" soruları nesne kimliğinden bağımsız: `bekKay_d` (Bekçi yer değiştirdiyse `Some`), `respond_d` (değişen oyuncuların açık listesi) | 4c dünyanın gösterimini değiştirince kimliğe dayanan bu sorular kırılmasın | B sınıfının 10 yeri (çalışmayan 7'si dahil) `ayni_nesne` kullanmıyor |
+| 4c-1 ✅ | Dünya katmanı: `Varlik`/`Beden`/`hayal`, `Op`/`Dunya` ve dört çeviri (`op_dunya`, `ow_kur`/`ow`/`ow_paylas`, `dunya_kopya`) `dunya/`'da; kimlik kuralı orada belgeli; `sina/katman.sh`'a kural | Çeviriler tek yerde, kimlik kuralı açık | `dunya` üst katmanlara bağlı değil |
+| 4c-2 (kapsam kararı) | Kafanın `Op` yerine görünüm (`Varlik`) üzerinde çalışması; çevirilerin kalkması | Ölçüm: çeviriler artık sürenin ~%1,5'i; kafanın ~14 bin satırı `&[Op]` üzerinden alanlara doğrudan erişiyor: çok günlük iş. Ayrıca çeviriler arasında nesne paylaşmak `dolanma`'nın davranışını değiştirir (3.2 C): önce o davranış kararı | Kullanıcı kararı |
+| 3e-4 | Kafanın önbellekleri ömürlerine göre (`Onbellek`: tik ömürlü `ge`, `rnb`, `keepP_son` …; saf kalıcı `ucus`, `suty` …), tik başında açıkça temizlenir | 4c'den sonra: anahtarlar artık işaretçi değil | `Kafa`'da dağınık `RefCell` önbellek yok |
+
+Kalan `thread_local`'lar (13): saf önbellekler (`GEC`, `GTB`, `GECY_K`, `BEK_DER`, `BEK_YOL`: değer yalnız anahtardan,
+sıradan bağımsız; iş parçacığı başına kabul edilir), tamponlar (`OW`, `DUNYA_KOPYA`, `ILK_TAMPON`, `SAHTE`, `SABLON`: 4c'de
+çoğu kalkar), sayaç/iz ve deney (`*_SAY`, `*_OLC`, `SON_KUME`, `ONDEN_SAY`), paralel işçi durumu (`DAG`, `ICTE`, `TABLO`).
+Davranışı etkileyen gizli durum yok.
+
+### 3.2 Kimlik envanteri (Aşama 4a, 5 Kasım)
+
+Kodda üç ayrı "aynı mı" sorusu var; 4a'dan önce üçü de `ayni` adını taşıyordu, artık adları anlamlarını söylüyor:
+
+| İşlev | Anlam | JS |
+|---|---|---|
+| `ayni_nesne` (`kafa1_js`; `kafa2_baglam` yeniden dışa açar) | Aynı nesne mi: bir oyuncunun kopyası aslıyla aynı değil; kimlik numarası `NaN` olan hayalet yalnız kendisiyle aynı | `a === b` |
+| `ayni_oyuncu` (`kafa1_secenek`) | Aynı takımın aynı numaralı oyuncusu mu: kopyası da sayılır | `a.team === b.team && a.id === b.id` |
+| `ayni_secenek` (`mac/kafa_bag`) | Seçenek kafanın şu an yürüttüğü karar mı (`_kafaId`); oyuncu kimliğiyle ilgisi yok | |
+
+**Ölçüm.** Her çağrı yerinde nesne kimliği ile oyuncu kimliğinin ne sıklıkla ayrıştığı sayıldı
+(`#[track_caller]` ile geçici ölçüm; 3 maç × 600 tik ve 2 maç × 2700 tik):
+
+| Sınıf | Yerler | Ayrışma | 4b/4c'de |
+|---|---|---|---|
+| **A. Dünyadaki kendisi mi** (taşıyıcıyı/alıcıyı dünyada bulmak ya da dışlamak) | `kafa1_js::sira`, `kafa1_enerji` 262/275, `kafa1_savur` 282/334, `kafa1_ikili:1206` (kütle: `p === h`), `kafa1_secenek` (5 yer, oyuncu kimliği), `kafa2_tarti` 263/451/456/547/714, `kafa2_zemin:401` | Hiç | Sıra (`Pid`) ile: karşılaştırılan hep dünyanın kendi öğesi |
+| **A'. Kendisi mi, ama karşılaştırılan hayalet olabilir** | `kafa1_ikili` 272/1379 | Yalnız nesne eşit: hayaletler (`NaN`) 7–566 bin | Hayaletin sırası yok (`Pid` = yok); oyuncu kimliği kullanılamaz |
+| **B. Değişti mi** (cevap dünyasında hangi oyuncu yeni kopya) | `kafa2_dunya:410` (Bekçi'nin yerleşmiş kopyası), `kafa2_tarti` 101/117 (cevap dünyası `Rw` ile `src`); çalışmayan aynı kalıp: `kafa2_karar` 226/231/312, `kafa2_eski` 114/646/852/855 | Yalnız oyuncu eşit: kopyalar, 114–330 bin | Görünümde değişenler açık liste (`Gorunum::degisen`): kimlik sorusu kalkar |
+| **C. Kopya dünyada kendi aslını atlamamak** | `kafa1_ikili:235` (`dolanma`: yoldaki gövdelerin etrafından dolanma) | İkisi de: kopyalar 4 milyon, hayaletler 2,8 milyon | **Bulgu**: `p` hayali bir kopyayken dünyadaki asıl gövdesi atlanmıyor, oyuncu kendi gerçek gövdesinin etrafından dolanmaya çalışıyor (JS'ten gelen davranış). Düzeltmek davranış değişikliği: davranış oturumunun kararı. 4b/4c bu yerde nesne kimliğini korur |
+| **D. Önbellek/dünya anahtarı** | `kafa2_dunya:518` (taşıyıcının tutma önbelleği: aynı nesne + dünya adresi), `kafa2_tarti` 686/693/695 (`o olmasa` dünyaları), `mac/kafa_dis` `DUNYA_KOPYA` (`Arc::ptr_eq`) | Hiç (tarti) | 4c'de dünya sürümü/kimliği; işaretçi ve adres anahtarı kalkar |
+| **Çalışmayan** → silindi | `kafa2_eski` (7 yer), `kafa2_karar` 226/231/312, `kafa2_dunya` 259/518 | Ölçüm (kapsam: 8 maç × 1500 tik) ve kanıt: `holdWorld` hiç çağrılmıyordu ve `_inLook`'u `true` yapan tek yerdi; dolayısıyla `PR = !_inLook` hep `true`, `!PR` arkasındaki eski kafa ölüydü | Silindi (5 Kasım): `kafa2_eski.rs`, `holdWorld` ve hayali maç düzeneği, kontra haritası, zincir, sahte hamle tartısı, `_inLook`; ölü kalan 21 öğe (~1700 satır). Motor uyarısız derleniyor |
+
+Sonuç: 4b/4c'de kimlik **sıra (`Pid`) + kaynak** (gerçek oyuncu / kopya / hayalet) olarak taşınır. A sınıfı sırayla
+karşılaştırılır, B sınıfı görünümün değişen listesinden okunur, C sınıfı (tek yer) kopyanın aslından ayrı olduğunu
+açıkça bilir, D sınıfı dünya sürümüyle anahtarlanır.
+
+### 3.3 Geri dönülecekler (5 Kasım)
+
+Bilerek ertelenen işler; her biri bir karar ya da uygun bir an bekliyor:
+
+| Konu | Neden ertelendi | Ne zaman |
+|---|---|---|
+| **`dolanma` davranışı** (3.2 C): hayali bir kopya oyuncu, dünyadaki kendi gerçek gövdesinin etrafından dolanmaya çalışıyor (2 maç × 2700 tikte ~4 milyon kez). JS'ten gelen davranış, büyük olasılıkla hata | Düzeltmek davranış değişikliği: iş bölümüne göre davranış oturumunun kararı (bayrak arkasında, ayrı commit, `sina/ayni.sh --yaz`) | Davranış oturumu ele aldığında; 4c-2'den önce |
+| **4c-2: tek dünya** (kafanın `Op` yerine görünüm `Varlik` üzerinde çalışması, çevirilerin kalkması) | Çeviriler artık sürenin ~%1,5'i; kafanın ~14 bin satırı `&[Op]` üzerinden alanlara doğrudan erişiyor (çok günlük iş, davranış oturumuyla sürekli çakışır); çeviriler arasında nesne paylaşmak `dolanma`'yı değiştirir | `dolanma` kararından sonra, kafa kodu durulduğunda |
+| **Rust adlandırması** (JS adları: `ALAN_SPR`, `decide0K`, `non_snake_case` izinleri) | Binlerce satıra dokunur; davranış oturumuyla sürekli çakışır; değeri okunurluk | Aşama 7 (crate'lere bölme) ile birlikte |
+| **Aşama 5: veri** (`Oyuncu` sıcak/soğuk, `JsDeger`, gereksiz `Option`'lar) | Kopya maliyeti %2,4'e indi; `model.rs` her katmanın ortak tipi, bölmesi 4c-2'ye bağlı | 4c-2 ile |
+| **3e-4: önbelleklerin ömürleri** | Anahtarların çoğu nesne/dünya kimliği; 4c-2'den sonra anlamlı | 4c-2'den sonra |
 
 Her aşamanın sonunda: `sina/ayni.sh` aynı, `cargo test` geçen sayısı düşmemiş, `alan-kos` hızı ölçülmüş
 (hız hedef değil, ama yapı değişikliği yavaşlatmamalı), wasm kareleri sitedekiyle aynı.

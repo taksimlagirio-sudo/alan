@@ -33,58 +33,14 @@
 //! - ALAN_EN3_KUL      core.js:169     barın kullanım değeri
 #![allow(non_snake_case, unused_variables, non_upper_case_globals)]
 
-use crate::model::{JMTacE, Oyuncu};
+use crate::model::Oyuncu;
 
 use super::varlik::{KayipF, Mc, Varlik};
 
 // ---- AlanDecide ----
 use crate::kafa::kafa1_js::{nk, Op};
-use crate::mac::kafa_dis::kafa_ile;
-/// Yerleşimin dünyasını kafanın dünyasına çevir (varlık: konum/hız kendinde, beden oyuncudan).
-fn ow_kur(w: &[Varlik], oy: &[Oyuncu]) -> Vec<Op> {
-    w.iter()
-        .map(|v| {
-            let mut o = v.govde(oy).clone();
-            o.x = v.x;
-            o.y = v.y;
-            o.vx = v.vx;
-            o.vy = v.vy;
-            std::sync::Arc::new(o)
-        })
-        .collect()
-}
-thread_local! {
-    /// ow_paylas kapsamındaki dünya: (w adresi, w uzunluğu, oy adresi, çevrilmiş dünya — ilk istekte kurulur)
-    static OW: std::cell::RefCell<Option<(usize, usize, usize, Option<std::rc::Rc<Vec<Op>>>)>> = const { std::cell::RefCell::new(None) };
-}
-/// `f` boyunca (w, oy) dünyasının kafa çevirisini paylaştırır: aynı dünyayı soran her çağrı bir kez kurulmuş
-/// çeviriyi alır. Kapsam boyunca w ve oy paylaşımlı ödünçte (değişemez), bu yüzden sonuç her seferinde
-/// kurulanla birebir aynıdır. Dünyayı değiştirebilecek çağrılar (ör. &mut Mc alanlar) kapsam dışında kalmalı.
-pub fn ow_paylas<R>(w: &[Varlik], oy: &[Oyuncu], f: impl FnOnce() -> R) -> R {
-    let eski = OW.with(|o| o.replace(Some((w.as_ptr() as usize, w.len(), oy.as_ptr() as usize, None))));
-    let r = f();
-    OW.with(|o| *o.borrow_mut() = eski);
-    r
-}
-fn ow(w: &[Varlik], oy: &[Oyuncu]) -> std::rc::Rc<Vec<Op>> {
-    let a = (w.as_ptr() as usize, w.len(), oy.as_ptr() as usize);
-    let hazir = OW.with(|o| match &*o.borrow() {
-        Some((wp, wl, op, Some(v))) if (*wp, *wl, *op) == a => Some(v.clone()),
-        _ => None,
-    });
-    if let Some(v) = hazir {
-        return v;
-    }
-    let v = std::rc::Rc::new(ow_kur(w, oy));
-    OW.with(|o| {
-        if let Some((wp, wl, op, slot)) = &mut *o.borrow_mut() {
-            if (*wp, *wl, *op) == a && w.len() > 0 {
-                *slot = Some(v.clone());
-            }
-        }
-    });
-    v
-}
+use crate::dunya::ow;
+pub use crate::dunya::ow_paylas;
 fn ops(ps: &[Oyuncu]) -> Vec<Op> {
     crate::mac::kafa_dis::op_dunya(ps)
 }
@@ -93,31 +49,24 @@ pub fn threat(team: u8, x: f64, y: f64) -> f64 {
     // saf: kafa bağlamı aranmaz (kesişme döngüsünde milyonlarca kez çağrılır)
     crate::kafa::kafa1_tehlike::threat_d(crate::mac::gecici_dis::kafa_d(), team as f64, x, y)
 }
+/// Saf (yetenek ve kuraldan): kafaya uğramaz.
 pub fn frenT(p: &Oyuncu, x: f64, y: f64, R: f64, T: f64, v: f64) -> f64 {
-    kafa_ile(|k| k.frenT(p, x, y, R, T, v))
+    crate::kafa::kafa1_varis::frenT_p(p, x, y, R, T, v)
 }
+/// Saf (ayardan): kafaya uğramaz.
 pub fn freeAt(w: &[Varlik], oy: &[Oyuncu], team: f64, x: f64, y: f64) -> f64 {
-    kafa_ile(|k| k.freeAt(&ow(w, oy), team, x, y))
+    let o = ow(w, oy);
+    crate::kafa::kafa1_tehlike::freeAt_d(crate::kafa::kafa2_baglam::ayar(), o.iter().map(|p| &**p), team, x, y)
 }
 pub fn coreSide(h: &Oyuncu) -> (f64, f64) {
     let c = crate::kafa::kafa1_ikili::coreSide_p(h);
     (c.ux, c.uy)
 }
-pub fn govdeV(h: &Oyuncu) -> f64 {
-    kafa_ile(|k| k.govdeV(h))
-}
 /// Taşıyıcının şimdi çekebileceği en sert şutun hızı (tam şarj): kural katmanından, kafaya uğramadan
 /// (eskiden yerleşim → kafa iç içe çağrısıydı; yedek kafaya düşen çağrıların neredeyse hepsi buradandı).
-/// Maç kurulurken (kafa yokken) eskisi gibi None.
-pub fn sutHiz(h: &Oyuncu) -> Option<f64> {
-    if !crate::mac::kafa_dis::kafa_var() {
-        return None;
-    }
-    Some(crate::kural::sut::sutHiz(h))
-}
-/// JS `savurPlan(h, {vx, vy}, ca0, w0, sYon, null, itme, E)` → `pl ? pl.T : None`.
-pub fn savurPlan(h: &Oyuncu, vx: f64, vy: f64, ca0: f64, w0: f64, sYon: f64, itme: bool, E: f64) -> Option<f64> {
-    kafa_ile(|k| k.savurPlan(h, nk(vx, vy), ca0, w0, sYon, None, itme, E).map(|p| p.T))
+/// Maç kurulurken (kafa yokken) çağrılmaz: Bekçi'nin bağlamı (BekM::sut) bunu bilir.
+pub fn sutHiz(h: &Oyuncu) -> f64 {
+    crate::kural::sut::sutHiz(h)
 }
 pub fn topK(h: &Oyuncu) -> f64 {
     crate::kafa::kafa1_ikili::topK_p(h, crate::mac::kafa_dis::mac_dokunus())
@@ -126,66 +75,64 @@ pub fn topK(h: &Oyuncu) -> f64 {
 fn kim<'a>(src: &'a [Op], p: &'a Oyuncu) -> &'a Oyuncu {
     src.iter().find(|q| q.id == p.id && q.team == p.team).map(|q| &**q).unwrap_or(p)
 }
-pub fn duelP(q: &Oyuncu, h: &Oyuncu, ps: &[Oyuncu]) -> f64 {
+pub fn duelP(m: &crate::model::Mac, q: &Oyuncu, h: &Oyuncu, ps: &[Oyuncu]) -> f64 {
     let src = ops(ps);
-    kafa_ile(|k| k.duelP(kim(&src, q), kim(&src, h), &src, None))
+    crate::mac::kafa_dis::kafa_mac(m, |k| k.duelP(kim(&src, q), kim(&src, h), &src, None))
 }
-pub fn girThr(q: &Oyuncu, h: &Oyuncu, ps: &[Oyuncu]) -> f64 {
+pub fn girThr(m: &crate::model::Mac, q: &Oyuncu, h: &Oyuncu, ps: &[Oyuncu]) -> f64 {
     let src = ops(ps);
-    kafa_ile(|k| k.girThr(kim(&src, q), kim(&src, h), &src))
+    crate::mac::kafa_dis::kafa_mac(m, |k| k.girThr(kim(&src, q), kim(&src, h), &src))
 }
-pub fn ucusT(L: f64, arrive: f64, al: Option<f64>) -> f64 {
-    kafa_ile(|k| k.ucusT(L, arrive, al))
+pub fn ucusT(m: &crate::model::Mac, L: f64, arrive: f64, al: Option<f64>) -> f64 {
+    crate::mac::kafa_dis::kafa_mac(m, |k| k.ucusT(L, arrive, al))
 }
 /// `arr`: None = JS'te verilmedi (undefined).
-pub fn laneOk(w: &[Varlik], oy: &[Oyuncu], team: u8, A: (f64, f64), B: (f64, f64), arr: f64, lag: Option<f64>) -> f64 {
-    kafa_ile(|k| k.laneOk(&ow(w, oy), team as f64, nk(A.0, A.1), nk(B.0, B.1), Some(arr), lag))
+pub fn laneOk(m: &crate::model::Mac, w: &[Varlik], oy: &[Oyuncu], team: u8, A: (f64, f64), B: (f64, f64), arr: f64, lag: Option<f64>) -> f64 {
+    crate::mac::kafa_dis::kafa_mac(m, |k| k.laneOk(&ow(w, oy), team as f64, nk(A.0, A.1), nk(B.0, B.1), Some(arr), lag))
 }
 /// JS laneOk(src, team, A, B) (arr ve lag verilmeden).
-pub fn laneOk0(w: &[Varlik], oy: &[Oyuncu], team: u8, A: (f64, f64), B: (f64, f64)) -> f64 {
-    kafa_ile(|k| k.laneOk(&ow(w, oy), team as f64, nk(A.0, A.1), nk(B.0, B.1), None, None))
+pub fn laneOk0(m: &crate::model::Mac, w: &[Varlik], oy: &[Oyuncu], team: u8, A: (f64, f64), B: (f64, f64)) -> f64 {
+    crate::mac::kafa_dis::kafa_mac(m, |k| k.laneOk(&ow(w, oy), team as f64, nk(A.0, A.1), nk(B.0, B.1), None, None))
 }
-pub fn bekYol(w: &[Varlik], oy: &[Oyuncu], team: u8, A: (f64, f64), B: (f64, f64), lag: f64) -> f64 {
-    kafa_ile(|k| crate::kafa::kafa2_zemin::bekYol(k, &ow(w, oy), team as f64, nk(A.0, A.1), nk(B.0, B.1), Some(lag)))
+pub fn bekYol(m: &crate::model::Mac, w: &[Varlik], oy: &[Oyuncu], team: u8, A: (f64, f64), B: (f64, f64), lag: f64) -> f64 {
+    crate::mac::kafa_dis::kafa_mac(m, |k| crate::kafa::kafa2_zemin::bekYol(k, &ow(w, oy), team as f64, nk(A.0, A.1), nk(B.0, B.1), Some(lag)))
 }
-pub fn yerDeger(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64, ch: f64) -> f64 {
-    kafa_ile(|k| crate::kafa::kafa2_zemin::yerDeger(k, &ow(w, oy), team as f64, x, y, ch))
+pub fn yerDeger(m: &crate::model::Mac, w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64, ch: f64) -> f64 {
+    crate::mac::kafa_dis::kafa_mac(m, |k| crate::kafa::kafa2_zemin::yerDeger(k, &ow(w, oy), team as f64, x, y, ch))
 }
 pub fn recvCh(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64, ch: f64, q: Option<&Oyuncu>) -> f64 {
-    // kafanın recvCh'i dünyayı okumaz: köprü kurulmaz
-    let _ = (w, oy);
-    kafa_ile(|k| match q {
-        Some(q) => k.recvCh(&[], team as f64, x, y, ch, q),
-        None => k.recvCh(&[], team as f64, x, y, ch, &Oyuncu::bos()),
-    })
+    // saf: dünyayı ve kafayı okumaz
+    let _ = (w, oy, team, x, y, q);
+    crate::kafa::kafa1_tehlike::recvCh_p(ch)
 }
-pub fn keepP(h: &Oyuncu, w: &[Varlik], oy: &[Oyuncu], dir: Option<(f64, f64)>, T: f64) -> f64 {
-    kafa_ile(|k| k.keepP(h, &ow(w, oy), dir.map(|d| nk(d.0, d.1)), T))
+pub fn keepP(m: &crate::model::Mac, h: &Oyuncu, w: &[Varlik], oy: &[Oyuncu], dir: Option<(f64, f64)>, T: f64) -> f64 {
+    crate::mac::kafa_dis::kafa_mac(m, |k| k.keepP(h, &ow(w, oy), dir.map(|d| nk(d.0, d.1)), T))
 }
-pub fn runOn(w: &[Varlik], oy: &[Oyuncu], team: u8, h: &Oyuncu, at: (f64, f64)) -> f64 {
-    kafa_ile(|k| k.runOn(&ow(w, oy), team as f64, h, nk(at.0, at.1)))
+pub fn runOn(m: &crate::model::Mac, w: &[Varlik], oy: &[Oyuncu], team: u8, h: &Oyuncu, at: (f64, f64)) -> f64 {
+    crate::mac::kafa_dis::kafa_mac(m, |k| k.runOn(&ow(w, oy), team as f64, h, nk(at.0, at.1)))
 }
-pub fn space(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64) -> f64 {
-    kafa_ile(|k| k.space(&ow(w, oy), team as f64, x, y))
+pub fn space(m: &crate::model::Mac, w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64) -> f64 {
+    crate::mac::kafa_dis::kafa_mac(m, |k| k.space(&ow(w, oy), team as f64, x, y))
 }
-pub fn front(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64) -> f64 {
-    kafa_ile(|k| k.front(&ow(w, oy), team as f64, x, y))
+pub fn front(m: &crate::model::Mac, w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64) -> f64 {
+    crate::mac::kafa_dis::kafa_mac(m, |k| k.front(&ow(w, oy), team as f64, x, y))
 }
 pub fn dagin(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, vv: f64, y: f64) -> f64 {
-    kafa_ile(|k| k.dagin(&ow(w, oy), team as f64, x, vv, Some(y)))
+    // saf: kafaya uğramaz
+    let o = ow(w, oy);
+    crate::kafa::kafa1_tehlike::dagin_p(o.iter().map(|p| &**p), team as f64, x, vv, Some(y))
 }
-pub fn kayipYer(ps: &[Oyuncu], team: u8, ch: f64, h: &Oyuncu, tac: Option<&crate::mac::Tac>) -> KayipF {
+pub fn kayipYer(m: &crate::model::Mac, ps: &[Oyuncu], team: u8, ch: f64, h: &Oyuncu, tac: Option<&crate::mac::Tac>) -> KayipF {
     let src = std::sync::Arc::new(ops(ps));
     let tac = tac.map(crate::mac::gecici_dis::kafa_tac);
-    let f = kafa_ile(|k| crate::kafa::kafa2_zemin::kayipYer(k, &src, team as f64, ch, h, tac.as_ref()));
+    let f = crate::mac::kafa_dis::kafa_mac(m, |k| crate::kafa::kafa2_zemin::kayipYer(k, &src, team as f64, ch, h, tac.as_ref()));
     let f = std::sync::Mutex::new(f);
-    std::sync::Arc::new(move |x: f64, y: f64| kafa_ile(|k| f.lock().unwrap().deger(k, x, y)))
+    std::sync::Arc::new(move |m: &crate::model::Mac, x: f64, y: f64| crate::mac::kafa_dis::kafa_mac(m, |k| f.lock().unwrap().deger(k, x, y)))
 }
 /// decide.js:6875 `PNC_GORUS`.
 pub const PNC_GORUS: f64 = 48.0;
 /// decide.js `DU.fakeT`, `DU.oyalaR`, `DU.engage`.
 pub const DU_fakeT: f64 = 9.0;
-pub const DU_oyalaR: f64 = 26.0;
 pub const DU_engage: f64 = 2.4;
 
 // ---- AlanMatch ----

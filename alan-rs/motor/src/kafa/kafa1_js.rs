@@ -40,12 +40,15 @@ pub fn yao(a: Option<f64>, b: f64) -> f64 {
 
 /// JS kimlik karşılaştırması (`p === q`): iki başvuru aynı satır mı.
 #[inline(always)]
-pub fn ayni(a: &Oyuncu, b: &Oyuncu) -> bool {
+/// Nesne kimliği (JS `a === b`): ikisi aynı nesne mi. Bir oyuncunun kopyası (hayali konum, cevap dünyası)
+/// aslıyla aynı **değildir**; kimlik numarası `NaN` olan hayaletler de yalnız kendileriyle aynıdır.
+/// `Op` (`Arc<Oyuncu>`) da verilebilir: aynı paylaşımlı nesne, aynı adres demektir. Kimlik envanteri: MIMARI.md 3.2.
+pub fn ayni_nesne(a: &Oyuncu, b: &Oyuncu) -> bool {
     std::ptr::eq(a, b)
 }
 /// `src.indexOf(h)` (kimlikle).
 pub fn sira(src: &[Op], h: &Oyuncu) -> Option<usize> {
-    src.iter().position(|p| ayni(p, h))
+    src.iter().position(|p| ayni_nesne(p, h))
 }
 /// `src.find(p => p.id === q.id && p.team === q.team)`.
 pub fn bul<'a>(src: &'a [Op], q: &Oyuncu) -> Option<&'a Oyuncu> {
@@ -271,16 +274,6 @@ fn rem_pio2(x: f64) -> Option<(i32, f64, f64)> {
     None
 }
 
-/// JS `Math.max(...dizi)` (boşsa -Infinity).
-pub fn enb(v: impl Iterator<Item = f64>) -> f64 {
-    let mut m = f64::NEG_INFINITY;
-    for x in v {
-        m = crate::mat::jmax(m, x);
-    }
-    m
-}
 
 /// Dünyanın bir oyuncusu (kafa2 ile ortak): dünya kopyası yalnız değişen oyuncuyu kopyalar.
-pub type Op = std::sync::Arc<Oyuncu>;
-/// Hayali dünya.
-pub type Dunya = Vec<Op>;
+pub use crate::dunya::Op;

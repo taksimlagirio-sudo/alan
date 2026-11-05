@@ -12,8 +12,7 @@ use crate::model::{JMTacE, KafaD, Oyuncu};
 
 use std::sync::Arc;
 
-pub type Op = Arc<Oyuncu>;
-pub type Dunya = Vec<Op>;
+pub use crate::dunya::{Dunya, Op};
 pub type Pid = usize;
 
 /// Zar (JS `rnd`: maçın zar dizisi ya da hayali dünyanın zarı).
@@ -111,9 +110,8 @@ pub fn sabitle(x: f64, n: i32) -> f64 {
 pub fn bul_i(w: &[Op], id: f64, team: f64) -> Option<usize> {
     w.iter().position(|z| z.id == id && z.team == team)
 }
-pub fn ayni(a: &Op, b: &Op) -> bool {
-    Arc::ptr_eq(a, b)
-}
+/// Nesne kimliği (JS `a === b`); `Op`'lar için de geçerli (aynı paylaşımlı nesne, aynı adres).
+pub use super::kafa1_js::ayni_nesne;
 
 /// Etkin taktik (JS `tacEff(m, t)`: `m.tac[t]` + maç durumu: `macK`, `macZ`, `kontra`, kp, yz).
 /// Kafa yalnız şu alanları okur; maç döngüsü kurar.
@@ -211,24 +209,13 @@ pub struct Sw {
     pub y: f64,
 }
 
-/// JS holdWorld'ün sonucu (`{ lost, lostT, ps, ch }`)
-#[derive(Clone, Debug)]
-pub struct HoldW {
-    pub lost: bool,
-    pub lostT: Option<f64>,
-    pub ps: Arc<Dunya>,
-    pub ch: f64,
-}
-
-/// Kafa 2'nin modül düzeyi önbellekleri (JS: PWM/PWT, holdWorld._c, BSK/BSKt, BSC, IMKB/IMKBT,
+/// Kafa 2'nin modül düzeyi önbellekleri (JS: PWM/PWT, BSK/BSKt, BSC, IMKB/IMKBT,
 /// IMKK/IMKKt, IMKO, IT, SAH_F, IMK_OFS, IMK_INAN_T, DRM).
 #[derive(Default)]
 pub struct Kafa2Durum {
     /// pwKos: oyuncu nesnesi (kimlik) → koşu satırları
     pub PWM: crate::HizliMap<usize, (Op, Vec<PwE>)>,
     pub PWT: Option<f64>,
-    /// holdWorld._c
-    pub hold_c: Option<(Op, usize, f64, Option<f64>, f64, HoldW)>,
     /// bskTab
     pub BSK: crate::HizliMap<String, Vec<f64>>,
     pub BSKt: Option<f64>,
@@ -246,10 +233,7 @@ pub struct Kafa2Durum {
     pub IMK_INAN_T: f64,
     /// JS `self.__sahF` (görünüm için)
     pub sahF_iz: Option<(Option<f64>, f64, Arc<crate::kafa::kafa2_zemin::Sahiplik>)>,
-    /// D._zin (zincir haritası; eski kafa)
-    pub zin: Option<crate::kafa::kafa2_eski::Zincir>,
-    /// JS `_inLook` / `_noHold` / `_noFake` / `_dalgada` / `_kayipYap` (KafaD'de yok)
-    pub _inLook: bool,
+    /// JS `_noHold` / `_noFake` / `_dalgada` / `_kayipYap` (KafaD'de yok)
     pub _noHold: bool,
     pub _noFake: bool,
     pub _dalgada: bool,
@@ -262,12 +246,18 @@ pub struct Kafa2Durum {
 pub use super::kafa1_baglam::Kafa;
 
 /// JS `D`'nin başlangıç değerleri (tek kaynak: `kafa1_param::d_js`).
+/// Kafanın değişmez ayarları (JS AlanDecide.D'nin sabit alanları): bir kez kurulur. Saf değerlendirmeler
+/// (`pressAt_d`, `threat_d` …) bunu açıkça alır; kafanın kendi `D`'si bunun kopyası + geçici bağlam alanları.
+pub fn ayar() -> &'static KafaD {
+    static D: std::sync::OnceLock<KafaD> = std::sync::OnceLock::new();
+    D.get_or_init(kafa_d)
+}
 pub fn kafa_d() -> KafaD {
     super::kafa1_param::d_js()
 }
 
 /// D'nin `_` alanlarını (`_tick` dışında) boşaltır (JS: `for (k of Object.keys(D)) if (k[0] === "_" && k !== "_tick") delete D[k]`).
-pub fn d_alt_bosalt(d: &mut KafaD) {
+pub fn d_alt_bosalt(d: &mut crate::model::KafaBag) {
     d._tekL = None;
     d._sut = None;
     d._zin = None;

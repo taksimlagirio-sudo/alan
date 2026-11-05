@@ -86,6 +86,75 @@ pub struct BosOy {
     pub t: Vec<i8>,
 }
 
+// ---- saf değerlendirmeler (MIMARI.md Aşama 3): kafanın durumuna değil, yalnız değişmez ayara (KafaD) bağlı.
+// Kafa, yerleşim ve maç aynı işlevi çağırır; dünya kopyalanmaz (oyuncular üzerinde dolaşılır).
+
+/// Rakip etkisinin toplamı (decide.js:140).
+pub fn oppAt_p<'a>(src: impl IntoIterator<Item = &'a Oyuncu>, team: f64, x: f64, y: f64) -> f64 {
+    let mut s = 0.0;
+    for p in src {
+        if p.team != team {
+            s += p.etki().infl(x, y);
+        }
+    }
+    s
+}
+/// Bölge katı (decide.js:3945): kaleye yakınlıkla baskının menzili daralır.
+pub fn zoneR_d(d: &crate::model::KafaD, team: f64, x: f64, y: f64) -> f64 {
+    let gx = gx_of(team);
+    let r = hypot(gx - x, GCY - y);
+    d.zoneMin + (1.0 - d.zoneMin) * jmin(1.0, jmax(0.0, (r - 8.0) / d.zoneD))
+}
+/// Baskı (decide.js:3949).
+pub fn pressAt_d<'a>(d: &crate::model::KafaD, src: impl IntoIterator<Item = &'a Oyuncu>, team: f64, x: f64, y: f64) -> f64 {
+    let z = zoneR_d(d, team, x, y);
+    let mut s = 0.0;
+    for p in src {
+        if p.team == team || p.noTouch {
+            continue;
+        }
+        let d = hypot(p.x - x, p.y - y) / z;
+        let r = 0.55 * ya(p.R, 8.0);
+        s += ya(p.D, 1.0) * exp(-d * d / (r * r));
+    }
+    s
+}
+/// Boşluk (decide.js:3959).
+pub fn freeAt_d<'a>(d: &crate::model::KafaD, src: impl IntoIterator<Item = &'a Oyuncu>, team: f64, x: f64, y: f64) -> f64 {
+    exp(1.6 * -pressAt_d(d, src, team, x, y))
+}
+/// Rakiplerin dağınıklığı (saf): (x, y)'den kaleye daha yakın rakip sayısıyla.
+pub fn dagin_p<'a>(src: impl IntoIterator<Item = &'a Oyuncu>, team: f64, x: f64, vv: f64, y: Option<f64>) -> f64 {
+    let gx = gx_of(team);
+    let dB = match y {
+        Some(y) => hypot(x - gx, y - GCY),
+        None => 0.0,
+    };
+    let mut n = 0;
+    for o in src {
+        if o.team != team && !o.bekci() {
+            let ic = match y {
+                Some(_) => hypot(o.x - gx, o.y - GCY) < dB,
+                None => (o.x - gx).abs() < (x - gx).abs(),
+            };
+            if ic {
+                n += 1;
+            }
+        }
+    }
+    let kat = match n {
+        0 => 1.6,
+        1 => 1.3,
+        2 => 1.1,
+        _ => 1.0,
+    };
+    1.0 - pow(jmax(0.0, 1.0 - jmin(1.0, vv)), kat)
+}
+/// Alıcının şarjı (decide.js:3962; tek enerji açık: max(.05, ch)).
+pub fn recvCh_p(ch: f64) -> f64 {
+    jmax(0.05, ch)
+}
+
 impl Kafa {
     /// JS pasMax()
     pub fn pasMax(&self) -> f64 {
@@ -98,13 +167,7 @@ impl Kafa {
     }
     /// Rakip alanı (decide.js:140).
     pub fn oppAt(&self, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
-        let mut s = 0.0;
-        for p in src {
-            if p.team != team {
-                s += p.etki().infl(x, y);
-            }
-        }
-        s
+        oppAt_p(src.iter().map(|p| &**p), team, x, y)
     }
     /// decide.js:145
     pub fn holdVal(&self, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
@@ -113,31 +176,19 @@ impl Kafa {
 
     /// decide.js:3945
     pub fn zoneR(&self, team: f64, x: f64, y: f64) -> f64 {
-        let gx = gx_of(team);
-        let d = hypot(gx - x, GCY - y);
-        self.D.zoneMin + (1.0 - self.D.zoneMin) * jmin(1.0, jmax(0.0, (d - 8.0) / self.D.zoneD))
+        zoneR_d(&self.D, team, x, y)
     }
     /// Baskı (decide.js:3949).
     pub fn pressAt(&self, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
-        let z = self.zoneR(team, x, y);
-        let mut s = 0.0;
-        for p in src {
-            if p.team == team || p.noTouch {
-                continue;
-            }
-            let d = hypot(p.x - x, p.y - y) / z;
-            let r = 0.55 * ya(p.R, 8.0);
-            s += ya(p.D, 1.0) * exp(-d * d / (r * r));
-        }
-        s
+        pressAt_d(&self.D, src.iter().map(|p| &**p), team, x, y)
     }
     /// decide.js:3959
     pub fn freeAt(&self, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
-        exp(1.6 * -self.pressAt(src, team, x, y))
+        freeAt_d(&self.D, src.iter().map(|p| &**p), team, x, y)
     }
     /// decide.js:3962 (tek enerji açık: max(.05, ch))
     pub fn recvCh(&self, _src: &[Op], _team: f64, _x: f64, _y: f64, ch: f64, _q: &Oyuncu) -> f64 {
-        jmax(0.05, ch)
+        recvCh_p(ch)
     }
 
     /// decide.js:3492 (useCurve, useValTab kapalı)
@@ -269,7 +320,7 @@ impl Kafa {
     }
     /// Bekçi yerine geçtikten sonra şutun açıklığı (decide.js:3634; JS gibi tik başına önbellekli).
     pub fn runSut(&self, team: f64, bk: &Oyuncu, x: f64, y: f64) -> f64 {
-        let t = self.D._tick;
+        let t = self.bag._tick;
         {
             let mut c = self.rnb.borrow_mut();
             if c.0 != t || (c.0.is_none() && t.is_none() && false) {
@@ -307,30 +358,7 @@ impl Kafa {
     }
     /// Savunma dağınıksa değer büyür (decide.js:3659).
     pub fn dagin(&self, src: &[Op], team: f64, x: f64, vv: f64, y: Option<f64>) -> f64 {
-        let gx = gx_of(team);
-        let dB = match y {
-            Some(y) => hypot(x - gx, y - GCY),
-            None => 0.0,
-        };
-        let mut n = 0;
-        for o in src {
-            if o.team != team && !o.bekci() {
-                let ic = match y {
-                    Some(_) => hypot(o.x - gx, o.y - GCY) < dB,
-                    None => (o.x - gx).abs() < (x - gx).abs(),
-                };
-                if ic {
-                    n += 1;
-                }
-            }
-        }
-        let kat = match n {
-            0 => 1.6,
-            1 => 1.3,
-            2 => 1.1,
-            _ => 1.0,
-        };
-        1.0 - pow(jmax(0.0, 1.0 - jmin(1.0, vv)), kat)
+        dagin_p(src.iter().map(|p| &**p), team, x, vv, y)
     }
     /// Yerin değeri (decide.js:3666).
     pub fn V(&self, src: &[Op], team: f64, x: f64, y: f64, ch: f64) -> f64 {
@@ -359,7 +387,7 @@ impl Kafa {
         let mut kk = Kaynak::Sec(&et);
         let k = crate::alan::k(&mut kk, x, y, team as u8);
         let e = jmax(P.tek_taban, ch);
-        let L = yao(self.D._tekL, 18.0);
+        let L = yao(self.bag._tekL, 18.0);
         let need = L * P.tek_s * (P.attn + jmax(0.0, -k) * P.drain * P.tek_drain * (1.0 - P.pierce * e));
         jmax(0.4, jmin(1.0, 0.55 + (e - need) / 0.3))
     }

@@ -22,7 +22,6 @@ pub const IMK_KO: [f64; 9] = [-8.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 8.0];
 pub const IMK_KD: [f64; 3] = [-2.0, 0.0, 2.0];
 pub const IMK_CH: [f64; 4] = [0.1, 0.4, 0.7, 1.0];
 pub const IMK_L: [f64; 4] = [5.0, 10.0, 15.0, 20.0];
-pub const IMK_PARMAK: &str = "104b9sy";
 const TAB_BOY: usize = 9 * 7 * 9 * 3 * 4;
 /// 16 tablo (şutçu L × Bekçi L, sıra L[a]-L[b]), her biri DS×SY×KO×KD×CH, değer −1 (yok) ya da 0–100.
 static IMK_SUT: &[u8; 16 * TAB_BOY] = include_bytes!("kafa2_imk_sut.bin");
@@ -866,9 +865,9 @@ pub fn sutEngel(k: &Kafa, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
 
 /// JS bskTab(team, bk) (decide.js:5427): boşluk noktalarının şut değeri önbelleği (tik başına).
 fn bskTab<'a>(k: &'a mut Kafa, team: f64, bk: Option<&Oyuncu>) -> &'a mut Vec<f64> {
-    if k.k2.BSKt != k.D._tick || k.k2.BSKt.is_none() {
+    if k.k2.BSKt != k.bag._tick || k.k2.BSKt.is_none() {
         k.k2.BSK.clear();
-        k.k2.BSKt = k.D._tick;
+        k.k2.BSKt = k.bag._tick;
     }
     let key = match bk {
         Some(b) => format!("{}|{}|{:?}|{}", team, b.id, b.en, if b._yer { 1 } else { 0 }),

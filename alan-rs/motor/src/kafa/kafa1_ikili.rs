@@ -239,7 +239,7 @@ impl Kafa {
         }
         let mut ek = 0.0;
         for c in src {
-            if ayni(c, p) || skip.map_or(false, |s| ayni(c, s)) || c.noTouch {
+            if ayni_nesne(c, p) || skip.map_or(false, |s| ayni_nesne(c, s)) || c.noTouch {
                 continue;
             }
             let u = ((c.x - p.x) * ax + (c.y - p.y) * ay) / (L * L);
@@ -276,7 +276,7 @@ impl Kafa {
         if omuz == Some(true) {
             1.0 / (1.0 + exp(-(sS - jmax(3.0, jround(8.0 - 0.25 * (q.yet.y(mek::HAMLE) - 10.0)))) / 2.0))
         } else {
-            0.6 + 0.4 * if src.iter().any(|o| !ayni(o, q) && o.team == q.team && !o.bekci() && !o.noTouch && hypot(o.x - h.x, o.y - h.y) < 12.0) { 0.5 } else { 0.0 }
+            0.6 + 0.4 * if src.iter().any(|o| !ayni_nesne(o, q) && o.team == q.team && !o.bekci() && !o.noTouch && hypot(o.x - h.x, o.y - h.y) < 12.0) { 0.5 } else { 0.0 }
         }
     }
     /// Pres rolleri (decide.js:4022): src sırasıyla (rolsüz: None).
@@ -481,7 +481,7 @@ impl Kafa {
     fn hedefQ(&self, c: &Kc, rol: &PresRol, qv: &mut Oyuncu, hx: &Oyuncu, t: f64) -> Nk {
         match rol {
             PresRol::Ilk { TH, dtac, gs } => {
-                crate::sekil::d_tick_ile(Some(c.t0), || self.dis.ilkPres(c.t0 + t, qv, hx, c.q.team, TH, dtac, gs));
+                self.dis.ilkPres(c.t0, c.t0 + t, qv, hx, c.q.team, TH, dtac, gs);
                 nk(qv.tx, qv.ty)
             }
             PresRol::An { an, r } => nk(hx.x + cos(*an) * r, hx.y + sin(*an) * r),
@@ -1225,7 +1225,7 @@ impl Kafa {
                     let uy = ny / nl;
                     let gq = self.dis.omuzK(q);
                     let vr = jmax(0.0, (z0(q.vx) + ux * IK.omuzV * gq - z0(h.vx)) * ux + (z0(q.vy) + uy * IK.omuzV * gq - z0(h.vy)) * uy);
-                    let mQ = self.dis.kutle(q, ayni(q, h));
+                    let mQ = self.dis.kutle(q, ayni_nesne(q, h));
                     let mH = self.dis.kutle(h, true);
                     let J = (1.0 + IK.esnek) * vr / (1.0 / mQ + 1.0 / mH);
                     let son = den - (J + 0.0015) * IK.dengeK / (mH * self.dis.direnc(h, true));
@@ -1398,7 +1398,7 @@ impl Kafa {
     pub fn commitThr(&self, q: &Oyuncu, h: &Oyuncu, src: &[Op]) -> f64 {
         let gx = ox_of(q.team);
         for o in src {
-            if !ayni(o, q) && o.team == q.team && !o.bekci() && (o.x - gx).abs() < (h.x - gx).abs() - 1.0 && hypot(o.x - h.x, o.y - h.y) < 14.0 {
+            if !ayni_nesne(o, q) && o.team == q.team && !o.bekci() && (o.x - gx).abs() < (h.x - gx).abs() - 1.0 && hypot(o.x - h.x, o.y - h.y) < 14.0 {
                 return DU.thrCover;
             }
         }

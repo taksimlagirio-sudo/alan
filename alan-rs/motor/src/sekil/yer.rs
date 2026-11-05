@@ -166,6 +166,9 @@ pub struct BekM<'a> {
     pub holder: Option<&'a Oyuncu>,
     /// JS `q === p` için Bekçi'nin sırası
     pub ben: Option<Pid>,
+    /// Taşıyıcının şut tehdidi tartılır mı: maç başladı, kafa kurulu (maç kurulurken hayır). Eskiden
+    /// sutHiz bunu iş parçacığına özel kafadan soruyordu; artık bağlamı kuran maçtan bilir.
+    pub sut: bool,
 }
 
 /// JS bekci(p, E, m): Bekçi'nin yeri (açıyı daraltır, uzaktan topa destek, karşı karşıyada çıkış).
@@ -192,7 +195,7 @@ pub fn bekci(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (
     bekci_an(p, ex + hh.vx * t, ey + hh.vy * t, m, k)
 }
 
-fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (f64, f64) {
+fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, _k: &dyn Kural) -> (f64, f64) {
     let gx = ownX(p.takim());
     let dx = ex - gx;
     let dy = ey - GCY;
@@ -213,7 +216,7 @@ fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (f
         let l = nz(hypot(x, y));
         (x / l, y / l)
     };
-    let mut r = if let Some(vb) = m.and_then(|m| m.holder).filter(|hh| hh.team != p.team).and_then(dis::sutHiz) {
+    let mut r = if let Some(vb) = m.filter(|m| m.sut).and_then(|m| m.holder).filter(|hh| hh.team != p.team).map(dis::sutHiz) {
         bek_derinlik(p, ex, ey, gx, L, bxu, byu, vb)
     } else {
         let cov = Q.bek_body + 0.8 * bek_dl(p);
@@ -549,20 +552,20 @@ impl YolBag {
 }
 
 /// yolBag/yolKesis'in taşıyıcı hız yanılgısı (görüşe bağlı, 15 tikte bir değişir).
-pub fn hizYanilgi(p: &Oyuncu, h: &Oyuncu, d: &KafaD) -> f64 {
+pub fn hizYanilgi(p: &Oyuncu, h: &Oyuncu, _d: &KafaD, dtik: Option<f64>) -> f64 {
     let g = p.yet.ozk("gorus");
-    let hs = sinh_k(12.9898 * (p.id + 1.0) + 4.1414 * (h.id + 1.0) + 78.233 * (super::D_TICK.with(|t| t.get()).or(d._tick).filter(|t| *t != 0.0 && *t == *t).unwrap_or(0.0) / 15.0).floor());
+    let hs = sinh_k(12.9898 * (p.id + 1.0) + 4.1414 * (h.id + 1.0) + 78.233 * (dtik.filter(|t| *t != 0.0 && *t == *t).unwrap_or(0.0) / 15.0).floor());
     1.0 + (kesir(hs) - 0.5) * (20.0 - g) * 0.02
 }
 
 /// JS yolBag(p, h): `p` (presçi) ile `h` (taşıyıcı) arasındaki yarışın değişmeyenleri.
-pub fn yolBag(p: &Oyuncu, h: &Oyuncu, k: &dyn Kural, d: &KafaD) -> YolBag {
+pub fn yolBag(p: &Oyuncu, h: &Oyuncu, k: &dyn Kural, d: &KafaD, dtik: Option<f64>) -> YolBag {
     let prH = dis::ALAN_KOSU_PR(h, k);
     let prP = dis::ALAN_KOSU_PR(p, k);
     let vSh = vSp(h, k);
     let vSq = vSp(p, k);
     YolBag {
-        vH: vSh * dis::topK(h) * hizYanilgi(p, h, d),
+        vH: vSh * dis::topK(h) * hizYanilgi(p, h, d, dtik),
         vP: vSq,
         tR0: jmax(0.0, TEPKI(p, Tepki::Kovala, k)),
         prH,
@@ -658,13 +661,13 @@ pub fn presKesisT(p: &Oyuncu, h: &Oyuncu, yol: &[Yon], cx: &YolBag, tehl: &[f64]
 }
 
 /// JS presKesis(p, h, dt, m).
-pub fn presKesis(p: &Oyuncu, h: &Oyuncu, dt: u8, k: &dyn Kural, d: &KafaD) -> Option<Kesis> {
+pub fn presKesis(p: &Oyuncu, h: &Oyuncu, dt: u8, k: &dyn Kural, d: &KafaD, dtik: Option<f64>) -> Option<Kesis> {
     let yol = tasHamle(h.x, h.y, h.vx, h.vy, dt);
     if yol.is_empty() {
         return Some(Kesis { x: h.x, y: h.y, s: 0.0, once: false });
     }
     let att = h.takim();
-    let cx = yolBag(p, h, k, d);
+    let cx = yolBag(p, h, k, d, dtik);
     let tehl: Vec<f64> = yol.iter().map(|Y| dis::threat(att, h.x + Y.ux * Y.sM, h.y + Y.uy * Y.sM)).collect();
     presKesisT(p, h, &yol, &cx, &tehl)
 }

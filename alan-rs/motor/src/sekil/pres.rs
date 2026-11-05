@@ -90,7 +90,7 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
     let job = |c: &mut Mc, j: String| c.ps[pi].job = Some(j.into());
     if !trap {
         let ox = ownX(dt);
-        let KS = presKesis(&c.ps[pi], &h, dt, k, c.d);
+        let KS = presKesis(&c.ps[pi], &h, dt, k, c.d, c.dtik);
         let (lx, ly) = match KS {
             Some(s) => (s.x, s.y),
             None => (h.x + 10.0 * h.vx, h.y + 10.0 * h.vy),
@@ -190,7 +190,7 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
             } else if c.rnd.is_some() {
                 let (Pd, th) = {
                     let ps = &*c.ps;
-                    (dis::duelP(&ps[pi], &h, ps), dis::girThr(&ps[pi], &h, ps))
+                    (dis::duelP(&*c.m, &ps[pi], &h, ps), dis::girThr(&*c.m, &ps[pi], &h, ps))
                 };
                 let koy = !(Pd >= th);
                 c.ps[pi]._onK = Some(JP_onK { h: h.id, koy, t: tik });

@@ -230,11 +230,11 @@ impl Sv {
                     let gec = matches!(&c.ek.kayL, Some((kk, _)) if *kk == key);
                     if !gec {
                         let ch = yada(c.m.ch, 0.3);
-                        let f = dis::kayipYer(c.ps, att, ch, &c.ps[hc], c.m.tac.get(att as usize));
+                        let f = dis::kayipYer(&*c.m, c.ps, att, ch, &c.ps[hc], c.m.tac.get(att as usize));
                         c.ek.kayL = Some((key, f));
                     }
                     let L = c.ek.kayL.as_ref().unwrap().1.clone();
-                    let LE = L(E.0, E.1);
+                    let LE = L(&*c.m, E.0, E.1);
                     if LE * S.W.tvPass > 0.003 {
                         c.ek.kpC = Some(KpC { L, LE, Hr, kH: 0.0, mut_: 0, kc: Default::default() });
                     }
@@ -474,7 +474,7 @@ impl Sv {
                                 }
                             }
                             if nd >= 4.0 {
-                                let lo = laneOpen(&sn, c.ps, att, E, (xx, y), None, k, c.d);
+                                let lo = laneOpen(&*c.m, &sn, c.ps, att, E, (xx, y), None, k, c.d);
                                 if lo >= 0.4 {
                                     ac.push((xx, y, lo * jmin(1.0, nd / 8.0)));
                                 }
@@ -629,7 +629,7 @@ impl Sv {
                             if hypot(P.0 - gx, P.1 - GCY) < KR + 0.8 {
                                 continue;
                             }
-                            let yv = yolP(&sn, c.ps, att, E, P, c.d);
+                            let yv = yolP(&*c.m, &sn, c.ps, att, E, P, c.d);
                             if yv > 0.3 {
                                 ak.push((P.0, P.1, yv));
                             }
@@ -733,7 +733,7 @@ impl Sv {
                     1.0
                 };
             let ck = self.cekAmac(c, p, a, &sn, hAtt, chC);
-            let kyF = if hAtt.is_some() { yolP(&sn, c.ps, att, E, (a.x, a.y), c.d) } else { 1.0 };
+            let kyF = if hAtt.is_some() { yolP(&*c.m, &sn, c.ps, att, E, (a.x, a.y), c.d) } else { 1.0 };
             let rv = self.runV(c, p, a, &sn);
             let run = (if self.runners[p] { S.runK * rv } else { 0.0 }) + self.roleRun(c, p) * rv;
             let kb = self.komb(c, p, a, &sn, hAtt);
@@ -813,7 +813,7 @@ impl Sv {
             let tB = self.fr.as_ref().map(|f| f.arr[u].t).unwrap_or(30.0);
             let d = hypot(a.x - pp.x, a.y - pp.y);
             let ta = gec(pp, a.x, a.y, Some(d), k) + d / vSp(pp, k);
-            return if ta > tB + 20.0 { 0.0 } else { S.ucK * dis::laneOk0(sn, c.ps, self.att, self.E, (a.x, a.y)) };
+            return if ta > tB + 20.0 { 0.0 } else { S.ucK * dis::laneOk0(&*c.m, sn, c.ps, self.att, self.E, (a.x, a.y)) };
         }
         if let (Some(_), Some(bh)) = (a.bind, a.bh) {
             if bindCak(pp, a.x, a.y, &bh, k) < S.bindYol {
@@ -897,12 +897,12 @@ impl Sv {
                 continue;
             }
             let qp = &c.ps[q];
-            let l0 = yolP(sn, c.ps, att, E, (qp.x, qp.y), c.d);
-            let l1 = yolP(&sn2, c.ps, att, E, (qp.x, qp.y), c.d);
+            let l0 = yolP(&*c.m, sn, c.ps, att, E, (qp.x, qp.y), c.d);
+            let l1 = yolP(&*c.m, &sn2, c.ps, att, E, (qp.x, qp.y), c.d);
             if l1 - l0 <= 0.05 {
                 continue;
             }
-            let g = (l1 - l0) * yerV(&sn2, c.ps, att, qp.x, qp.y, chC);
+            let g = (l1 - l0) * yerV(&*c.m, &sn2, c.ps, att, qp.x, qp.y, chC);
             if g > bg {
                 bg = g;
                 bq = Some(q);
@@ -918,7 +918,7 @@ impl Sv {
         let h = hAtt?;
         let att = self.att;
         let hp = &c.ps[h];
-        let pk = 1.0 - cl(dis::keepP(hp, sn, c.ps, None, c.d.recvKeepT), 0.0, 1.0);
+        let pk = 1.0 - cl(dis::keepP(&*c.m, hp, sn, c.ps, None, c.d.recvKeepT), 0.0, 1.0);
         if !(pk > 0.001) {
             return None;
         }
@@ -934,7 +934,7 @@ impl Sv {
             let a = (o.x + gx / gl * d, o.y + gy / gl * d);
             let g = gside(a.0, a.1, att, 2.0);
             let tO = d / vSp(o.r0(c.ps), k);
-            let V = jmax(0.0, yerV(sn, c.ps, 1 - att, a.0, a.1, ch0));
+            let V = jmax(0.0, yerV(&*c.m, sn, c.ps, 1 - att, a.0, a.1, ch0));
             let mut u0 = 1.0;
             for q in &our {
                 u0 *= 1.0 - 1.0 / (1.0 + exp((hypot(g.0 - q.0, g.1 - q.1) / q.2 - tO) / 5.0));
