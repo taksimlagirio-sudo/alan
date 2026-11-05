@@ -2,7 +2,12 @@
 import json, re, sys, collections
 adlar_d, hata, kok = sys.argv[1], sys.argv[2], sys.argv[3]
 yerli = len(sys.argv) > 4 and sys.argv[4] == '--yer'
-adlar=[l.strip() for l in open(adlar_d) if l.strip()]
+PARCA={'Oyuncu':'yapı','OyuncuGovde':'gövde','OyuncuMac':'hal'}
+parca={}
+for l in open(adlar_d):
+    if l.strip():
+        y,a=l.split(); parca[a]=PARCA[y]
+adlar=list(parca)
 src={}
 def satir(f,n):
     if f not in src: src[f]=open(kok+'/'+f).read().split('\n')
@@ -44,10 +49,15 @@ for l in open(hata):
     R[ad][tur][k]+=1
     if tur=='yaz': R[ad]['yer'][k].append(f.replace('motor/src/','')+':'+str(n))
 print(f"# Oyuncu alan envanteri: {len(adlar)} alan; tanınmayan hata {bilinmeyen}")
-print("# alan oku yaz(katman:sayı)")
+print("# parça: yapı (kopyalanır), gövde (p.govde, paylaşımlı), hal (p.hal, paylaşımlı, yazarken kopyalanır)")
+print("# alan parça oku yaz(katman:sayı)   ! = paylaşımlı parçaya kafa/karar yazıyor (kopyada yazarken kopyalama)")
+for t in ('yapı','gövde','hal'):
+    L=[a for a in adlar if parca[a]==t]
+    print(f"# {t}: {len(L)} alan, okuma {sum(sum(R[a]['oku'].values()) for a in L)}, yazma {sum(sum(R[a]['yaz'].values()) for a in L)}")
 for a in adlar:
     r=R[a]
-    print(f"{a:14} oku={sum(r['oku'].values()):4} yaz=" + ','.join(f"{k}:{v}" for k,v in sorted(r['yaz'].items())))
+    uyar = '!' if parca[a] != 'yapı' and any(k in r['yaz'] for k in ('kafa','karar')) else ' '
+    print(f"{uyar}{a:14} {parca[a]:5} oku={sum(r['oku'].values()):4} yaz=" + ','.join(f"{k}:{v}" for k,v in sorted(r['yaz'].items())))
     if yerli:
         for k,v in sorted(r['yer'].items()):
             print('    ', k, ' '.join(v))

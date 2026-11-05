@@ -293,7 +293,7 @@ davranış değişir).
 `sekil/konum.rs`'in geçmiş kaydında iki ödünç sırası). Ölçüm (m00, valgrind 300 tik): komutlar 35,86 → 34,65
 milyar (−%3,4), oyuncu kopyası %2,0 → %0,5; yazarken kopyalama tik başına ~44 `OyuncuMac` (önce tik başına ~500
 tam kopya). Duvar saati 13,40 → 12,57 ms/tik (**−%6,2**; küçük kopyalar önbelleğe sığıyor). Main ile 20 maç ×
-2700 tik aynı. Not: `sina/alan-envanter.sh` yalnız `Oyuncu`'nun kendi alanlarını sayar.
+2700 tik aynı. `sina/alan-envanter.sh` üç parçayı da sayar (alanın parçası yazılır; paylaşımlı bir parçaya kafa/karar yazıyorsa `!`: bugün yalnız `role`, kısmi bedenlerin kuruluşu).
 
 **5-2 ✅ gövde** (5 Kasım): 13 alan (`i, role, slot, name, a, yet, rslot, slot0, rslot0, rh, rs, tl, eg`)
 `OyuncuGovde`'ye, `Oyuncu::govde: Arc<OyuncuGovde>`; yazma `govde_mut()` (yalnız kurulum, rol atama, kayıt ve kısmi
@@ -305,6 +305,30 @@ ms/tik (−%2,9). 5-1 ile birlikte 13,40 → 12,21 (**−%8,9**). Main ile 20 ma
 
 Sıra: (1) maç durumu (108 alan, ~500 yer, kafaya dokunmaz: yalnız `mac/`, `sekil/`, `temas`), (2) gövde
 (~1000 okuma, çoğu `p.yet`/`p.team`/`p.id`: düz değiştirme), her biri `sina/ayni.sh` + 20 maçlık parmak iziyle.
+
+### 3.7 Gerçek zamanın profili (5 Kasım)
+
+valgrind komut sayar; sıcak hesaplarda komut sayısı ile süre ayrışıyor. Süre örneklemesi: `perf record -e cpu-clock`
+(sanal makinede donanım sayaçları yok; zamanlayıcıyla örnekleme çalışıyor; `apt-get install linux-tools-generic`,
+`/usr/lib/linux-tools-*/perf`). m00, 900 tik, payı %1'in üstündekiler:
+
+| İşlev | Süre | | İşlev | Süre |
+|---|---|---|---|---|
+| `kural::gec::gecOf` | %10,5 | | `top::tahmin` | %2,4 |
+| `sekil::yer::bek_derinlik0` | %8,4 | | `mat::atan` | %1,8 |
+| `kural::gec::gecYk` | %7,6 | | `ALAN_SPR`, `kosuPr`, `ivme` | %1,7'şer |
+| `mat::exp` | %6,6 | | `_int_malloc` | %1,6 |
+| `kafa2_imkan::sutTab` (+ kapanışı) | %7,0 | | `savurPlan` | %1,6 |
+| `ucusFormul` (+ kapanışı) | %4,5 | | `gecTabV` | %1,5 |
+| `imkan`'ın kapanışları | %4,0 | | `floor` | %1,5 |
+
+Gecikme tabloları (`gecOf` + `gecYk` + `gecTabV`) birlikte **~%20**: en büyük hedef.
+
+**Denendi, alınmadı: `bek_derinlik0`'ın sayım önbelleği.** Adayların kapattığı yol sayısı Bekçi'nin şimdiki
+derinliğine bağlı değil (yalnız eşitlikte seçer): 118 bin hesabın 55,5 binde farklı (top yeri, adım) var. Sayımı
+bunlarla önbelleğe almak komutları −%4,2 indirdi (işlevin kendi payı −%43), davranış aynıydı (20 maç). Ama süre:
+20 dönüşümlü koşuda 11,20 → 11,18 ms/tik, örneklemede −%1,4 (önbelleğin dağınık girişleri L1 ıskasını %11 artırdı).
+Gürültüden ayrılmayan kazanç için ikinci önbellek alınmadı.
 
 ## 4. Dış kütüphaneler
 
