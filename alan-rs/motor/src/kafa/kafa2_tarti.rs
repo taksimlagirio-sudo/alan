@@ -135,6 +135,38 @@ pub fn olabTau(k: &Kafa, p: &Oyuncu, v: f64, rc: f64, t: f64) -> f64 {
     hypot(1.5 + e / jmax(0.05, v) * 0.5, rc * crate::core_sabit::IN.tepki_z / 2.449 / 1.814)
 }
 
+/// Deney (ALAN_SECIM_BEKLENEN_IZ; ölçümde SECIM_BEKLENEN_ZORLA): gelecekteki kararın değeri, maçtaki gürültülü
+/// seçimle (her adaya genişliği `w` üçgen gürültü, en yükseği seçilir) seçilenin beklenen gerçek değeri.
+pub static SECIM_BEKLENEN_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn secim_beklenen() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SECIM_BEKLENEN_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SECIM_BEKLENEN_IZ").is_ok())
+}
+/// Adayların değerleri `c`, gürültü genişliği `w`: seçilenin beklenen değeri (sabit tohumla 32 örnek, zar dizisi değişmez).
+pub fn secimBeklenen(c: &[f64], w: f64, tohum: f64) -> f64 {
+    if c.is_empty() {
+        return 0.0;
+    }
+    if !(w > 0.0) {
+        return c.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
+    }
+    let n = 32;
+    let mut top = 0.0;
+    for j in 0..n {
+        let mut bi = 0;
+        let mut bv = f64::NEG_INFINITY;
+        for (i, &v) in c.iter().enumerate() {
+            let z = crate::yetenek::zar(tohum, j as f64, i as f64 * 2.0 + 1.0) + crate::yetenek::zar(tohum, j as f64, i as f64 * 2.0 + 2.0) - 1.0;
+            if v + w * z > bv {
+                bv = v + w * z;
+                bi = i;
+            }
+        }
+        top += c[bi];
+    }
+    top / n as f64
+}
+
 /// Deney (ALAN_ATAMA_IZ; ölçümde ATAMA_ZORLA): olabilirlikte bir savunmacı iki yerde olamaz: savunmacılar şimdiden
 /// (topu ve oyuncuları görerek) hareket eder, ama her biri bir hücumcuyu karşılar (en tehlikeli hücumcuya en erken
 /// yetişen); bir yolu yalnız boşta kalanlar, Bekçi, gönderenin ve alıcının karşılayıcısı kesebilir.
@@ -611,7 +643,17 @@ pub fn pencere(k: &mut Kafa, cx: &mut Cx, kq: &Op, T: f64, R: Option<Nokta>) -> 
 
 /// JS enIyiPas(cx, w, A, T, haric, der) (decide.js:7021): A'dan (T tik sonra) en iyi pasın değeri ve
 /// penceresi; der > 0 ise alıcıdan bir pas daha.
+thread_local! {
+    /// ALAN_SECIM_BEKLENEN_IZ: son enIyiPas çağrısının adaylarının değerleri (durumD beklenen seçimde kullanır)
+    static SON_ADAY: std::cell::RefCell<Vec<f64>> = const { std::cell::RefCell::new(Vec::new()) };
+}
 pub fn enIyiPas(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f64, der: f64) -> (f64, Option<Arc<Pencere>>) {
+    let mut adaylar: Vec<f64> = Vec::new();
+    let r = enIyiPas0(k, cx, w, A, T, haric, der, &mut adaylar);
+    SON_ADAY.with(|c| *c.borrow_mut() = adaylar);
+    r
+}
+fn enIyiPas0(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f64, der: f64, adaylar: &mut Vec<f64>) -> (f64, Option<Arc<Pencere>>) {
     let mut best = 0.0;
     let mut bk: Option<Arc<Pencere>> = None;
     let src = cx.src.clone();
@@ -709,6 +751,7 @@ pub fn enIyiPas(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f6
         }
         let kayip = cx.kayip.clone();
         let e = Lo * nv - (1.0 - Lo) * kay(k, &kayip, (A.x + P.B.x) / 2.0, (A.y + P.B.y) / 2.0);
+        adaylar.push(e);
         if crate::iz_acik() && std::env::var("ALAN_ENIYI_IZ").ok().as_deref() == Some(&*kq.govde.name) {
             eprintln!("ENIYI   = A ({:.1},{:.1}) T {:.0} → {} alış ({:.1},{:.1}) tR {:.0} yol {:.3} düğüm {:.3} e {:.3} | pencere tut {:.3} şut {:.3} zemin {:.3} sür {:.3}", A.x, A.y, T, kq.govde.name, P.B.x, P.B.y, tR, Lo, nv, e, P.kA, P.sut, P.zem, P.sur);
         }
@@ -761,7 +804,15 @@ pub fn durumD(k: &mut Kafa, cx: &mut Cx, w: &[Op], q: &Oyuncu, at: Nokta, T0: f6
     let sur = gam(k) * surD(k, &wb, team, &r, at, ch, &kayip, Some(cx), Some(T0));
     let ip = enIyiPas(k, cx, w, at, T0, q.id, 1.0);
     let pas = gam(k) * ip.0;
-    let v0 = jmax(jmax(jmax(sut, gam(k) * z0), pas), sur);
+    let mut v0 = jmax(jmax(jmax(sut, gam(k) * z0), pas), sur);
+    if secim_beklenen() {
+        // gelecekteki karar maçtaki gibi gürültülü (kafa1_secim): seçilenin beklenen değeri, en iyisinin değil
+        let mut c: Vec<f64> = vec![sut, gam(k) * z0, sur];
+        SON_ADAY.with(|a| c.extend(a.borrow().iter().map(|e| gam(k) * e)));
+        let B = jmin(1.0, k.pressAt(w, q.team, at.x, at.y));
+        let gw = k.secimW(q, B, false, None);
+        v0 = secimBeklenen(&c, gw, q.id + 1000.0 * at.x + at.y);
+    }
     let v = v0 * guven(k, jmax(0.0, T0v));
     let pasK = ip.1.as_ref().map(|P| format!("{} ({},{}) +{}t", P.k.govde.name, to_fixed(P.B.x, 0), to_fixed(P.B.y, 0), js_sayi(P.tb)));
     let res = Arc::new(DurumR { v, sut, zem: z0, pas, sur, pasK });
