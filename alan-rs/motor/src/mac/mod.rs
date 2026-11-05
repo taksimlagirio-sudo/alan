@@ -5,6 +5,9 @@
 //! Kafa (decide.js) ve yerleşim (shape.js) işlevleri `gecici_dis`'te.
 #![allow(non_snake_case, clippy::too_many_arguments)]
 
+pub use crate::mac_veri::{KenarW, Olay, Perde};
+pub use crate::mat::{js_num, to_fixed};
+pub use crate::saha::{dirOf, ownX, KX, KY, SN};
 pub mod dongu;
 pub mod enerji;
 pub mod gecici_dis;
@@ -15,7 +18,7 @@ pub mod kayit;
 pub mod kurulum;
 pub mod kuyu;
 pub mod notlar;
-pub mod tac;
+pub use crate::kural::tac;
 pub mod kafa_dis;
 pub mod motor;
 pub mod vurus;
@@ -27,11 +30,8 @@ pub use tac::{macEff, tacEff, MacW, MacZ, Tac};
 
 use crate::mat::{dogru, hypot};
 use crate::model::{Mac, Oyuncu, Pid};
-use crate::saha::{H, TPS, W};
+use crate::saha::W;
 
-/// JS ALAN_SAHA.KX, KY (saha ölçeği: 100 × 50'ye göre)
-pub const KX: f64 = W / 100.0;
-pub const KY: f64 = H / 50.0;
 
 /// Maçın zar dizisinin varsayılanı (Mac Default için; gerçek tohum createMatch'te verilir).
 impl Default for crate::rng::Rng {
@@ -40,31 +40,8 @@ impl Default for crate::rng::Rng {
     }
 }
 
-/// JS `m.events[]` öğesi.
-#[derive(Clone, Debug, Default)]
-pub struct Olay {
-    pub t: String,
-    pub r#type: String,
-    pub team: f64,
-    pub text: String,
-}
 
-/// JS `m._perde`.
-#[derive(Clone, Debug, Default)]
-pub struct Perde {
-    pub cid: f64,
-    pub qid: f64,
-    pub until: f64,
-}
 
-/// JS `p.kenarW`.
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct KenarW {
-    pub x: f64,
-    pub y: f64,
-    pub sonra: Option<(f64, f64)>,
-    pub until: f64,
-}
 
 /// JS `m.fake`.
 #[derive(Clone, Debug, Default)]
@@ -187,27 +164,6 @@ pub fn cl(v: f64, a: f64, b: f64) -> f64 {
         v
     }
 }
-#[inline(always)]
-pub fn dirOf(t: f64) -> f64 {
-    if t == 0.0 {
-        1.0
-    } else {
-        -1.0
-    }
-}
-#[inline(always)]
-pub fn ownX(t: f64) -> f64 {
-    if t == 0.0 {
-        0.0
-    } else {
-        W
-    }
-}
-/// JS `SN()`: saniyedeki tik.
-#[inline(always)]
-pub fn SN() -> f64 {
-    TPS
-}
 pub use crate::oyuncu::or0;
 pub use crate::oyuncu::oo;
 /// JS `a > b` (a undefined → false)
@@ -257,27 +213,7 @@ pub fn idden(m: &Mac, id: f64) -> Option<Pid> {
     m.ps.iter().position(|p| p.id == id)
 }
 
-/// JS `x.toFixed(n)` sonra `+` (sayıya): yarıda yukarı (tam ikili değerle).
-pub fn to_fixed(x: f64, n: usize) -> f64 {
-    let s = format!("{:.*}", n, x);
-    let mut v: f64 = s.parse().unwrap_or(x);
-    let k = 10f64.powi(n as i32);
-    let y = x.abs() * k;
-    if y.fract() == 0.5 && y < 1e15 {
-        let up = (y.floor() + 1.0) / k;
-        v = if x < 0.0 { -up } else { up };
-    }
-    v
-}
 
-/// JS `String(x)` (sayı), olay yazıları için.
-pub fn js_num(x: f64) -> String {
-    if x == x.trunc() && x.abs() < 1e21 {
-        format!("{}", x as i64)
-    } else {
-        format!("{}", x)
-    }
-}
 
 /// JS `null != b.gvx`: top tutulunca (temas) gelen hızı saklanır.
 pub fn gv_var(b: &crate::model::MacTop) -> bool {

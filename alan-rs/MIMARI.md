@@ -141,7 +141,7 @@ kodda çalıştığı için aşamalar küçük parçalarla ve sık `main`'e birl
 | 4 | Tek dünya | `Dunya` + `Gorunum`; kimlik `Pid`; köprü çevirileri kalkar | `ow`, `op_dunya`, `dunya_kopya`, `Varlik` yok; `Arc::ptr_eq` yok |
 | 5 | Veri | **5-1, 5-2 ✅** (3.6: `Oyuncu` 2704 → 288 bayt). `Oyuncu` → `OyuncuDurum` + `OyuncuGovde`; `KafaD` → `Ayar` + geçici durum; `JsDeger` ve gereksiz `Option`'lar | `Oyuncu` kopyası ~300 bayt; `model.rs` üretilmiş taslak değil |
 | 6 | JS bağı | **Karar (5 Kasım): Rust tek doğru kaynak.** JS ile bit bit aynılık kısıtı kalktı; doğrulama `sina/ayni.sh` ve maç istatistikleriyle | ✅ Temizlik: JS vektörüne bağlı 12 sınama gerekçeli `#[ignore]` (vektör üretilince `--ignored` ile çalışır; temiz klonda düşen ya da sessizce geçen sınama kalmadı); `tests/ayni.rs` `cargo test`'in kendisinde parmak izi başvurusunu denetler; `tests/kafa1.rs`'in JS taklit artıkları silindi; motor ve sınamalar uyarısız. Rust adlandırması ertelendi (bkz. Geri dönülecekler) |
-| 7 | Crate'ler | Katmanlar ayrı crate; döngüyü derleyici yasaklar | `cargo build` katman kuralını zorlar |
+| 7 | Crate'ler | Katmanlar ayrı crate; döngüyü derleyici yasaklar | **7a, 7b ✅** (3.8): temel ve yerleşim → maç bağları kalktı, tek kök (`MacEk`) kaldı; `sina/katman.sh` 7 kural. 7c (fiziksel bölme) bekliyor. Bitti sayılır: `cargo build` katman kuralını zorlar |
 
 ### 3.1 Aşama 3e ve 4'ün birlikte planı (5 Kasım)
 
@@ -350,6 +350,30 @@ derinliğine bağlı değil (yalnız eşitlikte seçer): 118 bin hesabın 55,5 b
 bunlarla önbelleğe almak komutları −%4,2 indirdi (işlevin kendi payı −%43), davranış aynıydı (20 maç). Ama süre:
 20 dönüşümlü koşuda 11,20 → 11,18 ms/tik, örneklemede −%1,4 (önbelleğin dağınık girişleri L1 ıskasını %11 artırdı).
 Gürültüden ayrılmayan kazanç için ikinci önbellek alınmadı.
+
+### 3.8 Aşama 7a–7b: döngülerin kaldırılması (5 Kasım)
+
+Ölçüm: `kafa` yalnız `kural` ve `dunya`'ya bağlıydı (crate'e hazır). İki döngü vardı: temel → maç (`model.rs` 13,
+`temas.rs` 2 başvuru) ve yerleşim ↔ maç (yerleşim → maç 27).
+
+**7a ✅** Maçın veri tipleri (`Tac` ve makrosu, `Durus`, `Kosul`, `MacZ`, `MacW`, `Olay`, `Perde`, `KenarW`, `Diz`,
+`DizV`, `Yer`, `Karar`, `FakeShow`, `EnSayac`) temel katmanda `mac_veri.rs`'e; maç eski yerlerinden yeniden dışa
+açıyor (`crate::mac::Tac` çalışıyor). `temas` `EN3`'ü doğrudan `kural`'dan alıyor.
+**7b ✅** Yerleşimin maçtan aldığı saf işlevler yerlerine: taktik (`tacEff`, `macEff`, `kpAkt`, `mac/tac.rs` →
+`kural/tac.rs`), talimat (`tl`, `TLV` → `kural/tac.rs`), `kuyuSafe` → `kural/hareket.rs`, `kafa_tac` →
+`kafa2_baglam`, `mac_dokunus` → `gecici_dis1`; `spd`, `ALAN_EN3_DOL` `kural::enerji`'den, `op_dunya` `dunya`'dan, `kafa_d`
+yerine `kafa2_baglam::ayar()`. Sahanın ve sayıların yardımcıları (`KX`, `KY`, `dirOf`, `ownX`, `SN` → `saha.rs`;
+`to_fixed`, `js_num` → `mat.rs`). Davranış aynı (20 maç × 2700 tik).
+
+**Kalan tek kök: temel maç modeli üst katmanların durumunu taşıyor.** `Mac.mac: MacEk` kafa kutusunu (`KafaKutu`),
+yerleşimin belleğini (`SekilDurum`) ve kafanın pres tablosunu (`PrT`) içeriyor; bu yüzden `model` → `mac` (1 başvuru)
+ve yerleşim kafaya maçın kutusundan ulaşıyor (`kafa_mac`, 13 yer, hepsi `sekil/gecici_dis.rs`). `MacEk`'e 97 erişimin
+95'i maçın içinde. Çözüm `MacEk`'i `Mac`'ten çıkarıp maç katmanına sahiplendirmek (`Motor { m: Mac, ek: MacEk }`) ve
+yerleşime kafayı açık bir arayüzle vermek (kafadaki `Dis` gibi). `sina/katman.sh` iki kuralı bu istisnayla denetliyor:
+kök dışında yeni bir bağ hemen yakalanır.
+
+Yan bulgu: kural 2 bugün davranış oturumunun bir deneyinde bozuk (`kafa2_imkan.rs` → `kafa2_karar::decide`,
+`ALAN_SUT_GERCEK_IZ`, bayrak arkasında).
 
 ## 4. Dış kütüphaneler
 

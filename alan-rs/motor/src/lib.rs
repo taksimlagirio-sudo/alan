@@ -12,6 +12,7 @@ pub mod kafa;
 pub mod kural;
 pub mod mat;
 pub mod mac;
+pub mod mac_veri;
 pub mod model;
 pub mod oyun;
 pub mod paket;

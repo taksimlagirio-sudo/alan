@@ -4,6 +4,7 @@
 //! burada `ALAN_SPR(p, k)` açık işlev, maçın bağlamı `MacKural` (çekirdeğin `temas::Kural`'ı).
 //! Bugünkü bayraklar: Enerji 2/3 açık, sürekli koşu açık (ALAN_SUREKLI), sprint evresi açık (SPR_FAZ),
 //! dokunuşla sürme kapalı.
+pub use crate::mac_veri::EnSayac;
 use super::*;
 use crate::mat::{exp, hypot, jmax, jmin, pow};
 use crate::model::JMSt;
@@ -32,8 +33,6 @@ impl MacKural {
 
 // ---- sayaçlar ----
 
-/// Enerji sayacı (JS {sprint: 0, ivme: 0, …}): ekleme sırasıyla.
-pub type EnSayac = Vec<(String, f64)>;
 
 fn ekle(s: &mut EnSayac, k: &str, v: f64) {
     if let Some(e) = s.iter_mut().find(|e| e.0 == k) {
