@@ -400,6 +400,8 @@ impl Kafa {
         let uy = (B.y - A.y) / L;
         let mut open = 1.0;
         let faz = self.dis.ALAN_SPR_FAZ().is_some();
+        // maçın kural görüntüsü döngü boyunca değişmez: bir kez alınır (her çağrıda kopyalanmaz)
+        let kr = self.dis.kural();
         for o in src {
             if o.team == team || o.bekci() || o.noTouch {
                 continue;
@@ -410,7 +412,7 @@ impl Kafa {
             }
             let pe = (-(o.x - A.x) * uy + (o.y - A.y) * ux).abs();
             let sv = jmax(0.0, self.ucusT(L, arr, Some(al)) + lag - self.TEPKI(o, Tepki::Kovala));
-            let R = 1.6 + if faz { self.dis.ALAN_KOSU_M(o, sv, self.vS(o)) } else { sv * self.vS(o) };
+            let R = 1.6 + if faz { crate::kural::enerji::ALAN_KOSU_M(o, sv, self.vS(o), &kr) } else { sv * self.vS(o) };
             open *= 1.0 - 1.0 / (1.0 + exp((pe - R) / 0.6));
         }
         open
