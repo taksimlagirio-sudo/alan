@@ -465,7 +465,7 @@ pub fn contact(b: &mut TopT, ps: &mut [Oyuncu], rnd: &mut dyn FnMut() -> f64, ox
     let (mut bd, mut be, mut b_r) = (1e9f64, 1e9f64, 1.0f64);
     for pi in 0..ps.len() {
         let p = &ps[pi];
-        if p.noTouch || p.sonuk || b.t.cds.get(&pi).copied().unwrap_or(0.0) > b.b.t {
+        if p.noTouch || p.hal.sonuk || b.t.cds.get(&pi).copied().unwrap_or(0.0) > b.b.t {
             continue;
         }
         if Some(pi) == b.t.from && b.b.t < 8.0 {
@@ -479,7 +479,7 @@ pub fn contact(b: &mut TopT, ps: &mut [Oyuncu], rnd: &mut dyn FnMut() -> f64, ox
         }
         let yeni = dalis_modeli(b, pi, ps);
         let vardi = b.t.dal_bas.is_some();
-        let (px, py) = if yeni { match bek_dalis(b, pi, ps) { Some((x, y, vx, vy)) => { if !b.t.hayal { let yeni_bas = !vardi && b.t.dal_bas.is_some(); let f = b.t.dal_bas.map_or(0.0, |d| d.f); let q = &mut ps[pi]; if yeni_bas && f > 0.0 { q._dalis = Some(q._dalis.unwrap_or(0.0) + f); } q.x = x; q.y = y; q.vx = vx; q.vy = vy; } (x, y) } None => (ps[pi].x, ps[pi].y) } } else { (ps[pi].x, ps[pi].y) }; /* maçta Bekçi'nin gerçek yeri dalışla güncellenir (ekranda görünür); dalışın bedeli bardan, gereken uzanmanın payıyla (dalış başlarken bir kez) */
+        let (px, py) = if yeni { match bek_dalis(b, pi, ps) { Some((x, y, vx, vy)) => { if !b.t.hayal { let yeni_bas = !vardi && b.t.dal_bas.is_some(); let f = b.t.dal_bas.map_or(0.0, |d| d.f); let q = &mut ps[pi]; if yeni_bas && f > 0.0 { q.hal_mut()._dalis = Some(q.hal._dalis.unwrap_or(0.0) + f); } q.x = x; q.y = y; q.vx = vx; q.vy = vy; } (x, y) } None => (ps[pi].x, ps[pi].y) } } else { (ps[pi].x, ps[pi].y) }; /* maçta Bekçi'nin gerçek yeri dalışla güncellenir (ekranda görünür); dalışın bedeli bardan, gereken uzanmanın payıyla (dalış başlarken bir kez) */
         let t0 = if sl > 0.0 { ((px - ox) * sx + (py - oy) * sy) / sl } else { 1.0 };
         let tt = kis(t0, 0.0, 1.0);
         let dd = hyp(ox + sx * tt - px, oy + sy * tt - py);
@@ -524,7 +524,7 @@ pub fn contact(b: &mut TopT, ps: &mut [Oyuncu], rnd: &mut dyn FnMut() -> f64, ox
                 let bp = &mut ps[bi];
                 bp.x += dx / dl * d;
                 bp.y += dy / dl * d;
-                bp._dalis = Some(bp._dalis.unwrap_or(0.0) + f);
+                bp.hal_mut()._dalis = Some(bp.hal._dalis.unwrap_or(0.0) + f);
             }
         }
     }
@@ -657,7 +657,7 @@ pub fn contact(b: &mut TopT, ps: &mut [Oyuncu], rnd: &mut dyn FnMut() -> f64, ox
                 a += 10.0;
             }
         }
-        let rcv = mate_t && (b.t.recv == Some(bi) || bp._rcvB == Some(b.t.kimlik));
+        let rcv = mate_t && (b.t.recv == Some(bi) || bp.hal._rcvB == Some(b.t.kimlik));
         let ix = if mate_t && true && !rcv {
             bp.tx - bp.x
         } else if bk_p {
@@ -753,7 +753,7 @@ pub fn kuyu_girer(p: &Oyuncu, x: f64, y: f64, t: f64, cik: bool, k: &dyn Kural) 
     if p.bekci() || (!alan_ic(x, y) && !cik) {
         return true;
     }
-    if p.sonuk {
+    if p.hal.sonuk {
         return !alan_ic(x, y);
     }
     let v = jmax(0.05, p.taban_hiz() * k.spr(p));
@@ -764,7 +764,7 @@ pub fn kuyu_girer(p: &Oyuncu, x: f64, y: f64, t: f64, cik: bool, k: &dyn Kural) 
         return true;
     }
     let t_e = if ic_p { 0.0 } else { (d_p - Q.kuyu_a) / v };
-    let ic = jmax(0.0, t - t_e) + if ic_p { p.kuyuT.unwrap_or(0.0) } else { 0.0 };
+    let ic = jmax(0.0, t - t_e) + if ic_p { p.hal.kuyuT.unwrap_or(0.0) } else { 0.0 };
     let t_c = if cik { (Q.kuyu_a - d_x + 0.3) / v + 1.0 / (0.18 * crate::yetenek::ah(&p.yet)) } else { 0.0 };
     ic + t_c <= Q.kuyu_sn
 }

@@ -47,7 +47,7 @@ fn enerji2_bir_tik_js_ile_ayni() {
         enerji2(&mut m);
         for (i, s) in c["son"].as_array().unwrap().iter().enumerate() {
             let p = &m.ps[i];
-            let r = [("en", p.en), ("D", Some(p.D)), ("_Dl", p._Dl), ("_D0", p._D0), ("_yog", p._yog), ("_enOnce", p._enOnce), ("_bosT", p._bosT), ("_evx", p._evx), ("_evy", p._evy)];
+            let r = [("en", p.en), ("D", Some(p.D)), ("_Dl", p.hal._Dl), ("_D0", p.hal._D0), ("_yog", p.hal._yog), ("_enOnce", p.hal._enOnce), ("_bosT", p.hal._bosT), ("_evx", p.hal._evx), ("_evy", p.hal._evy)];
             for ((ad, x), j) in r.iter().zip(s.as_array().unwrap()) {
                 if !ayni_o(*x, j) {
                     hata.push(format!("t{} oyuncu {i} {ad}: {:?} js {:?}", h(&c["m"]["tick"]), x, ho(j)));

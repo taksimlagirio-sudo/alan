@@ -77,7 +77,7 @@ impl Kare {
             .iter()
             .map(|p| {
                 let mut ik = 0u8;
-                if p.sendT.unwrap_or(0.0) > tick as f64 {
+                if p.hal.sendT.unwrap_or(0.0) > tick as f64 {
                     ik |= 1;
                 }
                 if let (Some(ht), Some((hx, hy))) = (holder_takim, holder_xy) {
@@ -92,7 +92,7 @@ impl Kare {
                     ty: p.ty as f32,
                     is: isler.no(p.job.as_deref().unwrap_or("")),
                     en: p.en.map(|e| e as f32).unwrap_or(nan),
-                    am: if p.amA { p.am.unwrap_or(0.0) as i8 } else { 0 },
+                    am: if p.hal.amA { p.hal.am.unwrap_or(0.0) as i8 } else { 0 },
                     den: p.den.map(|e| e as f32).unwrap_or(nan),
                     ikili: ik,
                     evre: 0,

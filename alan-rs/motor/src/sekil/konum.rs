@@ -36,16 +36,18 @@ pub fn position(c: &mut Mc) {
     let KT = if c.m.holder.is_some() { None } else { kendiTopu(c) };
     let h: Option<Pid> = c.m.holder.or(KT.map(|x| x.0));
     for p in c.ps.iter_mut() {
-        let hs = std::sync::Arc::make_mut(p.hist.get_or_insert_with(Default::default));
-        hs.push(JPHistE { x: p.x, y: p.y, vx: p.vx, vy: p.vy });
+        let e = JPHistE { x: p.x, y: p.y, vx: p.vx, vy: p.vy };
+        let hs = std::sync::Arc::make_mut(p.hal_mut().hist.get_or_insert_with(Default::default));
+        hs.push(e);
         if hs.len() > 14 {
             hs.remove(0);
         }
     }
     if tick % 20.0 == 0.0 {
         for p in c.ps.iter_mut() {
-            let pa = std::sync::Arc::make_mut(p.past.get_or_insert_with(Default::default));
-            pa.push(JPPastE { x: p.x, y: p.y });
+            let e = JPPastE { x: p.x, y: p.y };
+            let pa = std::sync::Arc::make_mut(p.hal_mut().past.get_or_insert_with(Default::default));
+            pa.push(e);
             if pa.len() > 4 {
                 pa.remove(0);
             }
@@ -81,7 +83,7 @@ pub fn position(c: &mut Mc) {
                 other = jmin(other, r.t);
             }
         }
-        if ps[first].bekci() && ps[first].chB != top_id {
+        if ps[first].bekci() && ps[first].hal.chB != top_id {
             let mut fp: Option<Pid> = None;
             let mut fr0: Option<Ar> = None;
             for (q, rq) in f0.arr.iter().enumerate() {
@@ -94,7 +96,7 @@ pub fn position(c: &mut Mc) {
                 let fr0 = fr0.unwrap();
                 let mut oth = 1e9;
                 for (q, r) in f0.arr.iter().enumerate() {
-                    if ps[q].team != ps[fp].team && !(ps[q].bekci() && ps[q].chB != top_id) {
+                    if ps[q].team != ps[fp].team && !(ps[q].bekci() && ps[q].hal.chB != top_id) {
                         oth = jmin(oth, r.t);
                     }
                 }
@@ -140,12 +142,12 @@ pub fn position(c: &mut Mc) {
         c.ek.sh.att = Some(att);
         c.ek.sh.gain = tick;
         for p in c.ps.iter_mut() {
-            p.lock = Some(0.0);
-            p.kapPrev = None;
-            p.zonePrev = None;
-            p.swPrev = None;
-            p.uaPrev = None;
-            p.rec = Some(if fresh && p.takim() != att && !p.bekci() && (p.x - E.0) * dirOf(p.takim()) > 2.0 {
+            p.hal_mut().lock = Some(0.0);
+            p.hal_mut().kapPrev = None;
+            p.hal_mut().zonePrev = None;
+            p.hal_mut().swPrev = None;
+            p.hal_mut().uaPrev = None;
+            p.hal_mut().rec = Some(if fresh && p.takim() != att && !p.bekci() && (p.x - E.0) * dirOf(p.takim()) > 2.0 {
                 tick + jmax(2.0, jround(26.0 - p.yet.y(mek::PRES_BASLA) * S.recOk))
             } else {
                 0.0
@@ -164,14 +166,14 @@ pub fn position(c: &mut Mc) {
     let since = tick - c.ek.sh.gain;
     if let Some(h) = h {
         for p in c.ps.iter_mut() {
-            if kilitli(p, tick) && p._lockH != Some(h) {
-                p.lock = Some(0.0);
+            if kilitli(p, tick) && p.hal._lockH != Some(h) {
+                p.hal_mut().lock = Some(0.0);
             }
         }
     }
     for p in c.ps.iter_mut() {
         if p.takim() == att {
-            p.tutQ = None;
+            p.hal_mut().tutQ = None;
         }
         p.sprint = false;
         p.press = kilitli(p, tick) && !p.noTouch;
@@ -186,7 +188,7 @@ pub fn position(c: &mut Mc) {
                 p.ty = r0.y;
                 p.sprint = true;
                 p.job = Some("alıcı".into());
-                p.chB = top_id;
+                p.hal_mut().chB = top_id;
             }
         }
     }
@@ -316,7 +318,7 @@ fn kovala(c: &mut Mc, fr: Option<&Fr>, att: u8, top_id: Option<TopRef>, chase: &
                 let ps = &*c.ps;
                 rt = okuTb(c.ball.as_deref_mut(), &ps[pi], ps, rt, false);
             }
-            if !recv && c.ps[pi].chB != top_id && tick - c.ek.sh.ballT < rt {
+            if !recv && c.ps[pi].hal.chB != top_id && tick - c.ek.sh.ballT < rt {
                 continue;
             }
             let basla = loose && !pb && hypot(r.x - oppX(pteam), r.y - GCY) < 35.0 && r.est <= bestS;
@@ -346,7 +348,7 @@ fn kovala(c: &mut Mc, fr: Option<&Fr>, att: u8, top_id: Option<TopRef>, chase: &
                     p.ty = r.y;
                     p.sprint = true;
                     p.job = Some(if recv { "alıcı" } else if bkCik { "kovala · çık" } else { "kovala" }.into());
-                    p.chB = top_id;
+                    p.hal_mut().chB = top_id;
                     if bkCik {
                         c.ek.bkCik[pi] = top_id;
                     }
@@ -365,7 +367,7 @@ fn kovala(c: &mut Mc, fr: Option<&Fr>, att: u8, top_id: Option<TopRef>, chase: &
                     p.ty = r.y;
                     p.sprint = true;
                     p.job = Some("kovala · bas".into());
-                    p.chB = top_id;
+                    p.hal_mut().chB = top_id;
                 }
             }
         }

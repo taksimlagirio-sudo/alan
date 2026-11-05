@@ -173,8 +173,8 @@ pub fn gorulen(m: &mut Mac, p: Pid) -> Option<Vec<Oyuncu>> {
                     o.y = v.y;
                     o.vx = v.vx;
                     o.vy = v.vy;
-                    o.__e = q.e;
-                    o.__yas = q.yas;
+                    o.hal_mut().__e = q.e;
+                    o.hal_mut().__yas = q.yas;
                     o
                 })
                 .collect(),
@@ -387,7 +387,7 @@ pub fn decide(m: &Mac, p: &Oyuncu, g: &[Oyuncu], ch: f64, r: &mut Rng, tE: &crat
         if crate::iz_acik() && std::env::var("ALAN_KARAR_IZ").ok().map_or(false, |v| v == "hepsi" || v == format!("{}", m.tick)) {
             eprintln!("tik {}\ndecide {} opts {}", m.tick, p.name, r.opts.len());
             for q in g {
-                eprintln!("  dunya {} {} {} {} {} {:?} {:?}", q.name, q.x, q.y, q.vx, q.vy, q.__e, q.__yas);
+                eprintln!("  dunya {} {} {} {} {} {:?} {:?}", q.name, q.x, q.y, q.vx, q.vy, q.hal.__e, q.hal.__yas);
             }
             let mut o: Vec<&crate::model::Secenek> = r.opts.iter().collect();
             o.sort_by(|a, b| b.v.unwrap_or(f64::NAN).partial_cmp(&a.v.unwrap_or(f64::NAN)).unwrap_or(std::cmp::Ordering::Equal));

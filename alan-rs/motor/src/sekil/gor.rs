@@ -13,7 +13,7 @@ use super::*;
 
 /// Görenin bir oyuncudan aklındaki son kare (JS `B[j]`) ya da yoksa geçmişten okunan.
 fn hist_oku(q: &Oyuncu, dl: f64) -> (f64, f64, f64, f64) {
-    match &q.hist {
+    match &q.hal.hist {
         Some(h) if !h.is_empty() => {
             let i = jmax(0.0, h.len() as f64 - 1.0 - dl) as usize;
             let e = &h[i];
@@ -63,7 +63,7 @@ pub fn seen(c: &mut Mc, pi: Pid) -> Arc<Vec<Varlik>> {
         let (hx, hyy, hvx, hvy) = hist_oku(q, dl);
         hayalet(q, j, hx + hvx * la + 2.0 * hsh(p.id, q.id, b) * e, hyy + hvy * la + 2.0 * hsh(q.id, p.id, b + 7.0) * e, hvx, hvy)
     };
-    let B = if !c.lite { p._bk.as_ref() } else { None };
+    let B = if !c.lite { p.hal._bk.as_ref() } else { None };
     match B {
         Some(B) if B.len() == n => {
             let eg = (20.0 - p.yet.y(mek::ALGI_HATA)) * GR.hata;
@@ -140,7 +140,7 @@ pub fn bak(c: &mut Mc) {
         let dl = jmax(1.0, jround(TEPKI(&c.ps[i], Tepki::Algi, k)));
         let nyP = niyet(&c.ps[i]);
         let pteam = c.ps[i].team;
-        let mut B = match c.ps[i]._bk.take() {
+        let mut B = match c.ps[i].hal_mut()._bk.take() {
             Some(b) if b.len() == n => std::sync::Arc::unwrap_or_clone(b),
             _ => vec![None; n],
         };
@@ -149,18 +149,18 @@ pub fn bak(c: &mut Mc) {
                 continue;
             }
             let q = &c.ps[j];
-            let (hl, kf) = match &q.hist {
+            let (hl, kf) = match &q.hal.hist {
                 Some(h) if !h.is_empty() => (h.len(), jmin(dl, h.len() as f64 - 1.0)),
                 _ => (0, 0.0),
             };
             let kk = kf as usize;
-            let (hx, hy, hvx0, hvy0) = if kk > 0 { let e = &q.hist.as_ref().unwrap()[hl - 1 - kk]; (e.x, e.y, e.vx, e.vy) } else { (q.x, q.y, q.vx, q.vy) };
+            let (hx, hy, hvx0, hvy0) = if kk > 0 { let e = &q.hal.hist.as_ref().unwrap()[hl - 1 - kk]; (e.x, e.y, e.vx, e.vy) } else { (q.x, q.y, q.vx, q.vy) };
             let (mut hvx, mut hvy) = (hvx0, hvy0);
             if kk > 0 && q.team != pteam {
                 if let Some(kj) = kur[j] {
                     let d2 = jround(S.gizleT * jmax(0.0, kj - nyP) / 10.0);
                     if d2 > 0.0 {
-                        let H0 = q.hist.as_ref().unwrap();
+                        let H0 = q.hal.hist.as_ref().unwrap();
                         let ix = jmin(kf + d2, hl as f64 - 1.0) as usize;
                         let e = &H0[hl - 1 - ix];
                         hvx = e.vx;
@@ -170,7 +170,7 @@ pub fn bak(c: &mut Mc) {
             }
             B[j] = Some(JP_bkE { x: hx, y: hy, vx: hvx, vy: hvy, t: t - kf, z: 2.0 * (t / GR.blok).floor() });
         }
-        c.ps[i]._bk = Some(std::sync::Arc::new(B));
+        c.ps[i].hal_mut()._bk = Some(std::sync::Arc::new(B));
     }
 }
 
@@ -187,7 +187,7 @@ pub struct Gorulen {
 pub fn gorulen(c: &mut Mc, pi: Pid) -> Vec<Gorulen> {
     let n = c.ps.len();
     let gercek = |c: &Mc, j: Pid| Gorulen { v: Varlik::oyuncu(j, &c.ps[j]), yas: None, e: None };
-    if c.ps[pi]._bk.is_none() {
+    if c.ps[pi].hal._bk.is_none() {
         return (0..n).map(|j| gercek(c, j)).collect();
     }
     let k = c.k;
@@ -200,7 +200,7 @@ pub fn gorulen(c: &mut Mc, pi: Pid) -> Vec<Gorulen> {
     for j in 0..n {
         let ps = &*c.ps;
         let p = &ps[pi];
-        let B = p._bk.as_ref().unwrap();
+        let B = p.hal._bk.as_ref().unwrap();
         let q = &ps[j];
         let r = match B.get(j) {
             Some(Some(r)) if j != pi => r.clone(),

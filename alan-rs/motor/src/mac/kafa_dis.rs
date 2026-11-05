@@ -135,7 +135,7 @@ impl Dis for MacDis {
             let IlkTampon { m, ek, ps } = &mut *t;
             m.tick = tick;
             ek.sh.gs = gs.as_ref().map(|g| Gs { t: g.t, dt: g.dt as u8, on: g.on, onP: g.onP, oy: g.oy });
-            let onK0 = qv._onK.clone(); // ilkPres_h okur (kafa görünümünde), sonra geri konur
+            let onK0 = qv.hal._onK.clone(); // ilkPres_h okur (kafa görünümünde), sonra geri konur
             // qv tampona yer değiştirerek girer (kopya yok); tamponda hep tek oyuncu
             if ps.len() != 1 {
                 ps.clear();
@@ -153,7 +153,7 @@ impl Dis for MacDis {
             std::mem::swap(qv, &mut ps[0]);
             // JS: qv nesnesi kesişme simülasyonu boyunca yaşar; ilkPres'in yazdığı pres planı (fake/iç) ve
             // sprint bir sonraki adımda görülür. (_onK bu görünümde yazılmaz.)
-            qv._onK = onK0;
+            qv.hal_mut()._onK = onK0;
         });
     }
     fn AS_ilkPres_var(&self) -> bool {
@@ -188,10 +188,10 @@ impl Dis for MacDis {
     }
     // ---- algı kopyaları ----
     fn algi_e(&self, p: &Oyuncu) -> Option<f64> {
-        p.__e
+        p.hal.__e
     }
     fn algi_yas(&self, p: &Oyuncu) -> Option<f64> {
-        p.__yas
+        p.hal.__yas
     }
     fn bekciFm(&self, p: &Oyuncu, B: Nk, fm: &d1::Fm) -> Nk {
         // dünya kopyalanmaz: Bekçi oyuncuların yalnız yerini ve takımını okur

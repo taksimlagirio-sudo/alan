@@ -869,7 +869,7 @@ fn bskTab<'a>(k: &'a mut Kafa, team: f64, bk: Option<&Oyuncu>) -> &'a mut Vec<f6
         k.k2.BSKt = k.bag._tick;
     }
     let key = match bk {
-        Some(b) => format!("{}|{}|{:?}|{}", team, b.id, b.en, if b._yer { 1 } else { 0 }),
+        Some(b) => format!("{}|{}|{:?}|{}", team, b.id, b.en, if b.hal._yer { 1 } else { 0 }),
         None => format!("{}|-", team),
     };
     let n = dis::SPT().len();

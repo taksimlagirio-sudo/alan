@@ -50,8 +50,8 @@ impl Oyuncu {
             fx: 0.0,
             fy: 0.0,
             team: self.takim(),
-            am_a: self.amA,
-            am: self.am.unwrap_or(0.0),
+            am_a: self.hal.amA,
+            am: self.hal.am.unwrap_or(0.0),
             en: self.en.unwrap_or(1.0),
         }
     }
@@ -120,6 +120,11 @@ pub fn tepki(p: &Oyuncu, k: Tepki, s: &TepkiS) -> f64 {
 }
 
 impl Oyuncu {
+    /// Maç durumuna yazmak için (paylaşılıyorsa önce kopyalar: yazarken kopyala).
+    #[inline]
+    pub fn hal_mut(&mut self) -> &mut crate::model::OyuncuMac {
+        std::sync::Arc::make_mut(&mut self.hal)
+    }
     /// `Oyuncu::default()` ile aynı değer, ama boş `Arc` alanları (ad, rol, yetenek) her seferinde yeniden ayrılmaz:
     /// bir kez kurulan şablonun kopyası (Arc'lar yalnız sayılır). Sıcak yollardaki sahte/boş oyuncular için.
     pub fn bos() -> Oyuncu {

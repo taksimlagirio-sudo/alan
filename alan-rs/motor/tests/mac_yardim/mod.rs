@@ -72,40 +72,40 @@ pub fn oyuncu(v: &Value) -> Oyuncu {
             "cd" => p.cd = x,
             "en" => p.en = Some(x),
             "den" => p.den = Some(x),
-            "_evx" => p._evx = Some(x),
-            "_evy" => p._evy = Some(x),
-            "_yog" => p._yog = Some(x),
-            "_dolYok" => p._dolYok = Some(x),
-            "_Dl" => p._Dl = Some(x),
-            "_D0" => p._D0 = Some(x),
-            "_enOnce" => p._enOnce = Some(x),
-            "_bosT" => p._bosT = Some(x),
-            "kuyuT" => p.kuyuT = Some(x),
-            "_hizK" => p._hizK = Some(x),
-            "_itK" => p._itK = Some(x),
-            "stun" => p.stun = Some(x),
-            "adandi" => p.adandi = Some(x),
-            "sendT" => p.sendT = Some(x),
-            "sendCd" => p.sendCd = Some(x),
+            "_evx" => p.hal_mut()._evx = Some(x),
+            "_evy" => p.hal_mut()._evy = Some(x),
+            "_yog" => p.hal_mut()._yog = Some(x),
+            "_dolYok" => p.hal_mut()._dolYok = Some(x),
+            "_Dl" => p.hal_mut()._Dl = Some(x),
+            "_D0" => p.hal_mut()._D0 = Some(x),
+            "_enOnce" => p.hal_mut()._enOnce = Some(x),
+            "_bosT" => p.hal_mut()._bosT = Some(x),
+            "kuyuT" => p.hal_mut().kuyuT = Some(x),
+            "_hizK" => p.hal_mut()._hizK = Some(x),
+            "_itK" => p.hal_mut()._itK = Some(x),
+            "stun" => p.hal_mut().stun = Some(x),
+            "adandi" => p.hal_mut().adandi = Some(x),
+            "sendT" => p.hal_mut().sendT = Some(x),
+            "sendCd" => p.hal_mut().sendCd = Some(x),
             "ca" => p.ca = Some(x),
-            "_korT" => p._korT = Some(x),
-            "slowT" => p.slowT = Some(x),
-            "fiske" => p.fiske = Some(x),
-            "fiskeCd" => p.fiskeCd = Some(x),
+            "_korT" => p.hal_mut()._korT = Some(x),
+            "slowT" => p.hal_mut().slowT = Some(x),
+            "fiske" => p.hal_mut().fiske = Some(x),
+            "fiskeCd" => p.hal_mut().fiskeCd = Some(x),
             "_dke" => p._dke = Some(x),
-            "_rcvAbs" => p._rcvAbs = Some(x),
+            "_rcvAbs" => p.hal_mut()._rcvAbs = Some(x),
             _ => {}
         }
     }
     let bo = &v["bo"];
     p.noTouch = bo["noTouch"].as_bool().unwrap();
-    p.sonuk = bo["sonuk"].as_bool().unwrap();
+    p.hal_mut().sonuk = bo["sonuk"].as_bool().unwrap();
     p.sprint = bo["sprint"].as_bool().unwrap();
-    p._topSpr = bo["_topSpr"].as_bool().unwrap();
-    p._sprIst = bo["_sprIst"].as_bool().unwrap();
-    p.amA = bo["amA"].as_bool().unwrap();
+    p.hal_mut()._topSpr = bo["_topSpr"].as_bool().unwrap();
+    p.hal_mut()._sprIst = bo["_sprIst"].as_bool().unwrap();
+    p.hal_mut().amA = bo["amA"].as_bool().unwrap();
     p.press = bo["press"].as_bool().unwrap();
-    p._kuyuCik = bo["_kuyuCik"].as_bool().unwrap();
+    p.hal_mut()._kuyuCik = bo["_kuyuCik"].as_bool().unwrap();
     if !v["sf"].is_null() {
         p._sf = Some(JP_sf { t0: h(&v["sf"]["t0"]), f: v["sf"]["f"].as_str().unwrap().into() });
     }

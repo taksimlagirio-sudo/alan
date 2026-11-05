@@ -17,7 +17,7 @@ fn main() {
     let v: serde_json::Value = serde_json::from_str(&metin).expect("kayıt JSON değil");
     // anlar/ dosyası: kurulum içinde
     let v = match v.get("kurulum") { Some(k) if v.get("yeni").is_none() => k.clone(), _ => v };
-    let tik: u32 = a[2].parse().expect("tik");
+    let tik: u32 = a[2].split(',').next().and_then(|x| x.parse().ok()).expect("tik");
     let kip = a.get(3).map(|s| s.as_str()).unwrap_or("ozet");
     // paralel kafa (ALAN_ISCI=n): n-1 yardımcı iş parçacığı aynı maçı oynar, dalgaları bölüşür
     let n_isci: usize = std::env::var("ALAN_ISCI").ok().and_then(|s| s.parse().ok()).unwrap_or(1);
@@ -53,6 +53,152 @@ fn main() {
     if kip == "durum" {
         writeln!(out, "{}", durum(&mt.m)).unwrap();
     }
+    // dene: <kayıt> <tik> dene [N] [süre]: tik'teki taşıyıcı kararının her seçeneği zorla seçilir, kopya maç N kez
+    // (karardan sonra zar dizisi değiştirilerek) süre tik doğal oynar; seçenek başına kafanın değeri/tutma kestirimi
+    // ve gerçekleşen: gol atma, gol yeme, top kaybı (süre içinde rakibe geçti mi), sonda top kimde.
+    // ALAN_DENE_KAFA: "kal" | "mek" | "mekg" (mek + sendeleme gecikmesi) (kopya maçların kafası; yoksa bugünkü kafa)
+    if kip == "dene" {
+        let n: u32 = a.get(4).and_then(|x| x.parse().ok()).unwrap_or(40);
+        let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(90);
+        let kafa = std::env::var("ALAN_DENE_KAFA").unwrap_or_default();
+        while mt.tick() + 1 < tik && !mt.bitti() {
+            mt.adim();
+        }
+        // maç karara kadar bugünkü kafayla oynar; kopyalar seçilen kafayla
+        alan_motor::kafa::kafa1_ikili::KP_KAL_ZORLA.store(kafa == "kal", std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa1_ikili::MEKANIZMA_ZORLA.store(kafa.starts_with("mek"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa1_ikili::SEND_GEC_ZORLA.store(kafa == "mekg", std::sync::atomic::Ordering::Relaxed);
+        let mut once = mt.m.clone();
+        once.mac.kafa = Default::default();
+        // seçenekler: önce hepsi bir kez zorlanır; ALAN_DENE_SEC=0,3,7 yalnız bunlar denenir, ALAN_DENE_LISTE seçenek sayısını yazar
+        let mut ad: Vec<(usize, alan_motor::model::Mac, alan_motor::mac::ZorlaSonuc)> = Vec::new();
+        let sec: Option<Vec<usize>> = std::env::var("ALAN_DENE_SEC").ok().map(|x| x.split(',').filter_map(|y| y.parse().ok()).collect());
+        for i in 0..64 {
+            let mut c = once.clone();
+            c.mac.zorla_i = Some(i);
+            alan_motor::mac::step(&mut c);
+            let Some(z) = c.mac.zorla_sonuc.take() else { break };
+            if sec.as_ref().map_or(true, |s| s.contains(&i)) { ad.push((i, c, z)); }
+        }
+        if std::env::var("ALAN_DENE_LISTE").is_ok() { println!("{}", ad.len()); return; }
+        {
+            {
+                for (i, c, z) in &ad {
+                    let h = c._sec.as_ref().map_or(0, |s| s.h);
+                    let tk = c.ps[h].team;
+                    let (mut gol, mut yedi, mut kayip, mut son_biz, mut son_rak) = (0u32, 0u32, 0u32, 0u32, 0u32);
+                    let mut kayip_t = 0.0;
+                    let hh = &h;
+                    let erken: u32 = std::env::var("ALAN_DENE_ERKEN").ok().and_then(|x| x.parse().ok()).unwrap_or(15);
+                    let (mut erk, mut send) = (0u32, 0u32);
+                    for d in 0..n {
+                        let mut k = c.clone();
+                        if d > 0 { k.r.s ^= (d as i32).wrapping_mul(-1640531527); }
+                        let s0 = k.score.clone();
+                        let mut kaybetti = false;
+                        let mut sendeledi = false;
+                        let t0 = k.tick;
+                        for j in 0..sure {
+                            if k.over { break; }
+                            alan_motor::mac::step(&mut k);
+                            if !kaybetti && k.holder.map_or(false, |q| k.ps[q].team != tk) { kaybetti = true; kayip += 1; kayip_t += j as f64; if j < erken { erk += 1; } }
+                            if !sendeledi && j < erken && k.ps[*hh].hal.sendT.map_or(false, |s| s > t0 as f64 + 0.5) { sendeledi = true; send += 1; }
+                            if k.score != s0 { break; }
+                        }
+                        let ti = tk as usize;
+                        if k.score[ti] > s0[ti] { gol += 1; }
+                        if k.score[1 - ti] > s0[1 - ti] { yedi += 1; }
+                        match k.holder { Some(q) if k.ps[q].team == tk => son_biz += 1, Some(_) => son_rak += 1, None => {} }
+                    }
+                    let f = |x: u32| x as f64 / n as f64;
+                    let l = format!("{:2} {:<28} ({:5.1},{:5.1}) v {:6.3} P {:5} {} | gol {:.2} yedi {:.2} kayıp {:.2} (ort {:4.0} tik) son biz {:.2} rakip {:.2}",
+                        i, z.tur, z.to.0, z.to.1, z.v, if z.P.is_finite() { format!("{:.2}", z.P) } else { "  -  ".into() }, if z.secilen { "*" } else { " " },
+                        f(gol), f(yedi), f(kayip), if kayip > 0 { kayip_t / kayip as f64 } else { f64::NAN }, f(son_biz), f(son_rak));
+                    let l = format!("{l} | ilk {erken} tikte kayıp {:.2} sendeleme {:.2}", f(erk), f(send));
+                    println!("{l}");
+                }
+            }
+        }
+        return;
+    }
+    // an: <kayıt> <t1,t2,…> an <önek> [süre]: maç bugünkü kafayla oynar; her ti'de kopya maç iki kez oynatılır
+    // (bugünkü kafa / tutmayı gerçeğe yakın kestiren kafa), kareler <önek>-<ti>-{eski,yeni}.json (kare kipinin biçimi)
+    if kip == "an" {
+        let tikler: Vec<u32> = a[2].split(',').filter_map(|x| x.parse().ok()).collect();
+        let onek = a.get(4).expect("an <önek>").clone();
+        let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(120);
+        let son = *tikler.iter().max().unwrap_or(&0);
+        let yaz = |m: &alan_motor::model::Mac, kareler: &Vec<String>, olaylar: &Vec<String>, isler: &alan_motor::oyun::IsSozluk, yol: &str| {
+            let ad: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.name).unwrap()).collect();
+            let tk: Vec<String> = m.ps.iter().map(|p| format!("{}", p.team)).collect();
+            let rl: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.role).unwrap()).collect();
+            let is: Vec<String> = isler.yazilar.iter().map(|j| serde_json::to_string(j).unwrap()).collect();
+            let j = format!("{{\"motor\":\"Rust motoru\",\"ad\":[{}],\"takim\":[{}],\"rol\":[{}],\"isler\":[{}],\"olay\":[{}],\"k\":[{}]}}", ad.join(","), tk.join(","), rl.join(","), is.join(","), olaylar.join(","), kareler.join(","));
+            std::fs::write(yol, j).expect("yazılamadı");
+        };
+        while mt.tick() < son && !mt.bitti() {
+            let t = mt.tick() + 1;
+            if tikler.contains(&t) {
+                let mut once = mt.m.clone();
+                once.mac.kafa = Default::default();
+                // ALAN_AN_YENI: "kal" (varsayılan: tutma kestirimi ölçülen gerçeğe eşlenir) | "mek" (sendeleme yarışı + dolanma) | "mekg" (mek + sendeleme gecikmesi)
+                let an_yeni = std::env::var("ALAN_AN_YENI").unwrap_or_default();
+                let mek = an_yeni.starts_with("mek");
+                let mekg = an_yeni == "mekg";
+                for (kip2, acik) in [("eski", false), ("yeni", true)] {
+                    alan_motor::kafa::kafa1_ikili::KP_KAL_ZORLA.store(acik && !mek, std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa1_ikili::MEKANIZMA_ZORLA.store(acik && mek, std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa1_ikili::SEND_GEC_ZORLA.store(acik && mekg, std::sync::atomic::Ordering::Relaxed);
+                    let mut m2 = Motor::yeni(once.clone());
+                    let mut isler2 = alan_motor::oyun::IsSozluk::default();
+                    let (mut kr, mut ol) = (Vec::new(), Vec::new());
+                    let mut osay = m2.m.ev_n;
+                    let karar_yaz = std::env::var("ALAN_AN_KARAR").is_ok();
+                    let mut son_k = None;
+                    for _ in 0..sure {
+                        if m2.bitti() { break; }
+                        m2.adim();
+                        if karar_yaz {
+                            // ALAN_AN_KARAR: kopya maçtaki her yeni taşıyıcı kararı (kararlar kipinin biçimi, başta değişke) stderr'e
+                            let m = &m2.m;
+                            let t = m._sec.as_ref().map(|s| s.t);
+                            if t.is_some() && t != son_k {
+                                son_k = t;
+                                if let Some(d) = &m.lastDec {
+                                    let o: Vec<String> = d.opts.iter().map(|o| format!("[{},{},{:.3},{}]", serde_json::to_string(&o.kind).unwrap(), serde_json::to_string(&o.q).unwrap(), o.v, o.to.as_ref().map_or("-".to_string(), |t| format!("({:.1},{:.1})", t.x, t.y)))).collect();
+                                    // her türün en iyisi (bütün seçenekler)
+                                    let mut en: Vec<(String, f64, f64, f64)> = Vec::new();
+                                    if let Some(sc) = &m._sec { for e in &sc.o { match en.iter_mut().find(|x| x.0 == e.k) { Some(x) => if e.v > x.1 { *x = (e.k.clone(), e.v, e.x, e.y) }, None => en.push((e.k.clone(), e.v, e.x, e.y)) } } }
+                                    let en: Vec<String> = en.iter().map(|x| format!("{}={:.3}@({:.0},{:.0})", x.0, x.1, x.2, x.3)).collect();
+                                    let pp: Vec<String> = d.opts.iter().map(|o| format!("{:.2}", o.P)).collect();
+                                    eprintln!("KARAR {} {} {} {} ({:.1},{:.1}) {} | P {} | en {}", kip2, m.tick, d.name, d.team, d.x, d.y, o.join(" "), pp.join(","), en.join(" "));
+                                }
+                            }
+                        }
+                        let k = m2.kare(&mut isler2);
+                        let mut s = format!("[{},{},{},{},{},{}", k.tick, k.sahip, r2(k.top_x), r2(k.top_y), k.skor[0], k.skor[1]);
+                        for o in &k.oyuncular {
+                            s.push_str(&format!(",{},{},{},{}", r2(o.x), r2(o.y), o.is, r2(o.en)));
+                        }
+                        s.push(']');
+                        kr.push(s);
+                        let m = &m2.m;
+                        let yeni = ((m.ev_n - osay) as usize).min(m.events.len());
+                        for e in m.events.iter().take(yeni).rev() {
+                            ol.push(format!("[{},{},{}]", m.tick, e.team, serde_json::to_string(&e.text).unwrap()));
+                        }
+                        osay = m.ev_n;
+                    }
+                    yaz(&m2.m, &kr, &ol, &isler2, &format!("{}-{}-{}.json", onek, t, kip2));
+                }
+                alan_motor::kafa::kafa1_ikili::KP_KAL_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kafa::kafa1_ikili::MEKANIZMA_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kafa::kafa1_ikili::SEND_GEC_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+            }
+            mt.adim();
+        }
+        return;
+    }
     while mt.tick() < tik && !mt.bitti() {
         // ölçüm (tutma): kaleye 35 br'den yakın her yeni taşıyıcı kararında, kararın sürme seçenekleri kopya maçta
         // zorlanıp oynatılır; kafanın tutma kestirimi gerçekleşenle bir satırda (tik, ad, mesafe, sıra, n, P, v,
@@ -81,6 +227,7 @@ fn main() {
                         let t0 = c.tick;
                         let mut sonuc = "tuttu";
                         let mut j = 0.0;
+                        let mut den_min: f64 = c.ps[h].den.unwrap_or(1.0);
                         // ALAN_TUTMA_KILIT: taşıyıcı sürme boyunca yeniden karar vermez (kafanın keepP tanımına en yakın ölçü)
                         let kilit = std::env::var("ALAN_TUTMA_KILIT").is_ok();
                         while j < T && !c.over {
@@ -89,6 +236,7 @@ fn main() {
                             }
                             alan_motor::mac::step(&mut c);
                             j += 1.0;
+                            den_min = den_min.min(c.ps[h].den.unwrap_or(1.0));
                             match c.holder {
                                 Some(q) if c.ps[q].team != hp.team => { sonuc = "kayip"; break; }
                                 Some(q) if q != h => { sonuc = "birakti"; break; }
@@ -96,7 +244,7 @@ fn main() {
                                 _ => {}
                             }
                         }
-                        writeln!(out, "[{},{},{:.2},{},{},{},{},{},[{},{}],{:?},{}]", m.tick, serde_json::to_string(&*hp.name).unwrap(), dk, sira, z.n, if z.P.is_finite() { format!("{}", z.P) } else { "null".into() }, z.v, z.secilen, z.to.0, z.to.1, sonuc, j).unwrap();
+                        writeln!(out, "[{},{},{:.2},{},{},{},{},{},[{},{}],{:?},{},{:.3}]", m.tick, serde_json::to_string(&*hp.name).unwrap(), dk, sira, z.n, if z.P.is_finite() { format!("{}", z.P) } else { "null".into() }, z.v, z.secilen, z.to.0, z.to.1, sonuc, j, den_min).unwrap();
                     }
                 }
             }
@@ -145,13 +293,13 @@ fn main() {
     let dt = t0.elapsed().as_secs_f64();
     if kip == "boyut" {
         for p in mt.m.ps.iter().take(3) {
-            eprintln!("{} hist {:?} past {:?} _bk {:?} job {:?} _lc {} sizeof {}", p.name, p.hist.as_ref().map(|v| v.len()), p.past.as_ref().map(|v| v.len()), p._bk.as_ref().map(|v| v.len()), p.job.as_ref().map(|j| j.len()), p._lc.is_some(), std::mem::size_of::<alan_motor::model::Oyuncu>());
+            eprintln!("{} hist {:?} past {:?} _bk {:?} job {:?} _lc {} sizeof {}", p.name, p.hal.hist.as_ref().map(|v| v.len()), p.hal.past.as_ref().map(|v| v.len()), p.hal._bk.as_ref().map(|v| v.len()), p.job.as_ref().map(|j| j.len()), p.hal._lc.is_some(), std::mem::size_of::<alan_motor::model::Oyuncu>());
         }
         let t = std::time::Instant::now();
         let mut n = 0usize;
         for _ in 0..100000 { let c = mt.m.ps[3].clone(); n += c.name.len(); }
         eprintln!("klon 100k: {:?} ({})", t.elapsed(), n);
-        let mut q = mt.m.ps[3].clone(); q.hist = None; q.past = None; q._bk = None;
+        let mut q = mt.m.ps[3].clone(); q.hal_mut().hist = None; q.hal_mut().past = None; q.hal_mut()._bk = None;
         let t = std::time::Instant::now();
         for _ in 0..100000 { let c = q.clone(); n += c.name.len(); }
         eprintln!("klon hist/past/_bk yok 100k: {:?} ({})", t.elapsed(), n);

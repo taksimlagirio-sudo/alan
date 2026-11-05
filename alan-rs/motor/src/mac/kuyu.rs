@@ -104,42 +104,42 @@ pub fn kuyuSaat(m: &mut Mac, mt: f64, mH: Option<Pid>) {
         let ic = d < Q.kuyu_a;
         let dur = ic && topK == if px < W / 2.0 { 0.0 } else { 1.0 };
         if dur {
-            m.ps[pi]._kuyuCik = false;
-            if !m.ps[pi].sonuk {
+            m.ps[pi].hal_mut()._kuyuCik = false;
+            if !m.ps[pi].hal.sonuk {
                 continue;
             }
         }
         if ic {
             if !holder {
-                m.ps[pi].kuyuT = Some(oo(m.ps[pi].kuyuT) + 1.0);
+                m.ps[pi].hal_mut().kuyuT = Some(oo(m.ps[pi].hal.kuyuT) + 1.0);
             }
-            if !m.ps[pi].sonuk && !holder && oo(m.ps[pi].kuyuT) >= Q.kuyu_sn {
-                m.ps[pi].sonuk = true;
-                m.ps[pi].hamle = None;
+            if !m.ps[pi].hal.sonuk && !holder && oo(m.ps[pi].hal.kuyuT) >= Q.kuyu_sn {
+                m.ps[pi].hal_mut().sonuk = true;
+                m.ps[pi].hal_mut().hamle = None;
                 let (t, ad) = (m.ps[pi].team, m.ps[pi].name.clone());
                 ev(m, "pas", t, format!("{ad} Kuyu alanında süreyi doldurdu · sönük"));
             }
         } else {
-            m.ps[pi].kuyuT = Some(0.0);
-            m.ps[pi].sonuk = false;
+            m.ps[pi].hal_mut().kuyuT = Some(0.0);
+            m.ps[pi].hal_mut().sonuk = false;
         }
         let p = &m.ps[pi];
-        if !ic || p.sonuk || holder || p._kuyuCik {
+        if !ic || p.hal.sonuk || holder || p.hal._kuyuCik {
             if !ic {
-                m.ps[pi]._kuyuCik = false;
+                m.ps[pi].hal_mut()._kuyuCik = false;
             }
-        } else if oo(p.kuyuT) + kuyuCikT(m, pi, None, &kk) + 1.0 >= Q.kuyu_sn {
-            m.ps[pi]._kuyuCik = true;
+        } else if oo(p.hal.kuyuT) + kuyuCikT(m, pi, None, &kk) + 1.0 >= Q.kuyu_sn {
+            m.ps[pi].hal_mut()._kuyuCik = true;
         }
         let p = &m.ps[pi];
-        if p.sonuk || (p._kuyuCik && !holder) {
+        if p.hal.sonuk || (p.hal._kuyuCik && !holder) {
             if let Some(y) = kuyuCikYon(m, pi) {
                 m.ps[pi].tx = cl(y.x + 0.7 * y.ux, 1.0, W - 1.0);
                 m.ps[pi].ty = cl(y.y + 0.7 * y.uy, 1.0, H - 1.0);
             }
             let p = &mut m.ps[pi];
             p.sprint = true;
-            p.job = Some(if p.sonuk { "sönük · alandan çıkıyor" } else { "Kuyu alanından çıkıyor" }.into());
+            p.job = Some(if p.hal.sonuk { "sönük · alandan çıkıyor" } else { "Kuyu alanından çıkıyor" }.into());
         } else if !holder && (ic || alan_ic(p.tx, p.ty)) {
             let v = jmax(0.05, spd(p) * vK(p, mH == Some(pi), mt, &kk));
             let tv = hypot(p.tx - p.x, p.ty - p.y) / v;

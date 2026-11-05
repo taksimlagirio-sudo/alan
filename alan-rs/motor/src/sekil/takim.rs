@@ -277,7 +277,7 @@ pub fn teamV(c: &mut Mc, sn: &mut Vec<Varlik>, svi: Pid, att: u8, E: (f64, f64),
     let mut byC = opp.clone();
     byC.sort_by(|&u, &v| (hypot(sn[u].x - cc.x, sn[u].y - cc.y) - hypot(sn[v].x - cc.x, sn[v].y - cc.y)).partial_cmp(&0.0).unwrap_or(std::cmp::Ordering::Equal));
     let kd = if p.is_some() { cc.kd.filter(|&i| i < sn.len()) } else { None };
-    let refIs = |o: &Varlik, pi: Pid| -> bool { o.r.map(|r| ps0[r].tutQ == Some(pi) && markajci(&ps0[r].job)).unwrap_or(false) };
+    let refIs = |o: &Varlik, pi: Pid| -> bool { o.r.map(|r| ps0[r].hal.tutQ == Some(pi) && markajci(&ps0[r].job)).unwrap_or(false) };
     let mk = match (p, kd) {
         (Some(pi), None) => opp.iter().copied().find(|&i| refIs(&sn[i], pi)),
         _ => None,
@@ -510,8 +510,8 @@ pub fn kapatHat(c: &mut Mc, di: Pid, att: u8, E: (f64, f64), qo: &Varlik) -> (f6
     }
     {
         let dp = &c.ps[di];
-        if let (Some(kh), Some(t)) = (&dp._kh, dp._khT) {
-            if t > c.m.tick - 4.0 && dp._khQ == qo.r {
+        if let (Some(kh), Some(t)) = (&dp.hal._kh, dp.hal._khT) {
+            if t > c.m.tick - 4.0 && dp.hal._khQ == qo.r {
                 return (qo.x + kh.dx, qo.y + kh.dy);
             }
         }
@@ -569,9 +569,9 @@ pub fn kapatHat(c: &mut Mc, di: Pid, att: u8, E: (f64, f64), qo: &Varlik) -> (f6
     }
     let r = (g0.0 + (best.0 - g0.0) * w, g0.1 + (best.1 - g0.1) * w);
     let dp = &mut c.ps[di];
-    dp._kh = Some(crate::model::JP_kh { dx: r.0 - qo.x, dy: r.1 - qo.y });
-    dp._khT = Some(c.m.tick);
-    dp._khQ = qo.r;
+    dp.hal_mut()._kh = Some(crate::model::JP_kh { dx: r.0 - qo.x, dy: r.1 - qo.y });
+    dp.hal_mut()._khT = Some(c.m.tick);
+    dp.hal_mut()._khQ = qo.r;
     r
 }
 

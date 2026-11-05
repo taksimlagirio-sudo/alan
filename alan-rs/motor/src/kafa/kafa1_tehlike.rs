@@ -332,7 +332,7 @@ impl Kafa {
         let iy = crate::mat::jround(2.0 * y);
         // eskiden metin anahtarı (team, id, en'in bitleri, _yer, ix, iy); aynı eşitlikte sayı anahtarı
         let sk = crate::js_sayi_k;
-        let k = [sk(team), sk(bk.id), bk.en.map_or(u64::MAX, f64::to_bits), bk._yer as u64, sk(ix), sk(iy)];
+        let k = [sk(team), sk(bk.id), bk.en.map_or(u64::MAX, f64::to_bits), bk.hal._yer as u64, sk(ix), sk(iy)];
         if let Some(v) = self.rnb.borrow().1.get(&k) {
             return *v;
         }
@@ -434,7 +434,7 @@ impl Kafa {
                 continue;
             }
             let pres = p.press || is_bas(&p.job, &["pres"]);
-            let mr = p.markRef.and_then(|k| src.get(k));
+            let mr = p.hal.markRef.and_then(|k| src.get(k));
             if let Some(mr) = mr {
                 if hypot(mr.x - at.x, mr.y - at.y) > 4.0 && self.threat(team, mr.x, mr.y) > tAt && !pres {
                     continue;

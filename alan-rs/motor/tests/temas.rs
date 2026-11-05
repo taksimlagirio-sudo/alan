@@ -21,9 +21,9 @@ fn oyuncu(v: &Value) -> Oyuncu {
     p.yet = if v["a"].as_object().unwrap().is_empty() { Yetenek::bos().into() } else { Yetenek::kur(&a).into() };
     p.x = h(&v["x"]); p.y = h(&v["y"]); p.vx = h(&v["vx"]); p.vy = h(&v["vy"]);
     p.en = ho(&v["en"]); p.den = ho(&v["den"]);
-    p.tx = h(&v["tx"]); p.ty = h(&v["ty"]); p.noTouch = v["noTouch"].as_bool().unwrap(); p.sonuk = v["sonuk"].as_bool().unwrap();
-    p.kuyuT = ho(&v["kuyuT"]); p.R = ho(&v["R"]).unwrap_or(0.0); p.D = ho(&v["D"]).unwrap_or(1.0); p.amA = v["amA"].as_bool().unwrap(); p.am = ho(&v["am"]);
-    p._rcvB = if v["rcvB"].as_bool().unwrap() { Some(1) } else { None }; p._dalis = ho(&v["dalis"]);
+    p.tx = h(&v["tx"]); p.ty = h(&v["ty"]); p.noTouch = v["noTouch"].as_bool().unwrap(); p.hal_mut().sonuk = v["sonuk"].as_bool().unwrap();
+    p.hal_mut().kuyuT = ho(&v["kuyuT"]); p.R = ho(&v["R"]).unwrap_or(0.0); p.D = ho(&v["D"]).unwrap_or(1.0); p.hal_mut().amA = v["amA"].as_bool().unwrap(); p.hal_mut().am = ho(&v["am"]);
+    p.hal_mut()._rcvB = if v["rcvB"].as_bool().unwrap() { Some(1) } else { None }; p.hal_mut()._dalis = ho(&v["dalis"]);
     p
 }
 fn top(v: &Value) -> TopT {
@@ -68,7 +68,7 @@ fn js_ile_bit_bit_ayni() {
         }
         let sj = &c["son"];
         for (n, x) in [("x", b.b.x), ("y", b.b.y), ("vx", b.b.vx), ("vy", b.b.vy), ("e", b.b.e), ("ch", b.b.ch), ("defl", b.b.defl)] { if !ayni(x, h(&sj[n])) { hata.push(format!("t{tk} contact top.{n}: {x:e} js {:e}", h(&sj[n]))); } }
-        for (i, q) in c["pson"].as_array().unwrap().iter().enumerate() { if !ayni(ps[i].x, h(&q[0])) || !ayni(ps[i].y, h(&q[1])) || !ayni(ps[i]._dalis.unwrap_or(0.0), h(&q[2])) { hata.push(format!("t{tk} contact oyuncu {i} yeri")); } }
+        for (i, q) in c["pson"].as_array().unwrap().iter().enumerate() { if !ayni(ps[i].x, h(&q[0])) || !ayni(ps[i].y, h(&q[1])) || !ayni(ps[i].hal._dalis.unwrap_or(0.0), h(&q[2])) { hata.push(format!("t{tk} contact oyuncu {i} yeri")); } }
     }
     eprintln!("temassız {} tutulan {} seken {}", say[0], say[1], say[2]);
     assert!(hata.is_empty(), "{} hata:\n{}", hata.len(), hata[..hata.len().min(20)].join("\n"));

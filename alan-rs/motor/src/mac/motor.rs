@@ -120,10 +120,10 @@ impl Motor {
             f[43 + 3 * k] = if p.tx.is_finite() { p.tx as f32 } else { nan };
             f[44 + 3 * k] = if p.ty.is_finite() { p.ty as f32 } else { nan };
             f[84 + k] = p.en.map_or(nan, |e| e as f32);
-            f[98 + k] = if p.amA { p.am.unwrap_or(0.0) as f32 } else { 0.0 };
+            f[98 + k] = if p.hal.amA { p.hal.am.unwrap_or(0.0) as f32 } else { 0.0 };
             f[113 + k] = p.den.map_or(nan, |e| e as f32);
             let mut ik = 0u8;
-            if p.sendT.unwrap_or(0.0) > m.tick {
+            if p.hal.sendT.unwrap_or(0.0) > m.tick {
                 ik |= 1;
             }
             if let Some(h) = hold {
@@ -146,7 +146,7 @@ impl Motor {
             f[146 + 3 * q] = nan;
             f[147 + 3 * q] = nan;
         }
-        f[112] = if hold.map_or(false, |h| h.sarj == Some(true)) { 1.0 } else { 0.0 };
+        f[112] = if hold.map_or(false, |h| h.hal.sarj == Some(true)) { 1.0 } else { 0.0 };
         // itilmiş açık top: iten ve duracağı yer
         let it = match (&m.ball, &m.fl) {
             (Some(b), Some(fl)) if m.holder.is_none() && b.done.is_none() => match b.tt.t.from {

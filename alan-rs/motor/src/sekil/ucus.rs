@@ -293,7 +293,7 @@ pub fn flightRead(c: &mut Mc) -> Option<Fr> {
         let tp0 = btp.unwrap_or(bt);
         let mut rcv: Option<Option<(TopRef, f64, f64, f64, Option<f64>)>> = None;
         if isRecv {
-            let iMx = if p._rcvB == Some(bid) { p._rcvAbs.unwrap_or(f64::NAN) + 2.0 - tick } else { 1e9 };
+            let iMx = if p.hal._rcvB == Some(bid) { p.hal._rcvAbs.unwrap_or(f64::NAN) + 2.0 - tick } else { 1e9 };
             best = alici(&pts, p, &w, ps, rc, iMx, Some(tp0), iMin, Some(S.rcvBuf), c.ball.as_deref_mut(), k, c.d);
             if best.is_none() {
                 best = alici(&pts, p, &w, ps, rc, iMx, Some(tp0), iMin, None, c.ball.as_deref_mut(), k, c.d);
@@ -355,13 +355,13 @@ pub fn flightRead(c: &mut Mc) -> Option<Fr> {
         best.est = best.t * (1.0 + hsh(p.id, ft0, 3.0) * (20.0 - p.yet.y(mek::ALGI_HATA)) * 0.04);
         if let Some(r) = rcv {
             let p = &mut c.ps[pi];
-            p._rcvV = None;
+            p.hal_mut()._rcvV = None;
             if let Some((bid, abs, x, y, vv)) = r {
-                p._rcvB = Some(bid);
-                p._rcvAbs = Some(abs);
-                p._rcvX = Some(x);
-                p._rcvY = Some(y);
-                p._rcvV = vv;
+                p.hal_mut()._rcvB = Some(bid);
+                p.hal_mut()._rcvAbs = Some(abs);
+                p.hal_mut()._rcvX = Some(x);
+                p.hal_mut()._rcvY = Some(y);
+                p.hal_mut()._rcvV = vv;
             }
         }
         out.push(best);

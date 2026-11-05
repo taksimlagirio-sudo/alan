@@ -386,7 +386,7 @@ pub fn markAta_ile(m: &mut Mac, dis: &mut dyn KurDis) {
         ara(0, 0.0, d.len(), &cost, &mut used, &mut cur, &mut bc, &mut best);
         if let Some(b) = best {
             for (i, &p) in d.iter().enumerate() {
-                m.ps[p].markRef = Some(o[b[i]]);
+                m.ps[p].hal_mut().markRef = Some(o[b[i]]);
             }
         }
     }
@@ -474,7 +474,7 @@ pub fn assignRoles_ile(m: &mut Mac, roles: &Roller, dis: &mut dyn KurDis) {
             };
             if let Some(&o0) = opp.first() {
                 taken.push(o0);
-                m.ps[p].markRef = Some(o0);
+                m.ps[p].hal_mut().markRef = Some(o0);
             }
         }
     }
@@ -537,7 +537,7 @@ pub fn roleSample(m: &mut Mac) {
             } else if tlv(p, "sav", "pres") >= 0.75 {
                 ok = p.press;
             } else if tlv(p, "sav", "adam") >= 0.5 {
-                ok = p.markRef.map_or(false, |r| hypot(p.x - m.ps[r].x, p.y - m.ps[r].y) < 6.0);
+                ok = p.hal.markRef.map_or(false, |r| hypot(p.x - m.ps[r].x, p.y - m.ps[r].y) < 6.0);
             } else if p.slot.d >= 0.7 {
                 ok = (p.x - W / 2.0) * dir > 0.0;
             } else {
@@ -587,8 +587,8 @@ pub fn kickoff_ile(m: &mut Mac, t: f64, dis: &mut dyn KurDis) {
         p.vy = 0.0;
         p.tx = p.x;
         p.ty = p.y;
-        p.driveTo = None;
-        p._dur = None;
+        p.hal_mut().driveTo = None;
+        p.hal_mut()._dur = None;
     }
     m.winT = None;
     m.gecis = false;
@@ -603,7 +603,7 @@ pub fn kickoff_ile(m: &mut Mac, t: f64, dis: &mut dyn KurDis) {
     }
     m.holder = Some(k);
     if m.ps[k].bekci() {
-        m.ps[k]._korT = Some(m.tick + Q.bek_koru);
+        m.ps[k].hal_mut()._korT = Some(m.tick + Q.bek_koru);
     }
     m.ball = None;
     m.ch = 0.3;

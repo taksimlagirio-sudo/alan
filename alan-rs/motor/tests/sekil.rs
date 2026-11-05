@@ -75,21 +75,21 @@ fn oyuncu(v: &Value) -> Oyuncu {
     p.D = h(&v["D"]);
     p.press = v["press"].as_bool().unwrap();
     p.noTouch = v["noTouch"].as_bool().unwrap();
-    p.sonuk = v["sonuk"].as_bool().unwrap();
-    p.kuyuT = ho(&v["kuyuT"]);
+    p.hal_mut().sonuk = v["sonuk"].as_bool().unwrap();
+    p.hal_mut().kuyuT = ho(&v["kuyuT"]);
     p.cd = h(&v["cd"]);
-    p.hist = Some(v["hist"].as_array().unwrap().iter().map(|e| JPHistE { x: h(&e[0]), y: h(&e[1]), vx: h(&e[2]), vy: h(&e[3]) }).collect::<Vec<_>>().into());
-    p.past = Some(v["past"].as_array().unwrap().iter().map(|e| JPPastE { x: h(&e[0]), y: h(&e[1]) }).collect::<Vec<_>>().into());
-    p._bk = bk(&v["bk"]).map(std::sync::Arc::new);
-    p._rcvB = if v["rcvB"].as_bool().unwrap() { Some(1) } else { None };
-    p._rcvAbs = ho(&v["rcvAbs"]);
-    p._rcvV = ho(&v["rcvV"]);
-    p._rcvX = ho(&v["rcvX"]);
-    p._rcvY = ho(&v["rcvY"]);
-    p.amA = v["amA"].as_bool().unwrap_or(false);
-    p.am = ho(&v["am"]);
+    p.hal_mut().hist = Some(v["hist"].as_array().unwrap().iter().map(|e| JPHistE { x: h(&e[0]), y: h(&e[1]), vx: h(&e[2]), vy: h(&e[3]) }).collect::<Vec<_>>().into());
+    p.hal_mut().past = Some(v["past"].as_array().unwrap().iter().map(|e| JPPastE { x: h(&e[0]), y: h(&e[1]) }).collect::<Vec<_>>().into());
+    p.hal_mut()._bk = bk(&v["bk"]).map(std::sync::Arc::new);
+    p.hal_mut()._rcvB = if v["rcvB"].as_bool().unwrap() { Some(1) } else { None };
+    p.hal_mut()._rcvAbs = ho(&v["rcvAbs"]);
+    p.hal_mut()._rcvV = ho(&v["rcvV"]);
+    p.hal_mut()._rcvX = ho(&v["rcvX"]);
+    p.hal_mut()._rcvY = ho(&v["rcvY"]);
+    p.hal_mut().amA = v["amA"].as_bool().unwrap_or(false);
+    p.hal_mut().am = ho(&v["am"]);
     assert!(!v["cone"].as_bool().unwrap_or(false), "koni (cone) görüldü");
-    p.chB = if v["chB"].as_bool().unwrap() { Some(1) } else { None };
+    p.hal_mut().chB = if v["chB"].as_bool().unwrap() { Some(1) } else { None };
     p
 }
 fn top(v: &Value) -> TopT {
@@ -252,11 +252,11 @@ fn js_ile_bit_bit_ayni() {
         }
         // bak: önceki akıl kareleri üstüne
         for (i, p) in K.ps.iter_mut().enumerate() {
-            p._bk = bk(&c["bk0"][i]).map(std::sync::Arc::new);
+            p.hal_mut()._bk = bk(&c["bk0"][i]).map(std::sync::Arc::new);
         }
         bak(&mut K.mc());
         for i in 0..n {
-            let r = &K.ps[i]._bk;
+            let r = &K.ps[i].hal._bk;
             let j = bk(&c["bak"][i]);
             let ok = match (r, &j) {
                 (Some(a), Some(b)) => a.len() == b.len() && a.iter().zip(b.iter()).all(|(x, y)| match (x, y) {
@@ -353,7 +353,7 @@ fn js_ile_bit_bit_ayni() {
         if let Some(fj) = c.get("fr").filter(|f| !f.is_null()) {
             let mut K2 = kur(c);
             for (i, p) in K2.ps.iter_mut().enumerate() {
-                p._bk = bk(&c["bak"][i]).map(std::sync::Arc::new);
+                p.hal_mut()._bk = bk(&c["bak"][i]).map(std::sync::Arc::new);
             }
             match catch_unwind(AssertUnwindSafe(|| flightRead(&mut K2.mc()))) {
                 Err(_) => say.entry("flightRead").or_default().atla += 1,
@@ -378,7 +378,7 @@ fn js_ile_bit_bit_ayni() {
                     }
                     for (i, q) in c["psSon"].as_array().unwrap().iter().enumerate() {
                         let p = &K2.ps[i];
-                        for (ad, x, y) in [("rcvV", p._rcvV, &q[0]), ("rcvAbs", p._rcvAbs, &q[1]), ("rcvX", p._rcvX, &q[2]), ("rcvY", p._rcvY, &q[3])] {
+                        for (ad, x, y) in [("rcvV", p.hal._rcvV, &q[0]), ("rcvAbs", p.hal._rcvAbs, &q[1]), ("rcvX", p.hal._rcvX, &q[2]), ("rcvY", p.hal._rcvY, &q[3])] {
                             chk(&mut hata, format!("t{tk} flightRead {i}._{ad}"), x.unwrap_or(f64::NAN), ho(y).unwrap_or(f64::NAN));
                         }
                     }
