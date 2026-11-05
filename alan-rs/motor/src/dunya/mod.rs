@@ -21,7 +21,7 @@ use std::sync::Arc;
 use crate::model::Oyuncu;
 
 pub mod varlik;
-pub use varlik::{hayal, Beden, Varlik};
+pub use varlik::{hayal, Beden, Varlik, Yerde};
 
 /// Kafanın dünyasının öğesi: paylaşımlı oyuncu.
 pub type Op = Arc<Oyuncu>;

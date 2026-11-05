@@ -69,14 +69,13 @@ pub fn bekSav(k: &Kafa, p: &Op, h: &Oyuncu, T: f64, src: &[Op]) -> Op {
     let kc0 = crate::temas::bek_kay(p);
     let v0 = dis::AM_spd(k, p);
     let sK = dis::AM_sprK(k, p);
-    let mut hv = h.clone();
     let mut t = 0usize;
     while (t as f64) < T {
         let tf = t as f64;
-        hv.x = h.x + 0.5 * veya(h.vx, 0.0) * tf;
-        hv.y = h.y + 0.5 * veya(h.vy, 0.0) * tf;
+        // taşıyıcı t tik sonra: kopya yerine görünüm (yalnız yeri değişir)
+        let hv = crate::dunya::Yerde { govde: h, x: h.x + 0.5 * veya(h.vx, 0.0) * tf, y: h.y + 0.5 * veya(h.vy, 0.0) * tf };
         let g = {
-            let fm = dis::Fm { tac: &[], ps: src, holder: Some(&hv) };
+            let fm = dis::Fm { tac: &[], ps: src, holder: Some(hv) };
             dis::AS_bekci(k, p, nk(hv.x, hv.y), Some(&fm))
         };
         let dx = g.x - q.x;
@@ -348,7 +347,7 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
                     } else {
                         let m = k.mac.as_ref().unwrap();
                         let hold = m.holder.map(|h| m.ps[h].clone());
-                        let fm = dis::Fm { tac: &m.tac, ps: &m.ps, holder: hold.as_deref() };
+                        let fm = dis::Fm { tac: &m.tac, ps: &m.ps, holder: hold.as_deref().map(crate::dunya::Yerde::oyuncu) };
                         let sb = dis::AS_slotBase(k, &fm, p, B, false);
                         gx = sb.x;
                         gy = sb.y;

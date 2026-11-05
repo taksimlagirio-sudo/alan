@@ -313,7 +313,7 @@ impl Sv {
             }
             let pp = &c.ps[p];
             self.base[p] = Some(if pp.bekci() {
-                let bm = BekM { ps: crate::sekil::yer::BekPs::Duz(c.ps), holder: c.m.holder.map(|h| &c.ps[h]), sut: c.m.mac.kafa.k.is_some(), ben: Some(p) };
+                let bm = BekM { ps: crate::sekil::yer::BekPs::Duz(c.ps), holder: c.m.holder.map(|h| crate::dunya::Yerde::oyuncu(&c.ps[h])), sut: c.m.mac.kafa.k.is_some(), ben: Some(p) };
                 let b = bekci(pp, E.0, E.1, Some(&bm), k);
                 Yer { x: b.0, y: b.1, el: None }
             } else {
