@@ -304,6 +304,9 @@ pub fn sutTab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: Op
         gov = jmax(gov, govOf(k, GCY + a * MO));
     }
     let sig = sig.unwrap_or(f64::NAN);
+    if crate::iz_acik() && sh.map_or(false, |s| std::env::var("ALAN_SURD_IZ").ok().as_deref() == Some(&*s.name)) {
+        eprintln!("SUTTAB ({:.1},{:.1}) dd {:.2} sy {:.2} ko {:.2} kd {:.2} ls {:.1} lk {:.1} ch {:.2} gov {:.3} oku {:.3} | yer0 ({:.1},{:.1}) bk ({:.1},{:.1})", x, y, dd, sy, ko, kd, ls, lk, ch, gov, okuL(ko), yer0.x, yer0.y, bkP.x, bkP.y);
+    }
     if !(sig > 0.3) {
         return gov * okuL(ko);
     }
