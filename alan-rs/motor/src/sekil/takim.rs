@@ -516,7 +516,7 @@ fn kpOf(c: &mut Mc, w2: &[Varlik], svi: Pid, cc: (f64, f64), q: Option<Pid>, yP:
     } else if kat <= 0.0 {
         ust
     } else {
-        jmax(0.0, (1.0 - k2) * LE - ((1.0 - k1) * LE + k1 * ((1.0 - yP) * LE + yP * (1.0 - cl(kA, 0.0, 1.0)) * (kp.L)(cc.0, cc.1))))
+        jmax(0.0, (1.0 - k2) * LE - ((1.0 - k1) * LE + k1 * ((1.0 - yP) * LE + yP * (1.0 - cl(kA, 0.0, 1.0)) * (kp.L)(&*c.m, cc.0, cc.1))))
     }
 }
 

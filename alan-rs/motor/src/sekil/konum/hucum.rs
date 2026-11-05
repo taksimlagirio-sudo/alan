@@ -234,7 +234,7 @@ impl Sv {
                         c.ek.kayL = Some((key, f));
                     }
                     let L = c.ek.kayL.as_ref().unwrap().1.clone();
-                    let LE = L(E.0, E.1);
+                    let LE = L(&*c.m, E.0, E.1);
                     if LE * S.W.tvPass > 0.003 {
                         c.ek.kpC = Some(KpC { L, LE, Hr, kH: 0.0, mut_: 0, kc: Default::default() });
                     }

@@ -180,7 +180,7 @@ mod tdis {
         fn bekciFm(&self, p: &Oyuncu, B: Nk, fm: &Fm) -> Nk {
             let ps = kisi(fm.ps);
             let ben = fm.ps.iter().position(|q| q.id == p.id && q.team == p.team);
-            let bm = alan_motor::sekil::yer::BekM { ps: alan_motor::sekil::yer::BekPs::Duz(&ps), holder: fm.holder, ben };
+            let bm = alan_motor::sekil::yer::BekM { ps: alan_motor::sekil::yer::BekPs::Duz(&ps), holder: fm.holder, ben, sut: true };
             let (x, y) = alan_motor::sekil::yer::bekci(p, B.x, B.y, Some(&bm), &self.m.kural.get());
             nk(x, y)
         }

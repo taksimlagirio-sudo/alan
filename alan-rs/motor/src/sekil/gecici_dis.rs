@@ -112,12 +112,9 @@ pub fn govdeV(h: &Oyuncu) -> f64 {
 }
 /// Taşıyıcının şimdi çekebileceği en sert şutun hızı (tam şarj): kural katmanından, kafaya uğramadan
 /// (eskiden yerleşim → kafa iç içe çağrısıydı; yedek kafaya düşen çağrıların neredeyse hepsi buradandı).
-/// Maç kurulurken (kafa yokken) eskisi gibi None.
-pub fn sutHiz(h: &Oyuncu) -> Option<f64> {
-    if !crate::mac::kafa_dis::kafa_var() {
-        return None;
-    }
-    Some(crate::kural::sut::sutHiz(h))
+/// Maç kurulurken (kafa yokken) çağrılmaz: Bekçi'nin bağlamı (BekM::sut) bunu bilir.
+pub fn sutHiz(h: &Oyuncu) -> f64 {
+    crate::kural::sut::sutHiz(h)
 }
 /// JS `savurPlan(h, {vx, vy}, ca0, w0, sYon, null, itme, E)` → `pl ? pl.T : None`.
 pub fn savurPlan(m: &crate::model::Mac, h: &Oyuncu, vx: f64, vy: f64, ca0: f64, w0: f64, sYon: f64, itme: bool, E: f64) -> Option<f64> {
@@ -182,7 +179,7 @@ pub fn kayipYer(m: &crate::model::Mac, ps: &[Oyuncu], team: u8, ch: f64, h: &Oyu
     let tac = tac.map(crate::mac::gecici_dis::kafa_tac);
     let f = crate::mac::kafa_dis::kafa_mac(m, |k| crate::kafa::kafa2_zemin::kayipYer(k, &src, team as f64, ch, h, tac.as_ref()));
     let f = std::sync::Mutex::new(f);
-    std::sync::Arc::new(move |x: f64, y: f64| kafa_ile(|k| f.lock().unwrap().deger(k, x, y)))
+    std::sync::Arc::new(move |m: &crate::model::Mac, x: f64, y: f64| crate::mac::kafa_dis::kafa_mac(m, |k| f.lock().unwrap().deger(k, x, y)))
 }
 /// decide.js:6875 `PNC_GORUS`.
 pub const PNC_GORUS: f64 = 48.0;

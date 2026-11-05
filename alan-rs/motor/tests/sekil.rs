@@ -325,7 +325,7 @@ fn js_ile_bit_bit_ayni() {
             chk(&mut hata, format!("t{tk} bekci {pi} y"), b0.1, h(&y["bk"]["y"]));
             say.entry("slotBase/bekci").or_default().tamam += 1;
             if !y["bkm"].is_null() {
-                let bm = BekM { ps: alan_motor::sekil::yer::BekPs::Duz(&K.ps), holder: K.m.holder.map(|h| &K.ps[h]), ben: Some(pi) };
+                let bm = BekM { ps: alan_motor::sekil::yer::BekPs::Duz(&K.ps), holder: K.m.holder.map(|h| &K.ps[h]), sut: K.m.mac.kafa.k.is_some(), ben: Some(pi) };
                 match catch_unwind(AssertUnwindSafe(|| bekci(&K.ps[pi], ex, ey, Some(&bm), &K.kk))) {
                     Ok(b1) => {
                         chk(&mut hata, format!("t{tk} bekci(m) {pi} x"), b1.0, h(&y["bkm"]["x"]));

@@ -134,7 +134,9 @@ pub struct Gs {
 }
 
 /// Kafanın kayıp-yeri işlevi (JS `D.kayipYer(...)` dönüşü: `(x, y) → değer`).
-pub type KayipF = Arc<dyn Fn(f64, f64) -> f64 + Send + Sync>;
+/// Kayıp haritası (x, y) → değer. Çağrı anında maçı alır: değerlendirme maçın kafasıyla yapılır
+/// (iş parçacığına özel kafa aranmaz; MIMARI.md Aşama 3).
+pub type KayipF = Arc<dyn Fn(&crate::model::Mac, f64, f64) -> f64 + Send + Sync>;
 
 /// JS modül değişkeni `_kpC`: topu kaybetme tartısı (position'da kurulur, teamV okur).
 #[derive(Clone)]

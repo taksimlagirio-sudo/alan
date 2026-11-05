@@ -144,7 +144,7 @@ pub fn slotBase(m: &Mac, p: Pid, ex: f64, ey: f64, att: bool) -> (f64, f64) {
 /// Bekçi'nin yeri
 pub fn bekci(m: &Mac, p: Pid, ex: f64, ey: f64) -> (f64, f64) {
     let kural = crate::mac::MacKural::of(m);
-    let bm = crate::sekil::yer::BekM { ps: crate::sekil::yer::BekPs::Duz(&m.ps), holder: m.holder.map(|h| &m.ps[h]), ben: Some(p) };
+    let bm = crate::sekil::yer::BekM { ps: crate::sekil::yer::BekPs::Duz(&m.ps), holder: m.holder.map(|h| &m.ps[h]), sut: m.mac.kafa.k.is_some(), ben: Some(p) };
     crate::sekil::yer::bekci(&m.ps[p], ex, ey, Some(&bm), &kural)
 }
 /// Topsuz oyuncuların hedefleri ve işleri (tx, ty, job, sprint, press …)
@@ -252,8 +252,8 @@ pub fn threat(team: f64, x: f64, y: f64) -> f64 {
     crate::kafa::kafa1_tehlike::threat_d(kafa_d(), team, x, y)
 }
 /// Pasın d'ye uçuş süresi (aF: varış sertliği)
-pub fn ucusT(d: f64, aF: f64) -> f64 {
-    kafa_ile(|k| k.ucusT(d, aF, None))
+pub fn ucusT(m: &Mac, d: f64, aF: f64) -> f64 {
+    kafa_mac(m, |k| k.ucusT(d, aF, None))
 }
 /// Çekirdeğin gövdedeki yönü (birim vektör)
 pub fn coreSide(m: &Mac, h: Pid) -> (f64, f64) {
@@ -457,6 +457,6 @@ pub fn commitThr(m: &Mac, q: Pid, h: Pid) -> f64 {
     kafa_mac(m, |k| k.commitThr(&src[q], &src[h], &src))
 }
 /// Alan değeri (not için)
-pub fn V(ps: &[Oyuncu], team: f64, x: f64, y: f64, ch: f64) -> f64 {
-    kafa_ile(|k| k.V(&op_dunya(ps), team, x, y, ch))
+pub fn V(m: &Mac, ps: &[Oyuncu], team: f64, x: f64, y: f64, ch: f64) -> f64 {
+    kafa_mac(m, |k| k.V(&op_dunya(ps), team, x, y, ch))
 }
