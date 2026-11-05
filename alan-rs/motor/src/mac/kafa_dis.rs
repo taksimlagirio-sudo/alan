@@ -80,6 +80,12 @@ impl Dis for MacDis {
     fn kural(&self) -> MacKural {
         self.kural.get()
     }
+    fn niyet_koy(&self, n: Option<(f64, f64, bool, Option<f64>)>) -> Option<(f64, f64, bool, Option<f64>)> {
+        let mut k = self.kural.get();
+        let eski = std::mem::replace(&mut k.niyet, n);
+        self.kural.set(k);
+        eski
+    }
     // ---- enerji / sprint ----
     fn ALAN_EN3_KUL(&self, p: &Oyuncu, e: f64, bizde: bool, bx: f64, by: f64) -> f64 {
         en::ALAN_EN3_KUL(p, e, bizde, Some((bx, by)), &self.kural.get())

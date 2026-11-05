@@ -192,6 +192,12 @@ pub trait Dis {
     fn kural(&self) -> crate::kural::enerji::MacKural {
         Default::default()
     }
+    /// Tartı süresince taşıyıcının sprint niyetini anlık görüntüye koy; öncekini döndür (geri koymak için).
+    /// Anlık görüntüsü olmayan dış dünyada (sınama) yok sayılır.
+    fn niyet_koy(&self, n: Option<(f64, f64, bool, Option<f64>)>) -> Option<(f64, f64, bool, Option<f64>)> {
+        let _ = n;
+        None
+    }
     // ---- enerji / sprint (core.js, match.js) ----
     /// core.js:169 ALAN_EN3_KUL(p, e, bizde, bx, by): enerjinin kullanım değeri
     fn ALAN_EN3_KUL(&self, p: &Oyuncu, e: f64, bizde: bool, bx: f64, by: f64) -> f64 { todo!() }
