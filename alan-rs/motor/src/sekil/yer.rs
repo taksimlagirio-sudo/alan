@@ -552,7 +552,7 @@ impl YolBag {
 }
 
 /// yolBag/yolKesis'in taşıyıcı hız yanılgısı (görüşe bağlı, 15 tikte bir değişir).
-pub fn hizYanilgi(p: &Oyuncu, h: &Oyuncu, d: &KafaD, dtik: Option<f64>) -> f64 {
+pub fn hizYanilgi(p: &Oyuncu, h: &Oyuncu, _d: &KafaD, dtik: Option<f64>) -> f64 {
     let g = p.yet.ozk("gorus");
     let hs = sinh_k(12.9898 * (p.id + 1.0) + 4.1414 * (h.id + 1.0) + 78.233 * (dtik.filter(|t| *t != 0.0 && *t == *t).unwrap_or(0.0) / 15.0).floor());
     1.0 + (kesir(hs) - 0.5) * (20.0 - g) * 0.02

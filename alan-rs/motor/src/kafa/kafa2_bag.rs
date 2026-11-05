@@ -22,7 +22,7 @@ use crate::oyuncu::Tepki;
 use std::borrow::Cow;
 use std::sync::Arc;
 
-pub use super::gecici_dis1::{Fm, GecTab, HayaliMac};
+pub use super::gecici_dis1::{Fm, GecTab};
 pub use super::kafa1_enerji::SarjTut as SarjT;
 pub use super::kafa1_savur::SavPlan;
 pub use super::kafa1_tehlike::{BosOy, SPT};
@@ -464,16 +464,6 @@ pub fn AM_spd(k: &Kafa, p: &Oyuncu) -> f64 {
 /// match.js:311 sprK(p) (enerjiyle kısılmış sprint katı)
 pub fn AM_sprK(k: &Kafa, p: &Oyuncu) -> f64 {
     k.dis.sprK(p)
-}
-/// holdWorld'ün hayali maçı (JS createMatch + kopya + kopyaDurum). Yalnız eski kafa (ALAN_PRENSIP kapalı).
-pub fn AM_hayali(k: &mut Kafa, tohum: f64, src: &[Op], hi: Pid, ch: f64, tac: Option<&Tac>) -> HayaliMac {
-    let d = k.dis.clone();
-    d.hayaliMac(k, tohum, src, hi, ch, tac)
-}
-/// JS M.step(m) (hayali maçta bir tik; m.decT = 99)
-pub fn AM_step(k: &mut Kafa, m: &mut HayaliMac) {
-    let d = k.dis.clone();
-    d.hayaliAdim(k, m)
 }
 
 /// JS vurTaban(p) (core.js:410): vuruşun taban enerjisi (kafa1'in top_yap'ındakiyle aynı).

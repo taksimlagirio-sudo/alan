@@ -177,13 +177,6 @@ pub struct Fm<'a> {
     pub holder: Option<&'a Oyuncu>,
 }
 
-/// holdWorld'ün hayali maçı (JS createMatch + kopya + kopyaDurum; yalnız eski kafa, ALAN_PRENSIP kapalı).
-pub struct HayaliMac {
-    pub ps: Vec<Op>,
-    /// topu tutan (ps sırası)
-    pub holder: Option<usize>,
-    pub ch: f64,
-}
 
 /// Dış dünya: maç, yerleşim ve enerji modüllerinin kafaya açtığı işlevler.
 pub trait Dis {
@@ -231,11 +224,6 @@ pub trait Dis {
     // ---- maç (match.js, window.AlanMatch) ----
     /// (birleştirmede eklendi; kafa2) match.js:939 tl(p, ev, k): takım talimatı (`null` → None)
     fn tl(&self, p: &Oyuncu, ev: &str, k: &str) -> Option<f64> { todo!() }
-    /// (birleştirmede eklendi; kafa2, yalnız eski kafa) holdWorld'ün hayali maçı: createMatch + kopya +
-    /// kopyaDurum (tohum, dünya, taşıyan, şarj, taktik)
-    fn hayaliMac(&self, k: &mut Kafa, tohum: f64, src: &[Op], hi: usize, ch: f64, tac: Option<&super::kafa2_baglam::Tac>) -> HayaliMac { todo!() }
-    /// (birleştirmede eklendi; kafa2, yalnız eski kafa) hayali maçta bir tik (JS M.step(m), m.decT = 99)
-    fn hayaliAdim(&self, k: &mut Kafa, m: &mut HayaliMac) { todo!() }
 
     // ---- maçın durumu (D._mac) ----
     /// D._mac var mı

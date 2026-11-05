@@ -210,24 +210,13 @@ pub struct Sw {
     pub y: f64,
 }
 
-/// JS holdWorld'ün sonucu (`{ lost, lostT, ps, ch }`)
-#[derive(Clone, Debug)]
-pub struct HoldW {
-    pub lost: bool,
-    pub lostT: Option<f64>,
-    pub ps: Arc<Dunya>,
-    pub ch: f64,
-}
-
-/// Kafa 2'nin modül düzeyi önbellekleri (JS: PWM/PWT, holdWorld._c, BSK/BSKt, BSC, IMKB/IMKBT,
+/// Kafa 2'nin modül düzeyi önbellekleri (JS: PWM/PWT, BSK/BSKt, BSC, IMKB/IMKBT,
 /// IMKK/IMKKt, IMKO, IT, SAH_F, IMK_OFS, IMK_INAN_T, DRM).
 #[derive(Default)]
 pub struct Kafa2Durum {
     /// pwKos: oyuncu nesnesi (kimlik) → koşu satırları
     pub PWM: crate::HizliMap<usize, (Op, Vec<PwE>)>,
     pub PWT: Option<f64>,
-    /// holdWorld._c
-    pub hold_c: Option<(Op, usize, f64, Option<f64>, f64, HoldW)>,
     /// bskTab
     pub BSK: crate::HizliMap<String, Vec<f64>>,
     pub BSKt: Option<f64>,
