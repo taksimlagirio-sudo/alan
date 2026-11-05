@@ -124,6 +124,13 @@ gözlemlenebilir durumu bit bit aynı). Davranış değiştiren bir iş (kural, 
 ayrı commit'te ve başvuruların bilerek yenilenmesiyle (`sina/ayni.sh --yaz`) gelir. Başka bir oturum aynı
 kodda çalıştığı için aşamalar küçük parçalarla ve sık `main`'e birleştirilerek ilerler.
 
+**İş bölümü (5 Kasım, kullanıcı kararı).** İki oturum aynı kodda çalışıyor:
+- *Mimari oturumu:* bu belgedeki aşamalar (yapı, katmanlar, bağlam, dünya, veri). Yapıya dokunan her iş onun.
+- *Davranış oturumu:* yapıya dokunmayan işler — oyun davranışı ve ayarları (bayrak arkasında, ayrı commit, `--yaz`),
+  ölçüm ve maç izleme, hata ayıklama (ör. tarayıcıdaki bellek kaçağı), siteye gönderme. Mimarinin sıradaki
+  aşamasının taşıyacağı dosyalara (köprüler: `sekil/gecici_dis`, `mac/kafa_dis`, `kafa/gecici_dis1`) hız yaması
+  yapmaz; yerleşim davranışı işleri (`sekil/konum`) Aşama 3'le çakışmasın diye önceden haber verilerek yapılır.
+
 | # | Aşama | Ne | Bitti sayılır |
 |---|---|---|---|
 | 0 | Güvenlik ağı | Parmak izi (`motor/src/parmak.rs`), `alan-kos … parmak`, `sina/ayni.sh`, başvurular (`sina/ayni/`) | ✅ Başvurular oturum başındaki motorla (b711370) aynı: 4 Kasım'ın bütün hız işleri bit bit davranış korumuş |

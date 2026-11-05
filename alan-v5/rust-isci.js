@@ -7,11 +7,12 @@ const SEYREK = !/[?&]seyrek=0(&|$)/.test(self.location && self.location.search |
 let W = null, mem = null, gen = 0, len = 5400, dur = 5400, kosuyor = false, istek = null, buf = null, hazir = null;
 /* wasm'da panik geri sarılmaz: örnek bozuk kalır (Rust'taki kilit açık kalır, sonraki her çağrı düşer). Hatadan sonra örnek atılır, sonraki 'yeni' taze örnek kurar. */
 function birak() { hazir = null; W = null; mem = null; }
+/* wasm göstericileri işaretli i32 gelir: bellek 2 GB'ı aşınca negatif olur ("byteOffset cannot be negative"); >>> 0 ile işaretsiz */
 const NF = 174, dek = new TextDecoder(), kod = new TextEncoder();
 function yukle() { if (!hazir) hazir = fetch('alan.wasm' + ALAN_SURUM_Q).then(r => { if (!r.ok) throw new Error('alan.wasm yüklenemedi (' + r.status + ')'); return r.arrayBuffer(); }).then(b => WebAssembly.instantiate(b, {})).then(r => { W = r.instance.exports; mem = W.memory; if (W.seyrek) W.seyrek(SEYREK ? 1 : 0); }); return hazir; }
-const metin = n => dek.decode(new Uint8Array(mem.buffer, W.metin_ptr(), n));
+const metin = n => dek.decode(new Uint8Array(mem.buffer, (W.metin_ptr() >>> 0), n));
 function yeniBuf() { return { kare: [], olay: [], karar: [], kafa: [], is: [] }; }
-function kaydet() { const p = W.kare(); const f = new Float32Array(NF); f.set(new Float32Array(mem.buffer, p, NF)); buf.kare.push([W.tik(), f]); const y = JSON.parse(metin(W.yenilikler())); for (const o of y.olay) buf.olay.push(o); for (const j of y.is) buf.is.push(j); }
+function kaydet() { const p = (W.kare() >>> 0); const f = new Float32Array(NF); f.set(new Float32Array(mem.buffer, p, NF)); buf.kare.push([W.tik(), f]); const y = JSON.parse(metin(W.yenilikler())); for (const o of y.olay) buf.olay.push(o); for (const j of y.is) buf.is.push(j); }
 let hsT0 = 0;
 function gonder(g, son, yari) { const n = performance.now(), ms = hsT0 ? n - hsT0 : 0; hsT0 = n; postMessage({ ms, pd: null, tip: 'kare', gen: g, kare: buf.kare, olay: buf.olay, karar: buf.karar, kafa: buf.kafa, is: buf.is, tick: W.tik(), son: !!son, yari: !!yari }); buf = yeniBuf(); }
 /* Döngü beklerken yeni maç gelirse istek not edilir; eski döngü çıkınca yeni maçı o başlatır (eskiden hiç başlamıyordu). */
@@ -26,7 +27,7 @@ onmessage = async e => { const d = e.data;
   if (d.tip === 'yeni') { gen = d.gen; len = d.len || 5400; dur = d.dur || len;
     try { await yukle(); } catch (er) { postMessage({ tip: 'hata', msg: String(er && er.message || er) }); return; }
     let ps;
-    try { const b = kod.encode(JSON.stringify(d)), p = W.ayir(b.length); new Uint8Array(mem.buffer, p, b.length).set(b);
+    try { const b = kod.encode(JSON.stringify(d)), p = (W.ayir(b.length) >>> 0); new Uint8Array(mem.buffer, p, b.length).set(b);
       const r = W.kur(p, b.length); W.birak(p, b.length);
       if (r !== 0) { postMessage({ tip: 'hata', msg: 'Rust motoru maçı kuramadı: ' + metin(W.metin_len()) }); return; }
       buf = yeniBuf(); kaydet(); ps = JSON.parse(metin(W.statik())); }

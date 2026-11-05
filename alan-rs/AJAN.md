@@ -1,6 +1,6 @@
 # Taşıma ajanları için ortak kurallar
 
-ALAN maç motoru JS'ten (alan-v5) Rust'a taşınıyor. Hedef: telefon ve bilgisayar uygulamasında yerel motor. Oyun JS ile **tıpatıp aynı olmak zorunda değil, ama aynı kalitede olmalı** ("salaklaşmasın"). Yine de hedef işlev işlev aynı sonuç: en kolay doğrulama bu.
+ALAN maç motoru JS'ten (alan-v5) Rust'a taşınıyor. Hedef: telefon ve bilgisayar uygulamasında yerel motor. Oyun JS ile **tıpatıp aynı olmak zorunda değil, ama aynı kalitede olmalı** ("salaklaşmasın"). ~~Yine de hedef işlev işlev aynı sonuç~~ — **5 Kasım: Rust tek doğru kaynak** (`MIMARI.md` Aşama 6): JS ile bit bit aynılık kısıtı kalktı; doğrulama `sina/ayni.sh` (davranış aynı) ve maç istatistikleri/izleme (davranış değişiyorsa). Aşağıdaki taşıma kuralları tarihsel.
 
 ## Kaynak
 

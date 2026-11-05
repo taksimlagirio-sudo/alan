@@ -36,7 +36,12 @@ fn hafif(m: &mut Mac) -> Mac {
     let ev = std::mem::take(&mut m.events);
     let kg = m.mac._kafa.take();
     let ps = std::mem::take(&mut m.ps);
+    // maçın kafa kutusu da kopyalanmaz: içindeki dış dünya (MacDis) bir önceki tikin hafif kopyasını tutar,
+    // kopyaya geçerse her tik bir öncekini tutan bir zincir oluşur ve hiçbiri bırakılmaz (maç boyunca
+    // ~330 MB / 1000 tik; tarayıcıda 2 GB'ı aşıp işçiyi düşürüyordu: "byteOffset cannot be negative")
+    let kk = std::mem::take(&mut m.mac.kafa);
     let mut c = m.clone();
+    m.mac.kafa = kk;
     m.events = ev;
     m.mac._kafa = kg;
     c.ps = ps.clone();

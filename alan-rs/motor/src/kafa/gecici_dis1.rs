@@ -437,7 +437,12 @@ fn gecY_k_arc(y: &Arc<crate::kural::gec::GecY>) -> Arc<GecY> {
             return d.clone();
         }
         let d = gecY_k(y);
-        c.borrow_mut().insert(k, (y.clone(), d.clone()));
+        let mut c = c.borrow_mut();
+        // sınırsız büyüyordu (tarayıcıda bellek kaçağının bir parçası); ayna saf dönüşüm, temizlenince aynısı kurulur
+        if c.len() >= 20_000 {
+            c.clear();
+        }
+        c.insert(k, (y.clone(), d.clone()));
         d
     })
 }
