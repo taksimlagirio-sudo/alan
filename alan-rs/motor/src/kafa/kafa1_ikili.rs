@@ -1563,12 +1563,14 @@ fn dolanma_kimlik() -> bool {
         return false;
     }
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    *A.get_or_init(|| std::env::var("ALAN_DOLANMA_KIMLIK").is_ok())
+    MEKANIZMA_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_DOLANMA_KIMLIK").is_ok())
 }
 
 /// Deney (varsayılan kapalı, ALAN_SEND_YARIS_IZ): benzetimde taşıyıcı sendeleyince maçın kuralıyla serbest top yarışı
 /// (Çekirdek çekirdeğin yerinden çıkar, taşıyıcı sendS boyunca hareketsiz); özgünü: sondaki en düşük dengeye göre kayıp.
 fn send_yaris() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SEND_YARIS_IZ").is_ok())
+    MEKANIZMA_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SEND_YARIS_IZ").is_ok())
 }
+/// alan-kos an: mekanizma düzeltmesini (sendeleme yarışı + dolanma kimliği) maçın ortasında açmak için
+pub static MEKANIZMA_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);

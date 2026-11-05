@@ -73,8 +73,11 @@ fn main() {
             if tikler.contains(&t) {
                 let mut once = mt.m.clone();
                 once.mac.kafa = Default::default();
+                // ALAN_AN_YENI: "kal" (varsayılan: tutma kestirimi ölçülen gerçeğe eşlenir) | "mek" (sendeleme yarışı + dolanma)
+                let mek = std::env::var("ALAN_AN_YENI").ok().as_deref() == Some("mek");
                 for (kip2, acik) in [("eski", false), ("yeni", true)] {
-                    alan_motor::kafa::kafa1_ikili::KP_KAL_ZORLA.store(acik, std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa1_ikili::KP_KAL_ZORLA.store(acik && !mek, std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa1_ikili::MEKANIZMA_ZORLA.store(acik && mek, std::sync::atomic::Ordering::Relaxed);
                     let mut m2 = Motor::yeni(once.clone());
                     let mut isler2 = alan_motor::oyun::IsSozluk::default();
                     let (mut kr, mut ol) = (Vec::new(), Vec::new());
@@ -99,6 +102,7 @@ fn main() {
                     yaz(&m2.m, &kr, &ol, &isler2, &format!("{}-{}-{}.json", onek, t, kip2));
                 }
                 alan_motor::kafa::kafa1_ikili::KP_KAL_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kafa::kafa1_ikili::MEKANIZMA_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
             }
             mt.adim();
         }
