@@ -14,7 +14,7 @@ use crate::model::Oyuncu;
 use crate::temas::Kural;
 use crate::yetenek::{ag, ah};
 
-use super::vSp;
+use crate::kural::kos::vSp;
 
 /// JS `Y`: bir yön/hız için 80 tiklik ilerleme eğrisi (`m[n]`: n tikte alınan yol) ve tam gecikme `g`.
 #[derive(Clone, Debug)]
