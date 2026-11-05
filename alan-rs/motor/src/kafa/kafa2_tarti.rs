@@ -21,6 +21,37 @@ use std::sync::Arc;
 pub const PNC_DILIM: f64 = 12.0;
 pub const PNC_UFUK: f64 = 120.0;
 pub const PNC_GORUS: f64 = 48.0;
+/// Alıcının tek dokunuş şutunun değeri (ALAN_TEK_SUT_IZ): pas A'dan `tv` tikte vurulur, topu `ta` tikte alıcıya
+/// B'de varır; dünya varış anında, Bekçi kararın dünyasındaki yerinden topun her tikteki yerine göre idealine doğru
+/// kayar (vuruşa dek top A'da); şut topun varışında, hazırlıksız. Uzak geleceğe güven indirimiyle.
+pub fn tekSutDeger(k: &mut Kafa, cx: &mut Cx, A: Nokta, B: Nokta, tv: f64, ta: f64, rq: &Op) -> f64 {
+    let T0 = jmax(1.0, ta);
+    let wT = pDunya(k, cx, B, T0, "pass", Some(&**rq));
+    let mut wT: Vec<Op> = wT.to_vec();
+    if let Some(bi) = wT.iter().position(|z| z.team != cx.team && bekci(z) && !z.noTouch) {
+        if let Some(b0) = cx.src.iter().find(|z| z.team == wT[bi].team && z.id == wT[bi].id).cloned() {
+            let vb = (0.17 + 0.006 * ALAN_HZ(&b0)) * dis::ALAN_SPRE(k, &b0) * crate::temas::bek_kay(&b0);
+            let mut bp = nk(b0.x, b0.y);
+            let mut t = 1.0;
+            let uc = jmax(1.0, T0 - tv);
+            while t <= T0 {
+                let f = jmax(0.0, jmin(1.0, (t - tv) / uc));
+                let top = nk(A.x + (B.x - A.x) * f, A.y + (B.y - A.y) * f);
+                let g = dis::AS_bekci(k, &kxy(&b0, bp.x, bp.y), top, None);
+                let (dx, dy) = (g.x - bp.x, g.y - bp.y);
+                let L = hypot(dx, dy);
+                if L > 1e-6 {
+                    let m = jmin(L, vb);
+                    bp = nk(bp.x + dx / L * m, bp.y + dy / L * m);
+                }
+                t += 1.0;
+            }
+            wT[bi] = kxy(&b0, bp.x, bp.y);
+        }
+    }
+    sutS(k, &wT, cx.team, B.x, B.y, cx.ch, Some(rq), Some(T0)) * exp(-T0 / k.k2.IMK_INAN_T)
+}
+
 /// Deney (ALAN_YOL_OLABILIR_IZ; ölçümde YOL_OLABILIR_ZORLA)
 pub static YOL_OLABILIR_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn yol_olabilir() -> bool {
@@ -486,7 +517,15 @@ pub fn enIyiPas(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f6
             }
             continue;
         }
-        let nv = nodeV(k, cx, kq, T + tR, der, R);
+        let mut nv = nodeV(k, cx, kq, T + tR, der, R);
+        if tek_sut() && !bekci(kq) {
+            // alıcının tek dokunuş şutu: pas T'de A'dan vurulur, top T + tR'de P.B'de
+            let ts = tekSutDeger(k, cx, A, P.B, T, T + tR, kq);
+            if crate::iz_acik() && std::env::var("ALAN_ENIYI_IZ").ok().as_deref() == Some(&*kq.govde.name) {
+                eprintln!("ENIYI     tek dokunuş {} ({:.1},{:.1}) T {:.0} tek {:.3} düğüm {:.3}", kq.govde.name, P.B.x, P.B.y, T + tR, ts, nv);
+            }
+            nv = jmax(nv, ts);
+        }
         let kayip = cx.kayip.clone();
         let e = Lo * nv - (1.0 - Lo) * kay(k, &kayip, (A.x + P.B.x) / 2.0, (A.y + P.B.y) / 2.0);
         if crate::iz_acik() && std::env::var("ALAN_ENIYI_IZ").ok().as_deref() == Some(&*kq.govde.name) {
@@ -696,32 +735,8 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                     if tek_sut() && !bekci(rq) {
                         // topun alıcıya varışı: ucusSure'nin topu yerleştirme payı (4 tik) tek dokunuşta yok
                         let T0 = jmax(1.0, veya(tf, 0.0) - 4.0);
-                        let wT = pDunya(k, cx, at, T0, "pass", Some(&**rq));
-                        let mut wT: Vec<Op> = wT.to_vec();
-                        // kaleci: o anki yerinden, topun her tikteki yerine göre ideal yerine doğru kayar (maçta
-                        // kaleci topu izler; topun gideceği yerin idealine dosdoğru gitmez)
-                        if let Some(bi) = wT.iter().position(|z| z.team != cx.team && bekci(z) && !z.noTouch) {
-                            if let Some(b0) = cx.src.iter().find(|z| z.team == wT[bi].team && z.id == wT[bi].id) {
-                                let hb = nk(cx.h.x, cx.h.y);
-                                let vb = (0.17 + 0.006 * ALAN_HZ(b0)) * dis::ALAN_SPRE(k, b0) * crate::temas::bek_kay(b0);
-                                let mut bp = nk(b0.x, b0.y);
-                                let mut t = 1.0;
-                                while t <= T0 {
-                                    let f = t / T0;
-                                    let top = nk(hb.x + (at.x - hb.x) * f, hb.y + (at.y - hb.y) * f);
-                                    let g = dis::AS_bekci(k, &kxy(b0, bp.x, bp.y), top, None);
-                                    let (dx, dy) = (g.x - bp.x, g.y - bp.y);
-                                    let L = hypot(dx, dy);
-                                    if L > 1e-6 {
-                                        let m = jmin(L, vb);
-                                        bp = nk(bp.x + dx / L * m, bp.y + dy / L * m);
-                                    }
-                                    t += 1.0;
-                                }
-                                wT[bi] = kxy(b0, bp.x, bp.y);
-                            }
-                        }
-                        let ts = sutS(k, &wT, cx.team, at.x, at.y, cx.ch, Some(rq), Some(T0)) * exp(-jmax(0.0, T0) / k.k2.IMK_INAN_T);
+                        let hb = nk(cx.h.x, cx.h.y);
+                        let ts = tekSutDeger(k, cx, hb, at, 0.0, T0, rq);
                         if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
                             eprintln!("TEKSUT {} → {} ({:.1},{:.1}) T {:.0} tek {:.3} tutup {:.3}", k.tick(), rq.govde.name, at.x, at.y, T0, ts, v);
                         }
