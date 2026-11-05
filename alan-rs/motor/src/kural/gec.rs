@@ -66,7 +66,7 @@ pub fn VMQ(vm: f64) -> f64 {
 
 /// JS IVK: [AH, AG] yuvarlanmış (ALAN_YET.acik(4) açık).
 pub fn IVK(r0: &Oyuncu, k: &dyn Kural) -> [f64; 2] {
-    [jround(1e4 * ah(&r0.yet)) / 1e4, jround(100.0 * ag(&r0.yet, r0.den, r0.bekci(), k.ik_yavas())) / 100.0]
+    [jround(1e4 * ah(&r0.govde.yet)) / 1e4, jround(100.0 * ag(&r0.govde.yet, r0.den, r0.bekci(), k.ik_yavas())) / 100.0]
 }
 
 /// match.js `ivme`, `_iv` verilmiş ve sprint evresiz hayali gövde için (gecYk'nin oynattığı `q`).

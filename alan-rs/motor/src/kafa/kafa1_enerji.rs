@@ -39,7 +39,7 @@ impl Kafa {
         self.spd(h)
     }
     pub fn itPk(&self, h: &Oyuncu) -> f64 {
-        spr_h(h.yet.hiz)
+        spr_h(h.govde.yet.hiz)
     }
     pub fn itHk(&self, h: &Oyuncu) -> f64 {
         self.dis.ALAN_SPR_HK(h)
@@ -103,7 +103,7 @@ impl Kafa {
     }
     /// decide.js:3968
     pub fn sarjMal(&self, h: &Oyuncu) -> f64 {
-        1.0 / jmax(0.5, jmin(2.0, 0.8 + 0.05 * (h.yet.y(mek::SARJ_BEDEL) - 10.0))) / self.dis.ALAN_EN_S(h)
+        1.0 / jmax(0.5, jmin(2.0, 0.8 + 0.05 * (h.govde.yet.y(mek::SARJ_BEDEL) - 10.0))) / self.dis.ALAN_EN_S(h)
     }
     /// decide.js:3969
     pub fn sarjVerim(&self, h: &Oyuncu) -> f64 {
@@ -143,16 +143,16 @@ impl Kafa {
     pub fn chargeRate(&self, h: &Oyuncu, src: &[Op], still: f64, ch: f64, ham: bool) -> f64 {
         let pasif = !ham && !h.hal.sarj.unwrap_or(true);
         let pr = self.pressAt(src, h.team, h.x, h.y);
-        let yk = h.yet.y(mek::SARJ_KOSU_PAY);
+        let yk = h.govde.yet.y(mek::SARJ_KOSU_PAY);
         let mn = jmin(0.9, self.D.chgMin * jmax(0.3, 1.0 + 0.08 * (yk - 10.0)));
         (if pasif { self.D.chgPasif } else { 1.0 })
             * (if ham { 1.0 } else { self.sarjVerim(h) })
             * self.D.chg0
             * self.D.chgTek
             * (mn + (1.0 - mn) * still)
-            * (0.25 + 0.75 * exp(2.0 * -pr * yum(&h.yet, "B")))
+            * (0.25 + 0.75 * exp(2.0 * -pr * yum(&h.govde.yet, "B")))
             * (1.0 - 0.5 * ch)
-            * (1.0 + 0.05 * (h.yet.y(mek::SARJ_HIZ) - 10.0))
+            * (1.0 + 0.05 * (h.govde.yet.y(mek::SARJ_HIZ) - 10.0))
     }
     /// Kafanın sprint katı (decide.js:3997).
     pub fn sprKafa(&self, p: &Oyuncu) -> f64 {
@@ -173,10 +173,10 @@ impl Kafa {
             };
             let sfE = h._sf.as_ref().map_or(false, |s| s.f == "patlama" || s.f == "tepe");
             let kos = sfE || if YS { spr && h._sf.is_none() } else { h._sf.is_none() && h.en.unwrap_or(1.0) >= F.bedel && dir.unwrap().x * (if h.team == 0.0 { 1.0 } else { -1.0 }) > 0.5 && L >= 4.0 };
-            if L == 10.0 && spr && crate::iz_acik() && std::env::var("ALAN_C3_IZ").ok().map_or(false, |x| x == format!("{}", self.tick())) { eprintln!("   SSX {} holder {:?} h {} {} {} topla {} YS {} sf {} kos {}", h.name, self.dis.mac_holder(), h.id, h.x, h.y, F.topla, YS, h._sf.is_some(), kos); }
+            if L == 10.0 && spr && crate::iz_acik() && std::env::var("ALAN_C3_IZ").ok().map_or(false, |x| x == format!("{}", self.tick())) { eprintln!("   SSX {} holder {:?} h {} {} {} topla {} YS {} sf {} kos {}", h.govde.name, self.dis.mac_holder(), h.id, h.x, h.y, F.topla, YS, h._sf.is_some(), kos); }
             if F.topla != 0.0 && !h.bekci() && tutan && kos {
                 let v = self.spd(h) * self.topK(h) * self.ikDen(h);
-                let pk = spr_h(h.yet.hiz);
+                let pk = spr_h(h.govde.yet.hiz);
                 let E2 = self.dis.ALAN_EN2();
                 let EB = YS;
                 let tk0 = self.tick();
@@ -199,7 +199,7 @@ impl Kafa {
                 };
                 let aft = if EB && !self.dis.ALAN_TASIYICI_SONRA_YAVAS() { 1.0 } else { F.after };
                 let d1 = v * pkE * T;
-                if L == 10.0 && crate::iz_acik() && std::env::var("ALAN_C3_IZ").ok().map_or(false, |x| x == format!("{}", self.tick())) { eprintln!("   SS {} v {} pk {} e0 {} Tt {} T {} pkE {} aft {} d1 {} en {:?} sf {}", h.name, v, pk, e0, Tt, T, pkE, aft, d1, h.en, h._sf.is_some()); }
+                if L == 10.0 && crate::iz_acik() && std::env::var("ALAN_C3_IZ").ok().map_or(false, |x| x == format!("{}", self.tick())) { eprintln!("   SS {} v {} pk {} e0 {} Tt {} T {} pkE {} aft {} d1 {} en {:?} sf {}", h.govde.name, v, pk, e0, Tt, T, pkE, aft, d1, h.en, h._sf.is_some()); }
                 return if L <= d1 { L / (v * pkE) + 2.0 } else { T + 2.0 + (L - d1) / (v * aft) };
             }
         }
@@ -228,7 +228,7 @@ impl Kafa {
                 None => continue,
             };
             let b = self.spd(p);
-            let vm = b * spr_h(p.yet.hiz);
+            let vm = b * spr_h(p.govde.yet.hiz);
             let Sb = self.dis.ALAN_EN2_SB(p);
             let dw = hypot(q.x - p.x, q.y - p.y);
             let ndQ = {
@@ -267,11 +267,11 @@ impl Kafa {
                     let mut ek = 0.0;
                     if let Some(st) = o.savT {
                         if st > 0.0 {
-                            ek += E.dolas * st * p.yet.verim(mek::DONDURME_BEDEL);
+                            ek += E.dolas * st * p.govde.yet.verim(mek::DONDURME_BEDEL);
                         }
                     }
                     if o.kind == "fake" {
-                        ek += E.fake * p.yet.verim(mek::FAKE_BEDEL);
+                        ek += E.fake * p.govde.yet.verim(mek::FAKE_BEDEL);
                     }
                     if o.kind == "tut" {
                         let mut nd: f64 = 1e9;
@@ -281,7 +281,7 @@ impl Kafa {
                             }
                         }
                         if nd < 2.4 {
-                            ek += E.kalkan * E.fizK * p.yet.verim(mek::TEMAS_BEDEL) * T * 0.5;
+                            ek += E.kalkan * E.fizK * p.govde.yet.verim(mek::TEMAS_BEDEL) * T * 0.5;
                         }
                     }
                     de += ek / Sb;
@@ -291,7 +291,7 @@ impl Kafa {
                 }
             }
             de = jmax(de, -(1.0 - pen));
-            let ck = if bizden { p.yet.ca_k() } else { 1.0 };
+            let ck = if bizden { p.govde.yet.ca_k() } else { 1.0 };
             if bizden {
                 out.biz += de * ck;
             } else {
@@ -302,7 +302,7 @@ impl Kafa {
                 out.hizRakipY += 0.0;
             }
         }
-        let g = h.yet.y(mek::ENERJI_TAHMIN);
+        let g = h.govde.yet.y(mek::ENERJI_TAHMIN);
         let hs = 43758.5453 * sin(12.9898 * (h.id + 1.0) + 78.233 * T);
         let u = hs - hs.floor() - 0.5;
         let hata = 1.0 + u * (20.0 - g) * 0.04;

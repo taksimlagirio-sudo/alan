@@ -130,7 +130,7 @@ impl Sv {
             return v;
         }
         let qp = &c.ps[q];
-        let ozk = cl(1.0 + 0.035 * (qp.yet.y(mek::TEHLIKE) + agirlik(mek::TEHLIKE, oz::HIZ) * (qp.hz() - qp.yet.oz[oz::HIZ]) - 10.0), 0.7, 1.4);
+        let ozk = cl(1.0 + 0.035 * (qp.govde.yet.y(mek::TEHLIKE) + agirlik(mek::TEHLIKE, oz::HIZ) * (qp.hz() - qp.govde.yet.oz[oz::HIZ]) - 10.0), 0.7, 1.4);
         let v = match self.tP.as_ref().and_then(|t| t.m_get(qp.id)) {
             Some(m) => m * ozk,
             None => {
@@ -253,15 +253,15 @@ impl Sv {
         let n = self.n;
         let (att, dt, E, h) = (self.att, self.dt, self.E, self.h);
         self.defs = (0..n).filter(|&i| { let p = &c.ps[i]; p.takim() == dt && !p.bekci() && !self.chase[i] && !p.noTouch }).collect();
-        let nArk = self.defs.iter().filter(|&&p| c.ps[p].slot.d <= 0.25).count();
+        let nArk = self.defs.iter().filter(|&&p| c.ps[p].govde.slot.d <= 0.25).count();
         {
             let mut s = self.defs.clone();
-            s.sort_by(|&u, &v| sira(c.ps[u].slot.d - c.ps[v].slot.d));
+            s.sort_by(|&u, &v| sira(c.ps[u].govde.slot.d - c.ps[v].govde.slot.d));
             for &p in s.iter().take(nArk) {
                 self.sweep[p] = true;
             }
             let mut u: Vec<Pid> = self.defs.iter().copied().filter(|&p| !self.sweep[p]).collect();
-            u.sort_by(|&a, &b| sira(c.ps[b].slot.d - c.ps[a].slot.d));
+            u.sort_by(|&a, &b| sira(c.ps[b].govde.slot.d - c.ps[a].govde.slot.d));
             let onde = self.dtac.t.onde.unwrap_or(f64::NAN);
             let nu = if onde > 0.0 && onde == onde { onde as usize } else { 0 };
             for &p in u.iter().take(nu) {
@@ -336,10 +336,10 @@ impl Sv {
         };
         {
             let mut s = self.defs.clone();
-            s.sort_by(|&u, &v| sira(c.ps[u].slot.d - c.ps[v].slot.d));
+            s.sort_by(|&u, &v| sira(c.ps[u].govde.slot.d - c.ps[v].govde.slot.d));
             self.swL = s.into_iter().filter(|&p| self.sweep[p]).collect();
             let mut s2 = self.swL.clone();
-            s2.sort_by(|&u, &v| sira(c.ps[u].slot.d - c.ps[v].slot.d));
+            s2.sort_by(|&u, &v| sira(c.ps[u].govde.slot.d - c.ps[v].govde.slot.d));
             self.swL = s2;
         }
         self.tP = match (&c.m._prT, h) {

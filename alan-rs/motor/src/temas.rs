@@ -109,17 +109,17 @@ fn yas_t(b: &TopT) -> f64 {
 }
 
 pub fn bek_dv(p: &Oyuncu) -> f64 {
-    Q.bek_dive_v + 0.01 * (p.yet.y(mek::DALIS) - 10.0)
+    Q.bek_dive_v + 0.01 * (p.govde.yet.y(mek::DALIS) - 10.0)
 }
 pub fn bek_dl(p: &Oyuncu) -> f64 {
-    Q.bek_dive * jmax(0.5, 1.0 + 0.007 * (p.yet.y(mek::DALIS) - 10.0))
+    Q.bek_dive * jmax(0.5, 1.0 + 0.007 * (p.govde.yet.y(mek::DALIS) - 10.0))
 }
 pub fn bek_kay(p: &Oyuncu) -> f64 {
-    kis(0.5 + 0.015 * (p.yet.y(mek::YANA_KAYMA) - 10.0), 0.4, 0.8)
+    kis(0.5 + 0.015 * (p.govde.yet.y(mek::YANA_KAYMA) - 10.0), 0.4, 0.8)
 }
 
 fn sez_f(p: &Oyuncu, v: &Oyuncu) -> f64 {
-    kis(0.5 + IN.sez * (p.yet.y(mek::VURUS_SEZ) - 10.0) - IN.giz * (v.yet.y(mek::VURUS_GIZLE) - 10.0), 0.05, 0.95)
+    kis(0.5 + IN.sez * (p.govde.yet.y(mek::VURUS_SEZ) - 10.0) - IN.giz * (v.govde.yet.y(mek::VURUS_GIZLE) - 10.0), 0.05, 0.95)
 }
 
 /// Bekçi vuruşu okur (JS bekOku): tepkinin zar katı ve vuruşun okunduğu öne alma.
@@ -150,7 +150,7 @@ pub fn bek_oku_e(p: &Oyuncu, v: &Oyuncu, cue: f64) -> f64 {
 }
 
 pub fn bek_re(p: &Oyuncu) -> f64 {
-    let ok = p.yet.y(mek::BEK_REFLEKS);
+    let ok = p.govde.yet.y(mek::BEK_REFLEKS);
     Q.bek_tepki * (1.0 - (ok - 10.0) * Q.bek_tepki_ok)
 }
 
@@ -313,7 +313,7 @@ pub fn touch_cap(b: &mut TopT, pi: usize, ps: &[Oyuncu], k: &dyn Kural) -> Kap {
     let mate = p.takim() == b.b.team;
     let bek = p.bekci();
     let mut ark_k = 0.0;
-    let mut sk = if bek { p.yet.y(mek::TUT_CEL) } else if mate { p.yet.y(mek::KONTROL_KAP) } else { p.yet.y(mek::KESME_KAP) };
+    let mut sk = if bek { p.govde.yet.y(mek::TUT_CEL) } else if mate { p.govde.yet.y(mek::KONTROL_KAP) } else { p.govde.yet.y(mek::KESME_KAP) };
     let mut pr = 0.0;
     for o in ps {
         if o.team != p.team {
@@ -328,19 +328,19 @@ pub fn touch_cap(b: &mut TopT, pi: usize, ps: &[Oyuncu], k: &dyn Kural) -> Kap {
             let rl = hyp(rx, ry);
             let ak = if rl > 1e-6 { jmax(0.0, (rx * p.vx + ry * p.vy) / (rl * ps0)) * jmin(1.0, ps0 / (p.taban_hiz() * k.spr(p))) } else { 0.0 };
             if ak > 0.0 {
-                sk += IN.ark_w * ak * (p.yet.ozk("ceviklik") - sk);
+                sk += IN.ark_w * ak * (p.govde.yet.ozk("ceviklik") - sk);
                 ark_k = IN.ark_k * ak;
             }
         }
     }
     let o = vurus_oku(b, pi, ps, false);
-    let ok = if !bek { p.yet.y(mek::HAZIRLIK) } else { p.yet.ozk("refleks") };
+    let ok = if !bek { p.govde.yet.y(mek::HAZIRLIK) } else { p.govde.yet.ozk("refleks") };
     let tau = jmax(1.0, Q.tepki0 - ok * Q.tepki_ok) * o.map(|x| x.0).unwrap_or(1.0);
     let haz = jmin(1.0, (b.b.tp.unwrap_or(b.b.t) + o.map(|x| x.1).unwrap_or(0.0)) / tau);
     let pr_k = 1.0 - exp(-jmax(0.0, pr - 0.4) * Q.press_k / Q.press_max);
     let ch_t = if b.b.alive { b.b.ch * Q.cap_ch } else { 0.0 };
     let cap = if !bek {
-        let alis = DK_ALIS.b * yum(&p.yet, "B") * pr_k + DK_ALIS.d * (1.0 - p.den.unwrap_or(1.0)) + if mate { DK_ALIS.h * har(p) * yum(&p.yet, "H") } else { 0.0 };
+        let alis = DK_ALIS.b * yum(&p.govde.yet, "B") * pr_k + DK_ALIS.d * (1.0 - p.den.unwrap_or(1.0)) + if mate { DK_ALIS.h * har(p) * yum(&p.govde.yet, "H") } else { 0.0 };
         Q.cap0 + (sk - 10.0) * Q.cap_sk - ch_t - Q.cap_pr * alis - ark_k
     } else {
         Q.cap0 + (sk - 10.0) * Q.cap_sk - ch_t - Q.cap_pr * pr_k - ark_k
@@ -394,7 +394,7 @@ pub fn oku_t(b: &mut TopT, pi: usize, ps: &[Oyuncu], d: f64, bek: bool) -> f64 {
 pub fn uc_k(x: f64, p: Option<&Oyuncu>) -> f64 {
     if x > IN.uc_x0 {
         1.0 - IN.uc_k * (match p {
-            Some(p) => kis(1.0 - IN.uc_y * (p.yet.y(mek::UZANMA_UCU) - 10.0), 0.4, 1.6),
+            Some(p) => kis(1.0 - IN.uc_y * (p.govde.yet.y(mek::UZANMA_UCU) - 10.0), 0.4, 1.6),
             None => 1.0,
         }) * jmin(1.0, (x - IN.uc_x0) / (1.0 - IN.uc_x0))
     } else {
@@ -414,7 +414,7 @@ pub fn opp_reach(b: &mut TopT, pi: usize, ps: &[Oyuncu], r: f64, s: &TepkiS) -> 
 
 /// Uzanma menzili (JS menzil): dengesi bozuk oyuncu az uzanır.
 pub fn menzil(p: &Oyuncu, yavas: f64) -> f64 {
-    let r = Q.reach + 0.04 * (p.yet.y(mek::UZANMA_MENZIL) - 10.0);
+    let r = Q.reach + 0.04 * (p.govde.yet.y(mek::UZANMA_MENZIL) - 10.0);
     match p.den {
         Some(d) if d < 1.0 && !p.bekci() => 1.0 + (r - 1.0) * denge_k(Some(d), yavas),
         _ => r,
@@ -441,7 +441,7 @@ pub fn thru_p(b: &Top, p: &Oyuncu) -> f64 {
         return 0.0;
     }
     let sp = hyp(b.vx, b.vy);
-    jmax(0.0, jmin(Q.thru_max * if p.bekci() { Q.bek_thru } else { 1.0 }, (sp - Q.thru_v) * Q.thru_k - 0.02 * (p.yet.y(mek::SIZMA) - 10.0)))
+    jmax(0.0, jmin(Q.thru_max * if p.bekci() { Q.bek_thru } else { 1.0 }, (sp - Q.thru_v) * Q.thru_k - 0.02 * (p.govde.yet.y(mek::SIZMA) - 10.0)))
 }
 
 /// Temasın sonucu (JS contact'ın dönüşü).
@@ -574,7 +574,7 @@ pub fn contact(b: &mut TopT, ps: &mut [Oyuncu], rnd: &mut dyn FnMut() -> f64, ox
             h
         }
     };
-    let cdv = if !bp.bekci() { Q.cd - 0.5 * (bp.yet.y(mek::YENIDEN_DOKUN) - 10.0) } else { Q.cd };
+    let cdv = if !bp.bekci() { Q.cd - 0.5 * (bp.govde.yet.y(mek::YENIDEN_DOKUN) - 10.0) } else { Q.cd };
     b.t.cds.insert(bi, b.b.t + jmax(Q.cd_min, jround(cdv * jmin(1.0, sp0 / Q.cd_v))));
     let thru = !mate_t && bd >= 1.0 && {
         let r = rnd();
@@ -765,7 +765,7 @@ pub fn kuyu_girer(p: &Oyuncu, x: f64, y: f64, t: f64, cik: bool, k: &dyn Kural) 
     }
     let t_e = if ic_p { 0.0 } else { (d_p - Q.kuyu_a) / v };
     let ic = jmax(0.0, t - t_e) + if ic_p { p.hal.kuyuT.unwrap_or(0.0) } else { 0.0 };
-    let t_c = if cik { (Q.kuyu_a - d_x + 0.3) / v + 1.0 / (0.18 * crate::yetenek::ah(&p.yet)) } else { 0.0 };
+    let t_c = if cik { (Q.kuyu_a - d_x + 0.3) / v + 1.0 / (0.18 * crate::yetenek::ah(&p.govde.yet)) } else { 0.0 };
     ic + t_c <= Q.kuyu_sn
 }
 

@@ -59,22 +59,22 @@ fn kayittan_kurulum_js_ile_ayni() {
             let p = &m.ps[i];
             let mut f = |n: &str, ok: bool| {
                 if !ok {
-                    hata.push(format!("{ad}: oyuncu {i} ({}) {n}", p.name));
+                    hata.push(format!("{ad}: oyuncu {i} ({}) {n}", p.govde.name));
                 }
             };
-            f("ad", &*p.name == pj["name"].as_str().unwrap());
-            f("rol", &*p.role == pj["role"].as_str().unwrap());
-            f("id", p.id == pj["id"].as_f64().unwrap() && p.team == pj["team"].as_f64().unwrap() && p.i == pj["i"].as_f64().unwrap());
-            f("slot", es(p.slot.d, &pj["slot"][0]) && es(p.slot.l, &pj["slot"][1]));
+            f("ad", &*p.govde.name == pj["name"].as_str().unwrap());
+            f("rol", &*p.govde.role == pj["role"].as_str().unwrap());
+            f("id", p.id == pj["id"].as_f64().unwrap() && p.team == pj["team"].as_f64().unwrap() && p.govde.i == pj["i"].as_f64().unwrap());
+            f("slot", es(p.govde.slot.d, &pj["slot"][0]) && es(p.govde.slot.l, &pj["slot"][1]));
             let ik = |a: Option<(f64, f64)>, b: &Value| match (a, b.is_null()) { (None, true) => true, (Some(a), false) => ayni(a.0, h(&b[0])) && ayni(a.1, h(&b[1])), _ => false };
-            f("rslot", ik(p.rslot.as_ref().map(|r| (r.d, r.l)), &pj["rslot"]));
-            f("slot0", ik(p.slot0.as_ref().map(|r| (r.d, r.l)), &pj["slot0"]));
-            f("rslot0", ik(p.rslot0.as_ref().map(|r| (r.d, r.l)), &pj["rslot0"]));
-            f("eg", ik(p.eg.as_ref().map(|r| (r.ps, r.rk)), &pj["eg"]));
-            f("rh", p.rh.as_deref() == pj["rh"].as_str());
-            f("rs", p.rs.as_deref() == pj["rs"].as_str());
+            f("rslot", ik(p.govde.rslot.as_ref().map(|r| (r.d, r.l)), &pj["rslot"]));
+            f("slot0", ik(p.govde.slot0.as_ref().map(|r| (r.d, r.l)), &pj["slot0"]));
+            f("rslot0", ik(p.govde.rslot0.as_ref().map(|r| (r.d, r.l)), &pj["rslot0"]));
+            f("eg", ik(p.govde.eg.as_ref().map(|r| (r.ps, r.rk)), &pj["eg"]));
+            f("rh", p.govde.rh.as_deref() == pj["rh"].as_str());
+            f("rs", p.govde.rs.as_deref() == pj["rs"].as_str());
             f("markRef", p.hal.markRef == pj["markRef"].as_u64().map(|x| x as usize));
-            match (&p.tl, pj["tl"].is_null()) {
+            match (&p.govde.tl, pj["tl"].is_null()) {
                 (None, true) => {}
                 (Some(t), false) => {
                     for (ev, mm) in [("huc", &t.huc), ("sav", &t.sav)] {
@@ -102,10 +102,10 @@ fn kayittan_kurulum_js_ile_ayni() {
             }
             for (j, y) in pj["Y"].as_array().unwrap().iter().enumerate() {
                 let mi = alan_motor::yetenek::MEK_AD.iter().position(|x| *x == mek[j]).unwrap();
-                f(&format!("Y.{}", mek[j]), es(p.yet.y(mi), y));
+                f(&format!("Y.{}", mek[j]), es(p.govde.yet.y(mi), y));
             }
             for (j, kk) in ["gorus", "tepki", "guc", "kesme", "hakimiyet", "yeralma"].iter().enumerate() {
-                f(&format!("oz.{kk}"), es(p.yet.ozk(kk), &pj["oz"][j]));
+                f(&format!("oz.{kk}"), es(p.govde.yet.ozk(kk), &pj["oz"][j]));
             }
         }
     }

@@ -14,7 +14,7 @@ pub use crate::kural::hareket::ivme;
 
 /// JS topHiz(m, p): topla koşunun katı (Toplu koşu; omuzdan sonra yavaşlama).
 pub fn topHiz(m: &Mac, p: &Oyuncu) -> f64 {
-    let s = p.yet.y(mek::TOPLU_KOSU);
+    let s = p.govde.yet.y(mek::TOPLU_KOSU);
     let k = jmin(1.0, 0.68 + 0.02 * s);
     let sl = if oo(p.hal.slowT) > m.tick { jmax(0.4, jmin(0.85, dis::DU::slowK + 0.025 * (s - 10.0))) } else { 1.0 };
     k * sl
@@ -126,16 +126,16 @@ pub fn iliski(m: &mut Mac) {
         }
         let j = super::kurulum::tl(p, "huc", "doldur");
         let Some(j) = j.filter(|&j| dogru(j)) else { continue };
-        let Some(a) = (0..m.ps.len()).find(|&q| m.ps[q].team == att && m.ps[q].i == j) else { continue };
+        let Some(a) = (0..m.ps.len()).find(|&q| m.ps[q].team == att && m.ps[q].govde.i == j) else { continue };
         if a == h {
             continue;
         }
         let A = &m.ps[a];
-        let s = A.rslot.as_ref().map_or((A.slot.d, A.slot.l), |r| (r.d, r.l));
+        let s = A.govde.rslot.as_ref().map_or((A.govde.slot.d, A.govde.slot.l), |r| (r.d, r.l));
         let bx = (if att == 0.0 { 0.0 } else { W }) + dir * (8.0 + 84.0 * s.0) * KX;
         let by = CY + 20.0 * s.1 * KY;
         if (A.x - bx) * dir > 8.0 && !icer(job(p), &["kovala", "alıcı", "koşu"]) {
-            let ad = if A.name.is_empty() { js_num(j) } else { A.name.to_string() };
+            let ad = if A.govde.name.is_empty() { js_num(j) } else { A.govde.name.to_string() };
             let p = &mut m.ps[pi];
             p.tx = bx;
             p.ty = by;
@@ -152,7 +152,7 @@ pub fn iliski(m: &mut Mac) {
         let mut pr: Vec<Pid> = defs.iter().copied().filter(|&i| m.ps[i].press).collect();
         srt(&mut pr);
         let p2 = pr.get(1).copied().or_else(|| {
-            let mut v: Vec<Pid> = defs.iter().copied().filter(|&i| !m.ps[i].press && m.ps[i].slot.d > 0.25 && d(i) < 14.0).collect();
+            let mut v: Vec<Pid> = defs.iter().copied().filter(|&i| !m.ps[i].press && m.ps[i].govde.slot.d > 0.25 && d(i) < 14.0).collect();
             srt(&mut v);
             v.first().copied()
         });
@@ -230,7 +230,7 @@ pub fn perde(m: &mut Mac) {
         }
     }
     let Some(c) = c else { return };
-    let ok = m.ps[c].yet.ozk("yeralma");
+    let ok = m.ps[c].govde.yet.ozk("yeralma");
     if m.r.sonraki() < jmax(0.0, jmin(0.9, 0.06 * (ok - 4.0))) {
         m._perde = Some(Perde { cid: m.ps[c].id, qid, until: m.tick + 90.0 });
     }
@@ -240,7 +240,7 @@ pub fn perde(m: &mut Mac) {
 pub fn otAkil(m: &mut Mac, q: Pid, b: crate::model::TopRef) -> bool {
     let p = &m.ps[q];
     if p.hal._otA.as_ref().map_or(true, |a| a.b != b) {
-        let ok = zar(p.id, m.tick, 11.0) < kademe(p.yet.y(mek::TEK_DOKUNUS_DUSUN), dis::D::otOk);
+        let ok = zar(p.id, m.tick, 11.0) < kademe(p.govde.yet.y(mek::TEK_DOKUNUS_DUSUN), dis::D::otOk);
         m.ps[q].hal_mut()._otA = Some(crate::model::JP_otA { b, ok });
     }
     m.ps[q].hal._otA.as_ref().unwrap().ok
@@ -250,8 +250,8 @@ pub fn otAkil(m: &mut Mac, q: Pid, b: crate::model::TopRef) -> bool {
 pub fn yanil(m: &mut Mac, pi: Pid, hx: f64, hy: f64, neden: &str) {
     let tick = m.tick;
     let p = &mut m.ps[pi];
-    let ok = p.yet.y(mek::FAKE_KAN);
-    let cv = p.yet.ceviklik - 10.0;
+    let ok = p.govde.yet.y(mek::FAKE_KAN);
+    let cv = p.govde.yet.ceviklik - 10.0;
     p.hal_mut().adandi = Some(jmax(oo(p.hal.adandi), tick + jmax(3.0, jround(3.0 + 0.45 * jmax(0.0, 20.0 - ok) - 0.2 * cv))));
     p.hal_mut().adT = Some(crate::model::JPAdT { x: hx, y: hy });
     p.hal_mut().adNeden = Some(neden.into());
@@ -269,7 +269,7 @@ pub fn fakeBasla(m: &mut Mac, h: Pid, o: &Secenek) {
             let pr = dis::fakeP(m, h, pi, &sh.k, sh.c);
             if m.r.sonraki() < pr {
                 fooled.push(m.ps[pi].id);
-                ad.push(if m.ps[pi].bekci() { "Bekçi yattı".into() } else { format!("{} aldandı", m.ps[pi].name) });
+                ad.push(if m.ps[pi].bekci() { "Bekçi yattı".into() } else { format!("{} aldandı", m.ps[pi].govde.name) });
             }
         }
     }
@@ -284,7 +284,7 @@ pub fn fakeBasla(m: &mut Mac, h: Pid, o: &Secenek) {
             ra.push((id, m.ps[pi].hal.adandi.unwrap_or(0.0)));
         }
     }
-    let v = EN.fake * m.ps[h].yet.verim(mek::FAKE_BEDEL);
+    let v = EN.fake * m.ps[h].govde.yet.verim(mek::FAKE_BEDEL);
     enHarca(m, h, "fake", v);
     let ht = m.ps[h].team;
     m.mac.fake = Some(Fake { team: ht, hid: m.ps[h].id, k: sh.k.clone(), to: sh.to, t0: m.tick, until: m.tick + T, react: m.tick + T + 8.0, fooled: fooled.clone(), tg, ra, ax: None, ay: None });
@@ -310,7 +310,7 @@ pub fn fakeBasla(m: &mut Mac, h: Pid, o: &Secenek) {
     m.decT = T + 1.0;
     let ne = if sh.k == "gönder" { "göndermeyi" } else if sh.k == "pas" { "pası" } else { "yana gidişi" };
     let ek = if ad.is_empty() { " · kimse aldanmadı".to_string() } else { format!(" · {}", ad.join(", ")) };
-    let n = m.ps[h].name.clone();
+    let n = m.ps[h].govde.name.clone();
     ev(m, "fake", ht, format!("{n} {ne} gösterdi{ek}"));
 }
 
@@ -517,7 +517,7 @@ pub fn savurAdim(m: &mut Mac, h: Pid) -> bool {
     let ca1 = hca + (if geri { -s.s } else { s.s }) * st;
     let cx = hx + cos(ca1) * b;
     let cy = hy + sin(ca1) * b;
-    let carp = m.ps.iter().find(|q| q.team != ht && !q.noTouch && hypot(cx - q.x, cy - q.y) < cr).map(|q| q.name.clone());
+    let carp = m.ps.iter().find(|q| q.team != ht && !q.noTouch && hypot(cx - q.x, cy - q.y) < cr).map(|q| q.govde.name.clone());
     if let Some(ad) = carp {
         let o = m.ps[h].hal_mut().savur.take().unwrap().o;
         super::kafa_bag::kafaNot(m, &o, &format!("savururken {ad}'e çarptı"));
@@ -737,7 +737,7 @@ pub fn r#move(m: &mut Mac) {
                     let vt = -(wx * ux + wy * uy);
                     let v0 = jmax(0.0, -(or0(p.vx) * ux + or0(p.vy) * uy));
                     let tc = jmax(0.0, hypot(b.x - p.x, b.y - p.y) - crate::temas::menzil(p, super::ikili::IK.yavas)) / jmax(0.05, bs + v0);
-                    let cap = IN.v_set + 0.018 * ag(&p.yet, p.den, p.bekci(), super::ikili::IK.yavas) * jmax(0.0, jmin(tc, p.hal._rcvAbs.unwrap() - m.tick) - 1.0);
+                    let cap = IN.v_set + 0.018 * ag(&p.govde.yet, p.den, p.bekci(), super::ikili::IK.yavas) * jmax(0.0, jmin(tc, p.hal._rcvAbs.unwrap() - m.tick) - 1.0);
                     if vt > cap {
                         wx += (vt - cap) * ux;
                         wy += (vt - cap) * uy;
@@ -863,7 +863,7 @@ pub fn r#move(m: &mut Mac) {
                     a.hal_mut()._omEv = Some(tick + 80.0);
                     b.hal_mut()._omEv = Some(tick + 80.0);
                     let (g, z) = if gA > gB { (i, j) } else { (j, i) };
-                    let (gt_, gn, zn) = (m.ps[g].team, m.ps[g].name.clone(), m.ps[z].name.clone());
+                    let (gt_, gn, zn) = (m.ps[g].team, m.ps[g].govde.name.clone(), m.ps[z].govde.name.clone());
                     ev(m, "pas", gt_, format!("{gn} omuz omuza {zn}'i yolundan itti"));
                 }
             }

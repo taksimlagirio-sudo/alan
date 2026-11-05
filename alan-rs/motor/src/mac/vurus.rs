@@ -32,7 +32,7 @@ pub struct TopIstek {
 
 /// JS vurTaban(p): vuruşun tabanı (topun en az enerjisi)
 pub fn vurTaban(p: &Oyuncu) -> f64 {
-    P.tek_taban * jmax(0.5, jmin(1.5, 1.0 + 0.05 * (p.yet.y(mek::VURUS_TABAN) - 10.0)))
+    P.tek_taban * jmax(0.5, jmin(1.5, 1.0 + 0.05 * (p.govde.yet.y(mek::VURUS_TABAN) - 10.0)))
 }
 
 /// JS K.makeBall(o): yeni top (yeni kimlikle).
@@ -56,7 +56,7 @@ fn etkiler(m: &Mac) -> Vec<Etki> {
 pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
     let F = &SPR_FAZ;
     let ht = m.ps[h].team;
-    let hname = m.ps[h].name.clone();
+    let hname = m.ps[h].govde.name.clone();
     if F.itKos && o.q == Some(h) && o.kind != "gönder" {
         if m.ps[h]._sf.is_some() {
             if !m.mac._lite {
@@ -121,7 +121,7 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
         }
         m.st.ot[t as usize] += 1.0;
         if !gon && !kenar {
-            let qn = o.q.map_or(String::new(), |q| m.ps[q].name.to_string());
+            let qn = o.q.map_or(String::new(), |q| m.ps[q].govde.name.to_string());
             let ch = js_num(jround(100.0 * m.ch));
             ev(m, "pas", t, format!("{hname} tek dokunuşla → {qn} · şarj %{ch}"));
         }
@@ -192,7 +192,7 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
                 m.st.calim[ti] += 1.0;
                 ev(m, "pas", t, format!("{hname} kenardan çalım · kendine sektirdi"));
             } else {
-                let qn = o.q.map_or(String::new(), |q| m.ps[q].name.to_string());
+                let qn = o.q.map_or(String::new(), |q| m.ps[q].govde.name.to_string());
                 ev(m, "pas", t, format!("{hname} kenardan sektirdi → {qn}{tk}"));
             }
         }

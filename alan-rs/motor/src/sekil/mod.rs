@@ -104,35 +104,35 @@ pub use crate::kural::kos::{lagOf, spre_k as ALAN_SPRE, tepki, vSp, TEPKI};
 // Yetenek kısayolları (ALAN_YET.acik(5/6/8) açık: hep yeni mekanikler).
 #[inline(always)]
 pub fn yerS(p: &Oyuncu) -> f64 {
-    p.yet.y(mek::BOLGE)
+    p.govde.yet.y(mek::BOLGE)
 }
 #[inline(always)]
 pub fn yerM(p: &Oyuncu) -> f64 {
-    p.yet.y(mek::ADAM_YETIS)
+    p.govde.yet.y(mek::ADAM_YETIS)
 }
 #[inline(always)]
 pub fn yerH(p: &Oyuncu) -> f64 {
-    p.yet.y(mek::BOSLUK)
+    p.govde.yet.y(mek::BOSLUK)
 }
 #[inline(always)]
 pub fn yerF(p: &Oyuncu) -> f64 {
-    p.yet.y(mek::BOS_FARK)
+    p.govde.yet.y(mek::BOS_FARK)
 }
 #[inline(always)]
 pub fn niyet(p: &Oyuncu) -> f64 {
-    p.yet.y(mek::NIYET_SEZ)
+    p.govde.yet.y(mek::NIYET_SEZ)
 }
 #[inline(always)]
 pub fn geriK(p: &Oyuncu) -> f64 {
-    1.0 + 0.015 * (p.yet.y(mek::GERI_KOSU) - 10.0)
+    1.0 + 0.015 * (p.govde.yet.y(mek::GERI_KOSU) - 10.0)
 }
 #[inline(always)]
 pub fn kurtul(p: &Oyuncu) -> f64 {
-    p.yet.y(mek::MARKAJ_KURTUL)
+    p.govde.yet.y(mek::MARKAJ_KURTUL)
 }
 #[inline(always)]
 pub fn bekY(p: &Oyuncu, m: usize) -> f64 {
-    p.yet.y(m)
+    p.govde.yet.y(m)
 }
 
 /// JS `43758.5453 * sin(…)` kesir karması (yolBag/yolKesis'in hız yanılgısı).

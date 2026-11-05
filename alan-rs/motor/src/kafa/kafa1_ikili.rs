@@ -155,7 +155,7 @@ impl Kafa {
     }
     #[allow(dead_code)]
     fn _topK_eski(&self, h: &Oyuncu) -> f64 {
-        let s = h.yet.y(mek::TOPLU_KOSU);
+        let s = h.govde.yet.y(mek::TOPLU_KOSU);
         let b = match self.dis.ALAN_DOKUNUS() {
             Some(C0) => {
                 let close = jmin(1.0, C0.close + (s - 10.0) * C0.closeS);
@@ -266,13 +266,13 @@ impl Kafa {
     /// decide.js:302
     pub fn fakeOkunmaz(&self, q: &Oyuncu, h: &Oyuncu) -> f64 {
         match &q.pplan {
-            Some(pp) if pp.k == "fake" => jmax(0.1, jmin(0.9, 0.5 + 0.04 * (q.yet.ozk("ceviklik") - h.yet.ozk("tepki")))),
+            Some(pp) if pp.k == "fake" => jmax(0.1, jmin(0.9, 0.5 + 0.04 * (q.govde.yet.ozk("ceviklik") - h.govde.yet.ozk("tepki")))),
             _ => 0.0,
         }
     }
     /// decide.js:4017
     pub fn yanilT(&self, p: &Oyuncu) -> f64 {
-        jmax(3.0, jround(3.0 + 0.45 * jmax(0.0, 20.0 - p.yet.y(mek::FAKE_KAN)) - 0.2 * (p.yet.ceviklik - 10.0)))
+        jmax(3.0, jround(3.0 + 0.45 * jmax(0.0, 20.0 - p.govde.yet.y(mek::FAKE_KAN)) - 0.2 * (p.govde.yet.ceviklik - 10.0)))
     }
     /// İkili kazanılınca topu kapma katı (decide.js:4018).
     pub fn kWof(&self, omuz: Option<bool>, h: &Oyuncu, q: &Oyuncu, src: &[Op], ikK: bool) -> f64 {
@@ -284,7 +284,7 @@ impl Kafa {
             None => return 1.0,
         };
         if omuz == Some(true) {
-            1.0 / (1.0 + exp(-(sS - jmax(3.0, jround(8.0 - 0.25 * (q.yet.y(mek::HAMLE) - 10.0)))) / 2.0))
+            1.0 / (1.0 + exp(-(sS - jmax(3.0, jround(8.0 - 0.25 * (q.govde.yet.y(mek::HAMLE) - 10.0)))) / 2.0))
         } else {
             0.6 + 0.4 * if src.iter().any(|o| !ayni_varlik(o, q) && o.team == q.team && !o.bekci() && !o.noTouch && hypot(o.x - h.x, o.y - h.y) < 12.0) { 0.5 } else { 0.0 }
         }
@@ -369,19 +369,19 @@ impl Kafa {
         let vB = self.spd(h) * if h.sprint { spK(h) } else { 1.0 } * self.topK(h);
         let vQ0 = self.spd(q);
         let vQs = vQ0 * spK(q);
-        let spU = 4.0 + 8.0 * (1.0 - cl1(q.en.unwrap_or(1.0))) * q.yet.ca_k();
+        let spU = 4.0 + 8.0 * (1.0 - cl1(q.en.unwrap_or(1.0))) * q.govde.yet.ca_k();
         let kX = ox_of(q.team);
-        let la = 2.0 + 0.4 * h.yet.y(mek::KALKAN);
-        let dlK = |p: &Oyuncu, b: f64| b * (1.0 + 0.0625 * (p.yet.y(mek::DENGE_DOLUM) - 10.0));
+        let la = 2.0 + 0.4 * h.govde.yet.y(mek::KALKAN);
+        let dlK = |p: &Oyuncu, b: f64| b * (1.0 + 0.0625 * (p.govde.yet.y(mek::DENGE_DOLUM) - 10.0));
         let mH = self.dis.kutle(h, true);
         let mQ = self.dis.kutle(q, false);
         let rH = self.dis.direnc(h, true);
         let rQ = self.dis.direnc(q, false);
-        let w = jmax(0.01, 0.03 * (20.0 - q.yet.y(mek::IKILI_KARAR)));
+        let w = jmax(0.01, 0.03 * (20.0 - q.govde.yet.y(mek::IKILI_KARAR)));
         let thr = self.girThr(q, h, src);
         let ek = self.enIkiliEk(q, h) + w / 2.0 - thr + self.girEk(q, h, thr, src);
         let t0 = self.tick0();
-        let cvQ = 0.25 * (q.yet.y(mek::HAMLE) - 10.0);
+        let cvQ = 0.25 * (q.govde.yet.y(mek::HAMLE) - 10.0);
         let c = Kc {
             h,
             q,
@@ -394,7 +394,7 @@ impl Kafa {
             vQ0,
             vQs,
             spU,
-            spG: 12.0 + 10.0 * (1.0 - cl1(q.en.unwrap_or(1.0))) * q.yet.ca_k(),
+            spG: 12.0 + 10.0 * (1.0 - cl1(q.en.unwrap_or(1.0))) * q.govde.yet.ca_k(),
             kX,
             la,
             dlH: dlK(h, IK.dolum),
@@ -975,10 +975,10 @@ impl Kafa {
                 }
                 None => jmax(0.0, qT - 0.5 * hT + kapa(yol, vO, away)),
             };
-            let KIZ = crate::iz_acik() && dir.map_or(false, |di| std::env::var("ALAN_KIZ").ok().map_or(false, |v| { let (a, b) = v.split_once(":").unwrap_or(("", "0")); &*h.name == a && (di.x - b.parse::<f64>().unwrap_or(9.0)).abs() < 1e-4 })) && std::env::var("ALAN_C3_IZ").ok().map_or(false, |x| x == format!("{}", self.tick()));
-            if KIZ && &*q.name == "Hendek" { let di = dir.unwrap(); eprintln!("   RT hT {} donS {} qT {} yol {} vO {} away {} d {}", hT, self.donS(h, di.x, di.y), qT, yol, vO, away, d); }
-            if KIZ { eprintln!("   KQ {} reach {} T {} keep0 {} e {:?} x {} {}", q.name, reachT, T, keep, self.dis.algi_e(q), q.x, q.y); }
-            kp_yaz!(kp_dis, (q.name.to_string(), d, reachT, keep, if q.bekci() { 9.0 } else { 0.0 }));
+            let KIZ = crate::iz_acik() && dir.map_or(false, |di| std::env::var("ALAN_KIZ").ok().map_or(false, |v| { let (a, b) = v.split_once(":").unwrap_or(("", "0")); &*h.govde.name == a && (di.x - b.parse::<f64>().unwrap_or(9.0)).abs() < 1e-4 })) && std::env::var("ALAN_C3_IZ").ok().map_or(false, |x| x == format!("{}", self.tick()));
+            if KIZ && &*q.govde.name == "Hendek" { let di = dir.unwrap(); eprintln!("   RT hT {} donS {} qT {} yol {} vO {} away {} d {}", hT, self.donS(h, di.x, di.y), qT, yol, vO, away, d); }
+            if KIZ { eprintln!("   KQ {} reach {} T {} keep0 {} e {:?} x {} {}", q.govde.name, reachT, T, keep, self.dis.algi_e(q), q.x, q.y); }
+            kp_yaz!(kp_dis, (q.govde.name.to_string(), d, reachT, keep, if q.bekci() { 9.0 } else { 0.0 }));
             if reachT > T {
                 continue;
             }
@@ -1028,7 +1028,7 @@ impl Kafa {
                             ilS = s4 / 4.0;
                             ilG = g4 / 4.0;
                         }
-                        if KIZ { eprintln!("   KK4 {} keep {} son {}", q.name, keep, s4 / 4.0); }
+                        if KIZ { eprintln!("   KK4 {} keep {} son {}", q.govde.name, keep, s4 / 4.0); }
                     } else {
                         let kk = self.kesisK(h, q, di, T, src, d, rl);
                         keep *= kk;
@@ -1096,7 +1096,7 @@ impl Kafa {
             let d0 = self.duelP_k(&qv, hArg, src, None);
             let P = d0.P;
             let tries = 1.0 + ((T - reachT) / DU.cd).floor();
-            let w = jmax(0.01, 0.03 * (20.0 - q.yet.y(mek::IKILI_KARAR)));
+            let w = jmax(0.01, 0.03 * (20.0 - q.govde.yet.y(mek::IKILI_KARAR)));
             let thr = self.girThr(q, h, src);
             let pcOf = |s: &mut Kafa, Pk: f64| jmax(0.0, jmin(1.0, (Pk + s.enIkiliEk(q, h) + w / 2.0 - thr + s.girEk(q, h, thr, src)) / w));
             let pc = pcOf(self, P);
@@ -1152,7 +1152,7 @@ impl Kafa {
             }
             let kW = self.kWof(kd, h, q, src, ikK);
             if ikK && kd == Some(true) && trK > 1.0 {
-                let dl = IK.dolum * (1.0 + 0.0625 * (h.yet.y(mek::DENGE_DOLUM) - 10.0)) * DU.cd;
+                let dl = IK.dolum * (1.0 + 0.0625 * (h.govde.yet.y(mek::DENGE_DOLUM) - 10.0)) * DU.cd;
                 let mut Pk = Pd;
                 let mut ck = pcd;
                 let mut dk = sd0;
@@ -1321,7 +1321,7 @@ impl Kafa {
                 let qy = q.y - h.y;
                 let qd = ya(hypot(qx, qy), 1.0);
                 let cosA = (qx * cs.ux + qy * cs.uy) / qd;
-                let mut P = DU.base + (q.yet.ozk("kesme") - h.yet.ozk("surme")) * DU.skill + DU.side * cosA * (cs.off / DU.core0) * 0.5;
+                let mut P = DU.base + (q.govde.yet.ozk("kesme") - h.govde.yet.ozk("surme")) * DU.skill + DU.side * cosA * (cs.off / DU.core0) * 0.5;
                 {
                     let B = Q.body;
                     let ox = h.x + cs.ux * B;
@@ -1330,7 +1330,7 @@ impl Kafa {
                     let uzan = h.bekci() && hypot(ox - kG, oy - GCY) < KR + 0.5 && hypot(ox - q.x, oy - q.y) < Q.reach + 0.4;
                     let fk = self.fakeOkunmaz(q, h);
                     let shd = shielded(h.x, h.y, q.x, q.y, ox, oy) && !uzan;
-                    let gk = jmax(0.5, jmin(1.5, 1.0 - 0.04 * (h.yet.ozk("guc") - q.yet.ozk("guc"))));
+                    let gk = jmax(0.5, jmin(1.5, 1.0 - 0.04 * (h.govde.yet.ozk("guc") - q.govde.yet.ozk("guc"))));
                     let Pk = if shd { jmin(P, P * DU.shieldK * gk) } else { P + (1.0 - P) * DU.openK };
                     let Pf = if shd { P + (1.0 - P) * DU.openK } else { Pk };
                     P = (1.0 - fk) * Pk + fk * Pf;
@@ -1533,7 +1533,7 @@ pub fn coreSide_p(h: &Oyuncu) -> CoreSide {
 }
 /// topK (decide.js): dokunuş ayarıyla, kafa durumuna bağlı değil.
 pub fn topK_p(h: &Oyuncu, dk: Option<crate::kafa::gecici_dis1::Dokunus>) -> f64 {
-    let s = h.yet.y(mek::TOPLU_KOSU);
+    let s = h.govde.yet.y(mek::TOPLU_KOSU);
     match dk {
         Some(C0) => {
             let close = jmin(1.0, C0.close + (s - 10.0) * C0.closeS);

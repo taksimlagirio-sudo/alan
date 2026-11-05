@@ -34,9 +34,9 @@ struct KayitKural(Vec<(f64, f64, f64, f64, f64, Vec<u64>)>);
 impl Kural for KayitKural {
     fn spr(&self, p: &Oyuncu) -> f64 {
         if p.id != p.id {
-            let mk: Vec<u64> = p.yet.mek.iter().map(|x| x.to_bits()).collect();
+            let mk: Vec<u64> = p.govde.yet.mek.iter().map(|x| x.to_bits()).collect();
             let e = self.0.iter().find(|x| x.5 == mk).expect("hayalin oyuncusu yok");
-            return if p.role.is_empty() { e.4 } else { e.3 };
+            return if p.govde.role.is_empty() { e.4 } else { e.3 };
         }
         self.0.iter().find(|x| x.0 == p.team && x.1 == p.id).unwrap().2
     }
@@ -54,14 +54,14 @@ fn oyuncu(v: &Value) -> Oyuncu {
     let mut p = Oyuncu::default();
     p.id = v["id"].as_f64().unwrap();
     p.team = v["team"].as_f64().unwrap();
-    p.i = v["i"].as_f64().unwrap_or(0.0);
-    p.role = v["role"].as_str().unwrap().into();
-    p.name = v["name"].as_str().unwrap().into();
-    p.yet = if v["a"].as_object().unwrap().is_empty() { Yetenek::bos().into() } else { Yetenek::kur(&a).into() };
-    p.slot.d = h(&v["slot"]["d"]);
-    p.slot.l = h(&v["slot"]["l"]);
+    p.govde_mut().i = v["i"].as_f64().unwrap_or(0.0);
+    p.govde_mut().role = v["role"].as_str().unwrap().into();
+    p.govde_mut().name = v["name"].as_str().unwrap().into();
+    p.govde_mut().yet = if v["a"].as_object().unwrap().is_empty() { Yetenek::bos().into() } else { Yetenek::kur(&a).into() };
+    p.govde_mut().slot.d = h(&v["slot"]["d"]);
+    p.govde_mut().slot.l = h(&v["slot"]["l"]);
     if !v["rslot"].is_null() {
-        p.rslot = Some(JPRslot { d: h(&v["rslot"]["d"]), l: h(&v["rslot"]["l"]) });
+        p.govde_mut().rslot = Some(JPRslot { d: h(&v["rslot"]["d"]), l: h(&v["rslot"]["l"]) });
     }
     p.x = h(&v["x"]);
     p.y = h(&v["y"]);
@@ -159,7 +159,7 @@ fn kur(c: &Value) -> Kur {
             .unwrap()
             .iter()
             .zip(ps.iter())
-            .map(|(p, o)| (o.team, o.id, h(&p["spr"]), h(&p["sprH"]), h(&p["sprF"]), o.yet.mek.iter().map(|x| x.to_bits()).collect()))
+            .map(|(p, o)| (o.team, o.id, h(&p["spr"]), h(&p["sprH"]), h(&p["sprF"]), o.govde.yet.mek.iter().map(|x| x.to_bits()).collect()))
             .collect(),
     );
     let mut m = Mac::default();

@@ -97,6 +97,6 @@ pub fn notlar(m: &Mac) -> Vec<Not> {
     let n = m.not.as_ref().unwrap_or(&bos);
     m.ps.iter().map(|p| {
         let pu = n.p.get(&(p.id as usize)).copied().unwrap_or(0.0);
-        Not { id: p.id, ad: p.name.to_string(), team: p.team, rol: p.role.to_string(), puan: to_fixed(pu, 3), not: to_fixed(jmax(3.0, jmin(10.0, 6.3 + (pu - NOT_0) * NOT_K)), 1) }
+        Not { id: p.id, ad: p.govde.name.to_string(), team: p.team, rol: p.govde.role.to_string(), puan: to_fixed(pu, 3), not: to_fixed(jmax(3.0, jmin(10.0, 6.3 + (pu - NOT_0) * NOT_K)), 1) }
     }).collect()
 }

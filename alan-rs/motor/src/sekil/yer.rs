@@ -25,16 +25,16 @@ pub fn gside(ax: f64, ay: f64, t: u8, off: f64) -> (f64, f64) {
 
 /// Slot (JS `att && p.rslot ? p.rslot : p.slot`): (d, l).
 pub fn slotOf(p: &Oyuncu, att: bool) -> (f64, f64) {
-    match (&p.rslot, att) {
+    match (&p.govde.rslot, att) {
         (Some(r), true) => (r.d, r.l),
-        _ => (p.slot.d, p.slot.l),
+        _ => (p.govde.slot.d, p.govde.slot.l),
     }
 }
 /// JS `(q.rslot || q.slot)`.
 pub fn rslotOf(p: &Oyuncu) -> (f64, f64) {
-    match &p.rslot {
+    match &p.govde.rslot {
         Some(r) => (r.d, r.l),
-        None => (p.slot.d, p.slot.l),
+        None => (p.govde.slot.d, p.govde.slot.l),
     }
 }
 
@@ -115,8 +115,8 @@ pub fn slotBase(m: &Mac, ps: &[Oyuncu], p: &Oyuncu, ex: f64, ey: f64, att: bool)
         if w[k] == 0.0 || w[k] != w[k] {
             continue;
         }
-        let q = match pl.get(k).and_then(|v| v.get((p.i - 1.0) as usize)) {
-            Some(q) if p.i >= 1.0 => *q,
+        let q = match pl.get(k).and_then(|v| v.get((p.govde.i - 1.0) as usize)) {
+            Some(q) if p.govde.i >= 1.0 => *q,
             _ => continue,
         };
         if q.0.is_some() || q.1.is_some() {
@@ -554,7 +554,7 @@ impl YolBag {
 
 /// yolBag/yolKesis'in taşıyıcı hız yanılgısı (görüşe bağlı, 15 tikte bir değişir).
 pub fn hizYanilgi(p: &Oyuncu, h: &Oyuncu, _d: &KafaD, dtik: Option<f64>) -> f64 {
-    let g = p.yet.ozk("gorus");
+    let g = p.govde.yet.ozk("gorus");
     let hs = sinh_k(12.9898 * (p.id + 1.0) + 4.1414 * (h.id + 1.0) + 78.233 * (dtik.filter(|t| *t != 0.0 && *t == *t).unwrap_or(0.0) / 15.0).floor());
     1.0 + (kesir(hs) - 0.5) * (20.0 - g) * 0.02
 }

@@ -395,7 +395,7 @@ impl Kafa {
         let OK1 = h.id >= 0.0;
         let cue1 = if OK1 { (if B._tekD { IN.cue_ot } else { IN.cue0 }) + gecik } else { 0.0 };
         let uM1 = (IN.u_a + IN.u_b) / 2.0;
-        let giz1 = if OK1 { h.yet.y(mek::VURUS_GIZLE) - 10.0 } else { 0.0 };
+        let giz1 = if OK1 { h.govde.yet.y(mek::VURUS_GIZLE) - 10.0 } else { 0.0 };
         let hIc = h.id >= 0.0 && hI.is_some();
         let hKI: Option<usize> = if h.id >= 0.0 { bul_i(src, h) } else { None };
         let pre = if gecik >= 1.0 && hIc { jmax(0.0, jmin(1.0, self.keepP(&src[hI.unwrap()], src, None, gecik))) } else { 1.0 };
@@ -429,7 +429,7 @@ impl Kafa {
                 }
             }
         }
-        let err = (20.0 - h.yet.y(mek::ALGI_HATA)) * D.errOk * D.errPos;
+        let err = (20.0 - h.govde.yet.y(mek::ALGI_HATA)) * D.errOk * D.errPos;
         let mut ad: Vec<UA> = Vec::new();
         for (i, p) in src.iter().enumerate() {
             if p.noTouch && (p.team == team || !(p.hal.stun.map_or(false, |s| s > tick) || p.hal.adandi.map_or(false, |s| s > tick))) {
@@ -509,7 +509,7 @@ impl Kafa {
                 0.0
             };
             let hmA = if bek { bek_har(p, o0.x, o0.y, b0.vx, b0.vy, &kr) } else { 0.0 };
-            let fO = if OK1 && rakip && !bek { jmax(0.05, jmin(0.95, 0.5 + IN.sez * (p.yet.y(mek::VURUS_SEZ) - 10.0) - IN.giz * giz1)) } else { 0.0 };
+            let fO = if OK1 && rakip && !bek { jmax(0.05, jmin(0.95, 0.5 + IN.sez * (p.govde.yet.y(mek::VURUS_SEZ) - 10.0) - IN.giz * giz1)) } else { 0.0 };
             let onE = cue1 * fO * uM1;
             let sdW = if fO != 0.0 { hypot(rc * IN.tepki_z / 2.449, cue1 * fO * (IN.u_b - IN.u_a) / 3.464) / 1.814 } else { 0.0 };
             let mut A = UA::yeni(Cow::Borrowed(&**p), Some(i));
@@ -663,7 +663,7 @@ impl Kafa {
                         let p: &Oyuncu = &A.p;
                         let tq = p.hal.tutQ.and_then(|t| src.get(t));
                         let tqOk = match (tq, qqI) {
-                            (Some(tq), Some(qi)) => tq.name == src[qi].name && tq.team == src[qi].team && oEk < n as f64,
+                            (Some(tq), Some(qi)) => tq.govde.name == src[qi].govde.name && tq.team == src[qi].team && oEk < n as f64,
                             _ => false,
                         };
                         let kj = if tqOk {
@@ -676,7 +676,7 @@ impl Kafa {
                         };
                         A.kj = kj;
                     }
-                    let kural = |A: &UA, e: f64, bS: f64| e <= bS + (20.0 - A.p.yet.y(mek::ALGI_HATA)) * S.marginT + 1.0 && !(e > oEk + 6.0) && !(e > oEk + 1.0);
+                    let kural = |A: &UA, e: f64, bS: f64| e <= bS + (20.0 - A.p.govde.yet.y(mek::ALGI_HATA)) * S.marginT + 1.0 && !(e > oEk + 6.0) && !(e > oEk + 1.0);
                     let mut c = 0.0;
                     while c < n as f64 && c <= oEk {
                         let mut bS: f64 = 1e9;
@@ -741,7 +741,7 @@ impl Kafa {
                                 }
                             } else {
                                 hepsi = false;
-                                let ah = ad[j].p.yet.y(mek::ALGI_HATA);
+                                let ah = ad[j].p.govde.yet.y(mek::ALGI_HATA);
                                 if ad[j].kt.is_none() && oEk < n as f64 && ec <= bS + (20.0 - ah) * S.marginT + 1.0 && !(ec > oEk + 6.0) && ec > oEk + 1.0 {
                                     let P0 = pts[oEk as usize];
                                     let t = self.dis.gside(nk(P0.x, P0.y), ad[j].p.team, 2.2);

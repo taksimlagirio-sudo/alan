@@ -11,8 +11,8 @@ fn oyuncu(v: &Value) -> Oyuncu {
     for (k, x) in v["a"].as_object().unwrap() { a.v.insert(k.clone(), h(x)); }
     let mut p = Oyuncu::default();
     p.id = v["id"].as_u64().unwrap() as f64; p.team = v["team"].as_u64().unwrap() as f64;
-    p.role = if v["bek"].as_bool().unwrap() { "Bekçi".into() } else { "Orta".into() };
-    p.yet = if v["a"].as_object().unwrap().is_empty() { Yetenek::bos().into() } else { Yetenek::kur(&a).into() };
+    p.govde_mut().role = if v["bek"].as_bool().unwrap() { "Bekçi".into() } else { "Orta".into() };
+    p.govde_mut().yet = if v["a"].as_object().unwrap().is_empty() { Yetenek::bos().into() } else { Yetenek::kur(&a).into() };
     p.x = h(&v["x"]); p.y = h(&v["y"]); p.vx = h(&v["vx"]); p.vy = h(&v["vy"]);
     p.en = ho(&v["en"]); p.den = ho(&v["den"]);
     p

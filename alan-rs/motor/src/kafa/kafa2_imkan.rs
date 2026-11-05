@@ -143,7 +143,7 @@ pub fn imkKov(k: &mut Kafa, p: &Oyuncu) -> (f64, f64) {
 
 /// JS imkOrt(a) (decide.js:6139): ham özelliklerin ortalaması (yoksa 10). Sıra: kaydın alan sırası.
 pub fn imkOrt(p: &Oyuncu) -> f64 {
-    let a = &p.a;
+    let a = &p.govde.a;
     let v = [a.hiz, a.ceviklik, a.guc, a.uzanma, a.alan, a.kontrol, a.surme, a.pas, a.gonderme, a.yukleme, a.tepki, a.gorus, a.yeralma, a.sogukkanlilik, a.kesme, a.refleks, a.yerlesim, a.hakimiyet, a.enerji, a.govde, a.caliskanlik];
     let mut s = 0.0;
     for x in v {
@@ -616,7 +616,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
                 }
             };
             let (p, e) = imk(k, TY, IC, a, zi, tR);
-            if di.is_none() && &*biz[a].p.name == "Kaan" && z.x == 104.0 && z.y == 36.0 && crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
+            if di.is_none() && &*biz[a].p.govde.name == "Kaan" && z.x == 104.0 && z.y == 36.0 && crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
                 eprintln!("    kaan ön z {} {} tR {:.3} p {:.6} ta {:.3} k {} kalkis {} q {:?}", z.x, z.y, tR, p, e.ta, e.k, e.kalkis, e.q.map(|q| (q.x, q.y)));
             }
             if p * imkInan(k, e.ta) <= r.u {
@@ -624,7 +624,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             }
             let S = imkS(k, IC, a, zi);
             let u = p * S * imkInan(k, e.ta);
-            if di.is_none() && &*biz[a].p.name == "Kaan" && crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
+            if di.is_none() && &*biz[a].p.govde.name == "Kaan" && crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
                 eprintln!("    kaan z {} {} tR {:.3} p {:.6} ta {:.3} S {:.6} u {:.6}", z.x, z.y, tR, p, e.ta, S, u);
             }
             if u > r.u {
@@ -660,7 +660,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             }
         }
         if crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
-            eprintln!("  açg {} u {:.6} z {} {} tr {} → {}", biz[ba].p.name, bu, zs[rz].x, zs[rz].y, bos.iter().map(|&i| format!("{}:{:.3}", rak[i].p.name, zs[rz].tr[i])).collect::<Vec<_>>().join(" "), if di >= 0 { rak[di as usize].p.name.clone() } else { "-".into() });
+            eprintln!("  açg {} u {:.6} z {} {} tr {} → {}", biz[ba].p.govde.name, bu, zs[rz].x, zs[rz].y, bos.iter().map(|&i| format!("{}:{:.3}", rak[i].p.govde.name, zs[rz].tr[i])).collect::<Vec<_>>().join(" "), if di >= 0 { rak[di as usize].p.govde.name.clone() } else { "-".into() });
         }
         atanan[ba] = Some(di);
         bos.retain(|&i| i as isize != di);
@@ -671,7 +671,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         let S = if r.z.is_some() { r.S } else { 0.0 };
         let p = if S > 0.0 { r.u / S } else { 0.0 };
         if crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
-            eprintln!("  hu {} u={:.6} S={:.6} ta={:.3} z={:?} kar={:?}", biz[a].p.name, r.u, S, r.ta, r.z.map(|z| (zs[z].x, zs[z].y)), atanan[a].and_then(|i| if i >= 0 { Some(rak[i as usize].p.name.clone()) } else { None }));
+            eprintln!("  hu {} u={:.6} S={:.6} ta={:.3} z={:?} kar={:?}", biz[a].p.govde.name, r.u, S, r.ta, r.z.map(|z| (zs[z].x, zs[z].y)), atanan[a].and_then(|i| if i >= 0 { Some(rak[i as usize].p.govde.name.clone()) } else { None }));
         }
         v = jmax(v, p * S);
     }

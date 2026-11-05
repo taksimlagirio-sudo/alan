@@ -151,7 +151,7 @@ impl Sv {
                 q: IsQ::P(q),
                 w: if derin { w } else { w * (1.0 - self.acik) },
                 g: if derin { omuz } else { yolu(qa) },
-                job: format!("{}{}", if derin { "arkada · " } else { "kapatma · " }, qp.name),
+                job: format!("{}{}", if derin { "arkada · " } else { "kapatma · " }, qp.govde.name),
                 derin,
                 bul: false,
                 okuF: derin,
@@ -163,7 +163,7 @@ impl Sv {
             });
             if !derin {
                 isler.last_mut().unwrap().grp = Some(qp.id);
-                isler.push(Is { q: IsQ::P(q), w, g: omuz, job: format!("arkada · {}", qp.name), derin: true, bul: false, okuF: true, grp: Some(qp.id), car: None, zone: None, rq: vec![], thr: 0.0 });
+                isler.push(Is { q: IsQ::P(q), w, g: omuz, job: format!("arkada · {}", qp.govde.name), derin: true, bul: false, okuF: true, grp: Some(qp.id), car: None, zone: None, rq: vec![], thr: 0.0 });
             }
         }
         isler.sort_by(|a, b| sira(b.w - a.w));
@@ -274,14 +274,14 @@ impl Sv {
             let by = pp.y - GCY;
             let bb = bx * ux + by * uy;
             let sL = -bb + (jmax(0.0, bb * bb - (bx * bx + by * by - R * R))).sqrt();
-            let tCik = jmin(L, sL) / v + 1.0 / (0.18 * ah(&pp.yet));
+            let tCik = jmin(L, sL) / v + 1.0 / (0.18 * ah(&pp.govde.yet));
             if tCik <= kal {
                 return t;
             }
             let rx = bx / nz1(dP);
             let ry = by / nz1(dP);
             let X = (cx + rx * (R + 0.3), GCY + ry * (R + 0.3));
-            (R - dP + 0.3) / v + 1.0 / (0.18 * ah(&pp.yet)) + hypot(G.0 - X.0, G.1 - X.1) / v
+            (R - dP + 0.3) / v + 1.0 / (0.18 * ah(&pp.govde.yet)) + hypot(G.0 - X.0, G.1 - X.1) / v
         };
         let tur = |J: &Is| -> u8 {
             if J.zone.is_some() {
@@ -420,13 +420,13 @@ impl Sv {
         }
         if crate::iz_acik() && !c.lite && std::env::var("ALAN_UA_IZ").ok().and_then(|x| x.parse::<f64>().ok()) == Some(c.m.tick) {
             if let Some(t) = &self.tP { eprintln!("TP {:?}", t.mm.iter().map(|(k, v)| format!("{}={:.4}", k, v)).collect::<Vec<_>>()); }
-            eprintln!("UA dt {} Ps {} bst {:?}", dt, Ps.iter().map(|&p| c.ps[p].name.clone()).collect::<Vec<_>>().join(","), bst);
+            eprintln!("UA dt {} Ps {} bst {:?}", dt, Ps.iter().map(|&p| c.ps[p].govde.name.clone()).collect::<Vec<_>>().join(","), bst);
             for (j, J) in Js.iter().enumerate() {
-                let qn = match J.q { IsQ::P(q) => c.ps[q].name.clone(), _ => "bölge".into() };
-                eprintln!(" J {} {} w {} g {} {} derin {} bul {} car {:?} zone {:?} job {}", j, qn, J.w, J.g.0, J.g.1, J.derin, J.bul, J.car, J.zone.map(|z| c.ps[z].name.clone()), J.job);
+                let qn = match J.q { IsQ::P(q) => c.ps[q].govde.name.clone(), _ => "bölge".into() };
+                eprintln!(" J {} {} w {} g {} {} derin {} bul {} car {:?} zone {:?} job {}", j, qn, J.w, J.g.0, J.g.1, J.derin, J.bul, J.car, J.zone.map(|z| c.ps[z].govde.name.clone()), J.job);
             }
             for (i, r) in Bs.iter().enumerate() {
-                eprintln!(" B {} {}", c.ps[Ps[i]].name, r.iter().map(|v| format!("{:.5}", v)).collect::<Vec<_>>().join(" "));
+                eprintln!(" B {} {}", c.ps[Ps[i]].govde.name, r.iter().map(|v| format!("{:.5}", v)).collect::<Vec<_>>().join(" "));
             }
         }
         for &p in &Ps {
@@ -530,7 +530,7 @@ impl Sv {
                 }
                 c.ps[p].job = Some(J.job.clone().into());
                 if c.ps[p].hal._blokT == Some(tick) {
-                    let nm = c.ps[J.q].name.clone();
+                    let nm = c.ps[J.q].govde.name.clone();
                     c.ps[p].job = Some(format!("arkada · blokta ({})", nm).into());
                 }
                 c.ps[p].hal_mut().tutQ = Some(J.q);
@@ -599,7 +599,7 @@ impl Sv {
         {
             let pp = &mut c.ps[p];
             pp.tx = wx;
-            pp.ty = GCY + 11.0 * pp.slot.l * GKY;
+            pp.ty = GCY + 11.0 * pp.govde.slot.l * GKY;
             pp.job = Some("önde bekle".into());
         }
         // önde talimatlı oyuncu savunmaya katılmaz: işi kontra için önde beklemek. Taşıyıcının arkasındaki adama pas yolunu
@@ -633,7 +633,7 @@ impl Sv {
                 if let Some(o0) = sn.iter().find(|o| o.r == Some(q)) {
                     let o = self.okunan(c, p, o0, q);
                     let g = kapatHat(c, p, self.att, self.E, &o);
-                    let nm = c.ps[q].name.clone();
+                    let nm = c.ps[q].govde.name.clone();
                     let pp = &mut c.ps[p];
                     pp.tx = g.0;
                     pp.ty = g.1;
@@ -667,7 +667,7 @@ impl Sv {
                 let pp = &mut c.ps[p];
                 pp.tx = 0.7 * g1.0 + 0.3 * g2.0;
                 pp.ty = 0.7 * g1.1 + 0.3 * g2.1;
-                pp.job = Some(format!("karşıla · {}", hp.name).into());
+                pp.job = Some(format!("karşıla · {}", hp.govde.name).into());
                 pp.hal_mut().tutQ = Some(o);
                 return true;
             }
@@ -680,7 +680,7 @@ impl Sv {
                     self.yakin(so.x, so.y, g0)
                 }
             };
-            let nm = c.ps[o].name.clone();
+            let nm = c.ps[o].govde.name.clone();
             let pp = &mut c.ps[p];
             pp.tx = g.0;
             pp.ty = g.1;
@@ -742,7 +742,7 @@ impl Sv {
             let o0 = sn.iter().find(|o| o.r == Some(q)).expect("markaj: görülmeyen adam");
             let o = self.okunan(c, p, o0, q);
             let g = kapatHat(c, p, att, E, &o);
-            let nm = c.ps[q].name.clone();
+            let nm = c.ps[q].govde.name.clone();
             if self.adamT(c, p) {
                 let pp = &mut c.ps[p];
                 pp.job = Some(format!("markaj · {}", nm).into());
@@ -778,10 +778,10 @@ impl Sv {
                 None => E,
             };
             let dT = hypot(T.0 - ownX(dt), T.1 - GCY);
-            let hold = 6.0 + 10.0 * pp.slot.d;
+            let hold = 6.0 + 10.0 * pp.govde.slot.d;
             let f = jmin(1.0, hold / jmax(dT, 1.0));
             let gx = ownX(dt) + (T.0 - ownX(dt)) * f;
-            let gy = GCY + (T.1 - GCY) * f + if qo.is_some() { 0.0 } else { 8.0 * pp.slot.l };
+            let gy = GCY + (T.1 - GCY) * f + if qo.is_some() { 0.0 } else { 8.0 * pp.govde.slot.l };
             let kk = if qo.is_some() { 0.6 } else { 1.0 };
             tx += (gx - tx) * w * kk;
             ty += (gy - ty) * w * kk;
@@ -857,7 +857,7 @@ impl Sv {
                 if dT <= dP {
                     continue;
                 }
-                let q = pp.hal.tutQ.filter(|&q| !c.ps[q].name.is_empty() && icerir(&pp.job, &c.ps[q].name));
+                let q = pp.hal.tutQ.filter(|&q| !c.ps[q].govde.name.is_empty() && icerir(&pp.job, &c.ps[q].govde.name));
                 let mut w = self.acik;
                 match q {
                     Some(q) => w = jmax(w, kos(c.ps[q].vx)),

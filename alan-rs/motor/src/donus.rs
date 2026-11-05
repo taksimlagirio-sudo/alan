@@ -28,7 +28,7 @@ pub fn omega(p: &Oyuncu, yakin: bool, yavas: f64) -> f64 {
         Some(d) if d < 1.0 && !p.bekci() => denge_k(Some(d), yavas),
         _ => 1.0,
     };
-    jmax(0.03, (TQ.w0 + (p.yet.y(if yakin { mek::DOLAS } else { mek::SAVURMA_HIZ }) - 10.0) * TQ.w_sk) * (1.0 - TQ.w_v * jmin(1.0, v / TQ.v_ref)) * taraf(p) * d_k)
+    jmax(0.03, (TQ.w0 + (p.govde.yet.y(if yakin { mek::DOLAS } else { mek::SAVURMA_HIZ }) - 10.0) * TQ.w_sk) * (1.0 - TQ.w_v * jmin(1.0, v / TQ.v_ref)) * taraf(p) * d_k)
 }
 
 pub fn short_dir(a0: f64, a1: f64) -> f64 {
@@ -67,11 +67,11 @@ pub fn shielded(px: f64, py: f64, ox: f64, oy: f64, cx: f64, cy: f64) -> bool {
 }
 
 pub fn flick_miss(p: &Oyuncu) -> f64 {
-    jmax(0.02, 0.12 - 0.015 * (p.yet.y(mek::FISKE_KACIR) - 10.0))
+    jmax(0.02, 0.12 - 0.015 * (p.govde.yet.y(mek::FISKE_KACIR) - 10.0))
 }
 
 pub fn flick_w(p: &Oyuncu) -> f64 {
-    TQ.flick_w * (1.0 + 0.05 * (p.yet.y(mek::FISKE_HIZ) - 10.0))
+    TQ.flick_w * (1.0 + 0.05 * (p.govde.yet.y(mek::FISKE_HIZ) - 10.0))
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -106,7 +106,7 @@ pub fn simulate(p0: &Oyuncu, a0: f64, a1: f64, mode: Mod, dir: f64, opps0: &[Oyu
     let body = Q.body;
     let r = Q.reach;
     let a = arc(a0, a1, dir);
-    let sur = p0.yet.ozk("surme");
+    let sur = p0.govde.yet.ozk("surme");
     let mut done = 0.0f64;
     let mut keep = 1.0;
     let mut res: Option<DonusSonuc> = None;
@@ -139,7 +139,7 @@ pub fn simulate(p0: &Oyuncu, a0: f64, a1: f64, mode: Mod, dir: f64, opps0: &[Oyu
             if res.is_some() {
                 break;
             }
-            let ok = o.yet.ozk("tepki");
+            let ok = o.govde.yet.ozk("tepki");
             if t > TQ.react - ok * TQ.react_ok {
                 let dx = cx - ox[i];
                 let dy = cy - oy[i];
@@ -165,7 +165,7 @@ pub fn simulate(p0: &Oyuncu, a0: f64, a1: f64, mode: Mod, dir: f64, opps0: &[Oyu
             let d = hyp(cx - ox[i], cy - oy[i]);
             if t >= TQ.grab && d < r && (fly || !shielded(px, py, ox[i], oy[i], cx, cy)) && t >= ocd[i] {
                 ocd[i] = t + if fly { TQ.cd_loose } else { TQ.cd_hold };
-                let pp = if fly { TQ.p_loose } else { kis(TQ.p_hold + (o.yet.ozk("kesme") - sur) * TQ.p_hold_sk, 0.05, 0.8) };
+                let pp = if fly { TQ.p_loose } else { kis(TQ.p_hold + (o.govde.yet.ozk("kesme") - sur) * TQ.p_hold_sk, 0.05, 0.8) };
                 match rnd.as_mut() {
                     Some(r) => {
                         if r() < pp {
@@ -193,7 +193,7 @@ pub fn simulate(p0: &Oyuncu, a0: f64, a1: f64, mode: Mod, dir: f64, opps0: &[Oyu
 
 /// Dört yoldan (iki yön × dolaş/fiske) en ucuzunu seç (JS Turn.choose): rakipleri Görüş'üyle hatalı görür.
 pub fn choose(p: &Oyuncu, a0: f64, a1: f64, opps: &[Oyuncu], rnd: &mut dyn FnMut() -> f64, yavas: f64) -> Plan {
-    let ok = p.yet.ozk("gorus");
+    let ok = p.govde.yet.ozk("gorus");
     let err = 0.2 * jmax(0.0, 16.0 - ok);
     let lam = kis(0.3 + 0.08 * (ok - 5.0), 0.3, 1.1);
     let sd = short_dir(a0, a1);

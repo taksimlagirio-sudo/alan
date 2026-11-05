@@ -31,7 +31,7 @@ impl Kafa {
     }
     /// decide.js:547
     pub fn sogK(&self, h: &Oyuncu) -> f64 {
-        jmax(0.2, 1.0 - 0.06 * (h.yet.ozk("sogukkanlilik") - 10.0))
+        jmax(0.2, 1.0 - 0.06 * (h.govde.yet.ozk("sogukkanlilik") - 10.0))
     }
     /// D._sut'un metin hâli (şutun türü: "güçlü"/"plase"); sayıysa (taktik) yok.
     pub fn d_sut_tur(&self) -> Option<String> {
@@ -58,9 +58,9 @@ impl Kafa {
         } else {
             mek::PAS_YON
         };
-        let Sy = if my == mek::SUT_YON { h.yet.sut_y(hypot(gx_of(h.team) - h.x, GCY - h.y)) } else { h.yet.y(my) };
-        let Sv = if gon { Sy } else { h.yet.y(mek::PAS_HIZ) };
-        let Sb = h.yet.y(mek::BIRAKMA);
+        let Sy = if my == mek::SUT_YON { h.govde.yet.sut_y(hypot(gx_of(h.team) - h.x, GCY - h.y)) } else { h.govde.yet.y(my) };
+        let Sv = if gon { Sy } else { h.govde.yet.y(mek::PAS_HIZ) };
+        let Sb = h.govde.yet.y(mek::BIRAKMA);
         if !DZ {
             return HataF { y: (20.0 - Sy) * lk, v: (20.0 - Sv) * lk, b: (20.0 - Sb) * lk };
         }
@@ -71,9 +71,9 @@ impl Kafa {
         let eY = hypot(20.0 - Sy, ty);
         let eB = hypot(20.0 - Sb, ty);
         HataF {
-            y: eY * lk + 10.0 * l0 * durum_pay(&h.yet, my, T, &s),
-            v: (20.0 - Sv) * lk + 10.0 * l0 * durum_pay(&h.yet, if gon { my } else { mek::PAS_HIZ }, T, &s),
-            b: eB * lk + 10.0 * l0 * durum_pay(&h.yet, mek::BIRAKMA, T, &s),
+            y: eY * lk + 10.0 * l0 * durum_pay(&h.govde.yet, my, T, &s),
+            v: (20.0 - Sv) * lk + 10.0 * l0 * durum_pay(&h.govde.yet, if gon { my } else { mek::PAS_HIZ }, T, &s),
+            b: eB * lk + 10.0 * l0 * durum_pay(&h.govde.yet, mek::BIRAKMA, T, &s),
         }
     }
     /// Pasın sertliğiyle artan yön hatası (decide.js:758).

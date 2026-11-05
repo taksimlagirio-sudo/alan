@@ -13,7 +13,7 @@ fn ivme_js_ile_ayni() {
         let mut p = oyuncu(&c["p"]);
         ivme(&mut p, h(&c["wx"]), h(&c["wy"]), h(&c["vm"]));
         if !ayni(p.vx, h(&c["vx"])) || !ayni(p.vy, h(&c["vy"])) {
-            hata.push(format!("ivme {} {}: {} {} js {} {}", p.name, p.role, p.vx, p.vy, h(&c["vx"]), h(&c["vy"])));
+            hata.push(format!("ivme {} {}: {} {} js {} {}", p.govde.name, p.govde.role, p.vx, p.vy, h(&c["vx"]), h(&c["vy"])));
         }
     }
     eprintln!("ivme {}", v["ivme"].as_array().unwrap().len());
@@ -30,7 +30,7 @@ fn ikili_katsayilari_js_ile_ayni() {
         let t = h(&c["m"]["tick"]);
         let mut f = |n: &str, a: f64, j: &serde_json::Value| {
             if !ayni(a, h(j)) {
-                hata.push(format!("t{t} {} {n}: {a} js {}", p.name, h(j)));
+                hata.push(format!("t{t} {} {n}: {a} js {}", p.govde.name, h(j)));
             }
         };
         f("kutle", kutle(&p, ph), &c["kutle"]);

@@ -33,7 +33,7 @@ thread_local! {
 
 impl Tablo {
     fn oy(&mut self, o: &Op) {
-        self.ye(&o.yet);
+        self.ye(&o.govde.yet);
         let a = Arc::as_ptr(o) as usize;
         if !self.po.contains_key(&a) {
             self.po.insert(a, self.lo.len() as u32);

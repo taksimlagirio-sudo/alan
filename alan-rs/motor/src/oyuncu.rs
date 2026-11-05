@@ -32,7 +32,7 @@ pub fn kim(p: &Oyuncu) -> (f64, f64) {
 
 impl Oyuncu {
     pub fn bekci(&self) -> bool {
-        &*self.role == "Bekçi"
+        &*self.govde.role == "Bekçi"
     }
     /// takım (0/1) tam sayı olarak
     #[inline(always)]
@@ -58,7 +58,7 @@ impl Oyuncu {
     /// Etkin Hız (Enerji 3.0: bar hızı düşürmez, ham Hız).
     #[inline(always)]
     pub fn hz(&self) -> f64 {
-        self.yet.hiz
+        self.govde.yet.hiz
     }
     /// Temel koşu hızı (br/tik).
     #[inline(always)]
@@ -68,7 +68,7 @@ impl Oyuncu {
     /// Sprint katı Hız'dan (çekirdek; maç sprint evresiyle sarar).
     #[inline(always)]
     pub fn spr0(&self) -> f64 {
-        spr_h(self.yet.hiz)
+        spr_h(self.govde.yet.hiz)
     }
 }
 
@@ -103,7 +103,7 @@ pub const EN3_TEPKI_K: f64 = 0.25;
 
 pub fn tepki(p: &Oyuncu, k: Tepki, s: &TepkiS) -> f64 {
     use crate::core_sabit::Q;
-    let y = &p.yet;
+    let y = &p.govde.yet;
     let t = match k {
         Tepki::Alan => s.lag0 - y.y(mek::ALAN_ACMA) * s.lag_ok,
         Tepki::Algi => s.lag0 - y.y(mek::ALGI_GECIKME) * s.lag_ok,
@@ -120,6 +120,11 @@ pub fn tepki(p: &Oyuncu, k: Tepki, s: &TepkiS) -> f64 {
 }
 
 impl Oyuncu {
+    /// Gövdeye yazmak için (paylaşılıyorsa önce kopyalar: yazarken kopyala).
+    #[inline]
+    pub fn govde_mut(&mut self) -> &mut crate::model::OyuncuGovde {
+        std::sync::Arc::make_mut(&mut self.govde)
+    }
     /// Maç durumuna yazmak için (paylaşılıyorsa önce kopyalar: yazarken kopyala).
     #[inline]
     pub fn hal_mut(&mut self) -> &mut crate::model::OyuncuMac {

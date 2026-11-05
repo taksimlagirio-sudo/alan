@@ -116,7 +116,7 @@ pub fn kuyuSaat(m: &mut Mac, mt: f64, mH: Option<Pid>) {
             if !m.ps[pi].hal.sonuk && !holder && oo(m.ps[pi].hal.kuyuT) >= Q.kuyu_sn {
                 m.ps[pi].hal_mut().sonuk = true;
                 m.ps[pi].hal_mut().hamle = None;
-                let (t, ad) = (m.ps[pi].team, m.ps[pi].name.clone());
+                let (t, ad) = (m.ps[pi].team, m.ps[pi].govde.name.clone());
                 ev(m, "pas", t, format!("{ad} Kuyu alanında süreyi doldurdu · sönük"));
             }
         } else {

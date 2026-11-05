@@ -29,8 +29,8 @@ pub fn alP(d: Option<&JODet>) -> Option<f64> {
 impl Kafa {
     /// Rakibin kanma olasılığı (decide.js:303).
     pub fn fakeP(&self, h: &Oyuncu, p: &Oyuncu, k: &str, c: Option<f64>) -> f64 {
-        let ok = p.yet.y(mek::FAKE_KAN);
-        let sk = h.yet.y(if k == "gövde" { mek::FAKE_GOVDE } else { mek::FAKE_INAN });
+        let ok = p.govde.yet.y(mek::FAKE_KAN);
+        let sk = h.govde.yet.y(if k == "gövde" { mek::FAKE_GOVDE } else { mek::FAKE_INAN });
         let base = jmax(0.08, jmin(0.9, 0.5 + 0.04 * (sk - ok)));
         let cc = c.unwrap_or(1.0);
         let g = jmin(1.0, 0.5 + 0.03 * ok);
@@ -38,7 +38,7 @@ impl Kafa {
     }
     /// Fake'in süresi (decide.js:307).
     pub fn fakeT(&self, h: &Oyuncu) -> f64 {
-        jmax(8.0, jmin(18.0, jround(14.0 - 0.5 * (h.yet.y(mek::FAKE_SURE) - 10.0))))
+        jmax(8.0, jmin(18.0, jround(14.0 - 0.5 * (h.govde.yet.y(mek::FAKE_SURE) - 10.0))))
     }
     /// Kanan rakibin koşacağı yer (decide.js:308).
     pub fn fakeHedef(&self, p: &Oyuncu, h: &Oyuncu, sh: &FakeSh) -> Nk {

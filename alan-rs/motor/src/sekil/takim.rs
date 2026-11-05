@@ -140,8 +140,8 @@ pub fn coverSpots(o: (f64, f64), att: u8, E: (f64, f64), targets: &[(f64, f64)],
 /// Ayrı kurulmuş koşu bedeni (JS `{a: p.a, x, y, vx, vy}`): yetenek p'nin, kimlik/bar yok.
 pub fn govdeF(p: &Oyuncu, x: f64, y: f64, vx: f64, vy: f64) -> Oyuncu {
     let mut f = Oyuncu::bos();
-    f.a = p.a.clone();
-    f.yet = p.yet.clone();
+    f.govde_mut().a = p.govde.a.clone();
+    f.govde_mut().yet = p.govde.yet.clone();
     f.id = f64::NAN;
     f.x = x;
     f.y = y;

@@ -77,7 +77,7 @@ pub fn ikiliTemas(ps: &mut [Oyuncu], ia: Pid, ib: Pid, ux: f64, uy: f64, o: f64,
     }
     if let Some(hd) = bag.ikm.as_mut() {
         for (p, pi) in [(&mut *a, ia), (&mut *b, ib)] {
-            let v = EN.kalkan * EN.fizK * (1.0 + 10.0 * J) * p.yet.verim(mek::TEMAS_BEDEL);
+            let v = EN.kalkan * EN.fizK * (1.0 + 10.0 * J) * p.govde.yet.verim(mek::TEMAS_BEDEL);
             enHarca_p(hd.st, hd.lite, p, pi, "ikili", v);
         }
     }
@@ -134,8 +134,8 @@ pub fn govdeAyir(ps: &mut [Oyuncu], h: HArg, bag: &mut IkBag) {
                     continue;
                 }
                 let (a, b) = iki(ps, i, j);
-                let ga = 1.0 + 0.05 * (a.yet.y(mek::ITILME_PAYI) - 10.0);
-                let gb = 1.0 + 0.05 * (b.yet.y(mek::ITILME_PAYI) - 10.0);
+                let ga = 1.0 + 0.05 * (a.govde.yet.y(mek::ITILME_PAYI) - 10.0);
+                let gb = 1.0 + 0.05 * (b.govde.yet.y(mek::ITILME_PAYI) - 10.0);
                 let ka = gb / (ga + gb);
                 let kb = 1.0 - ka;
                 let o = bd - d;
@@ -218,10 +218,10 @@ pub fn denge(m: &mut Mac) {
                     }
                 }
                 let kim = o.map_or(1.0 - pt, |o| m.ps[o].team);
-                let ad = m.ps[pi].name.clone();
+                let ad = m.ps[pi].govde.name.clone();
                 ev(m, "kesme", kim, format!("{ad} sendeledi, Çekirdek ayağından kaçtı"));
             } else if !m.mac._lite {
-                let (t, ad) = (m.ps[pi].team, m.ps[pi].name.clone());
+                let (t, ad) = (m.ps[pi].team, m.ps[pi].govde.name.clone());
                 ev(m, "pas", t, format!("{ad} sendeledi"));
             }
         }

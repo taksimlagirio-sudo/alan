@@ -10,7 +10,7 @@ use crate::yetenek::{ag, ah};
 pub fn ivme(p: &mut Oyuncu, wx: f64, wy: f64, vmax: f64) {
     let sp = hypot(p.vx, p.vy);
     let k0 = 0.18;
-    let kH = k0 * ah(&p.yet) * if p._sf.as_ref().map_or(false, |s| s.f == "patlama") { SPR_FAZ.patK } else { 1.0 };
+    let kH = k0 * ah(&p.govde.yet) * if p._sf.as_ref().map_or(false, |s| s.f == "patlama") { SPR_FAZ.patK } else { 1.0 };
     if sp < 0.001 {
         p.vx += (wx - p.vx) * kH;
         p.vy += (wy - p.vy) * kH;
@@ -24,7 +24,7 @@ pub fn ivme(p: &mut Oyuncu, wx: f64, wy: f64, vmax: f64) {
     let px = dvx - al * ux;
     let py = dvy - al * uy;
     let r = jmin(1.0, sp / jmax(0.05, vmax));
-    let g = ag(&p.yet, p.den, p.bekci(), IK.yavas);
+    let g = ag(&p.govde.yet, p.den, p.bekci(), IK.yavas);
     let kA = if al >= 0.0 { kH } else { k0 * g * (1.0 - 0.55 * r) };
     let kT = k0 * g * (1.0 - 0.45 * r);
     let mut ba = al * kA;

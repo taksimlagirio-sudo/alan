@@ -44,16 +44,6 @@ pub struct Oyuncu {
     pub id: f64,
     /// `team`: number
     pub team: f64,
-    /// `i`: number
-    pub i: f64,
-    /// `role`: string
-    pub role: std::sync::Arc<str>,
-    /// `slot`: object
-    pub slot: JPSlot,
-    /// `name`: string
-    pub name: std::sync::Arc<str>,
-    /// `a`: object
-    pub a: JPA,
     /// `R`: number
     pub R: f64,
     /// `D`: number
@@ -88,6 +78,37 @@ pub struct Oyuncu {
     pub _don: Option<f64>,
     /// `_dke`: number (sonradan eklenir)
     pub _dke: Option<f64>,
+    /// `_sf`: null|object
+    pub _sf: Option<JP_sf>,
+    /// `den`: number (sonradan eklenir)
+    pub den: Option<f64>,
+    /// `pplan`: object (sonradan eklenir)
+    pub pplan: Option<JPPplan>,
+    /// Varlık kimliği (MIMARI.md 3.2, 4c-2): gerçek oyuncu ve kopyaları aynı, hayalet kendi gerçek oyuncusundan
+    /// ayrı; sahte/boş oyuncuda yok (o zaman yalnız nesne kimliği). Kopyayla taşınır; kayda girmez.
+    #[serde(skip)]
+    pub kim: Kim,
+    /// Maç durumu (MIMARI.md 3.6): yalnız maç ve yerleşimin yazdığı alanlar; kopyalar paylaşır,
+    /// yazma `hal_mut()` ile (paylaşılıyorsa önce kopyalar).
+    pub hal: std::sync::Arc<OyuncuMac>,
+    /// Gövde (MIMARI.md 3.6): kurulumda (ve taktik değişiminde) yazılan, kopyaların paylaştığı alanlar;
+    /// yazma `govde_mut()` ile (paylaşılıyorsa önce kopyalar).
+    pub govde: std::sync::Arc<OyuncuGovde>,
+}
+
+/// Oyuncunun gövdesi (MIMARI.md 3.6): rol, slot, ad, yetenek, talimat. Maç boyunca (neredeyse) değişmez.
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+pub struct OyuncuGovde {
+    /// `i`: number
+    pub i: f64,
+    /// `role`: string
+    pub role: std::sync::Arc<str>,
+    /// `slot`: object
+    pub slot: JPSlot,
+    /// `name`: string
+    pub name: std::sync::Arc<str>,
+    /// `a`: object
+    pub a: JPA,
     /// `rslot`: object (sonradan eklenir)
     pub rslot: Option<JPRslot>,
     /// `slot0`: object (sonradan eklenir)
@@ -102,23 +123,10 @@ pub struct Oyuncu {
     pub tl: Option<std::sync::Arc<JPTl>>,
     /// `eg`: object (sonradan eklenir)
     pub eg: Option<JPEg>,
-    /// `_sf`: null|object
-    pub _sf: Option<JP_sf>,
-    /// `den`: number (sonradan eklenir)
-    pub den: Option<f64>,
-    /// `pplan`: object (sonradan eklenir)
-    pub pplan: Option<JPPplan>,
     /// (Rust) yetenek satırı: `a`dan maç başında kurulur (ALAN_Y)
     /// paylaşımlı: maç içinde değişmez, kopyası yalnız sayaç (her oyuncu kopyasında sözlük kurulmasın)
     #[serde(with = "crate::paket::yet_kod")]
     pub yet: std::sync::Arc<crate::yetenek::Yetenek>,
-    /// Varlık kimliği (MIMARI.md 3.2, 4c-2): gerçek oyuncu ve kopyaları aynı, hayalet kendi gerçek oyuncusundan
-    /// ayrı; sahte/boş oyuncuda yok (o zaman yalnız nesne kimliği). Kopyayla taşınır; kayda girmez.
-    #[serde(skip)]
-    pub kim: Kim,
-    /// Maç durumu (MIMARI.md 3.6): yalnız maç ve yerleşimin yazdığı alanlar; kopyalar paylaşır,
-    /// yazma `hal_mut()` ile (paylaşılıyorsa önce kopyalar).
-    pub hal: std::sync::Arc<OyuncuMac>,
 }
 
 /// Oyuncunun maç durumu (MIMARI.md 3.6): işler, hamleler, sayaçlar, yerleşimin anıları. Kafa bunlara yazmaz.

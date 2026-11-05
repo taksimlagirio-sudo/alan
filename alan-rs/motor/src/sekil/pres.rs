@@ -82,7 +82,7 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
     let (px, py) = (c.ps[pi].x, c.ps[pi].y);
     let d0 = hypot(px - h.x, py - h.y);
     let trap = dtac.t.sistem.as_deref() == Some("Kenara sıkıştır");
-    let okp = c.ps[pi].yet.y(mek::PRES_FAKE);
+    let okp = c.ps[pi].govde.yet.y(mek::PRES_FAKE);
     let set = |c: &mut Mc, x: f64, y: f64| {
         c.ps[pi].tx = x;
         c.ps[pi].ty = y;
@@ -205,7 +205,7 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
                 };
                 let kh = koyHedef(&c.ps[pi], &h, cos(an), sin(an));
                 set(c, kh.0, kh.1);
-                job(c, format!("yolu kesiyor · {}", h.name));
+                job(c, format!("yolu kesiyor · {}", h.govde.name));
                 let p = &mut c.ps[pi];
                 p.sprint = hypot(p.tx - p.x, p.ty - p.y) > 1.5;
                 return;

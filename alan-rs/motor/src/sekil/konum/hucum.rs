@@ -591,7 +591,7 @@ impl Sv {
             let dr = dirOf(att);
             let ileri = (hh.x - pp.x) * dr;
             let bt = dis::tl(&pp, "huc", "bindir");
-            let tal = matches!(bt, Some(b) if b != 0.0 && b == b && hb.i == b);
+            let tal = matches!(bt, Some(b) if b != 0.0 && b == b && hb.govde.i == b);
             let side = if (hh.y - GCY).abs() > 4.0 { jsign(hh.y - GCY) } else { yada(jsign(pp.y - hh.y), 1.0) };
             let kosul = if tal { ileri > -5.0 && ileri < 40.0 && (hh.x - ownX(att)) * dr > 25.0 * GKX } else { !elDar && (hh.y - GCY).abs() > 8.0 * GKY && ileri > 3.0 && ileri < 25.0 && (pp.y - hh.y).abs() < 22.0 && (hh.x - ownX(att)) * dr > 35.0 * GKX };
             if kosul {
@@ -653,7 +653,7 @@ impl Sv {
                 let xx = (jmax(0.0, r * r - dy * dy)).sqrt();
                 Aday { x: cl(gx - dr * xx, 2.0, GW - 2.0), y: cl(GCY + dy, 2.0, GH - 2.0), dogal: true, ..Default::default() }
             };
-            match &*pp.role {
+            match &*pp.govde.role {
                 "Uç" => {
                     cands.push(nok(yb * MOUTH, KR + 1.0));
                     cands.push(nok(0.0, KR + 2.5));
@@ -774,13 +774,13 @@ impl Sv {
         pm.job = Some(if best.vac {
             "açılan boşluk".into()
         } else {
-            match &pm.rh {
+            match &pm.govde.rh {
                 Some(rh) if !rh.is_empty() && &**rh != "Serbest" => rh.to_lowercase().into(),
                 _ => "boşluk".into(),
             }
         });
         pm.hal_mut()._amacJob = None;
-        let ad = |c: &Mc, q: Pid| c.ps[q].name.clone();
+        let ad = |c: &Mc, q: Pid| c.ps[q].govde.name.clone();
         let yeni: Option<String> = if let Some(ck) = bestCk.filter(|ck| ck.0 >= S.cekEtiket) {
             Some(format!("açma · {} · {}", ad(c, ck.1), ad(c, ck.2)))
         } else if let Some(u) = best.uc {
@@ -1005,7 +1005,7 @@ impl Sv {
                         }
                         if let Some(bo) = bo {
                             al[bo] = true;
-                            let nm = c.ps[bo].name.clone();
+                            let nm = c.ps[bo].govde.name.clone();
                             let pp = &mut c.ps[p];
                             pp.tx = bL.0;
                             pp.ty = bL.1;

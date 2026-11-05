@@ -136,8 +136,8 @@ pub fn yetKur(p: &mut Oyuncu, a: &HamA) {
             _ => {}
         }
     }
-    p.a = j;
-    p.yet = std::sync::Arc::new(crate::yetenek::Yetenek::kur(&a.ham()));
+    p.govde_mut().a = j;
+    p.govde_mut().yet = std::sync::Arc::new(crate::yetenek::Yetenek::kur(&a.ham()));
 }
 
 /// JS createMatch(seed, o) (yerleşim gerçek: gecici_dis).
@@ -179,7 +179,7 @@ pub fn createMatch_ile(seed: f64, o: &KurSecenek, dis: &mut dyn KurDis) -> Mac {
                 }
             }
             let bek = &*s.role == "Bekçi";
-            let mut p = Oyuncu { id: (10 * t + i) as f64, team: t as f64, i: i as f64, role: s.role.clone(), slot: s.clone(), name: NAMES[t][i].into(), R: if bek { 7.0 } else { 8.0 }, D: if bek { 1.2 } else { 1.0 }, x: W / 2.0, y: CY, vx: 0.0, vy: 0.0, tx: W / 2.0, ty: CY, cd: 0.0, kim: crate::model::Kim::oyuncu((10 * t + i) as f64), ..Default::default() };
+            let mut p = Oyuncu { id: (10 * t + i) as f64, team: t as f64, govde: std::sync::Arc::new(crate::model::OyuncuGovde { i: i as f64, role: s.role.clone(), slot: s.clone(), name: NAMES[t][i].into(), ..Default::default() }), R: if bek { 7.0 } else { 8.0 }, D: if bek { 1.2 } else { 1.0 }, x: W / 2.0, y: CY, vx: 0.0, vy: 0.0, tx: W / 2.0, ty: CY, cd: 0.0, kim: crate::model::Kim::oyuncu((10 * t + i) as f64), ..Default::default() };
             yetKur(&mut p, &a);
             m.ps.push(p);
             m.mac.ham.push(a);
@@ -241,19 +241,19 @@ pub fn dizUygula_ile(m: &mut Mac, t: f64, dz: &Diz, dis: &mut dyn KurDis) {
         if p.team != t || p.bekci() {
             continue;
         }
-        let k = p.i as i64 - 1;
-        if let Some(s0) = &p.slot0 {
-            p.slot = JPSlot { role: s0.role.clone(), d: s0.d, l: s0.l };
-            p.rslot = p.rslot0.as_ref().map(|r| crate::model::JPRslot { d: r.d, l: r.l });
+        let k = p.govde.i as i64 - 1;
+        if let Some(s0) = &p.govde.slot0 {
+            p.govde_mut().slot = JPSlot { role: s0.role.clone(), d: s0.d, l: s0.l };
+            p.govde_mut().rslot = p.govde.rslot0.as_ref().map(|r| crate::model::JPRslot { d: r.d, l: r.l });
         }
         if let Some(y) = sv.as_ref().and_then(|v| v.get(k as usize)) {
-            p.slot = JPSlot { role: p.slot.role.clone(), d: y.d, l: y.l };
+            p.govde_mut().slot = JPSlot { role: p.govde.slot.role.clone(), d: y.d, l: y.l };
         }
         if let Some(y) = hu.as_ref().and_then(|v| v.get(k as usize)) {
-            p.rslot = Some(crate::model::JPRslot { d: y.d, l: y.l });
+            p.govde_mut().rslot = Some(crate::model::JPRslot { d: y.d, l: y.l });
         }
-        p.slot0 = Some(crate::model::JPSlot0 { role: p.slot.role.clone(), d: p.slot.d, l: p.slot.l });
-        p.rslot0 = p.rslot.as_ref().map(|r| crate::model::JPRslot0 { d: r.d, l: r.l });
+        p.govde_mut().slot0 = Some(crate::model::JPSlot0 { role: p.govde.slot.role.clone(), d: p.govde.slot.d, l: p.govde.slot.l });
+        p.govde_mut().rslot0 = p.govde.rslot.as_ref().map(|r| crate::model::JPRslot0 { d: r.d, l: r.l });
     }
     let d = m.diz.get_or_insert_with(|| vec![None, None]);
     d[t as usize] = Some(dz.clone());
@@ -290,7 +290,7 @@ pub fn PAKET(ev: &str, ad: &str) -> Vec<(&'static str, f64)> {
 
 /// JS tl(p, ev, k): oyuncunun talimatı, yoksa varsayılan.
 pub fn tl(p: &Oyuncu, ev: &str, k: &str) -> Option<f64> {
-    if let Some(t) = &p.tl {
+    if let Some(t) = &p.govde.tl {
         let o = if ev == "huc" { &t.huc } else { &t.sav };
         if let Some(v) = o.get(k) {
             return Some(*v);
@@ -406,10 +406,10 @@ pub fn assignRoles_ile(m: &mut Mac, roles: &Roller, dis: &mut dyn KurDis) {
             if p.team != t as f64 || p.bekci() {
                 continue;
             }
-            if let Some(r) = rol(roles, t, p.i) {
-                p.rh = Some(r.h.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| "Serbest".into()).into());
-                p.rs = Some(r.s.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| "Bölge".into()).into());
-                p.tl = Some(std::sync::Arc::new(tlKur(&r)));
+            if let Some(r) = rol(roles, t, p.govde.i) {
+                p.govde_mut().rh = Some(r.h.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| "Serbest".into()).into());
+                p.govde_mut().rs = Some(r.s.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| "Bölge".into()).into());
+                p.govde_mut().tl = Some(std::sync::Arc::new(tlKur(&r)));
             }
         }
     }
@@ -426,7 +426,7 @@ pub fn assignRoles_ile(m: &mut Mac, roles: &Roller, dis: &mut dyn KurDis) {
                 }
                 let (mut s0, mut n0, mut var0) = (0.0, 0.0, false);
                 for &pi in &ps {
-                    let r = rol(roles, t, m.ps[pi].i);
+                    let r = rol(roles, t, m.ps[pi].govde.i);
                     let v = r.as_ref().and_then(|r| r.tl.as_ref()).and_then(|tl| if ev == "huc" { tl.huc.as_ref() } else { tl.sav.as_ref() }).and_then(|o| o.get(k).cloned().flatten());
                     match v {
                         Some(v) => {
@@ -448,9 +448,9 @@ pub fn assignRoles_ile(m: &mut Mac, roles: &Roller, dis: &mut dyn KurDis) {
         }
         for &pi in &ps {
             let p = &mut m.ps[pi];
-            p.rh = Some("Serbest".into());
-            p.rs = Some("Bölge".into());
-            p.tl = Some(std::sync::Arc::new(ort.clone()));
+            p.govde_mut().rh = Some("Serbest".into());
+            p.govde_mut().rs = Some("Bölge".into());
+            p.govde_mut().tl = Some(std::sync::Arc::new(ort.clone()));
         }
     }
     for t in [0.0, 1.0] {
@@ -458,12 +458,12 @@ pub fn assignRoles_ile(m: &mut Mac, roles: &Roller, dis: &mut dyn KurDis) {
         let ds: Vec<Pid> = (0..m.ps.len()).filter(|&i| m.ps[i].team == t && !m.ps[i].bekci() && tlv(&m.ps[i], "sav", "adam") >= 0.5).collect();
         for p in ds {
             let ki = tl(&m.ps[p], "sav", "kimi");
-            let sec = ki.and_then(|ki| (0..m.ps.len()).find(|&q| m.ps[q].team != t && m.ps[q].i == ki && !m.ps[q].bekci() && !taken.contains(&q)));
+            let sec = ki.and_then(|ki| (0..m.ps.len()).find(|&q| m.ps[q].team != t && m.ps[q].govde.i == ki && !m.ps[q].bekci() && !taken.contains(&q)));
             let opp: Vec<Pid> = match sec {
                 Some(s) => vec![s],
                 None => {
                     let mut v: Vec<Pid> = (0..m.ps.len()).filter(|&q| m.ps[q].team != t && !m.ps[q].bekci() && !taken.contains(&q)).collect();
-                    let rs = |q: &Oyuncu| q.rslot.as_ref().map_or(q.slot.d, |r| r.d);
+                    let rs = |q: &Oyuncu| q.govde.rslot.as_ref().map_or(q.govde.slot.d, |r| r.d);
                     v.sort_by(|&u, &w| {
                         let a = tlv(&m.ps[w], "huc", "kosu") - tlv(&m.ps[u], "huc", "kosu");
                         let a = if a != 0.0 && a == a { a } else { rs(&m.ps[w]) - rs(&m.ps[u]) };
@@ -491,13 +491,13 @@ pub fn roleSample(m: &mut Mac) {
     let (ex, hteam) = (m.ps[h].x, m.ps[h].team);
     for pi in 0..m.ps.len() {
         let p = &m.ps[pi];
-        if p.tl.is_none() || pi == h {
+        if p.govde.tl.is_none() || pi == h {
             continue;
         }
         let t = p.team;
         let dir = dirOf(t);
         let atk = hteam == t;
-        let rsl = p.rslot.as_ref().map_or((p.slot.d, p.slot.l), |r| (r.d, r.l));
+        let rsl = p.govde.rslot.as_ref().map_or((p.govde.slot.d, p.govde.slot.l), |r| (r.d, r.l));
         let mut k: Option<&str>;
         let mut ok = false;
         if atk {
@@ -526,7 +526,7 @@ pub fn roleSample(m: &mut Mac) {
             }
         } else {
             k = Some("s");
-            if p.slot.d <= 0.25 {
+            if p.govde.slot.d <= 0.25 {
                 let mut deep = 1e9;
                 for q in &m.ps {
                     if q.team == t && !q.bekci() {
@@ -538,14 +538,14 @@ pub fn roleSample(m: &mut Mac) {
                 ok = p.press;
             } else if tlv(p, "sav", "adam") >= 0.5 {
                 ok = p.hal.markRef.map_or(false, |r| hypot(p.x - m.ps[r].x, p.y - m.ps[r].y) < 6.0);
-            } else if p.slot.d >= 0.7 {
+            } else if p.govde.slot.d >= 0.7 {
                 ok = (p.x - W / 2.0) * dir > 0.0;
             } else {
                 k = None;
             }
         }
         if let Some(k) = k {
-            let (ti, i) = (t as usize, p.i as usize);
+            let (ti, i) = (t as usize, p.govde.i as usize);
             let ra = m.ra.as_mut().unwrap();
             let a = ra[ti].entry(i).or_insert_with(|| crate::model::JMRaEE { h: vec![0.0, 0.0], s: vec![0.0, 0.0] });
             let v = if k == "h" { &mut a.h } else { &mut a.s };
@@ -571,8 +571,8 @@ pub fn kickoff_ile(m: &mut Mac, t: f64, dis: &mut dyn KurDis) {
         let tq = tac::tq0(m, m.ps[pi].team);
         let p = &mut m.ps[pi];
         let huc = p.team == t;
-        let s = if huc { p.rslot0.as_ref().map(|r| (r.d, r.l)).or(p.rslot.as_ref().map(|r| (r.d, r.l))) } else { None };
-        let s = s.or(p.slot0.as_ref().map(|r| (r.d, r.l))).unwrap_or((p.slot.d, p.slot.l));
+        let s = if huc { p.govde.rslot0.as_ref().map(|r| (r.d, r.l)).or(p.govde.rslot.as_ref().map(|r| (r.d, r.l))) } else { None };
+        let s = s.or(p.govde.slot0.as_ref().map(|r| (r.d, r.l))).unwrap_or((p.govde.slot.d, p.govde.slot.l));
         let x0 = ownX(p.team);
         let dir = dirOf(p.team);
         let bl = match tq.blok.as_deref() {
@@ -593,7 +593,7 @@ pub fn kickoff_ile(m: &mut Mac, t: f64, dis: &mut dyn KurDis) {
     m.winT = None;
     m.gecis = false;
     m.gc = None;
-    let k = (0..m.ps.len()).find(|&i| m.ps[i].team == t && m.ps[i].bekci()).or_else(|| (0..m.ps.len()).find(|&i| m.ps[i].team == t && m.ps[i].i == 3.0)).unwrap();
+    let k = (0..m.ps.len()).find(|&i| m.ps[i].team == t && m.ps[i].bekci()).or_else(|| (0..m.ps.len()).find(|&i| m.ps[i].team == t && m.ps[i].govde.i == 3.0)).unwrap();
     {
         let kp = &mut m.ps[k];
         kp.x = ownX(t) + 4.0 * dirOf(t);
@@ -645,7 +645,7 @@ pub fn kickoff_ile(m: &mut Mac, t: f64, dis: &mut dyn KurDis) {
 pub fn slotPos(m: &Mac, p: &Oyuncu, bx: f64, by: f64, att: bool) -> (f64, f64) {
     let t = p.team;
     let tac = &m.tac[t as usize];
-    let s = &p.slot;
+    let s = &p.govde.slot;
     let x0 = ownX(t);
     let dir = dirOf(t);
     let bd = (bx - x0) * dir;

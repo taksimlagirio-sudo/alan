@@ -94,7 +94,7 @@ pub fn pres_mi(job: &Option<std::sync::Arc<str>>) -> bool {
 }
 #[inline(always)]
 pub fn bekci(p: &Oyuncu) -> bool {
-    &*p.role == "Bekçi"
+    &*p.govde.role == "Bekçi"
 }
 /// JS `0 === team`
 #[inline(always)]

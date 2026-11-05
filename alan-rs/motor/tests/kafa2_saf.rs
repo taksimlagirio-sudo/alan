@@ -34,35 +34,35 @@ fn oyuncu(v: &Value) -> Oyuncu {
         let x = h(&e[1]);
         a.v.insert(k.to_string(), x);
         match k {
-            "hiz" => p.a.hiz = x,
-            "ceviklik" => p.a.ceviklik = x,
-            "guc" => p.a.guc = x,
-            "uzanma" => p.a.uzanma = x,
-            "alan" => p.a.alan = x,
-            "kontrol" => p.a.kontrol = x,
-            "surme" => p.a.surme = x,
-            "pas" => p.a.pas = x,
-            "gonderme" => p.a.gonderme = x,
-            "yukleme" => p.a.yukleme = x,
-            "tepki" => p.a.tepki = x,
-            "gorus" => p.a.gorus = x,
-            "yeralma" => p.a.yeralma = x,
-            "sogukkanlilik" => p.a.sogukkanlilik = x,
-            "kesme" => p.a.kesme = x,
-            "refleks" => p.a.refleks = x,
-            "yerlesim" => p.a.yerlesim = x,
-            "hakimiyet" => p.a.hakimiyet = x,
-            "enerji" => p.a.enerji = x,
-            "govde" => p.a.govde = x,
-            "caliskanlik" => p.a.caliskanlik = x,
+            "hiz" => p.govde_mut().a.hiz = x,
+            "ceviklik" => p.govde_mut().a.ceviklik = x,
+            "guc" => p.govde_mut().a.guc = x,
+            "uzanma" => p.govde_mut().a.uzanma = x,
+            "alan" => p.govde_mut().a.alan = x,
+            "kontrol" => p.govde_mut().a.kontrol = x,
+            "surme" => p.govde_mut().a.surme = x,
+            "pas" => p.govde_mut().a.pas = x,
+            "gonderme" => p.govde_mut().a.gonderme = x,
+            "yukleme" => p.govde_mut().a.yukleme = x,
+            "tepki" => p.govde_mut().a.tepki = x,
+            "gorus" => p.govde_mut().a.gorus = x,
+            "yeralma" => p.govde_mut().a.yeralma = x,
+            "sogukkanlilik" => p.govde_mut().a.sogukkanlilik = x,
+            "kesme" => p.govde_mut().a.kesme = x,
+            "refleks" => p.govde_mut().a.refleks = x,
+            "yerlesim" => p.govde_mut().a.yerlesim = x,
+            "hakimiyet" => p.govde_mut().a.hakimiyet = x,
+            "enerji" => p.govde_mut().a.enerji = x,
+            "govde" => p.govde_mut().a.govde = x,
+            "caliskanlik" => p.govde_mut().a.caliskanlik = x,
             _ => {}
         }
     }
     p.id = v["id"].as_f64().unwrap();
     p.team = v["team"].as_f64().unwrap();
-    p.role = v["role"].as_str().unwrap_or("").into();
-    p.name = v["name"].as_str().unwrap_or("").into();
-    p.yet = if a.v.is_empty() { Yetenek::bos().into() } else { Yetenek::kur(&a).into() };
+    p.govde_mut().role = v["role"].as_str().unwrap_or("").into();
+    p.govde_mut().name = v["name"].as_str().unwrap_or("").into();
+    p.govde_mut().yet = if a.v.is_empty() { Yetenek::bos().into() } else { Yetenek::kur(&a).into() };
     p.x = h(&v["x"]);
     p.y = h(&v["y"]);
     p.vx = h(&v["vx"]);
@@ -79,10 +79,10 @@ fn oyuncu(v: &Value) -> Oyuncu {
         let mut t = JPTl::default();
         t.huc.insert("risk".into(), h(&v["tlRisk"]));
         t.huc.insert("tempo".into(), h(&v["tlTempo"]));
-        p.tl = Some(t.into());
+        p.govde_mut().tl = Some(t.into());
     }
     if !v["egRk"].is_null() {
-        p.eg = Some(JPEg { ps: 0.5, rk: h(&v["egRk"]) });
+        p.govde_mut().eg = Some(JPEg { ps: 0.5, rk: h(&v["egRk"]) });
     }
     p
 }

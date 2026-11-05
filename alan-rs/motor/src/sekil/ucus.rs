@@ -58,7 +58,7 @@ pub fn okuT(b: Option<&mut TopT>, p: &Oyuncu, ps: &[Oyuncu], d: f64, bek0: bool)
     let mut on = 0.0;
     if let Some(fi) = b.t.from {
         if b.t.cue > 0.0 {
-            let f = jmax(0.05, jmin(0.95, 0.5 + IN.sez * (p.yet.y(mek::VURUS_SEZ) - 10.0) - IN.giz * (ps[fi].yet.y(mek::VURUS_GIZLE) - 10.0)));
+            let f = jmax(0.05, jmin(0.95, 0.5 + IN.sez * (p.govde.yet.y(mek::VURUS_SEZ) - 10.0) - IN.giz * (ps[fi].govde.yet.y(mek::VURUS_GIZLE) - 10.0)));
             on = b.t.cue * f * if bek { (IN.u_a + IN.u_b) / 2.0 } else { IN.u_a + (IN.u_b - IN.u_a) * _zar(a, kk, 29.0) };
         }
     }
@@ -135,7 +135,7 @@ pub fn alici(pts: &[Nokta], p: &Oyuncu, w: &[Varlik], oy: &[Oyuncu], rc: f64, iM
     let MP = tp0.is_some();
     let rP = menzilP(p, k);
     let mut yol = 1e9;
-    let aB = 0.018 * ag(&p.yet, p.den, p.bekci(), k.ik_yavas());
+    let aB = 0.018 * ag(&p.govde.yet, p.den, p.bekci(), k.ik_yavas());
     let vS = IN.v_set;
     let setT = |q: &Nokta, q2: &Nokta, dr: f64| -> f64 {
         if dr <= 0.0 {
@@ -352,7 +352,7 @@ pub fn flightRead(c: &mut Mc) -> Option<Fr> {
             Some(t) if t != 0.0 && t == t => t,
             _ => 0.0,
         };
-        best.est = best.t * (1.0 + hsh(p.id, ft0, 3.0) * (20.0 - p.yet.y(mek::ALGI_HATA)) * 0.04);
+        best.est = best.t * (1.0 + hsh(p.id, ft0, 3.0) * (20.0 - p.govde.yet.y(mek::ALGI_HATA)) * 0.04);
         if let Some(r) = rcv {
             let p = &mut c.ps[pi];
             p.hal_mut()._rcvV = None;

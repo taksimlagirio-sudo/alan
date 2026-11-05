@@ -105,10 +105,10 @@ pub const fn SBED() -> f64 {
 // ---- çekirdeğin enerji işlevleri ----
 
 pub fn ALAN_EN_S(p: &Oyuncu) -> f64 {
-    0.7 + 0.03 * p.yet.y(mek::BAR_BOY)
+    0.7 + 0.03 * p.govde.yet.y(mek::BAR_BOY)
 }
 pub fn ALAN_EN_SD(p: &Oyuncu) -> f64 {
-    0.7 + 0.03 * p.yet.y(mek::BAR_DOLUM)
+    0.7 + 0.03 * p.govde.yet.y(mek::BAR_DOLUM)
 }
 pub fn ALAN_EN2_SB(p: &Oyuncu) -> f64 {
     jmax(0.5, jmin(1.6, 1.0 + 5.0 * (ALAN_EN_S(p) - 1.0) / 3.0))
@@ -143,14 +143,14 @@ pub const fn ALAN_SPR_AFTER() -> f64 {
 }
 /// JS ALAN_HZ (Enerji 3: ham Hız)
 pub fn ALAN_HZ(p: &Oyuncu) -> f64 {
-    p.yet.hiz
+    p.govde.yet.hiz
 }
 pub fn ALAN_SPR_H(h: f64) -> f64 {
     spr_h(h)
 }
 /// Çekirdeğin sprint katı (JS SPR0 = sarılmamış ALAN_SPR)
 pub fn SPR0(p: &Oyuncu) -> f64 {
-    spr_h(p.yet.hiz)
+    spr_h(p.govde.yet.hiz)
 }
 /// JS spd(p): temel koşu hızı
 pub fn spd(p: &Oyuncu) -> f64 {

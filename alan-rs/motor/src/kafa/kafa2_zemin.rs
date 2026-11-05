@@ -285,21 +285,10 @@ pub fn ileriKur(k: &mut Kafa, m: &MacGor) -> Option<IleriTab> {
             let mut d = Oyuncu::bos();
             d.id = p.id;
             d.team = p.team;
-            d.i = p.i;
-            d.role = p.role.clone();
-            d.name = p.name.clone();
-            d.slot = p.slot.clone();
-            d.rslot = p.rslot.clone();
-            d.slot0 = p.slot0.clone();
-            d.rslot0 = p.rslot0.clone();
-            d.a = p.a.clone();
-            d.yet = p.yet.clone();
+            // gövdenin 13 alanının hepsi oyuncununki: kopya yerine paylaşılır
+            d.govde = p.govde.clone();
             d.R = p.R;
             d.D = p.D;
-            d.rh = p.rh.clone();
-            d.rs = p.rs.clone();
-            d.tl = p.tl.clone();
-            d.eg = p.eg.clone();
             d.cd = 0.0;
             d.en = Some(1.0);
             d.x = p.x;
@@ -451,7 +440,7 @@ pub fn ileriTab(k: &mut Kafa) -> Option<Arc<IleriTab>> {
         let key = format!(
             "{:?}|{:?}",
             m.tac,
-            m.ps.iter().map(|p| (p.id, p.team, p.role.clone(), format!("{:?}", p.slot), format!("{:?}", p.rslot))).collect::<Vec<_>>()
+            m.ps.iter().map(|p| (p.id, p.team, p.govde.role.clone(), format!("{:?}", p.govde.slot), format!("{:?}", p.govde.rslot))).collect::<Vec<_>>()
         );
         let eski = k.k2.IT.take();
         let degisti = match &eski {
@@ -728,7 +717,7 @@ pub fn riskOf(k: &Kafa, h: &Oyuncu, tac: Option<&Tac>) -> f64 {
         Some(r) => 1.4 - 0.8 * r,
         None => 1.0,
     };
-    let pr = h.tl.as_ref().and_then(|t| t.huc.get("risk").copied()).or(h.eg.as_ref().map(|e| e.rk)).unwrap_or(0.5);
+    let pr = h.govde.tl.as_ref().and_then(|t| t.huc.get("risk").copied()).or(h.govde.eg.as_ref().map(|e| e.rk)).unwrap_or(0.5);
     let mk = match tac.and_then(|t| t.macK) {
         Some(m) if dogru(m) => m,
         _ => 1.0,
