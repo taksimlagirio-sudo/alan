@@ -601,6 +601,8 @@ impl Kafa {
             eprintln!("UCUS {} {} -> {} hedef {:?} hız ({:.2},{:.2}) gecik {}", self.tick(), h.name, src[qqI.unwrap()].name, to.map(|t| (t.x, t.y)), b0.vx, b0.vy, gecik);
         }
         let mut uc_yol = 0;
+        let alis_kume = alis_kume();
+        let (mut kmA, mut kmX, mut kmY) = (0.0f64, 0.0f64, 0.0f64);
         for &(z, w, zs, yol) in &UCsY {
             uc_yol += 1;
             if uc_yol > 1 { ucus_iz = false; }
@@ -778,6 +780,8 @@ impl Kafa {
             let mut CX = vec![0.0; na];
             let mut CY = vec![0.0; na];
             let mut S = 1.0;
+            // ALAN_ALIS_KUME_IZ: bu yolda alıcının doğrudan alışları (kütle, yer) sırayla
+            let mut dAl: Vec<(f64, f64, f64)> = Vec::new();
             let (mut m1, mut o1, mut k1, mut mx1, mut my1, mut ox1, mut oy1, mut son, mut s1, mut sx1, mut sy1, mut d1, mut dx1, mut dy1) = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0usize, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
             let mut F = vec![0.0; na];
             let mut i = 1;
@@ -1039,6 +1043,12 @@ impl Kafa {
                         ox1 += oo * rkX;
                         oy1 += oo * rkY;
                         let BENF = ad[j].ben && !(qqI.is_some() && ad[j].pi == qqI);
+                        if alis_kume {
+                            let kcd = if BENF { mm } else if !yv { dP * (1.0 - Pc) * rk } else { 0.0 };
+                            if mm - kcd > 1e-12 {
+                                dAl.push((mm - kcd, P.x, P.y));
+                            }
+                        }
                         if BENF || !yv {
                             let kc_ = if BENF { dP * (Pc + (1.0 - Pc) * rk) } else { dP * (1.0 - Pc) * rk };
                             s1 += kc_;
@@ -1196,6 +1206,21 @@ impl Kafa {
                     }
                 }
             }
+            if alis_kume {
+                let dt: f64 = dAl.iter().map(|x| x.0).sum();
+                if dt > 1e-9 {
+                    let mut c = 0.0;
+                    for &(a, x, y) in &dAl {
+                        c += a;
+                        if c >= 0.5 * dt {
+                            kmA += w * dt;
+                            kmX += w * dt * x;
+                            kmY += w * dt * y;
+                            break;
+                        }
+                    }
+                }
+            }
             let tot = ya(m1 + o1 + k1, 1.0);
             Wt += w;
             m += w * m1;
@@ -1228,7 +1253,12 @@ impl Kafa {
         let mut Ps = sk / Wt;
         let mut endS = if sk > 1e-9 { nk(sx / sk, sy / sk) } else { end };
         let mD = m - Ps;
-        let endD = if mD > 1e-9 { nk((mx - sx) / Wt / mD, (my - sy) / Wt / mD) } else { endM };
+        let mut endD = if mD > 1e-9 { nk((mx - sx) / Wt / mD, (my - sy) / Wt / mD) } else { endM };
+        // ALAN_ALIS_KUME_IZ: alış yeri, alışların ortalaması değil ortancası (yol boyunca alışların yarısının
+        // toplandığı nokta): erken alış ile top kaçarsa çok sonraki alışın ortalaması kimsenin almadığı bir yerdir.
+        if alis_kume && kmA > 1e-9 && mD > 1e-9 {
+            endD = nk(kmX / kmA, kmY / kmA);
+        }
         if pre < 1.0 {
             m = pre * m + 0.35 * (1.0 - pre);
             o = pre * o + 0.65 * (1.0 - pre);
@@ -1243,6 +1273,12 @@ impl Kafa {
         let endSek = if dk > 1e-9 { nk(dxs / dk, dys / dk) } else { end };
         Ucus { P: m, Pk: k, Pl: o, end, endM, endO, Ps, endS, endD, Psek, endSek }
     }
+}
+
+pub static ALIS_KUME_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn alis_kume() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    ALIS_KUME_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_ALIS_KUME_IZ").is_ok())
 }
 
 thread_local! { static UC_IZ_DER: std::cell::Cell<u32> = const { std::cell::Cell::new(0) }; }

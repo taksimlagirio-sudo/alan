@@ -86,6 +86,8 @@ fn main() {
         let ek = std::env::var("ALAN_EK").unwrap_or_default();
         alan_motor::kural::gec::GEC_DONUS_ZORLA.store(ek.split(',').any(|x| x == "donus"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::sekil::gor::ARKADAS_NIYET_ZORLA.store(ek.split(',').any(|x| x == "niyet"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa1_ucus::ALIS_KUME_ZORLA.store(ek.split(',').any(|x| x == "kume"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa2_tarti::TEK_SUT_ZORLA.store(ek.split(',').any(|x| x == "tek"), std::sync::atomic::Ordering::Relaxed);
         let mut once = mt.m.clone();
         once.mac.kafa = Default::default();
         // seçenekler: önce hepsi bir kez zorlanır; ALAN_DENE_SEC=0,3,7 yalnız bunlar denenir, ALAN_DENE_LISTE seçenek sayısını yazar
@@ -220,6 +222,8 @@ fn main() {
                     let ek = std::env::var("ALAN_EK").unwrap_or_default();
                     alan_motor::kural::gec::GEC_DONUS_ZORLA.store(acik && ek.split(',').any(|x| x == "donus"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::sekil::gor::ARKADAS_NIYET_ZORLA.store(acik && ek.split(',').any(|x| x == "niyet"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa1_ucus::ALIS_KUME_ZORLA.store(acik && ek.split(',').any(|x| x == "kume"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa2_tarti::TEK_SUT_ZORLA.store(acik && ek.split(',').any(|x| x == "tek"), std::sync::atomic::Ordering::Relaxed);
                     let mut m2 = Motor::yeni(once.clone());
                     let mut isler2 = alan_motor::oyun::IsSozluk::default();
                     let (mut kr, mut ol) = (Vec::new(), Vec::new());
@@ -268,6 +272,8 @@ fn main() {
                 alan_motor::kafa::kafa2_tarti::GORUS_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kural::gec::GEC_DONUS_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::sekil::gor::ARKADAS_NIYET_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kafa::kafa1_ucus::ALIS_KUME_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kafa::kafa2_tarti::TEK_SUT_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
             }
             mt.adim();
         }
