@@ -196,8 +196,8 @@ Bilerek ertelenen işler; her biri bir karar ya da uygun bir an bekliyor:
 
 | Konu | Neden ertelendi | Ne zaman |
 |---|---|---|
-| **`dolanma` davranışı** (3.2 C): hayali bir kopya oyuncu, dünyadaki kendi gerçek gövdesinin etrafından dolanmaya çalışıyor (2 maç × 2700 tikte ~4 milyon kez). JS'ten gelen davranış, büyük olasılıkla hata | Düzeltme bayrak arkasında: `ALAN_DOLANMA_KIMLIK` (kopya, aslını oyuncu kimliğiyle tanıyıp atlar; varsayılan kapalı). Ölçüm (3.4): 20 maçta istatistik farkı gürültü içinde | Varsayılan yapmak davranış oturumunun kararı (`sina/ayni.sh --yaz` ile); 4c-2'den önce |
-| **4c-2: tek dünya** (kafanın `Op` yerine görünüm `Varlik` üzerinde çalışması, çevirilerin kalkması) | Çeviriler artık sürenin ~%1,5'i; kafanın ~14 bin satırı `&[Op]` üzerinden alanlara doğrudan erişiyor (çok günlük iş, davranış oturumuyla sürekli çakışır); çeviriler arasında nesne paylaşmak `dolanma`'yı değiştirir | `dolanma` kararından sonra, kafa kodu durulduğunda |
+| ~~**`dolanma` davranışı**~~ (3.2 C): hayali bir kopya oyuncu, dünyadaki kendi gerçek gövdesinin etrafından dolanmaya çalışıyordu | **Yapıldı (5 Kasım)**: kopya aslını oyuncu kimliğiyle tanıyıp atlıyor; varsayılan, eski davranış `ALAN_DOLANMA_ESKI` ile (yalnız yerelde). Ölçüm 3.4; başvurular `sina/ayni.sh --yaz` ile yenilendi | — |
+| **4c-2: tek dünya** (kafanın `Op` yerine görünüm `Varlik` üzerinde çalışması, çevirilerin kalkması) | Çeviriler artık sürenin ~%1,5'i; kafanın ~14 bin satırı `&[Op]` üzerinden alanlara doğrudan erişiyor (çok günlük iş, davranış oturumuyla sürekli çakışır); çeviriler arasında nesne paylaşmak `dolanma`'yı değiştirir | `dolanma` kararı verildi; kafa kodu durulduğunda |
 | **Rust adlandırması** (JS adları: `ALAN_SPR`, `decide0K`, `non_snake_case` izinleri) | Binlerce satıra dokunur; davranış oturumuyla sürekli çakışır; değeri okunurluk | Aşama 7 (crate'lere bölme) ile birlikte |
 | **Aşama 5: veri** (`Oyuncu` sıcak/soğuk, `JsDeger`, gereksiz `Option`'lar) | Kopya maliyeti %2,4'e indi; `model.rs` her katmanın ortak tipi, bölmesi 4c-2'ye bağlı | 4c-2 ile |
 | **3e-4: önbelleklerin ömürleri** | Anahtarların çoğu nesne/dünya kimliği; 4c-2'den sonra anlamlı | 4c-2'den sonra |
@@ -231,7 +231,7 @@ iş artışı yok. İzlenecek: Aşama 7'de (crate'lere bölme) yeniden ölçülm
 ölü satır sildi). `Dis` 66 → 27 yöntem; `kafa_ile` 51 çağrı → 0; `thread_local` 21 → 13; uyarılar 0;
 katman kuralları (`sina/katman.sh`) 5/5; testler 13 geçen, 0 kalan, 12 JS karşılaştırması `ignore`.
 
-**`ALAN_DOLANMA_KIMLIK`** (aynı 20 maç, kapalı / açık; maç başı ortalama, eşleşmiş fark ± standart hata):
+**`ALAN_DOLANMA_KIMLIK`** (bayrağın ilk adı; artık varsayılan, eski davranış `ALAN_DOLANMA_ESKI`) (aynı 20 maç, kapalı / açık; maç başı ortalama, eşleşmiş fark ± standart hata):
 
 | | Kapalı | Açık | Fark/maç | Artan/azalan maç |
 |---|---|---|---|---|
@@ -245,7 +245,7 @@ Rakibe giden pas %7,9 → %9,5; sahiplik ve enerji (bar ortalaması 0,778 → 0,
 standart hatanın dışına çıkmıyor; bayrak maçı ilk ~40 tikte ayırıyor (kaos), ama maçın istatistiğini
 ölçülebilir biçimde değiştirmiyor. Hız farkı da maçların ayrı yollardan gitmesinden; dolanma döngüsünün
 maliyeti değişmiyor. Sonuç: düzeltme güvenli ve doğru (kopya kendi gövdesini engel saymamalı); varsayılan
-yapmak davranış oturumunun kararı, 4c-2'nin önünü açar.
+yapıldı (kullanıcı kararı, 5 Kasım); 4c-2'nin önü açık.
 
 ## 4. Dış kütüphaneler
 

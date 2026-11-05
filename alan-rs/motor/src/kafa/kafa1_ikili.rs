@@ -239,7 +239,7 @@ impl Kafa {
         }
         let mut ek = 0.0;
         let kimlik = dolanma_kimlik();
-        // Bayrak açıkken varsayımsal kopya (p ya da skip src'deki aslının kopyası) kendi aslını engel saymaz.
+        // Varsayılan olarak varsayımsal kopya (p ya da skip src'deki aslının kopyası) kendi aslını engel saymaz.
         // Hayaletlerin id'si NaN: NaN == NaN yanlış, onlara dokunmaz.
         let ayni = |c: &Op, o: &Oyuncu| ayni_nesne(c, o) || (kimlik && c.team == o.team && c.id == o.id);
         for c in src {
@@ -1468,12 +1468,13 @@ pub fn topK_p(h: &Oyuncu, dk: Option<crate::kafa::gecici_dis1::Dokunus>) -> f64 
     }
 }
 
-/// MIMARI.md 3.3 "dolanma": ALAN_DOLANMA_KIMLIK açıkken dolanma, kopyanın kendi aslını da atlar
-/// (nesne kimliği yerine oyuncu kimliği). Varsayılan kapalı; tarayıcıda hep kapalı.
+/// MIMARI.md 3.3 "dolanma": dolanma, kopyanın kendi aslını da atlar (nesne kimliği yerine oyuncu kimliği).
+/// Varsayılan (5 Kasım'dan beri). ALAN_DOLANMA_ESKI eski davranışı (yalnız nesne kimliği) geri getirir;
+/// tarayıcıda hep yeni davranış.
 fn dolanma_kimlik() -> bool {
     if cfg!(target_family = "wasm") {
-        return false;
+        return true;
     }
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    *A.get_or_init(|| std::env::var("ALAN_DOLANMA_KIMLIK").is_ok())
+    *A.get_or_init(|| std::env::var("ALAN_DOLANMA_ESKI").is_err())
 }
