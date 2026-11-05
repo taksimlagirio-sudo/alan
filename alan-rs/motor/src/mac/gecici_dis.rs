@@ -186,7 +186,7 @@ pub fn gercek(_o: &mut Secenek) {}
 
 // ---- decide.js ----
 use crate::kafa::kafa1_js::nk;
-use crate::mac::kafa_dis::{kafa_ile, kafa_mac, op_dunya};
+use crate::mac::kafa_dis::{kafa_mac, op_dunya};
 /// Maçın etkin taktiği → kafanın taktiği
 pub fn kafa_tac(t: &crate::mac::Tac) -> crate::kafa::kafa2_baglam::Tac {
     let mz = t.macZ.map(|z| std::sync::Arc::new(move |dt: f64| z.zaman(dt)) as std::sync::Arc<dyn Fn(f64) -> f64 + Send + Sync>);
