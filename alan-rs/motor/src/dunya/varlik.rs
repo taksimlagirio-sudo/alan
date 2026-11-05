@@ -91,6 +91,7 @@ pub fn hayal(q: &Oyuncu) -> Oyuncu {
     o.role = q.role.clone();
     o.press = q.press;
     o.id = f64::NAN;
+    o.kim = crate::model::Kim::hayalet(q.kim);
     o.x = q.x;
     o.y = q.y;
     o

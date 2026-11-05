@@ -398,7 +398,7 @@ pub fn ileriKur(k: &mut Kafa, m: &MacGor) -> Option<IleriTab> {
                     }
                 }
                 for a in huc.iter() {
-                    if bekci(a) || a.noTouch || tsi.map(|t| ayni_nesne(t, a)).unwrap_or(false) {
+                    if bekci(a) || a.noTouch || tsi.map(|t| ayni_varlik(t, a)).unwrap_or(false) {
                         continue;
                     }
                     let L = hypot(a.x - E.x, a.y - E.y);

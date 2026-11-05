@@ -249,7 +249,7 @@ impl Kafa {
                 }
             };
             let mut de;
-            if bizden && !ayni_nesne(p, h) && dw < 0.3 {
+            if bizden && !ayni_varlik(p, h) && dw < 0.3 {
                 let sx = bit.map_or(0.0, |b| 0.5 * (b.x - h.x));
                 let sy = bit.map_or(0.0, |b| 0.5 * (b.y - h.y));
                 let L = hypot(p.tx + sx - p.x, p.ty + sy - p.y);
@@ -262,7 +262,7 @@ impl Kafa {
                 let need = dw / jmax(1.0, T);
                 de = if need > b { harR(p, need, b, vm) * T } else { -dR(need / b) * T };
             }
-            if ayni_nesne(p, h) {
+            if ayni_varlik(p, h) {
                 if let Some(o) = o {
                     let mut ek = 0.0;
                     if let Some(st) = o.savT {

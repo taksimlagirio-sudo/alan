@@ -9,6 +9,34 @@ pub type TopRef = u64;
 /// Karışık tipli JS değeri (taslakta; sahibi düzeltir).
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)] pub enum JsDeger { #[default] Yok, Sayi(f64), Metin(String), Mantik(bool), Dizi(Vec<JsDeger>), Nesne(Vec<(String, JsDeger)>) }
 
+/// Dünyadaki bir varlığın kimliği: gerçek oyuncu (kopyaları dahil) `id`'siyle, hayaleti `HAYALET + id` ile;
+/// `YOK` (sahte/boş oyuncu) hiçbir şeye eşit değil.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Kim(pub u16);
+impl Kim {
+    pub const YOK: Kim = Kim(u16::MAX);
+    const HAYALET: u16 = 100;
+    pub fn oyuncu(id: f64) -> Kim {
+        Kim(id as u16)
+    }
+    pub fn hayalet(gercek: Kim) -> Kim {
+        if gercek == Kim::YOK { Kim::YOK } else { Kim(gercek.0 + Kim::HAYALET) }
+    }
+    #[inline(always)]
+    pub fn var(self) -> bool {
+        self != Kim::YOK
+    }
+    #[inline(always)]
+    pub fn hayalet_mi(self) -> bool {
+        self.var() && self.0 >= Kim::HAYALET
+    }
+}
+impl Default for Kim {
+    fn default() -> Kim {
+        Kim::YOK
+    }
+}
+
 /// JS `p`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct Oyuncu {
@@ -298,6 +326,10 @@ pub struct Oyuncu {
     /// (mac) `gvH`, `gvCd`: gövdeyle vurma hamlesi
     pub gvH: Option<JPHamle>,
     pub gvCd: Option<f64>,
+    /// Varlık kimliği (MIMARI.md 3.2, 4c-2): gerçek oyuncu ve kopyaları aynı, hayalet kendi gerçek oyuncusundan
+    /// ayrı; sahte/boş oyuncuda yok (o zaman yalnız nesne kimliği). Kopyayla taşınır; kayda girmez.
+    #[serde(skip)]
+    pub kim: Kim,
 }
 
 /// JS `b`
