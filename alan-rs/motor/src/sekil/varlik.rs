@@ -54,7 +54,10 @@ pub struct Gs {
 /// Kafanın kayıp-yeri işlevi (JS `D.kayipYer(...)` dönüşü: `(x, y) → değer`).
 /// Kayıp haritası (x, y) → değer. Çağrı anında maçı alır: değerlendirme maçın kafasıyla yapılır
 /// (iş parçacığına özel kafa aranmaz; MIMARI.md Aşama 3).
-pub type KayipF = Arc<dyn Fn(&crate::model::Mac, f64, f64) -> f64 + Send + Sync>;
+/// Yerleşimin kafaya ulaşması (MIMARI.md 3.8): maçın kafası. Maç katmanı bağlamı (`Mc`) kurarken verir; temel
+/// maç modeli kafayı tanımaz. Yoksa (kurulum, kafasız sınama) None.
+pub type KafaEl<'a> = Option<&'a std::cell::RefCell<crate::kafa::Kafa>>;
+pub type KayipF = Arc<dyn Fn(KafaEl, f64, f64) -> f64 + Send + Sync>;
 
 /// JS modül değişkeni `_kpC`: topu kaybetme tartısı (position'da kurulur, teamV okur).
 #[derive(Clone)]
@@ -103,6 +106,8 @@ pub struct Mc<'a> {
     /// JS `m.ball`
     pub ball: Option<&'a mut TopT>,
     pub ek: &'a mut SekilDurum,
+    /// maçın kafası (yerleşimin kafaya sorduğu değerlendirmeler için)
+    pub kafa: KafaEl<'a>,
     pub k: &'a dyn Kural,
     /// JS `AlanDecide.D`
     pub d: &'a KafaD,

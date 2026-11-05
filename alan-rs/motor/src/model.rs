@@ -530,8 +530,8 @@ pub struct Mac {
     pub events: Vec<crate::mac_veri::Olay>,
     /// (mac) bugüne dek çıkan olay sayısı (events 120'de kesilir; yeni olayları bulmak için)
     pub ev_n: u64,
-    /// (mac) taslakta olmayan maç alanları (_lite, _kafa, fake, __mH …)
-    pub mac: crate::mac::MacEk,
+    /// JS `m.kosulAkt`: takımların etkin taktik koşulları (kural::tac yazar)
+    pub kosulAkt: Option<[Vec<String>; 2]>,
 }
 
 /// (mac) Maç topu `m.ball`: fizik ve temas `temas::TopT`'de, ek alanlar `TopEk`'te

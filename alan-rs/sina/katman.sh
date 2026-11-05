@@ -49,12 +49,9 @@ hizmet="$(ls kafa/kafa1_*.rs) kafa/kafa2_zemin.rs kafa/kafa2_imkan.rs kafa/kafa2
 denetle "değerlendirme → yerleşimin kararı (sekil::konum) yok" "$hizmet" '(sekil|super)::(konum|position)\b|\bkonum::'
 # 4. karar yerleşimin kararına bağlanmaz (yerleşimin hizmetlerini kullanabilir)
 denetle "karar → yerleşimin kararı (sekil::konum) yok" "kafa/kafa2_karar.rs kafa/kafa2_tarti.rs kafa/kafa2_eski.rs" '(sekil|super)::(konum|position)\b|\bkonum::'
-# 5. temel katman (kökteki dosyalar) üst katmanlara bağlanmaz (Aşama 7a). Tek istisna, Aşama 7'nin kökü: temel
-#    maç modeli (`Mac`) üst katmanların durumunu (`MacEk`: kafa kutusu, yerleşimin belleği) taşıyor (MIMARI.md 3.8).
+# 5. temel katman (kökteki dosyalar) üst katmanlara bağlanmaz (Aşama 7a; MacEk Mac'ten çıktı, istisna yok).
 temel="$(ls *.rs | grep -vE '^(lib|oyun|paket|paralel|parmak)\.rs$')"
-denetle_izinli "temel → maç / yerleşim / kafa yok (istisna: model'deki MacEk)" "$temel" 'crate::mac::MacEk\b' \
-  'crate::(mac|sekil|kafa)::'
-# 6. yerleşim maça bağlanmaz (Aşama 7b). Tek istisna, aynı kök: yerleşim kafaya maçın kutusundan ulaşıyor (kafa_mac).
-denetle_izinli "yerleşim → maç yok (istisna: kafa_mac)" "$(find sekil -name '*.rs')" 'crate::mac::kafa_dis::kafa_mac\b' \
-  'crate::mac::'
+denetle "temel → maç / yerleşim / kafa yok" "$temel" 'crate::(mac|sekil|kafa)::'
+# 6. yerleşim maça bağlanmaz (Aşama 7b; kafaya maçın verdiği el ile ulaşır: Mc::kafa).
+denetle "yerleşim → maç yok" "$(find sekil -name '*.rs')" 'crate::mac::'
 exit $hata

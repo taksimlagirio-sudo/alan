@@ -9,7 +9,8 @@ use crate::kafa::gecici_dis1::{self as d1, Dis};
 use crate::kafa::kafa1_js::{nk, Nk};
 use crate::mac::enerji as en;
 use crate::mac::MacKural;
-use crate::model::{JMShGs, Mac, Oyuncu};
+use crate::model::{JMShGs, Oyuncu};
+use crate::mac::MacTam as Mac;
 use crate::sekil;
 use std::sync::Arc;
 use crate::dunya::dunya_kopya;
@@ -148,7 +149,8 @@ impl Dis for MacDis {
             let dtac = self.takim_tac(team);
             let d = crate::mac::gecici_dis::kafa_d();
             let kural = self.kural.get();
-            let mut c = Mc { m, ps, ball: None, ek, k: &kural, d, lite: true, rnd: None, dtik: Some(dtik) };
+            // kafanın kendi pres sınaması: boş maçta, kafasız (yerleşim buradan kafaya dönmez)
+            let mut c = Mc { m, ps, ball: None, ek, kafa: None, k: &kural, d, lite: true, rnd: None, dtik: Some(dtik) };
             sekil::pres::ilkPres_h(&mut c, 0, hx, if team == 1.0 { 1 } else { 0 }, Some(&th), dtac);
             // sonuç (tx, ty, job dahil) qv'ye geri döner; tamponda eski hâli kalır, bir sonraki çağrıda üzerine yazılır
             std::mem::swap(qv, &mut ps[0]);

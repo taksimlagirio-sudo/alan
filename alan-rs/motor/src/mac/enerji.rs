@@ -57,7 +57,7 @@ pub fn enSay_p(st: &mut JMSt, lite: bool, team: f64, pi: Pid, k: &str, v: f64) {
 pub fn enSay(m: &mut Mac, pi: Pid, k: &str, v: f64) {
     if crate::iz_acik() && !m.mac._lite && v > 0.0 && &*m.ps[pi].govde.name == "Cansu" && std::env::var("ALAN_EN_IZ").ok().and_then(|x| x.parse::<f64>().ok()).map_or(false, |x| m.tick >= x - 1.0 && m.tick <= x) { eprintln!("EN {} {} {} {}", m.tick, m.ps[pi].govde.name, k, v); }
     let t = m.ps[pi].team;
-    enSay_p(&mut m.st, m.mac._lite, t, pi, k, v);
+    enSay_p(&mut m.m.st, m.mac._lite, t, pi, k, v);
 }
 
 /// JS verim(p, ...oz): eski özelliklerin ortalamasıyla harcama katı
@@ -82,7 +82,7 @@ pub fn enHarca_p(st: &mut JMSt, lite: bool, p: &mut Oyuncu, pi: Pid, k: &str, v:
 pub fn enHarca(m: &mut Mac, pi: Pid, k: &str, v: f64) {
     if crate::iz_acik() && !m.mac._lite && &*m.ps[pi].govde.name == "Cansu" && std::env::var("ALAN_EN_IZ").ok().and_then(|x| x.parse::<f64>().ok()).map_or(false, |x| m.tick >= x - 1.0 && m.tick <= x) { eprintln!("ENH {} {} {} {} en {:?}", m.tick, m.ps[pi].govde.name, k, v, m.ps[pi].en); }
     let lite = m.mac._lite;
-    enHarca_p(&mut m.st, lite, &mut m.ps[pi], pi, k, v);
+    enHarca_p(&mut m.m.st, lite, &mut m.m.ps[pi], pi, k, v);
 }
 
 /// JS enerji2(m) (Enerji 3): sprint harcar, dinlenme doldurur; bar alan gücünü (D) ölçekler.
@@ -264,8 +264,8 @@ pub fn alanSec(m: &mut Mac) {
     for pi in 0..m.ps.len() {
         let rt = jmax(2.0, crate::oyuncu::tepki(&m.ps[pi], crate::oyuncu::Tepki::Alan, &ts));
         if m.tick - t0 < rt || m.ps[pi].noTouch {
-            let p = &mut m.ps[pi];
-            p.hal_mut().amA = m.tick - t0 >= rt;
+            let p = &mut m.m.ps[pi];
+            p.hal_mut().amA = m.m.tick - t0 >= rt;
             p.hal_mut().am = Some(0.0);
             continue;
         }
@@ -680,7 +680,7 @@ pub fn sprFaz(m: &mut Mac) {
             if m.st.sprF.is_empty() {
                 m.st.sprF = vec![0.0, 0.0];
             }
-            m.st.sprF[m.ps[pi].team as usize] += 1.0;
+            m.m.st.sprF[m.m.ps[pi].team as usize] += 1.0;
         }
     }
 }
