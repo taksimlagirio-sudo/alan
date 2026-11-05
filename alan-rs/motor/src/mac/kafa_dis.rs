@@ -4,6 +4,7 @@
 //! üstünden maçı canlı okur; bir kararın içinde maç değişmediği için anlık görüntü aynıdır).
 #![allow(non_snake_case)]
 
+pub use crate::kafa::gecici_dis1::mac_dokunus;
 use crate::kafa::gecici_dis1::{self as d1, Dis};
 use crate::kafa::kafa1_js::{nk, Nk};
 use crate::mac::enerji as en;
@@ -279,10 +280,6 @@ struct IlkTampon {
 }
 thread_local! {
     static ILK_TAMPON: std::cell::RefCell<IlkTampon> = std::cell::RefCell::new(IlkTampon::default());
-}
-/// Maçın dokunuş ayarı (JS ALAN_DOKUNUS): bugün kapalı (maç taşımadı)
-pub fn mac_dokunus() -> Option<d1::Dokunus> {
-    None
 }
 /// Maçın kendi kafasıyla çalış (açık bağlam, MIMARI.md Aşama 3): kafa maçın kutusunda (`m.mac.kafa`).
 /// İç içe çağrı (kafa meşgulken yerleşimden kafaya dönüş) yapı gereği olmaz: kafa yerleşimin hizmetlerini

@@ -400,3 +400,8 @@ pub fn sutEngel(k: &Kafa, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
 pub fn yerDeger(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64) -> f64 {
     super::kafa2_zemin::yerDeger(k, w, team, x, y, ch)
 }
+
+/// Maçın dokunuş ayarı (JS ALAN_DOKUNUS): bugün kapalı (maç taşımadı)
+pub fn mac_dokunus() -> Option<Dokunus> {
+    None
+}

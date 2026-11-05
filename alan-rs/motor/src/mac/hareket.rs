@@ -1,5 +1,6 @@
 //! Hareket (match.js 1597–1834, 2109–2560, 2594–2750): koşu hızı, ivme, dolanma, ilişkiler (boşluk doldurma,
 //! pres tuzağı), perde, fake, savurma, ön hareket ve tikin hareket adımı `move`.
+pub use crate::kural::hareket::kuyuSafe;
 use super::enerji::*;
 use super::gecici_dis as dis;
 use super::ikili::{dengeHiz, govdeAyir, ikOn, kutle, omuzK, IkBag, IkHedef};
@@ -423,10 +424,6 @@ pub fn korumaBaski(m: &mut Mac) {
 
 /// JS outOfKuyu: Kuyu açıkken bir şey yapmaz (eski kale çemberi).
 pub fn outOfKuyu(_p: &mut Oyuncu, _vel: bool) {}
-/// JS kuyuSafe: Kuyu açıkken null.
-pub fn kuyuSafe(_x: f64, _y: f64) -> Option<(f64, f64)> {
-    None
-}
 
 /// JS corePos(m): Çekirdeğin yeri (taşıyıcının önünde ya da boştaki top).
 pub fn corePos(m: &Mac) -> Option<(f64, f64)> {

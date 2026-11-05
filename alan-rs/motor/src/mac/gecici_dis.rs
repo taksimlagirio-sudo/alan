@@ -31,25 +31,13 @@
 //! | V | decide.js:3666 |
 //! | D (sabitler), DU (sabitler) | decide.js:6–100 (değerler kopyalandı, todo değil) |
 #![allow(unused_variables)]
+pub use crate::kafa::kafa2_baglam::kafa_tac;
+pub use crate::mac_veri::{FakeShow, Karar};
 use crate::kafa::gecici_dis1::KuralErisim as _;
 use crate::model::{Mac, Oyuncu, Pid, Secenek, JP_onH};
 use crate::rng::Rng;
 
-/// Kafanın kararı (JS r = {best, opts, T}): best, opts içindeki sıra (JS nesne kimliği).
-#[derive(Clone, Debug, Default)]
-pub struct Karar {
-    pub opts: Vec<Secenek>,
-    pub best: Option<usize>,
-    pub T: f64,
-}
 
-/// Fake'in gösterdiği (JS o.show = {k, to, c}).
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct FakeShow {
-    pub k: String,
-    pub to: (f64, f64),
-    pub c: f64,
-}
 
 /// Savurma planı (JS savurPlan sonucu).
 #[derive(Clone, Copy, Debug, Default)]
@@ -188,11 +176,6 @@ pub fn gercek(_o: &mut Secenek) {}
 // ---- decide.js ----
 use crate::kafa::kafa1_js::nk;
 use crate::mac::kafa_dis::{kafa_mac, op_dunya};
-/// Maçın etkin taktiği → kafanın taktiği
-pub fn kafa_tac(t: &crate::mac::Tac) -> crate::kafa::kafa2_baglam::Tac {
-    let mz = t.macZ.map(|z| std::sync::Arc::new(move |dt: f64| z.zaman(dt)) as std::sync::Arc<dyn Fn(f64) -> f64 + Send + Sync>);
-    crate::kafa::kafa2_baglam::Tac { risk: t.risk, tempo: t.tempo, sabir: t.sabir, sut: t.sut, pasSurme: t.pasSurme, pasBoy: t.pasBoy, kontra: t.kontra == Some(true), macK: t.macK, macZ: mz, enDinlen: t.enDinlen, enYipratma: t.enYipratma, plan_taraf: None, temel: None }
-}
 /// JS `D._mac = m`: kafanın maç görünümü
 pub fn mac_gor(m: &Mac) -> crate::kafa::kafa2_baglam::MacGor {
     let tac = (0..2)

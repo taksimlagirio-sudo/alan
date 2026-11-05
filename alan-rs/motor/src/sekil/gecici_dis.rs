@@ -42,12 +42,12 @@ use crate::kafa::kafa1_js::{nk, Op};
 use crate::dunya::ow;
 pub use crate::dunya::ow_paylas;
 fn ops(ps: &[Oyuncu]) -> Vec<Op> {
-    crate::mac::kafa_dis::op_dunya(ps)
+    crate::dunya::op_dunya(ps)
 }
 
 pub fn threat(team: u8, x: f64, y: f64) -> f64 {
     // saf: kafa bağlamı aranmaz (kesişme döngüsünde milyonlarca kez çağrılır)
-    crate::kafa::kafa1_tehlike::threat_d(crate::mac::gecici_dis::kafa_d(), team as f64, x, y)
+    crate::kafa::kafa1_tehlike::threat_d(crate::kafa::kafa2_baglam::ayar(), team as f64, x, y)
 }
 /// Saf (yetenek ve kuraldan): kafaya uğramaz.
 pub fn frenT(p: &Oyuncu, x: f64, y: f64, R: f64, T: f64, v: f64) -> f64 {
@@ -69,7 +69,7 @@ pub fn sutHiz(h: &Oyuncu) -> f64 {
     crate::kural::sut::sutHiz(h)
 }
 pub fn topK(h: &Oyuncu) -> f64 {
-    crate::kafa::kafa1_ikili::topK_p(h, crate::mac::kafa_dis::mac_dokunus())
+    crate::kafa::kafa1_ikili::topK_p(h, crate::kafa::gecici_dis1::mac_dokunus())
 }
 /// JS'te oyuncular dünyadaki nesnelerin kendisidir (kafa `o !== q` ile karşılaştırır): kopya dünyada kimliğiyle bul.
 fn kim<'a>(src: &'a [Op], p: &'a Oyuncu) -> &'a Oyuncu {
@@ -122,9 +122,9 @@ pub fn dagin(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, vv: f64, y: f64) -> 
     let o = ow(w, oy);
     crate::kafa::kafa1_tehlike::dagin_p(o.iter().map(|p| &**p), team as f64, x, vv, Some(y))
 }
-pub fn kayipYer(m: &crate::model::Mac, ps: &[Oyuncu], team: u8, ch: f64, h: &Oyuncu, tac: Option<&crate::mac::Tac>) -> KayipF {
+pub fn kayipYer(m: &crate::model::Mac, ps: &[Oyuncu], team: u8, ch: f64, h: &Oyuncu, tac: Option<&crate::mac_veri::Tac>) -> KayipF {
     let src = std::sync::Arc::new(ops(ps));
-    let tac = tac.map(crate::mac::gecici_dis::kafa_tac);
+    let tac = tac.map(crate::kafa::kafa2_baglam::kafa_tac);
     let f = crate::mac::kafa_dis::kafa_mac(m, |k| crate::kafa::kafa2_zemin::kayipYer(k, &src, team as f64, ch, h, tac.as_ref()));
     let f = std::sync::Mutex::new(f);
     std::sync::Arc::new(move |m: &crate::model::Mac, x: f64, y: f64| crate::mac::kafa_dis::kafa_mac(m, |k| f.lock().unwrap().deger(k, x, y)))
@@ -139,29 +139,29 @@ pub const DU_engage: f64 = 2.4;
 
 /// JS tl(p, ev, k): `null` → None.
 pub fn tl(p: &Oyuncu, ev: &str, k: &str) -> Option<f64> {
-    crate::mac::kurulum::tl(p, ev, k)
+    crate::kural::tac::tl(p, ev, k)
 }
 /// JS kpAkt(m, t): kontrpresçilerin id'leri (m.kp'yi bitirebilir).
 pub fn kpAkt(c: &mut Mc, t: u8) -> Option<Vec<f64>> {
-    c.mac_ile(|m| crate::mac::tac::kpAkt(m, t as f64))
+    c.mac_ile(|m| crate::kural::tac::kpAkt(m, t as f64))
 }
 /// Etkin taktik (JS tacEff dönüşü): taktik + kontrpres (`_kp`) işareti. (`plan`, `enPresDalga` hiç kurulmaz.)
 #[derive(Clone, Debug, Default)]
 pub struct TacE {
-    pub t: crate::mac::Tac,
+    pub t: crate::mac_veri::Tac,
     pub kp: bool,
 }
 pub fn tacEff(c: &mut Mc, t: u8) -> TacE {
-    let t = c.mac_ile(|m| crate::mac::tac::tacEff(m, t as f64));
+    let t = c.mac_ile(|m| crate::kural::tac::tacEff(m, t as f64));
     let kp = t._kp.is_some();
     TacE { t, kp }
 }
 /// JS `macEff(m, t, {}).macK`.
 pub fn macEff_macK(c: &mut Mc, t: u8) -> Option<f64> {
-    c.mac_ile(|m| crate::mac::tac::macEff(m, t as f64, Default::default()).macK)
+    c.mac_ile(|m| crate::kural::tac::macEff(m, t as f64, Default::default()).macK)
 }
 pub fn kuyuSafe(x: f64, y: f64) -> Option<(f64, f64)> {
-    crate::mac::hareket::kuyuSafe(x, y)
+    crate::kural::hareket::kuyuSafe(x, y)
 }
 /// match.js kosuPr dönüşü.
 #[derive(Clone, Copy, Debug)]
@@ -180,7 +180,7 @@ pub fn slowT(p: &Oyuncu) -> f64 {
 // ---- core.js enerji ----
 
 pub fn ALAN_EN3_DOL(p: &Oyuncu, sahip: bool, nd: f64, yerK: f64) -> f64 {
-    crate::mac::enerji::ALAN_EN3_DOL(p, sahip, nd, yerK)
+    crate::kural::enerji::ALAN_EN3_DOL(p, sahip, nd, yerK)
 }
 pub fn ALAN_EN3_KUL(p: &Oyuncu, e: f64, bizde: bool, bx: f64, by: f64, k: &dyn crate::temas::Kural) -> f64 {
     k.en3_kul(p, e, bizde, Some((bx, by)))

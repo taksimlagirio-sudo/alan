@@ -339,7 +339,7 @@ pub struct OyuncuMac {
     pub __e: Option<f64>,
     pub __yas: Option<f64>,
     /// (mac) `kenarW`: kenardan çalımın yol noktası
-    pub kenarW: Option<crate::mac::KenarW>,
+    pub kenarW: Option<crate::mac_veri::KenarW>,
     /// (mac) `fkBlock`, `fkCool`: fake sonrası bekleme
     pub fkBlock: bool,
     pub fkCool: Option<f64>,
@@ -447,11 +447,11 @@ pub struct Mac {
     /// `fl`: null|object
     pub fl: Option<JMFl>,
     /// `tac`: dizi
-    pub tac: Vec<crate::mac::Tac>,
+    pub tac: Vec<crate::mac_veri::Tac>,
     /// `st`: object
     pub st: JMSt,
     /// `diz`: dizi (sonradan eklenir)
-    pub diz: Option<Vec<Option<crate::mac::Diz>>>,
+    pub diz: Option<Vec<Option<crate::mac_veri::Diz>>>,
     /// `winT`: null|number
     pub winT: Option<f64>,
     /// `gecis`: boolean
@@ -463,11 +463,11 @@ pub struct Mac {
     /// `ra`: dizi (sonradan eklenir)
     pub ra: Option<Vec<std::collections::BTreeMap<usize, JMRaEE>>>,
     /// `tac0`: dizi (sonradan eklenir)
-    pub tac0: Option<Vec<Option<crate::mac::Tac>>>,
+    pub tac0: Option<Vec<Option<crate::mac_veri::Tac>>>,
     /// `evre`: dizi (sonradan eklenir)
     pub evre: Option<Vec<Option<JMEvreE>>>,
     /// `_macC`: object (sonradan eklenir)
-    pub _macC: Option<std::collections::BTreeMap<String, crate::mac::MacW>>,
+    pub _macC: Option<std::collections::BTreeMap<String, crate::mac_veri::MacW>>,
     /// `macDurum`: dizi (sonradan eklenir)
     pub macDurum: Option<Vec<Option<JMMacDurumE>>>,
     /// `_sn`: Map (sonradan eklenir)
@@ -481,7 +481,7 @@ pub struct Mac {
     /// `att`: number (sonradan eklenir)
     pub att: Option<f64>,
     /// `_perde`: null
-    pub _perde: Option<crate::mac::Perde>,
+    pub _perde: Option<crate::mac_veri::Perde>,
     /// `_kuyuTop`: number (sonradan eklenir)
     pub _kuyuTop: Option<f64>,
     /// `_temaslar`: object (sonradan eklenir)
@@ -527,7 +527,7 @@ pub struct Mac {
     /// (mac) `r`: maçın zar dizisi
     pub r: crate::rng::Rng,
     /// (mac) `events`: olaylar (en yenisi başta, en çok 120)
-    pub events: Vec<crate::mac::Olay>,
+    pub events: Vec<crate::mac_veri::Olay>,
     /// (mac) bugüne dek çıkan olay sayısı (events 120'de kesilir; yeni olayları bulmak için)
     pub ev_n: u64,
     /// (mac) taslakta olmayan maç alanları (_lite, _kafa, fake, __mH …)
@@ -885,7 +885,7 @@ pub struct Secenek {
     pub ot: Option<f64>,
     pub noErr: bool,
     pub devam: Option<f64>,
-    pub show: Option<crate::mac::gecici_dis::FakeShow>,
+    pub show: Option<crate::mac_veri::FakeShow>,
     /// (mac) kafa günlüğü için seçeneğin kimliği (JS nesne kimliği)
     pub _kafaId: Option<u64>,
     pub shot: Option<String>,
@@ -1545,9 +1545,9 @@ pub struct JMSt {
     /// `swN`: number
     pub swN: f64,
     /// `enH`: dizi
-    pub enH: Vec<crate::mac::EnSayac>,
+    pub enH: Vec<crate::mac_veri::EnSayac>,
     /// `enP`: object
-    pub enP: std::collections::BTreeMap<usize, crate::mac::EnSayac>,
+    pub enP: std::collections::BTreeMap<usize, crate::mac_veri::EnSayac>,
     /// `sprF`: dizi
     pub sprF: Vec<f64>,
     /// `sprT`: dizi
@@ -1819,7 +1819,7 @@ pub struct JMPre {
     /// `q`: OYUNCU
     pub q: Pid,
     /// `r`: object
-    pub r: crate::mac::gecici_dis::Karar,
+    pub r: crate::mac_veri::Karar,
     /// `x`: number
     pub x: f64,
     /// `y`: number
@@ -1838,7 +1838,7 @@ pub struct JMCtl {
     /// `t`: number
     pub t: f64,
     /// `r`: object
-    pub r: crate::mac::gecici_dis::Karar,
+    pub r: crate::mac_veri::Karar,
 }
 
 /// JS `m._prT`

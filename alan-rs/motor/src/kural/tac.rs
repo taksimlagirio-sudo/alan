@@ -1,81 +1,13 @@
 //! Taktik (match.js 1–236, 894–938): takım talimatı (Tac), geçiş penceresi, karşı pres, maç durumu (macEff),
 //! yetişme uyumu (yzUyum), evre.
-use super::*;
+use crate::mat::{dogru, hypot, js_num, to_fixed};
+use crate::model::*;
+use crate::oyuncu::oo;
+use crate::saha::{dirOf, ownX, KX, KY, SN, W};
 use crate::mat::{exp, jmax, jmin, jround, pow};
 use crate::saha::CY;
-use serde::Deserialize;
 
-/// Duruş noktası (JS tac.durus.huc[][]: {f, y}).
-#[derive(Clone, Debug, Default, Deserialize)]
-pub struct DurusN {
-    #[serde(default)]
-    pub f: Option<f64>,
-    #[serde(default)]
-    pub y: Option<f64>,
-}
-#[derive(Clone, Debug, Default, Deserialize)]
-pub struct Durus {
-    #[serde(default)]
-    pub huc: Vec<Vec<DurusN>>,
-    #[serde(default)]
-    pub sav: Vec<Vec<DurusN>>,
-}
-
-/// Koşul (JS tac.kosul[]: {ne, son, ayar}).
-#[derive(Clone, Debug, Default, Deserialize)]
-pub struct Kosul {
-    #[serde(default)]
-    pub ne: Option<String>,
-    #[serde(default)]
-    pub son: Option<f64>,
-    #[serde(default)]
-    pub ayar: Option<Tac>,
-}
-
-/// Maçın kalan zamanının değeri (JS macEff'in `macZ` kapanışı): veri olarak.
-#[derive(Clone, Copy, Debug, Default)]
-pub struct MacZ {
-    pub d: f64,
-    pub kal: f64,
-    pub birim: f64,
-}
-
-macro_rules! tac_yap {
-    ($($a:ident : $t:ty),* $(,)?) => {
-        /// Takım talimatı (JS `m.tac[t]` ve tacEff'in döndürdüğü kopya). Bütün alanlar seçimli:
-        /// JS `{...a, ...b}` = `a.ust(&b)`; okuyan `??` varsayılanını kendisi verir.
-        #[derive(Clone, Debug, Default, Deserialize)]
-        pub struct Tac {
-            $( #[serde(default)] pub $a: Option<$t>, )*
-            /// (tacEff) karşı pres işareti
-            #[serde(skip)]
-            pub _kp: Option<String>,
-            /// (tacEff) maç durumu katı ve zaman değeri
-            #[serde(skip)]
-            pub macK: Option<f64>,
-            #[serde(skip)]
-            pub macZ: Option<MacZ>,
-        }
-        impl Tac {
-            /// JS `{...self, ...o}`
-            pub fn ust(&self, o: &Tac) -> Tac {
-                Tac {
-                    $( $a: o.$a.clone().or_else(|| self.$a.clone()), )*
-                    _kp: o._kp.clone().or_else(|| self._kp.clone()),
-                    macK: o.macK.or(self.macK),
-                    macZ: o.macZ.or(self.macZ),
-                }
-            }
-        }
-    };
-}
-tac_yap! {
-    blok: String, pres: f64, onde: f64, arkada: f64, genislik: String, risk: f64, tempo: f64, kazaninca: String,
-    tuzak: String, sistem: String, siddet: f64, savGen: f64, gecisH: String, kpYer: String, kpSure: f64,
-    kaleOnu: String, pasSurme: f64, pasBoy: f64, sabir: f64, sut: f64, enDinlen: f64, enYipratma: f64,
-    enHarcama: f64, tetik: Vec<String>, durus: Durus, yz: bool, kayip: f64, gecisEsik: f64,
-    kosul: Vec<Kosul>, _ev: String, kontra: bool,
-}
+pub use crate::mac_veri::{Durus, DurusN, Kosul, MacW, MacZ, Tac};
 
 /// JS TAC0
 pub fn TAC0() -> Tac {
@@ -346,12 +278,6 @@ pub fn tacEff(m: &mut Mac, t: f64) -> Tac {
 pub const MAC_ORAN: f64 = 1.8 / 5400.0;
 pub const MAC_UC: [f64; 2] = [0.35, 2.8];
 
-#[derive(Clone, Copy, Debug, Default)]
-pub struct MacW {
-    pub g: f64,
-    pub c: f64,
-    pub e0: f64,
-}
 
 pub fn fak(k: usize) -> f64 {
     let mut r = 1.0;
@@ -532,4 +458,28 @@ pub fn evreUygula(m: &mut Mac) {
 #[allow(dead_code)]
 fn _kullan() {
     let _ = CY;
+}
+
+// Oyuncu talimatı (maç kurulumundan taşındı, Aşama 7b)
+/// JS TLV: talimat varsayılanları (null = yok).
+pub fn TLV(ev: &str, k: &str) -> Option<f64> {
+    match (ev, k) {
+        ("huc", "kosu" | "istek" | "destek" | "risk" | "ritim" | "tempo" | "gonder" | "serbest") => Some(0.5),
+        ("sav", "adam") => Some(0.0),
+        ("sav", "pres") => Some(0.5),
+        _ => None,
+    }
+}
+pub const TLV_HUC: [&str; 10] = ["kosu", "istek", "destek", "risk", "ritim", "tempo", "gonder", "serbest", "doldur", "bindir"];
+pub const TLV_SAV: [&str; 3] = ["adam", "kimi", "pres"];
+
+/// JS tl(p, ev, k): oyuncunun talimatı, yoksa varsayılan.
+pub fn tl(p: &Oyuncu, ev: &str, k: &str) -> Option<f64> {
+    if let Some(t) = &p.govde.tl {
+        let o = if ev == "huc" { &t.huc } else { &t.sav };
+        if let Some(v) = o.get(k) {
+            return Some(*v);
+        }
+    }
+    TLV(ev, k)
 }

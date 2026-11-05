@@ -1,4 +1,6 @@
 //! Kurulum (match.js 237–316, 717–1240): oyuncular, diziliş, roller (talimat paketleri), markaj, santra.
+pub use crate::kural::tac::{tl, TLV, TLV_HUC, TLV_SAV};
+pub use crate::mac_veri::{Diz, DizV, Yer};
 use super::tac::{Tac, BLOK, GEN, TAC0};
 use super::*;
 use crate::core_sabit::Q;
@@ -9,29 +11,6 @@ use crate::saha::{CY, H, MAC_LEN};
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
-/// Diziliş yeri (JS {d, l}).
-#[derive(Clone, Copy, Debug, Default, Deserialize)]
-pub struct Yer {
-    #[serde(default)]
-    pub d: f64,
-    #[serde(default)]
-    pub l: f64,
-}
-/// Diziliş (JS "3-2-1" ya da [{d, l}…]).
-#[derive(Clone, Debug, Deserialize)]
-#[serde(untagged)]
-pub enum DizV {
-    Dizi(Vec<Yer>),
-    Metin(String),
-}
-/// JS `m.diz[t]` = {sav, huc}
-#[derive(Clone, Debug, Default, Deserialize)]
-pub struct Diz {
-    #[serde(default)]
-    pub sav: Option<DizV>,
-    #[serde(default)]
-    pub huc: Option<DizV>,
-}
 
 /// Rol talimatı (JS roles[t][i] = {h, s, tl: {huc, sav}, eg}).
 #[derive(Clone, Debug, Default, Deserialize)]
@@ -263,17 +242,6 @@ pub fn dizUygula_ile(m: &mut Mac, t: f64, dz: &Diz, dis: &mut dyn KurDis) {
     markAta_ile(m, dis);
 }
 
-/// JS TLV: talimat varsayılanları (null = yok).
-pub fn TLV(ev: &str, k: &str) -> Option<f64> {
-    match (ev, k) {
-        ("huc", "kosu" | "istek" | "destek" | "risk" | "ritim" | "tempo" | "gonder" | "serbest") => Some(0.5),
-        ("sav", "adam") => Some(0.0),
-        ("sav", "pres") => Some(0.5),
-        _ => None,
-    }
-}
-pub const TLV_HUC: [&str; 10] = ["kosu", "istek", "destek", "risk", "ritim", "tempo", "gonder", "serbest", "doldur", "bindir"];
-pub const TLV_SAV: [&str; 3] = ["adam", "kimi", "pres"];
 
 /// JS PAKET: rol paketleri.
 pub fn PAKET(ev: &str, ad: &str) -> Vec<(&'static str, f64)> {
@@ -288,16 +256,6 @@ pub fn PAKET(ev: &str, ad: &str) -> Vec<(&'static str, f64)> {
     }
 }
 
-/// JS tl(p, ev, k): oyuncunun talimatı, yoksa varsayılan.
-pub fn tl(p: &Oyuncu, ev: &str, k: &str) -> Option<f64> {
-    if let Some(t) = &p.govde.tl {
-        let o = if ev == "huc" { &t.huc } else { &t.sav };
-        if let Some(v) = o.get(k) {
-            return Some(*v);
-        }
-    }
-    TLV(ev, k)
-}
 /// tl(...) sayı olarak (JS'te null sayı işleminde 0).
 pub fn tlv(p: &Oyuncu, ev: &str, k: &str) -> f64 {
     tl(p, ev, k).unwrap_or(0.0)

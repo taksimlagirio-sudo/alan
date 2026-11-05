@@ -20,6 +20,19 @@ denetle() {
   [ "$bozuk" = 0 ] && echo "tutuyor: $ad"
   return 0
 }
+# denetle_izinli "<açıklama>" "<dosyalar>" "<izinli örüntü>" <yasak örüntü>...: izinli örüntüye uyan satırlar sayılmaz
+denetle_izinli() {
+  local ad="$1" dosyalar="$2" izin="$3"; shift 3
+  local bozuk=0
+  for yasak in "$@"; do
+    # shellcheck disable=SC2086
+    if grep -nE "$yasak" $dosyalar 2>/dev/null | grep -vE "$izin" >"$gec"; then
+      echo "İHLAL ($ad): '$yasak'"; sed 's/^/   /' "$gec"; hata=1; bozuk=1
+    fi
+  done
+  [ "$bozuk" = 0 ] && echo "tutuyor: $ad"
+  return 0
+}
 # 1. kural katmanı yalnız temele bağlı
 denetle "kural → üst katmanlar yok" "$(find kural -name '*.rs')" \
   'crate::(mac|sekil|kafa|paralel|paket|oyun)\b'
@@ -36,4 +49,12 @@ hizmet="$(ls kafa/kafa1_*.rs) kafa/kafa2_zemin.rs kafa/kafa2_imkan.rs kafa/kafa2
 denetle "değerlendirme → yerleşimin kararı (sekil::konum) yok" "$hizmet" '(sekil|super)::(konum|position)\b|\bkonum::'
 # 4. karar yerleşimin kararına bağlanmaz (yerleşimin hizmetlerini kullanabilir)
 denetle "karar → yerleşimin kararı (sekil::konum) yok" "kafa/kafa2_karar.rs kafa/kafa2_tarti.rs kafa/kafa2_eski.rs" '(sekil|super)::(konum|position)\b|\bkonum::'
+# 5. temel katman (kökteki dosyalar) üst katmanlara bağlanmaz (Aşama 7a). Tek istisna, Aşama 7'nin kökü: temel
+#    maç modeli (`Mac`) üst katmanların durumunu (`MacEk`: kafa kutusu, yerleşimin belleği) taşıyor (MIMARI.md 3.8).
+temel="$(ls *.rs | grep -vE '^(lib|oyun|paket|paralel|parmak)\.rs$')"
+denetle_izinli "temel → maç / yerleşim / kafa yok (istisna: model'deki MacEk)" "$temel" 'crate::mac::MacEk\b' \
+  'crate::(mac|sekil|kafa)::'
+# 6. yerleşim maça bağlanmaz (Aşama 7b). Tek istisna, aynı kök: yerleşim kafaya maçın kutusundan ulaşıyor (kafa_mac).
+denetle_izinli "yerleşim → maç yok (istisna: kafa_mac)" "$(find sekil -name '*.rs')" 'crate::mac::kafa_dis::kafa_mac\b' \
+  'crate::mac::'
 exit $hata
