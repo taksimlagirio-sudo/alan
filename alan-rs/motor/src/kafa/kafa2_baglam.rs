@@ -111,9 +111,8 @@ pub fn sabitle(x: f64, n: i32) -> f64 {
 pub fn bul_i(w: &[Op], id: f64, team: f64) -> Option<usize> {
     w.iter().position(|z| z.id == id && z.team == team)
 }
-pub fn ayni(a: &Op, b: &Op) -> bool {
-    Arc::ptr_eq(a, b)
-}
+/// Nesne kimliği (JS `a === b`); `Op`'lar için de geçerli (aynı paylaşımlı nesne, aynı adres).
+pub use super::kafa1_js::ayni_nesne;
 
 /// Etkin taktik (JS `tacEff(m, t)`: `m.tac[t]` + maç durumu: `macK`, `macZ`, `kontra`, kp, yz).
 /// Kafa yalnız şu alanları okur; maç döngüsü kurar.

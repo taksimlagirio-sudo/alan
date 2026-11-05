@@ -164,13 +164,14 @@ pub fn kafaBasla(m: &mut Mac, h: Pid, o: &mut Secenek, ot: bool) {
     m.mac._kafa.as_mut().unwrap().P = Some(KafaP { oid, r });
 }
 
-fn ayni(m: &Mac, o: &Secenek) -> bool {
+/// Seçenek, kafanın şu an yürüttüğü karar mı (kimliği `_kafaId` ile).
+fn ayni_secenek(m: &Mac, o: &Secenek) -> bool {
     matches!((&m.mac._kafa, o._kafaId), (Some(k), Some(id)) if k.P.as_ref().map_or(false, |p| p.oid == id))
 }
 
 /// JS kafaCikis(m, o, v)
 pub fn kafaCikis(m: &mut Mac, o: &Secenek, v: (f64, f64)) {
-    if !ayni(m, o) {
+    if !ayni_secenek(m, o) {
         return;
     }
     let tick = m.tick;
@@ -182,7 +183,7 @@ pub fn kafaCikis(m: &mut Mac, o: &Secenek, v: (f64, f64)) {
 
 /// JS kafaNot(m, o, y)
 pub fn kafaNot(m: &mut Mac, o: &Secenek, y: &str) {
-    if ayni(m, o) {
+    if ayni_secenek(m, o) {
         m.mac._kafa.as_mut().unwrap().P.as_mut().unwrap().r.bozuldu = Some(y.into());
     }
 }

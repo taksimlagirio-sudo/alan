@@ -256,7 +256,7 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
                 let mut bq: Option<&Op> = None;
                 let mut bd = 1e9;
                 for q in &acik {
-                    if alinan.iter().any(|a| ayni(a, q)) {
+                    if alinan.iter().any(|a| ayni_nesne(a, q)) {
                         continue;
                     }
                     let d = uz(q.x, q.y, f.x, f.y);
@@ -407,7 +407,7 @@ pub fn bekYerW(k: &Kafa, w: &[Op], team: f64, B: Nokta, T: Option<f64>) -> Dunya
     let mut w2 = w.to_vec();
     if let Some(i) = i {
         let b2 = bekKay(k, &w[i], B, T.unwrap_or(30.0));
-        if !ayni(&b2, &w[i]) {
+        if !ayni_nesne(&b2, &w[i]) {
             w2[i] = b2;
         }
     }
@@ -515,7 +515,7 @@ pub fn paylastir(k: &Kafa, W: &[Op], team: f64, T: f64, haric: &[usize]) -> Duny
 pub fn holdWorld(k: &mut Kafa, hi: Pid, src: &[Op], ch: f64, tac: Option<&Tac>, T: f64, rnd: &mut Zar, to: Option<Nokta>) -> HoldW {
     if to.is_none() {
         if let Some((h, sp, cT, ct, cch, r)) = &k.k2.hold_c {
-            if ayni(h, &src[hi]) && *sp == src.as_ptr() as usize && *cT == T && *ct == k.bag._tick && *cch == ch {
+            if ayni_nesne(h, &src[hi]) && *sp == src.as_ptr() as usize && *cT == T && *ct == k.bag._tick && *cch == ch {
                 return r.clone();
             }
         }

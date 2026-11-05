@@ -44,7 +44,9 @@ pub struct TekC {
 }
 
 #[inline(always)]
-fn ayni(a: &Oyuncu, b: &Oyuncu) -> bool {
+/// Oyuncu kimliği: aynı takımın aynı numaralı oyuncusu mu (kopyası da sayılır). Nesne kimliğinden farklı:
+/// MIMARI.md 3.2.
+fn ayni_oyuncu(a: &Oyuncu, b: &Oyuncu) -> bool {
     a.team == b.team && a.id == b.id
 }
 #[inline(always)]
@@ -139,7 +141,7 @@ impl Kafa {
         let SAH = |t: f64, x: f64, y: f64| -> f64 { saf.oku(t, x, y) };
         let TOPLA = h.id >= 0.0;
         let mut res = Secenekler::default();
-        let hi = src.iter().position(|q| ayni(q, h));
+        let hi = src.iter().position(|q| ayni_oyuncu(q, h));
         let qid = |a: Al| -> Option<Pid> {
             match a {
                 Al::Src(i) => Some(i),
@@ -151,7 +153,7 @@ impl Kafa {
         // arkadaşlar (pas alıcıları): yolun rakipsizliği × sahiplik değeri, en iyi nMates
         let mut mates: Vec<(usize, f64)> = Vec::new();
         for (i, q) in src.iter().enumerate() {
-            if q.team != team || ayni(q, h) || q.bekci() {
+            if q.team != team || ayni_oyuncu(q, h) || q.bekci() {
                 continue;
             }
             let d = hypot(q.x - h.x, q.y - h.y);
@@ -164,7 +166,7 @@ impl Kafa {
         mates.truncate(D.nMates as usize);
         let mut mates: Vec<usize> = mates.into_iter().map(|m| m.0).collect();
         if !h.bekci() {
-            if let Some(ki) = src.iter().position(|q| q.team == team && q.bekci() && !ayni(q, h) && !q.noTouch) {
+            if let Some(ki) = src.iter().position(|q| q.team == team && q.bekci() && !ayni_oyuncu(q, h) && !q.noTouch) {
                 let kp = &src[ki];
                 let dk = hypot(kp.x - h.x, kp.y - h.y);
                 if dk >= 4.0 && dk <= jmin(passMaxF, 40.0 * GW / 100.0) && (h.x - if team == 0.0 { 0.0 } else { GW }).abs() <= GW / 2.0 {
@@ -187,7 +189,7 @@ impl Kafa {
                 alicilar.push(Al::H);
             }
             for (i, q) in src.iter().enumerate() {
-                if q.team != team || ayni(q, h) || q.bekci() || q.noTouch || alicilar.iter().any(|a| matches!(a, Al::Src(j) if *j == i)) {
+                if q.team != team || ayni_oyuncu(q, h) || q.bekci() || q.noTouch || alicilar.iter().any(|a| matches!(a, Al::Src(j) if *j == i)) {
                     continue;
                 }
                 let d = hypot(q.x - h.x, q.y - h.y);
@@ -200,7 +202,7 @@ impl Kafa {
                     Al::Src(i) => &src[i],
                     Al::H => h,
                 };
-                let qH = matches!(a, Al::H) || ayni(q, h);
+                let qH = matches!(a, Al::H) || ayni_oyuncu(q, h);
                 let mut dirs: Vec<Nk> = Vec::new();
                 let ek = |dirs: &mut Vec<Nk>, x: f64, y: f64, esik: f64| {
                     let l = hypot(x, y);

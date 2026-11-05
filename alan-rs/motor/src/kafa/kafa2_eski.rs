@@ -111,7 +111,7 @@ impl KontraF {
             let mut wk = dis::respond(k, &src, opp, nk(kq.x, kq.y), Tk, "pass");
             if let Some(bi) = wk.iter().position(|o| o.team == self.team && bekci(o) && !o.noTouch) {
                 let b2 = bekKay(k, &wk[bi], nk(kq.x, kq.y), Tk);
-                if !ayni(&b2, &wk[bi]) {
+                if !ayni_nesne(&b2, &wk[bi]) {
                     wk[bi] = b2;
                 }
             }
@@ -158,7 +158,7 @@ pub fn bekDuelP(k: &mut Kafa, h: &Op, src: &[Op], to: Nokta, dir: Nokta) -> Opti
     let team = h.team;
     let bk = src.iter().find(|q| q.team != team && bekci(q))?.clone();
     let hE = kxy(h, to.x, to.y);
-    let ps: Dunya = src.iter().map(|q| if ayni(q, h) { hE.clone() } else { q.clone() }).collect();
+    let ps: Dunya = src.iter().map(|q| if ayni_nesne(q, h) { hE.clone() } else { q.clone() }).collect();
     let bt = {
         let fm = dis::Fm { tac: &[], ps: &ps, holder: Some(&hE) };
         dis::AS_bekci(k, &bk, to, Some(&fm))
@@ -172,7 +172,7 @@ pub fn bekDuelP(k: &mut Kafa, h: &Op, src: &[Op], to: Nokta, dir: Nokta) -> Opti
         if tK <= tH + 8.0 + 1.2 * hypot(bt.x - bk.x, bt.y - bk.y) {
             let hA = kxyv(h, to.x, to.y, dir.x * vC, dir.y * vC);
             let bA = kxy(&bk, bt.x, bt.y);
-            let ps2: Dunya = src.iter().map(|q| if ayni(q, h) { hA.clone() } else if ayni(q, &bk) { bA.clone() } else { q.clone() }).collect();
+            let ps2: Dunya = src.iter().map(|q| if ayni_nesne(q, h) { hA.clone() } else if ayni_nesne(q, &bk) { bA.clone() } else { q.clone() }).collect();
             return Some(jmax(0.0, jmin(1.0, dis::duelP(k, &bA, &hA, &ps2))));
         }
     }
@@ -454,7 +454,7 @@ pub fn tekSut(k: &mut Kafa, h: &Op, src: &[Op], ch: f64, rnd: &mut Zar, opts: &m
             bekKay(k, &bk0, at, tf - k.D.sutHazir)
         });
         let hS = kxyv(&q0, at.x, at.y, 0.0, 0.0);
-        let srcS: Dunya = w.iter().map(|p| if ayni(p, &q0) { hS.clone() } else if bk.as_ref().map(|b| ayni(p, b)).unwrap_or(false) { bS.clone().unwrap() } else { p.clone() }).collect();
+        let srcS: Dunya = w.iter().map(|p| if ayni_nesne(p, &q0) { hS.clone() } else if bk.as_ref().map(|b| ayni_nesne(p, b)).unwrap_or(false) { bS.clone().unwrap() } else { p.clone() }).collect();
         let qq = src[opts[oi].q.unwrap()].clone();
         let c2 = dis::recvCh(k, &w, team, at.x, at.y, ch, &qq);
         let mut best: f64 = 0.0;
@@ -643,7 +643,7 @@ pub fn sonraDeger(k: &mut Kafa, hc0: &Oyuncu, w: &[Op], ch: f64, risk: f64) -> O
         if let Some(bi) = bi {
             let Tb = if tpk { Tu } else { dis::ucusT(k, hypot(at.x - hc.x, at.y - hc.y), k.D.arriveFirm, None) };
             let b2 = bekKay(k, &wr[bi], at, Tb);
-            if !ayni(&b2, &wr[bi]) {
+            if !ayni_nesne(&b2, &wr[bi]) {
                 wv[bi] = b2;
             }
         }
@@ -721,7 +721,7 @@ pub fn sonraDeger(k: &mut Kafa, hc0: &Oyuncu, w: &[Op], ch: f64, risk: f64) -> O
     let pm = dis::pasMax(k);
     let hP = nk(hc.x, hc.y);
     for (qi, q) in w.iter().enumerate() {
-        if q.team != team || ayni(q, &hc) || q.id == hc.id || q.noTouch {
+        if q.team != team || ayni_nesne(q, &hc) || q.id == hc.id || q.noTouch {
             continue;
         }
         if hypot(q.x - hc.x, q.y - hc.y) <= pm {
@@ -756,7 +756,7 @@ pub fn sonraDeger(k: &mut Kafa, hc0: &Oyuncu, w: &[Op], ch: f64, risk: f64) -> O
     if dis::kenarAkil(k, &hc) {
         let mut bq: Vec<(usize, Op)> = Vec::new();
         for (qi, q) in w.iter().enumerate() {
-            if q.team == team && !ayni(q, &hc) && q.id != hc.id && !bekci(q) && !q.noTouch && hypot(q.x - hc.x, q.y - hc.y) >= 10.0 && dis::laneOk(k, w, team, hP, nk(q.x, q.y), None, None) < k.D.bankIf {
+            if q.team == team && !ayni_nesne(q, &hc) && q.id != hc.id && !bekci(q) && !q.noTouch && hypot(q.x - hc.x, q.y - hc.y) >= 10.0 && dis::laneOk(k, w, team, hP, nk(q.x, q.y), None, None) < k.D.bankIf {
                 bq.push((qi, q.clone()));
             }
         }
@@ -849,10 +849,10 @@ pub fn sonraDeger(k: &mut Kafa, hc0: &Oyuncu, w: &[Op], ch: f64, risk: f64) -> O
             let son = k.keepP_son.get();
             let to = if son < Ls { nk(hc.x + ux * jmax(0.0, son), hc.y + uy * jmax(0.0, son)) } else { to0 };
             let Rw = dis::respond(k, w, team, to, Ts, "drive");
-            let resp: Vec<usize> = (0..w.len()).filter(|&i| !ayni(&Rw[i], &w[i])).collect();
+            let resp: Vec<usize> = (0..w.len()).filter(|&i| !ayni_nesne(&Rw[i], &w[i])).collect();
             let Pw = super::kafa2_dunya::predictWorld(k, w, team, to, Ts, true, Some(&resp), false, None);
             let w2: Dunya = (0..w.len())
-                .map(|i| if !ayni(&Rw[i], &w[i]) { Rw[i].clone() } else if Some(i) == ix { kxy(&hc, to.x, to.y) } else { Pw[i].clone() })
+                .map(|i| if !ayni_nesne(&Rw[i], &w[i]) { Rw[i].clone() } else if Some(i) == ix { kxy(&hc, to.x, to.y) } else { Pw[i].clone() })
                 .collect();
             let c2 = jmin(1.0, ch + dis::chargeRate(k, &hc, w, 0.0, ch) * Ts);
             let mut Vs = jmax(dis::V(k, &w2, team, to.x, to.y, c2), if k.D.useSpace { dis::runOn(k, &w2, team, &hc, to) } else { 0.0 });
