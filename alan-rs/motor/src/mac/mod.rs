@@ -187,14 +187,7 @@ pub fn SN() -> f64 {
     TPS
 }
 pub use crate::oyuncu::or0;
-/// JS `o || 0` (Option)
-#[inline(always)]
-pub fn oo(x: Option<f64>) -> f64 {
-    match x {
-        Some(v) if dogru(v) => v,
-        _ => 0.0,
-    }
-}
+pub use crate::oyuncu::oo;
 /// JS `a > b` (a undefined → false)
 #[inline(always)]
 pub fn gt(a: Option<f64>, b: f64) -> bool {

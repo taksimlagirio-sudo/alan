@@ -16,6 +16,14 @@ pub fn or0(x: f64) -> f64 {
         0.0
     }
 }
+/// JS `o || 0` (Option)
+#[inline(always)]
+pub fn oo(x: Option<f64>) -> f64 {
+    match x {
+        Some(v) if crate::mat::dogru(v) => v,
+        _ => 0.0,
+    }
+}
 /// Oyuncunun kimliği (team, id): Kural yalnız `&Oyuncu` görür.
 #[inline(always)]
 pub fn kim(p: &Oyuncu) -> (f64, f64) {

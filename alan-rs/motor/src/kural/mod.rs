@@ -3,4 +3,6 @@
 #![allow(non_snake_case, non_upper_case_globals, clippy::too_many_arguments)]
 pub mod enerji;
 pub mod gec;
+pub mod hareket;
+pub mod ikili;
 pub mod kos;
