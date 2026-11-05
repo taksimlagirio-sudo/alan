@@ -2,6 +2,7 @@
 //! aldatmak. Bugünkü davranışta (sonF) iki dünya (kandı/kanmadı) kafa2'nin sonraDeger'iyle tartılır.
 #![allow(non_snake_case)]
 
+use crate::kafa::gecici_dis1::KuralErisim as _;
 use super::gecici_dis1::{riskOf, sonraDeger};
 use super::kafa1_baglam::Kafa;
 use super::kafa1_js::*;

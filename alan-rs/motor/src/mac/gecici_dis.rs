@@ -31,6 +31,7 @@
 //! | V | decide.js:3666 |
 //! | D (sabitler), DU (sabitler) | decide.js:6–100 (değerler kopyalandı, todo değil) |
 #![allow(unused_variables)]
+use crate::kafa::gecici_dis1::KuralErisim as _;
 use crate::model::{Mac, Oyuncu, Pid, Secenek, JP_onH};
 use crate::rng::Rng;
 

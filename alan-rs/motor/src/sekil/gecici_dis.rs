@@ -106,12 +106,14 @@ pub fn coreSide(h: &Oyuncu) -> (f64, f64) {
 pub fn govdeV(h: &Oyuncu) -> f64 {
     kafa_ile(|k| k.govdeV(h))
 }
-/// Taşıyıcının şimdi çekebileceği en sert şutun hızı (tam şarj): gövde savurma hızı × vuruş enerjisi (kafanın vurE'si).
+/// Taşıyıcının şimdi çekebileceği en sert şutun hızı (tam şarj): kural katmanından, kafaya uğramadan
+/// (eskiden yerleşim → kafa iç içe çağrısıydı; yedek kafaya düşen çağrıların neredeyse hepsi buradandı).
+/// Maç kurulurken (kafa yokken) eskisi gibi None.
 pub fn sutHiz(h: &Oyuncu) -> Option<f64> {
     if !crate::mac::kafa_dis::kafa_var() {
         return None;
     }
-    Some(kafa_ile(|k| k.govdeV(h) * k.vurE(h, Some(1.0), true)))
+    Some(crate::kural::sut::sutHiz(h))
 }
 /// JS `savurPlan(h, {vx, vy}, ca0, w0, sYon, null, itme, E)` → `pl ? pl.T : None`.
 pub fn savurPlan(h: &Oyuncu, vx: f64, vy: f64, ca0: f64, w0: f64, sYon: f64, itme: bool, E: f64) -> Option<f64> {
@@ -144,7 +146,7 @@ pub fn laneOk0(w: &[Varlik], oy: &[Oyuncu], team: u8, A: (f64, f64), B: (f64, f6
     kafa_ile(|k| k.laneOk(&ow(w, oy), team as f64, nk(A.0, A.1), nk(B.0, B.1), None, None))
 }
 pub fn bekYol(w: &[Varlik], oy: &[Oyuncu], team: u8, A: (f64, f64), B: (f64, f64), lag: f64) -> f64 {
-    kafa_ile(|k| crate::kafa::kafa2_tarti::bekYol(k, &ow(w, oy), team as f64, nk(A.0, A.1), nk(B.0, B.1), Some(lag)))
+    kafa_ile(|k| crate::kafa::kafa2_zemin::bekYol(k, &ow(w, oy), team as f64, nk(A.0, A.1), nk(B.0, B.1), Some(lag)))
 }
 pub fn yerDeger(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, y: f64, ch: f64) -> f64 {
     kafa_ile(|k| crate::kafa::kafa2_zemin::yerDeger(k, &ow(w, oy), team as f64, x, y, ch))
@@ -175,7 +177,7 @@ pub fn dagin(w: &[Varlik], oy: &[Oyuncu], team: u8, x: f64, vv: f64, y: f64) -> 
 pub fn kayipYer(ps: &[Oyuncu], team: u8, ch: f64, h: &Oyuncu, tac: Option<&crate::mac::Tac>) -> KayipF {
     let src = std::sync::Arc::new(ops(ps));
     let tac = tac.map(crate::mac::gecici_dis::kafa_tac);
-    let f = kafa_ile(|k| crate::kafa::kafa2_karar::kayipYer(k, &src, team as f64, ch, h, tac.as_ref()));
+    let f = kafa_ile(|k| crate::kafa::kafa2_zemin::kayipYer(k, &src, team as f64, ch, h, tac.as_ref()));
     let f = std::sync::Mutex::new(f);
     std::sync::Arc::new(move |x: f64, y: f64| kafa_ile(|k| f.lock().unwrap().deger(k, x, y)))
 }
