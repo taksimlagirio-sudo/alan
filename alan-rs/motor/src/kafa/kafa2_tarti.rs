@@ -8,7 +8,7 @@ use super::kafa2_bag as dis;
 use super::kafa2_bag::{ALAN_HZ};
 use super::kafa2_baglam::*;
 use super::kafa2_dunya::{bekYerW, geriCekil, predictWorld};
-use super::kafa2_imkan::{imkUzak, imkan, sutS, sutVakit, SUR_BOS, SUR_PARCA};
+use super::kafa2_imkan::{imkSg, imkTau, imkUzak, imkan, sutS, sutVakit, SUR_BOS, SUR_PARCA};
 use super::kafa2_zemin::{gam, zeminS, KayipF};
 use crate::mat::{cos, exp, hypot, jmax, jmin, jround};
 use crate::model::{Dok, Oyuncu, Secenek};
@@ -21,6 +21,71 @@ use std::sync::Arc;
 pub const PNC_DILIM: f64 = 12.0;
 pub const PNC_UFUK: f64 = 120.0;
 pub const PNC_GORUS: f64 = 48.0;
+/// Deney (ALAN_YOL_OLABILIR_IZ; ölçümde YOL_OLABILIR_ZORLA)
+pub static YOL_OLABILIR_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn yol_olabilir() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    YOL_OLABILIR_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_YOL_OLABILIR_IZ").is_ok())
+}
+
+/// A'dan B'ye, şimdiden t0 tik sonra vurulan pasın yolunun açık olma olasılığı, olabilirlikle: her rakip (Bekçi
+/// dahil) pas vurulunca (t0) tepki verir, kararın dünyasındaki yerinden yolun her noktasına en erken ne zaman yetişebilir
+/// (tepki + dönüş gecikmesi + koşu, menzil kadar yakına) ve top o noktaya ne zaman varır; alıcı o noktaya daha önce
+/// gelebiliyorsa top onundur. Yetişme olasılığı zamanla büyüyen belirsizlikle; rakip başına yolun en kötü noktası.
+pub fn yolOlabilir(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t0: f64, alici: Option<&Oyuncu>, iz: bool) -> f64 {
+    let L = hypot(B.x - A.x, B.y - A.y);
+    if L < 0.5 {
+        return 1.0;
+    }
+    let kr = k.dis.kural();
+    // alıcı yolun bir noktasına topla buluşmaya gelebilir: savunmacı oradan ancak alıcıdan önce varırsa keser
+    let al = alici.map(|q| {
+        let q = src.iter().find(|o| o.team == q.team && o.id == q.id).map(|o| (**o).clone()).unwrap_or_else(|| q.clone());
+        let G = dis::AS_gecTab(k, &q);
+        let v = jmax(0.05, dis::AS_vSp(k, &q));
+        let R = jmin(2.0, crate::temas::menzil(&q, 0.35));
+        (q, G, v, R)
+    });
+    let mut acik = 1.0;
+    for p in src.iter() {
+        if p.team == team || p.noTouch {
+            continue;
+        }
+        let G = dis::AS_gecTab(k, p);
+        let v = jmax(0.05, dis::AS_vSp(k, p));
+        let bek = bekci(p);
+        let R = if bek { crate::core_sabit::Q.bek_body + crate::temas::bek_dl(p) } else { jmin(2.0, crate::temas::menzil(p, 0.35)) };
+        let rc = jmax(0.0, if bek { crate::temas::bek_re(p) } else { dis::ALAN_TEPKI(k, p, "kovala") });
+        let mut en = 0.0f64;
+        let mut s = 1.5;
+        while s < L - 1.0 {
+            let x = A.x + (B.x - A.x) * s / L;
+            let y = A.y + (B.y - A.y) * s / L;
+            let tb = t0 + dis::ucusT(k, L, k.D.arriveFirm, Some(s));
+            let d = jmax(0.0, hypot(p.x - x, p.y - y) - R);
+            // savunmacı pası ancak vurulunca görür: koşusu vuruştan (t0) başlar; o ana dek yeri bilinmez (belirsizlik payı)
+            let tp = t0 + rc + dis::AS_gecOf(k, &G, x, y, d) + crate::kural::enerji::ALAN_KOSU_T(p, d, v, &kr);
+            let tq = match &al {
+                Some((q, Gq, vq, Rq)) => {
+                    let dq = jmax(0.0, hypot(q.x - x, q.y - y) - Rq);
+                    dis::AS_gecOf(k, Gq, x, y, dq) + crate::kural::enerji::ALAN_KOSU_T(q, dq, *vq, &kr)
+                }
+                None => f64::INFINITY,
+            };
+            let pk = imkSg((jmin(tb, tq) - tp) / imkTau(tb));
+            if pk > en {
+                en = pk;
+            }
+            s += 1.5;
+        }
+        if iz && en > 0.05 {
+            eprintln!("ENIYI     olabilir {} ({:.1},{:.1}) kesme {:.3}", p.govde.name, p.x, p.y, en);
+        }
+        acik *= 1.0 - en;
+    }
+    acik
+}
+
 /// Deney (ALAN_ZEMIN_YARIS_IZ, ölçümde ZEMIN_YARIS_ZORLA)
 pub static ZEMIN_YARIS_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn zemin_yaris() -> bool {
@@ -399,8 +464,14 @@ pub fn enIyiPas(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f6
             continue;
         }
         let lag = k.D.sutHazir;
-        let lo1 = dis::laneOk(k, w, cx.team, A, P.B, Some(k.D.arriveFirm), Some(lag));
-        let lo2 = bekYol(k, w, cx.team, A, P.B, Some(lag));
+        let (lo1, lo2) = if yol_olabilir() {
+            // ALAN_YOL_OLABILIR_IZ: yolun açıklığı donmuş öngörü dünyasından değil, kararın dünyasından (cx.src):
+            // her savunmacı (ve Bekçi) karar anındaki yerinden, tepkisi ve dönüş gecikmesiyle top geçmeden yola
+            // yetişebilir mi
+            (yolOlabilir(k, &cx.src.clone(), cx.team, A, P.B, T + lag, Some(&**kq), iz), 1.0)
+        } else {
+            (dis::laneOk(k, w, cx.team, A, P.B, Some(k.D.arriveFirm), Some(lag)), bekYol(k, w, cx.team, A, P.B, Some(lag)))
+        };
         let Lo = lo1 * lo2;
         if Lo < 0.05 {
             if iz {
