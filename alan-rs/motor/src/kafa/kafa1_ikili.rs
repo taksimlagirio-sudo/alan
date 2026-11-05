@@ -643,7 +643,7 @@ impl Kafa {
                 let fA = if gA > 0.02 && gA > gB { 0.5 } else { 1.0 };
                 let fB = if gB > 0.02 && gB > gA { 0.5 } else { 1.0 };
                 s.qv.den = Some(jmax(0.0, s.qv.den.unwrap() - yuk * fA * IK.dengeK / (c.mQ * c.rQ)));
-                s.hv.den = Some(jmax(0.0, s.hv.den.unwrap() - yuk * fB * IK.dengeK / (c.mH * c.rH)));
+                s.hv.den = Some(jmax(0.0, s.hv.den.unwrap() - kes_yuk() * yuk * fB * IK.dengeK / (c.mH * c.rH)));
                 tem = true;
             }
             {
@@ -734,6 +734,7 @@ impl Kafa {
                             dr = d1;
                             s.fkOk = false;
                             s.keep *= 1.0 - 0.5 * flick_miss(h);
+                            KES_SAY.with(|k| { let v = k.get(); k.set((v.0 + 1, v.1, v.2)); });
                             s.fk = (a1 / fw).ceil();
                             s.fkD = dr;
                             om = fw;
@@ -743,6 +744,7 @@ impl Kafa {
                     if hypot(s.hv.x + cos(ca1) * B - s.qv.x, s.hv.y + sin(ca1) * B - s.qv.y) < CRk {
                         if s.fk > 0.0 {
                             s.keep *= 0.5;
+                            KES_SAY.with(|k| { let v = k.get(); k.set((v.0, v.1 + 1, v.2)); });
                             s.fk = 0.0;
                         }
                     } else {
@@ -776,8 +778,12 @@ impl Kafa {
                             let d = self.duelP_k(&s.qv, &s.hv, c.src, Some(hm.omuz));
                             let dus = hm.pc * d.P * self.kWof(Some(hm.omuz), h, c.q, c.src, true);
                             s.keep *= 1.0 - dus;
+                            KES_SAY.with(|k| { let v = k.get(); k.set((v.0, v.1, v.2 + 1)); });
                             if KP_DER.with(|c| c.get()) == 1 {
                                 KP_DENEME.with(|c| { let (n, a, b) = c.get(); c.set((n + 1, a + d.P, b + dus)); });
+                                if crate::iz_acik() && std::env::var("ALAN_KDUEL_IZ").is_ok() {
+                                    eprintln!("KDUEL [{},{:.4},{:.4},{:.4},{:.4},{:.4},{:.4},{:.4}]", hm.omuz, d.P, hm.pc, hypot(z0(s.hv.vx), z0(s.hv.vy)), z0(s.hv._don.unwrap_or(0.0)), s.hv.den.unwrap_or(1.0), self.ikHiz(h), self.kWof(Some(hm.omuz), h, c.q, c.src, true));
+                                }
                             }
                             if hm.omuz {
                                 let den = s.hv.den.unwrap();
@@ -840,7 +846,14 @@ impl Kafa {
         let pS = cl1((IK.sendele + 0.1 - s.dMin) / 0.2);
         let pQ = cl1((IK.sendele + 0.1 - s.qMin) / 0.2);
         *son = (s.hv.x - h.x) * dir.x + (s.hv.y - h.y) * dir.y;
-        s.keep * (1.0 - pS * (1.0 - 0.5 * pQ))
+        let son_k = match kes_send() {
+            Some(ks) => s.keep * (1.0 - pS * ks),
+            None => s.keep * (1.0 - pS * (1.0 - 0.5 * pQ)),
+        };
+        if son_k < 0.1 && KP_DER.with(|c| c.get()) == 1 && crate::iz_acik() && std::env::var("ALAN_KES_IZ").is_ok() {
+            eprintln!("KES [{:.4},{:.4},{:.4},{:.4},{:.4},{:.2},{}]", son_k, s.keep, pS, s.dMin, pQ, hypot(h.x - c.q.x, h.y - c.q.y), KES_SAY.with(|k| { let v = k.get(); k.set((0, 0, 0)); format!("[{},{},{}]", v.0, v.1, v.2) }));
+        }
+        son_k
     }
 
     /// Topu T tik tutabilme olasılığı (decide.js:4429); `dir`: sürüş yönü (yok: yerinde tutar).
@@ -1412,6 +1425,8 @@ thread_local! {
     pub static KP_KAYIT: std::cell::RefCell<Option<Vec<(String, f64, f64, f64, f64)>>> = const { std::cell::RefCell::new(None) };
     /// keepP'nin iç içe derinliği: kayıt yalnız en dıştaki çağrıdan
     static KP_DER: std::cell::Cell<u32> = const { std::cell::Cell::new(0) };
+    /// ölçüm (ALAN_KES_IZ): kes_oyna'da (fiske denemesi, fiske çarpışması, kapma girişimi) sayıları
+    static KES_SAY: std::cell::Cell<(u32, u32, u32)> = const { std::cell::Cell::new((0, 0, 0)) };
     /// en dıştaki keepP'de kapma girişimleri: (sayı, d.P toplamı, düşülen olasılık toplamı)
     static KP_DENEME: std::cell::Cell<(u32, f64, f64)> = const { std::cell::Cell::new((0, 0.0, 0.0)) };
 }
@@ -1461,5 +1476,29 @@ pub fn topK_p(h: &Oyuncu, dk: Option<crate::kafa::gecici_dis1::Dokunus>) -> f64 
             close + (1.0 - close) * jmin(1.0, 0.0 / Lr)
         }
         None => jmin(1.0, 0.68 + 0.02 * s),
+    }
+}
+
+/// Deneme (ayar arayışı, ALAN_KES_YUK=<katsayı>): benzetimde taşıyıcının gövde temasından kaybettiği denge ölçeklenir.
+fn kes_yuk() -> f64 {
+    static A: std::sync::OnceLock<f64> = std::sync::OnceLock::new();
+    *A.get_or_init(|| if crate::iz_acik() { std::env::var("ALAN_KES_YUK").ok().and_then(|v| v.parse().ok()).unwrap_or(1.0) } else { 1.0 })
+}
+/// Deneme (ayar arayışı, ALAN_KES_SEND=<olasılık>): benzetimin sonunda taşıyıcı sendelediyse topun gitme olasılığı
+/// (özgün: 1 − 0,5·pQ; gerçek maçta sendeleyen taşıyıcının topu kaybı ~0,4).
+fn kes_send() -> Option<f64> {
+    static A: std::sync::OnceLock<Option<f64>> = std::sync::OnceLock::new();
+    *A.get_or_init(|| if crate::iz_acik() { std::env::var("ALAN_KES_SEND").ok().and_then(|v| v.parse().ok()) } else { None })
+}
+
+/// Deney (varsayılan kapalı, ALAN_KP_KAL_IZ): sürmenin tutma kestirimi ölçülen gerçekle eşlenir.
+/// alan-kos tutma (kilitli, 4 maç, kaleye 35 br içi): kestirim 0,03 → gerçek 0,74; 0,30 → 0,75; 0,53 → 0,90;
+/// 0,69 → 0,83; 1,00 → 0,97. Doğrusal uydurma: P' = 0,74 + 0,23 P.
+pub fn kp_kal(p: f64) -> f64 {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    if *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_KP_KAL_IZ").is_ok()) && p.is_finite() {
+        0.74 + 0.23 * jmax(0.0, jmin(1.0, p))
+    } else {
+        p
     }
 }

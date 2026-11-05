@@ -292,7 +292,7 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
         if kpq {
             crate::kafa::kafa1_ikili::KP_KAYIT.with(|c| *c.borrow_mut() = Some(Vec::new()));
         }
-        let P = dis::keepP(k, hk.as_ref().unwrap_or(&*h), &src, o.dir, Ts);
+        let P = crate::kafa::kafa1_ikili::kp_kal(dis::keepP(k, hk.as_ref().unwrap_or(&*h), &src, o.dir, Ts));
         if kpq {
             let v = crate::kafa::kafa1_ikili::KP_KAYIT.with(|c| c.borrow_mut().take()).unwrap_or_default();
             let gx = if h.team == 0.0 { GW } else { 0.0 };

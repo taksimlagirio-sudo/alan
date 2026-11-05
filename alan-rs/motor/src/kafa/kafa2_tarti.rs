@@ -208,7 +208,7 @@ pub fn surD(k: &mut Kafa, w: &[Op], team: f64, kq: &Oyuncu, at: Nokta, ch: f64, 
             r.vx = if yol > 0.0 { u.x * vK } else { 0.0 };
             r.vy = if yol > 0.0 { u.y * vK } else { 0.0 };
             let Ts0 = jmax(4.0, dis::surSure(k, &r, seg, Some(u), None));
-            let p = jmax(0.0, jmin(1.0, dis::keepP(k, &r, &ww, Some(u), Ts0)));
+            let p = crate::kafa::kafa1_ikili::kp_kal(jmax(0.0, jmin(1.0, dis::keepP(k, &r, &ww, Some(u), Ts0))));
             let pr = k.keepP_son.get();
             let adv = if pr < seg { jmax(0.0, pr) } else { seg };
             kayv += Pc * (1.0 - p) * kay(k, kayip, pos.x + u.x * adv / 2.0, pos.y + u.y * adv / 2.0);
@@ -575,7 +575,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
             });
             let P = match d.P {
                 Some(p) => p,
-                None => dis::keepP(k, &h, src, o.dir, Ts),
+                None => crate::kafa::kafa1_ikili::kp_kal(dis::keepP(k, &h, src, o.dir, Ts)),
             };
             let adv = (E.x - h.x) * dir;
             let pw = pDunya(k, &mut cx, E, Ts, "drive", Some(&h));
