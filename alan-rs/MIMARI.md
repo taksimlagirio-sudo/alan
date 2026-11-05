@@ -336,6 +336,15 @@ işlemleri ve sırası tek başınakiyle aynı. Eğri hesabı %7,5 → ~%5.
 Süre: örneklemede 24 328 → 22 246 örnek (m00 900 tik, −%8,6); duvar saati m00 −%7, m05 −%4, m15 −%1 (eğri hesabının
 çok olduğu maçta çok).
 
+**`bek_derinlik0` ✅ (küçük)** (5 Kasım). Gerçek maliyeti iki kez hesaplatarak ölçüldü: ~%8 (m00, 900 tik, iki kez
+hesaplayınca +0,8–1,3 ms/tik). Zamanın çoğu `sqrt`'un gecikmesi ve aday × yol döngüsü. İki kesin kısaltma:
+(1) `hypot(ax, ay) <= er` → `q = ax·ax + ay·ay`, `er²`'nin 1e-12'lik bandının dışındaysa sonuç karekök alınmadan
+belli (`sqrt` doğru yuvarlanır); bandın içinde, NaN'da, sonsuzda, `er ≤ 0`'da eski karşılaştırma.
+(2) Aday sayımı, kalan yolların hepsi kapansa bile adayın seçilmesine yetmeyecekse bırakılır.
+İşlevin kendi süresi −%14 (örnekleme), toplam ~−%1 (m00 duvar saati −%0,7; gürültüye yakın). Kalan maliyet çağrı
+sayısında: tik başına ~400 hesap (kafanın varsayımsal şut yerleri; önbellek %81 isabetli); aşağısı ya kafanın
+çağırma biçimine ya da yaklaşıma (davranış) dokunur.
+
 **Denendi, alınmadı: `bek_derinlik0`'ın sayım önbelleği.** Adayların kapattığı yol sayısı Bekçi'nin şimdiki
 derinliğine bağlı değil (yalnız eşitlikte seçer): 118 bin hesabın 55,5 binde farklı (top yeri, adım) var. Sayımı
 bunlarla önbelleğe almak komutları −%4,2 indirdi (işlevin kendi payı −%43), davranış aynıydı (20 maç). Ama süre:

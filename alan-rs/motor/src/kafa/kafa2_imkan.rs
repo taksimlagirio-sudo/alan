@@ -304,6 +304,46 @@ pub fn sutTab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: Op
         gov = jmax(gov, govOf(k, GCY + a * MO));
     }
     let sig = sig.unwrap_or(f64::NAN);
+    // ALAN_SUT_GERCEK_IZ: tablo yerine hücrenin anlamı o noktada doğrudan hesaplanır (boş sahada şutçu + Bekçi,
+    // kafanın kendi kararıyla gönder seçeneklerinin en iyi gol olasılığı), Bekçi gerçek yerinde. Yavaş: deney.
+    if sut_gercek() && SUT_GERCEK_DER.with(|c| c.get()) == 0 {
+        let key = (team as i64, (x * 2.0).round() as i64, (y * 2.0).round() as i64, (bkP.x * 2.0).round() as i64, (bkP.y * 2.0).round() as i64, (ch * 10.0).round() as i64, k.tick() as i64);
+        let pk = match SUT_GERCEK_ON.with(|c| c.borrow().get(&key).copied()) {
+            Some(v) => v,
+            None => {
+                SUT_GERCEK_DER.with(|c| c.set(c.get() + 1));
+                let mut sc = match sh { Some(s) => s.clone(), None => sahte(team, x, y, -1.0) };
+                sc.x = x;
+                sc.y = y;
+                sc.vx = 0.0;
+                sc.vy = 0.0;
+                let mut kb: Oyuncu = (*bk).clone();
+                kb.x = bkP.x;
+                kb.y = bkP.y;
+                kb.vx = 0.0;
+                kb.vy = 0.0;
+                let src: Arc<Dunya> = Arc::new(vec![Arc::new(sc), Arc::new(kb)]);
+                let bag0 = k.bag.clone();
+                let r = crate::kafa::kafa2_karar::decide(k, 0, &src, ch, &mut || 0.5, None);
+                k.bag = bag0;
+                let v = r.opts.iter().filter(|o| o.kind == "gönder").filter_map(|o| o.det.as_ref().and_then(|d| d.Pk)).fold(0.0, f64::max);
+                SUT_GERCEK_DER.with(|c| c.set(c.get() - 1));
+                SUT_GERCEK_ON.with(|c| {
+                    let mut c = c.borrow_mut();
+                    if c.len() > 20000 { c.clear(); }
+                    c.insert(key, v);
+                });
+                v
+            }
+        };
+        if crate::iz_acik() && sh.map_or(false, |s| std::env::var("ALAN_SURD_IZ").ok().as_deref() == Some(&*s.govde.name)) {
+            eprintln!("SUTGERCEK ({:.1},{:.1}) bk ({:.1},{:.1}) gol {:.3} tablo {:.3}", x, y, bkP.x, bkP.y, pk, okuL(ko));
+        }
+        return gov * pk;
+    }
+    if crate::iz_acik() && sh.map_or(false, |s| std::env::var("ALAN_SURD_IZ").ok().as_deref() == Some(&*s.govde.name)) {
+        eprintln!("SUTTAB ({:.1},{:.1}) dd {:.2} sy {:.2} ko {:.2} kd {:.2} ls {:.1} lk {:.1} ch {:.2} gov {:.3} oku {:.3} | yer0 ({:.1},{:.1}) bk ({:.1},{:.1})", x, y, dd, sy, ko, kd, ls, lk, ch, gov, okuL(ko), yer0.x, yer0.y, bkP.x, bkP.y);
+    }
     if !(sig > 0.3) {
         return gov * okuL(ko);
     }
@@ -312,6 +352,16 @@ pub fn sutTab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: Op
 }
 
 // ------------------------------------------------------------------ imkân
+
+thread_local! {
+    static SUT_GERCEK_DER: std::cell::Cell<u32> = const { std::cell::Cell::new(0) };
+    static SUT_GERCEK_ON: std::cell::RefCell<std::collections::HashMap<(i64, i64, i64, i64, i64, i64, i64), f64>> = std::cell::RefCell::new(Default::default());
+}
+pub static SUT_GERCEK_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sut_gercek() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SUT_GERCEK_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SUT_GERCEK_IZ").is_ok())
+}
 
 pub const IMK_HUC: f64 = 6.0;
 const IMK_SAP: [(f64, f64); 5] = [(0.0, 1.2), (15.0, 2.0), (30.0, 2.7), (50.0, 7.0), (80.0, 10.9)];
