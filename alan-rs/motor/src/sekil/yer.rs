@@ -166,6 +166,9 @@ pub struct BekM<'a> {
     pub holder: Option<&'a Oyuncu>,
     /// JS `q === p` için Bekçi'nin sırası
     pub ben: Option<Pid>,
+    /// Taşıyıcının şut tehdidi tartılır mı: maç başladı, kafa kurulu (maç kurulurken hayır). Eskiden
+    /// sutHiz bunu iş parçacığına özel kafadan soruyordu; artık bağlamı kuran maçtan bilir.
+    pub sut: bool,
 }
 
 /// JS bekci(p, E, m): Bekçi'nin yeri (açıyı daraltır, uzaktan topa destek, karşı karşıyada çıkış).
@@ -213,7 +216,7 @@ fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (f
         let l = nz(hypot(x, y));
         (x / l, y / l)
     };
-    let mut r = if let Some(vb) = m.and_then(|m| m.holder).filter(|hh| hh.team != p.team).and_then(dis::sutHiz) {
+    let mut r = if let Some(vb) = m.filter(|m| m.sut).and_then(|m| m.holder).filter(|hh| hh.team != p.team).map(dis::sutHiz) {
         bek_derinlik(p, ex, ey, gx, L, bxu, byu, vb)
     } else {
         let cov = Q.bek_body + 0.8 * bek_dl(p);

@@ -27,7 +27,7 @@ pub fn notTik(m: &mut Mac) {
         None => m.ball.as_ref().map(|b| b.team as f64).or(n.team),
     };
     if let (Some(cp), Some(team)) = (cp, team) {
-        let v = gecici_dis::V(&m.ps, team, cp.0, cp.1, or0(m.ch));
+        let v = gecici_dis::V(m, &m.ps, team, cp.0, cp.1, or0(m.ch));
         s = Some(if team == 0.0 { v } else { -v });
     }
     let actor = h.or_else(|| m.ball.as_ref().and_then(|b| b.tt.t.from)).or(n.actor);

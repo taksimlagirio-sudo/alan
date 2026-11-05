@@ -262,6 +262,12 @@ pub struct Kafa2Durum {
 pub use super::kafa1_baglam::Kafa;
 
 /// JS `D`'nin başlangıç değerleri (tek kaynak: `kafa1_param::d_js`).
+/// Kafanın değişmez ayarları (JS AlanDecide.D'nin sabit alanları): bir kez kurulur. Saf değerlendirmeler
+/// (`pressAt_d`, `threat_d` …) bunu açıkça alır; kafanın kendi `D`'si bunun kopyası + geçici bağlam alanları.
+pub fn ayar() -> &'static KafaD {
+    static D: std::sync::OnceLock<KafaD> = std::sync::OnceLock::new();
+    D.get_or_init(kafa_d)
+}
 pub fn kafa_d() -> KafaD {
     super::kafa1_param::d_js()
 }

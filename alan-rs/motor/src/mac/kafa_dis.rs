@@ -187,7 +187,7 @@ impl Dis for MacDis {
     fn bekciFm(&self, p: &Oyuncu, B: Nk, fm: &d1::Fm) -> Nk {
         // dünya kopyalanmaz: Bekçi oyuncuların yalnız yerini ve takımını okur
         let ben = fm.ps.iter().position(|q| q.id == p.id && q.team == p.team);
-        let bm = sekil::yer::BekM { ps: sekil::yer::BekPs::Pay(fm.ps), holder: fm.holder, ben };
+        let bm = sekil::yer::BekM { ps: sekil::yer::BekPs::Pay(fm.ps), holder: fm.holder, ben, sut: true };
         let (x, y) = sekil::yer::bekci(p, B.x, B.y, Some(&bm), &self.kural.get());
         nk(x, y)
     }
@@ -327,6 +327,18 @@ pub static YAN_SAY: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUs
 pub fn kafa_var() -> bool {
     KAFA.with(|c| c.borrow().is_some())
 }
+/// Maçın kendi kafasıyla çalış (açık bağlam, MIMARI.md Aşama 3): kafa maçın içinde (`m.mac.kafa`), iş
+/// parçacığına özel değişkenden aranmaz. Kafa yoksa ya da meşgulse eski yola düşer (ölçüm: 3 maç × 900 tikte
+/// hiç olmuyor; küresel kafa Aşama 3c'de kalkınca düşülmez).
+pub fn kafa_mac<R>(m: &Mac, f: impl FnOnce(&mut Kafa) -> R) -> R {
+    if let Some(k) = &m.mac.kafa.k {
+        if let Ok(mut b) = k.try_borrow_mut() {
+            let t = b.D._tick;
+            return crate::sekil::d_tick_ile(t, || f(&mut b));
+        }
+    }
+    kafa_ile(f)
+}
 pub fn kafa_ile<R>(f: impl FnOnce(&mut Kafa) -> R) -> R {
     let k = KAFA.with(|c| c.borrow().clone()).expect("kafa bağlamı kurulmadı (kafa_hazirla)");
     if let Ok(mut b) = k.try_borrow_mut() {
@@ -361,7 +373,7 @@ pub fn op_dunya(ps: &[Oyuncu]) -> Vec<crate::kafa::kafa1_js::Op> {
 /// JS `m._prT`: kafa kararda yazar (D._mac === m). Rust'ta kafa kendinde tutar; karardan hemen sonra
 /// maça (yerleşim okur) ve kafa1'in dış dünyasına (girEsik okur) aktarılır.
 pub fn prT_esitle(m: &mut Mac) {
-    let p = KAFA.with(|c| c.borrow().clone()).and_then(|k| k.try_borrow().ok().and_then(|k| k.prT.clone()));
+    let p = m.mac.kafa.k.as_ref().and_then(|k| k.try_borrow().ok().and_then(|k| k.prT.clone()));
     if let Some(p) = p {
         let (hm, _) = p.hm.clone().unwrap_or_default();
         m._prT = Some(crate::model::JM_prT { team: p.team, hId: p.hId, t: p.t.unwrap_or(f64::NAN), m: p.m.clone(), mm: p.mm.clone(), hm, h: p.h });

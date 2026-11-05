@@ -259,6 +259,36 @@ pub struct Lane {
     pub loose: bool,
 }
 
+/// Frenle varış (saf): p'nin (x, y)'ye R yakınlığa T tikte varamadığı ek süre (yetenek ve kuraldan).
+pub fn frenT_p(p: &Oyuncu, x: f64, y: f64, R: f64, T: f64, v: f64) -> f64 {
+    let vx = z0(p.vx);
+    let vy = z0(p.vy);
+    let s0 = hypot(vx, vy);
+    if s0 < 0.1 || !(T > 0.0) {
+        return 0.0;
+    }
+    let ux = vx / s0;
+    let uy = vy / s0;
+    let dx = x - p.x;
+    let dy = y - p.y;
+    let xa = dx * ux + dy * uy;
+    let xl = (-dx * uy + dy * ux).abs();
+    let ag = crate::yetenek::ag(&p.yet, p.den, p.bekci(), crate::kural::ikili::IK.yavas);
+    let aB = 0.018 * ag;
+    let aL = 0.021 * ag;
+    let tS = s0 / aB;
+    let aMin = if T <= tS { s0 * T - aB * T * T / 2.0 } else { s0 * tS / 2.0 - jmin(v * (T - tS), 0.025 * (T - tS) * (T - tS)) };
+    let aMax = s0 * T + jmin((v - s0) * T, 0.18 * v * 0.5 * crate::yetenek::ah(&p.yet) * T * T);
+    let rA = jmax(jmax(0.0, aMin - xa), xa - aMax);
+    let rL = jmax(0.0, xl - jmin(v * T, aL * T * T / 2.0));
+    let def = hypot(rA, rL) - R;
+    if def > 0.0 {
+        T + def / v
+    } else {
+        0.0
+    }
+}
+
 impl Kafa {
     /// Bekçi kendi alanının dışına çıkar mı (decide.js:1603).
     pub fn bekCikar(&self, bk: &Oyuncu, X: f64, Y: f64, tB: f64, tm: f64) -> bool {
@@ -290,32 +320,7 @@ impl Kafa {
     }
     /// Koşan oyuncunun durup (x, y)'ye dönmesinin gecikmesi (decide.js:1604).
     pub fn frenT(&self, p: &Oyuncu, x: f64, y: f64, R: f64, T: f64, v: f64) -> f64 {
-        let vx = z0(p.vx);
-        let vy = z0(p.vy);
-        let s0 = hypot(vx, vy);
-        if s0 < 0.1 || !(T > 0.0) {
-            return 0.0;
-        }
-        let ux = vx / s0;
-        let uy = vy / s0;
-        let dx = x - p.x;
-        let dy = y - p.y;
-        let xa = dx * ux + dy * uy;
-        let xl = (-dx * uy + dy * ux).abs();
-        let ag = self.AG(p);
-        let aB = 0.018 * ag;
-        let aL = 0.021 * ag;
-        let tS = s0 / aB;
-        let aMin = if T <= tS { s0 * T - aB * T * T / 2.0 } else { s0 * tS / 2.0 - jmin(v * (T - tS), 0.025 * (T - tS) * (T - tS)) };
-        let aMax = s0 * T + jmin((v - s0) * T, 0.18 * v * 0.5 * self.AH(p) * T * T);
-        let rA = jmax(jmax(0.0, aMin - xa), xa - aMax);
-        let rL = jmax(0.0, xl - jmin(v * T, aL * T * T / 2.0));
-        let def = hypot(rA, rL) - R;
-        if def > 0.0 {
-            T + def / v
-        } else {
-            0.0
-        }
+        frenT_p(p, x, y, R, T, v)
     }
     /// JS ucusFormul'ün `arr(p, x, y, G)`: p'nin (x, y)'ye varış süresi.
     pub fn arr(&self, p: &Oyuncu, x: f64, y: f64, G: Option<&GecTab>) -> f64 {
