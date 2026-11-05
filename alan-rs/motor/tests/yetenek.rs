@@ -4,6 +4,7 @@ use serde_json::Value;
 fn h(v: &Value) -> f64 { f64::from_bits(u64::from_str_radix(v.as_str().unwrap(), 16).unwrap()) }
 fn ayni(a: f64, b: f64) -> bool { a.to_bits() == b.to_bits() }
 #[test]
+#[ignore = "JS karşılaştırması: vektör sina/yetenek-vektor.js ile üretilince `cargo test --release -- --ignored`; Rust tek doğru kaynak (MIMARI.md Aşama 6)"]
 fn js_ile_bit_bit_ayni() {
     let s = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../sina/yetenek-vektor.json")).unwrap();
     let v: Value = serde_json::from_str(&s).unwrap();

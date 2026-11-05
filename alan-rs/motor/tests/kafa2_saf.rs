@@ -2,8 +2,6 @@
 use alan_motor::kafa::gecici_dis1::Dis;
 use alan_motor::kafa::kafa2_bag as dis;
 use alan_motor::kafa::kafa2_baglam::*;
-use alan_motor::mat::{jmax, jmin};
-use alan_motor::oyuncu::TepkiS;
 use std::cell::RefCell;
 use alan_motor::kafa::{kafa2_dunya, kafa2_imkan, kafa2_karar, kafa2_tarti};
 use alan_motor::model::{JPEg, JPTl, Oyuncu};
@@ -114,6 +112,7 @@ fn vektor() -> Option<Value> {
 }
 
 #[test]
+#[ignore = "JS karşılaştırması: vektör sina/kafa2-vektor.js ile üretilince `cargo test --release -- --ignored`; Rust tek doğru kaynak (MIMARI.md Aşama 6)"]
 fn imk_egrileri() {
     let v = match vektor() {
         Some(v) => v,
@@ -134,6 +133,7 @@ fn imk_egrileri() {
 }
 
 #[test]
+#[ignore = "JS karşılaştırması: vektör sina/kafa2-vektor.js ile üretilince `cargo test --release -- --ignored`; Rust tek doğru kaynak (MIMARI.md Aşama 6)"]
 fn js_ile_bit_bit_ayni() {
     let v = match vektor() {
         Some(v) => v,

@@ -4,6 +4,7 @@
 //! `Dis`'e birleştirmede eklenen yöntemler (bekciFm, slotBase, S_prHat, tl, sprK) burada yerleşimin ve
 //! maçın gerçek işlevleriyle verilir. Vektörde maçın bütün durumu yok (sprint isteği, top uçuşu, kayıp
 //! zamanı…): sapmalar bu eksiklerden olabilir.
+#![allow(non_snake_case)]
 use alan_motor::kafa::gecici_dis1::KuralErisim as _;
 use alan_motor::kafa::kafa2_baglam::*;
 use alan_motor::kafa::{kafa2_dunya, kafa2_imkan, kafa2_karar, kafa2_zemin};
@@ -148,8 +149,7 @@ mod tdis {
     use alan_motor::kafa::kafa1_js::{nk, Nk, Op};
     use alan_motor::mac::kafa_dis::MacDis;
     use alan_motor::model::{JMShGs, Oyuncu};
-    use alan_motor::oyuncu::TepkiS;
-    pub struct TDis {
+        pub struct TDis {
         pub m: MacDis,
     }
     fn kisi(ps: &[Op]) -> Vec<Oyuncu> {

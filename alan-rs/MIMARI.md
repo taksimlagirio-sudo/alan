@@ -140,7 +140,7 @@ kodda çalıştığı için aşamalar küçük parçalarla ve sık `main`'e birl
 | 3 | Açık bağlam | Kafa iş parçacığına özel değişkenden değil, maçın kutusundan (`m.mac.kafa`) alınır; kafanın durumuna bağlı olmayan değerlendirmeler saf işlev; gizli bağlam (sprint niyeti, kafanın tiki) açık alan | **3a–d ✅**, **3e-1 ✅** `SF_NIYET` → `MacKural::niyet`, **3e-2 ✅** `D_TICK` → `Mc::dtik`, **3e-3 ✅** `KafaD` yalnız değişmez ayar, geçici bağlam `KafaBag`. Kalan 3e-4: bkz. 3.1 |
 | 4 | Tek dünya | `Dunya` + `Gorunum`; kimlik `Pid`; köprü çevirileri kalkar | `ow`, `op_dunya`, `dunya_kopya`, `Varlik` yok; `Arc::ptr_eq` yok |
 | 5 | Veri | `Oyuncu` → `OyuncuDurum` + `OyuncuGovde`; `KafaD` → `Ayar` + geçici durum; `JsDeger` ve gereksiz `Option`'lar | `Oyuncu` kopyası ~300 bayt; `model.rs` üretilmiş taslak değil |
-| 6 | JS bağı | **Karar (5 Kasım): Rust tek doğru kaynak.** JS ile bit bit aynılık kısıtı kalktı; doğrulama `sina/ayni.sh` ve maç istatistikleriyle. Kalan: JS karşılaştırma sınamalarının (`tests/kafa1.rs`, `kafa2_saf.rs` taklitleri, vektör üreticileri) temizliği, Rust adlandırması, sadeleştirme | Karar verildi; temizlik sürüyor |
+| 6 | JS bağı | **Karar (5 Kasım): Rust tek doğru kaynak.** JS ile bit bit aynılık kısıtı kalktı; doğrulama `sina/ayni.sh` ve maç istatistikleriyle | ✅ Temizlik: JS vektörüne bağlı 12 sınama gerekçeli `#[ignore]` (vektör üretilince `--ignored` ile çalışır; temiz klonda düşen ya da sessizce geçen sınama kalmadı); `tests/ayni.rs` `cargo test`'in kendisinde parmak izi başvurusunu denetler; `tests/kafa1.rs`'in JS taklit artıkları silindi; motor ve sınamalar uyarısız. Rust adlandırması ertelendi (bkz. Geri dönülecekler) |
 | 7 | Crate'ler | Katmanlar ayrı crate; döngüyü derleyici yasaklar | `cargo build` katman kuralını zorlar |
 
 ### 3.1 Aşama 3e ve 4'ün birlikte planı (5 Kasım)
@@ -189,6 +189,18 @@ Kodda üç ayrı "aynı mı" sorusu var; 4a'dan önce üçü de `ayni` adını t
 Sonuç: 4b/4c'de kimlik **sıra (`Pid`) + kaynak** (gerçek oyuncu / kopya / hayalet) olarak taşınır. A sınıfı sırayla
 karşılaştırılır, B sınıfı görünümün değişen listesinden okunur, C sınıfı (tek yer) kopyanın aslından ayrı olduğunu
 açıkça bilir, D sınıfı dünya sürümüyle anahtarlanır.
+
+### 3.3 Geri dönülecekler (5 Kasım)
+
+Bilerek ertelenen işler; her biri bir karar ya da uygun bir an bekliyor:
+
+| Konu | Neden ertelendi | Ne zaman |
+|---|---|---|
+| **`dolanma` davranışı** (3.2 C): hayali bir kopya oyuncu, dünyadaki kendi gerçek gövdesinin etrafından dolanmaya çalışıyor (2 maç × 2700 tikte ~4 milyon kez). JS'ten gelen davranış, büyük olasılıkla hata | Düzeltmek davranış değişikliği: iş bölümüne göre davranış oturumunun kararı (bayrak arkasında, ayrı commit, `sina/ayni.sh --yaz`) | Davranış oturumu ele aldığında; 4c-2'den önce |
+| **4c-2: tek dünya** (kafanın `Op` yerine görünüm `Varlik` üzerinde çalışması, çevirilerin kalkması) | Çeviriler artık sürenin ~%1,5'i; kafanın ~14 bin satırı `&[Op]` üzerinden alanlara doğrudan erişiyor (çok günlük iş, davranış oturumuyla sürekli çakışır); çeviriler arasında nesne paylaşmak `dolanma`'yı değiştirir | `dolanma` kararından sonra, kafa kodu durulduğunda |
+| **Rust adlandırması** (JS adları: `ALAN_SPR`, `decide0K`, `non_snake_case` izinleri) | Binlerce satıra dokunur; davranış oturumuyla sürekli çakışır; değeri okunurluk | Aşama 7 (crate'lere bölme) ile birlikte |
+| **Aşama 5: veri** (`Oyuncu` sıcak/soğuk, `JsDeger`, gereksiz `Option`'lar) | Kopya maliyeti %2,4'e indi; `model.rs` her katmanın ortak tipi, bölmesi 4c-2'ye bağlı | 4c-2 ile |
+| **3e-4: önbelleklerin ömürleri** | Anahtarların çoğu nesne/dünya kimliği; 4c-2'den sonra anlamlı | 4c-2'den sonra |
 
 Her aşamanın sonunda: `sina/ayni.sh` aynı, `cargo test` geçen sayısı düşmemiş, `alan-kos` hızı ölçülmüş
 (hız hedef değil, ama yapı değişikliği yavaşlatmamalı), wasm kareleri sitedekiyle aynı.
