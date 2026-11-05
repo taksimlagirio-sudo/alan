@@ -279,7 +279,7 @@ impl Kafa {
         let MD = TQ.min_d;
         let mut qs: Vec<Kov> = Vec::new();
         for q in src {
-            if q.team == h.team || q.noTouch || ayni_nesne(q, h) {
+            if q.team == h.team || q.noTouch || ayni_varlik(q, h) {
                 continue;
             }
             let d = hypot(q.x - h.x, q.y - h.y);
@@ -331,7 +331,7 @@ impl Kafa {
         let B = Q.body;
         let CR = TQ.min_d / 2.0 + 0.3;
         for q in src {
-            if q.team == h.team || q.noTouch || ayni_nesne(q, h) {
+            if q.team == h.team || q.noTouch || ayni_varlik(q, h) {
                 continue;
             }
             let d = hypot(q.x - h.x, q.y - h.y);

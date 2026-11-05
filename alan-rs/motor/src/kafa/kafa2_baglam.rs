@@ -111,7 +111,7 @@ pub fn bul_i(w: &[Op], id: f64, team: f64) -> Option<usize> {
     w.iter().position(|z| z.id == id && z.team == team)
 }
 /// Nesne kimliği (JS `a === b`); `Op`'lar için de geçerli (aynı paylaşımlı nesne, aynı adres).
-pub use super::kafa1_js::ayni_nesne;
+pub use super::kafa1_js::{ayni_nesne, ayni_varlik};
 
 /// Etkin taktik (JS `tacEff(m, t)`: `m.tac[t]` + maç durumu: `macK`, `macZ`, `kontra`, kp, yz).
 /// Kafa yalnız şu alanları okur; maç döngüsü kurar.

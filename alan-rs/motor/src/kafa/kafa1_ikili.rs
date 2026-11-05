@@ -238,10 +238,11 @@ impl Kafa {
             return 0.0;
         }
         let mut ek = 0.0;
-        let kimlik = dolanma_kimlik();
+        let (kimlik, hayalet) = (dolanma_kimlik(), dolanma_hayalet());
         // Varsayılan olarak varsayımsal kopya (p ya da skip src'deki aslının kopyası) kendi aslını engel saymaz.
-        // Hayaletlerin id'si NaN: NaN == NaN yanlış, onlara dokunmaz.
-        let ayni = |c: &Op, o: &Oyuncu| ayni_nesne(c, o) || (kimlik && c.team == o.team && c.id == o.id);
+        // Hayaletin kopyası ise (bugün) kendi hayaletini atlamaz: ALAN_DOLANMA_HAYALET ile atlar.
+        // Oyuncu kimliği burada takım + id ile: sahte oyuncular (`sahte(.., id)`) varlık kimliği taşımadan gerçek id taşır.
+        let ayni = |c: &Op, o: &Oyuncu| ayni_nesne(c, o) || (kimlik && ((c.team == o.team && c.id == o.id) || (hayalet && o.kim.hayalet_mi() && ayni_varlik(c, o))));
         for c in src {
             if ayni(c, p) || skip.map_or(false, |s| ayni(c, s)) || c.noTouch {
                 continue;
@@ -280,7 +281,7 @@ impl Kafa {
         if omuz == Some(true) {
             1.0 / (1.0 + exp(-(sS - jmax(3.0, jround(8.0 - 0.25 * (q.yet.y(mek::HAMLE) - 10.0)))) / 2.0))
         } else {
-            0.6 + 0.4 * if src.iter().any(|o| !ayni_nesne(o, q) && o.team == q.team && !o.bekci() && !o.noTouch && hypot(o.x - h.x, o.y - h.y) < 12.0) { 0.5 } else { 0.0 }
+            0.6 + 0.4 * if src.iter().any(|o| !ayni_varlik(o, q) && o.team == q.team && !o.bekci() && !o.noTouch && hypot(o.x - h.x, o.y - h.y) < 12.0) { 0.5 } else { 0.0 }
         }
     }
     /// Pres rolleri (decide.js:4022): src sırasıyla (rolsüz: None).
@@ -1229,7 +1230,7 @@ impl Kafa {
                     let uy = ny / nl;
                     let gq = self.dis.omuzK(q);
                     let vr = jmax(0.0, (z0(q.vx) + ux * IK.omuzV * gq - z0(h.vx)) * ux + (z0(q.vy) + uy * IK.omuzV * gq - z0(h.vy)) * uy);
-                    let mQ = self.dis.kutle(q, ayni_nesne(q, h));
+                    let mQ = self.dis.kutle(q, ayni_varlik(q, h));
                     let mH = self.dis.kutle(h, true);
                     let J = (1.0 + IK.esnek) * vr / (1.0 / mQ + 1.0 / mH);
                     let son = den - (J + 0.0015) * IK.dengeK / (mH * self.dis.direnc(h, true));
@@ -1402,7 +1403,7 @@ impl Kafa {
     pub fn commitThr(&self, q: &Oyuncu, h: &Oyuncu, src: &[Op]) -> f64 {
         let gx = ox_of(q.team);
         for o in src {
-            if !ayni_nesne(o, q) && o.team == q.team && !o.bekci() && (o.x - gx).abs() < (h.x - gx).abs() - 1.0 && hypot(o.x - h.x, o.y - h.y) < 14.0 {
+            if !ayni_varlik(o, q) && o.team == q.team && !o.bekci() && (o.x - gx).abs() < (h.x - gx).abs() - 1.0 && hypot(o.x - h.x, o.y - h.y) < 14.0 {
                 return DU.thrCover;
             }
         }
@@ -1477,4 +1478,13 @@ fn dolanma_kimlik() -> bool {
     }
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     *A.get_or_init(|| std::env::var("ALAN_DOLANMA_ESKI").is_err())
+}
+/// ALAN_DOLANMA_HAYALET: hayaletin kopyası da kendi hayaletini engel saymaz (dolanma düzeltmesinin hayaletlere
+/// uzanışı; varsayılan kapalı, tarayıcıda kapalı). MIMARI.md 3.4.
+fn dolanma_hayalet() -> bool {
+    if cfg!(target_family = "wasm") {
+        return false;
+    }
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *A.get_or_init(|| std::env::var("ALAN_DOLANMA_HAYALET").is_ok())
 }

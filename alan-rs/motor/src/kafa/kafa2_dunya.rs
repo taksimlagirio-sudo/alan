@@ -261,7 +261,7 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
                 let mut bq: Option<&Op> = None;
                 let mut bd = 1e9;
                 for q in &acik {
-                    if alinan.iter().any(|a| ayni_nesne(a, q)) {
+                    if alinan.iter().any(|a| ayni_varlik(a, q)) {
                         continue;
                     }
                     let d = uz(q.x, q.y, f.x, f.y);

@@ -46,9 +46,16 @@ pub fn yao(a: Option<f64>, b: f64) -> f64 {
 pub fn ayni_nesne(a: &Oyuncu, b: &Oyuncu) -> bool {
     std::ptr::eq(a, b)
 }
-/// `src.indexOf(h)` (kimlikle).
+/// Varlık kimliği (MIMARI.md 3.2, 4c-2): aynı nesne ya da aynı varlık (`Oyuncu::kim`: gerçek oyuncu ve
+/// kopyaları bir, her hayalet ayrı). Kimliği olmayan (sahte/boş) oyuncu yalnız kendisiyle aynı. Kafanın
+/// "dünyadaki kendisi mi" soruları bununla: dünyanın gösterimine (kopya mı, paylaşımlı mı) bağlı değil.
+#[inline(always)]
+pub fn ayni_varlik(a: &Oyuncu, b: &Oyuncu) -> bool {
+    std::ptr::eq(a, b) || (a.kim.var() && a.kim == b.kim)
+}
+/// `src.indexOf(h)` (varlık kimliğiyle).
 pub fn sira(src: &[Op], h: &Oyuncu) -> Option<usize> {
-    src.iter().position(|p| ayni_nesne(p, h))
+    src.iter().position(|p| ayni_varlik(p, h))
 }
 /// `src.find(p => p.id === q.id && p.team === q.team)`.
 pub fn bul<'a>(src: &'a [Op], q: &Oyuncu) -> Option<&'a Oyuncu> {
