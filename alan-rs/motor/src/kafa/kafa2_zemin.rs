@@ -664,6 +664,28 @@ pub fn sahiplikKur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>
         FF[0].N = a;
         FF[1].N = b;
     }
+    // ALAN_SAH_IZ=x,y: o hücrenin şut değeri, son değeri ve en iyi yolu (takım `team` için)
+    if crate::iz_acik() {
+        if let Ok(v) = std::env::var("ALAN_SAH_IZ") {
+            let p: Vec<f64> = v.split(',').filter_map(|z| z.parse().ok()).collect();
+            if p.len() == 2 {
+                let t = team as usize;
+                let (i, j) = ((p[0] / KG).round() as usize, (p[1] / KG).round() as usize);
+                let c = i * NY + j;
+                let f = &FF[t];
+                let o = &FF[1 - t];
+                let kac = Sahiplik::oku_n(&o.N, NX, NY, f.gxo, GCY);
+                let mut ys: Vec<(f64, String)> = vec![(if f.S[c] > 0.0 { f.S[c] - (1.0 - f.S[c]) * kac } else { f64::NEG_INFINITY }, format!("şut S {:.3}", f.S[c]))];
+                for e in &f.H[c] {
+                    let a = Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y);
+                    let v = e.k * g * a - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly);
+                    ys.push((v, format!("→ ({:.0},{:.0}) k {:.3} hedefN {:.3} hedefS {:.3}", e.x, e.y, e.k, a, f.S[((e.x / KG).round() as usize).min(NX - 1) * NY + ((e.y / KG).round() as usize).min(NY - 1)])));
+                }
+                ys.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
+                eprintln!("SAH {} takım {} hücre ({:.0},{:.0}) N {:.3} S {:.3} | {}", k.tick(), team, i as f64 * KG, j as f64 * KG, f.N[c], f.S[c], ys.iter().take(4).map(|y| format!("{:.3}: {}", y.0, y.1)).collect::<Vec<_>>().join(" ; "));
+            }
+        }
+    }
     let n1 = FF.pop().unwrap().N;
     let n0 = FF.pop().unwrap().N;
     Sahiplik { N: [n0, n1], NX, NY }

@@ -723,7 +723,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         let S = if r.z.is_some() { r.S } else { 0.0 };
         let p = if S > 0.0 { r.u / S } else { 0.0 };
         if crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
-            eprintln!("  hu {} u={:.6} S={:.6} ta={:.3} z={:?} kar={:?}", biz[a].p.govde.name, r.u, S, r.ta, r.z.map(|z| (zs[z].x, zs[z].y)), atanan[a].and_then(|i| if i >= 0 { Some(rak[i as usize].p.govde.name.clone()) } else { None }));
+            eprintln!("  hu B ({:.1},{:.1}) ofs {:.0} {} u={:.6} S={:.6} ta={:.3} z={:?} kar={:?}", B.x, B.y, k.k2.IMK_OFS, biz[a].p.govde.name, r.u, S, r.ta, r.z.map(|z| (zs[z].x, zs[z].y)), atanan[a].and_then(|i| if i >= 0 { Some(rak[i as usize].p.govde.name.clone()) } else { None }));
         }
         v = jmax(v, p * S);
     }

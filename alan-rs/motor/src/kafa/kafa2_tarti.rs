@@ -175,13 +175,20 @@ pub fn zeminH(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Op
         js_sayi(jround(veyo(T, 0.0) / PNC_DILIM))
     );
     if let Some(v) = M.borrow().get(&key) {
+        if crate::iz_acik() && kq.map_or(false, |q| std::env::var("ALAN_SURD_IZ").ok().as_deref() == Some(&*q.govde.name)) {
+            eprintln!("ZEMIN ({:.1},{:.1}) T {:.0} önbellek {:.3} anahtar {}", x, y, veyo(T, 0.0), v, key);
+        }
         return *v;
     }
     let o0 = k.k2.IMK_OFS;
     k.k2.IMK_OFS = veyo(T, 0.0);
     let v = imkan(k, w, team, nk(x, y), kq, ch);
     k.k2.IMK_OFS = o0;
-    let v = jmax(v, zeminS(k, w, team, x, y, ch, kq));
+    let zs = zeminS(k, w, team, x, y, ch, kq);
+    if crate::iz_acik() && kq.map_or(false, |q| std::env::var("ALAN_SURD_IZ").ok().as_deref() == Some(&*q.govde.name)) {
+        eprintln!("ZEMIN ({:.1},{:.1}) T {:.0} imkan {:.3} zeminS {:.3}", x, y, veyo(T, 0.0), v, zs);
+    }
+    let v = jmax(v, zs);
     M.borrow_mut().insert(key, v);
     v
 }
