@@ -17,7 +17,7 @@ fn main() {
     let v: serde_json::Value = serde_json::from_str(&metin).expect("kayıt JSON değil");
     // anlar/ dosyası: kurulum içinde
     let v = match v.get("kurulum") { Some(k) if v.get("yeni").is_none() => k.clone(), _ => v };
-    let tik: u32 = a[2].parse().expect("tik");
+    let tik: u32 = a[2].split(',').next().and_then(|x| x.parse().ok()).expect("tik");
     let kip = a.get(3).map(|s| s.as_str()).unwrap_or("ozet");
     // paralel kafa (ALAN_ISCI=n): n-1 yardımcı iş parçacığı aynı maçı oynar, dalgaları bölüşür
     let n_isci: usize = std::env::var("ALAN_ISCI").ok().and_then(|s| s.parse().ok()).unwrap_or(1);
@@ -52,6 +52,57 @@ fn main() {
     let mut son_karar: Option<f64> = None;
     if kip == "durum" {
         writeln!(out, "{}", durum(&mt.m)).unwrap();
+    }
+    // an: <kayıt> <t1,t2,…> an <önek> [süre]: maç bugünkü kafayla oynar; her ti'de kopya maç iki kez oynatılır
+    // (bugünkü kafa / tutmayı gerçeğe yakın kestiren kafa), kareler <önek>-<ti>-{eski,yeni}.json (kare kipinin biçimi)
+    if kip == "an" {
+        let tikler: Vec<u32> = a[2].split(',').filter_map(|x| x.parse().ok()).collect();
+        let onek = a.get(4).expect("an <önek>").clone();
+        let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(120);
+        let son = *tikler.iter().max().unwrap_or(&0);
+        let yaz = |m: &alan_motor::model::Mac, kareler: &Vec<String>, olaylar: &Vec<String>, isler: &alan_motor::oyun::IsSozluk, yol: &str| {
+            let ad: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.name).unwrap()).collect();
+            let tk: Vec<String> = m.ps.iter().map(|p| format!("{}", p.team)).collect();
+            let rl: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.role).unwrap()).collect();
+            let is: Vec<String> = isler.yazilar.iter().map(|j| serde_json::to_string(j).unwrap()).collect();
+            let j = format!("{{\"motor\":\"Rust motoru\",\"ad\":[{}],\"takim\":[{}],\"rol\":[{}],\"isler\":[{}],\"olay\":[{}],\"k\":[{}]}}", ad.join(","), tk.join(","), rl.join(","), is.join(","), olaylar.join(","), kareler.join(","));
+            std::fs::write(yol, j).expect("yazılamadı");
+        };
+        while mt.tick() < son && !mt.bitti() {
+            let t = mt.tick() + 1;
+            if tikler.contains(&t) {
+                let mut once = mt.m.clone();
+                once.mac.kafa = Default::default();
+                for (kip2, acik) in [("eski", false), ("yeni", true)] {
+                    alan_motor::kafa::kafa1_ikili::KP_KAL_ZORLA.store(acik, std::sync::atomic::Ordering::Relaxed);
+                    let mut m2 = Motor::yeni(once.clone());
+                    let mut isler2 = alan_motor::oyun::IsSozluk::default();
+                    let (mut kr, mut ol) = (Vec::new(), Vec::new());
+                    let mut osay = m2.m.ev_n;
+                    for _ in 0..sure {
+                        if m2.bitti() { break; }
+                        m2.adim();
+                        let k = m2.kare(&mut isler2);
+                        let mut s = format!("[{},{},{},{},{},{}", k.tick, k.sahip, r2(k.top_x), r2(k.top_y), k.skor[0], k.skor[1]);
+                        for o in &k.oyuncular {
+                            s.push_str(&format!(",{},{},{},{}", r2(o.x), r2(o.y), o.is, r2(o.en)));
+                        }
+                        s.push(']');
+                        kr.push(s);
+                        let m = &m2.m;
+                        let yeni = ((m.ev_n - osay) as usize).min(m.events.len());
+                        for e in m.events.iter().take(yeni).rev() {
+                            ol.push(format!("[{},{},{}]", m.tick, e.team, serde_json::to_string(&e.text).unwrap()));
+                        }
+                        osay = m.ev_n;
+                    }
+                    yaz(&m2.m, &kr, &ol, &isler2, &format!("{}-{}-{}.json", onek, t, kip2));
+                }
+                alan_motor::kafa::kafa1_ikili::KP_KAL_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+            }
+            mt.adim();
+        }
+        return;
     }
     while mt.tick() < tik && !mt.bitti() {
         // ölçüm (tutma): kaleye 35 br'den yakın her yeni taşıyıcı kararında, kararın sürme seçenekleri kopya maçta

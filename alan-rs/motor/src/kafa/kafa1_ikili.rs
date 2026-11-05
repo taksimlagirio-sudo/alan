@@ -1544,9 +1544,12 @@ fn kes_send() -> Option<f64> {
 /// Deney (varsayılan kapalı, ALAN_KP_KAL_IZ): sürmenin tutma kestirimi ölçülen gerçekle eşlenir.
 /// alan-kos tutma (kilitli, 4 maç, kaleye 35 br içi): kestirim 0,03 → gerçek 0,74; 0,30 → 0,75; 0,53 → 0,90;
 /// 0,69 → 0,83; 1,00 → 0,97. Doğrusal uydurma: P' = 0,74 + 0,23 P.
+/// alan-kos an: deneyi maçın ortasında açmak için (yalnız ölçüm aracı yazar)
+pub static KP_KAL_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn kp_kal(p: f64) -> f64 {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    if *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_KP_KAL_IZ").is_ok()) && p.is_finite() {
+    let acik = KP_KAL_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_KP_KAL_IZ").is_ok());
+    if acik && p.is_finite() {
         0.74 + 0.23 * jmax(0.0, jmin(1.0, p))
     } else {
         p
