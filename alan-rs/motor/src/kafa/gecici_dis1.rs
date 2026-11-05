@@ -11,33 +11,14 @@
 //! Her yöntemin başında JS kaynağı (dosya:satır, sade kaynakta) yazılı.
 #![allow(non_snake_case, unused_variables)]
 
-use std::sync::Arc;
 use crate::temas::Kural as _;
 use super::kafa1_baglam::Kafa;
 use super::kafa1_js::{Nk, Op};
 use crate::model::{JMShGs, Oyuncu};
 use crate::oyuncu::TepkiS;
 
-/// Yerleşimin geçiş tablosu (shape.js gecTabV dönüşü): oyuncunun dönüp hızlanma gecikmesi.
-#[derive(Clone, Debug, Default)]
-pub struct GecTab {
-    pub vx: f64,
-    pub vy: f64,
-    pub s0: f64,
-    pub x: f64,
-    pub y: f64,
-    /// 9 yön (cos = -1 … 1) için gecikme
-    pub t: Vec<f64>,
-    /// 9 yön için yol eğrisi (gecK'nın girdisi)
-    pub Y: Vec<std::sync::Arc<GecY>>,
-    pub vm: f64,
-}
-/// shape.js gecYk dönüşü: `g` gecikme, `m` 80 tiklik en çok yol (yok: AlanMatch.ivme yok).
-#[derive(Clone, Debug, Default)]
-pub struct GecY {
-    pub g: f64,
-    pub m: Option<Vec<f64>>,
-}
+/// Geçiş tablosu: kuralın kendisi (kafanın ayrı biçimi ve çevirisi kalktı; MIMARI.md 4c-2c).
+pub use crate::kural::gec::{GecTab, GecY};
 
 /// Yerleşim parametreleri (shape.js `S`): kafanın okuduğu alanlar.
 #[derive(Clone, Debug)]
@@ -335,35 +316,11 @@ pub trait KuralErisim: Dis {
     }
     /// shape.js:152 gecTab(o); `refsiz`: JS'te `ref: null`/`ref = undefined` verilmiş kopya (kendi yeri)
     fn gecTab(&self, o: &Oyuncu, _refsiz: bool) -> Option<GecTab> {
-        Some(gecTab_k(&crate::kural::gec::gecTab(o, &self.kural())))
+        Some(crate::kural::gec::gecTab(o, &self.kural()))
     }
     /// shape.js:183 gecOf(G, x, y, s)
     fn gecOf(&self, G: &GecTab, x: f64, y: f64, s: Option<f64>) -> f64 {
-        // crate::kural::gec::gecOf ile aynı; yalnız gereken yönün tablosu okunur (9 yön kopyalanmaz)
-        let dx = x - G.x;
-        let dy = y - G.y;
-        let L = crate::mat::hypot(dx, dy);
-        if L < 0.5 {
-            return 0.0;
-        }
-        let c = if G.s0 < 0.001 { 1.0 } else { (G.vx * dx + G.vy * dy) / (G.s0 * L) };
-        let kk = (crate::mat::jround(4.0 * crate::mat::jmax(-1.0, crate::mat::jmin(1.0, c))) + 4.0) as usize;
-        match s {
-            Some(s) => {
-                let Y = &G.Y[kk];
-                if let Some(a) = Y.m.as_ref().and_then(|v| v.get(..81)).and_then(|v| <&[f64; 81]>::try_from(v).ok()) {
-                    return crate::kural::gec::gecK_m(Y.g, a, s, G.vm);
-                }
-                let mut m = [0.0; 81];
-                if let Some(v) = &Y.m {
-                    for (i, x) in v.iter().take(81).enumerate() {
-                        m[i] = *x;
-                    }
-                }
-                crate::kural::gec::gecK_m(Y.g, &m, s, G.vm)
-            }
-            None => G.t[kk],
-        }
+        crate::kural::gec::gecOf(G, x, y, s)
     }
     /// shape.js:145 gec(o, x, y, s) (yoksa None)
     fn gec(&self, o: &Oyuncu, x: f64, y: f64, s: Option<f64>) -> Option<f64> {
@@ -412,33 +369,6 @@ pub trait KuralErisim: Dis {
 }
 impl<T: Dis + ?Sized> KuralErisim for T {}
 
-fn gecY_k(y: &crate::kural::gec::GecY) -> Arc<GecY> {
-    Arc::new(GecY { g: y.g, m: Some(y.m.to_vec()) })
-}
-thread_local! {
-    /// Yerleşimin gecikme eğrilerinin (önbellekte, değişmez) kafa biçimi: bir kez dönüştürülür.
-    /// Anahtar eğrinin Arc adresi; yerleşimin Arc'ı da tutulur ki adres başka eğriye geçmesin.
-    static GECY_K: std::cell::RefCell<crate::HizliMap<usize, (Arc<crate::kural::gec::GecY>, Arc<GecY>)>> = std::cell::RefCell::new(Default::default());
-}
-fn gecY_k_arc(y: &Arc<crate::kural::gec::GecY>) -> Arc<GecY> {
-    let k = Arc::as_ptr(y) as usize;
-    GECY_K.with(|c| {
-        if let Some((_, d)) = c.borrow().get(&k) {
-            return d.clone();
-        }
-        let d = gecY_k(y);
-        let mut c = c.borrow_mut();
-        // sınırsız büyüyordu (tarayıcıda bellek kaçağının bir parçası); ayna saf dönüşüm, temizlenince aynısı kurulur
-        if c.len() >= 20_000 {
-            c.clear();
-        }
-        c.insert(k, (y.clone(), d.clone()));
-        d
-    })
-}
-fn gecTab_k(g: &crate::kural::gec::GecTab) -> GecTab {
-    GecTab { vx: g.vx, vy: g.vy, s0: g.s0, x: g.x, y: g.y, t: g.tb.0.to_vec(), Y: g.tb.1.iter().map(gecY_k_arc).collect(), vm: g.vm }
-}
 
 
 // ======================================================================
