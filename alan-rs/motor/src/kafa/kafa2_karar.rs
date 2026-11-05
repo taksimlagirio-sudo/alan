@@ -288,7 +288,19 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
         let Ts = jmax(6.0, dis::surSure(k, &h, hypot(to.x - h.x, to.y - h.y), o.dir, o.spr));
         // JS keepP(o.spr ? sprKop(h) : h, …): sprintsizde taşıyıcının kendisi (dünyadaki nesne; dolanma onu kimliğiyle atlar)
         let hk: Option<Oyuncu> = if o.spr.map(dogru).unwrap_or(false) { Some(dis::sprKop(k, &h)) } else { None };
+        let kpq = crate::iz_acik() && std::env::var("ALAN_KPQ_IZ").is_ok();
+        if kpq {
+            crate::kafa::kafa1_ikili::KP_KAYIT.with(|c| *c.borrow_mut() = Some(Vec::new()));
+        }
         let P = dis::keepP(k, hk.as_ref().unwrap_or(&*h), &src, o.dir, Ts);
+        if kpq {
+            let v = crate::kafa::kafa1_ikili::KP_KAYIT.with(|c| c.borrow_mut().take()).unwrap_or_default();
+            let gx = if h.team == 0.0 { GW } else { 0.0 };
+            if hypot(gx - h.x, GCY - h.y) < 35.0 {
+                let q: Vec<String> = v.iter().map(|e| format!("[{:?},{:.2},{:.1},{:.5},{}]", e.0, e.1, e.2, e.3, e.4)).collect();
+                eprintln!("KPQ [{},{:?},{:.2},{:.2},[{:.2},{:.2}],{},{:.1},{:.4},[{}]]", k.tick(), &*h.name, h.x, h.y, to.x, to.y, o.spr.map_or(false, dogru), Ts, P, q.join(","));
+            }
+        }
         let pr = k.keepP_son.get();
         let (A, A_to) = {
             let L = hypot(to.x - h.x, to.y - h.y);

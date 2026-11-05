@@ -11,6 +11,13 @@ use super::kafa1_param::{DU, MIND};
 use super::kafa1_tehlike::{ox_of, GH8, GW8};
 use crate::core_sabit::{Q, TQ};
 use crate::donus::{flick_miss, flick_w, omega, shielded};
+macro_rules! kp_yaz {
+    ($dis:expr, $e:expr) => {
+        if $dis {
+            KP_KAYIT.with(|c| if let Some(v) = c.borrow_mut().as_mut() { v.push($e); });
+        }
+    };
+}
 use crate::mat::{acos, atan2, cos, exp, hypot, jmax, jmin, jround, jsign, pow, sin, PI};
 use crate::model::{JMShGs, Oyuncu};
 use crate::saha::{CY as GCY, KR, W as GW};
@@ -231,8 +238,12 @@ impl Kafa {
             return 0.0;
         }
         let mut ek = 0.0;
+        let kimlik = dolanma_kimlik();
+        // Bayrak açıkken varsayımsal kopya (p ya da skip src'deki aslının kopyası) kendi aslını engel saymaz.
+        // Hayaletlerin id'si NaN: NaN == NaN yanlış, onlara dokunmaz.
+        let ayni = |c: &Op, o: &Oyuncu| ayni_nesne(c, o) || (kimlik && c.team == o.team && c.id == o.id);
         for c in src {
-            if ayni_nesne(c, p) || skip.map_or(false, |s| ayni_nesne(c, s)) || c.noTouch {
+            if ayni(c, p) || skip.map_or(false, |s| ayni(c, s)) || c.noTouch {
                 continue;
             }
             let u = ((c.x - p.x) * ax + (c.y - p.y) * ay) / (L * L);
@@ -767,7 +778,11 @@ impl Kafa {
                         let yet = if hm.omuz { g < MD + 0.45 } else { hypot(s.qv.x - s.hv.x - cos(ca) * B, s.qv.y - s.hv.y - sin(ca) * B) < Q.reach + 1.0 };
                         if yet {
                             let d = self.duelP_k(&s.qv, &s.hv, c.src, Some(hm.omuz));
-                            s.keep *= 1.0 - hm.pc * d.P * self.kWof(Some(hm.omuz), h, c.q, c.src, true);
+                            let dus = hm.pc * d.P * self.kWof(Some(hm.omuz), h, c.q, c.src, true);
+                            s.keep *= 1.0 - dus;
+                            if KP_DER.with(|c| c.get()) == 1 {
+                                KP_DENEME.with(|c| { let (n, a, b) = c.get(); c.set((n + 1, a + d.P, b + dus)); });
+                            }
                             if hm.omuz {
                                 let den = s.hv.den.unwrap();
                                 s.hv.den = Some(den - hm.pc * jmax(0.0, den - d.son));
@@ -835,6 +850,10 @@ impl Kafa {
     /// Topu T tik tutabilme olasılığı (decide.js:4429); `dir`: sürüş yönü (yok: yerinde tutar).
     /// `keepP_son`'a ilk kesişmeye dek ilerleyişi yazar.
     pub fn keepP(&mut self, h: &Oyuncu, src: &[Op], dir: Option<Nk>, T: f64) -> f64 {
+        let (_kpd, kp_dis) = KpDer::gir();
+        if kp_dis {
+            KP_DENEME.with(|c| c.set((0, 0.0, 0.0)));
+        }
         self.keepP_son.set(f64::INFINITY);
         if h.bekci() {
             if let Some(k) = h._korT {
@@ -890,6 +909,7 @@ impl Kafa {
             let KIZ = crate::iz_acik() && dir.map_or(false, |di| std::env::var("ALAN_KIZ").ok().map_or(false, |v| { let (a, b) = v.split_once(":").unwrap_or(("", "0")); &*h.name == a && (di.x - b.parse::<f64>().unwrap_or(9.0)).abs() < 1e-4 })) && std::env::var("ALAN_C3_IZ").ok().map_or(false, |x| x == format!("{}", self.tick()));
             if KIZ && &*q.name == "Hendek" { let di = dir.unwrap(); eprintln!("   RT hT {} donS {} qT {} yol {} vO {} away {} d {}", hT, self.donS(h, di.x, di.y), qT, yol, vO, away, d); }
             if KIZ { eprintln!("   KQ {} reach {} T {} keep0 {} e {:?} x {} {}", q.name, reachT, T, keep, self.dis.algi_e(q), q.x, q.y); }
+            kp_yaz!(kp_dis, (q.name.to_string(), d, reachT, keep, if q.bekci() { 9.0 } else { 0.0 }));
             if reachT > T {
                 continue;
             }
@@ -938,7 +958,8 @@ impl Kafa {
                         }
                         if KIZ { eprintln!("   KK4 {} keep {} son {}", q.name, keep, s4 / 4.0); }
                     } else {
-                        keep *= self.kesisK(h, q, di, T, src, d, rl);
+                        let kk = self.kesisK(h, q, di, T, src, d, rl);
+                        keep *= kk;
                         if self.kesisK_son.get() < ilS {
                             ilS = self.kesisK_son.get();
                         }
@@ -1081,6 +1102,11 @@ impl Kafa {
             }
         }
         self.keepP_son.set(ilS);
+        kp_yaz!(kp_dis, ("=".into(), 0.0, 0.0, keep, 0.0));
+        if kp_dis {
+            let (n, a, b) = KP_DENEME.with(|c| c.get());
+            kp_yaz!(kp_dis, ("#".into(), n as f64, a, b, 0.0));
+        }
         keep
     }
 
@@ -1385,6 +1411,26 @@ impl Kafa {
 }
 
 thread_local! { static KS_IZ: std::cell::Cell<bool> = const { std::cell::Cell::new(false) }; }
+thread_local! {
+    /// ölçüm (ALAN_KPQ_IZ): keepP'de her rakibin başında (ad, uzaklık, yetişme, o anki tutma, 9 = Bekçi); sonda ("=", …, tutma)
+    pub static KP_KAYIT: std::cell::RefCell<Option<Vec<(String, f64, f64, f64, f64)>>> = const { std::cell::RefCell::new(None) };
+    /// keepP'nin iç içe derinliği: kayıt yalnız en dıştaki çağrıdan
+    static KP_DER: std::cell::Cell<u32> = const { std::cell::Cell::new(0) };
+    /// en dıştaki keepP'de kapma girişimleri: (sayı, d.P toplamı, düşülen olasılık toplamı)
+    static KP_DENEME: std::cell::Cell<(u32, f64, f64)> = const { std::cell::Cell::new((0, 0.0, 0.0)) };
+}
+struct KpDer;
+impl KpDer {
+    fn gir() -> (KpDer, bool) {
+        let d = KP_DER.with(|c| { let d = c.get(); c.set(d + 1); d });
+        (KpDer, d == 0)
+    }
+}
+impl Drop for KpDer {
+    fn drop(&mut self) {
+        KP_DER.with(|c| c.set(c.get() - 1));
+    }
+}
 pub fn ks_iz() -> bool { KS_IZ.with(|f| f.get()) }
 
 /// coreSide (decide.js): kafa durumuna bağlı değil, yerleşim de doğrudan çağırır.
@@ -1420,4 +1466,14 @@ pub fn topK_p(h: &Oyuncu, dk: Option<crate::kafa::gecici_dis1::Dokunus>) -> f64 
         }
         None => jmin(1.0, 0.68 + 0.02 * s),
     }
+}
+
+/// MIMARI.md 3.3 "dolanma": ALAN_DOLANMA_KIMLIK açıkken dolanma, kopyanın kendi aslını da atlar
+/// (nesne kimliği yerine oyuncu kimliği). Varsayılan kapalı; tarayıcıda hep kapalı.
+fn dolanma_kimlik() -> bool {
+    if cfg!(target_family = "wasm") {
+        return false;
+    }
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *A.get_or_init(|| std::env::var("ALAN_DOLANMA_KIMLIK").is_ok())
 }

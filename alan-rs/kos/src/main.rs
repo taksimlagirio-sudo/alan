@@ -49,17 +49,78 @@ fn main() {
     let out = std::io::stdout();
     let mut out = std::io::BufWriter::new(out.lock());
     let mut olay_say = mt.m.ev_n;
+    let mut son_karar: Option<f64> = None;
     if kip == "durum" {
         writeln!(out, "{}", durum(&mt.m)).unwrap();
     }
     while mt.tick() < tik && !mt.bitti() {
+        // ölçüm (tutma): kaleye 35 br'den yakın her yeni taşıyıcı kararında, kararın sürme seçenekleri kopya maçta
+        // zorlanıp oynatılır; kafanın tutma kestirimi gerçekleşenle bir satırda (tik, ad, mesafe, sıra, n, P, v,
+        // kafa seçer miydi, hedef, sonuç, süre). Sonuç: "kayip" (top rakipte), "birakti" (pas/şut), "tuttu" (süre bitti).
+        let once = if kip == "tutma" { let mut c = mt.m.clone(); c.mac.kafa = Default::default(); Some(c) } else { None };
+        let t_once = mt.m._sec.as_ref().map(|s| s.t);
         mt.adim();
+        if once.is_some() && std::env::var("ALAN_TUTMA_PK").is_ok() { eprintln!("PK {}", alan_motor::parmak::parmak_izi(&mt.m)); }
+        if let Some(once) = once {
+            let m = &mt.m;
+            let t_sec = m._sec.as_ref().map(|s| s.t);
+            if t_sec.is_some() && t_sec != t_once {
+                let h = m._sec.as_ref().unwrap().h;
+                let hp = &m.ps[h];
+                let gx = if hp.team == 0.0 { 120.0 } else { 0.0 };
+                let dk = ((gx - hp.x) * (gx - hp.x) + (30.0 - hp.y) * (30.0 - hp.y)).sqrt();
+                if dk < 35.0 && !hp.bekci() {
+                    for sira in 0..4 {
+                        let mut c = once.clone();
+                        c.mac.zorla = Some(sira);
+                        alan_motor::mac::step(&mut c);
+                        let z = match c.mac.zorla_sonuc.take() { Some(z) => z, None => break };
+                        let (hx, hy) = (c.ps[h].x, c.ps[h].y);
+                        let T = (((z.to.0 - hx).powi(2) + (z.to.1 - hy).powi(2)).sqrt() / 0.25).round() + 6.0;
+                        c.decT = T;
+                        let t0 = c.tick;
+                        let mut sonuc = "tuttu";
+                        let mut j = 0.0;
+                        // ALAN_TUTMA_KILIT: taşıyıcı sürme boyunca yeniden karar vermez (kafanın keepP tanımına en yakın ölçü)
+                        let kilit = std::env::var("ALAN_TUTMA_KILIT").is_ok();
+                        while j < T && !c.over {
+                            if kilit && c.holder == Some(h) {
+                                c.decT = T - j + 1.0;
+                            }
+                            alan_motor::mac::step(&mut c);
+                            j += 1.0;
+                            match c.holder {
+                                Some(q) if c.ps[q].team != hp.team => { sonuc = "kayip"; break; }
+                                Some(q) if q != h => { sonuc = "birakti"; break; }
+                                None if c.fl.as_ref().map_or(false, |f| f.t0 >= t0 && !f.kind.is_empty()) => { sonuc = "birakti"; break; }
+                                _ => {}
+                            }
+                        }
+                        writeln!(out, "[{},{},{:.2},{},{},{},{},{},[{},{}],{:?},{}]", m.tick, serde_json::to_string(&*hp.name).unwrap(), dk, sira, z.n, if z.P.is_finite() { format!("{}", z.P) } else { "null".into() }, z.v, z.secilen, z.to.0, z.to.1, sonuc, j).unwrap();
+                    }
+                }
+            }
+        }
         let s = mt.iz();
         if kip == "iz" {
             writeln!(out, "{}", s.json()).unwrap();
         }
         if kip == "parmak" {
             writeln!(out, "{} {:016x}", mt.m.tick, alan_motor::parmak::parmak_izi(&mt.m)).unwrap();
+        }
+        if kip == "kararlar" {
+            // her yeni taşıyıcı kararı bir satır: tik, ad, takım, yer, seçilen başta ilk 4 seçenek (tür, alıcı, değer, hedef)
+            let m = &mt.m;
+            let t = m._sec.as_ref().map(|s| s.t);
+            if t.is_some() && t != son_karar {
+                son_karar = t;
+                if let Some(d) = &m.lastDec {
+                    let o: Vec<String> = d.opts.iter().map(|o| format!("[{},{},{},{}]", serde_json::to_string(&o.kind).unwrap(), serde_json::to_string(&o.q).unwrap(), if o.v.is_finite() { format!("{}", o.v) } else { "null".into() }, o.to.as_ref().map_or("null".to_string(), |t| format!("[{},{}]", t.x, t.y)))).collect();
+                    // bütün seçenekler (m._sec.o): tür, hedef, değer
+                    let hep: Vec<String> = m._sec.as_ref().map_or(vec![], |s| s.o.iter().map(|e| format!("[{},{},{},{}]", serde_json::to_string(&e.k).unwrap(), e.x, e.y, if e.v.is_finite() { format!("{}", e.v) } else { "null".into() })).collect());
+                    writeln!(out, "[{},{},{},{},{},[{}],[{}]]", m.tick, serde_json::to_string(&d.name).unwrap(), d.team, d.x, d.y, o.join(","), hep.join(",")).unwrap();
+                }
+            }
         }
         if kip == "durum" {
             let m = &mt.m;
