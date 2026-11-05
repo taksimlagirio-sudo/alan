@@ -39,7 +39,6 @@ use super::varlik::{KayipF, Mc, Varlik};
 
 // ---- AlanDecide ----
 use crate::kafa::kafa1_js::{nk, Op};
-use crate::mac::kafa_dis::kafa_ile;
 /// Yerleşimin dünyasını kafanın dünyasına çevir (varlık: konum/hız kendinde, beden oyuncudan).
 fn ow_kur(w: &[Varlik], oy: &[Oyuncu]) -> Vec<Op> {
     w.iter()
