@@ -8,7 +8,10 @@ use super::kafa2_bag as dis;
 use super::kafa2_bag::{ALAN_HZ};
 use super::kafa2_baglam::*;
 use super::kafa2_dunya::{bekYerW, geriCekil, predictWorld};
-use super::kafa2_imkan::{imkSg, imkTau, imkUzak, imkan, sutS, sutVakit, SUR_BOS, SUR_PARCA};
+use super::kafa2_imkan::{imkSg, imkTau, imkUzak, imkan, sutS, sutTab, sutVakit, SUR_BOS, SUR_PARCA};
+fn sutTab_k(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: Option<&Oyuncu>) -> f64 {
+    sutTab(k, w, team, x, y, ch, sh, None, None, None, None)
+}
 use super::kafa2_zemin::{gam, zeminS, KayipF};
 use crate::mat::{cos, exp, hypot, jmax, jmin, jround};
 use crate::model::{Dok, Oyuncu, Secenek};
@@ -49,7 +52,57 @@ pub fn tekSutDeger(k: &mut Kafa, cx: &mut Cx, A: Nokta, B: Nokta, tv: f64, ta: f
             wT[bi] = kxy(&b0, bp.x, bp.y);
         }
     }
-    sutS(k, &wT, cx.team, B.x, B.y, cx.ch, Some(rq), Some(T0)) * exp(-T0 / k.k2.IMK_INAN_T)
+    // Kuyu kuralı: varış anında kuyuda olamayacak savunmacı (süresini doldurmuş) kuyunun kenarına
+    {
+        let kr = k.dis.kural();
+        let gx = if t0(cx.team) { GW } else { 0.0 };
+        for i in 0..wT.len() {
+            let o = &wT[i];
+            if o.team == cx.team || bekci(o) || o.noTouch {
+                continue;
+            }
+            let Some(o0) = cx.src.iter().find(|z| z.team == o.team && z.id == o.id) else { continue };
+            if !crate::temas::kuyu_girer(o0, o.x, o.y, T0, false, &kr) {
+                let (dx, dy) = (o.x - gx, o.y - GCY);
+                let L = jmax(1e-6, hypot(dx, dy));
+                let r = crate::core_sabit::Q.kuyu_a + 0.5;
+                wT[i] = kxy(o, gx + dx / L * r, GCY + dy / L * r);
+            }
+        }
+    }
+    if !yol_olabilir() {
+        return sutS(k, &wT, cx.team, B.x, B.y, cx.ch, Some(rq), Some(T0)) * exp(-T0 / k.k2.IMK_INAN_T);
+    }
+    // ALAN_YOL_OLABILIR_IZ: yakın rakip ve şut yolu da olabilirlikle: rakipler pas vurulunca (tv) tepki verir;
+    // varışa (T0) dek şutçunun dibine (2.4 br) ya da şut yoluna yetişebilir mi (kuyu kuralıyla)
+    let src = cx.src.clone();
+    let kr = k.dis.kural();
+    let mut fB = 1.0;
+    for p in src.iter() {
+        if p.team == cx.team || p.noTouch || bekci(p) {
+            continue;
+        }
+        let G = dis::AS_gecTab(k, p);
+        let v = jmax(0.05, dis::AS_vSp(k, p));
+        let rc = jmax(0.0, dis::ALAN_TEPKI(k, p, "kovala"));
+        let d = jmax(0.0, hypot(p.x - B.x, p.y - B.y) - 2.4);
+        let tp = tv + rc + dis::AS_gecOf(k, &G, B.x, B.y, d) + crate::kural::enerji::ALAN_KOSU_T(p, d, v, &kr);
+        if !crate::temas::kuyu_girer(p, B.x, B.y, tp, false, &kr) {
+            continue;
+        }
+        fB *= 1.0 - imkSg((T0 - tp) / imkTau(T0));
+    }
+    let gx = if t0(cx.team) { GW } else { 0.0 };
+    let mut yl: f64 = 0.0;
+    for a in [0.0, 0.6, -0.6] {
+        let G = nk(gx, GCY + a * crate::saha::MOUTH);
+        yl = jmax(yl, yolOlabilirB(k, &src, cx.team, B, G, T0, tv, None, false, false));
+    }
+    let tab = sutTab_k(k, &wT, cx.team, B.x, B.y, cx.ch, Some(rq));
+    if crate::iz_acik() && std::env::var("ALAN_ENIYI_IZ").ok().as_deref() == Some(&*rq.govde.name) {
+        eprintln!("ENIYI     tek parçalar {} ({:.1},{:.1}) tablo {:.3} yakın {:.3} yol {:.3} güven {:.3}", rq.govde.name, B.x, B.y, tab, fB, yl, exp(-T0 / k.k2.IMK_INAN_T));
+    }
+    tab * fB * yl * exp(-T0 / k.k2.IMK_INAN_T)
 }
 
 /// Deney (ALAN_YOL_OLABILIR_IZ; ölçümde YOL_OLABILIR_ZORLA)
@@ -64,6 +117,11 @@ pub fn yol_olabilir() -> bool {
 /// (tepki + dönüş gecikmesi + koşu, menzil kadar yakına) ve top o noktaya ne zaman varır; alıcı o noktaya daha önce
 /// gelebiliyorsa top onundur. Yetişme olasılığı zamanla büyüyen belirsizlikle; rakip başına yolun en kötü noktası.
 pub fn yolOlabilir(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t0: f64, alici: Option<&Oyuncu>, iz: bool) -> f64 {
+    yolOlabilirB(k, src, team, A, B, t0, t0, alici, true, iz)
+}
+/// yolOlabilir'in genişi: top A'dan `t0`'da çıkar, rakipler `tt`'de tepki vermeye başlar; `bek`: Bekçi de sayılır mı
+/// (şut yolunda Bekçi şut tablosunda zaten var: sayılmaz).
+pub fn yolOlabilirB(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t0: f64, tt: f64, alici: Option<&Oyuncu>, bek_dahil: bool, iz: bool) -> f64 {
     let L = hypot(B.x - A.x, B.y - A.y);
     if L < 0.5 {
         return 1.0;
@@ -79,7 +137,7 @@ pub fn yolOlabilir(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t0: 
     });
     let mut acik = 1.0;
     for p in src.iter() {
-        if p.team == team || p.noTouch {
+        if p.team == team || p.noTouch || (!bek_dahil && bekci(p)) {
             continue;
         }
         let G = dis::AS_gecTab(k, p);
@@ -95,7 +153,7 @@ pub fn yolOlabilir(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t0: 
             let tb = t0 + dis::ucusT(k, L, k.D.arriveFirm, Some(s));
             let d = jmax(0.0, hypot(p.x - x, p.y - y) - R);
             // savunmacı pası ancak vurulunca görür: koşusu vuruştan (t0) başlar; o ana dek yeri bilinmez (belirsizlik payı)
-            let tp = t0 + rc + dis::AS_gecOf(k, &G, x, y, d) + crate::kural::enerji::ALAN_KOSU_T(p, d, v, &kr);
+            let tp = tt + rc + dis::AS_gecOf(k, &G, x, y, d) + crate::kural::enerji::ALAN_KOSU_T(p, d, v, &kr);
             let tq = match &al {
                 Some((q, Gq, vq, Rq)) => {
                     let dq = jmax(0.0, hypot(q.x - x, q.y - y) - Rq);
@@ -103,6 +161,11 @@ pub fn yolOlabilir(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t0: 
                 }
                 None => f64::INFINITY,
             };
+            // Kuyu kuralı (temas::kuyu_girer): kuyu süresini doldurmuş savunmacı o noktaya giremez
+            if !bek && !crate::temas::kuyu_girer(p, x, y, tp, false, &kr) {
+                s += 1.5;
+                continue;
+            }
             let pk = imkSg((jmin(tb, tq) - tp) / imkTau(tb));
             if pk > en {
                 en = pk;
