@@ -2,12 +2,15 @@
 //! (ileriKur, ileriTab, ileriDeger, ilerleme), zemin, sahiplik haritası (sahiplikKur, zeminS), yerDeger.
 #![allow(non_snake_case, clippy::too_many_arguments)]
 
+use crate::kafa::kafa2_bag::ALAN_HZ;
+use crate::mat::dogru;
+use crate::mat::exp;
+use crate::saha::KR;
 use crate::kafa::gecici_dis1::KuralErisim as _;
 use super::kafa2_bag as dis;
 use super::kafa2_baglam::*;
 use super::kafa2_dunya::{bekYerW, predictWorld};
 use super::kafa2_imkan::{imkSg, imkTau, imkUzak, imkan, sutS, sutVakit, tasima, IMK_HUC};
-use super::kafa2_tarti::bekYol;
 use crate::mat::{hypot, jmax, jmin};
 use crate::model::Oyuncu;
 use crate::saha::{CY as GCY, H as GH, W as GW};
@@ -694,4 +697,50 @@ pub fn yerDeger(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64) -> f
     let a = dis::shotQ(k, &wb, team, x, y, ch) * sutVakit(k, w, team, x, y, None);
     let b = k.D.combo * zemin(k, w, team, x, y, ch, None);
     jmax(a, b)
+}
+
+// ------------------------------------------------------------------ yerleşimin de kullandıkları
+// (MIMARI.md Aşama 2: yerleşim kararın dosyalarına bağlanmaz; bunlar değerlendirme katmanında)
+
+/// JS bekYol(w, team, A, B, lag) (decide.js:6876): A→B pasını rakip Bekçi'nin kesmeme olasılığı.
+pub fn bekYol(k: &mut Kafa, w: &[Op], team: f64, A: Nokta, B: Nokta, lag: Option<f64>) -> f64 {
+    let kb = match w.iter().find(|o| o.team != team && bekci(o) && !o.noTouch) {
+        Some(b) => b.clone(),
+        None => return 1.0,
+    };
+    let L = veya(hypot(B.x - A.x, B.y - A.y), 1.0);
+    let ux = (B.x - A.x) / L;
+    let uy = (B.y - A.y) / L;
+    let s = jmax(0.0, jmin(L, (kb.x - A.x) * ux + (kb.y - A.y) * uy));
+    let cx0 = A.x + ux * s;
+    let cy0 = A.y + uy * s;
+    if hypot(cx0 - if t0(kb.team) { 0.0 } else { GW }, cy0 - GCY) > KR + 6.0 {
+        return 1.0;
+    }
+    let Q = &crate::core_sabit::Q;
+    let t = dis::ucusT(k, s, k.D.arriveFirm, None) + veyo(lag, 0.0);
+    let rc = crate::temas::bek_re(&kb);
+    let vk = (0.17 + 0.006 * ALAN_HZ(&kb)) * dis::ALAN_SPRE(k, &kb);
+    let R = Q.bek_body + jmin(crate::temas::bek_dl(&kb), jmax(0.0, t - rc) * crate::temas::bek_dv(&kb)) + jmax(0.0, t - rc - 2.0) * vk * 0.6;
+    1.0 / (1.0 + exp(-(hypot(kb.x - cx0, kb.y - cy0) - R) / 0.3))
+}
+
+/// JS riskOf(h, tac) (decide.js:5423)
+pub fn riskOf(k: &Kafa, h: &Oyuncu, tac: Option<&Tac>) -> f64 {
+    let tr = match tac.and_then(|t| t.risk) {
+        Some(r) => 1.4 - 0.8 * r,
+        None => 1.0,
+    };
+    let pr = h.tl.as_ref().and_then(|t| t.huc.get("risk").copied()).or(h.eg.as_ref().map(|e| e.rk)).unwrap_or(0.5);
+    let mk = match tac.and_then(|t| t.macK) {
+        Some(m) if dogru(m) => m,
+        _ => 1.0,
+    };
+    k.D.riskBase * tr * (1.4 - 0.8 * pr) * mk
+}
+
+/// JS kayipYer(src, team, ch, h, tac) (decide.js:8801): kayıp haritası (dışarıdan)
+pub fn kayipYer(k: &mut Kafa, src: &Arc<Dunya>, team: f64, ch: f64, h: &Oyuncu, tac: Option<&Tac>) -> KayipF {
+    let r = riskOf(k, h, tac);
+    kayipF(k, src.clone(), team, ch, r)
 }

@@ -30,11 +30,12 @@ Her katman yalnız altındakileri çağırır. Döngü yok; geri çağrı gereki
   ─────────────────────────────────────────────────────────────────────────────────────────
   mac        tik döngüsü: kararı ve yerleşimi çağırır, hareketi ve teması uygular, olaylar
   ─────────────────────────────────────────────────────────────────────────────────────────
-  karar      taşıyıcının kararı (bugünkü kafa2: dünyalar, seçenekler, tartı, prensipler)
-  yerlesim   topsuz oyuncuların yeri (bugünkü sekil: hücum, savunma, eşleşme, pres, Bekçi)
+  karar      taşıyıcının kararı: seçeneklerin tartısı, prensipler, ileriye bakış
+  yerlesim   topsuz oyuncuların yeri: hücum, savunma, eşleşme (position)
   ─────────────────────────────────────────────────────────────────────────────────────────
   deger      ortak değerlendirme: tehlike, boşluk, pas yolu, tutma, kesişme, uçuş, şut, ikili,
-             yer değeri, kayıp haritası (bugünkü kafa1 + kafa2'nin yerleşimin de kullandıkları)
+             yer değeri, kayıp haritası; ve yerleşimin hizmetleri: Bekçi'nin yeri, slotBase,
+             pres öngörüsü (ilkPres), tehlike listesi, alıcının direnci
   ─────────────────────────────────────────────────────────────────────────────────────────
   dunya      tek dünya gösterimi ve varsayımsal görünümler; oyuncu kimliği = sıra (Pid)
   kural      maçın kuralları, saf: enerji/sprint/koşu, tepki, varış tabloları, ivme/kütle/direnç
@@ -42,13 +43,28 @@ Her katman yalnız altındakileri çağırır. Döngü yok; geri çağrı gereki
   temel      mat · saha · top · temas · donus · yetenek · rng            (bugün de böyle, sağlam)
 ```
 
-Karar yerleşimi çağırabilir (Bekçi'nin yeri, `slotBase`, pres öngörüsü: hepsi aşağı doğru); yerleşim kararı
-çağırmaz, ihtiyaç duyduğu değerlendirmeler `deger`'dedir. Bugünkü döngünün kaynağı tam bu: yerleşimin
-kullandığı `kayipYer`, `yerDeger`, `bekYol` kafa2'de duruyor.
+Yerleşim ile karar birbirini çağırmaz; ikisi de `deger`'i çağırır.
+
+**Aşama 2'nin bulgusu (5 Kasım):** yerleşimin bazı işlevleri (Bekçi'nin yeri, `slotBase`, pres öngörüsü
+`ilkPres`, tehlike listesi, `aliciDirenc`, `gside`) ile kafanın değerlendirmeleri **gerçekten karşılıklı**
+çağrışır. Kafa rakibin presini maçın kendi pres kuralıyla öngörür ("kafa = maç"); pres kuralı da ikili
+değerlendirmesini (`girThr`, `duelP`) kullanır. Bu bir kod kusuru değil, modelin doğası. Bu yüzden bu
+hizmetler `deger` katmanındadır; katman içinde karşılıklı çağrı serbesttir, katmanlar arasında yasak.
+
+Dosya eşlemesi (modüller fiziksel olarak yerinde; başka bir oturum aynı kodda çalıştığı için dosya taşımak
+Aşama 7'ye kaldı, kural `sina/katman.sh`'ta):
+
+| Katman | Dosyalar |
+|---|---|
+| kural | `kural/*` |
+| deger | `kafa/kafa1_*`, `kafa/kafa2_{zemin,imkan,dunya,bag}`, `sekil/{yer,pres,takim,ucus,gor,varlik,sabit,gecici_dis}` |
+| yerlesim | `sekil/konum.rs`, `sekil/konum/*` |
+| karar | `kafa/kafa2_{karar,tarti,eski}` |
+| (Aşama 3'te dağılacak) | `kafa/kafa2_baglam` (bütün katmanların önbellek tipleri), `kafa/gecici_dis1` (`Dis` köprüsü) |
 
 **Rust'a özgü güvence:** katmanlar sonunda ayrı crate'ler olur (`alan-temel`, `alan-kural`, `alan-dunya`,
 `alan-deger`, `alan-yerlesim`, `alan-karar`, `alan-mac`). Cargo crate'ler arası döngüye izin vermez: mimari
-derleyicinin denetimine girer. O zamana kadar aynı crate içinde modül; kuralı bir betik (`sina/katman.sh`, Aşama 1'de eklenir) denetler.
+derleyicinin denetimine girer. O zamana kadar aynı crate içinde modül; kuralı `sina/katman.sh` denetler.
 
 ### 2.2 Açık bağlam
 
@@ -112,7 +128,7 @@ kodda çalıştığı için aşamalar küçük parçalarla ve sık `main`'e birl
 |---|---|---|---|
 | 0 | Güvenlik ağı | Parmak izi (`motor/src/parmak.rs`), `alan-kos … parmak`, `sina/ayni.sh`, başvurular (`sina/ayni/`) | ✅ Başvurular oturum başındaki motorla (b711370) aynı: 4 Kasım'ın bütün hız işleri bit bit davranış korumuş |
 | 1 | Kural katmanı | Enerji/sprint/koşu, tepki, varış tabloları, ikili ve hareket fiziği → `kural/` (saf işlevler; oyuncu + `MacKural`/`&dyn Kural` girer). Kafa bunlara `Dis` yerine `KuralErisim` ile, maçın anlık görüntüsünden (`Dis::kural`) ulaşır | ✅ `kural/{enerji,gec,kos,ikili,hareket}.rs`; `sekil`'deki yinelenen kurallar teke indi; `Dis` 66 → 27 yöntem; `sina/katman.sh` tutuyor |
-| 2 | Değerlendirme katmanı | kafa1'in değerlendirme işlevleri + kafa2'den yerleşimin kullandıkları (`kayipYer`, `yerDeger`, `bekYol`) → `deger/` | `sekil` hiçbir şekilde kafa2'ye bağlı değil; `sekil/gecici_dis.rs` yalnız `deger` çağırır |
+| 2 | Değerlendirme katmanı | Yerleşim → kafa iç içe çağrısını kaldırmak; yerleşimin ve değerlendirmenin karar dosyalarına bağını kesmek; katman eşlemesi | ✅ Şut gücü `kural/sut.rs`'e (yedek kafaya düşen çağrı 300 tikte yüz binlerce → 0); `kayipYer`, `riskOf`, `bekYol` `kafa2_zemin`'e; `sina/katman.sh` 4 kural tutuyor. Kalan `Dis` yerleşim yöntemleri (`bekciFm`, `slotBase`, `ilkPres` …) dünya çevirisi gerektirdiği için Aşama 4'te kalkar |
 | 3 | Açık bağlam | `Baglam`, `Ayar`, `MacAni`, `Onbellek`; `kafa_ile` ve `KAFA`/`DIS`/`YAN` kalkar. Önce `deger`, sonra `yerlesim`, sonra `karar` | `kafa_ile` 0; `thread_local` yalnız sayaç/iz için |
 | 4 | Tek dünya | `Dunya` + `Gorunum`; kimlik `Pid`; köprü çevirileri kalkar | `ow`, `op_dunya`, `dunya_kopya`, `Varlik` yok; `Arc::ptr_eq` yok |
 | 5 | Veri | `Oyuncu` → `OyuncuDurum` + `OyuncuGovde`; `KafaD` → `Ayar` + geçici durum; `JsDeger` ve gereksiz `Option`'lar | `Oyuncu` kopyası ~300 bayt; `model.rs` üretilmiş taslak değil |

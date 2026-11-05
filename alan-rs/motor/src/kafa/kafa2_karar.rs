@@ -3,6 +3,7 @@
 //! dalgaKos, decideOT, otFactor, riskOf, realize, kayipYer.
 #![allow(non_snake_case, clippy::too_many_arguments)]
 
+pub use super::kafa2_zemin::{kayipYer, riskOf};
 use super::kafa2_bag as dis;
 use super::kafa2_bag::{ALAN_HZ, ALAN_Y};
 use super::kafa2_baglam::*;
@@ -21,19 +22,6 @@ use std::sync::Arc;
 const GW8: f64 = if GW == 100.0 { 99.2 } else { GW - 0.8 };
 const GH8: f64 = if GH == 50.0 { 49.2 } else { GH - 0.8 };
 
-/// JS riskOf(h, tac) (decide.js:5423)
-pub fn riskOf(k: &Kafa, h: &Oyuncu, tac: Option<&Tac>) -> f64 {
-    let tr = match tac.and_then(|t| t.risk) {
-        Some(r) => 1.4 - 0.8 * r,
-        None => 1.0,
-    };
-    let pr = h.tl.as_ref().and_then(|t| t.huc.get("risk").copied()).or(h.eg.as_ref().map(|e| e.rk)).unwrap_or(0.5);
-    let mk = match tac.and_then(|t| t.macK) {
-        Some(m) if dogru(m) => m,
-        _ => 1.0,
-    };
-    k.D.riskBase * tr * (1.4 - 0.8 * pr) * mk
-}
 
 /// JS otFactor(p, inSp) (decide.js:5252): tek dokunuşun hata katı (gelen topun hızına göre)
 pub fn otFactor(k: &Kafa, p: &Oyuncu, inSp: f64) -> f64 {
@@ -56,11 +44,6 @@ pub fn decideOT(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
     s
 }
 
-/// JS kayipYer(src, team, ch, h, tac) (decide.js:8801): kayıp haritası (dışarıdan)
-pub fn kayipYer(k: &mut Kafa, src: &Arc<Dunya>, team: f64, ch: f64, h: &Oyuncu, tac: Option<&Tac>) -> super::kafa2_zemin::KayipF {
-    let r = riskOf(k, h, tac);
-    kayipF(k, src.clone(), team, ch, r)
-}
 
 /// decide'ın sonucu (JS `{ best, opts, T }`)
 #[derive(Clone, Debug, Default)]
