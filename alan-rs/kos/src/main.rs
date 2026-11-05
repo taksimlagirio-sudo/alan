@@ -56,16 +56,18 @@ fn main() {
     // dene: <kayıt> <tik> dene [N] [süre]: tik'teki taşıyıcı kararının her seçeneği zorla seçilir, kopya maç N kez
     // (karardan sonra zar dizisi değiştirilerek) süre tik doğal oynar; seçenek başına kafanın değeri/tutma kestirimi
     // ve gerçekleşen: gol atma, gol yeme, top kaybı (süre içinde rakibe geçti mi), sonda top kimde.
-    // ALAN_DENE_KAFA: "kal" | "mek" (kopya maçların kafası; yoksa bugünkü kafa)
+    // ALAN_DENE_KAFA: "kal" | "mek" | "mekg" (mek + sendeleme gecikmesi) (kopya maçların kafası; yoksa bugünkü kafa)
     if kip == "dene" {
         let n: u32 = a.get(4).and_then(|x| x.parse().ok()).unwrap_or(40);
         let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(90);
         let kafa = std::env::var("ALAN_DENE_KAFA").unwrap_or_default();
-        alan_motor::kafa::kafa1_ikili::KP_KAL_ZORLA.store(kafa == "kal", std::sync::atomic::Ordering::Relaxed);
-        alan_motor::kafa::kafa1_ikili::MEKANIZMA_ZORLA.store(kafa == "mek", std::sync::atomic::Ordering::Relaxed);
         while mt.tick() + 1 < tik && !mt.bitti() {
             mt.adim();
         }
+        // maç karara kadar bugünkü kafayla oynar; kopyalar seçilen kafayla
+        alan_motor::kafa::kafa1_ikili::KP_KAL_ZORLA.store(kafa == "kal", std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa1_ikili::MEKANIZMA_ZORLA.store(kafa.starts_with("mek"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa1_ikili::SEND_GEC_ZORLA.store(kafa == "mekg", std::sync::atomic::Ordering::Relaxed);
         let mut once = mt.m.clone();
         once.mac.kafa = Default::default();
         // seçenekler: önce hepsi bir kez zorlanır; ALAN_DENE_SEC=0,3,7 yalnız bunlar denenir, ALAN_DENE_LISTE seçenek sayısını yazar
@@ -86,15 +88,21 @@ fn main() {
                     let tk = c.ps[h].team;
                     let (mut gol, mut yedi, mut kayip, mut son_biz, mut son_rak) = (0u32, 0u32, 0u32, 0u32, 0u32);
                     let mut kayip_t = 0.0;
+                    let hh = &h;
+                    let erken: u32 = std::env::var("ALAN_DENE_ERKEN").ok().and_then(|x| x.parse().ok()).unwrap_or(15);
+                    let (mut erk, mut send) = (0u32, 0u32);
                     for d in 0..n {
                         let mut k = c.clone();
                         if d > 0 { k.r.s ^= (d as i32).wrapping_mul(-1640531527); }
                         let s0 = k.score.clone();
                         let mut kaybetti = false;
+                        let mut sendeledi = false;
+                        let t0 = k.tick;
                         for j in 0..sure {
                             if k.over { break; }
                             alan_motor::mac::step(&mut k);
-                            if !kaybetti && k.holder.map_or(false, |q| k.ps[q].team != tk) { kaybetti = true; kayip += 1; kayip_t += j as f64; }
+                            if !kaybetti && k.holder.map_or(false, |q| k.ps[q].team != tk) { kaybetti = true; kayip += 1; kayip_t += j as f64; if j < erken { erk += 1; } }
+                            if !sendeledi && j < erken && k.ps[*hh].sendT.map_or(false, |s| s > t0 as f64 + 0.5) { sendeledi = true; send += 1; }
                             if k.score != s0 { break; }
                         }
                         let ti = tk as usize;
@@ -106,6 +114,7 @@ fn main() {
                     let l = format!("{:2} {:<28} ({:5.1},{:5.1}) v {:6.3} P {:5} {} | gol {:.2} yedi {:.2} kayıp {:.2} (ort {:4.0} tik) son biz {:.2} rakip {:.2}",
                         i, z.tur, z.to.0, z.to.1, z.v, if z.P.is_finite() { format!("{:.2}", z.P) } else { "  -  ".into() }, if z.secilen { "*" } else { " " },
                         f(gol), f(yedi), f(kayip), if kayip > 0 { kayip_t / kayip as f64 } else { f64::NAN }, f(son_biz), f(son_rak));
+                    let l = format!("{l} | ilk {erken} tikte kayıp {:.2} sendeleme {:.2}", f(erk), f(send));
                     println!("{l}");
                 }
             }
@@ -132,11 +141,14 @@ fn main() {
             if tikler.contains(&t) {
                 let mut once = mt.m.clone();
                 once.mac.kafa = Default::default();
-                // ALAN_AN_YENI: "kal" (varsayılan: tutma kestirimi ölçülen gerçeğe eşlenir) | "mek" (sendeleme yarışı + dolanma)
-                let mek = std::env::var("ALAN_AN_YENI").ok().as_deref() == Some("mek");
+                // ALAN_AN_YENI: "kal" (varsayılan: tutma kestirimi ölçülen gerçeğe eşlenir) | "mek" (sendeleme yarışı + dolanma) | "mekg" (mek + sendeleme gecikmesi)
+                let an_yeni = std::env::var("ALAN_AN_YENI").unwrap_or_default();
+                let mek = an_yeni.starts_with("mek");
+                let mekg = an_yeni == "mekg";
                 for (kip2, acik) in [("eski", false), ("yeni", true)] {
                     alan_motor::kafa::kafa1_ikili::KP_KAL_ZORLA.store(acik && !mek, std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa1_ikili::MEKANIZMA_ZORLA.store(acik && mek, std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa1_ikili::SEND_GEC_ZORLA.store(acik && mekg, std::sync::atomic::Ordering::Relaxed);
                     let mut m2 = Motor::yeni(once.clone());
                     let mut isler2 = alan_motor::oyun::IsSozluk::default();
                     let (mut kr, mut ol) = (Vec::new(), Vec::new());
@@ -181,6 +193,7 @@ fn main() {
                 }
                 alan_motor::kafa::kafa1_ikili::KP_KAL_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa1_ikili::MEKANIZMA_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kafa::kafa1_ikili::SEND_GEC_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
             }
             mt.adim();
         }

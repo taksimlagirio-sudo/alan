@@ -302,6 +302,7 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
             }
         }
         let pr = k.keepP_son.get();
+        let gec = k.keepP_gec.get();
         let (A, A_to) = {
             let L = hypot(to.x - h.x, to.y - h.y);
             if pr < L {
@@ -319,6 +320,9 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
         if !A_to {
             o.toE = Some(A);
             o.TsE = Some(Ts);
+            if gec > 0.0 && crate::kafa::kafa1_ikili::send_gec() {
+                o.sendGec = Some(gec);
+            }
         }
         let vY = 0.0;
         let Vend = 0.0;

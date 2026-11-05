@@ -169,6 +169,8 @@ pub struct ZorlaSonuc {
     pub n: usize,
     /// seçeneğin türü ve alıcısı (dene kipi için)
     pub tur: String,
+    /// seçeneğin değer dökümü (dok)
+    pub dok: String,
 }
 
 // ---- küçük JS yardımcıları ----

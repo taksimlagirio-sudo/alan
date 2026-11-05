@@ -112,6 +112,8 @@ struct Kd {
     kalS: bool,
     /// taşıyıcının ilk sendelediği an (ALAN_SEND_YARIS_IZ): serbest top yarışının olasılığı (rakip kazanır)
     sendY: Option<f64>,
+    /// sendeleme yarışında topu bizim tarafın alma süresi (sendelemeden sonra, tik)
+    sendGec: f64,
 }
 /// kesisK'nın sabitleri.
 struct Kc<'a> {
@@ -479,6 +481,7 @@ impl Kafa {
             qCd: z0(q.sendCd.unwrap_or(0.0)) - t0,
             kalS,
             sendY: None,
+            sendGec: 0.0,
         };
         let mut son = 0.0;
         let mut bolundu = false;
@@ -697,6 +700,7 @@ impl Kafa {
                         }
                     }
                     s.sendY = Some(1.0 / (1.0 + exp((tRak - tBiz) / 5.0)));
+                    s.sendGec = tBiz;
                     // maçta sürme burada biter (top serbest): benzetim de biter
                     break;
                 }
@@ -884,9 +888,11 @@ impl Kafa {
                 Self::kes_adan(c, s, t, b.W, b.omuz);
                 let kG = self.kes_oyna(c, s, t + 1.0, son, bolundu);
                 let sG = *son;
+                let gG = self.kesisK_gec.get();
                 *s = z;
                 let kY = self.kes_oyna(c, s, t + 1.0, son, bolundu);
                 *son = b.pc * sG + (1.0 - b.pc) * *son;
+                self.kesisK_gec.set(b.pc * gG + (1.0 - b.pc) * self.kesisK_gec.get());
                 return b.pc * kG + (1.0 - b.pc) * kY;
             }
             t += 1.0;
@@ -894,6 +900,7 @@ impl Kafa {
         let pS = cl1((IK.sendele + 0.1 - s.dMin) / 0.2);
         let pQ = cl1((IK.sendele + 0.1 - s.qMin) / 0.2);
         *son = (s.hv.x - h.x) * dir.x + (s.hv.y - h.y) * dir.y;
+        self.kesisK_gec.set(if s.sendY.is_some() { s.sendGec } else { 0.0 });
         let son_k = match (s.sendY, kes_send()) {
             // sendelemeyle biten benzetim: o anki tutma × yarışı bizim kazanmamız (sondaki en düşük denge çarpanı yok)
             (Some(py), _) => s.keep * (1.0 - py),
@@ -914,6 +921,7 @@ impl Kafa {
             KP_DENEME.with(|c| c.set((0, 0.0, 0.0)));
         }
         self.keepP_son.set(f64::INFINITY);
+        self.keepP_gec.set(0.0);
         if h.bekci() {
             if let Some(k) = h._korT {
                 if k - self.tick() >= T {
@@ -922,6 +930,7 @@ impl Kafa {
             }
         }
         let mut ilS = f64::INFINITY;
+        let mut ilG = 0.0;
         let mut keep = 1.0;
         let mut RL: Option<Vec<Option<PresRol>>> = None;
         let ikK = self.dis.IK().is_some();
@@ -997,6 +1006,7 @@ impl Kafa {
                         let a = e / 3f64.sqrt();
                         let mut k4 = 0.0;
                         let mut s4 = 0.0;
+                        let mut g4 = 0.0;
                         // örnek noktalar için rakibin tek kopyası (kesisK onu yalnız okur)
                         let mut qs = q.clone();
                         for (sx, sy) in [(-1.0, -1.0), (-1.0, 1.0), (1.0, -1.0), (1.0, 1.0)] {
@@ -1009,11 +1019,13 @@ impl Kafa {
                             KS_IZ.with(|f| f.set(ks0));
                             k4 += kk;
                             s4 += self.kesisK_son.get();
+                            g4 += self.kesisK_gec.get();
                             if KIZ { eprintln!("    S {} {} k {} son {} rl {:?} hspr {} {:?} hca {:?} hv {} {}", sx, sy, kk, self.kesisK_son.get(), rl, h.sprint, h._sf.as_ref().map(|s| s.f.clone()), h.ca, h.vx, h.vy); }
                         }
                         keep *= k4 / 4.0;
                         if s4 / 4.0 < ilS {
                             ilS = s4 / 4.0;
+                            ilG = g4 / 4.0;
                         }
                         if KIZ { eprintln!("   KK4 {} keep {} son {}", q.name, keep, s4 / 4.0); }
                     } else {
@@ -1021,6 +1033,7 @@ impl Kafa {
                         keep *= kk;
                         if self.kesisK_son.get() < ilS {
                             ilS = self.kesisK_son.get();
+                            ilG = self.kesisK_gec.get();
                         }
                     }
                     continue;
@@ -1161,6 +1174,7 @@ impl Kafa {
             }
         }
         self.keepP_son.set(ilS);
+        self.keepP_gec.set(ilG);
         kp_yaz!(kp_dis, ("=".into(), 0.0, 0.0, keep, 0.0));
         if kp_dis {
             let (n, a, b) = KP_DENEME.with(|c| c.get());
@@ -1571,6 +1585,13 @@ fn dolanma_kimlik() -> bool {
 fn send_yaris() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     MEKANIZMA_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SEND_YARIS_IZ").is_ok())
+}
+/// Deney (ALAN_SEND_GEC_IZ, ölçümde SEND_GEC_ZORLA): sendelemeyle kesilen sürmenin varış durumu, topu geri
+/// almaya dek geçen süre (keepP_gec) kadar sonrasının dünyasında tartılır (maçta taşıyıcı o süre hareketsiz).
+pub static SEND_GEC_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn send_gec() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SEND_GEC_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SEND_GEC_IZ").is_ok())
 }
 /// alan-kos an: mekanizma düzeltmesini (sendeleme yarışı + dolanma kimliği) maçın ortasında açmak için
 pub static MEKANIZMA_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
