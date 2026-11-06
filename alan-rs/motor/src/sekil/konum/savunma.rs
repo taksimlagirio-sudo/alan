@@ -29,6 +29,8 @@ pub(in super::super) struct Sv {
     pub sweep: Vec<bool>,
     pub up: Vec<bool>,
     pub up_hat: f64,
+    /// Rakip bizim yarı sahamıza yerleşmiş ve top kuyunun önünde: blok kalkar, savunmacı adamını kale tarafından tutar.
+    pub yerlesik: bool,
     pub press: Vec<Pid>,
     pub prs: Option<Prs>,
     pub atk_all: Vec<Pid>,
@@ -81,6 +83,7 @@ impl Sv {
             sweep: vec![false; n],
             up: vec![false; n],
             up_hat: 0.0,
+            yerlesik: false,
             press: vec![],
             prs: None,
             atk_all: vec![],
@@ -247,6 +250,11 @@ impl Sv {
     }
 
     /// Savunma: pres, süpürücüler, markaj, eşleşme, yedek işler, takım düzeltmeleri.
+    ///
+    /// Alan savunması (taktik "alan", bölge yarıçapı, blok derinliği) savunmacının tutacağı adam yokken orta sahaya
+    /// çıkmaması için. Rakip yarı sahamıza yerleşmiş ve top kuyunun önündeyken (`yerlesik`) korunacak alan kalmaz
+    /// (6 Kasım 2026, kullanıcı kararı): adam adama (taktik alan olsa da), bölge oyuncusu yarıçapa bakmadan boştaki
+    /// adamı alır, blok kalkar (adamını kale tarafından tutar), topa en çok bir presçi.
     pub fn savunma(&mut self, c: &mut Mc) {
         let k = c.k;
         let tick = c.m.tick;
@@ -287,7 +295,16 @@ impl Sv {
             }
             wx
         };
+        self.yerlesik = yerlesik_adam() && {
+            let ra: Vec<Pid> = (0..n).filter(|&q| c.ps[q].takim() == att && !c.ps[q].bekci()).collect();
+            let yarida = ra.iter().filter(|&&q| (c.ps[q].x - own_x(dt)).abs() < crate::saha::W / 2.0).count();
+            self.g_d(E.0, E.1) < YERLESIK_TOP_D && 2 * yarida >= ra.len() && !ra.is_empty()
+        };
         let p_lim = pres_lim(c, &self.dtac, h, att);
+        // yerleşik hücumda topa en çok bir presçi: ötekiler adam tutar
+        let p_lim = if self.yerlesik { p_lim.min(1) } else { p_lim };
+        // S7b: taşıyıcı tehlike bölgesindeyken tetik beklemeden ikinci presçi
+        let p_lim = if s7(2) && h.is_some() && self.g_d(E.0, E.1) < S7_D { p_lim.max(2) } else { p_lim };
         if let Some(h) = h {
             self.pres_sec(c, h, p_lim);
         }
@@ -431,13 +448,48 @@ impl Sv {
             }
         }
         self.yedek(c);
+        if sav_taban() {
+            self.taban(c);
+        }
         self.takim(c);
+    }
+
+    /// ALAN_SAV_TABAN_IZ (GOREV-savunma S3): adam işlerinin hedefine derinlik tabanı. Top uzaktayken savunmacı kale
+    /// dibinde bekleyen hücumcuyu kale çizgisine kadar izlemez, takımın çizgisini tutar: taban = min(blok çizgisi,
+    /// max(SAV_TABAN_MIN, top derinliği − SAV_TABAN_ARA)). Top yaklaştıkça taban geriler (64 br'den yakında yok).
+    /// Pres, kovalama, geri koşu ve Bekçi dışarıda.
+    fn taban(&mut self, c: &mut Mc) {
+        let dt = self.dt;
+        let x0 = own_x(dt);
+        let dir = dir_of(dt);
+        let bd = (self.E.0 - x0) * dir;
+        let blok = c.m.tac[dt as usize].blok.as_deref().and_then(BLOK).unwrap_or(34.0 * GKX);
+        let tb = jmin(blok, jmax(SAV_TABAN_MIN, bd - SAV_TABAN_ARA));
+        if !(tb > SAV_TABAN_MIN) {
+            return;
+        }
+        for &p in &self.defs.clone() {
+            if self.press.contains(&p) {
+                continue;
+            }
+            let pp = &c.ps[p];
+            let job = pp.job.as_deref().unwrap_or("");
+            if !(job.starts_with("markaj") || job.starts_with("arkada") || job.starts_with("kapatma") || job.starts_with("bölge")) {
+                continue;
+            }
+            let d = (pp.tx - x0) * dir;
+            if d < tb {
+                let p = &mut c.ps[p];
+                p.tx = x0 + dir * tb;
+            }
+        }
     }
 
     /// JS `adamT(p)`: adam adama savunma (paylaşım dalgası yokken).
     #[inline]
     pub fn adam_t(&self, c: &Mc, p: Pid) -> bool {
-        tl0(&c.ps[p], "sav", "adam") >= 0.5 && !self.YR
+        // yerleşik hücumda (top kuyunun önünde) takımın taktiği alan savunması olsa da adam adama
+        (tl0(&c.ps[p], "sav", "adam") >= 0.5 || self.yerlesik) && !self.YR
     }
 
     /// Pres seçimi (JS `if (h) {…}` bloğu): adaylar, değerleri, kilit, kontrpres, sıra.
@@ -685,8 +737,12 @@ impl Sv {
                         .map(|(j, &q)| {
                             let s0 = sv.iter().find(|o| o.r == Some(q)).map(|o| (o.x, o.y)).unwrap_or((c.ps[q].x, c.ps[q].y));
                             let g = gside(s0.0, s0.1, dt, yada(S.mark_off, 2.5));
-                            let t = hypot(g.0 - pp.x, g.1 - pp.y) / v - if pp.hal.markRef == Some(q) { rc } else { 0.0 };
-                            DG[j] * jmax(0.0, jmin(1.0, (TQ[j] + SH - t) / SH))
+                            let once = pp.hal.markRef == Some(q);
+                            // ALAN_UA_HIST_IZ (S2): önceki adama süreklilik: yetişme süresinde pay ve değerde ayrıcalık (iş değiştirme
+                            // maliyeti); yoksa yetişme sınırındaki adam her tik verilip alınıyor (markaj ↔ arkada · alan)
+                            let hist = ua_hist() && once;
+                            let t = hypot(g.0 - pp.x, g.1 - pp.y) / v - if once { rc } else { 0.0 } - if hist { UA_HIST * SH } else { 0.0 };
+                            DG[j] * jmax(0.0, jmin(1.0, (TQ[j] + SH - t) / SH)) * if hist { 1.0 + UA_HIST } else { 1.0 }
                         })
                         .collect(),
                 );
@@ -752,4 +808,41 @@ pub(super) fn dal_sinir(B: &[Vec<f64>], gi: &[usize]) -> Option<Vec<i64>> {
 #[allow(dead_code)]
 fn _q() -> f64 {
     Q.body
+}
+
+/// Yerleşik hücumda topun kalemize en çok uzaklığı (kuyunun önü; kuyu yarıçapı 9).
+pub const YERLESIK_TOP_D: f64 = 30.0;
+/// Deney (ALAN_YERLESIK_ADAM_IZ; ölçümde ve wasm'da YERLESIK_ADAM_ZORLA, sitede adreste yerlesik=1): yerleşik hücumda adam
+/// adama (taktik alan olsa da), bölge yarıçapı yok, blok kalkar, topa en çok bir presçi. Varsayılan kapalı.
+pub static YERLESIK_ADAM_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn yerlesik_adam() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    YERLESIK_ADAM_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_YERLESIK_ADAM_IZ").is_ok())
+}
+
+/// Deney (ALAN_PRES_KAZANC_IZ; ölçümde PRES_KAZANC_ZORLA; GOREV-savunma S1): taşıyıcıya baskı işinin değerine topu orada
+/// kazanmanın bizim için değeri eklenir (savunan takımın taşıyıcının yerindeki tehdidi × taktiğin pres ayarı × hat katı).
+pub static PRES_KAZANC_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn pres_kazanc() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    PRES_KAZANC_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_PRES_KAZANC_IZ").is_ok())
+}
+
+/// Deney (ALAN_UA_HIST_IZ; ölçümde UA_HIST_ZORLA; GOREV-savunma S2): eşleşme atamasında önceki tikin işine ayrıcalık
+/// (değeri × (1 + UA_HIST)): iş değiştirme maliyeti.
+pub const UA_HIST: f64 = 0.25;
+pub static UA_HIST_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn ua_hist() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    UA_HIST_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_UA_HIST_IZ").is_ok())
+}
+
+/// S3 tabanı: en derin taban (kuyunun hemen önü) ve tabanın topun gerisinde kaldığı uzaklık.
+pub const SAV_TABAN_MIN: f64 = 8.0 * GKX;
+pub const SAV_TABAN_ARA: f64 = 45.0 * GKX;
+/// Deney (ALAN_SAV_TABAN_IZ; ölçümde SAV_TABAN_ZORLA; GOREV-savunma S3): adam işlerinin hedefine derinlik tabanı.
+pub static SAV_TABAN_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sav_taban() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAV_TABAN_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAV_TABAN_IZ").is_ok())
 }
