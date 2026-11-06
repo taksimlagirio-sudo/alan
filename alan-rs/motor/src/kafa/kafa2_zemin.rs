@@ -537,6 +537,8 @@ struct SahYol {
     k: f64,
     lx: f64,
     ly: f64,
+    /// ALAN_SAH_ZAMAN_IZ: bu kenarın indirimi (g ya da g^(süre / karar aralığı))
+    g: f64,
 }
 
 /// JS sahiplikKur(w, team, ch, B0) (decide.js:6634): her hücrede şut değeri (S) ve komşu hücreye
@@ -569,6 +571,9 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
     let NX = (GW / KG).round() as usize + 1;
     let NY = (GH / KG).round() as usize + 1;
     let g = gam(k);
+    // ALAN_SAH_ZAMAN_IZ: indirim kenar başına değil, eylemin süresine göre (sürme de pas da harcadığı zamanla öder)
+    let zaman = crate::kafa::kafa2_tarti::sah_zaman();
+    let u_k = jmax(1.0, crate::kafa::kafa2_tarti::ufuk_simdi());
     let v_c = 0.1955;
     let PM = dis::pas_max(k);
     struct F {
@@ -681,7 +686,7 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
                     let y2 = b as f64 * KG;
                     let tk = hypot(x2 - x, y2 - y) / v_c;
                     let kk = jmin(imk_sg((rv((x + x2) / 2.0, (y + y2) / 2.0) - tk / 2.0) / imk_tau(tk / 2.0)), imk_sg((rv(x2, y2) - tk) / imk_tau(tk)));
-                    yol.push(SahYol { x: x2, y: y2, k: kk, lx: x2, ly: y2 });
+                    yol.push(SahYol { x: x2, y: y2, k: kk, lx: x2, ly: y2, g: if zaman { crate::mat::pow(g, tk / u_k) } else { g } });
                 }
                 for q in &biz {
                     let L = hypot(q.x - x, q.y - y);
@@ -691,7 +696,8 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
                     let A = nk(x, y);
                     let acik = if crate::kafa::kafa2_tarti::sah_surekli() { yol_sure(k, w, t, A, nk(q.x, q.y)) } else { dis::lane_ok(k, w, t, A, nk(q.x, q.y), Some(k.D.arriveFirm), Some(k.D.sut_hazir)) };
                     let kk = acik * bek_yol(k, w, t, A, nk(q.x, q.y), Some(k.D.sut_hazir));
-                    yol.push(SahYol { x: q.x, y: q.y, k: kk, lx: (x + q.x) / 2.0, ly: (y + q.y) / 2.0 });
+                    let tp = dis::ucus_t(k, L, k.D.arriveFirm, None) + k.D.sut_hazir;
+                    yol.push(SahYol { x: q.x, y: q.y, k: kk, lx: (x + q.x) / 2.0, ly: (y + q.y) / 2.0, g: if zaman { crate::mat::pow(g, tp / u_k) } else { g } });
                 }
                 H[c] = yol;
             }
@@ -733,7 +739,7 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
             for c in 0..f.S.len() {
                 let mut b = if f.S[c] > 0.0 { f.S[c] - (1.0 - f.S[c]) * kac } else { f64::NEG_INFINITY };
                 if bek && BW[t][c] > 0.0 {
-                    let mut vs: Vec<f64> = f.H[c].iter().map(|e| e.k * g * Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y) - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly)).collect();
+                    let mut vs: Vec<f64> = f.H[c].iter().map(|e| e.k * e.g * Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y) - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly)).collect();
                     if b > f64::NEG_INFINITY {
                         vs.push(b);
                     }
@@ -754,7 +760,7 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
                 }
                 if crate::kafa::kafa2_tarti::sah_yumusak() && !bek {
                     // ALAN_SAH_YUMUSAK_IZ: şut ve en iyi üç yolun ortalaması
-                    let mut vs: Vec<f64> = f.H[c].iter().map(|e| e.k * g * Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y) - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly)).collect();
+                    let mut vs: Vec<f64> = f.H[c].iter().map(|e| e.k * e.g * Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y) - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly)).collect();
                     vs.sort_by(|a, b| b.partial_cmp(a).unwrap_or(std::cmp::Ordering::Equal));
                     let n = vs.len().min(3);
                     let yol = if n > 0 { vs[..n].iter().sum::<f64>() / n as f64 } else { f64::NEG_INFINITY };
@@ -762,7 +768,7 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
                     continue;
                 }
                 for e in &f.H[c] {
-                    let v = e.k * g * Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y) - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly);
+                    let v = e.k * e.g * Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y) - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly);
                     if v > b {
                         b = v;
                     }
@@ -796,7 +802,7 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
                 let mut ys: Vec<(f64, String)> = vec![(if f.S[c] > 0.0 { f.S[c] - (1.0 - f.S[c]) * kac } else { f64::NEG_INFINITY }, format!("şut S {:.3}", f.S[c]))];
                 for e in &f.H[c] {
                     let a = Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y);
-                    let v = e.k * g * a - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly);
+                    let v = e.k * e.g * a - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly);
                     ys.push((v, format!("→ ({:.0},{:.0}) k {:.3} hedefN {:.3} hedefS {:.3}", e.x, e.y, e.k, a, f.S[((e.x / KG).round() as usize).min(NX - 1) * NY + ((e.y / KG).round() as usize).min(NY - 1)])));
                 }
                 ys.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
