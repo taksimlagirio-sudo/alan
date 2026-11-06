@@ -1454,6 +1454,17 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
             }
         }
     }
+    if crate::iz_acik() && std::env::var("ALAN_SUT_SAY_IZ").is_ok() {
+        let gx = if h.team == 0.0 { GW } else { 0.0 };
+        if hypot(gx - h.x, GCY - h.y) < 26.0 {
+            let ng = opts.iter().filter(|o| o.kind == "gönder").count();
+            let nv = opts.iter().filter(|o| o.kind == "gönder" && o.v.is_some()).count();
+            let bg = opts.iter().filter(|o| o.kind == "gönder").filter_map(|o| o.v).fold(f64::NEG_INFINITY, jmax);
+            let bo = opts.iter().filter(|o| o.kind != "gönder").filter_map(|o| o.v).fold(f64::NEG_INFINITY, jmax);
+            let pk = opts.iter().filter(|o| o.kind == "gönder" && o.v.is_some()).filter_map(|o| o.det.as_ref().and_then(|d| d.Pk)).fold(0.0, jmax);
+            eprintln!("SUTSON {} {} tartida {} degerli {} en_iyi_sut {:.3} en_iyi_diger {:.3} Pk {:.3}", k.tick(), h.govde.name, ng, nv, bg, bo, pk);
+        }
+    }
     // m._prT: arkadaşların ve taşıyanın değeri, bir rakip olmasa ne kazanılırdı
     {
         let mut tm: Vec<(f64, f64)> = Vec::new();
