@@ -484,9 +484,7 @@ impl Kafa {
 
 /// threat (decide.js): yalnız sabitlere bağlı (D.threatK, D.sideK).
 pub fn threat_d(D: &crate::model::KafaD, team: f64, x: f64, y: f64) -> f64 {
-    let gx = gx_of(team);
-    let d = hypot(x - gx, y - GCY);
-    exp(-d / D.threatK) * (1.0 - D.sideK * (y - GCY).abs() / GCY)
+    crate::saha::tehdit(D.threatK, D.sideK, team, x, y)
 }
 
 /// Deney bayrağı (ALAN_TUTAN_KALIR_IZ; ölçümde TUTAN_KALIR_ZORLA)

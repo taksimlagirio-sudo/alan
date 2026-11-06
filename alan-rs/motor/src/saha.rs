@@ -100,3 +100,10 @@ pub fn SN() -> f64 {
     TPS
 }
 
+/// threat (decide.js): team takımının kalesine (atak yönü) yakınlık; k: uzaklık ölçeği, yan: kenar cezası.
+#[inline]
+pub fn tehdit(k: f64, yan: f64, team: f64, x: f64, y: f64) -> f64 {
+    let gx = if team == 0.0 { W } else { 0.0 };
+    let d = crate::mat::hypot(x - gx, y - CY);
+    crate::mat::exp(-d / k) * (1.0 - yan * (y - CY).abs() / CY)
+}

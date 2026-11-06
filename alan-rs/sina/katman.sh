@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Katman kuralı denetimi (MIMARI.md 2.1): her katman yalnız altındakilere bağlanır.
-# Kurallar aşamalar ilerledikçe eklenir; şimdilik modüller fiziksel olarak yerinde, katmanlar dosya düzeyinde.
+# Aşama 7c'den beri katmanlar arası kuralı (1, 1b, 5, 6) derleyici de zorlar (her katman ayrı crate, katman/);
+# burada kalmaları ucuz bir ikinci denetim. Katman içi kurallar (2, 3, 4: kafa ve şekil içindeki bölümler) yalnız burada.
 #   sina/katman.sh      kural bozulmuşsa ihlalleri yazar ve 1 ile çıkar
 set -euo pipefail
 cd "$(dirname "$0")/../motor/src"

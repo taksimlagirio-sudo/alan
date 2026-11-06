@@ -47,7 +47,7 @@ pub mod motor;
 pub mod vurus;
 
 pub use dongu::{run, step, take};
-pub use enerji::{EnSayac, MacKural};
+pub use enerji::{mac_kurali, EnSayac, MacKural};
 pub use kurulum::{assignRoles, createMatch, dizSlots, dizUygula, kickoff, Diz, DizV, KurSecenek};
 pub use tac::{macEff, tacEff, MacW, MacZ, Tac};
 
@@ -57,12 +57,6 @@ use crate::mac::MacTam as Mac;
 use crate::saha::W;
 
 
-/// Maçın zar dizisinin varsayılanı (Mac Default için; gerçek tohum createMatch'te verilir).
-impl Default for crate::rng::Rng {
-    fn default() -> Self {
-        crate::rng::Rng::yeni(1)
-    }
-}
 
 
 

@@ -543,7 +543,7 @@ fn tasiyici(m: &mut Mac, h: Pid) -> bool {
     amBitir(m);
     let ht = m.ps[h].team;
     m.st.poss[ht as usize] += 1.0;
-    let kk = MacKural::of(m);
+    let kk = mac_kurali(m);
     // JS `pr = D.oppAt(...)`: hesaplanır ama kullanılmaz (taşınmadı)
     let hp = &m.ps[h];
     let still = cl(1.0 - hypot(hp.vx, hp.vy) / (spd(hp) * ALAN_SPR(hp, &kk)), 0.0, 1.0);
@@ -1448,7 +1448,7 @@ fn bostaTop(m: &mut Mac) {
         if bd < Q.reach {
             let best = best.unwrap();
             let z = m.r.sonraki();
-            let kk = MacKural::of(m);
+            let kk = mac_kurali(m);
             let cp = {
                 let b = m.m.ball.as_mut().unwrap();
                 crate::temas::ctrl_p(&mut b.tt, best, &m.m.ps, None, &kk)
@@ -1460,7 +1460,7 @@ fn bostaTop(m: &mut Mac) {
         }
     } else {
         alanSec(m);
-        let kk = MacKural::of(m);
+        let kk = mac_kurali(m);
         let (bx0, by0) = (m.ball.as_ref().unwrap().x, m.ball.as_ref().unwrap().y);
         let mut b = m.ball.take().unwrap();
         let mut rr = std::mem::take(&mut m.r);

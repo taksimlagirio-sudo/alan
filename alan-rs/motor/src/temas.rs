@@ -212,7 +212,7 @@ pub fn bek_dalis(b: &mut TopT, pi: usize, ps: &[Oyuncu]) -> Option<(f64, f64, f6
             let (bx, by, bvx, bvy) = (b.b.x, b.b.y, b.b.vx, b.b.vy);
             let vb = hyp(bvx, bvy);
             let e = p.en.map_or(1.0, |e| kis(e, 0.0, 1.0));
-            let dv = bek_dv(p) * (crate::kural::enerji::EN3.tepeAlt + (1.0 - crate::kural::enerji::EN3.tepeAlt) * e); /* itki barla (tepe hızının bar kuralıyla aynı ölçü): barı düşük Bekçi daha yavaş uzanır */
+            let dv = bek_dv(p) * (crate::core_sabit::EN3.tepeAlt + (1.0 - crate::core_sabit::EN3.tepeAlt) * e); /* itki barla (tepe hızının bar kuralıyla aynı ölçü): barı düşük Bekçi daha yavaş uzanır */
             let dl = bek_dl(p);
             let (ux, uy) = if vb > 1e-9 { (bvx / vb, bvy / vb) } else { (0.0, 0.0) };
             let (wx, wy) = (bx - p.x, by - p.y);

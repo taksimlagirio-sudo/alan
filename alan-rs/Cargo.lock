@@ -3,6 +3,28 @@
 version = 4
 
 [[package]]
+name = "alan-dunya"
+version = "0.1.0"
+dependencies = [
+ "alan-temel",
+ "bincode",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "alan-kafa"
+version = "0.1.0"
+dependencies = [
+ "alan-dunya",
+ "alan-kural",
+ "alan-temel",
+ "bincode",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "alan-kos"
 version = "0.1.0"
 dependencies = [
@@ -11,7 +33,59 @@ dependencies = [
 ]
 
 [[package]]
+name = "alan-kural"
+version = "0.1.0"
+dependencies = [
+ "alan-temel",
+ "bincode",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "alan-mac"
+version = "0.1.0"
+dependencies = [
+ "alan-dunya",
+ "alan-kafa",
+ "alan-kural",
+ "alan-sekil",
+ "alan-temel",
+ "bincode",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "alan-motor"
+version = "0.1.0"
+dependencies = [
+ "alan-dunya",
+ "alan-kafa",
+ "alan-kural",
+ "alan-mac",
+ "alan-sekil",
+ "alan-temel",
+ "bincode",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "alan-sekil"
+version = "0.1.0"
+dependencies = [
+ "alan-dunya",
+ "alan-kafa",
+ "alan-kural",
+ "alan-temel",
+ "bincode",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "alan-temel"
 version = "0.1.0"
 dependencies = [
  "bincode",

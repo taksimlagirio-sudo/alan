@@ -8,26 +8,12 @@ pub use crate::mac_veri::EnSayac;
 use super::*;
 use crate::mat::{exp, hypot, jmax, jmin, pow};
 use crate::model::JMSt;
-use crate::temas::Kural;
 use crate::yetenek::mek;
 pub use crate::kural::enerji::*;
 
-impl Kural for MacKural {
-    fn spr(&self, p: &Oyuncu) -> f64 {
-        ALAN_SPR(p, self)
-    }
-    fn kosu_pr(&self, p: &Oyuncu) -> Option<(f64, f64)> {
-        kosuPr(p, self).map(|k| (k.Ts, k.k))
-    }
-    fn en3_kul(&self, p: &Oyuncu, e: f64, bizde: bool, b: Option<(f64, f64)>) -> f64 {
-        ALAN_EN3_KUL(p, e, bizde, b, self)
-    }
-}
-
-impl MacKural {
-    pub fn of(m: &Mac) -> MacKural {
-        MacKural { niyet: None, mh: m.mac.__mH, tick: m.tick, holder: m.holder.map(|h| kim(&m.ps[h])), flq: m.fl.as_ref().and_then(|f| f.q).map(|q| kim(&m.ps[q])) }
-    }
+/// Maçın sprint bağlamı (eskiden `MacKural::of`; Aşama 7c: tip kural katmanında, kurucusu maçta).
+pub fn mac_kurali(m: &Mac) -> MacKural {
+    MacKural { niyet: None, mh: m.mac.__mH, tick: m.tick, holder: m.holder.map(|h| kim(&m.ps[h])), flq: m.fl.as_ref().and_then(|f| f.q).map(|q| kim(&m.ps[q])) }
 }
 
 
@@ -365,7 +351,7 @@ pub fn sprintKarar3(m: &mut Mac) {
     let fr = frAl(m);
     let aF = gecici_dis::D::arriveFirm;
     let Wf = |T: f64, tD: f64| if tD >= 1e8 { 1.0 } else { 1.0 / (1.0 + exp((T - tD) / 5.0)) };
-    let kk = MacKural::of(m);
+    let kk = mac_kurali(m);
     for pi in 0..m.ps.len() {
         {
             let p = &mut m.ps[pi];
@@ -545,39 +531,6 @@ pub fn sprintKarar3(m: &mut Mac) {
     }
 }
 
-/// JS ALAN_EN3_KUL(p, e, bizde, bx, by): barın e düzeyindeki kullanım değeri.
-pub fn ALAN_EN3_KUL(p: &Oyuncu, e: f64, bizde: bool, bxy: Option<(f64, f64)>, k: &MacKural) -> f64 {
-    let Some((bx, by)) = bxy else { return 0.0 };
-    let ee = jmax(0.0, jmin(1.0, e));
-    let yak = exp(-hypot(p.x - bx, p.y - by) / 10.0);
-    let tB = gecici_dis::threat(if bizde { p.team } else { 1.0 - p.team }, bx, by);
-    let mut u = yak * tB * gecici_dis::DU::enFark * ee;
-    if bizde {
-        u += gecici_dis::threat(p.team, p.x, p.y) * jmin(1.0, ee / 0.2);
-    }
-    if !p.bekci() {
-        let b = spd(p);
-        let pk = if SPR_FAZ.ust { ALAN_SPR(p, k) } else { 1.3 };
-        let d = jmax(3.0, jmin(25.0, hypot(p.x - bx, p.y - by)));
-        let T = |x: f64| {
-            if x < EN2.pat {
-                return d / b;
-            }
-            let vS = b * ALAN_EN3_TEPE(Some(x), pk);
-            let ts = ALAN_EN2_TS(p, Some(x - EN2.pat));
-            let r = vS * ts;
-            if d <= r {
-                d / vS
-            } else {
-                ts + (d - r) / b
-            }
-        };
-        let T1 = T(1.0);
-        u += yak * (tB + gecici_dis::threat(if bizde { 1.0 - p.team } else { p.team }, bx, by)) / (1.0 + exp((T(ee) - T1) / 5.0));
-    }
-    u
-}
-
 /// JS sprintBasla(m, p, F, yazi)
 pub fn sprintBasla(m: &mut Mac, pi: Pid, yazi: Option<String>) {
     m.ps[pi]._sf = Some(crate::model::JP_sf { t0: m.tick, f: "patlama".into() });
@@ -642,7 +595,7 @@ pub fn sprFaz(m: &mut Mac) {
     let T2 = T1 + F.tepeT;
     let T3 = T2 + F.frenT;
     let T4 = T3 + F.dolT;
-    let kk = MacKural::of(m);
+    let kk = mac_kurali(m);
     for pi in 0..m.ps.len() {
         let holder = m.holder == Some(pi);
         let sk = kk.sprKar(&m.ps[pi]);

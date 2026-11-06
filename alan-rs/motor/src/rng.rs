@@ -5,6 +5,13 @@ pub struct Rng {
     pub s: i32,
 }
 
+/// Maçın zar dizisinin varsayılanı (Mac Default için; gerçek tohum createMatch'te verilir).
+impl Default for Rng {
+    fn default() -> Self {
+        Rng::yeni(1)
+    }
+}
+
 impl Rng {
     pub fn yeni(seed: u32) -> Rng {
         Rng { s: seed as i32 }
