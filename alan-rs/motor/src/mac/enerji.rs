@@ -344,6 +344,9 @@ pub fn fr_top(m: &Mac) -> Option<crate::model::JMShFr> {
     })
 }
 
+/// onde_ac: önde bekleyenin yürüme katı (normal koşunun).
+pub const ONDE_YURU: f64 = 0.5;
+
 /// JS sprintKarar3(m): her koşucu için koşu hızı (tempo → sprint arası sürekli kat, _hizK).
 pub fn sprint_karar3(m: &mut Mac) {
     let F = &SPR_FAZ;
@@ -376,6 +379,14 @@ pub fn sprint_karar3(m: &mut Mac) {
             continue;
         }
         let j = job(p).to_string();
+        // onde_ac: önde bekleyen, rakip topu tutarken acelesi yok: yürür (bar dolar); top havadayken (kazanılabilir) normal hız
+        if crate::sekil::konum::onde_ac() && j == "önde bekle" && h.map_or(false, |h| m.ps[h].team != p.team) {
+            let p = &mut m.ps[pi];
+            p.hal_mut()._hizK = Some(ONDE_YURU);
+            p.sprint = false;
+            p.hal_mut()._kosuK = Some("yürü".into());
+            continue;
+        }
         if sp_zorla(&j) {
             let p = &mut m.ps[pi];
             p.hal_mut()._topSpr = true;

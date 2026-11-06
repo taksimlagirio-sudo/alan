@@ -655,9 +655,11 @@ impl Sv {
                 }
                 k += 2.0;
             }
+            // hedef uzun süre geçerli: oyuncu başına 30 tikte bir yeniden tartılır, yalnız belirgin kazançta (3) kayar
             let pp = &c.ps[p];
             let once = pp.job.as_deref() == Some("önde bekle") && (pp.ty - ty0).abs() <= 10.5;
-            if once && puan(pp.ty) + 1.0 >= en.1 { pp.ty } else { en.0 }
+            let tart = (c.m.tick as i64 + p as i64 * 7) % ONDE_AC_T == 0;
+            if once && (!tart || puan(pp.ty) + 3.0 >= en.1) { pp.ty } else { en.0 }
         } else {
             ty0
         };
@@ -1080,7 +1082,10 @@ fn uadeg_eski() -> bool {
     *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_UADEG_ESKI_IZ").is_ok())
 }
 
-/// Deney (ALAN_ONDE_AC_IZ; ölçümde/wasm'da ONDE_AC_ZORLA): önde bekleyen oyuncu son çizgi boyunca açığa kayar. Varsayılan kapalı.
+/// onde_ac: önde bekleyenin yerini yeniden tartma aralığı (tik).
+pub const ONDE_AC_T: i64 = 30;
+/// Deney (ALAN_ONDE_AC_IZ; ölçümde/wasm'da ONDE_AC_ZORLA): önde bekleyen oyuncu son çizgi boyunca açığa kayar; rakip topu
+/// tutarken yürüyerek (bar dolar), top havadayken normal koşar (mac/enerji.rs sprint_karar3). Varsayılan kapalı.
 pub static ONDE_AC_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn onde_ac() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
