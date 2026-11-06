@@ -1343,7 +1343,9 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
                 v: o.v.unwrap_or(f64::NAN),
                 kh: o.kh.clone(),
                 devam: o.devam,
-                ..Default::default()
+                en: o.en.clone(),
+                dok: o.dok.clone(),
+                sjK: o.sjK,
             }
         }).collect();
         m.m.lastDec = Some(crate::model::JMLastDec { name: hp.govde.name.to_string(), team: ht, x: hp.x, y: hp.y, opts });
