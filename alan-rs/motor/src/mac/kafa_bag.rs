@@ -57,6 +57,8 @@ pub struct KafaKayit {
     pub P: Option<f64>,
     pub Ps: Option<f64>,
     pub Pk: Option<f64>,
+    /// kafanın beklediği: top rakibe geçer (ölçüm için)
+    pub Pl: Option<f64>,
     pub hiz: Option<f64>,
     pub savT: Option<f64>,
     pub tf: Option<f64>,
@@ -153,6 +155,7 @@ pub fn kafa_basla(m: &mut Mac, h: Pid, o: &mut Secenek, ot: bool) {
         P: k3(d.and_then(|d| d.P)),
         Ps: d.and_then(|d| d.Ps).and_then(|x| k3(Some(x))),
         Pk: k3(d.and_then(|d| d.Pk)),
+        Pl: k3(d.and_then(|d| d.Pl)),
         hiz: k3(k_hiz(o.launch.as_ref().map(|l| (l.vx, l.vy)))),
         savT: o.savT,
         tf: o.tf.map(jround),

@@ -161,6 +161,8 @@ fn main() {
         alan_motor::kafa::kafa2_tarti::IKI_KADEME_ZORLA.store(ek.split(',').any(|x| x == "kademe"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa1_secim::PLAN_ZORLA.store(ek.split(',').any(|x| x == "plan"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::SAH_SUREKLI_ZORLA.store(ek.split(',').any(|x| x == "sahsur"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa2_tarti::SEKME_BEDEL_ZORLA.store(ek.split(',').any(|x| x == "sekbedel"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa2_tarti::GOVDE_YOL_KAPALI.store(ek.split(',').any(|x| x == "govdeyolkapali"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa1_secim::GURULTU_SUREKLI_ZORLA.store(ek.split(',').any(|x| x == "surekli"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::KUYU_GEC_ZORLA.store(ek.split(',').any(|x| x == "kuyugec"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::GOVDE_YOL_ZORLA.store(ek.split(',').any(|x| x == "govdeyol"), std::sync::atomic::Ordering::Relaxed);
@@ -326,6 +328,8 @@ fn main() {
                     alan_motor::kafa::kafa2_tarti::IKI_KADEME_ZORLA.store(acik && ek.split(',').any(|x| x == "kademe"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa1_secim::PLAN_ZORLA.store(acik && ek.split(',').any(|x| x == "plan"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::SAH_SUREKLI_ZORLA.store(acik && ek.split(',').any(|x| x == "sahsur"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa2_tarti::SEKME_BEDEL_ZORLA.store(acik && ek.split(',').any(|x| x == "sekbedel"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa2_tarti::GOVDE_YOL_KAPALI.store(acik && ek.split(',').any(|x| x == "govdeyolkapali"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa1_secim::GURULTU_SUREKLI_ZORLA.store(acik && ek.split(',').any(|x| x == "surekli"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::KUYU_GEC_ZORLA.store(acik && ek.split(',').any(|x| x == "kuyugec"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::GOVDE_YOL_ZORLA.store(acik && ek.split(',').any(|x| x == "govdeyol"), std::sync::atomic::Ordering::Relaxed);
@@ -401,6 +405,8 @@ fn main() {
                 alan_motor::kafa::kafa2_tarti::IKI_KADEME_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa1_secim::PLAN_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa2_tarti::SAH_SUREKLI_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kafa::kafa2_tarti::SEKME_BEDEL_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kafa::kafa2_tarti::GOVDE_YOL_KAPALI.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa1_secim::GURULTU_SUREKLI_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa2_tarti::KUYU_GEC_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa2_tarti::GOVDE_YOL_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
@@ -466,6 +472,28 @@ fn main() {
         }
         if kip == "parmak" {
             writeln!(out, "{} {:016x}", mt.m.tick, alan_motor::parmak::parmak_izi(&mt.m)).unwrap();
+        }
+        if kip == "kafasut" {
+            // kafa ↔ gerçek kaydındaki her şut: kafanın beklediği (gol Pk, sekip bize Ps, rakibe Pl) ve sonra topu alan (rolü)
+            let m = &mut mt.m;
+            if let Some(K) = m.mac._kafa.as_mut() {
+                let L: Vec<_> = K.L.drain(..).collect();
+                for r in L.iter().filter(|r| r.kind == "gönder") {
+                    let s = r.son.as_ref();
+                    let kim = s.and_then(|s| s.kim_id).and_then(|id| m.ps.iter().find(|p| p.id == id && Some(&*p.govde.name) == s.and_then(|s| s.kim.as_deref())));
+                    let rol = match (s, kim) {
+                        (Some(s), _) if s.gol.unwrap_or(0.0) > 0.0 => "gol".to_string(),
+                        (_, Some(p)) if p.team != r.team && p.bekci() => "kaleci".into(),
+                        (_, Some(p)) if p.team != r.team => "savunmaci".into(),
+                        (_, Some(_)) => "bizden".into(),
+                        _ => "yok".into(),
+                    };
+                    let gx = if r.team == 0.0 { alan_motor::saha::W } else { 0.0 };
+                    let dd = ((gx - r.x.unwrap_or(0.0)).powi(2) + (alan_motor::saha::CY - r.y.unwrap_or(0.0)).powi(2)).sqrt();
+                    let sap: Vec<String> = r.sapma.iter().map(|x| serde_json::to_string(&x.y).unwrap()).collect();
+                    writeln!(out, "{{\"t\":{},\"ad\":{:?},\"d\":{:.1},\"Pk\":{},\"Ps\":{},\"Pl\":{},\"shot\":{:?},\"sonra\":{:?},\"kim\":{:?},\"sapma\":[{}]}}", r.t, r.ad, dd, r.Pk.unwrap_or(-1.0), r.Ps.unwrap_or(-1.0), r.Pl.unwrap_or(-1.0), r.shot.clone().unwrap_or_default(), rol, s.and_then(|s| s.kim.clone()).unwrap_or_default(), sap.join(",")).unwrap();
+                }
+            }
         }
         if kip == "sutlar" {
             // her şut kararı (seçilen gönder): tik, takım, şutçu, yer, kafanın gol olasılığı (det.Pk); 60 tik içinde gol oldu mu

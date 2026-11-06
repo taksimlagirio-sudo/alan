@@ -304,6 +304,13 @@ pub fn sah_surekli() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     SAH_SUREKLI_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_SUREKLI_IZ").is_ok())
 }
+/// Deney (ALAN_SEKME_BEDEL_IZ; ölçümde SEKME_BEDEL_ZORLA): şut yalnız gol olasılığıyla, pas yalnız alıcıya doğrudan varma
+/// olasılığıyla değer kazanır; gol olmayan şut ve alıcının almadığı pas payı (sekip bize dönse de) kaybedilmiş gibi bedel öder.
+pub static SEKME_BEDEL_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sekme_bedel() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SEKME_BEDEL_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SEKME_BEDEL_IZ").is_ok())
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
@@ -1139,6 +1146,8 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
             let Pl = d.Pl.unwrap_or(0.0);
             let Lv = L(k, e_o.x, e_o.y);
             let P = d.Pk.unwrap_or(0.0);
+            // ALAN_SEKME_BEDEL_IZ: şutun değeri yalnız golden; gol olmayan her sonuç (sekip bize dönse de) kaybedilmiş gibi bedel
+            let Pl = if sekme_bedel() { jmax(0.0, 1.0 - P) } else { Pl };
             o.v = Some(P - Pl * Lv);
             o.dok = Some(Dok::yeni(&[("gol", P), ("kayip", -Pl * Lv)]));
         } else if kind == "pas" || kind == "önüne" || kind == "kenardan" {
@@ -1194,6 +1203,8 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
             let t_s = 0.0;
             let e_o = d.endO.or(d.end).unwrap_or(at);
             let Lv = L(k, e_o.x, e_o.y);
+            // ALAN_SEKME_BEDEL_IZ: pas yalnız alıcıya doğrudan varınca değerli; geri kalan her pay (sekip bize dönen de) başarısız pas
+            let Pl = if sekme_bedel() { jmax(0.0, 1.0 - Pd) } else { Pl };
             o.v = Some(Pd * t_a.0 + Ps * t_s - Pl * Lv);
             if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
                 eprintln!("PASV {} {} [{}{}→{} hız {:?}] ->({:.1},{:.1}) Pd {:.3} alici {:.3} durum {:.3} Ps {:.3} Pl {:.3} kayip {:.3} v {:.3} | şut {:.3} zemin {:.3} pas {:.3} sür {:.3} {:?} T {:.0}", k.tick(), h.govde.name, o.kind, if o.tek.map_or(false, crate::mat::dogru) { "·tek" } else { "" }, rq.govde.name, o.launch.as_ref().map(|l| ((l.vx * 100.0).round() / 100.0, (l.vy * 100.0).round() / 100.0)), at.x, at.y, Pd, t_a.2, t_a.1.v, Ps, Pl, Lv, Pd * t_a.0 + Ps * t_s - Pl * Lv, t_a.1.sut, t_a.1.zem, t_a.1.pas, t_a.1.sur, t_a.1.pas_k, tf);
