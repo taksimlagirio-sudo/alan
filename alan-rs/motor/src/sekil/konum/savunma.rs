@@ -446,7 +446,41 @@ impl Sv {
             }
         }
         self.yedek(c);
+        if sav_taban() {
+            self.taban(c);
+        }
         self.takim(c);
+    }
+
+    /// ALAN_SAV_TABAN_IZ (GOREV-savunma S3): adam işlerinin hedefine derinlik tabanı. Top uzaktayken savunmacı kale
+    /// dibinde bekleyen hücumcuyu kale çizgisine kadar izlemez, takımın çizgisini tutar: taban = min(blok çizgisi,
+    /// max(SAV_TABAN_MIN, top derinliği − SAV_TABAN_ARA)). Top yaklaştıkça taban geriler (64 br'den yakında yok).
+    /// Pres, kovalama, geri koşu ve Bekçi dışarıda.
+    fn taban(&mut self, c: &mut Mc) {
+        let dt = self.dt;
+        let x0 = own_x(dt);
+        let dir = dir_of(dt);
+        let bd = (self.E.0 - x0) * dir;
+        let blok = c.m.tac[dt as usize].blok.as_deref().and_then(BLOK).unwrap_or(34.0 * GKX);
+        let tb = jmin(blok, jmax(SAV_TABAN_MIN, bd - SAV_TABAN_ARA));
+        if !(tb > SAV_TABAN_MIN) {
+            return;
+        }
+        for &p in &self.defs.clone() {
+            if self.press.contains(&p) {
+                continue;
+            }
+            let pp = &c.ps[p];
+            let job = pp.job.as_deref().unwrap_or("");
+            if !(job.starts_with("markaj") || job.starts_with("arkada") || job.starts_with("kapatma") || job.starts_with("bölge")) {
+                continue;
+            }
+            let d = (pp.tx - x0) * dir;
+            if d < tb {
+                let p = &mut c.ps[p];
+                p.tx = x0 + dir * tb;
+            }
+        }
     }
 
     /// JS `adamT(p)`: adam adama savunma (paylaşım dalgası yokken).
@@ -799,4 +833,14 @@ pub static UA_HIST_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::Ato
 pub fn ua_hist() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     UA_HIST_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_UA_HIST_IZ").is_ok())
+}
+
+/// S3 tabanı: en derin taban (kuyunun hemen önü) ve tabanın topun gerisinde kaldığı uzaklık.
+pub const SAV_TABAN_MIN: f64 = 8.0 * GKX;
+pub const SAV_TABAN_ARA: f64 = 45.0 * GKX;
+/// Deney (ALAN_SAV_TABAN_IZ; ölçümde SAV_TABAN_ZORLA; GOREV-savunma S3): adam işlerinin hedefine derinlik tabanı.
+pub static SAV_TABAN_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sav_taban() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAV_TABAN_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAV_TABAN_IZ").is_ok())
 }
