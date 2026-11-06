@@ -436,14 +436,14 @@ pub fn ileriKur(k: &mut Kafa, m: &MacGor) -> Option<IleriTab> {
 /// JS ileriTab() (decide.js:6546): maçın ileri tablosu (taktik ya da kadro değişince yeniden).
 pub fn ileriTab(k: &mut Kafa) -> Option<Arc<IleriTab>> {
     let m = k.mac.clone()?;
-    let ayni_tik = matches!(&k.k2.IT, Some((t, _, _)) if *t == m.tick);
+    let ayni_tik = matches!(&k.ob.it, Some((t, _, _)) if *t == m.tick);
     if !ayni_tik {
         let key = format!(
             "{:?}|{:?}",
             m.tac,
             m.ps.iter().map(|p| (p.id, p.team, p.govde.role.clone(), format!("{:?}", p.govde.slot), format!("{:?}", p.govde.rslot))).collect::<Vec<_>>()
         );
-        let eski = k.k2.IT.take();
+        let eski = k.ob.it.take();
         let degisti = match &eski {
             Some((_, k0, _)) => *k0 != key,
             None => true,
@@ -463,13 +463,13 @@ pub fn ileriTab(k: &mut Kafa) -> Option<Arc<IleriTab>> {
             k.k2._noHold = sakla_k2.0;
             k.k2._noFake = sakla_k2.1;
             k.k2._dalgada = sakla_k2.2;
-            k.k2.IT = Some((m.tick, key, tab));
+            k.ob.it = Some((m.tick, key, tab));
         } else {
             let (_, k0, tb) = eski.unwrap();
-            k.k2.IT = Some((m.tick, k0, tb));
+            k.ob.it = Some((m.tick, k0, tb));
         }
     }
-    k.k2.IT.as_ref().and_then(|x| x.2.clone())
+    k.ob.it.as_ref().and_then(|x| x.2.clone())
 }
 
 /// JS ileriDeger(team, x, y) (decide.js:6585)

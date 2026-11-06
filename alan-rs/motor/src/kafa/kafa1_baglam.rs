@@ -46,13 +46,6 @@ pub struct Kafa {
     /// sendelemeyle biten benzetimde topu geri almaya dek beklenen süre (tik); keepP_gec: ilk kesişmenin ki
     pub kesisK_gec: Cell<f64>,
     pub keepP_gec: Cell<f64>,
-    /// JS `UCUS`: varış hızı (bit) → uzunluk (1..80) → yol
-    pub(crate) ucus: RefCell<crate::HizliMap<u64, Vec<Option<Arc<UcusYol>>>>>,
-    /// JS `SUTY`: hız (1/20) → yol birikimi
-    pub(crate) suty: RefCell<crate::HizliMap<i64, Arc<Vec<f64>>>>,
-    /// JS `GE`, `GEk`, `GEt`, `GEic`
-    pub(crate) ge: RefCell<(Option<f64>, crate::HizliMap<[u64; 7], f64>, crate::HizliMap<[u64; 3], f64>)>,
-    pub(crate) ge_ic: Cell<bool>,
     /// JS `D._mac` (kafa2'nin okuduğu maç görünümü; maç döngüsü kararın önünde doldurur)
     pub mac: Option<MacGor>,
     /// JS `m._prT` çıktısı (kafa2 yazar; maç ve kafa1'in girEsik'i `Dis::prT` ile okur, bkz. `PrT::d1`)
@@ -61,10 +54,8 @@ pub struct Kafa {
     pub k2: Kafa2Durum,
     /// decide0'ın `srcC._kc`'si (kararın K önbelleği; launchFor/ucusSure/bankSure/bankFor buna bakar)
     pub srcC_kc: Option<RefCell<KOnbellek>>,
-    /// JS `RNB`, `RNBt`
-    pub(crate) rnb: RefCell<(Option<f64>, crate::HizliMap<[u64; 6], f64>)>,
-    /// JS `SHT`'nin tabloda olmayan hücreleri (hesaplanmış)
-    pub(crate) sht_ek: RefCell<crate::HizliMap<i64, f64>>,
+    /// önbellekler, ömürlerine göre (MIMARI.md 3e-4)
+    pub ob: super::onbellek::Onbellek,
 }
 
 impl Kafa {
@@ -78,16 +69,11 @@ impl Kafa {
             kesisK_son: Cell::new(0.0),
             kesisK_gec: Cell::new(0.0),
             keepP_gec: Cell::new(0.0),
-            ucus: RefCell::new(Default::default()),
-            suty: RefCell::new(Default::default()),
-            ge: RefCell::new((None, Default::default(), Default::default())),
-            ge_ic: Cell::new(false),
-            rnb: RefCell::new((None, Default::default())),
-            sht_ek: RefCell::new(Default::default()),
             mac: None,
             prT: None,
-            k2: Kafa2Durum { PWT: Some(-1e9), IMK_INAN_T: 60.0, ..Default::default() },
+            k2: Kafa2Durum { IMK_INAN_T: 60.0, ..Default::default() },
             srcC_kc: None,
+            ob: Default::default(),
         }
     }
     /// JS `D._tick || 0`
