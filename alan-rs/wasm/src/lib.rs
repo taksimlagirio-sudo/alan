@@ -438,3 +438,29 @@ pub extern "C" fn plan(acik: i32) {
     alan_motor::kafa::kafa1_secim::PLAN_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
     alan_motor::kafa::kafa1_secim::PLAN_ZORLA.store(acik != 0, std::sync::atomic::Ordering::Relaxed);
 }
+
+// ---- hücum ve savunma oturumlarının deneyleri (varsayılan kapalı; sitede adreste =1 ya da yeni=1 hepsini açar) ----
+macro_rules! anahtar {
+    ($ad:ident, $yol:path) => {
+        #[no_mangle]
+        pub extern "C" fn $ad(acik: i32) {
+            $yol.store(acik != 0, std::sync::atomic::Ordering::Relaxed);
+        }
+    };
+}
+// H1: sahiplik haritası yakınsayana dek (sahyak) / ön eleme sırayla (onsira)
+anahtar!(sah_yakinsa, alan_motor::kafa::kafa2_tarti::SAH_YAKINSA_ZORLA);
+anahtar!(on_sira, alan_motor::kafa::kafa2_tarti::ON_SIRA_ZORLA);
+// H2: savurma yolunda rakip tepkiden sonra kovalar (savtepki)
+anahtar!(savur_tepki, alan_motor::kafa::kafa2_tarti::SAVUR_TEPKI_ZORLA);
+// tut: eldeki en iyi seçenek × beklemenin indirimi (tutelde)
+anahtar!(tut_elde, alan_motor::kafa::kafa2_tarti::TUT_ELDE_ZORLA);
+// S1 baskıya kazanç, S2 atamada süreklilik, S3 savunma tabanı
+anahtar!(pres_kazanc, alan_motor::sekil::konum::PRES_KAZANC_ZORLA);
+anahtar!(ua_hist, alan_motor::sekil::konum::UA_HIST_ZORLA);
+anahtar!(sav_taban, alan_motor::sekil::konum::SAV_TABAN_ZORLA);
+/// S7 taşıyıcıyı durdurmak: bit 1 şut hattı, 2 ikinci presçi, 4 kale önüne dönüş (7 hepsi)
+#[no_mangle]
+pub extern "C" fn s7(bit: i32) {
+    alan_motor::sekil::S7_ZORLA.store(bit as u8, std::sync::atomic::Ordering::Relaxed);
+}
