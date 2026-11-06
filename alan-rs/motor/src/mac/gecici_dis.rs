@@ -78,7 +78,7 @@ pub mod D {
 /// JS AlanDecide.DU (maçın okuduğu sabitler; slowK tanımsız → 0,55)
 #[allow(non_upper_case_globals)]
 pub mod DU {
-    pub const enFark: f64 = 0.15;
+    pub const enFark: f64 = crate::core_sabit::EN_FARK;
     pub const engage: f64 = 2.4;
     pub const cd: f64 = 14.0;
     pub const oyalaR: f64 = 26.0;
@@ -96,7 +96,7 @@ pub fn mc_ile<T>(m: &mut Mac, f: impl FnOnce(&mut crate::sekil::varlik::Mc) -> T
     use crate::sekil::varlik::Mc;
     crate::mac::kafa_dis::kafa_hazirla(m);
     crate::mac::kafa_dis::kural_tazele(m);
-    let kural = crate::mac::MacKural::of(m);
+    let kural = crate::mac::mac_kurali(m);
     let mut ps = std::mem::take(&mut m.ps);
     // top maçta kalır (takımı okunur); yerleşim kopyasında çalışır, sonra geri yazılır
     let mut ball = m.ball.as_ref().map(|b| b.tt.clone());
@@ -133,7 +133,7 @@ pub fn slotBase(m: &Mac, p: Pid, ex: f64, ey: f64, att: bool) -> (f64, f64) {
 }
 /// Bekçi'nin yeri
 pub fn bekci(m: &Mac, p: Pid, ex: f64, ey: f64) -> (f64, f64) {
-    let kural = crate::mac::MacKural::of(m);
+    let kural = crate::mac::mac_kurali(m);
     let bm = crate::sekil::yer::BekM { ps: crate::sekil::yer::BekPs::Duz(&m.ps), holder: m.holder.map(|h| crate::dunya::Yerde::oyuncu(&m.ps[h])), sut: m.mac.kafa.k.is_some(), ben: Some(p) };
     crate::sekil::yer::bekci(&m.ps[p], ex, ey, Some(&bm), &kural)
 }
@@ -489,7 +489,7 @@ pub fn imk_hucre(m: &Mac, sut: &Oyuncu, bek: &Oyuncu, dd: f64, sy: f64, ko: f64,
     b.vy = 0.0;
     b.x = W - 1.0;
     b.y = CY;
-    let kural = crate::mac::MacKural::of(m);
+    let kural = crate::mac::mac_kurali(m);
     let g0 = vec![s.clone(), b.clone()];
     let bm = crate::sekil::yer::BekM { ps: crate::sekil::yer::BekPs::Duz(&g0), holder: Some(crate::dunya::Yerde::oyuncu(&g0[0])), sut: true, ben: Some(1) };
     let (yx, yy) = crate::sekil::yer::bekci(&g0[1], x, y, Some(&bm), &kural);

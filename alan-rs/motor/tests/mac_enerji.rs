@@ -66,7 +66,7 @@ fn sprint_kati_ve_kosu_js_ile_ayni() {
     let mut n = 0;
     for c in v["spr"].as_array().unwrap() {
         let m = mac(&c["m"]);
-        let k = MacKural::of(&m);
+        let k = alan_motor::mac::mac_kurali(&m);
         for (i, pj) in c["per"].as_array().unwrap().iter().enumerate() {
             let p = &m.ps[i];
             let d = h(&pj["d"]);
@@ -104,7 +104,7 @@ fn kuyu_cikisi_js_ile_ayni() {
     let mut hata = vec![];
     for c in v["kuyu"].as_array().unwrap() {
         let m = mac(&c["m"]);
-        let k = MacKural::of(&m);
+        let k = alan_motor::mac::mac_kurali(&m);
         let pi = c["p"].as_u64().unwrap() as usize;
         let y = kuyuCikYon(&m, pi);
         let ok = match (y, c["Y"].is_null()) {

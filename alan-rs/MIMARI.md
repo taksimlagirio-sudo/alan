@@ -51,8 +51,8 @@ Yerleşim ile karar birbirini çağırmaz; ikisi de `deger`'i çağırır.
 değerlendirmesini (`girThr`, `duelP`) kullanır. Bu bir kod kusuru değil, modelin doğası. Bu yüzden bu
 hizmetler `deger` katmanındadır; katman içinde karşılıklı çağrı serbesttir, katmanlar arasında yasak.
 
-Dosya eşlemesi (modüller fiziksel olarak yerinde; başka bir oturum aynı kodda çalıştığı için dosya taşımak
-Aşama 7'ye kaldı, kural `sina/katman.sh`'ta):
+Dosya eşlemesi (Aşama 7c'den beri her katman ayrı crate, `katman/<ad>/`; kaynak dosyalar `motor/src`'de yerinde,
+crate kökü `#[path]` ile bağlar, 3.9. Katmanlar arası kuralı derleyici, katman içi kuralları `sina/katman.sh` zorlar):
 
 | Katman | Dosyalar |
 |---|---|
@@ -144,7 +144,7 @@ kodda çalıştığı için aşamalar küçük parçalarla ve sık `main`'e birl
 | 4 | Tek dünya | `Dunya` + `Gorunum`; kimlik `Pid`; köprü çevirileri kalkar | **✅ kapandı (6 Kasım, ölçümle yeniden kapsamlandı):** kimlik değer (`Oyuncu::kim`), dünya kendi tipi (`Dunya`, temel katmanda), gövdeler paylaşımlı, köprülerdeki çift biçimler kalktı. `Gorunum` (taban + değişenler) yapılmadı: dünyaların çoğu sıfırdan kuruluyor (3.1, 4c-2c) |
 | 5 | Veri | **5-1, 5-2 ✅** (3.6: `Oyuncu` 2704 → 288 bayt). `Oyuncu` → `OyuncuDurum` + `OyuncuGovde`; `KafaD` → `Ayar` + geçici durum; `JsDeger` ve gereksiz `Option`'lar | `Oyuncu` kopyası ~300 bayt; `model.rs` üretilmiş taslak değil |
 | 6 | JS bağı | **Karar (5 Kasım): Rust tek doğru kaynak.** JS ile bit bit aynılık kısıtı kalktı; doğrulama `sina/ayni.sh` ve maç istatistikleriyle | ✅ Temizlik: JS vektörüne bağlı 12 sınama gerekçeli `#[ignore]` (vektör üretilince `--ignored` ile çalışır; temiz klonda düşen ya da sessizce geçen sınama kalmadı); `tests/ayni.rs` `cargo test`'in kendisinde parmak izi başvurusunu denetler; `tests/kafa1.rs`'in JS taklit artıkları silindi; motor ve sınamalar uyarısız. Rust adlandırması ertelendi (bkz. Geri dönülecekler) |
-| 7 | Crate'ler | Katmanlar ayrı crate; döngüyü derleyici yasaklar | **7a, 7b ✅** (3.8): temel, yerleşim → maç bağları yok; `MacEk` `Mac`'ten çıktı (`MacTam`); `sina/katman.sh` 7 kural, istisnasız. Katmanlar arasında döngü yok. 7c (fiziksel bölme) bekliyor. Bitti sayılır: `cargo build` katman kuralını zorlar |
+| 7 | Crate'ler | Katmanlar ayrı crate; döngüyü derleyici yasaklar | **7a, 7b ✅** (3.8), **7c ✅** (3.9): `alan-temel` ← `alan-kural`, `alan-dunya` ← `alan-kafa` ← `alan-sekil` ← `alan-mac`; `alan-motor` hepsini eski yollarla yeniden dışa verir. Bitti: üst katmana bağlanmak derlenmez |
 
 ### 3.1 Aşama 3e ve 4'ün birlikte planı (5 Kasım)
 
@@ -206,7 +206,7 @@ Bilerek ertelenen işler; her biri bir karar ya da uygun bir an bekliyor:
 |---|---|---|
 | ~~**`dolanma` davranışı**~~ (3.2 C): hayali bir kopya oyuncu, dünyadaki kendi gerçek gövdesinin etrafından dolanmaya çalışıyordu | **Yapıldı (5 Kasım)**: kopya aslını oyuncu kimliğiyle tanıyıp atlıyor; varsayılan, eski davranış `ALAN_DOLANMA_ESKI` ile (yalnız yerelde). Ölçüm 3.4; başvurular `sina/ayni.sh --yaz` ile yenilendi | — |
 | **4c-2: tek dünya** (kafanın `Op` yerine görünüm `Varlik` üzerinde çalışması, çevirilerin kalkması) | Çeviriler artık sürenin ~%1,5'i; kafanın ~14 bin satırı `&[Op]` üzerinden alanlara doğrudan erişiyor (çok günlük iş, davranış oturumuyla sürekli çakışır); çeviriler arasında nesne paylaşmak `dolanma`'yı değiştirir | `dolanma` kararı verildi; kafa kodu durulduğunda |
-| **Rust adlandırması** (JS adları: `ALAN_SPR`, `decide0K`, `non_snake_case` izinleri) | Binlerce satıra dokunur; davranış oturumuyla sürekli çakışır; değeri okunurluk | Aşama 7 (crate'lere bölme) ile birlikte |
+| **Rust adlandırması** (JS adları: `ALAN_SPR`, `decide0K`, `non_snake_case` izinleri) | Binlerce satıra dokunur; davranış oturumuyla sürekli çakışır; değeri okunurluk | 7c bitti; sırada |
 | **Aşama 5: veri** (`Oyuncu` sıcak/soğuk, `JsDeger`, gereksiz `Option`'lar) | Kopya maliyeti %2,4'e indi; `model.rs` her katmanın ortak tipi, bölmesi 4c-2'ye bağlı | 4c-2 ile |
 | ~~**3e-4: önbelleklerin ömürleri**~~ | **Yapıldı (6 Kasım)**: `Onbellek` | — |
 
@@ -400,6 +400,40 @@ işlevi `m` yerine bu eli alır. Düz veri `kosulAkt` temel modele (taktiğin ke
 
 Yan bulgu: kural 2 bugün davranış oturumunun bir deneyinde bozuk (`kafa2_imkan.rs` → `kafa2_karar::decide`,
 `ALAN_SUT_GERCEK_IZ`, bayrak arkasında).
+
+### 3.9 Aşama 7c: katmanlar ayrı crate (6 Kasım)
+
+Crate'ler ve bağımlılıkları (her crate'in `Cargo.toml`'u katman kuralının kendisi):
+
+| Crate | Modül | Bağlı olduğu |
+|---|---|---|
+| `alan-temel` | kökteki dosyalar (`model`, `mat`, `saha`, `temas`, `mac_veri`, `dunya_tip`, `paket`, `oyun`, `paralel`, `parmak` …), `iz_acik`, `HizliMap` | — |
+| `alan-kural` | `kural` | temel |
+| `alan-dunya` | `dunya` | temel |
+| `alan-kafa` | `kafa` | temel, kural, dünya |
+| `alan-sekil` | `sekil` | temel, kural, dünya, kafa |
+| `alan-mac` | `mac` | hepsi |
+| `alan-motor` | yalnız yeniden dışa verir (`alan_motor::mac::…` gibi eski yollar, `kos`, `wasm`, testler değişmedi) | hepsi |
+
+Kaynak dosyalar taşınmadı: `katman/<ad>/lib.rs` katmanın modülünü `#[path = "../../motor/src/<ad>/mod.rs"]` ile
+bağlar ve alt katmanları yeniden dışa verir (`pub use alan_temel::*;`), bu yüzden `crate::model::…` gibi yollar
+değişmedi. Neden: davranış oturumu aynı dosyalarda çalışıyor; taşıma her birleştirmede çakışma demekti. Dosyalar
+ileride `katman/<ad>/`'a taşınabilir, yalnız `#[path]` satırları değişir.
+
+Bölme derleyicinin bulduğu dört gizli bağı açtı (hepsi davranışı değiştirmeden çözüldü):
+- `temas` (temel) → `kural::enerji::EN3`: `En3`/`EN3` temele (`core_sabit`), `kural::enerji` yeniden dışa verir.
+- `MacZ`'nin (temel tip) yöntemleri kural katmanındaydı: `macW`, `fak`, `MAC_ORAN`, `MAC_UC` ve `impl MacZ`
+  `mac_veri`'ye; `kural::tac` yeniden dışa verir.
+- `impl Kural for MacKural` maç katmanındaydı ve kafa da kullanıyordu (kafa → maç bağı): uygulama ve
+  `ALAN_EN3_KUL` `kural::enerji`'ye. `ALAN_EN3_KUL` kafanın `threat`'ini kullanıyordu (kural → kafa): tehdit
+  geometrisi temelde (`saha::tehdit`), sabitleri (`TEHDIT_K`, `TEHDIT_YAN`, `EN_FARK`) `core_sabit`'te; kafanın
+  `D.threatK`/`D.sideK`/`DU.enFark`'ı ve maçın `DU::enFark`'ı aynı sabitlerden alır (tek kaynak).
+  `MacKural::of(m)` → `mac_kurali(m)` (yabancı tipe yöntem eklenemez).
+- `Default for Rng` maç katmanındaydı: `rng.rs`'e.
+
+Doğrulama: `sina/ayni.sh` aynı, main ile 20 maç × 2700 tik parmak izi birebir, testler 14/0/12, wasm derleniyor.
+Hız gürültü içinde (m00/m05/m10, 600 tik, üçer koşu: 19,05/15,41/17,15 → 19,42/15,34/17,24 ms/tik); release
+derlemesi 60 → 30 sn (crate'ler paralel derleniyor).
 
 ## 4. Dış kütüphaneler
 

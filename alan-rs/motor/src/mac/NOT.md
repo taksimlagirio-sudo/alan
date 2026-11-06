@@ -22,7 +22,7 @@
 
 - `self.ALAN_SPR` (sprint evresine göre sarılı) → `enerji::ALAN_SPR(p, &MacKural)`. `MacKural` = `temas::Kural`
   (`impl Kural for MacKural`): `mh` = JS `self.__mH` (son karar veren taşıyıcı; `m.mac.__mH`'ta), `tick`
-  (JS `D._tick || _mt`), `holder`/`flq` (JS `_mM.holder`, `_mM.fl.q`: kosuPr'nin sprKar'ı). `MacKural::of(&m)`.
+  (JS `D._tick || _mt`), `holder`/`flq` (JS `_mM.holder`, `_mM.fl.q`: kosuPr'nin sprKar'ı). `mac_kurali(&m)`.
   Çekirdek temas işlevlerine (contact, stepAll, ctrlP, bekHar, kuyuGirer) bu verilir.
 - `self.ALAN_KOSU_T/TP/M/PR`, `ALAN_SPR_HK`, `ALAN_SPRE`, `ALAN_EN3_*`, `ALAN_DENGE_KAYIP` → aynı adlı işlevler.
 - `ALAN_SPR_FAZ` alıcısı → `SPR_FAZ` (sürekli koşuda döndürülen değerler: patT 1, frenT 4, dolT 0, after 1, patK 1).

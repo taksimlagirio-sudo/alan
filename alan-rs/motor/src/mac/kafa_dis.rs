@@ -8,7 +8,7 @@ pub use crate::kafa::gecici_dis1::mac_dokunus;
 use crate::kafa::gecici_dis1::{self as d1, Dis};
 use crate::kafa::kafa1_js::{nk, Nk};
 use crate::mac::enerji as en;
-use crate::mac::MacKural;
+use crate::mac::{mac_kurali, MacKural};
 use crate::model::{JMShGs, Oyuncu};
 use crate::mac::MacTam as Mac;
 use crate::sekil;
@@ -56,7 +56,7 @@ fn hafif(m: &mut Mac) -> Mac {
 
 impl MacDis {
     pub fn kur(m: &mut Mac) -> MacDis {
-        let kural = MacKural::of(m);
+        let kural = mac_kurali(m);
         let tacE = [0u8, 1].map(|t| {
             let tq = crate::mac::tac::tacEff(m, t as f64);
             let kp = tq._kp.is_some();
@@ -310,7 +310,7 @@ pub fn prT_esitle(m: &mut Mac) {
 /// JS'in canlı okuduğu sprint bağlamı (self.__mH, taşıyıcı, alıcı, tik): kafa çağrılmadan hemen önce.
 pub fn kural_tazele(m: &Mac) {
     if let Some(d) = &m.mac.kafa.dis {
-        d.kural.set(MacKural::of(m));
+        d.kural.set(mac_kurali(m));
         d.holder.set(m.holder.map(|h| { let p = &m.ps[h]; (p.id, p.team, p.x, p.y) }));
         d.ch.set(Some(m.ch));
         // JS m._prT ve m.sh.gs canlı okunur: aynı tikte önceki kararın yazdığı görülür

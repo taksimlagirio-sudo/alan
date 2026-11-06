@@ -8,7 +8,6 @@ use crate::model::{JMSt, JM_temas, JM_temaslarLE};
 use crate::saha::H;
 use crate::yetenek::mek;
 pub use crate::kural::ikili::*;
-use crate::kural::ikili::dengeDolumK;
 
 
 

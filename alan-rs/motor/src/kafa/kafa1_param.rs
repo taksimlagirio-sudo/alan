@@ -32,7 +32,7 @@ pub struct Du {
     pub oyalaD: f64,
 }
 pub const DU: Du = Du {
-    enFark: 0.15,
+    enFark: crate::core_sabit::EN_FARK,
     base: 0.3,
     skill: 0.03,
     cage: 0.14,
@@ -95,8 +95,8 @@ pub fn d_js() -> KafaD {
         surKarar: 0.025,
         asanPay: 3.0,
         sutHazir: 5.0,
-        threatK: 22.0,
-        sideK: 0.35,
+        threatK: crate::core_sabit::TEHDIT_K,
+        sideK: crate::core_sabit::TEHDIT_YAN,
         b0: 0.06,
         b1: 0.28,
         recvKeepT: 8.0,

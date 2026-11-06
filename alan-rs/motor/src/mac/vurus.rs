@@ -147,7 +147,7 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
         }
     }
     if let Some(bk) = m.ps.iter().position(|p| p.team != t && p.bekci()) {
-        let kk = MacKural::of(m);
+        let kk = mac_kurali(m);
         b.tt.t.bek_id = Some(m.ps[bk].id as u32);
         b.tt.t.bek_m = crate::temas::bek_har(&m.ps[bk], b.x, b.y, b.vx, b.vy, &kk);
     }

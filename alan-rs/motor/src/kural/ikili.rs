@@ -62,7 +62,7 @@ pub fn sendS(p: &Oyuncu) -> f64 {
     jmax(2.0, jround(IK.sendT - 0.5 * (p.govde.yet.y(mek::SENDELEME) - 10.0)))
 }
 
-pub(crate) fn dengeDolumK(p: &Oyuncu) -> f64 {
+pub fn dengeDolumK(p: &Oyuncu) -> f64 {
     1.0 + 0.0625 * (p.govde.yet.y(mek::DENGE_DOLUM) - 10.0)
 }
 

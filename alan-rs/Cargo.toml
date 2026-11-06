@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["motor", "kos", "wasm"]
+members = ["motor", "kos", "wasm", "katman/temel", "katman/kural", "katman/dunya", "katman/kafa", "katman/sekil", "katman/mac"]
 
 [profile.release]
 opt-level = 3

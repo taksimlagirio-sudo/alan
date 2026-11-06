@@ -621,7 +621,7 @@ pub fn r#move(m: &mut Mac) {
             }
         }
     }
-    let kk = MacKural::of(m);
+    let kk = mac_kurali(m);
     let hizi = |m: &Mac, qi: Pid| -> f64 {
         let q = &m.ps[qi];
         spd(q) * vK(q, mH == Some(qi), mt, &kk) * (if m.holder == Some(qi) { topHiz(m, q) * if q.hal.savur.is_some() { 0.5 } else { 1.0 } } else { 1.0 }) * dengeHiz(m, qi)

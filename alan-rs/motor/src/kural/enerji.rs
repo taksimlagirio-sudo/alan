@@ -7,7 +7,7 @@
 //! dokunuşla sürme kapalı.
 //!
 //! Kafanın tartı sırasında verdiği sprint niyeti `MacKural::niyet`'te (açık bağlam).
-use crate::mat::{dogru, jmax, jmin, pow};
+use crate::mat::{dogru, exp, hypot, jmax, jmin, pow};
 use crate::model::Oyuncu;
 use crate::oyuncu::kim;
 use crate::yetenek::{mek, spr_h};
@@ -60,19 +60,8 @@ pub struct En2 {
 }
 pub const EN2: En2 = En2 { tepe: 1.0 / 120.0, pat: 0.0, dinlen: 1.0 / 180.0, tempoDol: 0.25, yuruDol: 0.7, yogTau: 150.0, yogK: 0.6, yogMin: 0.4, hizDus: 0.1, geriK: 0.5, uzan: 0.08, uzanDolYok: 15.0, refL: 20.0 };
 
-/// JS ALAN_EN3
-pub struct En3 {
-    pub r0: f64,
-    pub rSahip: f64,
-    pub rYer: f64,
-    pub rBek: f64,
-    pub baskiR0: f64,
-    pub baskiR1: f64,
-    pub yerD: f64,
-    pub tepeAlt: f64,
-    pub tepkiK: f64,
-}
-pub const EN3: En3 = En3 { r0: 1.0 / 1350.0, rSahip: 1.0 / 270.0, rYer: 1.0 / 450.0, rBek: 1.0 / 450.0, baskiR0: 1.0, baskiR1: 6.0, yerD: 4.0, tepeAlt: 0.25, tepkiK: 0.25 };
+/// JS ALAN_EN3 (tanım temelde, `core_sabit`: temas da kullanır)
+pub use crate::core_sabit::{En3, EN3};
 
 /// JS ALAN_SPR_FAZ (sürekli koşuda alıcının döndürdüğü: patT 1, frenT 4, dolT 0, after 1, patK 1)
 pub struct SprFaz {
@@ -329,4 +318,58 @@ pub fn ALAN_KOSU_M(p: &Oyuncu, t: f64, v1: f64, k: &MacKural) -> f64 {
         }
         _ => jmax(0.0, t) * v1,
     }
+}
+
+// Çekirdeğin kural arayüzü (Aşama 7c: tipiyle aynı crate'te; eskiden mac/enerji.rs).
+use crate::temas::Kural;
+impl Kural for MacKural {
+    fn spr(&self, p: &Oyuncu) -> f64 {
+        ALAN_SPR(p, self)
+    }
+    fn kosu_pr(&self, p: &Oyuncu) -> Option<(f64, f64)> {
+        kosuPr(p, self).map(|k| (k.Ts, k.k))
+    }
+    fn en3_kul(&self, p: &Oyuncu, e: f64, bizde: bool, b: Option<(f64, f64)>) -> f64 {
+        ALAN_EN3_KUL(p, e, bizde, b, self)
+    }
+}
+
+
+/// Kafanın tehdit ölçüsü, sabitleriyle (kafa `threat_d(ayar())` ile aynı değer).
+#[inline]
+fn tehdit_s(team: f64, x: f64, y: f64) -> f64 {
+    crate::saha::tehdit(crate::core_sabit::TEHDIT_K, crate::core_sabit::TEHDIT_YAN, team, x, y)
+}
+
+/// JS ALAN_EN3_KUL(p, e, bizde, bx, by): barın e düzeyindeki kullanım değeri.
+pub fn ALAN_EN3_KUL(p: &Oyuncu, e: f64, bizde: bool, bxy: Option<(f64, f64)>, k: &MacKural) -> f64 {
+    let Some((bx, by)) = bxy else { return 0.0 };
+    let ee = jmax(0.0, jmin(1.0, e));
+    let yak = exp(-hypot(p.x - bx, p.y - by) / 10.0);
+    let tB = tehdit_s(if bizde { p.team } else { 1.0 - p.team }, bx, by);
+    let mut u = yak * tB * crate::core_sabit::EN_FARK * ee;
+    if bizde {
+        u += tehdit_s(p.team, p.x, p.y) * jmin(1.0, ee / 0.2);
+    }
+    if !p.bekci() {
+        let b = spd(p);
+        let pk = if SPR_FAZ.ust { ALAN_SPR(p, k) } else { 1.3 };
+        let d = jmax(3.0, jmin(25.0, hypot(p.x - bx, p.y - by)));
+        let T = |x: f64| {
+            if x < EN2.pat {
+                return d / b;
+            }
+            let vS = b * ALAN_EN3_TEPE(Some(x), pk);
+            let ts = ALAN_EN2_TS(p, Some(x - EN2.pat));
+            let r = vS * ts;
+            if d <= r {
+                d / vS
+            } else {
+                ts + (d - r) / b
+            }
+        };
+        let T1 = T(1.0);
+        u += yak * (tB + tehdit_s(if bizde { 1.0 - p.team } else { p.team }, bx, by)) / (1.0 + exp((T(ee) - T1) / 5.0));
+    }
+    u
 }

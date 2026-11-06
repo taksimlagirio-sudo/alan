@@ -93,7 +93,7 @@ pub fn kuyuSaat(m: &mut Mac, mt: f64, mH: Option<Pid>) {
         _ => -1.0,
     };
     m._kuyuTop = Some(topK);
-    let kk = MacKural::of(m);
+    let kk = mac_kurali(m);
     for pi in 0..m.ps.len() {
         if m.ps[pi].bekci() {
             continue;
