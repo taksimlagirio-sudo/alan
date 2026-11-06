@@ -140,7 +140,8 @@ pub fn tahmin_ob(ob: &super::onbellek::Onbellek, b: &crate::top::Top, et: &[Etki
         return kaynakla(et, kc, |k| tahmin(b, k, &crate::saha::P, Some(n)));
     }
     let s = |o: Option<f64>| -> [u64; 2] { o.map_or([0, 0], |v| [1, v.to_bits()]) };
-    let mut a: Vec<u64> = Vec::with_capacity(24 + et.len() * 11);
+    let mut a = ob.tahmin_tampon.borrow_mut();
+    a.clear();
     a.extend([b.x, b.y, b.vx, b.vy, b.e, b.ch, b.dead, b.t, b.dist, b.walls, b.direk, b.defl].map(f64::to_bits));
     a.extend([b.team as u64, b.alive as u64, b.defl_b as u64, n as u64]);
     a.extend(s(b.tp));
@@ -150,7 +151,7 @@ pub fn tahmin_ob(ob: &super::onbellek::Onbellek, b: &crate::top::Top, et: &[Etki
         a.extend([e.x, e.y, e.r, e.d, e.fx, e.fy, e.am, e.en].map(f64::to_bits));
         a.extend([e.koni as u64, e.team as u64, e.am_a as u64]);
     }
-    if let Some(r) = ob.tahmin.borrow().get(&a) {
+    if let Some(r) = ob.tahmin.borrow().get(&a[..]) {
         return (r.0.clone(), r.1.clone());
     }
     let r = tahmin(b, &mut Kaynak::Sec(et), &crate::saha::P, Some(n));
@@ -158,7 +159,7 @@ pub fn tahmin_ob(ob: &super::onbellek::Onbellek, b: &crate::top::Top, et: &[Etki
     if t.len() >= 2048 {
         t.clear();
     }
-    t.insert(a, std::sync::Arc::new(r.clone()));
+    t.insert(a.clone(), std::sync::Arc::new(r.clone()));
     r
 }
 
