@@ -43,8 +43,17 @@ pub fn dagit(n: usize, f: &mut dyn FnMut(usize, Option<&[u8]>) -> Option<Vec<u8>
 }
 
 /// Bu dalga bölüşülecek mi (bölüştürücü var, iç içe değil, en az iki iş)?
+#[cfg(not(target_family = "wasm"))]
+#[inline]
 pub fn hazir(n: usize) -> bool {
     n >= 2 && !ICTE.with(|c| c.get()) && DAG.with(|x| x.borrow().is_some())
+}
+/// wasm'da bölüştürücü kurulmaz (`kur` yalnız `alan-kos`'ta): hep `false`; satır içine açılınca paketleme kodu
+/// (bincode) wasm'dan atılır.
+#[cfg(target_family = "wasm")]
+#[inline]
+pub fn hazir(_n: usize) -> bool {
+    false
 }
 
 pub fn icte() -> bool {
