@@ -165,6 +165,7 @@ fn main() {
         alan_motor::kafa::kafa2_tarti::SAH_BELIRSIZ_ZORLA.store(ek.split(',').any(|x| x == "sahbelirsiz"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa1_secim::PLAN_SUR_KAPALI.store(ek.split(',').any(|x| x == "plansurkapali"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa1_secim::PLAN_SUR_ZORLA.store(ek.split(',').any(|x| x == "plansur"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa2_tarti::KOVSUZ_SABIT_ZORLA.store(ek.split(',').any(|x| x == "kovsuz"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::KAYIP_SAHIP_ZORLA.store(ek.split(',').any(|x| x == "kayipsahip"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::SEKME_BEDEL_ZORLA.store(ek.split(',').any(|x| x == "sekbedel"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::GOVDE_YOL_KAPALI.store(ek.split(',').any(|x| x == "govdeyolkapali"), std::sync::atomic::Ordering::Relaxed);
@@ -338,6 +339,7 @@ fn main() {
                     alan_motor::kafa::kafa2_tarti::SAH_BELIRSIZ_ZORLA.store(acik && ek.split(',').any(|x| x == "sahbelirsiz"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa1_secim::PLAN_SUR_KAPALI.store(acik && ek.split(',').any(|x| x == "plansurkapali"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa1_secim::PLAN_SUR_ZORLA.store(acik && ek.split(',').any(|x| x == "plansur"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa2_tarti::KOVSUZ_SABIT_ZORLA.store(acik && ek.split(',').any(|x| x == "kovsuz"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::KAYIP_SAHIP_ZORLA.store(acik && ek.split(',').any(|x| x == "kayipsahip"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::SEKME_BEDEL_ZORLA.store(acik && ek.split(',').any(|x| x == "sekbedel"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::GOVDE_YOL_KAPALI.store(acik && ek.split(',').any(|x| x == "govdeyolkapali"), std::sync::atomic::Ordering::Relaxed);
@@ -505,6 +507,28 @@ fn main() {
                     let dd = ((gx - r.x.unwrap_or(0.0)).powi(2) + (alan_motor::saha::CY - r.y.unwrap_or(0.0)).powi(2)).sqrt();
                     let sap: Vec<String> = r.sapma.iter().map(|x| serde_json::to_string(&x.y).unwrap()).collect();
                     writeln!(out, "{{\"t\":{},\"ad\":{:?},\"d\":{:.1},\"Pk\":{},\"Ps\":{},\"Pl\":{},\"shot\":{:?},\"sonra\":{:?},\"kim\":{:?},\"sapma\":[{}]}}", r.t, r.ad, dd, r.Pk.unwrap_or(-1.0), r.Ps.unwrap_or(-1.0), r.Pl.unwrap_or(-1.0), r.shot.clone().unwrap_or_default(), rol, s.and_then(|s| s.kim.clone()).unwrap_or_default(), sap.join(",")).unwrap();
+                }
+            }
+        }
+        if kip == "kafapas" {
+            // kafa ↔ gerçek kaydındaki her pas: kafanın beklediği (P: bizde kalır, Ps: sekip bize, Pd = P − Ps: alıcıya
+            // doğrudan, Pl: rakibe) ve sonra topu alan (alıcı / başka arkadaş / rakip)
+            let m = &mut mt.m;
+            if let Some(K) = m.mac._kafa.as_mut() {
+                let L: Vec<_> = K.L.drain(..).collect();
+                for r in L.iter().filter(|r| r.kind == "pas" || r.kind == "önüne" || r.kind == "kenardan") {
+                    let s = r.son.as_ref();
+                    let kim = s.and_then(|s| s.kim_id).and_then(|id| m.ps.iter().find(|p| p.id == id && Some(&*p.govde.name) == s.and_then(|s| s.kim.as_deref())));
+                    let rol = match kim {
+                        Some(p) if p.team != r.team => "rakip".to_string(),
+                        Some(p) if Some(&*p.govde.name) == r.q.as_deref() => "alici".into(),
+                        Some(p) if p.id == r.id => "kendi".into(),
+                        Some(_) => "bizden".into(),
+                        None => "yok".into(),
+                    };
+                    let P = r.P.unwrap_or(-1.0);
+                    let Ps = r.Ps.unwrap_or(0.0);
+                    writeln!(out, "{{\"t\":{},\"ad\":{:?},\"tur\":{:?},\"q\":{:?},\"x\":{:.1},\"y\":{:.1},\"P\":{},\"Ps\":{},\"Pd\":{:.3},\"Pl\":{},\"v\":{},\"sonra\":{:?},\"kim\":{:?}}}", r.t, r.ad, r.kind, r.q.clone().unwrap_or_default(), r.x.unwrap_or(0.0), r.y.unwrap_or(0.0), P, Ps, (P - Ps).max(0.0), r.Pl.unwrap_or(-1.0), r.v.unwrap_or(0.0), rol, s.and_then(|s| s.kim.clone()).unwrap_or_default()).unwrap();
                 }
             }
         }

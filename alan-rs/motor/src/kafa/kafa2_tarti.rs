@@ -339,6 +339,13 @@ pub fn sah_belirsiz() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     SAH_BELIRSIZ_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_BELIRSIZ_IZ").is_ok())
 }
+/// Deney (ALAN_KOVSUZ_SABIT_IZ; ölçümde KOVSUZ_SABIT_ZORLA): uçuşta kovalamayan savunmacının tepkiden sonra topun
+/// yoluna tam hızla koşabileceği varsayımı kalkar (görevindeki yerine göre).
+pub static KOVSUZ_SABIT_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn kovsuz_sabit() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    KOVSUZ_SABIT_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_KOVSUZ_SABIT_IZ").is_ok())
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
