@@ -1381,7 +1381,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
             ev(m, "sarj", ht, format!("{n} şarj ediyor · %{ch}"));
         }
     }
-    let why = o.why.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| o.kind.clone());
+    let why = o.kind.clone();
     if o.kind == "sür" {
         let to = o.to.clone().unwrap_or_default();
         {
@@ -1411,16 +1411,6 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
             m.decT = hd;
             m.ps[h].hal_mut().holdD = true;
         }
-        let lw = m.ps[h].hal.lastWhy.clone();
-        let n = m.ps[h].govde.name.clone();
-        let look = o.det.as_ref().and_then(|_| dis_lookTo(m, &o));
-        if o.why.as_deref() == Some("çek") && lw.as_deref() != Some("çek") {
-            ev(m, "pas", ht, format!("{n} rakibi üstüne çekiyor{}", look.as_ref().map_or(String::new(), |l| format!(" · {l} açılacak"))));
-        } else if o.why.as_deref() == Some("koşu") && lw.as_deref() != Some("koşu") {
-            if let Some(l) = look {
-                ev(m, "pas", ht, format!("{n} bekliyor · {l} koşusunu bitirince verecek"));
-            }
-        }
         m.ps[h].hal_mut().lastWhy = Some(why.into());
     } else {
         m.ps[h].hal_mut().lastWhy = Some(why.into());
@@ -1434,10 +1424,6 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
     false
 }
 
-/// JS o.det.lookTo.name: kafanın bakılan oyuncusu (taslakta yok; kafa ekleyecek).
-fn dis_lookTo(_m: &Mac, _o: &Secenek) -> Option<String> {
-    None
-}
 
 /// Boştaki top: durduysa en yakın alır; yoksa alan seçimi, topun tiki ve temas, gövde, sayı.
 fn bostaTop(m: &mut Mac) {

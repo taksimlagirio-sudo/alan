@@ -392,8 +392,6 @@ pub struct TopEk {
     pub cue: Option<f64>,
     /// `bekId`: number (sonradan eklenir)
     pub bekId: Option<f64>,
-    /// `bekM`: number (sonradan eklenir)
-    pub bekM: Option<f64>,
     /// `tp`: number (sonradan eklenir)
     pub tp: Option<f64>,
     /// `cds`: Map (sonradan eklenir)
@@ -742,10 +740,8 @@ pub struct Secenek {
     pub _w: Option<std::sync::Arc<Vec<std::sync::Arc<Oyuncu>>>>,
     pub _T: Option<f64>,
     pub _en: Option<f64>,
-    pub next: Option<f64>,
     pub sonra: Option<String>,
     pub ust: Option<f64>,
-    pub why: Option<String>,
     pub zaman: Option<f64>,
     pub wp: Option<Nokta>,
     pub wp1: Option<Nokta>,

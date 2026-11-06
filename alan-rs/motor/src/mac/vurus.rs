@@ -193,12 +193,6 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
         if o.kind == "önüne" {
             m.st.lead[ti] += 1.0;
         }
-        if o.why.as_deref() == Some("kombinasyon") {
-            if m.st.combo.is_empty() {
-                m.st.combo = vec![0.0, 0.0];
-            }
-            m.st.combo[ti] += 1.0;
-        }
     }
 }
 
