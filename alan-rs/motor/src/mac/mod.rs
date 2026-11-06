@@ -118,6 +118,8 @@ impl HamA {
 /// Taslakta olmayan maç alanları.
 #[derive(Clone, Debug, Default)]
 pub struct MacEk {
+    /// ALAN_PLAN_IZ: oyuncu başına (ps sırası) son taşıyıcı kararının planı (kafa1_secim::PlanIz)
+    pub plan_son: Vec<Option<crate::kafa::kafa1_secim::PlanIz>>,
     /// JS `m._lite`: kafanın hafif kopyası (olay yazılmaz, sayaç tutulmaz)
     pub _lite: bool,
     /// JS `m._ic`

@@ -1250,6 +1250,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
     };
     let gg: Vec<Oyuncu> = g.clone().unwrap_or_else(|| m.ps.clone());
     let mut oi = dis::secim(m, h, &r, &gg);
+    dis::plan_yaz(m, h, &r.opts[oi], &gg);
     dis::gercek(&mut r.opts[oi]);
     let mut dv_c: Option<usize> = None;
     if let Some(sk) = m.ps[h].hal._surK.clone().filter(|k| k.id == m.ps[h].id) {

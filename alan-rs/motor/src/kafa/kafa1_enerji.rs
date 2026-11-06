@@ -206,6 +206,12 @@ impl Kafa {
         let dir = dir.unwrap_or_default();
         let v = self.spd(h) * if h.sprint { self.spr_kafa(h) } else { 1.0 } * self.top_k(h) * self.ik_den(h);
         let v0 = jmax(0.0, z0(h.vx) * dir.x + z0(h.vy) * dir.y);
+        // ALAN_PLAN_IZ: hızlanma payı yerine maçın dönüş tablosundan dönme bedeli (o anki hız ve yönden hedefe)
+        if crate::kafa::kafa1_secim::plan_acik() && L > 0.0 {
+            if let Some(G) = self.dis.gec_tab(h, false) {
+                return L / v + self.dis.gec_of(&G, h.x + dir.x * L, h.y + dir.y * L, Some(L));
+            }
+        }
         L / v + jmax(0.0, 1.0 - v0 / v) / (0.18 * self.AH(h))
     }
 
