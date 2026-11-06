@@ -44,6 +44,9 @@ pub fn bek_yer_bos() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     !BEK_YER_BOS_KAPALI.load(std::sync::atomic::Ordering::Relaxed) && (BEK_YER_BOS_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_BEK_YER_BOS_ESKI").is_err()))
 }
+thread_local! {
+    static BEK_BOS_ON: std::cell::RefCell<std::collections::HashMap<(u64, u64, u64, u64, u64, u64), Nokta>> = std::cell::RefCell::new(std::collections::HashMap::new());
+}
 /// Ölçümde (kopya maçlar) gömülü tablo: ALAN_IMK_TABLO_HEP ile taban eski tabloyla oynarken kopya bugünkünü kullanır
 pub static IMK_GOMULU_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 fn tablo_dis_acik() -> bool {
@@ -239,6 +242,11 @@ pub fn sut_tab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: O
         // ALAN_BEK_YER_BOS: ideal, tablonun üretildiği gibi boş sahada (yalnız şutçu ve Bekçi, şut bağlamı) — tablo Bekçi'nin
         // bu ideale göre kaymasını okur (mac::gecici_dis::imk_hucre); dolu dünyada ideal başka tehlikeye göre kayabiliyordu
         None if bek_yer_bos() => {
+            // tik başına önbellek: boş sahadaki ideal yalnız şutçunun yerine, şutçuya ve Bekçi'ye bağlı (anahtar birebir)
+            let anahtar = (k.tick().to_bits(), team.to_bits(), bk.id.to_bits(), sh.map_or(-1.0, |s| s.id).to_bits(), x.to_bits(), y.to_bits());
+            if let Some(v) = BEK_BOS_ON.with(|c| c.borrow().get(&anahtar).copied()) {
+                v
+            } else {
             let tac = k.mac.as_ref().map(|m| m.tac.clone()).unwrap_or_default();
             let yap = |s0: &Oyuncu| -> Nokta {
                 let mut sc = s0.clone();
@@ -254,9 +262,18 @@ pub fn sut_tab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: O
                 let c = dis::as_bekci(k, &g0[1], nk(X, Y), Some(&fm));
                 nk(fx(c.x), fy(c.y))
             };
-            match sh {
+            let v = match sh {
                 Some(s0) => yap(s0),
                 None => sahte_ile(team, x, y, -1.0, |hold| yap(hold)),
+            };
+            BEK_BOS_ON.with(|c| {
+                let mut c = c.borrow_mut();
+                if c.keys().next().map_or(false, |k0| k0.0 != anahtar.0) || c.len() > 50000 {
+                    c.clear();
+                }
+                c.insert(anahtar, v);
+            });
+            v
             }
         }
         None => {
@@ -568,13 +585,8 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
                     let t = var_b(k, o, x, y);
                     if imk_kuyu() && !crate::kafa::kafa2_tarti::kuyu_olabilir(&o.p, x, y, t, &kr) { 1e9 } else { t }
                 }).collect();
-                let yer = bk.as_ref().map(|b| {
-                    sahte_ile(team, x, y, -1.0, |hold| {
-                        let fm = dis::Fm { tac: &tac, ps: w, holder: Some(crate::dunya::Yerde::oyuncu(hold)) };
-                        dis::as_bekci(k, b, nk(x, y), Some(&fm))
-                    })
-                });
-                zs.push(ImkZ { i: zs.len(), x, y, tr, yer });
+                // Bekçi'nin bu hücredeki şutçuya göre ideali yalnız şutu tartılan hücrede gerekir: ilk kullanımda (yer_of)
+                zs.push(ImkZ { i: zs.len(), x, y, tr, yer: None });
                 y += IMK_HUC;
             }
             x += if gx == GW { -IMK_HUC } else { IMK_HUC };
@@ -612,11 +624,26 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         best
     };
     let mut TY: Vec<Option<TopYol>> = vec![None; zs.len()];
-    let bk_at = |z: &ImkZ, bas: Nokta, kalkis: f64, ta: f64| -> Option<Nokta> {
+    let YER: Vec<std::cell::Cell<Option<Option<Nokta>>>> = vec![std::cell::Cell::new(None); zs.len()];
+    let yer_of = |k: &mut Kafa, zi: usize| -> Option<Nokta> {
+        if let Some(v) = YER[zi].get() {
+            return v;
+        }
+        let (x, y) = (zs[zi].x, zs[zi].y);
+        let v = bk.as_ref().map(|b| {
+            sahte_ile(team, x, y, -1.0, |hold| {
+                let fm = dis::Fm { tac: &tac, ps: w, holder: Some(crate::dunya::Yerde::oyuncu(hold)) };
+                dis::as_bekci(k, b, nk(x, y), Some(&fm))
+            })
+        });
+        YER[zi].set(Some(v));
+        v
+    };
+    let bk_at = |yer: Option<Nokta>, bas: Nokta, kalkis: f64, ta: f64| -> Option<Nokta> {
         if bk.is_none() {
             return None;
         }
-        let yer = z.yer?;
+        let yer = yer?;
         let dx = yer.x - bas.x;
         let dy = yer.y - bas.y;
         let L = hypot(dx, dy);
@@ -679,18 +706,30 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
     // hücrenin şut yolu açıklığı oyuncuya bağlı değil (sutYol bu girdilerle saf): hücre başına bir kez
     let SY: Vec<std::cell::Cell<Option<f64>>> = vec![std::cell::Cell::new(None); zs.len()];
     // Sof: hücreden şutun değeri
+    // Bekçi'nin topun çıkış noktasına (q) göre ideali hücreye bağlı değil: bu çağrıda q başına bir kez (birebir)
+    let bas_on: std::cell::RefCell<Vec<((u64, u64), Nokta)>> = std::cell::RefCell::new(Vec::new());
     let sof = |k: &mut Kafa, oi: usize, zi: usize, ta: f64, kalkis: f64, q: Option<Nokta>| -> f64 {
         let o = &biz[oi];
         let z = &zs[zi];
         let bas = match (&bk, q) {
             (Some(b), Some(q)) => {
-                let fm = dis::Fm { tac: &tac, ps: w, holder: h.map(crate::dunya::Yerde::oyuncu) };
-                dis::as_bekci(k, b, q, Some(&fm))
+                let an = (q.x.to_bits(), q.y.to_bits());
+                let var = bas_on.borrow().iter().find(|e| e.0 == an).map(|e| e.1);
+                match var {
+                    Some(v) => v,
+                    None => {
+                        let fm = dis::Fm { tac: &tac, ps: w, holder: h.map(crate::dunya::Yerde::oyuncu) };
+                        let v = dis::as_bekci(k, b, q, Some(&fm));
+                        bas_on.borrow_mut().push((an, v));
+                        v
+                    }
+                }
             }
             (Some(b), None) => nk(b.x, b.y),
             (None, _) => nk(0.0, 0.0),
         };
-        let r = sut_tab(k, w, team, z.x, z.y, ch, Some(&o.p), Some(0.96), z.yer, bk_at(z, bas, kalkis, ta), Some(ta + k.D.sut_hazir));
+        let zyer = yer_of(k, zi);
+        let r = sut_tab(k, w, team, z.x, z.y, ch, Some(&o.p), Some(0.96), zyer, bk_at(zyer, bas, kalkis, ta), Some(ta + k.D.sut_hazir));
         let sy = match SY[zi].get() {
             Some(v) => v,
             None => {

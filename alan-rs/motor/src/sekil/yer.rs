@@ -306,25 +306,43 @@ fn bek_derinlik(p: &Oyuncu, ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f6
     let vb = jmax(vb, 1e-6);
     let adim = jmax(0.05, crate::kural::enerji::spd(p));
     let r_simdi = hypot(p.x - gx, p.y - GCY);
-    // saf hesap: girdileri bit bit aynıysa sonuç aynı (L, bxu, byu ex, ey, gx'ten çıkar)
-    let anahtar = [re, dv, dl, adim, r_simdi, ex, ey, gx, vb].map(f64::to_bits);
-    if let Some(v) = BEK_DER.with(|c| c.borrow().get(&anahtar).copied()) {
-        BEK_DER_SAY.with(|c| c.set((c.get().0 + 1, c.get().1)));
-        return v;
-    }
-    BEK_DER_SAY.with(|c| c.set((c.get().0, c.get().1 + 1)));
-    let v = bek_derinlik0(ex, ey, gx, L, bxu, byu, vb, re, dv, dl, adim, r_simdi);
-    BEK_DER.with(|c| {
-        let mut c = c.borrow_mut();
-        if c.len() > 200_000 {
-            c.clear();
+    // saf hesap: girdileri bit bit aynıysa sonuç aynı (L, bxu, byu ex, ey, gx'ten çıkar). Adayların kapattığı yol sayıları
+    // Bekçi'nin şimdiki derinliğine (r_simdi) bağlı değil: r_simdi'siz anahtarla saklanır, seçim (en çok kapatan; eşitlikte
+    // şimdikine en yakın, önce gelen) burada; budamalı eski seçimle birebir aynı (budama yalnız seçilemeyecek adayı keser).
+    let anahtar = [re, dv, dl, adim, ex, ey, gx, vb].map(f64::to_bits);
+    let say = match BEK_DER.with(|c| c.borrow().get(&anahtar).cloned()) {
+        Some(v) => {
+            BEK_DER_SAY.with(|c| c.set((c.get().0 + 1, c.get().1)));
+            v
         }
-        c.insert(anahtar, v);
-    });
-    v
+        None => {
+            BEK_DER_SAY.with(|c| c.set((c.get().0, c.get().1 + 1)));
+            let mut v = Vec::new();
+            bek_derinlik0(ex, ey, gx, L, bxu, byu, vb, re, dv, dl, adim, r_simdi, Some(&mut v));
+            let v = std::rc::Rc::new(v);
+            BEK_DER.with(|c| {
+                let mut c = c.borrow_mut();
+                if c.len() > 200_000 {
+                    c.clear();
+                }
+                c.insert(anahtar, v.clone());
+            });
+            v
+        }
+    };
+    let (mut eniyi, mut ek, mut ed) = (2.5, 0usize, f64::INFINITY);
+    for &(r, k) in say.iter() {
+        let d = (r - r_simdi).abs();
+        if k > ek || (k == ek && d < ed) {
+            eniyi = r;
+            ek = k;
+            ed = d;
+        }
+    }
+    eniyi
 }
 thread_local! {
-    static BEK_DER: std::cell::RefCell<crate::HizliMap<[u64; 9], f64>> = std::cell::RefCell::new(Default::default());
+    static BEK_DER: std::cell::RefCell<crate::HizliMap<[u64; 8], std::rc::Rc<Vec<(f64, usize)>>>> = std::cell::RefCell::new(Default::default());
     pub static BEK_DER_SAY: std::cell::Cell<(u64, u64)> = const { std::cell::Cell::new((0, 0)) };
     /// bek_derinlik0'ın şut yolu tamponu: (yollar (ux, uy, baş, son), noktalar (px, py, er), s'ler)
     /// noktalar (px, py, er, er²·(1−δ), er²·(1+δ)): karekökü atlamak için erişimin karesinin bandı
@@ -334,7 +352,7 @@ thread_local! {
 const KOK_PAY: f64 = 1e-12;
 #[allow(clippy::too_many_arguments)]
 #[inline(never)]
-fn bek_derinlik0(ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64, re: f64, dv: f64, dl: f64, adim: f64, r_simdi: f64) -> f64 {
+fn bek_derinlik0(ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64, re: f64, dv: f64, dl: f64, adim: f64, r_simdi: f64, mut sayim: Option<&mut Vec<(f64, usize)>>) -> f64 {
     let body = Q.bek_body;
     let n = (2.0 * MOUTH / body).ceil().max(1.0) as usize;
     // şut yollarının noktaları ve o anki erişim aday derinlikten bağımsız: bir kez (sonuç aynı)
@@ -433,6 +451,12 @@ fn bek_derinlik0(ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64,
     let mut r = 2.5;
     let n_yol = yollar.len();
     while r <= r_maks + 1e-9 {
+        // sayım kipi: her adayın kapattığı yol sayısı (budamasız); seçim çağıranda (r_simdi'ye bağlı tek yer eşitlik)
+        if let Some(v) = sayim.as_deref_mut() {
+            v.push((r, kap(r, 0)));
+            r += adim;
+            continue;
+        }
         let d = (r - r_simdi).abs();
         // bütün yolları kapatan bir aday varken daha uzak (ya da eşit uzak) aday seçilemez: sayım gereksiz
         if ek == n_yol && !(d < ed) {
