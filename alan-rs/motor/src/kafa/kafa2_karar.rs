@@ -775,6 +775,22 @@ pub fn decide0_k(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar
                 }
             }
         }
+        // ALAN_IKI_KADEME_IZ: kaba değeri en iyi pas adayının kaba değerinden taşıyıcının karar gürültüsünün 3 katından
+        // fazla geride kalan pas adayı tam tartılmaz (oyuncu onu kendi gürültüsüyle de seçemez)
+        if crate::kafa::kafa2_tarti::iki_kademe() {
+            let enb = pl.iter().filter(|x| keep.contains(&x.0)).map(|x| x.1).fold(f64::NEG_INFINITY, f64::max);
+            if enb > f64::NEG_INFINITY {
+                let B = jmin(1.0, k.press_at(src, team, h.x, h.y));
+                let gw = k.secim_w(&h, B, false, None);
+                let esik = enb - 3.0 * gw;
+                let n0 = keep.len();
+                keep.retain(|i| pl.iter().find(|x| x.0 == *i).map_or(true, |x| x.1 >= esik));
+                if crate::iz_acik() && std::env::var("ALAN_KADEME_DOK").is_ok() {
+                    let rs: Vec<String> = pl.iter().filter(|x| keep.contains(&x.0)).map(|x| format!("{:.3}", x.1)).collect();
+                    eprintln!("KADEME {} pas adayı {} -> {} en iyi {:.3} gw {:.3} | {}", k.tick(), n0, keep.len(), enb, gw, rs.join(" "));
+                }
+            }
+        }
         let mut drop: Vec<usize> = pl.iter().filter(|x| !keep.contains(&x.0)).map(|x| x.0).collect();
         drop.extend(sh.iter().filter(|x| !k_g.contains(&gk(&opts[x.0]))).map(|x| x.0));
         let mut i = opts.len();
