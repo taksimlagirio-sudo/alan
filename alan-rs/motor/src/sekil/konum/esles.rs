@@ -9,7 +9,7 @@ use crate::yetenek::ah;
 
 use super::super::gecici_dis as dis;
 use super::super::*;
-use super::savunma::{dal_sinir, Sv};
+use super::savunma::{dal_sinir, pres_kazanc, ua_hist, Sv, UA_HIST};
 use super::yardim::*;
 
 impl Sv {
@@ -66,7 +66,7 @@ impl Sv {
             let bs = self.base[p].unwrap();
             let dr = if self.d_max > 0.0 { jmin(1.0, self.dng(c, q) / self.d_max) } else { 0.0 };
             if let Some(sn) = sn {
-                if hypot(sn.x - bs.x, sn.y - bs.y) < 1.5 * (S.zone_r + yer_s(&c.ps[p]) * S.zone_ok + S.zone_dng * dr) {
+                if self.yerlesik || hypot(sn.x - bs.x, sn.y - bs.y) < 1.5 * (S.zone_r + yer_s(&c.ps[p]) * S.zone_ok + S.zone_dng * dr) {
                     self.taken[p] = true;
                     self.mark[p] = Some(q);
                     z_tak[q] = true;
@@ -91,7 +91,8 @@ impl Sv {
                 let sn = ileri_v(sn0, oku_tp(&c.ps[p]), Some(&c.ps[q]), c.ps, self.sg);
                 let bs = self.base[p].unwrap();
                 let d = hypot(sn.0 - bs.x, sn.1 - bs.y);
-                if d < S.zone_r + yer_s(&c.ps[p]) * S.zone_ok + S.zone_dng * dr && d < bd {
+                // yerleşik hücumda bölge yarıçapı yok: en yakın boştaki savunmacı
+                if (self.yerlesik || d < S.zone_r + yer_s(&c.ps[p]) * S.zone_ok + S.zone_dng * dr) && d < bd {
                     bd = d;
                     bp = Some(p);
                 }
@@ -189,6 +190,15 @@ impl Sv {
                 let w0 = match self.t_p.as_ref().and_then(|t| t.h) {
                     Some(th) => th * P.K,
                     None => P.G,
+                };
+                // ALAN_PRES_KAZANC_IZ (S1): baskının değerine kendi kazancımız da girer: topu taşıyıcının yerinde kazanırsak
+                // rakip kalesine yakınlık (savunan takımın tehdidi) × taktiğin pres ayarı × hat katı. Kafanın "o olmasa"
+                // değerinden (t_p.h, rakibin haritası) bağımsız; pres = 0 olan takımda 0.
+                let w0 = if pres_kazanc() {
+                    let hp = &c.ps[hh];
+                    w0 + self.dtac.t.pres.unwrap_or(0.0).max(0.0) * jmax(0.0, dis::threat(dt, hp.x, hp.y)) * P.K
+                } else {
+                    w0
                 };
                 Js.push(Is { q: IsQ::P(hh), w: w0 * if car == 0 { 1.0 } else { 1.0 - P.P0 }, g: (c.ps[hh].x, c.ps[hh].y), job: String::new(), derin: false, bul: false, oku_f: false, grp: None, car: Some(car), zone: None, rq: vec![], thr: 0.0 });
             }
@@ -358,6 +368,20 @@ impl Sv {
                         }
                     }
                 };
+                // ALAN_UA_HIST_IZ (S2): önceki tikin işi sürüyorsa değeri UA_HIST kadar artar (iş değiştirme maliyeti):
+                // birbirine yakın değerlerde atama her tik dönmesin, oyuncu iki işin arasında gidip gelmesin
+                let val = if ua_hist() && val > 0.0 && {
+                    let pp = &c.ps[p];
+                    match tr {
+                        1 => pp.hal._savCar == Some(tick - 1.0),
+                        0 => J.qp().map_or(false, |q| pp.hal.uaPrev == Some(q) || pp.hal.markRef == Some(q)),
+                        _ => false,
+                    }
+                } {
+                    val * (1.0 + UA_HIST)
+                } else {
+                    val
+                };
                 row.push(val);
             }
             Bs.push(row);
@@ -521,7 +545,10 @@ impl Sv {
                     let pp = &c.ps[p];
                     eprintln!("BULJ {} {} yer ({:.1},{:.1}) J.g ({:.1},{:.1}) hedef ({:.1},{:.1}) job {}", tick, pp.govde.name, pp.x, pp.y, J.g.0, J.g.1, g.0, g.1, J.job);
                 }
-                if J.derin && !J.bul && J.job.starts_with("arkada · ") {
+                // blok: adamın kale tarafı savunmacının blok derinliğinden öndeyse adamın peşinden çıkmaz, bloğunda kalır
+                // (orta sahaya çekilmesin). Yerleşik hücumda (top kuyunun önünde) adam zaten ceza sahası ağzında: blok
+                // yok, adamı kale tarafından tutar.
+                if J.derin && !J.bul && J.job.starts_with("arkada · ") && !self.yerlesik {
                     let d_b = self.base[p].map(|b| self.g_d(b.x, b.y)).unwrap_or(1e9);
                     let d_j = self.g_d(J.g.0, J.g.1);
                     if d_j > d_b + 1.0 {
@@ -928,6 +955,19 @@ impl Sv {
                     let pp = &c.ps[p];
                     let ex = self.press.contains(&p) || bas(&pp.job, &["pres", "karşıla", "kovala", "sekme", "alıcı"]) || pp.hal._savD == Some(tick) || pp.hal._savT == Some(tick);
                     if ex || self.g_d(pp.tx, pp.ty) < g_e + pay {
+                        // S7c: tehlike bölgesinde geçilmiş (topun gerisinde kalmış) savunmacı adamına değil kale önüne,
+                        // taşıyıcının şut hattına döner
+                        if s7(4) && !ex && g_e < S7_D && self.g_d(pp.x, pp.y) >= g_e + 1.0 {
+                            let bs = self.base[p].map(|b| (b.x, b.y)).unwrap_or((pp.x, pp.y));
+                            let (lx, ly) = (E.0 + 0.55 * (own_x(dt) - E.0), E.1 + 0.55 * (GCY - E.1));
+                            let pp = &mut c.ps[p];
+                            pp.tx = lx;
+                            pp.ty = cl(ly + 0.25 * (bs.1 - ly), 3.0, GH - 3.0);
+                            pp.sprint = true;
+                            pp.job = Some("geri koşu · kale önü".into());
+                            pp.hal_mut().tutQ = None;
+                            continue;
+                        }
                         if self.g_d(pp.x, pp.y) >= g_e + pay && !pp.sprint {
                             let pp = &mut c.ps[p];
                             pp.sprint = true;

@@ -359,6 +359,12 @@ pub extern "C" fn govde_yol(acik: i32) {
     alan_motor::kafa::kafa2_tarti::GOVDE_YOL_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
 }
 
+/// Yerleşik hücumda adam adama (sekil::konum::yerlesik_adam; deney): 1 açık, 0 kapalı (varsayılan).
+#[no_mangle]
+pub extern "C" fn yerlesik_adam(acik: i32) {
+    alan_motor::sekil::konum::YERLESIK_ADAM_ZORLA.store(acik != 0, std::sync::atomic::Ordering::Relaxed);
+}
+
 /// Sürmenin tutma olasılığı değerin tartıldığı ara noktaya dek (kafa2_tarti::sur_e): 1 açık, 0 kapalı.
 #[no_mangle]
 pub extern "C" fn sur_e(acik: i32) {
