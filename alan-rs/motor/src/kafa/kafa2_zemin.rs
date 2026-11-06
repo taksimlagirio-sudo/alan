@@ -709,7 +709,8 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
             BW[t] = v;
         }
     }
-    for _ in 0..SAH_ADIM {
+    let yakinsa = crate::kafa::kafa2_tarti::sah_yakinsa();
+    for _ in 0..(if yakinsa { NX * NY } else { SAH_ADIM }) {
         let mut n2 = [vec![0.0; NX * NY], vec![0.0; NX * NY]];
         for t in 0..2 {
             let f = &ff[t];
@@ -756,8 +757,16 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
             }
         }
         let [a, b] = n2;
+        let fark = if yakinsa {
+            ff[0].N.iter().zip(a.iter()).chain(ff[1].N.iter().zip(b.iter())).filter(|(x, y)| x.is_finite() && y.is_finite()).map(|(x, y)| (x - y).abs()).fold(0.0, f64::max)
+        } else {
+            1.0
+        };
         ff[0].N = a;
         ff[1].N = b;
+        if yakinsa && fark < 1e-6 {
+            break;
+        }
     }
     // ALAN_SAH_IZ=x,y: o hücrenin şut değeri, son değeri ve en iyi yolu (takım `team` için)
     if crate::iz_acik() {

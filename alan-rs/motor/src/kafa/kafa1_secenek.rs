@@ -364,7 +364,7 @@ impl Kafa {
                 for onune in [false, true] {
                     let mut al: Vec<(usize, Nk)> = Vec::new();
                     for c in &C2 {
-                        if c.onune != onune || !(c.s > 0.0) {
+                        if c.onune != onune || !(c.s > 0.0 || (crate::kafa::kafa2_tarti::on_sira() && c.s.is_finite())) {
                             continue;
                         }
                         if !al.iter().any(|a| a.0 == c.pi) {
@@ -396,6 +396,8 @@ impl Kafa {
         }
         // ---- şut ----
         let gd = hypot(gx - h.x, GCY - h.y);
+        let n_sut0 = res.out.len();
+        let sut_say_iz = crate::iz_acik() && std::env::var("ALAN_SUT_SAY_IZ").is_ok();
         if gd < D.shot_range * (0.75 + 0.5 * match &B._sut { Some(SutBag::Egilim(v)) => *v, _ => 0.5 }) {
             for ty in self.sut_hedef(h, src, gx) {
                 for sy in [1.0, -1.0] {
@@ -413,6 +415,9 @@ impl Kafa {
                     res.out.push(o);
                 }
             }
+        }
+        if sut_say_iz && gd < 26.0 {
+            eprintln!("SUTURET {} {} {:.1} {}", self.tick(), h.govde.name, gd, res.out.len() - n_sut0);
         }
         let fx = gx - h.x;
         let fy = GCY - h.y;
@@ -501,7 +506,7 @@ impl Kafa {
                 if sec_s.len() >= 6 {
                     break;
                 }
-                if c.s > 0.0 && !sec_s.iter().any(|P| hypot(P.x - c.P.x, P.y - c.P.y) < 2.5) {
+                if (c.s > 0.0 || (crate::kafa::kafa2_tarti::on_sira() && c.s.is_finite())) && !sec_s.iter().any(|P| hypot(P.x - c.P.x, P.y - c.P.y) < 2.5) {
                     sec_s.push(c.P);
                     let duvar = c.P.y < 2.6 || c.P.y > GH - 2.6;
                     let sur = |own: f64, spr: bool| {
