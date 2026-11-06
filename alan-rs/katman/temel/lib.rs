@@ -42,6 +42,8 @@ pub mod yetenek;
 mod yetenek_tablo;
 
 /// İz kancaları (ALAN_*_IZ / ALAN_IMK_HU) açık mı: bir kez okunur, sıcak yolda ortam değişkeni aranmaz.
+/// `#[inline]`: wasm'da sabit `false`; crate sınırını geçip açılınca iz kodu wasm'dan atılır (Aşama 7c'den beri gerekli).
+#[inline]
 pub fn iz_acik() -> bool {
     // wasm32-unknown-unknown'da ortam değişkeni listesi yok (std::env::vars panikler)
     if cfg!(target_family = "wasm") {
