@@ -176,6 +176,7 @@ pub fn imk_kov(k: &mut Kafa, p: &Oyuncu) -> (f64, f64) {
     if k.ob.imkk.0 != Some(t) {
         k.ob.imkk.0 = Some(t);
         k.ob.imkk.1 = Default::default();
+        k.ob.imkk_nesil += 1;
     }
     let key = (crate::js_sayi_k(p.team), crate::js_sayi_k(p.id));
     if let Some(r) = k.ob.imkk.1.get(&key) {
@@ -525,42 +526,129 @@ struct ImkE {
     inan: Option<(f64, f64, f64)>,
 }
 
+/// İmkânın topun yerinden (B) ve taşıyıcıdan (h) bağımsız kısmı: oyuncu listeleri, Bekçi, hücre tablosu (rakiplerin
+/// varışı), hücre başına Bekçi ideali ve şut yolu, şut değerleri. Aynı dünyayla art arda soranlar (KayipF'in hücreleri:
+/// ölçüm m00, şut tablosu çağrılarının %73'ü ve Bekçi yeri çağrılarının çoğu bu tekrarlardı) bir kez kurar.
+/// Geçerlilik: kafanın ve görünümün tiki, imkKov'un nesli (ilk soranın değerini saklar), maçın kural görüntüsü, takım,
+/// ch, taktik; biri değişirse yeniden kurulur. Dünyayı sahibi tutar (çağıran aynı dünyayı verir).
+pub struct ImkBag {
+    gec: Vec<u64>,
+    tac: Arc<[crate::model::JMTacE]>,
+    kr: crate::kural::enerji::MacKural,
+    biz: Vec<ImkO>,
+    rak: Vec<ImkO>,
+    bk: Option<Op>,
+    vk: f64,
+    rk: f64,
+    zs: Vec<ImkZ>,
+    yer: Vec<std::cell::Cell<Option<Option<Nokta>>>>,
+    sy: Vec<std::cell::Cell<Option<f64>>>,
+    /// (arkadaş, hücre, Bekçi'nin konumu, ta) → şut tablosu
+    sut: std::cell::RefCell<crate::HizliMap<(usize, usize, [u64; 3], u64), f64>>,
+}
+fn imk_bag_gec(k: &Kafa, team: f64, ch: f64) -> Vec<u64> {
+    let o = |v: Option<f64>| -> [u64; 2] { v.map_or([0, 0], |v| [1, v.to_bits()]) };
+    let p = |v: Option<(f64, f64)>| -> [u64; 3] { v.map_or([0, 0, 0], |(a, b)| [1, a.to_bits(), b.to_bits()]) };
+    let kr = k.dis.kural();
+    let mut g = Vec::with_capacity(32);
+    g.extend(o(k.mac.as_ref().map(|m| m.tick)));
+    g.push(k.tick().to_bits());
+    g.push(k.ob.imkk_nesil);
+    g.extend([team, ch, kr.tick].map(f64::to_bits));
+    g.extend(p(kr.mh));
+    g.extend(p(kr.holder));
+    g.extend(p(kr.flq));
+    match kr.niyet {
+        Some((a, b, c, d)) => {
+            g.extend([1, a.to_bits(), b.to_bits(), c as u64]);
+            g.extend(o(d));
+        }
+        None => g.push(0),
+    }
+    g.push(imk_kuyu() as u64);
+    g
+}
+impl ImkBag {
+    pub fn kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64) -> ImkBag {
+        let gec = imk_bag_gec(k, team, ch);
+        let gx = if t0(team) { GW } else { 0.0 };
+        let mut biz: Vec<ImkO> = Vec::new();
+        let mut rak: Vec<ImkO> = Vec::new();
+        // maçın kural görüntüsü imkân boyunca değişmez: bir kez alınır (varış başına kopyalanmaz)
+        let kr = k.dis.kural();
+        for p in w {
+            if p.noTouch {
+                continue;
+            }
+            let o = ImkO { p: p.clone(), G: dis::as_gec_tab(k, p), v: dis::as_v_sp(k, p), R: jmin(2.0, crate::temas::menzil(p, 0.35)), rc: 0.0, pr: crate::kural::enerji::kosuPr(p, &kr) };
+            if p.team == team {
+                if !bekci(p) {
+                    biz.push(o);
+                }
+            } else if !bekci(p) {
+                let mut o = o;
+                o.rc = jmax(0.0, dis::alan_tepki(k, p, "kovala"));
+                rak.push(o);
+            }
+        }
+        let bk: Option<Op> = w.iter().find(|p| p.team != team && bekci(p) && !p.noTouch).cloned();
+        let tac = k.mac.as_ref().map(|m| m.tac.clone()).unwrap_or_default();
+        let vk = bk.as_ref().map(|b| dis::as_v_sp(k, b)).unwrap_or(0.0);
+        let rk = bk.as_ref().map(|b| jmax(0.0, dis::alan_tepki(k, b, "kovala"))).unwrap_or(0.0);
+        let mut zs: Vec<ImkZ> = Vec::new();
+        {
+            let mut x = if gx == GW { GW - 4.0 } else { 4.0 };
+            while (x - gx).abs() <= 40.0 {
+                let mut y = GCY - 18.0;
+                while y <= GCY + 18.0 {
+                    // ALAN_IMK_KUYU_IZ: kuyu süresini dolduracak savunmacı bu hücreye giremez (temas::kuyu_girer)
+                    let tr = rak.iter().map(|o| {
+                        let d = jmax(0.0, hypot(o.p.x - x, o.p.y - y) - IMK_BLOK);
+                        let t = o.rc + dis::as_gec_of(k, &o.G, x, y, d) + crate::kural::enerji::alan_kosu_tp(o.pr, d, o.v);
+                        if imk_kuyu() && !crate::kafa::kafa2_tarti::kuyu_olabilir(&o.p, x, y, t, &kr) { 1e9 } else { t }
+                    }).collect();
+                    // Bekçi'nin bu hücredeki şutçuya göre ideali yalnız şutu tartılan hücrede gerekir: ilk kullanımda (yer_of)
+                    zs.push(ImkZ { i: zs.len(), x, y, tr, yer: None });
+                    y += IMK_HUC;
+                }
+                x += if gx == GW { -IMK_HUC } else { IMK_HUC };
+            }
+        }
+        let n = zs.len();
+        ImkBag { gec, tac, kr, biz, rak, bk, vk, rk, zs, yer: vec![std::cell::Cell::new(None); n], sy: vec![std::cell::Cell::new(None); n], sut: Default::default() }
+    }
+    /// Bu bağlam kafanın şimdiki durumunda geçerli mi
+    fn gecerli(&self, k: &Kafa, team: f64, ch: f64) -> bool {
+        self.gec == imk_bag_gec(k, team, ch) && k.mac.as_ref().map_or(self.tac.is_empty(), |m| Arc::ptr_eq(&m.tac, &self.tac))
+    }
+}
+
+const IMK_BLOK: f64 = 2.4;
+
 /// JS imkan(w, team, B, h, ch, iz) (decide.js:6270): top B'deyken takımın şut imkânı. Her arkadaş için
 /// şut hücrelerinden en iyisi: vaktinde varma olasılığı (rakiplerin varışıyla yarış) × topun oraya
 /// gidebilmesi × oradan şutun değeri × geleceğe güven; rakipler arkadaşlara açgözlü eşlenir.
 pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch: f64) -> f64 {
-    let gx = if t0(team) { GW } else { 0.0 };
-    let mut biz: Vec<ImkO> = Vec::new();
-    let mut rak: Vec<ImkO> = Vec::new();
-    // maçın kural görüntüsü imkân boyunca değişmez: bir kez alınır (varış başına kopyalanmaz)
-    let kr = k.dis.kural();
-    for p in w {
-        if p.noTouch {
-            continue;
-        }
-        let o = ImkO { p: p.clone(), G: dis::as_gec_tab(k, p), v: dis::as_v_sp(k, p), R: jmin(2.0, crate::temas::menzil(p, 0.35)), rc: 0.0, pr: crate::kural::enerji::kosuPr(p, &kr) };
-        if p.team == team {
-            if !bekci(p) {
-                biz.push(o);
-            }
-        } else if !bekci(p) {
-            let mut o = o;
-            o.rc = jmax(0.0, dis::alan_tepki(k, p, "kovala"));
-            rak.push(o);
-        }
+    let bag = ImkBag::kur(k, w, team, ch);
+    imkan_b(k, w, team, B, h, ch, &bag)
+}
+/// `imkan`, aynı dünyayla art arda soranın sakladığı bağlamla (`bag`: yoksa ya da geçersizse kurulur). Sonuç `imkan`'la aynı.
+pub fn imkan_bag(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch: f64, bag: &mut Option<ImkBag>) -> f64 {
+    if !bag.as_ref().map_or(false, |b| b.gecerli(k, team, ch)) {
+        *bag = Some(ImkBag::kur(k, w, team, ch));
     }
-    const IMK_BLOK: f64 = 2.4;
-    let var_b = |k: &Kafa, o: &ImkO, x: f64, y: f64| -> f64 {
-        let d = jmax(0.0, hypot(o.p.x - x, o.p.y - y) - IMK_BLOK);
-        o.rc + dis::as_gec_of(k, &o.G, x, y, d) + crate::kural::enerji::alan_kosu_tp(o.pr, d, o.v)
-    };
+    imkan_b(k, w, team, B, h, ch, bag.as_ref().unwrap())
+}
+fn imkan_b(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch: f64, bag: &ImkBag) -> f64 {
+    let (biz, rak, zs, bk, tac, vk, rk) = (&bag.biz, &bag.rak, &bag.zs, &bag.bk, &bag.tac, bag.vk, bag.rk);
+    let kr = bag.kr;
     let var_ = |k: &Kafa, o: &ImkO, x: f64, y: f64, rc: f64| -> f64 {
         let d = jmax(0.0, hypot(o.p.x - x, o.p.y - y) - o.R);
         rc + dis::as_gec_of(k, &o.G, x, y, d) + crate::kural::enerji::alan_kosu_tp(o.pr, d, o.v)
     };
     let rak_var = |k: &Kafa, x: f64, y: f64| -> f64 {
         let mut t = 1e9;
-        for o in &rak {
+        for o in rak {
             t = jmin(t, var_(k, o, x, y, o.rc));
         }
         t
@@ -570,28 +658,6 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         None => 0.3,
     };
     const KISA: f64 = 15.0;
-    let bk: Option<Op> = w.iter().find(|p| p.team != team && bekci(p) && !p.noTouch).cloned();
-    let tac = k.mac.as_ref().map(|m| m.tac.clone()).unwrap_or_default();
-    let vk = bk.as_ref().map(|b| dis::as_v_sp(k, b)).unwrap_or(0.0);
-    let rk = bk.as_ref().map(|b| jmax(0.0, dis::alan_tepki(k, b, "kovala"))).unwrap_or(0.0);
-    let mut zs: Vec<ImkZ> = Vec::new();
-    {
-        let mut x = if gx == GW { GW - 4.0 } else { 4.0 };
-        while (x - gx).abs() <= 40.0 {
-            let mut y = GCY - 18.0;
-            while y <= GCY + 18.0 {
-                // ALAN_IMK_KUYU_IZ: kuyu süresini dolduracak savunmacı bu hücreye giremez (temas::kuyu_girer)
-                let tr = rak.iter().map(|o| {
-                    let t = var_b(k, o, x, y);
-                    if imk_kuyu() && !crate::kafa::kafa2_tarti::kuyu_olabilir(&o.p, x, y, t, &kr) { 1e9 } else { t }
-                }).collect();
-                // Bekçi'nin bu hücredeki şutçuya göre ideali yalnız şutu tartılan hücrede gerekir: ilk kullanımda (yer_of)
-                zs.push(ImkZ { i: zs.len(), x, y, tr, yer: None });
-                y += IMK_HUC;
-            }
-            x += if gx == GW { -IMK_HUC } else { IMK_HUC };
-        }
-    }
     let top_yol = |k: &mut Kafa, x: f64, y: f64| -> TopYol {
         let L = hypot(x - B.x, y - B.y);
         let mut best = TopYol { t: 1e9, k: 0.0, s: None };
@@ -624,7 +690,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         best
     };
     let mut TY: Vec<Option<TopYol>> = vec![None; zs.len()];
-    let YER: Vec<std::cell::Cell<Option<Option<Nokta>>>> = vec![std::cell::Cell::new(None); zs.len()];
+    let YER = &bag.yer;
     let yer_of = |k: &mut Kafa, zi: usize| -> Option<Nokta> {
         if let Some(v) = YER[zi].get() {
             return v;
@@ -704,7 +770,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         }
     };
     // hücrenin şut yolu açıklığı oyuncuya bağlı değil (sutYol bu girdilerle saf): hücre başına bir kez
-    let SY: Vec<std::cell::Cell<Option<f64>>> = vec![std::cell::Cell::new(None); zs.len()];
+    let SY = &bag.sy;
     // Sof: hücreden şutun değeri
     // Bekçi'nin topun çıkış noktasına (q) göre ideali hücreye bağlı değil: bu çağrıda q başına bir kez (birebir)
     let bas_on: std::cell::RefCell<Vec<((u64, u64), Nokta)>> = std::cell::RefCell::new(Vec::new());
@@ -729,7 +795,18 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             (None, _) => nk(0.0, 0.0),
         };
         let zyer = yer_of(k, zi);
-        let r = sut_tab(k, w, team, z.x, z.y, ch, Some(&o.p), Some(0.96), zyer, bk_at(zyer, bas, kalkis, ta), Some(ta + k.D.sut_hazir));
+        let bkat = bk_at(zyer, bas, kalkis, ta);
+        // şut tablosunun öteki girdileri (dünya, takım, hücre, ch, şutçu, Bekçi ideali) bağlamda sabit
+        let an = (oi, zi, bkat.map_or([0, 0, 0], |b| [1, b.x.to_bits(), b.y.to_bits()]), ta.to_bits());
+        let sv = bag.sut.borrow().get(&an).copied();
+        let r = match sv {
+            Some(v) => v,
+            None => {
+                let v = sut_tab(k, w, team, z.x, z.y, ch, Some(&o.p), Some(0.96), zyer, bkat, Some(ta + k.D.sut_hazir));
+                bag.sut.borrow_mut().insert(an, v);
+                v
+            }
+        };
         let sy = match SY[zi].get() {
             Some(v) => v,
             None => {

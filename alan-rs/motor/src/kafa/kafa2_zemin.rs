@@ -10,7 +10,7 @@ use crate::kafa::gecici_dis1::KuralErisim as _;
 use super::kafa2_bag as dis;
 use super::kafa2_baglam::*;
 use super::kafa2_dunya::{bek_yer_w, predict_world};
-use super::kafa2_imkan::{imk_sg, imk_tau, imk_uzak, imkan, sut_s, sut_vakit, tasima, IMK_HUC};
+use super::kafa2_imkan::{imk_sg, imk_tau, imk_uzak, sut_s, sut_vakit, tasima, IMK_HUC};
 use crate::mat::{hypot, jmax, jmin};
 use crate::model::Oyuncu;
 use crate::saha::{CY as GCY, H as GH, W as GW};
@@ -40,10 +40,12 @@ pub struct KayipF {
     kayit: Option<usize>,
     istenen: crate::HizliMap<u64, (f64, f64)>,
     onden: crate::HizliMap<u64, ()>,
+    /// rakibin imkânının topun yerinden bağımsız kısmı (dünya bu nesnede sabit: hücreler arasında bir kez kurulur)
+    imk: Option<super::kafa2_imkan::ImkBag>,
 }
 
 pub fn kayip_f(k: &Kafa, src: Arc<Dunya>, team: f64, ch: f64, risk: f64) -> KayipF {
-    KayipF { src, team, risk, cc: dis::ch_kayip(k, ch), ot: 1.0 - team, c: Default::default(), yq: None, g_b: k.bag._g_pr, o_b: k.k2.imk_ofs, kayit: None, istenen: Default::default(), onden: Default::default() }
+    KayipF { src, team, risk, cc: dis::ch_kayip(k, ch), ot: 1.0 - team, c: Default::default(), yq: None, g_b: k.bag._g_pr, o_b: k.k2.imk_ofs, kayit: None, istenen: Default::default(), onden: Default::default(), imk: None }
 }
 
 // ------------------------------------------------------------------ kararın ızgarasını önceden hesaplama
@@ -103,7 +105,7 @@ impl Drop for KayipF {
 }
 
 impl KayipF {
-    fn kazan_imk(&self, k: &mut Kafa, X: f64, Y: f64) -> f64 {
+    fn kazan_imk(&mut self, k: &mut Kafa, X: f64, Y: f64) -> f64 {
         if imk_uzak(self.ot, X, Y) {
             return 0.0;
         }
@@ -127,7 +129,7 @@ impl KayipF {
             c.vy = 0.0;
             c
         });
-        imkan(k, &self.src, self.ot, nk(X, Y), r.as_ref(), self.cc)
+        super::kafa2_imkan::imkan_bag(k, &self.src, self.ot, nk(X, Y), r.as_ref(), self.cc, &mut self.imk)
     }
     fn pas_r(&mut self, k: &mut Kafa, X: f64, Y: f64) -> f64 {
         if self.yq.is_none() {
