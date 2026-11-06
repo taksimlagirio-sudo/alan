@@ -472,3 +472,5 @@ anahtar!(bek_direk, alan_motor::sekil::yer::BEK_DIREK_ZORLA);
 // önde bekleyen pasa açılır (ondeac); Kuyu alanından paylı ve koşarak çıkış (kuyupay)
 anahtar!(onde_ac, alan_motor::sekil::konum::ONDE_AC_ZORLA);
 anahtar!(kuyu_pay, alan_motor::mac::kuyu::KUYU_PAY_ZORLA);
+// bütün oyuncular için yürüme: hız seçiminde normal koşunun altı, bar dolumu hıza bağlı (yuru)
+anahtar!(yuru, alan_motor::mac::enerji::YURU_ZORLA);
