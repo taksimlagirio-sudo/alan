@@ -4,9 +4,15 @@
 set -e
 cd "$(dirname "$0")/.."
 OUT=${1:-analiz/out}; mkdir -p "$OUT"
+# TOHUM=<sayı>: aynı taktik ve kadroyla başka tohum (kayıttaki yeni.tohum değişir)
+KAYIT=analiz/mac-217468.json
+if [ -n "${TOHUM:-}" ]; then
+  KAYIT="$OUT/kayit-$TOHUM.json"
+  python3 -c "import json,sys; v=json.load(open('analiz/mac-217468.json')); v['yeni']['tohum']=int(sys.argv[1]); json.dump(v,open(sys.argv[2],'w'),ensure_ascii=False)" "$TOHUM" "$KAYIT"
+fi
 cargo build --release -q -p alan-kos
-./target/release/alan-kos analiz/mac-217468.json 9000 analiz > "$OUT/analiz.jsonl" 2> "$OUT/analiz.err" &
-./target/release/alan-kos analiz/mac-217468.json 9000 kararlar > "$OUT/kararlar.txt" 2> "$OUT/kararlar.err" &
+./target/release/alan-kos "$KAYIT" 9000 analiz > "$OUT/analiz.jsonl" 2> "$OUT/analiz.err" &
+./target/release/alan-kos "$KAYIT" 9000 kararlar > "$OUT/kararlar.txt" 2> "$OUT/kararlar.err" &
 wait
 cat "$OUT/analiz.err"
 export ANALIZ_OUT="$(cd "$OUT" && pwd)"
