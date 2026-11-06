@@ -1,0 +1,42 @@
+# Şut tablosunun kendiliğinden yenilenmesi: main'e motor değişikliği gelince kafanın şut modelinin parmak izi
+# (alan-kos sutizi) gömülü tablonun iziyle karşılaştırılır; farklıysa tablo bugünkü modelle yeniden üretilir,
+# wasm derlenir ve site (alan-v5/alan.wasm, sürüm etiketi) güncellenip main'e gönderilir.
+name: sut-tablosu
+on:
+  push:
+    branches: [main]
+    paths: ['alan-rs/**']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: sut-tablosu
+  cancel-in-progress: false
+jobs:
+  tablo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rust
+        run: rustup toolchain install stable --profile minimal --target wasm32-unknown-unknown && rustup default stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: alan-rs
+      - name: Denetle
+        id: denet
+        run: |
+          cd alan-rs
+          if ./sina/tablo.sh; then echo "eski=0" >> "$GITHUB_OUTPUT"; else echo "eski=1" >> "$GITHUB_OUTPUT"; fi
+      - name: Yeniden üret ve siteyi derle
+        if: steps.denet.outputs.eski == '1'
+        run: ./alan-rs/sina/site.sh
+      - name: Gönder
+        if: steps.denet.outputs.eski == '1'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add alan-rs/motor/src/kafa/kafa2_imk_sut.bin alan-rs/motor/src/kafa/kafa2_imk_sut.bin.iz alan-v5/alan.wasm *.html
+          git commit -m "Şut tablosu kafanın bugünkü şut modelinden kendiliğinden yeniden üretildi; site derlendi"
+          git pull --rebase origin main
+          git push origin HEAD:main

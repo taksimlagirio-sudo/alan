@@ -1309,9 +1309,14 @@ impl Kafa {
 }
 
 pub static BEK_DALIS_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+/// Kafanın Bekçi dalış modeli (maçın kaleci kurallarıyla; hm cezası yok). Varsayılan açık (sitedeki kafa); kapatmak: BEK_DALIS_KAPALI (wasm: adres seçeneği) ya da ALAN_BEK_DALIS_ESKI=1.
+pub static BEK_DALIS_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn bek_dalis_k() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    BEK_DALIS_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_BEK_DALIS_IZ").is_ok())
+    if BEK_DALIS_KAPALI.load(std::sync::atomic::Ordering::Relaxed) {
+        return false;
+    }
+    BEK_DALIS_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_BEK_DALIS_ESKI").is_err())
 }
 pub static ALIS_KUME_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn alis_kume() -> bool {
