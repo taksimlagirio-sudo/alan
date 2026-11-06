@@ -306,7 +306,9 @@ fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, _k: &dyn Kural) -> (
     let (qx, qy) = (ex + bx * st, ey + by * st);
     // deney (bek_direk): top direğin dışındayken (dar açı) Bekçi yakın direğin dışına taşmaz, çizgiden direğin gerektirdiğinden
     // çok çıkmaz: açıortayda topun üstüne çıkınca yakın direkle arası açılıyor, içeri çekilen şut uzak köşeye gidiyordu
-    if bek_direk() && (ey - GCY).abs() > MOUTH {
+    // yalnız yakın direk şutu: top kale çizgisine yakın (BEK_DIREK_DX) ve dar açıda (direğin dışında, en az 45° yanda);
+    // uzak şutta Bekçi açıortayda kalır
+    if bek_direk() && (ey - GCY).abs() > MOUTH && (ex - gx).abs() <= BEK_DIREK_DX && (ey - GCY).abs() >= (ex - gx).abs() {
         let yan = if ey > GCY { 1.0 } else { -1.0 };
         // yakın direği gövdeyle kapatır (açıortayda çizgiye inince kale ortasına düşüyor, direkte gövdeden geniş boşluk kalıyordu)
         let qy = GCY + yan * (MOUTH - Q.bek_body);
@@ -319,6 +321,8 @@ fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, _k: &dyn Kural) -> (
 
 /// bek_direk: dar açıda Bekçi'nin çizgiden en çok çıkışı (br).
 pub const BEK_DIREK_DER: f64 = 1.5;
+/// bek_direk: kuralın geçerli olduğu en uzak top (kale çizgisine, br).
+pub const BEK_DIREK_DX: f64 = 12.0;
 /// Deney (ALAN_BEK_DIREK_IZ; ölçümde/wasm'da BEK_DIREK_ZORLA): dar açıda Bekçi yakın direği tutar. Varsayılan kapalı.
 pub static BEK_DIREK_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn bek_direk() -> bool {

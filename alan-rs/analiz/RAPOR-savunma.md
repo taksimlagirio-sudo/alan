@@ -119,3 +119,13 @@ Yorum:
   dönüyor (iz: t2 5438–5478). S7'nin konusu değil; geçiş (hücumdan savunmaya) ayrı iş.
 - Gol/şut hâlâ yüksek (0,44–0,68): hatta savunmacı olsa da şutlar giriyor. Kaleci / şut sapması tarafı ayrıca bakılmalı.
 - Baskıcının barı (geç gollerde .04–.11) bu turda ele alınmadı.
+
+## Hepsi açık setinden çıkanlar (analizci değerlendirmesiyle)
+- **S3 (`ALAN_SAV_TABAN_IZ`, `savtaban`) bırakıldı:** ofsayt yok; çizgiyi topa göre tabanda tutmak rakibin en önündeki
+  hücumcusunu çizginin arkasında bırakıyor (217468, Kale Duvarı topta: en geri Liman adamının arkasında hücumcu bayraksız %4,
+  S3 ile %49). Çizgi eskisi gibi rakibin en önündeki hücumcusuna göre kurulur. Kod bayrak arkasında duruyor; `yeni=1` ve
+  `bayraklar.env` artık açmıyor (açıkça `savtaban=1` ile açılır).
+- **S7b etkisiz, S7c zararlı (yerini S7d aldı):** `s7=1` artık a, d, e, f, g'yi açar (bit 121); `bayraklar.env`'de
+  `ALAN_S7_IZ` yerine `ALAN_S7A_IZ`.
+- **bek_direk** yalnız yakın direk şutunda (`c718f9b`; top kale çizgisine 12 br içinde, en az 45° yanda): Kale Duvarı 30+ br'den
+  6 şut / 0 gol (önce 25 / 19).
