@@ -518,7 +518,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
                 // ALAN_IMK_KUYU_IZ: kuyu süresini dolduracak savunmacı bu hücreye giremez (temas::kuyu_girer)
                 let tr = rak.iter().map(|o| {
                     let t = varB(k, o, x, y);
-                    if imk_kuyu() && !crate::temas::kuyu_girer(&o.p, x, y, t, false, &kr) { 1e9 } else { t }
+                    if imk_kuyu() && !crate::kafa::kafa2_tarti::kuyuOlabilir(&o.p, x, y, t, &kr) { 1e9 } else { t }
                 }).collect();
                 let yer = bk.as_ref().map(|b| {
                     sahte_ile(team, x, y, -1.0, |hold| {
@@ -621,7 +621,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             }
         }
         // ALAN_IMK_KUYU_IZ: hücumcu da kuyuya ancak süresi yetiyorsa girer
-        let kuyu_yok = imk_kuyu() && !crate::temas::kuyu_girer(&o.p, z.x, z.y, ta, false, &kr);
+        let kuyu_yok = imk_kuyu() && !crate::kafa::kafa2_tarti::kuyuOlabilir(&o.p, z.x, z.y, ta, &kr);
         if ta > IMK_UFUK || kk <= 0.0 || kuyu_yok {
             ImkE { ta, k: 0.0, tv: f64::NAN, kalkis: 0.0, q: None, S: None }
         } else {

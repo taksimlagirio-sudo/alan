@@ -152,6 +152,8 @@ fn main() {
         alan_motor::kafa::kafa2_tarti::SAHSIZ_ZORLA.store(ek.split(',').any(|x| x == "sahsiz"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_imkan::IMK_KUYU_ZORLA.store(ek.split(',').any(|x| x == "imkkuyu"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_imkan::IMK_TABLO_ZORLA.store(ek.split(',').any(|x| x == "tablo"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa2_tarti::BOLGE_ZORLA.store(ek.split(',').any(|x| x == "bolge"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa2_tarti::KUYU_GEC_ZORLA.store(ek.split(',').any(|x| x == "kuyugec"), std::sync::atomic::Ordering::Relaxed);
         let mut once = mt.m.clone();
         once.mac.kafa = Default::default();
         // seçenekler: önce hepsi bir kez zorlanır; ALAN_DENE_SEC=0,3,7 yalnız bunlar denenir, ALAN_DENE_LISTE seçenek sayısını yazar
@@ -304,6 +306,8 @@ fn main() {
                     alan_motor::kafa::kafa2_tarti::SAHSIZ_ZORLA.store(acik && ek.split(',').any(|x| x == "sahsiz"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_imkan::IMK_KUYU_ZORLA.store(acik && ek.split(',').any(|x| x == "imkkuyu"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_imkan::IMK_TABLO_ZORLA.store(acik && ek.split(',').any(|x| x == "tablo"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa2_tarti::BOLGE_ZORLA.store(acik && ek.split(',').any(|x| x == "bolge"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa2_tarti::KUYU_GEC_ZORLA.store(acik && ek.split(',').any(|x| x == "kuyugec"), std::sync::atomic::Ordering::Relaxed);
                     let mut m2 = Motor::yeni(once.clone());
                     let mut isler2 = alan_motor::oyun::IsSozluk::default();
                     let (mut kr, mut ol) = (Vec::new(), Vec::new());
@@ -366,6 +370,8 @@ fn main() {
                 alan_motor::kafa::kafa2_tarti::SAHSIZ_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa2_imkan::IMK_KUYU_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa2_imkan::IMK_TABLO_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kafa::kafa2_tarti::BOLGE_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kafa::kafa2_tarti::KUYU_GEC_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
             }
             mt.adim();
         }

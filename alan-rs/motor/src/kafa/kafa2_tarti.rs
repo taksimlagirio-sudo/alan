@@ -62,7 +62,7 @@ pub fn tekSutDeger(k: &mut Kafa, cx: &mut Cx, A: Nokta, B: Nokta, tv: f64, ta: f
                 continue;
             }
             let Some(o0) = cx.src.iter().find(|z| z.team == o.team && z.id == o.id) else { continue };
-            if !crate::temas::kuyu_girer(o0, o.x, o.y, T0, false, &kr) {
+            if !kuyuOlabilir(o0, o.x, o.y, T0, &kr) {
                 let (dx, dy) = (o.x - gx, o.y - GCY);
                 let L = jmax(1e-6, hypot(dx, dy));
                 let r = crate::core_sabit::Q.kuyu_a + 0.5;
@@ -100,7 +100,7 @@ pub fn tekSutDeger(k: &mut Kafa, cx: &mut Cx, A: Nokta, B: Nokta, tv: f64, ta: f
         let rc = jmax(0.0, dis::ALAN_TEPKI(k, p, "kovala"));
         let d = jmax(0.0, hypot(p.x - B.x, p.y - B.y) - 2.4);
         let tp = tv + rc + dis::AS_gecOf(k, &G, B.x, B.y, d) + crate::kural::enerji::ALAN_KOSU_T(p, d, v, &kr);
-        if !crate::temas::kuyu_girer(p, B.x, B.y, tp, false, &kr) {
+        if !kuyuOlabilir(p, B.x, B.y, tp, &kr) {
             continue;
         }
         fB *= 1.0 - imkSg((T0 - tp) / olabTau(k, p, v, rc, T0));
@@ -184,6 +184,47 @@ pub static SAHSIZ_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::Atom
 pub fn sahsiz() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     SAHSIZ_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAHSIZ_IZ").is_ok())
+}
+/// Deney (ALAN_BOLGE_IZ; ölçümde BOLGE_ZORLA): sahiplik haritası yerine bölge değeri haritası (kafa2_zemin::sahiplikBolge)
+pub static BOLGE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn bolge() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    BOLGE_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_BOLGE_IZ").is_ok())
+}
+/// Deney (ALAN_KUYU_GEC_IZ; ölçümde KUYU_GEC_ZORLA): kafanın olabilirlik hesaplarında kuyu kuralı "t tik sonra
+/// (x, y)'de olabilir mi" diye sorulur: savunmacı alana hemen girip beklemek zorunda değil, dışarıda bekleyip
+/// zamanında girebilir (maçta alandan çıkınca sayaç sıfırlanır, mac/kuyu.rs). temas::kuyu_girer hemen girip
+/// kalmayı tartar; uzak bir an için (pas sürmeden sonra gelince) alandaki herkesi dışarıda sayıyordu.
+pub static KUYU_GEC_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn kuyu_gec() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    KUYU_GEC_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_KUYU_GEC_IZ").is_ok())
+}
+/// Kafanın kuyu sorusu: p, t tik sonra (x, y)'de olabilir mi (kuyu_gec açıkken zamanında girişle).
+pub fn kuyuOlabilir(p: &crate::model::Oyuncu, x: f64, y: f64, t: f64, kr: &dyn crate::temas::Kural) -> bool {
+    use crate::temas::{kuyu_girer, kuyu_mer};
+    if kuyu_girer(p, x, y, t, false, kr) {
+        return true;
+    }
+    if !kuyu_gec() {
+        return false;
+    }
+    let Q = &crate::core_sabit::Q;
+    let v = jmax(0.05, p.taban_hiz() * kr.spr(p));
+    let d_x = kuyu_mer(x, y);
+    // kenardan noktaya içeride geçen süre
+    let ic = jmax(0.0, Q.kuyu_a - d_x) / v;
+    if ic > Q.kuyu_sn {
+        return false;
+    }
+    let d_p = kuyu_mer(p.x, p.y);
+    if d_p >= Q.kuyu_a {
+        // dışarıda: girişini geciktirebilir
+        return true;
+    }
+    // içeride: çıkıp (sayaç sıfırlanır) yeniden girmeye vakti var mı
+    let cik = (Q.kuyu_a - d_p + 0.3) / v + 1.0 / (0.18 * crate::yetenek::ah(&p.govde.yet));
+    cik + ic <= t
 }
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
@@ -341,7 +382,7 @@ pub fn yolOlabilirB(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t0:
                 None => f64::INFINITY,
             };
             // Kuyu kuralı (temas::kuyu_girer): kuyu süresini doldurmuş savunmacı o noktaya giremez
-            if !bek && !crate::temas::kuyu_girer(p, x, y, tp, false, &kr) {
+            if !bek && !kuyuOlabilir(p, x, y, tp, &kr) {
                 s += 1.5;
                 continue;
             }
