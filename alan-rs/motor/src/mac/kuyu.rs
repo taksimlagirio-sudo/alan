@@ -128,7 +128,7 @@ pub fn kuyu_saat(m: &mut Mac, mt: f64, m_h: Option<Pid>) {
             if !ic {
                 m.ps[pi].hal_mut()._kuyuCik = false;
             }
-        } else if oo(p.hal.kuyuT) + kuyu_cik_t(m, pi, None, &kk) + 1.0 >= Q.kuyu_sn {
+        } else if oo(p.hal.kuyuT) + if kuyu_pay() { KUYU_PAY_K * kuyu_cik_t(m, pi, None, &kk) + KUYU_PAY_T } else { kuyu_cik_t(m, pi, None, &kk) + 1.0 } >= Q.kuyu_sn {
             m.ps[pi].hal_mut()._kuyuCik = true;
         }
         let p = &m.ps[pi];
@@ -154,6 +154,25 @@ pub fn kuyu_saat(m: &mut Mac, mt: f64, m_h: Option<Pid>) {
                 p.tx = cl(gx + dx / l * r, 1.5, W - 1.5);
                 p.ty = cl(CY + dy / l * r, 1.5, H - 1.5);
             }
+            // kuyu_pay: alanın içindeyken hedefi dışarıdaysa (kalamadığı için dışarı alındıysa) yürümez, koşar: yürüyerek
+            // çıkarken saat doluyor, çıkış koşusu geç kalıyordu
+            if kuyu_pay() && ic {
+                let p = &m.ps[pi];
+                if !alan_ic(p.tx, p.ty) && kuyu_mer(p.tx, p.ty) >= Q.kuyu_a {
+                    m.ps[pi].sprint = true;
+                }
+            }
         }
     }
+}
+
+/// kuyu_pay: çıkış süresi tahminine pay (kat ve tik): dönüş, bar ve kalabalık tahmini iyimser kılıyor.
+pub const KUYU_PAY_K: f64 = 1.3;
+pub const KUYU_PAY_T: f64 = 6.0;
+/// Deney (ALAN_KUYU_PAY_IZ; ölçümde/wasm'da KUYU_PAY_ZORLA; GOREV-savunma S4): Kuyu alanından paylı ve koşarak çıkış.
+/// Varsayılan kapalı.
+pub static KUYU_PAY_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn kuyu_pay() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    KUYU_PAY_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_KUYU_PAY_IZ").is_ok())
 }
