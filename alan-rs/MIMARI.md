@@ -453,8 +453,12 @@ Yorumlardaki JS adları (`/// JS macW`) bilerek değişmedi: JS motoruyla karş�
 
 Kalan adlar yüzünden 48 dosyada izin satırı duruyor; uyarısı kalmayan dosyalarda izin kaldırıldı (yeni kodda uyarı verir).
 
-Eski adlarla yazılmış bir dalı güncellemek: `python3 sina/adlandir.py --hazir sina/ad-esleme.tsv` (yalnız eşlemedeki
-adları değiştirir; sonra `cargo check`).
+Eski adlarla yazılmış bir dalı güncellemek (davranış oturumunun dalında denendi, çakışmasız derlendi):
+1. Dala adlandırmadan önceki main'i birleştir: `git merge 6f76ff4` (7c dahil).
+2. Bu commit'in `sina/adlandir.py` ve `sina/ad-esleme.tsv`'sini al (`git checkout <bu commit> -- sina/adlandir.py sina/ad-esleme.tsv`),
+   `python3 sina/adlandir.py --hazir sina/ad-esleme.tsv` (yalnız eşlemedeki adları değiştirir), `cargo check`, commit.
+3. Yeni main'i birleştir; çakışan dosyalarda dalın kendi hâlini al (`git checkout --ours <dosya>`): main'in o dosyalardaki
+   tek değişikliği adlandırma, dalınki zaten adlandırılmış.
 
 Doğrulama: `sina/ayni.sh` aynı, 20 maç × 2700 tik parmak izi birebir, testler 14/0/12, wasm derleniyor. İlk denemede
 `tac_yap!` makrosunun serde alanları (`kpSure` …) yakalanmamıştı ve başvurular ayrıştı; araç makroları ve girdi JSON
