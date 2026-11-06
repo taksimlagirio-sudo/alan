@@ -353,6 +353,12 @@ pub fn sutTab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: Op
 
 // ------------------------------------------------------------------ imkân
 
+/// Deney (ALAN_IMK_KUYU_IZ; ölçümde IMK_KUYU_ZORLA): imkân yarışında kuyu kuralı
+pub static IMK_KUYU_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn imk_kuyu() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    IMK_KUYU_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_IMK_KUYU_IZ").is_ok())
+}
 thread_local! {
     static SUT_GERCEK_DER: std::cell::Cell<u32> = const { std::cell::Cell::new(0) };
     static SUT_GERCEK_ON: std::cell::RefCell<std::collections::HashMap<(i64, i64, i64, i64, i64, i64, i64), f64>> = std::cell::RefCell::new(Default::default());
@@ -486,7 +492,11 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         while (x - gx).abs() <= 40.0 {
             let mut y = GCY - 18.0;
             while y <= GCY + 18.0 {
-                let tr = rak.iter().map(|o| varB(k, o, x, y)).collect();
+                // ALAN_IMK_KUYU_IZ: kuyu süresini dolduracak savunmacı bu hücreye giremez (temas::kuyu_girer)
+                let tr = rak.iter().map(|o| {
+                    let t = varB(k, o, x, y);
+                    if imk_kuyu() && !crate::temas::kuyu_girer(&o.p, x, y, t, false, &kr) { 1e9 } else { t }
+                }).collect();
                 let yer = bk.as_ref().map(|b| {
                     sahte_ile(team, x, y, -1.0, |hold| {
                         let fm = dis::Fm { tac: &tac, ps: w, holder: Some(crate::dunya::Yerde::oyuncu(hold)) };
@@ -587,7 +597,9 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
                 q = Some(nk(B.x + (z.x - B.x) * s / L, B.y + (z.y - B.y) * s / L));
             }
         }
-        if ta > IMK_UFUK || kk <= 0.0 {
+        // ALAN_IMK_KUYU_IZ: hücumcu da kuyuya ancak süresi yetiyorsa girer
+        let kuyu_yok = imk_kuyu() && !crate::temas::kuyu_girer(&o.p, z.x, z.y, ta, false, &kr);
+        if ta > IMK_UFUK || kk <= 0.0 || kuyu_yok {
             ImkE { ta, k: 0.0, tv: f64::NAN, kalkis: 0.0, q: None, S: None }
         } else {
             ImkE { ta, k: kk, tv: ta + k.D.sutHazir, kalkis, q, S: None }

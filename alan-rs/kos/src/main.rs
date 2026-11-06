@@ -50,6 +50,7 @@ fn main() {
     let mut out = std::io::BufWriter::new(out.lock());
     let mut olay_say = mt.m.ev_n;
     let mut son_karar: Option<f64> = None;
+    let mut sut_bekle: Vec<(f64, usize, String, f64, f64, f64, f64)> = Vec::new();
     if kip == "durum" {
         writeln!(out, "{}", durum(&mt.m)).unwrap();
     }
@@ -98,6 +99,7 @@ fn main() {
         alan_motor::kafa::kafa2_tarti::SECIM_BEKLENEN_ZORLA.store(ek.split(',').any(|x| x == "beklenen"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::IKI_HAMLE_ZORLA.store(ek.split(',').any(|x| x == "iki"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::SAHSIZ_ZORLA.store(ek.split(',').any(|x| x == "sahsiz"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa2_imkan::IMK_KUYU_ZORLA.store(ek.split(',').any(|x| x == "imkkuyu"), std::sync::atomic::Ordering::Relaxed);
         let mut once = mt.m.clone();
         once.mac.kafa = Default::default();
         // seçenekler: önce hepsi bir kez zorlanır; ALAN_DENE_SEC=0,3,7 yalnız bunlar denenir, ALAN_DENE_LISTE seçenek sayısını yazar
@@ -248,6 +250,7 @@ fn main() {
                     alan_motor::kafa::kafa2_tarti::SECIM_BEKLENEN_ZORLA.store(acik && ek.split(',').any(|x| x == "beklenen"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::IKI_HAMLE_ZORLA.store(acik && ek.split(',').any(|x| x == "iki"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::SAHSIZ_ZORLA.store(acik && ek.split(',').any(|x| x == "sahsiz"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa2_imkan::IMK_KUYU_ZORLA.store(acik && ek.split(',').any(|x| x == "imkkuyu"), std::sync::atomic::Ordering::Relaxed);
                     let mut m2 = Motor::yeni(once.clone());
                     let mut isler2 = alan_motor::oyun::IsSozluk::default();
                     let (mut kr, mut ol) = (Vec::new(), Vec::new());
@@ -308,6 +311,7 @@ fn main() {
                 alan_motor::kafa::kafa2_tarti::SECIM_BEKLENEN_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa2_tarti::IKI_HAMLE_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa2_tarti::SAHSIZ_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kafa::kafa2_imkan::IMK_KUYU_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
             }
             mt.adim();
         }
@@ -369,6 +373,32 @@ fn main() {
         }
         if kip == "parmak" {
             writeln!(out, "{} {:016x}", mt.m.tick, alan_motor::parmak::parmak_izi(&mt.m)).unwrap();
+        }
+        if kip == "sutlar" {
+            // her şut kararı (seçilen gönder): tik, takım, şutçu, yer, kafanın gol olasılığı (det.Pk); 60 tik içinde gol oldu mu
+            let m = &mt.m;
+            let t = m._sec.as_ref().map(|s| s.t);
+            if t.is_some() && t != son_karar {
+                son_karar = t;
+                if let Some(d) = &m.lastDec {
+                    if let Some(o) = d.opts.first() {
+                        if o.kind.starts_with("gönder") {
+                            sut_bekle.push((m.tick, d.team as usize, d.name.clone(), d.x, d.y, o.P, m.score[d.team as usize]));
+                        }
+                    }
+                }
+            }
+            let tk = mt.m.tick;
+            let sk = mt.m.score.clone();
+            sut_bekle.retain(|x| {
+                let gol = sk[x.1] > x.6;
+                if gol || tk - x.0 >= 60.0 {
+                    writeln!(out, "[{},{},{:?},{:.1},{:.1},{:.3},{}]", x.0, x.1, x.2, x.3, x.4, x.5, if gol { 1 } else { 0 }).unwrap();
+                    false
+                } else {
+                    true
+                }
+            });
         }
         if kip == "kararlar" {
             // her yeni taşıyıcı kararı bir satır: tik, ad, takım, yer, seçilen başta ilk 4 seçenek (tür, alıcı, değer, hedef)
