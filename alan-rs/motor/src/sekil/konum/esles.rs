@@ -948,17 +948,34 @@ impl Sv {
             c.ek.sh.gs = Some(Gs { t: tick, dt, on, on_p, oy: kp_a.is_none() && (on_p || self.YR) });
             let pay = if on { -1.0 } else { 3.0 };
             if on || (self.YR && g_e < 64.0 * GKX) {
+                // S7d: bu tik tutulan adamlar (savunmacıların tutQ'su)
+                let mut s7_tut: Vec<Pid> = if s7(8) { self.defs.iter().filter_map(|&d| c.ps[d].hal.tutQ).collect() } else { Vec::new() };
                 for &p in &self.defs.clone() {
                     if self.up[p] {
                         continue;
                     }
                     let pp = &c.ps[p];
-                    // S7d: tehlike bölgesinde geçilmiş herkes (ilk presçi dışında, baskıcılar da) kale önüne döner; adamı topun
-                    // önündeyse (kaleye toptan yakın) onu tutmayı sürdürür
+                    // S7d: tehlike bölgesinde geçilmiş (topun gerisinde kalmış) savunmacı, ilk presçi dışında (baskıcılar da):
+                    // adamı tehlikeliyse (topun önünde ya da kendisi tehlike bölgesinde, uzak taraf dahil) onu tutmayı sürdürür;
+                    // değilse önce tehlike bölgesinde kimsenin tutmadığı adama (kaleye en yakın), o da yoksa kale önüne döner
                     if s7(8) && g_e < S7_D && self.press.first() != Some(&p) && self.g_d(pp.x, pp.y) >= g_e + 1.0 && {
                         let q = pp.hal.tutQ.or(pp.hal.markRef);
-                        q.map_or(true, |q| self.g_d(c.ps[q].x, c.ps[q].y) >= g_e - 2.0)
+                        q.map_or(true, |q| { let d = self.g_d(c.ps[q].x, c.ps[q].y); !(d < g_e - 2.0 || d < S7_D) })
                     } {
+                        let bos = self.atk.iter().copied().filter(|&q| Some(q) != h && !s7_tut.contains(&q) && self.g_d(c.ps[q].x, c.ps[q].y) < S7_D).min_by(|&u, &v| sira(self.g_d(c.ps[u].x, c.ps[u].y) - self.g_d(c.ps[v].x, c.ps[v].y)));
+                        if let Some(q) = bos {
+                            s7_tut.push(q);
+                            let (qx, qy) = (c.ps[q].x, c.ps[q].y);
+                            let l = jmax(0.01, self.g_d(qx, qy));
+                            let nm = c.ps[q].govde.name.clone();
+                            let pp = &mut c.ps[p];
+                            pp.tx = qx + 2.0 * (own_x(dt) - qx) / l;
+                            pp.ty = qy + 2.0 * (GCY - qy) / l;
+                            pp.sprint = true;
+                            pp.job = Some(format!("geri koşu · {}", nm).into());
+                            pp.hal_mut().tutQ = Some(q);
+                            continue;
+                        }
                         let bs = self.base[p].map(|b| (b.x, b.y)).unwrap_or((pp.x, pp.y));
                         let (lx, ly) = (E.0 + 0.55 * (own_x(dt) - E.0), E.1 + 0.55 * (GCY - E.1));
                         let pp = &mut c.ps[p];
