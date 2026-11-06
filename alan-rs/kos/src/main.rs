@@ -169,6 +169,7 @@ fn main() {
         alan_motor::kafa::kafa2_tarti::ON_SIRA_ZORLA.store(ek.split(',').any(|x| x == "onsira"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::SAH_YAKINSA_ZORLA.store(ek.split(',').any(|x| x == "sahyak"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::SAVUR_TEPKI_ZORLA.store(ek.split(',').any(|x| x == "savtepki"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa2_tarti::TUT_ELDE_ZORLA.store(ek.split(',').any(|x| x == "tutelde"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::KOVSUZ_SABIT_ZORLA.store(ek.split(',').any(|x| x == "kovsuz"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::KAYIP_SAHIP_ZORLA.store(ek.split(',').any(|x| x == "kayipsahip"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::SEKME_BEDEL_ZORLA.store(ek.split(',').any(|x| x == "sekbedel"), std::sync::atomic::Ordering::Relaxed);
@@ -347,6 +348,7 @@ fn main() {
                     alan_motor::kafa::kafa2_tarti::ON_SIRA_ZORLA.store(acik && ek.split(',').any(|x| x == "onsira"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::SAH_YAKINSA_ZORLA.store(acik && ek.split(',').any(|x| x == "sahyak"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::SAVUR_TEPKI_ZORLA.store(acik && ek.split(',').any(|x| x == "savtepki"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa2_tarti::TUT_ELDE_ZORLA.store(acik && ek.split(',').any(|x| x == "tutelde"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::KOVSUZ_SABIT_ZORLA.store(acik && ek.split(',').any(|x| x == "kovsuz"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::KAYIP_SAHIP_ZORLA.store(acik && ek.split(',').any(|x| x == "kayipsahip"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::SEKME_BEDEL_ZORLA.store(acik && ek.split(',').any(|x| x == "sekbedel"), std::sync::atomic::Ordering::Relaxed);

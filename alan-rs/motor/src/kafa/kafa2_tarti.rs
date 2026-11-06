@@ -372,6 +372,13 @@ pub fn savur_tepki() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     SAVUR_TEPKI_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAVUR_TEPKI_IZ").is_ok())
 }
+/// Deney (ALAN_TUT_ELDE_IZ; ölçümde TUT_ELDE_ZORLA): tutmanın değeri eldeki en iyi seçenek × beklemenin indirimi
+/// (tempo/sabır) ya da beklemenin sonunda açılan somut şut/pas/sür; harita değeri tutmaya doğrudan girmez.
+pub static TUT_ELDE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn tut_elde() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    TUT_ELDE_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_TUT_ELDE_IZ").is_ok())
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
@@ -1399,6 +1406,27 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
         cx.PD.clear();
         if let Some(m) = &cx.IM {
             m.borrow_mut().clear();
+        }
+    }
+    // ALAN_TUT_ELDE_IZ: tutmanın değeri haritadan (zemin) değil eldekinden: şu anki en iyi somut seçenek, beklemenin
+    // indirimiyle (pr_gam, tempo/sabır; karar aralığı başına), ya da beklemenin sonunda açılan somut şut/pas/sür
+    if tut_elde() {
+        let g = veyo(k.bag._g_pr, k.D.combo);
+        let u = UFUK.with(|u| u.get());
+        let simdi = opts.iter().filter(|o| o.kind != "tut").filter_map(|o| o.v).fold(f64::NEG_INFINITY, jmax);
+        for o in opts.iter_mut() {
+            if o.kind != "tut" || o.v.is_none() {
+                continue;
+            }
+            let Some(d) = o.dok.as_ref() else { continue };
+            let (Some(P), Some(Th), Some(ky)) = (d.al("tutar"), d.al("sure"), d.al("kayip")) else { continue };
+            let acilan = jmax(jmax(d.al("sut").unwrap_or(0.0), d.al("ileri").unwrap_or(0.0)), d.al("surme").unwrap_or(0.0));
+            let bekle = if simdi.is_finite() { simdi * crate::mat::pow(g, Th / jmax(u, 1.0)) } else { 0.0 };
+            let v = P * jmax(bekle, acilan) + ky;
+            if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
+                eprintln!("TUTE {} {} Th {:.0} P {:.3} şimdi {:.3} g {:.3} bekle {:.3} açılan {:.3} v {:.3} -> {:.3}", k.tick(), h.govde.name, Th, P, simdi, g, bekle, acilan, o.v.unwrap_or(0.0), v);
+            }
+            o.v = Some(v);
         }
     }
     if kayip_sahip() {
