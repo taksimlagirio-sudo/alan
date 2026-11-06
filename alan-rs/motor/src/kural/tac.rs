@@ -78,7 +78,7 @@ pub fn on_ref(m: &Mac, t: f64, ex: f64) -> f64 {
 
 /// JS `m.tac0 && m.tac0[t] || m.tac[t] || {}`
 pub fn tq0(m: &Mac, t: f64) -> Tac {
-    if let Some(Some(x)) = m.tac0.as_ref().map(|v| v[t as usize].clone()) {
+    if let Some(Some(x)) = m.tac0.get(t as usize).cloned() {
         return x;
     }
     m.tac.get(t as usize).cloned().unwrap_or_default()
@@ -285,7 +285,7 @@ pub fn mac_eff(m: &mut Mac, t: f64, tq: Tac) -> Tac {
     let kal = m.len - m.tick;
     let d = m.score[ti] - m.score[1 - ti];
     let key = format!("{}:{}", js_num(d), js_num((kal / 120.0).floor()));
-    let c = m._mac_c.get_or_insert_with(Default::default);
+    let c = &mut m._mac_c;
     let w = *c.entry(key).or_insert_with(|| mac_w(d, kal));
     let n = mac_w(0.0, m.len);
     let oran = jmax(MAC_UC[0], jmin(MAC_UC[1], w.c / jmax(0.001, w.g) / (n.c / jmax(0.001, n.g))));
@@ -358,22 +358,22 @@ pub fn evre_bul(m: &mut Mac, t: f64) -> &'static str {
 }
 
 pub fn evre_uygula(m: &mut Mac) {
-    if m.tac0.is_none() {
-        m.tac0 = Some(vec![None, None]);
+    if m.tac0.is_empty() {
+        m.tac0 = vec![None, None];
     }
-    if m.evre.is_none() {
-        m.evre = Some(vec![None, None]);
+    if m.evre.is_empty() {
+        m.evre = vec![None, None];
     }
     for t in [0.0, 1.0] {
         let ti = t as usize;
         let Some(cur) = m.tac.get(ti).cloned() else { continue };
         if cur._ev.as_deref().map_or(true, |s| s.is_empty()) {
-            m.tac0.as_mut().unwrap()[ti] = Some(cur.clone());
+            m.tac0[ti] = Some(cur.clone());
         }
-        let b = m.tac0.as_ref().unwrap()[ti].clone().unwrap_or(cur);
+        let b = m.tac0[ti].clone().unwrap_or(cur);
         let key = evre_bul(m, t);
         let tick = m.tick;
-        let ev = m.evre.as_mut().unwrap();
+        let ev = &mut m.evre;
         if ev[ti].as_ref().map_or(true, |e| e.key != key) {
             ev[ti] = Some(crate::model::JMEvreE { key: key.into(), ev: key[..3].into(), ad: key[4..].into(), t0: tick });
         }

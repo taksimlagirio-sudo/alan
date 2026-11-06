@@ -323,8 +323,16 @@ sayaçları, KafaBag'in üç bağlamı); her yazma yerine elle bakıldı (`Mac.c
 **5-6 ✅ gereksiz `Option`'lar (ölçüldü):** `sina/option-olc.rs` (4 maç × 2700 tik, `{:#?}` dökümünden): 272 `Option`
 alanından 41'i hep dolu, 60'ı hep boş, 171'i ikisi de. Hep boşlardan yalnız 3'üne hiçbir yerde değer yazılmıyor
 (`Secenek.next`, `Secenek.why`, `TopEk.bekM`): silindi, okudukları ölü dallar ve yalnız onlar için hesaplanan
-`dis_lookTo` da. Kalan 57'ye yazılıyor (seyrek yollar, bu maçların kullanmadığı taktik ayarları). Hep dolu 41 alanı
-`Option`'sız yapmak her birinde kurulumdaki "yok" anlamını ayrı ayrı düşünmeyi gerektirir: değeri düşük, ertelendi.
+`dis_lookTo` da. Kalan 57'ye yazılıyor (seyrek yollar, bu maçların kullanmadığı taktik ayarları). Hep dolu 41 alan
+(6 Kasım'da yeniden ölçüldü: 42) tek tek incelendi; **9'u `Option`'sız** (boşluğu hiçbir okumada gözlenmiyordu):
+`Mac._mac_c` (`get_or_insert_with(Default)`), `Mac.tac0`, `Mac.evre` (tembel `vec![None, None]`: boş `Option<Vec>` →
+boş `Vec`, okumalar `get`), `OyuncuMac.hist` (boş `Arc<Vec>`), `lock` (`p.lock > t`, t ≥ 0: yok = 0), `rec`, `_yog`
+(`unwrap_or(0.0)`), `_evx`, `_evy` (yalnız yazılıyor). Kalan 33 bilerek `Option`: `Tac.*` (8; taktik JSON'u,
+`ust` katmanlamasında "verilmedi" anlamlı), `Oyuncu.en` (yok = enerji kuralı kapalı), `Oyuncu.job`, `Mac.E`/`att`/`sh`/
+`ra`/`not` (maçın ilk adımından önce yok; okumalar boşluğa göre dallanıyor), `_kuyu_top` (`== Some(takım)`; yok ≠ 0),
+`_D0`/`_enOnce` (`unwrap_or(NaN)`/`unwrap_or(1.0)`: düz tipte özel varsayılan isterdi), kafanın karar tipleri
+(`Secenek.*`, `Karar.best`, `JODet.P`: JS'in `undefined` karşılaştırmaları) ve olay/not kayıtları. Davranış aynı
+(20 maç × 2700 tik).
 Sonuç: `model.rs` 6015 → 1950 satır, 328 → 82 tip.
 
 Sıra: (1) maç durumu (108 alan, ~500 yer, kafaya dokunmaz: yalnız `mac/`, `sekil/`, `temas`), (2) gövde

@@ -146,9 +146,9 @@ pub struct OyuncuMac {
     /// `bekBas`: null|number
     pub bekBas: Option<f64>,
     /// `hist`: dizi (sonradan eklenir)
-    pub hist: Option<std::sync::Arc<Vec<JPHistE>>>,
+    pub hist: std::sync::Arc<Vec<JPHistE>>,
     /// `lock`: number (sonradan eklenir)
-    pub lock: Option<f64>,
+    pub lock: f64,
     /// `kapPrev`: OYUNCU|null (yerleşim: kapatma işinin adamı)
     pub kapPrev: Option<Pid>,
     /// `zonePrev`: OYUNCU|null
@@ -158,7 +158,7 @@ pub struct OyuncuMac {
     /// `uaPrev`: OYUNCU|null
     pub uaPrev: Option<Pid>,
     /// `rec`: number (sonradan eklenir)
-    pub rec: Option<f64>,
+    pub rec: f64,
     /// `tutQ`: OYUNCU|null
     pub tutQ: Option<Pid>,
     /// `otx`: null|number
@@ -174,11 +174,11 @@ pub struct OyuncuMac {
     /// `_hizK`: null|number
     pub _hizK: Option<f64>,
     /// `_evx`: number (sonradan eklenir)
-    pub _evx: Option<f64>,
+    pub _evx: f64,
     /// `_evy`: number (sonradan eklenir)
-    pub _evy: Option<f64>,
+    pub _evy: f64,
     /// `_yog`: number (sonradan eklenir)
-    pub _yog: Option<f64>,
+    pub _yog: f64,
     /// `_D0`: number (sonradan eklenir)
     pub _D0: Option<f64>,
     /// `_Dl`: number (sonradan eklenir)
@@ -448,11 +448,11 @@ pub struct Mac {
     /// `ra`: dizi (sonradan eklenir)
     pub ra: Option<Vec<std::collections::BTreeMap<usize, JMRaEE>>>,
     /// `tac0`: dizi (sonradan eklenir)
-    pub tac0: Option<Vec<Option<crate::mac_veri::Tac>>>,
+    pub tac0: Vec<Option<crate::mac_veri::Tac>>,
     /// `evre`: dizi (sonradan eklenir)
-    pub evre: Option<Vec<Option<JMEvreE>>>,
+    pub evre: Vec<Option<JMEvreE>>,
     /// `_macC`: object (sonradan eklenir)
-    pub _mac_c: Option<std::collections::BTreeMap<String, crate::mac_veri::MacW>>,
+    pub _mac_c: std::collections::BTreeMap<String, crate::mac_veri::MacW>,
     /// `E`: object (sonradan eklenir)
     pub E: Option<JME>,
     /// `att`: number (sonradan eklenir)

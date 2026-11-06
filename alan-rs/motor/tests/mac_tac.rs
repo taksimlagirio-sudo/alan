@@ -30,7 +30,7 @@ fn taceff_evre_gecis_js_ile_ayni() {
         let mut m = mac(&s["m"]);
         m.devre = s["devre"].as_bool().unwrap();
         m.tac = s["tac"].as_array().unwrap().iter().map(|t| serde_json::from_value::<Tac>(t.clone()).unwrap()).collect();
-        m.tac0 = s["tac0"].as_array().map(|a| a.iter().map(|t| if t.is_null() { None } else { Some(serde_json::from_value::<Tac>(t.clone()).unwrap()) }).collect());
+        m.tac0 = s["tac0"].as_array().map(|a| a.iter().map(|t| if t.is_null() { None } else { Some(serde_json::from_value::<Tac>(t.clone()).unwrap()) }).collect()).unwrap_or_default();
         m.kp = if s["kp"].is_null() { None } else { let k = &s["kp"]; Some(JMKp { team: k["team"].as_f64().unwrap(), ids: k["ids"].as_array().unwrap().iter().map(|x| x.as_f64().unwrap()).collect(), bitis: h(&k["bitis"]), sahip: k["sahip"].as_u64().map(|x| x as usize) }) };
         m.gc = gc(&s["gc"]);
         m.hh_kul = s["hhKul"].as_bool().unwrap();
@@ -40,7 +40,7 @@ fn taceff_evre_gecis_js_ile_ayni() {
         for e in s["macC"].as_array().unwrap() {
             cc.insert(e[0].as_str().unwrap().to_string(), alan_motor::mac::MacW { g: h(&e[1]), c: h(&e[2]), e0: h(&e[3]) });
         }
-        m._mac_c = Some(cc);
+        m._mac_c = cc;
         let tk = m.tick;
         for t in 0..2 {
             let e = tac_eff(&mut m, t as f64);

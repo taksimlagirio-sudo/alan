@@ -234,8 +234,8 @@ pub fn diz_uygula_ile(m: &mut Mac, t: f64, dz: &Diz, dis: &mut dyn KurDis) {
         p.govde_mut().slot0 = Some(crate::model::JPSlot0 { role: p.govde.slot.role.clone(), d: p.govde.slot.d, l: p.govde.slot.l });
         p.govde_mut().rslot0 = p.govde.rslot.as_ref().map(|r| crate::model::JPRslot0 { d: r.d, l: r.l });
     }
-    if let Some(e) = m.evre.as_mut() {
-        e[t as usize] = None;
+    if !m.evre.is_empty() {
+        m.evre[t as usize] = None;
     }
     mark_ata_ile(m, dis);
 }

@@ -500,13 +500,13 @@ fn main() {
     let dt = t0.elapsed().as_secs_f64();
     if kip == "boyut" {
         for p in mt.m.ps.iter().take(3) {
-            eprintln!("{} hist {:?} past {:?} _bk {:?} job {:?} sizeof {}", p.govde.name, p.hal.hist.as_ref().map(|v| v.len()), p.hal.past.as_ref().map(|v| v.len()), p.hal._bk.as_ref().map(|v| v.len()), p.job.as_ref().map(|j| j.len()), std::mem::size_of::<alan_motor::model::Oyuncu>());
+            eprintln!("{} hist {:?} past {:?} _bk {:?} job {:?} sizeof {}", p.govde.name, Some(p.hal.hist.len()), p.hal.past.as_ref().map(|v| v.len()), p.hal._bk.as_ref().map(|v| v.len()), p.job.as_ref().map(|j| j.len()), std::mem::size_of::<alan_motor::model::Oyuncu>());
         }
         let t = std::time::Instant::now();
         let mut n = 0usize;
         for _ in 0..100000 { let c = mt.m.ps[3].clone(); n += c.govde.name.len(); }
         eprintln!("klon 100k: {:?} ({})", t.elapsed(), n);
-        let mut q = mt.m.ps[3].clone(); q.hal_mut().hist = None; q.hal_mut().past = None; q.hal_mut()._bk = None;
+        let mut q = mt.m.ps[3].clone(); q.hal_mut().hist = Default::default(); q.hal_mut().past = None; q.hal_mut()._bk = None;
         let t = std::time::Instant::now();
         for _ in 0..100000 { let c = q.clone(); n += c.govde.name.len(); }
         eprintln!("klon hist/past/_bk yok 100k: {:?} ({})", t.elapsed(), n);

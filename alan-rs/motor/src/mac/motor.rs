@@ -93,7 +93,8 @@ impl Motor {
         let mut f = [0f32; 174];
         let m = &self.m;
         let ev = |e: &Option<crate::model::JMEvreE>| e.as_ref().and_then(|e| super::tac::EVKOD.iter().position(|k| *k == e.key)).map_or(-1.0, |i| i as f32);
-        if let Some(E) = &m.evre {
+        if !m.evre.is_empty() {
+            let E = &m.evre;
             f[40] = E.first().map_or(-1.0, ev);
             f[41] = E.get(1).map_or(-1.0, ev);
         }

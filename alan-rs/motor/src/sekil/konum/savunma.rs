@@ -194,7 +194,7 @@ impl Sv {
         {
             let p = &mut c.ps[pi];
             if !kilitli(p, tick) {
-                p.hal_mut().lock = Some(tick + S.lock);
+                p.hal_mut().lock = tick + S.lock;
                 p.hal_mut().lockAt = Some(tick + 0.01 * kk as f64);
                 p.hal_mut()._lockH = Some(h);
             }
@@ -539,7 +539,7 @@ impl Sv {
         }
         for &p in &self.defs {
             if !self.press.contains(&p) {
-                c.ps[p].hal_mut().lock = Some(0.0);
+                c.ps[p].hal_mut().lock = 0.0;
             }
         }
     }

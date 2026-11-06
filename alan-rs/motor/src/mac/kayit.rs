@@ -160,7 +160,7 @@ pub fn uygula_ile(m: &mut Mac, c: &Degisim, dis: &mut dyn KurDis) {
         if t < m.tac.len() {
             m.tac[t] = m.tac[t].ust(tc);
             if m.tac[t]._ev.as_deref().map_or(false, |s| !s.is_empty()) {
-                if let Some(Some(b)) = m.tac0.as_mut().and_then(|v| v.get_mut(t)) {
+                if let Some(Some(b)) = m.tac0.get_mut(t) {
                     *b = b.ust(tc);
                 }
             }
