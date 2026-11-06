@@ -19,21 +19,44 @@ use std::sync::{Arc, Mutex};
 pub const IMK_DS: [f64; 9] = [10.0, 13.0, 16.0, 20.0, 24.0, 28.0, 32.0, 36.0, 40.0];
 pub const IMK_SY: [f64; 7] = [0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0];
 pub const IMK_KO: [f64; 9] = [-8.0, -6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 8.0];
-pub const IMK_KD: [f64; 3] = [-2.0, 0.0, 2.0];
+pub const IMK_KD: [f64; 7] = [-16.0, -12.0, -8.0, -5.0, -2.0, 0.0, 2.0];
 pub const IMK_CH: [f64; 4] = [0.1, 0.4, 0.7, 1.0];
 pub const IMK_L: [f64; 4] = [5.0, 10.0, 15.0, 20.0];
-const TAB_BOY: usize = 9 * 7 * 9 * 3 * 4;
+const TAB_BOY: usize = 9 * 7 * 9 * 7 * 4;
+/// Eski biçimli dosya tablosu (Bekçi-geride ekseni −2…2): yalnız ölçümde eski maçları yeniden kurmak için okunur
+pub const IMK_KD_ESKI: [f64; 3] = [-2.0, 0.0, 2.0];
+const TAB_BOY_ESKI: usize = 9 * 7 * 9 * 3 * 4;
+fn eski_bicim() -> bool {
+    tablo_dis_acik() && imk_tablo_dis().map_or(false, |t| t.len() == 16 * TAB_BOY_ESKI)
+}
+/// Bekçi-geride ekseni (okunan tablonun biçimine göre)
+fn kd_ekseni() -> &'static [f64] {
+    if eski_bicim() { &IMK_KD_ESKI } else { &IMK_KD }
+}
 /// 16 tablo (şutçu L × Bekçi L, sıra L[a]-L[b]), her biri DS×SY×KO×KD×CH, değer −1 (yok) ya da 0–100.
 static IMK_SUT: &[u8; 16 * TAB_BOY] = include_bytes!("kafa2_imk_sut.bin");
 /// Dosyadaki tablo ne zaman kullanılır: ALAN_IMK_TABLO_HEP ortamda ya da ölçümde (kopya maçlar) IMK_TABLO_ZORLA
 pub static IMK_TABLO_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+/// Şut tablosunun Bekçi ideali boş sahada (ALAN_BEK_YER_BOS_ESKI=1 ya da BEK_YER_BOS_KAPALI ile eski: dolu dünyada).
+pub static BEK_YER_BOS_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub static BEK_YER_BOS_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn bek_yer_bos() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    !BEK_YER_BOS_KAPALI.load(std::sync::atomic::Ordering::Relaxed) && (BEK_YER_BOS_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_BEK_YER_BOS_ESKI").is_err()))
+}
+/// Ölçümde (kopya maçlar) gömülü tablo: ALAN_IMK_TABLO_HEP ile taban eski tabloyla oynarken kopya bugünkünü kullanır
+pub static IMK_GOMULU_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 fn tablo_dis_acik() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    if IMK_GOMULU_ZORLA.load(std::sync::atomic::Ordering::Relaxed) {
+        return false;
+    }
     IMK_TABLO_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_IMK_TABLO_HEP").is_ok())
 }
 #[inline(always)]
 fn tab_v(tab: usize, i: usize) -> f64 {
     match if tablo_dis_acik() { imk_tablo_dis() } else { None } {
+        Some(t) if t.len() == 16 * TAB_BOY_ESKI => t[tab * TAB_BOY_ESKI + i] as i8 as f64,
         Some(t) => t[tab * TAB_BOY + i] as i8 as f64,
         None => IMK_SUT[tab * TAB_BOY + i] as i8 as f64,
     }
@@ -47,7 +70,7 @@ pub fn imk_tablo_dis() -> Option<&'static [u8]> {
         }
         let yol = std::env::var("ALAN_IMK_TABLO").ok()?;
         let v = std::fs::read(&yol).ok()?;
-        if v.len() == 16 * TAB_BOY { Some(v) } else { None }
+        if v.len() == 16 * TAB_BOY || v.len() == 16 * TAB_BOY_ESKI { Some(v) } else { None }
     })
     .as_deref()
 }
@@ -84,7 +107,7 @@ impl ImkBol {
         if let Some(a) = self.tabs.get(&tab) {
             return a.clone();
         }
-        let (n_s, n_k, n_d, n_c, n_ds) = (IMK_SY.len(), IMK_KO.len(), IMK_KD.len(), IMK_CH.len(), IMK_DS.len());
+        let (n_s, n_k, n_d, n_c, n_ds) = (IMK_SY.len(), IMK_KO.len(), kd_ekseni().len(), IMK_CH.len(), IMK_DS.len());
         let mut n = vec![0.0; n_k * n_d];
         let mut w = vec![0.0; n_k * n_d];
         for k in 0..n_k {
@@ -213,6 +236,29 @@ pub fn sut_tab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: O
     let sy = Y - GCY;
     let yer0 = match bk_yer {
         Some(b) => b,
+        // ALAN_BEK_YER_BOS: ideal, tablonun üretildiği gibi boş sahada (yalnız şutçu ve Bekçi, şut bağlamı) — tablo Bekçi'nin
+        // bu ideale göre kaymasını okur (mac::gecici_dis::imk_hucre); dolu dünyada ideal başka tehlikeye göre kayabiliyordu
+        None if bek_yer_bos() => {
+            let tac = k.mac.as_ref().map(|m| m.tac.clone()).unwrap_or_default();
+            let yap = |s0: &Oyuncu| -> Nokta {
+                let mut sc = s0.clone();
+                sc.team = 0.0;
+                sc.vx = 0.0;
+                sc.vy = 0.0;
+                let mut b = (*bk).clone();
+                b.team = 1.0;
+                b.vx = 0.0;
+                b.vy = 0.0;
+                let g0: Vec<Op> = vec![kxy(&sc, X, Y), kxy(&b, GW - 1.0, GCY)];
+                let fm = dis::Fm { tac: &tac, ps: &g0, holder: Some(crate::dunya::Yerde::oyuncu(&g0[0])) };
+                let c = dis::as_bekci(k, &g0[1], nk(X, Y), Some(&fm));
+                nk(fx(c.x), fy(c.y))
+            };
+            match sh {
+                Some(s0) => yap(s0),
+                None => sahte_ile(team, x, y, -1.0, |hold| yap(hold)),
+            }
+        }
         None => {
             let tac = k.mac.as_ref().map(|m| m.tac.clone()).unwrap_or_default();
             // şutçu (x, y)'de: kopya yerine görünüm (yalnız yeri değişir)
@@ -242,8 +288,8 @@ pub fn sut_tab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: O
         None => 10.0,
     }));
     let lk = jmax(5.0, jmin(20.0, imk_ort(&bk)));
-    let (n_k, n_d) = (IMK_KO.len(), IMK_KD.len());
-    let (ei, et) = fr(&IMK_KD, kd);
+    let (n_k, n_d) = (IMK_KO.len(), kd_ekseni().len());
+    let (ei, et) = fr(kd_ekseni(), kd);
     let BK = imk_bol(k, team, x, y, dd, sy, ch);
     let oku1 = |tab: usize, ki: usize, kt: f64| -> f64 {
         let A = BK.lock().unwrap().tab(tab);

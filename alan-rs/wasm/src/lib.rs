@@ -370,3 +370,9 @@ pub extern "C" fn sur_e(acik: i32) {
 pub extern "C" fn bek_dalis(acik: i32) {
     alan_motor::kafa::kafa1_ucus::BEK_DALIS_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
 }
+
+/// Şut tablosunun Bekçi ideali boş sahada (kafa2_imkan::bek_yer_bos): 1 açık (varsayılan), 0 kapalı.
+#[no_mangle]
+pub extern "C" fn bek_yer_bos(acik: i32) {
+    alan_motor::kafa::kafa2_imkan::BEK_YER_BOS_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
+}
