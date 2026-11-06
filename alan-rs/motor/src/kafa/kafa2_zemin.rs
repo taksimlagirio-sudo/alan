@@ -691,6 +691,23 @@ pub fn sahiplikKur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>
     Sahiplik { N: [n0, n1], NX, NY }
 }
 
+/// ALAN_SAHSIZ_IZ: sahiplik haritasının yerine, seçenek üretimi için aynı ızgarada yerel değer: her hücre kendi
+/// basit konum değeri (zemin: oradan taşıyıp şut ya da ilerleme), komşudan yayılma ve yineleme yok.
+pub fn sahiplikYerel(k: &mut Kafa, w: &[Op], ch: f64) -> Sahiplik {
+    let KG = IMK_HUC;
+    let NX = (GW / KG).round() as usize + 1;
+    let NY = (GH / KG).round() as usize + 1;
+    let mut N: [Vec<f64>; 2] = [vec![0.0; NX * NY], vec![0.0; NX * NY]];
+    for t in [0usize, 1] {
+        for i in 0..NX {
+            for j in 0..NY {
+                N[t][i * NY + j] = zemin(k, w, t as f64, i as f64 * KG, j as f64 * KG, ch, None);
+            }
+        }
+    }
+    Sahiplik { N, NX, NY }
+}
+
 /// JS zeminS(w, team, x, y, ch, k) (decide.js:6747): sahiplik haritası varsa ondan
 pub fn zeminS(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Option<&Oyuncu>) -> f64 {
     // ALAN_SAHSIZ_IZ: sahiplik haritası değerlendirmede kullanılmaz (basit konum değeri)

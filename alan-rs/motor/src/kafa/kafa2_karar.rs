@@ -66,7 +66,8 @@ pub fn decide0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar, 
     let s0 = k.SAH_F.clone();
     {
         let h = src[hi].clone();
-        let f = Arc::new(sahiplikKur(k, src, h.team, ch, Some(nk(h.x, h.y))));
+        // ALAN_SAHSIZ_IZ: seçenek üretiminin ızgarası yerel değerle (yayılmasız)
+        let f = Arc::new(if crate::kafa::kafa2_tarti::sahsiz() { crate::kafa::kafa2_zemin::sahiplikYerel(k, src, ch) } else { sahiplikKur(k, src, h.team, ch, Some(nk(h.x, h.y))) });
         k.k2.sahF_iz = Some((k.bag._tick, h.team, f.clone()));
         k.SAH_F = Some(f);
     }
