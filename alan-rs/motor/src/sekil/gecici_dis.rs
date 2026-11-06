@@ -41,7 +41,7 @@ use super::varlik::{KayipF, Mc, Varlik};
 use crate::kafa::kafa1_js::{nk, Op};
 use crate::dunya::ow;
 pub use crate::dunya::ow_paylas;
-fn ops(ps: &[Oyuncu]) -> Vec<Op> {
+fn ops(ps: &[Oyuncu]) -> crate::dunya::Dunya {
     crate::dunya::op_dunya(ps)
 }
 

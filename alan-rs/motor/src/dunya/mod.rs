@@ -23,13 +23,12 @@ use crate::model::Oyuncu;
 pub mod varlik;
 pub use varlik::{hayal, Beden, Varlik, Yerde};
 
-/// Kafanın dünyasının öğesi: paylaşımlı oyuncu.
-pub type Op = Arc<Oyuncu>;
+pub use crate::dunya_tip::Op;
 /// Kafanın dünyası.
-pub type Dunya = Vec<Op>;
+pub use crate::dunya_tip::Dunya;
 
 /// Dünyayı kafanın biçimine çevir.
-pub fn op_dunya(ps: &[Oyuncu]) -> Vec<Op> {
+pub fn op_dunya(ps: &[Oyuncu]) -> Dunya {
     ps.iter().map(|p| Arc::new(p.clone())).collect()
 }
 

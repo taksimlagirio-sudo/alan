@@ -8,6 +8,7 @@ pub mod alan;
 pub mod core_sabit;
 pub mod donus;
 pub mod dunya;
+pub mod dunya_tip;
 pub mod kafa;
 pub mod kural;
 pub mod mat;

@@ -9,7 +9,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 type Op = Arc<Oyuncu>;
-type W = Arc<Vec<Op>>;
+type W = Arc<crate::dunya_tip::Dunya>;
 
 #[derive(Default)]
 pub struct Tablo {

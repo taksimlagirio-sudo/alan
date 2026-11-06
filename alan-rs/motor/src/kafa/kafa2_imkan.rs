@@ -345,7 +345,7 @@ pub fn sutTab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: Op
                 kb.y = bkP.y;
                 kb.vx = 0.0;
                 kb.vy = 0.0;
-                let src: Arc<Dunya> = Arc::new(vec![Arc::new(sc), Arc::new(kb)]);
+                let src: Arc<Dunya> = Arc::new(crate::dunya::Dunya::from(vec![Arc::new(sc), Arc::new(kb)]));
                 let bag0 = k.bag.clone();
                 let r = crate::kafa::kafa2_karar::decide(k, 0, &src, ch, &mut || 0.5, None);
                 k.bag = bag0;

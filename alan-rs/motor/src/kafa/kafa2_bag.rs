@@ -342,7 +342,7 @@ pub fn duelP(k: &mut Kafa, q: &Oyuncu, h: &Oyuncu, src: &[Op]) -> f64 {
 pub fn enW(k: &Kafa, w: &Arc<Dunya>, o: &Secenek) -> Arc<Dunya> {
     match k.enW(w, Some(o)) {
         Cow::Borrowed(_) => w.clone(),
-        Cow::Owned(v) => Arc::new(v),
+        Cow::Owned(v) => Arc::new(crate::dunya::Dunya::from(v)),
     }
 }
 /// JS enGec(q, w, f): `q.en`'in geçici değeri (None: değişmez). Çağıran q'nun kopyasıyla f'i çağırır.
