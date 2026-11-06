@@ -476,3 +476,5 @@ anahtar!(kuyu_pay, alan_motor::mac::kuyu::KUYU_PAY_ZORLA);
 anahtar!(sah_zaman, alan_motor::kafa::kafa2_tarti::SAH_ZAMAN_ZORLA);
 // bütün oyuncular için yürüme: hız seçiminde normal koşunun altı, bar dolumu hıza bağlı (yuru)
 anahtar!(yuru, alan_motor::mac::enerji::YURU_ZORLA);
+// kayıp bedelinde sahipliğin değeri en az bölgenin harita değeri (kayipharita)
+anahtar!(kayip_harita, alan_motor::kafa::kafa2_tarti::KAYIP_HARITA_ZORLA);
