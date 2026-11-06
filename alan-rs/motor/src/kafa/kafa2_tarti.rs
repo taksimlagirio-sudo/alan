@@ -431,6 +431,9 @@ pub fn yol_olabilir_b(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t
         let bek = bekci(p);
         let R = if bek { crate::core_sabit::Q.bek_body + crate::temas::bek_dl(p) } else { jmin(2.0, crate::temas::menzil(p, 0.35)) };
         let rc = jmax(0.0, if bek { crate::temas::bek_re(p) } else { dis::alan_tepki(k, p, "kovala") });
+        // koşu profilleri (kosuPr) yol boyunca sabit: bir kez
+        let pr_p = crate::kural::enerji::kosuPr(p, &kr);
+        let pr_q = al.as_ref().and_then(|a| crate::kural::enerji::kosuPr(&a.0, &kr));
         let mut en = 0.0f64;
         let mut s = 1.5;
         while s < L - 1.0 {
@@ -439,11 +442,11 @@ pub fn yol_olabilir_b(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t
             let tb = t0 + dis::ucus_t(k, L, k.D.arriveFirm, Some(s));
             let d = jmax(0.0, hypot(p.x - x, p.y - y) - R);
             // savunmacı pası ancak vurulunca görür: koşusu vuruştan (t0) başlar; o ana dek yeri bilinmez (belirsizlik payı)
-            let tp = tt + rc + dis::as_gec_of(k, &G, x, y, d) + crate::kural::enerji::alan_kosu_t(p, d, v, &kr);
+            let tp = tt + rc + dis::as_gec_of(k, &G, x, y, d) + crate::kural::enerji::alan_kosu_tp(pr_p, d, v);
             let tq = match &al {
                 Some((q, Gq, vq, Rq)) => {
                     let dq = jmax(0.0, hypot(q.x - x, q.y - y) - Rq);
-                    dis::as_gec_of(k, Gq, x, y, dq) + crate::kural::enerji::alan_kosu_t(q, dq, *vq, &kr)
+                    dis::as_gec_of(k, Gq, x, y, dq) + crate::kural::enerji::alan_kosu_tp(pr_q, dq, *vq)
                 }
                 None => f64::INFINITY,
             };
@@ -555,7 +558,17 @@ pub fn to_fixed(x: f64, n: usize) -> String {
 /// JS pDunya(cx, B, T, kind, q) (decide.js:6932): top B'deyken T tik sonraki dünya (en yakın cevap
 /// veren tek rakip cevabıyla, ötekiler öngörüyle; alıcı B'de).
 pub fn p_dunya(k: &mut Kafa, cx: &mut Cx, B: Nokta, T: f64, kind: &str, q: Option<&Oyuncu>) -> Arc<Dunya> {
-    let key = format!("w|{}|{}|{}|{}|{}", kind, to_fixed(B.x, 2), to_fixed(B.y, 2), js_sayi(jround(T)), q.map(|q| js_sayi(q.id)).unwrap_or_default());
+    let mut key = format!("w|{}|{}|{}|{}|{}", kind, to_fixed(B.x, 2), to_fixed(B.y, 2), js_sayi(jround(T)), q.map(|q| js_sayi(q.id)).unwrap_or_default());
+    let (B, T) = if pr_sirasiz() {
+        if kind == "drive" {
+            if let Some(q) = q {
+                key.push_str(&format!("|{:x}|{:x}", q.x.to_bits(), q.y.to_bits()));
+            }
+        }
+        (nk(iki_bas(B.x), iki_bas(B.y)), jround(T))
+    } else {
+        (B, T)
+    };
     if let Some(w) = cx.PW.get(&key) {
         return w.clone();
     }
@@ -617,7 +630,7 @@ pub fn zemin_h(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: O
         Some(c) => c,
     };
     let M = cx.IM.get_or_insert_with(|| Rc::new(RefCell::new(Default::default()))).clone();
-    let key = format!(
+    let mut key = format!(
         "{}|{}|{}|{}|{}",
         js_sayi(team),
         kq.map(|q| js_sayi(q.id)).unwrap_or_else(|| "-".into()),
@@ -625,6 +638,12 @@ pub fn zemin_h(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: O
         js_sayi(jround(y / 3.0)),
         js_sayi(jround(veyo(T, 0.0) / PNC_DILIM))
     );
+    let (x, y, T) = if pr_sirasiz() {
+        key.push_str(&format!("|{:x}", dunya_oz(w)));
+        (jround(x / 3.0) * 3.0, jround(y / 3.0) * 3.0, T.map(|t| jround(t / PNC_DILIM) * PNC_DILIM))
+    } else {
+        (x, y, T)
+    };
     if let Some(v) = M.borrow().get(&key) {
         if crate::iz_acik() && kq.map_or(false, |q| std::env::var("ALAN_SURD_IZ").ok().as_deref() == Some(&*q.govde.name)) {
             eprintln!("ZEMIN ({:.1},{:.1}) T {:.0} önbellek {:.3} anahtar {}", x, y, veyo(T, 0.0), v, key);
@@ -733,7 +752,15 @@ pub fn sur_d(k: &mut Kafa, w: &[Op], team: f64, kq: &Oyuncu, at: Nokta, ch: f64,
 /// alırsa: dünya, tutma olasılığı, şut / zemin / sürme değeri.
 pub fn pencere(k: &mut Kafa, cx: &mut Cx, kq: &Op, T: f64, R: Option<Nokta>) -> Arc<Pencere> {
     let tb = jmin(PNC_UFUK, jmax(0.0, jround(T / PNC_DILIM) * PNC_DILIM));
-    let key = format!("{}|{}{}", js_sayi(kq.id), js_sayi(tb), R.map(|r| format!("|{}|{}", js_sayi(jround(2.0 * r.x)), js_sayi(jround(2.0 * r.y)))).unwrap_or_default());
+    let mut key = format!("{}|{}{}", js_sayi(kq.id), js_sayi(tb), R.map(|r| format!("|{}|{}", js_sayi(jround(2.0 * r.x)), js_sayi(jround(2.0 * r.y)))).unwrap_or_default());
+    let R = if pr_sirasiz() {
+        if R.is_none() {
+            key.push_str(&format!("|{:x}|{:x}", kq.x.to_bits(), kq.y.to_bits()));
+        }
+        R.map(|r| nk(jround(2.0 * r.x) / 2.0, jround(2.0 * r.y) / 2.0))
+    } else {
+        R
+    };
     if let Some(e) = cx.PE.get(&key) {
         return e.clone();
     }
@@ -903,7 +930,13 @@ fn en_iyi_pas0(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f64
 /// (şut, zemin, sürme, sonraki pas) × güven − kayıp).
 pub fn node_v(k: &mut Kafa, cx: &mut Cx, kq: &Op, T: f64, der: f64, R: Option<Nokta>) -> f64 {
     let e = pencere(k, cx, kq, T, R);
-    let key = format!("v|{}|{}|{}{}", js_sayi(kq.id), js_sayi(e.tb), js_sayi(der), R.map(|r| format!("|{}|{}", js_sayi(jround(2.0 * r.x)), js_sayi(jround(2.0 * r.y)))).unwrap_or_default());
+    let mut key = format!("v|{}|{}|{}{}", js_sayi(kq.id), js_sayi(e.tb), js_sayi(der), R.map(|r| format!("|{}|{}", js_sayi(jround(2.0 * r.x)), js_sayi(jround(2.0 * r.y)))).unwrap_or_default());
+    if pr_sirasiz() {
+        key.push_str(&format!("|{:x}", T.to_bits()));
+        if R.is_none() {
+            key.push_str(&format!("|{:x}|{:x}", kq.x.to_bits(), kq.y.to_bits()));
+        }
+    }
     if let Some(v) = cx.PV.get(&key) {
         return *v;
     }
@@ -916,7 +949,13 @@ pub fn node_v(k: &mut Kafa, cx: &mut Cx, kq: &Op, T: f64, der: f64, R: Option<No
 
 /// JS durumD(cx, w, q, at, T0) (decide.js:7086): q topu at'ta (T0 tik sonra) alırsa durumu.
 pub fn durum_d(k: &mut Kafa, cx: &mut Cx, w: &[Op], q: &Oyuncu, at: Nokta, T0: f64) -> Arc<DurumR> {
-    let key = format!("d|{}|{}|{}|{}", js_sayi(q.id), js_sayi(jround(2.0 * at.x)), js_sayi(jround(2.0 * at.y)), js_sayi(jround(T0 / PNC_DILIM)));
+    let mut key = format!("d|{}|{}|{}|{}", js_sayi(q.id), js_sayi(jround(2.0 * at.x)), js_sayi(jround(2.0 * at.y)), js_sayi(jround(T0 / PNC_DILIM)));
+    let (at, T0) = if pr_sirasiz() {
+        key.push_str(&format!("|{:x}", dunya_oz(w)));
+        (nk(jround(2.0 * at.x) / 2.0, jround(2.0 * at.y) / 2.0), jround(T0 / PNC_DILIM) * PNC_DILIM)
+    } else {
+        (at, T0)
+    };
     if let Some(r) = cx.PD.get(&key) {
         return r.clone();
     }
@@ -1023,6 +1062,31 @@ fn dok_dk(r: &DurumR, o: &mut Secenek) {
 }
 
 const PR_BOL: bool = false;
+
+/// Deney (ALAN_PR_SIRASIZ_IZ, PLAN-paralel.md Adım 1): prensip tartısının önbellekleri (PW, PE, PV, PD, IM) sıradan
+/// bağımsız: değer anahtarın temsil ettiği girdilerle hesaplanır (nokta ve süre anahtarın ızgarasında, anahtarda olmayan
+/// dünya ve yerler anahtara eklenir). Davranışı değiştirir; açıkken prensip döngüsü işçilere bölüşülür.
+pub fn pr_sirasiz() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_PR_SIRASIZ_IZ").is_ok())
+}
+/// Dünyanın özeti (önbellek anahtarı için): oyuncuların kimliği, yeri, hızı, hedefi.
+fn dunya_oz(w: &[Op]) -> u64 {
+    use std::hash::Hasher;
+    let mut h = crate::HizliKarma::default();
+    for p in w {
+        for v in [p.id, p.team, p.x, p.y, p.vx, p.vy, p.tx, p.ty, p.en.unwrap_or(f64::NAN)] {
+            h.write_u64(v.to_bits());
+        }
+        h.write_u8(p.noTouch as u8);
+        h.write_u8(p.sprint as u8);
+    }
+    h.finish()
+}
+/// `to_fixed(x, 2)`'nin gösterdiği sayı
+fn iki_bas(x: f64) -> f64 {
+    to_fixed(x, 2).parse().unwrap_or(x)
+}
 /// Hız (yalnız Rust, JS'te yok): "bir rakip olmasa" tablosunda arkadaşından UZAK_R'den uzak rakip atlanır
 /// (çıkarılmasının o arkadaşın değerine etkisi ölçüldü, bkz. ALAN_UZAK_IZ). Eskisi: ALAN_UZAK_ESKI_IZ.
 const UZAK_R: f64 = 20.0;
@@ -1199,7 +1263,7 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
     let taze = crate::iz_acik() && std::env::var("ALAN_PR_TAZE_IZ").is_ok();
     // DİKKAT: önbellekler (PW/PE/PV/PD) yuvarlanmış anahtarla ilk soranın sonucunu verir (JS gibi): sıra
     // sınaması 289. tikte ayrışır, bu yüzden bölüşülmez (PR_BOL kapalı).
-    let bol = (PR_BOL || taze) && !ters && crate::paralel::hazir(n);
+    let bol = (PR_BOL || taze || pr_sirasiz()) && !ters && crate::paralel::hazir(n);
     if bol {
         let mp: Dunya = k.mac.as_ref().map(|m| m.ps.clone()).unwrap_or_default();
         crate::paket::taban_kur([src], mp.iter());
