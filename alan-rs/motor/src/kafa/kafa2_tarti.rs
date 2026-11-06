@@ -194,7 +194,9 @@ pub fn bolge() -> bool {
     if BOLGE_KAPALI.load(std::sync::atomic::Ordering::Relaxed) {
         return false;
     }
-    BOLGE_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_BOLGE_ESKI").is_err())
+    // sahiplik haritası (sürekli pas yolları) varsayılan olunca kapandı (20 maç: bölge orta sahada sahip olmanın değerini
+    // görmüyor, uzak şut 67 / sahiplik + plan 30); açmak: ALAN_BOLGE_IZ (sitede ?bolge=1)
+    BOLGE_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_BOLGE_IZ").is_ok())
 }
 /// Deney (ALAN_KUYU_GEC_IZ; ölçümde KUYU_GEC_ZORLA): kafanın olabilirlik hesaplarında kuyu kuralı "t tik sonra
 /// (x, y)'de olabilir mi" diye sorulur: savunmacı alana hemen girip beklemek zorunda değil, dışarıda bekleyip
@@ -300,9 +302,14 @@ pub fn iki_kademe() -> bool {
 }
 /// Deney (ALAN_SAH_SUREKLI_IZ; ölçümde SAH_SUREKLI_ZORLA): sahiplik haritasında pas yolu zaman payıyla sürekli (kafa2_zemin::yol_sure).
 pub static SAH_SUREKLI_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+/// Sahiplik haritasında pas yolu zaman payıyla sürekli. Varsayılan açık (sitedeki kafa); kapatmak: SAH_SUREKLI_KAPALI (wasm: adres seçeneği) ya da ALAN_SAH_SUREKLI_ESKI=1.
+pub static SAH_SUREKLI_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn sah_surekli() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    SAH_SUREKLI_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_SUREKLI_IZ").is_ok())
+    if SAH_SUREKLI_KAPALI.load(std::sync::atomic::Ordering::Relaxed) {
+        return false;
+    }
+    SAH_SUREKLI_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_SAH_SUREKLI_ESKI").is_err())
 }
 /// Deney (ALAN_SEKME_BEDEL_IZ; ölçümde SEKME_BEDEL_ZORLA): şut yalnız gol olasılığıyla, pas yalnız alıcıya doğrudan varma
 /// olasılığıyla değer kazanır; gol olmayan şut ve alıcının almadığı pas payı (sekip bize dönse de) kaybedilmiş gibi bedel öder.

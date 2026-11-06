@@ -399,4 +399,17 @@ pub extern "C" fn gurultu_surekli(acik: i32) {
 #[no_mangle]
 pub extern "C" fn bolge(acik: i32) {
     alan_motor::kafa::kafa2_tarti::BOLGE_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
+    alan_motor::kafa::kafa2_tarti::BOLGE_ZORLA.store(acik != 0, std::sync::atomic::Ordering::Relaxed);
+}
+
+/// sah_surekli: 1 açık (varsayılan), 0 kapalı.
+#[no_mangle]
+pub extern "C" fn sah_surekli(acik: i32) {
+    alan_motor::kafa::kafa2_tarti::SAH_SUREKLI_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
+}
+
+/// plan: 1 açık (varsayılan), 0 kapalı.
+#[no_mangle]
+pub extern "C" fn plan(acik: i32) {
+    alan_motor::kafa::kafa1_secim::PLAN_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
 }

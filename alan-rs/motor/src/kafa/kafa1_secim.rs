@@ -265,9 +265,14 @@ pub fn gurultu_surekli() -> bool {
 /// bozmaz; belirgin biçimde iyi bir şey çıkınca bozar). Yalnız seçim anında; değere karışmaz. Ayrıca sürmenin süresine
 /// hızlanma payı yerine maçın dönüş tablosundan dönme bedeli (kafa1_enerji::sur_sure).
 pub static PLAN_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+/// Plan sadakati. Varsayılan açık (sitedeki kafa); kapatmak: PLAN_KAPALI (wasm: adres seçeneği) ya da ALAN_PLAN_ESKI=1.
+pub static PLAN_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn plan_acik() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    PLAN_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_PLAN_IZ").is_ok())
+    if PLAN_KAPALI.load(std::sync::atomic::Ordering::Relaxed) {
+        return false;
+    }
+    PLAN_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_PLAN_ESKI").is_err())
 }
 /// Bir taşıyıcı kararının planı: tür öbeği, pasın alıcısı (kimlik), sürmenin yönü (açı), karar tiki.
 #[derive(Clone, Debug, Default)]
