@@ -87,7 +87,7 @@ impl Kafa {
     pub fn sutT(&self, v0: f64, s: f64) -> f64 {
         let kq = jmax(1.0, jround(20.0 * v0)) as i64;
         let c = {
-            let m = self.suty.borrow();
+            let m = self.ob.suty.borrow();
             m.get(&kq).cloned()
         };
         let c = match c {
@@ -107,7 +107,7 @@ impl Kafa {
                     t += 1;
                 }
                 let c = Arc::new(c);
-                self.suty.borrow_mut().insert(kq, c.clone());
+                self.ob.suty.borrow_mut().insert(kq, c.clone());
                 c
             }
         };
@@ -258,7 +258,7 @@ impl Kafa {
         let key = (1e4 * di + 100.0 * ai + ci) as i64;
         match SHT_VE.binary_search_by_key(&key, |c| c.0) {
             Ok(i) => SHT_VE[i].1,
-            Err(_) => *self.sht_ek.borrow().get(&key).unwrap_or(&0.0),
+            Err(_) => *self.ob.sht_ek.borrow().get(&key).unwrap_or(&0.0),
         }
     }
     /// decide.js:3925

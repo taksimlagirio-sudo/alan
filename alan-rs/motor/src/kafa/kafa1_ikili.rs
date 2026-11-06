@@ -1377,25 +1377,17 @@ impl Kafa {
     }
     /// Maçın pres tartısından ikiliye girme eşiği (decide.js:4668; JS gibi tik başına önbellekli).
     pub fn girEsik(&mut self, q: &Oyuncu, h: &Oyuncu, src: &[Op], ch: Option<f64>) -> Option<f64> {
-        if self.ge_ic.get() {
+        if self.ob.ge_ic.get() {
             return None;
         }
         let t = self.tick();
-        {
-            let mut g = self.ge.borrow_mut();
-            if g.0 != Some(t) {
-                g.1.clear();
-                g.2.clear();
-                g.0 = Some(t);
-            }
-        }
         // JS anahtarı `${q.id}|${q.team}|${h.id}|...`: metin yerine aynı eşitlikte sayı anahtarı (crate::js_sayi_k)
         let sk = crate::js_sayi_k;
         let k = [sk(q.id), sk(q.team), sk(h.id), sk(jround(2.0 * q.x)), sk(jround(2.0 * q.y)), sk(jround(2.0 * h.x)), sk(jround(2.0 * h.y))];
-        if let Some(&v) = self.ge.borrow().1.get(&k) {
+        if let Some(&v) = self.ob.ge.borrow().0.get(&k) {
             return if v < 0.0 { None } else { Some(v) };
         }
-        self.ge_ic.set(true);
+        self.ob.ge_ic.set(true);
         let v = (|| {
             let c = ch.or_else(|| self.dis.mac_ch()).unwrap_or(0.3);
             let cs = self.coreSide(h);
@@ -1418,12 +1410,12 @@ impl Kafa {
             let G = z0(hz.hm.as_ref().unwrap().iter().find(|e| e.0 == q.id).map_or(0.0, |e| e.1));
             let vk = [sk(q.team), sk(jround(kx)), sk(jround(ky))];
             let Vk = {
-                let o = self.ge.borrow().2.get(&vk).copied();
+                let o = self.ob.ge.borrow().1.get(&vk).copied();
                 match o {
                     Some(v) => v,
                     None => {
                         let v = yerDeger(self, src, q.team, kx, ky, c);
-                        self.ge.borrow_mut().2.insert(vk, v);
+                        self.ob.ge.borrow_mut().1.insert(vk, v);
                         v
                     }
                 }
@@ -1435,8 +1427,8 @@ impl Kafa {
                 0.5
             }
         })();
-        self.ge_ic.set(false);
-        self.ge.borrow_mut().1.insert(k, v);
+        self.ob.ge_ic.set(false);
+        self.ob.ge.borrow_mut().0.insert(k, v);
         if v < 0.0 {
             None
         } else {
@@ -1446,16 +1438,10 @@ impl Kafa {
     /// girEsik'in yer değeri önbelleğine (JS `GEk`) bu tik için değer koy: sınama ve birleştirme kancası
     /// (yerDeger kafa2'nin; sınamada JS'teki değeri verir).
     pub fn ge_vk_koy(&self, key: String, v: f64) {
-        let t = self.tick();
-        let mut g = self.ge.borrow_mut();
-        if g.0 != Some(t) {
-            g.1.clear();
-            g.2.clear();
-            g.0 = Some(t);
-        }
+        let mut g = self.ob.ge.borrow_mut();
         // JS anahtarı "team|x,y" → sayı anahtarı
         let n: Vec<f64> = key.split(|c| c == '|' || c == ',').map(|t| t.parse::<f64>().unwrap_or(f64::NAN)).collect();
-        g.2.insert([crate::js_sayi_k(n[0]), crate::js_sayi_k(n[1]), crate::js_sayi_k(n[2])], v);
+        g.1.insert([crate::js_sayi_k(n[0]), crate::js_sayi_k(n[1]), crate::js_sayi_k(n[2])], v);
     }
     /// decide.js:4701
     pub fn girThr(&mut self, q: &Oyuncu, h: &Oyuncu, src: &[Op]) -> f64 {

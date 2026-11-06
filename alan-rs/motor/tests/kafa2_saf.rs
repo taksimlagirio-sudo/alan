@@ -191,7 +191,7 @@ fn js_ile_bit_bit_ayni() {
         for e in a["st"].as_array().unwrap() {
             let team = e[0].as_f64().unwrap();
             // imkKov'un önbelleği maçın tikine bağlı; JS vektörü her çağrıya taze tik verdi
-            k.k2.IMKK.clear();
+            k.ob.imkk.1.clear();
             let r = kafa2_imkan::sutTab(&mut k, &ps, team, h(&e[1]), h(&e[2]), h(&e[3]), None, ho(&e[9]), Some(nk(h(&e[4]), h(&e[5]))), Some(nk(h(&e[6]), h(&e[7]))), ho(&e[8]));
             bak("sutTab", tk, r, &e[10], &mut hata, &mut say[5]);
         }

@@ -320,20 +320,12 @@ impl Kafa {
     }
     /// Bekçi yerine geçtikten sonra şutun açıklığı (decide.js:3634; JS gibi tik başına önbellekli).
     pub fn runSut(&self, team: f64, bk: &Oyuncu, x: f64, y: f64) -> f64 {
-        let t = self.bag._tick;
-        {
-            let mut c = self.rnb.borrow_mut();
-            if c.0 != t || (c.0.is_none() && t.is_none() && false) {
-                c.1.clear();
-                c.0 = t;
-            }
-        }
         let ix = crate::mat::jround(2.0 * x);
         let iy = crate::mat::jround(2.0 * y);
         // eskiden metin anahtarı (team, id, en'in bitleri, _yer, ix, iy); aynı eşitlikte sayı anahtarı
         let sk = crate::js_sayi_k;
         let k = [sk(team), sk(bk.id), bk.en.map_or(u64::MAX, f64::to_bits), bk.hal._yer as u64, sk(ix), sk(iy)];
-        if let Some(v) = self.rnb.borrow().1.get(&k) {
+        if let Some(v) = self.ob.rnb.borrow().get(&k) {
             return *v;
         }
         let X = ix / 2.0;
@@ -345,7 +337,7 @@ impl Kafa {
         b2.vx = 0.0;
         b2.vy = 0.0;
         let v = self.sutKapali(&[Op::new(b2)], team, X, Y, 0.4);
-        self.rnb.borrow_mut().1.insert(k, v);
+        self.ob.rnb.borrow_mut().insert(k, v);
         v
     }
     /// decide.js:3656
