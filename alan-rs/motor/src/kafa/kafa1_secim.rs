@@ -215,9 +215,14 @@ impl Kafa {
 
 /// Deney (ALAN_GURULTU_SUREKLI_IZ; ölçümde GURULTU_SUREKLI_ZORLA): seçim gürültüsü zamanda ve seçeneğin anlamında sürekli.
 pub static GURULTU_SUREKLI_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+/// Seçim gürültüsü zamanda ve seçeneğin anlamında sürekli. Varsayılan açık (sitedeki kafa); kapatmak: GURULTU_SUREKLI_KAPALI (wasm: adres seçeneği) ya da ALAN_GURULTU_SUREKLI_ESKI=1.
+pub static GURULTU_SUREKLI_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn gurultu_surekli() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    GURULTU_SUREKLI_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_GURULTU_SUREKLI_IZ").is_ok())
+    if GURULTU_SUREKLI_KAPALI.load(std::sync::atomic::Ordering::Relaxed) {
+        return false;
+    }
+    GURULTU_SUREKLI_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_GURULTU_SUREKLI_ESKI").is_err())
 }
 
 /// Sayının JS dizgisi (tam sayılar ve kısa ondalıklar için yeterli).

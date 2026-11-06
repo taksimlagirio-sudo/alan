@@ -258,16 +258,26 @@ thread_local! {
 /// Deney (ALAN_SUR_UFUK_IZ; ölçümde SUR_UFUK_ZORLA): sürme, taşıyıcının yeniden karar vereceği ana dek tartılır (tutma da değer
 /// de oradaki ara noktada); uzun sürme bütün yolu boyunca, kısa hamle yalnız birkaç tik tartılıyordu (k85-1159: Cansu).
 pub static SUR_UFUK_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+/// Sürme yeniden karar anına dek tartılır. Varsayılan açık (sitedeki kafa); kapatmak: SUR_UFUK_KAPALI (wasm: adres seçeneği) ya da ALAN_SUR_UFUK_ESKI=1.
+pub static SUR_UFUK_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn sur_ufuk() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    SUR_UFUK_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SUR_UFUK_IZ").is_ok())
+    if SUR_UFUK_KAPALI.load(std::sync::atomic::Ordering::Relaxed) {
+        return false;
+    }
+    SUR_UFUK_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_SUR_UFUK_ESKI").is_err())
 }
 /// Deney (ALAN_SAH_YUMUSAK_IZ; ölçümde SAH_YUMUSAK_ZORLA): sahiplik haritasında hücrenin değeri en iyi tek yoldan değil, en iyi
 /// üç yolun ortalamasından (bir yol kapanınca değer çökmez; tek kaynağın değeri zincir boyunca söner).
 pub static SAH_YUMUSAK_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+/// Sahiplik haritasında en iyi üç yolun ortalaması. Varsayılan açık (sitedeki kafa); kapatmak: SAH_YUMUSAK_KAPALI (wasm: adres seçeneği) ya da ALAN_SAH_YUMUSAK_ESKI=1.
+pub static SAH_YUMUSAK_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn sah_yumusak() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    SAH_YUMUSAK_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_YUMUSAK_IZ").is_ok())
+    if SAH_YUMUSAK_KAPALI.load(std::sync::atomic::Ordering::Relaxed) {
+        return false;
+    }
+    SAH_YUMUSAK_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_SAH_YUMUSAK_ESKI").is_err())
 }
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
