@@ -810,12 +810,12 @@ fn _q() -> f64 {
 
 /// Yerleşik hücumda topun kalemize en çok uzaklığı (kuyunun önü; kuyu yarıçapı 9).
 pub const YERLESIK_TOP_D: f64 = 30.0;
-/// Yerleşik hücumda bloğun kalkması (savunmacı adamını tutar). Varsayılan açık; eski davranış: ALAN_YERLESIK_ADAM_ESKI=1 ya da
-/// YERLESIK_ADAM_KAPALI (wasm: adreste yerlesik=0).
-pub static YERLESIK_ADAM_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+/// Deney (ALAN_YERLESIK_ADAM_IZ; ölçümde ve wasm'da YERLESIK_ADAM_ZORLA, sitede adreste yerlesik=1): yerleşik hücumda adam
+/// adama (taktik alan olsa da), bölge yarıçapı yok, blok kalkar, topa en çok bir presçi. Varsayılan kapalı.
+pub static YERLESIK_ADAM_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn yerlesik_adam() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    !YERLESIK_ADAM_KAPALI.load(std::sync::atomic::Ordering::Relaxed) && *A.get_or_init(|| std::env::var("ALAN_YERLESIK_ADAM_ESKI").is_err())
+    YERLESIK_ADAM_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_YERLESIK_ADAM_IZ").is_ok())
 }
 
 /// Deney (ALAN_PRES_KAZANC_IZ; ölçümde PRES_KAZANC_ZORLA; GOREV-savunma S1): taşıyıcıya baskı işinin değerine topu orada
