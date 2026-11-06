@@ -1462,7 +1462,9 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
             let bg = opts.iter().filter(|o| o.kind == "gönder").filter_map(|o| o.v).fold(f64::NEG_INFINITY, jmax);
             let bo = opts.iter().filter(|o| o.kind != "gönder").filter_map(|o| o.v).fold(f64::NEG_INFINITY, jmax);
             let pk = opts.iter().filter(|o| o.kind == "gönder" && o.v.is_some()).filter_map(|o| o.det.as_ref().and_then(|d| d.Pk)).fold(0.0, jmax);
-            eprintln!("SUTSON {} {} tartida {} degerli {} en_iyi_sut {:.3} en_iyi_diger {:.3} Pk {:.3}", k.tick(), h.govde.name, ng, nv, bg, bo, pk);
+            let zs = zemin_s(k, src, team, h.x, h.y, ch, Some(&h));
+            let hs = k.sah_f.as_ref().map_or(f64::NAN, |f| f.oku_s(team, h.x, h.y));
+            eprintln!("SUTSON {} {} tartida {} degerli {} en_iyi_sut {:.3} en_iyi_diger {:.3} Pk {:.3} harita {:.3} haritaS {:.3}", k.tick(), h.govde.name, ng, nv, bg, bo, pk, zs, hs);
         }
     }
     // m._prT: arkadaşların ve taşıyanın değeri, bir rakip olmasa ne kazanılırdı
