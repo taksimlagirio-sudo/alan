@@ -33,11 +33,11 @@ pub(super) fn nz1(l: f64) -> f64 {
 /// JS `p.lock > t`.
 #[inline]
 pub(super) fn kilitli(p: &Oyuncu, t: f64) -> bool {
-    p.hal.lock.map(|l| l > t).unwrap_or(false)
+    p.hal.lock > t
 }
 /// JS `(u.lock > t ? u.lockAt : t)`.
 #[inline]
-pub(super) fn kilitAn(p: &Oyuncu, t: f64) -> f64 {
+pub(super) fn kilit_an(p: &Oyuncu, t: f64) -> f64 {
     if kilitli(p, t) {
         p.hal.lockAt.unwrap_or(f64::NAN)
     } else {
@@ -74,7 +74,7 @@ pub(super) struct Aday {
     pub vg: bool,
     pub bind: Option<&'static str>,
     pub bh: Option<BindH>,
-    pub bindT: bool,
+    pub bind_t: bool,
     pub dogal: bool,
 }
 impl Aday {
@@ -103,7 +103,7 @@ impl BindH {
 }
 
 /// JS bindCak(p, c, b): p'nin c'ye koşusu ile taşıyıcının yolu arasındaki en yakın mesafe.
-pub(super) fn bindCak(p: &Oyuncu, cx: f64, cy: f64, b: &BindH, k: &dyn Kural) -> f64 {
+pub(super) fn bind_cak(p: &Oyuncu, cx: f64, cy: f64, b: &BindH, k: &dyn Kural) -> f64 {
     let L = {
         let l = hypot(cx - p.x, cy - p.y);
         if l != 0.0 && l == l {
@@ -112,22 +112,22 @@ pub(super) fn bindCak(p: &Oyuncu, cx: f64, cy: f64, b: &BindH, k: &dyn Kural) ->
             1e-9
         }
     };
-    let v = vSp(p, k);
+    let v = v_sp(p, k);
     let T = L / v;
     let ux = (cx - p.x) / L * v;
     let uy = (cy - p.y) / L * v;
     let niyet = b.tx.is_some();
     let (btx, bty) = (b.tx.unwrap_or(0.0), b.ty.unwrap_or(0.0));
-    let nL = if niyet { hypot(btx - b.x, bty - b.y) } else { 0.0 };
+    let n_l = if niyet { hypot(btx - b.x, bty - b.y) } else { 0.0 };
     let nv = if niyet { 0.17 + 0.006 * b.hz } else { 0.0 };
-    let TT = if niyet { jmax(T, nL / nv) } else { T };
+    let TT = if niyet { jmax(T, n_l / nv) } else { T };
     let mut mn: f64 = 1e9;
     let mut t = 0.0;
     while t <= TT + 1e-9 {
         let kk = jmin(t, T);
         let (bx, by) = if niyet {
-            if nL > 1e-9 {
-                (b.x + (btx - b.x) * jmin(1.0, nv * t / nL), b.y + (bty - b.y) * jmin(1.0, nv * t / nL))
+            if n_l > 1e-9 {
+                (b.x + (btx - b.x) * jmin(1.0, nv * t / n_l), b.y + (bty - b.y) * jmin(1.0, nv * t / n_l))
             } else {
                 (b.x, b.y)
             }
@@ -141,7 +141,7 @@ pub(super) fn bindCak(p: &Oyuncu, cx: f64, cy: f64, b: &BindH, k: &dyn Kural) ->
 }
 
 /// JS `oppIn(sn, x, y)`: görülenlerin alan etkisi toplamı.
-pub(super) fn oppIn(sn: &[Varlik], ps: &[Oyuncu], x: f64, y: f64) -> f64 {
+pub(super) fn opp_in(sn: &[Varlik], ps: &[Oyuncu], x: f64, y: f64) -> f64 {
     let mut s = 0.0;
     for q in sn {
         let g = q.govde(ps);
@@ -151,24 +151,24 @@ pub(super) fn oppIn(sn: &[Varlik], ps: &[Oyuncu], x: f64, y: f64) -> f64 {
     s
 }
 /// JS `laneIn(sn, a, b, n=4)`.
-pub(super) fn laneIn(sn: &[Varlik], ps: &[Oyuncu], a: (f64, f64), b: (f64, f64)) -> f64 {
+pub(super) fn lane_in(sn: &[Varlik], ps: &[Oyuncu], a: (f64, f64), b: (f64, f64)) -> f64 {
     let n = 4;
     let mut s = 0.0;
     for i in 1..=n {
         let t = i as f64 / (n as f64 + 1.0);
-        s += oppIn(sn, ps, a.0 + (b.0 - a.0) * t, a.1 + (b.1 - a.1) * t);
+        s += opp_in(sn, ps, a.0 + (b.0 - a.0) * t, a.1 + (b.1 - a.1) * t);
     }
     s / n as f64
 }
 
 /// JS `okuT(p)` (savunucunun okuma ufku).
 #[inline]
-pub(super) fn okuTp(p: &Oyuncu) -> f64 {
+pub(super) fn oku_tp(p: &Oyuncu) -> f64 {
     cl(niyet(p) - 6.0 + 4.0, 2.0, 18.0)
 }
 
 /// JS `ileri(q, T, r)` hayalet için: görülen hızıyla (gerçek maçta) ya da gerçek hızla T tik ileri.
-pub(super) fn ileriV(o: &Varlik, T: f64, r: Option<&Oyuncu>, ps: &[Oyuncu], sg: bool) -> (f64, f64) {
+pub(super) fn ileri_v(o: &Varlik, T: f64, r: Option<&Oyuncu>, ps: &[Oyuncu], sg: bool) -> (f64, f64) {
     let (vx, vy) = match (sg, o.gvx) {
         (true, Some(gx)) => (gx, o.gvy.unwrap_or(0.0)),
         _ => {
@@ -183,7 +183,7 @@ pub(super) fn ileriV(o: &Varlik, T: f64, r: Option<&Oyuncu>, ps: &[Oyuncu], sg: 
     }
 }
 /// JS `ileri(q, T)` gerçek oyuncu için.
-pub(super) fn ileriP(q: &Oyuncu, T: f64) -> (f64, f64) {
+pub(super) fn ileri_p(q: &Oyuncu, T: f64) -> (f64, f64) {
     if T != 0.0 && T == T {
         (cl(q.x + q.vx * T, 1.0, GW - 1.0), cl(q.y + q.vy * T, 1.0, GH - 1.0))
     } else {
@@ -206,7 +206,7 @@ pub(super) struct Is {
     pub job: String,
     pub derin: bool,
     pub bul: bool,
-    pub okuF: bool,
+    pub oku_f: bool,
     pub grp: Option<f64>,
     pub car: Option<usize>,
     pub zone: Option<Pid>,
@@ -236,7 +236,7 @@ pub(super) struct Ua {
 pub(super) struct Prs {
     pub cand: Vec<bool>,
     pub pv: Vec<Option<PrV>>,
-    pub pLim: usize,
+    pub p_lim: usize,
     pub G: f64,
     pub K: f64,
     pub P0: f64,
@@ -247,7 +247,7 @@ pub(super) struct PrV {
     pub P: f64,
     pub v: f64,
     pub c: f64,
-    pub tR: f64,
+    pub t_r: f64,
 }
 
 /// JS `tP` (kafanın pres tartısı, `m._prT`).
@@ -270,7 +270,7 @@ impl TP {
 }
 
 /// JS sayının metni (tam sayı kimlikler için).
-pub(super) fn idStr(x: f64) -> String {
+pub(super) fn id_str(x: f64) -> String {
     if x == x.trunc() && x.abs() < 1e15 {
         format!("{}", x as i64)
     } else {

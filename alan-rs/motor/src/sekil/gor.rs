@@ -5,7 +5,7 @@
 use std::sync::Arc;
 
 use crate::mat::{hypot, jmax, jmin, jround};
-use crate::model::{JP_bkE, Oyuncu, Pid};
+use crate::model::{JpBkE, Oyuncu, Pid};
 use crate::oyuncu::Tepki;
 use crate::yetenek::{mek, zar};
 
@@ -14,7 +14,7 @@ use super::*;
 /// Görenin bir oyuncudan aklındaki son kare (JS `B[j]`) ya da yoksa geçmişten okunan.
 fn hist_oku(q: &Oyuncu, dl: f64) -> (f64, f64, f64, f64) {
     match &q.hal.hist {
-        Some(h) if !h.is_empty() => {
+        h if !h.is_empty() => {
             let i = jmax(0.0, h.len() as f64 - 1.0 - dl) as usize;
             let e = &h[i];
             (e.x, e.y, e.vx, e.vy)
@@ -26,13 +26,13 @@ fn hist_oku(q: &Oyuncu, dl: f64) -> (f64, f64, f64, f64) {
 /// JS seen(m, p): `p`nin gördüğü rakipler (hayaletler). Aynı tikte önbellekli.
 pub fn seen(c: &mut Mc, pi: Pid) -> Arc<Vec<Varlik>> {
     let t = c.m.tick;
-    if c.ek.snT == Some(t) {
+    if c.ek.sn_t == Some(t) {
         if let Some(Some(v)) = c.ek.sn.get(pi) {
             return v.clone();
         }
     } else {
         c.ek.sn = Vec::new();
-        c.ek.snT = Some(t);
+        c.ek.sn_t = Some(t);
     }
     let n = c.ps.len();
     let mut out: Vec<Varlik> = Vec::with_capacity(n);
@@ -40,7 +40,7 @@ pub fn seen(c: &mut Mc, pi: Pid) -> Arc<Vec<Varlik>> {
     let k = c.k;
     let ps = &*c.ps;
     let p = &ps[pi];
-    let e = (20.0 - p.govde.yet.y(mek::ALGI_HATA)) * S.errPos;
+    let e = (20.0 - p.govde.yet.y(mek::ALGI_HATA)) * S.err_pos;
     let dl = jmax(1.0, jround(TEPKI(p, Tepki::Algi, k)));
     let la = dl + (niyet(p) - 6.0) * S.look;
     let b = (t / 20.0).floor();
@@ -66,11 +66,11 @@ pub fn seen(c: &mut Mc, pi: Pid) -> Arc<Vec<Varlik>> {
     let B = if !c.lite { p.hal._bk.as_ref() } else { None };
     match B {
         Some(B) if B.len() == n => {
-            let eg = (20.0 - p.govde.yet.y(mek::ALGI_HATA)) * GR.hata;
+            let eg = (20.0 - p.govde.yet.y(mek::ALGI_HATA)) * gr.hata;
             let a = 100.0 * p.team + p.id;
             let kz = (tohum(c.m.seed) % 9973) as f64 * 1.618;
             let la2 = (niyet(p) - 6.0) * S.look;
-            let H = GR.yasH;
+            let H = gr.yas_h;
             for j in 0..n {
                 let q = &ps[j];
                 if q.team == p.team {
@@ -88,7 +88,7 @@ pub fn seen(c: &mut Mc, pi: Pid) -> Arc<Vec<Varlik>> {
                 let kk = jmax(0.0, 1.0 - yas / H);
                 let x0 = r.x + r.vx * f;
                 let y0 = r.y + r.vy * f;
-                let s = eg * jmin(2.0, hypot(x0 - p.x, y0 - p.y) / GR.uz0);
+                let s = eg * jmin(2.0, hypot(x0 - p.x, y0 - p.y) / gr.uz0);
                 let bq = 100.0 * q.team + q.id;
                 let vx = r.vx * kk;
                 let vy = r.vy * kk;
@@ -145,7 +145,7 @@ pub fn bak(c: &mut Mc) {
     let k = c.k;
     for i in 0..n {
         let dl = jmax(1.0, jround(TEPKI(&c.ps[i], Tepki::Algi, k)));
-        let nyP = niyet(&c.ps[i]);
+        let ny_p = niyet(&c.ps[i]);
         let pteam = c.ps[i].team;
         let mut B = match c.ps[i].hal_mut()._bk.take() {
             Some(b) if b.len() == n => std::sync::Arc::unwrap_or_clone(b),
@@ -157,17 +157,17 @@ pub fn bak(c: &mut Mc) {
             }
             let q = &c.ps[j];
             let (hl, kf) = match &q.hal.hist {
-                Some(h) if !h.is_empty() => (h.len(), jmin(dl, h.len() as f64 - 1.0)),
+                h if !h.is_empty() => (h.len(), jmin(dl, h.len() as f64 - 1.0)),
                 _ => (0, 0.0),
             };
             let kk = kf as usize;
-            let (hx, hy, hvx0, hvy0) = if kk > 0 { let e = &q.hal.hist.as_ref().unwrap()[hl - 1 - kk]; (e.x, e.y, e.vx, e.vy) } else { (q.x, q.y, q.vx, q.vy) };
+            let (hx, hy, hvx0, hvy0) = if kk > 0 { let e = &q.hal.hist[hl - 1 - kk]; (e.x, e.y, e.vx, e.vy) } else { (q.x, q.y, q.vx, q.vy) };
             let (mut hvx, mut hvy) = (hvx0, hvy0);
             if kk > 0 && q.team != pteam {
                 if let Some(kj) = kur[j] {
-                    let d2 = jround(S.gizleT * jmax(0.0, kj - nyP) / 10.0);
+                    let d2 = jround(S.gizle_t * jmax(0.0, kj - ny_p) / 10.0);
                     if d2 > 0.0 {
-                        let H0 = q.hal.hist.as_ref().unwrap();
+                        let H0 = &q.hal.hist;
                         let ix = jmin(kf + d2, hl as f64 - 1.0) as usize;
                         let e = &H0[hl - 1 - ix];
                         hvx = e.vx;
@@ -175,7 +175,7 @@ pub fn bak(c: &mut Mc) {
                     }
                 }
             }
-            B[j] = Some(JP_bkE { x: hx, y: hy, vx: hvx, vy: hvy, t: t - kf, z: 2.0 * (t / GR.blok).floor() });
+            B[j] = Some(JpBkE { x: hx, y: hy, vx: hvx, vy: hvy, t: t - kf, z: 2.0 * (t / gr.blok).floor() });
         }
         c.ps[i].hal_mut()._bk = Some(std::sync::Arc::new(B));
     }
@@ -216,35 +216,35 @@ pub fn gorulen(c: &mut Mc, pi: Pid) -> Vec<Gorulen> {
                 continue;
             }
         };
-        let e = (20.0 - p.govde.yet.y(mek::ALGI_HATA)) * GR.hata;
+        let e = (20.0 - p.govde.yet.y(mek::ALGI_HATA)) * gr.hata;
         let a = 100.0 * p.team + p.id;
         let kz = (tohum(c.m.seed) % 9973) as f64 * 1.618;
         let yas = t - r.t;
-        let H = GR.yasH;
+        let H = gr.yas_h;
         let f = if yas < H { yas - yas * yas / (2.0 * H) } else { H / 2.0 };
         let kk = jmax(0.0, 1.0 - yas / H);
         let x0 = r.x + r.vx * f;
         let y0 = r.y + r.vy * f;
-        let s = e * jmin(2.0, hypot(x0 - p.x, y0 - p.y) / GR.uz0);
+        let s = e * jmin(2.0, hypot(x0 - p.x, y0 - p.y) / gr.uz0);
         let b = 100.0 * q.team + q.id;
         let (mut xs, mut ys, mut vxs, mut vys) = (x0, y0, r.vx * kk, r.vy * kk);
         if yas > 0.0 && q.bekci() && q.team != p.team {
             if let Some((tx, ty)) = top {
                 let bm = BekM { ps: crate::sekil::yer::BekPs::Duz(ps), holder: c.m.holder.map(|h| crate::dunya::Yerde::oyuncu(&ps[h])), sut: c.kafa.is_some(), ben: Some(j) };
                 let hd = bekci(q, tx, ty, Some(&bm), k);
-                let vm = spd(q) * ALAN_SPRE(q, k);
-                let kH = 0.18 * crate::yetenek::ah(&q.govde.yet);
+                let vm = spd(q) * alan_spre(q, k);
+                let k_h = 0.18 * crate::yetenek::ah(&q.govde.yet);
                 let (mut x, mut y, mut vx, mut vy) = (r.x, r.y, r.vx, r.vy);
                 let mut u = 0.0;
-                while u < jmin(yas, GR.yasH) {
+                while u < jmin(yas, gr.yas_h) {
                     let dx = hd.0 - x;
                     let dy = hd.1 - y;
                     let d = hypot(dx, dy);
-                    let w = jmin(vm, d * kH * 2.0);
+                    let w = jmin(vm, d * k_h * 2.0);
                     let wx = if d > 1e-6 { dx / d * w } else { 0.0 };
                     let wy = if d > 1e-6 { dy / d * w } else { 0.0 };
-                    vx += (wx - vx) * kH;
-                    vy += (wy - vy) * kH;
+                    vx += (wx - vx) * k_h;
+                    vy += (wy - vy) * k_h;
                     x += vx;
                     y += vy;
                     u += 1.0;
@@ -258,14 +258,14 @@ pub fn gorulen(c: &mut Mc, pi: Pid) -> Vec<Gorulen> {
         // Deney (ALAN_ARKADAS_NIYET_IZ): takım arkadaşının koşusu bilinir; eski kaydı sabit hızla değil,
         // arkadaşın hedefine (tx, ty) maçın koşusuyla (mac/hareket.rs) yaş kadar ilerletilir.
         if yas > 0.0 && q.team == p.team && !q.bekci() && arkadas_niyet() && (q.tx != 0.0 || q.ty != 0.0) {
-            let vm = spd(q) * ALAN_SPRE(q, k);
+            let vm = spd(q) * alan_spre(q, k);
             let mut g = q.clone();
             g.x = r.x;
             g.y = r.y;
             g.vx = r.vx;
             g.vy = r.vy;
             let mut u = 0.0;
-            while u < jmin(yas, GR.yasH) {
+            while u < jmin(yas, gr.yas_h) {
                 let dx = q.tx - g.x;
                 let dy = q.ty - g.y;
                 let l = hypot(dx, dy);

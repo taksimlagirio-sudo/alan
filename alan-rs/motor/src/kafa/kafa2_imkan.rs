@@ -4,9 +4,9 @@
 #![allow(non_snake_case, clippy::too_many_arguments)]
 
 use super::kafa2_bag as dis;
-use super::kafa2_bag::{ALAN_HZ};
+use super::kafa2_bag::{alan_hz};
 use super::kafa2_baglam::*;
-use super::kafa2_dunya::{bekKay, bekYerW};
+use super::kafa2_dunya::{bekKay, bek_yer_w};
 use crate::mat::{cos, exp, hypot, jmax, jmin, sin};
 use crate::model::Oyuncu;
 use crate::saha::{CY as GCY, H as GH, MOUTH, W as GW};
@@ -84,11 +84,11 @@ impl ImkBol {
         if let Some(a) = self.tabs.get(&tab) {
             return a.clone();
         }
-        let (nS, nK, nD, nC, nDS) = (IMK_SY.len(), IMK_KO.len(), IMK_KD.len(), IMK_CH.len(), IMK_DS.len());
-        let mut n = vec![0.0; nK * nD];
-        let mut w = vec![0.0; nK * nD];
-        for k in 0..nK {
-            for q in 0..nD {
+        let (n_s, n_k, n_d, n_c, n_ds) = (IMK_SY.len(), IMK_KO.len(), IMK_KD.len(), IMK_CH.len(), IMK_DS.len());
+        let mut n = vec![0.0; n_k * n_d];
+        let mut w = vec![0.0; n_k * n_d];
+        for k in 0..n_k {
+            for q in 0..n_d {
                 let mut sn = 0.0;
                 let mut sw = 0.0;
                 for a in 0..2 {
@@ -98,7 +98,7 @@ impl ImkBol {
                             if wgt <= 0.0 {
                                 continue;
                             }
-                            let ix = ((((self.di + a).min(nDS - 1) * nS + (self.si + b).min(nS - 1)) * nK + k) * nD + q) * nC + (self.ci + f).min(nC - 1);
+                            let ix = ((((self.di + a).min(n_ds - 1) * n_s + (self.si + b).min(n_s - 1)) * n_k + k) * n_d + q) * n_c + (self.ci + f).min(n_c - 1);
                             let v = tab_v(tab, ix);
                             if !(v < 0.0) {
                                 sn += wgt * v;
@@ -107,8 +107,8 @@ impl ImkBol {
                         }
                     }
                 }
-                n[k * nD + q] = sn;
-                w[k * nD + q] = sw;
+                n[k * n_d + q] = sn;
+                w[k * n_d + q] = sw;
             }
         }
         let a = Arc::new((n, w));
@@ -128,7 +128,7 @@ fn nb(x: f64) -> u64 {
 }
 
 /// JS imkBol(T, fr, team, x, y, dd, sy, ch) (decide.js:6074)
-fn imkBol(k: &mut Kafa, team: f64, x: f64, y: f64, dd: f64, sy: f64, ch: f64) -> Arc<Mutex<ImkBol>> {
+fn imk_bol(k: &mut Kafa, team: f64, x: f64, y: f64, dd: f64, sy: f64, ch: f64) -> Arc<Mutex<ImkBol>> {
     let key = [nb(team), nb(x), nb(y), nb(ch)];
     if let Some(e) = k.ob.imkb.get(&key) {
         return e.clone();
@@ -145,7 +145,7 @@ fn imkBol(k: &mut Kafa, team: f64, x: f64, y: f64, dd: f64, sy: f64, ch: f64) ->
 }
 
 /// JS imkKov(p) (decide.js:6113): rakibin kovalama tepkisi ve hızı (maç tiki başına önbellek, team|id).
-pub fn imkKov(k: &mut Kafa, p: &Oyuncu) -> (f64, f64) {
+pub fn imk_kov(k: &mut Kafa, p: &Oyuncu) -> (f64, f64) {
     let t = k.mac.as_ref().map(|m| m.tick);
     if k.ob.imkk.0 != Some(t) {
         k.ob.imkk.0 = Some(t);
@@ -155,13 +155,13 @@ pub fn imkKov(k: &mut Kafa, p: &Oyuncu) -> (f64, f64) {
     if let Some(r) = k.ob.imkk.1.get(&key) {
         return *r;
     }
-    let r = (dis::ALAN_TEPKI(k, p, "kovala"), (0.17 + 0.006 * ALAN_HZ(p)) * dis::ALAN_SPRE(k, p));
+    let r = (dis::alan_tepki(k, p, "kovala"), (0.17 + 0.006 * alan_hz(p)) * dis::alan_spre(k, p));
     k.ob.imkk.1.insert(key, r);
     r
 }
 
 /// JS imkOrt(a) (decide.js:6139): ham özelliklerin ortalaması (yoksa 10). Sıra: kaydın alan sırası.
-pub fn imkOrt(p: &Oyuncu) -> f64 {
+pub fn imk_ort(p: &Oyuncu) -> f64 {
     let a = &p.govde.a;
     let v = [a.hiz, a.ceviklik, a.guc, a.uzanma, a.alan, a.kontrol, a.surme, a.pas, a.gonderme, a.yukleme, a.tepki, a.gorus, a.yeralma, a.sogukkanlilik, a.kesme, a.refleks, a.yerlesim, a.hakimiyet, a.enerji, a.govde, a.caliskanlik];
     let mut s = 0.0;
@@ -199,7 +199,7 @@ pub fn sahte(team: f64, x: f64, y: f64, id: f64) -> Oyuncu {
 
 /// JS sutTab(w, team, x, y, ch, sh, sig, bkYer, bkPos, tOnce) (decide.js:6147): (x, y)'den şutun
 /// gol olasılığı tablodan (Bekçi'nin yerine, şutçu ve Bekçi'nin düzeyine göre) × gövdelerin şut yolu.
-pub fn sutTab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: Option<&Oyuncu>, sig: Option<f64>, bkYer: Option<Nokta>, bkPos: Option<Nokta>, tOnce: Option<f64>) -> f64 {
+pub fn sut_tab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: Option<&Oyuncu>, sig: Option<f64>, bk_yer: Option<Nokta>, bk_pos: Option<Nokta>, tOnce: Option<f64>) -> f64 {
     let bk = match w.iter().find(|p| p.team != team && bekci(p)) {
         Some(b) => b.clone(),
         None => return 1.0,
@@ -211,7 +211,7 @@ pub fn sutTab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: Op
     let Y = fy(y);
     let dd = veya(hypot(GW - X, GCY - Y), 1.0);
     let sy = Y - GCY;
-    let yer0 = match bkYer {
+    let yer0 = match bk_yer {
         Some(b) => b,
         None => {
             let tac = k.mac.as_ref().map(|m| m.tac.clone()).unwrap_or_default();
@@ -219,16 +219,16 @@ pub fn sutTab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: Op
             match sh {
                 Some(s) => {
                     let fm = dis::Fm { tac: &tac, ps: w, holder: Some(crate::dunya::Yerde { govde: s, x, y }) };
-                    dis::AS_bekci(k, &bk, nk(x, y), Some(&fm))
+                    dis::as_bekci(k, &bk, nk(x, y), Some(&fm))
                 }
                 None => sahte_ile(team, x, y, -1.0, |hold| {
                     let fm = dis::Fm { tac: &tac, ps: w, holder: Some(crate::dunya::Yerde::oyuncu(hold)) };
-                    dis::AS_bekci(k, &bk, nk(x, y), Some(&fm))
+                    dis::as_bekci(k, &bk, nk(x, y), Some(&fm))
                 }),
             }
         }
     };
-    let bkP = bkPos.unwrap_or(nk(bk.x, bk.y));
+    let bkP = bk_pos.unwrap_or(nk(bk.x, bk.y));
     let (yx, yy, bx, by) = (fx(yer0.x), fy(yer0.y), fx(bkP.x), fy(bkP.y));
     let ux = (GW - X) / dd;
     let uy = (GCY - Y) / dd;
@@ -238,13 +238,13 @@ pub fn sutTab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: Op
     let ko = sg * ((bx - yx) * nx + (by - yy) * ny);
     let kd = -((bx - yx) * ux + (by - yy) * uy);
     let ls = jmax(5.0, jmin(20.0, match sh {
-        Some(s) => imkOrt(s),
+        Some(s) => imk_ort(s),
         None => 10.0,
     }));
-    let lk = jmax(5.0, jmin(20.0, imkOrt(&bk)));
-    let (nK, nD) = (IMK_KO.len(), IMK_KD.len());
+    let lk = jmax(5.0, jmin(20.0, imk_ort(&bk)));
+    let (n_k, n_d) = (IMK_KO.len(), IMK_KD.len());
     let (ei, et) = fr(&IMK_KD, kd);
-    let BK = imkBol(k, team, x, y, dd, sy, ch);
+    let BK = imk_bol(k, team, x, y, dd, sy, ch);
     let oku1 = |tab: usize, ki: usize, kt: f64| -> f64 {
         let A = BK.lock().unwrap().tab(tab);
         let mut s = 0.0;
@@ -255,7 +255,7 @@ pub fn sutTab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: Op
                 if wgt <= 0.0 {
                     continue;
                 }
-                let j = (ki + c).min(nK - 1) * nD + (ei + e).min(nD - 1);
+                let j = (ki + c).min(n_k - 1) * n_d + (ei + e).min(n_d - 1);
                 s += wgt * A.0[j];
                 wsum += wgt * A.1[j];
             }
@@ -284,7 +284,7 @@ pub fn sutTab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: Op
         ek(mt - lt, 0, 1);
         ek(lt, 1, 1);
     }
-    let okuL = |kov: f64| -> f64 {
+    let oku_l = |kov: f64| -> f64 {
         let (ki, kt) = fr(&IMK_KO, kov);
         let mut s = 0.0;
         for &(wgt, tab) in &LT {
@@ -293,12 +293,12 @@ pub fn sutTab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: Op
         s
     };
     let gx = if t0(team) { GW } else { 0.0 };
-    let vSG = (match sh {
-        Some(s) => dis::sutV(k, s),
-        None => k.D.shotV,
+    let v_sg = (match sh {
+        Some(s) => dis::sut_v(k, s),
+        None => k.D.shot_v,
     }) * crate::top::chg_mul(ch);
     let opps: Vec<Op> = w.iter().filter(|p| !(p.team == team || bekci(p) || p.noTouch)).cloned().collect();
-    let govOf = |k: &mut Kafa, ty: f64| -> f64 {
+    let gov_of = |k: &mut Kafa, ty: f64| -> f64 {
         let dg2 = veya(hypot(gx - x, ty - y), 1.0);
         let ux2 = (gx - x) / dg2;
         let uy2 = (ty - y) / dg2;
@@ -309,18 +309,18 @@ pub fn sutTab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: Op
                 continue;
             }
             let pe = (-(p.x - x) * uy2 + (p.y - y) * ux2).abs();
-            let kv_ = imkKov(k, p);
-            let R = crate::core_sabit::Q.reach + jmax(0.0, veyo(tOnce, 0.0) + al / vSG - kv_.0) * kv_.1;
+            let kv_ = imk_kov(k, p);
+            let R = crate::core_sabit::Q.reach + jmax(0.0, veyo(tOnce, 0.0) + al / v_sg - kv_.0) * kv_.1;
             if pe < R + 0.8 {
-                g *= k.D.shotThru;
+                g *= k.D.shot_thru;
             }
         }
         g
     };
-    let MO = MOUTH;
+    let mo = MOUTH;
     let mut gov = f64::NEG_INFINITY;
-    for a in [k.D.aimPow, -k.D.aimPow, k.D.aimPlase, -k.D.aimPlase] {
-        gov = jmax(gov, govOf(k, GCY + a * MO));
+    for a in [k.D.aim_pow, -k.D.aim_pow, k.D.aim_plase, -k.D.aim_plase] {
+        gov = jmax(gov, gov_of(k, GCY + a * mo));
     }
     let sig = sig.unwrap_or(f64::NAN);
     // ALAN_SUT_GERCEK_IZ: tablo yerine hücrenin anlamı o noktada doğrudan hesaplanır (boş sahada şutçu + Bekçi,
@@ -356,18 +356,18 @@ pub fn sutTab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: Op
             }
         };
         if crate::iz_acik() && sh.map_or(false, |s| std::env::var("ALAN_SURD_IZ").ok().as_deref() == Some(&*s.govde.name)) {
-            eprintln!("SUTGERCEK ({:.1},{:.1}) bk ({:.1},{:.1}) gol {:.3} tablo {:.3}", x, y, bkP.x, bkP.y, pk, okuL(ko));
+            eprintln!("SUTGERCEK ({:.1},{:.1}) bk ({:.1},{:.1}) gol {:.3} tablo {:.3}", x, y, bkP.x, bkP.y, pk, oku_l(ko));
         }
         return gov * pk;
     }
     if crate::iz_acik() && sh.map_or(false, |s| std::env::var("ALAN_SURD_IZ").ok().as_deref() == Some(&*s.govde.name)) {
-        eprintln!("SUTTAB ({:.1},{:.1}) dd {:.2} sy {:.2} ko {:.2} kd {:.2} ls {:.1} lk {:.1} ch {:.2} gov {:.3} oku {:.3} | yer0 ({:.1},{:.1}) bk ({:.1},{:.1})", x, y, dd, sy, ko, kd, ls, lk, ch, gov, okuL(ko), yer0.x, yer0.y, bkP.x, bkP.y);
+        eprintln!("SUTTAB ({:.1},{:.1}) dd {:.2} sy {:.2} ko {:.2} kd {:.2} ls {:.1} lk {:.1} ch {:.2} gov {:.3} oku {:.3} | yer0 ({:.1},{:.1}) bk ({:.1},{:.1})", x, y, dd, sy, ko, kd, ls, lk, ch, gov, oku_l(ko), yer0.x, yer0.y, bkP.x, bkP.y);
     }
     if !(sig > 0.3) {
-        return gov * okuL(ko);
+        return gov * oku_l(ko);
     }
     let h3 = 1.7320508 * sig;
-    gov * (2.0 / 3.0 * okuL(ko) + (okuL(ko - h3) + okuL(ko + h3)) / 6.0)
+    gov * (2.0 / 3.0 * oku_l(ko) + (oku_l(ko - h3) + oku_l(ko + h3)) / 6.0)
 }
 
 // ------------------------------------------------------------------ imkân
@@ -394,7 +394,7 @@ pub const IMK_UFUK: f64 = 150.0;
 pub const IMK_V: f64 = 0.42;
 
 /// JS imkSap(t) (decide.js:6255): t tik sonrasının konum belirsizliği (br)
-pub fn imkSap(t: f64) -> f64 {
+pub fn imk_sap(t: f64) -> f64 {
     let mut a = IMK_SAP[0];
     for b in IMK_SAP {
         if t <= b.0 {
@@ -406,23 +406,23 @@ pub fn imkSap(t: f64) -> f64 {
     a.1
 }
 /// JS imkInan(t) (decide.js:6267): uzak geleceğe güven azalır
-pub fn imkInan(k: &Kafa, t: f64) -> f64 {
+pub fn imk_inan(k: &Kafa, t: f64) -> f64 {
     if crate::kafa::kafa2_tarti::belirsiz_kaynak() {
         return 1.0;
     }
-    exp(-(veya(t, 0.0) + k.k2.IMK_OFS) / k.k2.IMK_INAN_T)
+    exp(-(veya(t, 0.0) + k.k2.imk_ofs) / k.k2.imk_inan_t)
 }
 /// JS imkTau(t)
-pub fn imkTau(t: f64) -> f64 {
-    hypot(1.5, imkSap(t) / IMK_V)
+pub fn imk_tau(t: f64) -> f64 {
+    hypot(1.5, imk_sap(t) / IMK_V)
 }
 /// JS imkSg(z)
 #[inline(always)]
-pub fn imkSg(z: f64) -> f64 {
+pub fn imk_sg(z: f64) -> f64 {
     1.0 / (1.0 + exp(-z))
 }
 /// JS imkUzak(team, x, y) (decide.js:6628)
-pub fn imkUzak(team: f64, x: f64, y: f64) -> bool {
+pub fn imk_uzak(team: f64, x: f64, y: f64) -> bool {
     hypot((if t0(team) { GW } else { 0.0 }) - x, GCY - y) > 60.0
 }
 
@@ -467,29 +467,29 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         if p.noTouch {
             continue;
         }
-        let o = ImkO { p: p.clone(), G: dis::AS_gecTab(k, p), v: dis::AS_vSp(k, p), R: jmin(2.0, crate::temas::menzil(p, 0.35)), rc: 0.0 };
+        let o = ImkO { p: p.clone(), G: dis::as_gec_tab(k, p), v: dis::as_v_sp(k, p), R: jmin(2.0, crate::temas::menzil(p, 0.35)), rc: 0.0 };
         if p.team == team {
             if !bekci(p) {
                 biz.push(o);
             }
         } else if !bekci(p) {
             let mut o = o;
-            o.rc = jmax(0.0, dis::ALAN_TEPKI(k, p, "kovala"));
+            o.rc = jmax(0.0, dis::alan_tepki(k, p, "kovala"));
             rak.push(o);
         }
     }
     const IMK_BLOK: f64 = 2.4;
     // maçın kural görüntüsü imkân boyunca değişmez: bir kez alınır (varış başına kopyalanmaz)
     let kr = k.dis.kural();
-    let varB = |k: &Kafa, o: &ImkO, x: f64, y: f64| -> f64 {
+    let var_b = |k: &Kafa, o: &ImkO, x: f64, y: f64| -> f64 {
         let d = jmax(0.0, hypot(o.p.x - x, o.p.y - y) - IMK_BLOK);
-        o.rc + dis::AS_gecOf(k, &o.G, x, y, d) + crate::kural::enerji::ALAN_KOSU_T(&o.p, d, o.v, &kr)
+        o.rc + dis::as_gec_of(k, &o.G, x, y, d) + crate::kural::enerji::alan_kosu_t(&o.p, d, o.v, &kr)
     };
     let var_ = |k: &Kafa, o: &ImkO, x: f64, y: f64, rc: f64| -> f64 {
         let d = jmax(0.0, hypot(o.p.x - x, o.p.y - y) - o.R);
-        rc + dis::AS_gecOf(k, &o.G, x, y, d) + crate::kural::enerji::ALAN_KOSU_T(&o.p, d, o.v, &kr)
+        rc + dis::as_gec_of(k, &o.G, x, y, d) + crate::kural::enerji::alan_kosu_t(&o.p, d, o.v, &kr)
     };
-    let rakVar = |k: &Kafa, x: f64, y: f64| -> f64 {
+    let rak_var = |k: &Kafa, x: f64, y: f64| -> f64 {
         let mut t = 1e9;
         for o in &rak {
             t = jmin(t, var_(k, o, x, y, o.rc));
@@ -497,14 +497,14 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         t
     };
     let vh = match h {
-        Some(h) => jmax(0.05, dis::AS_vSp(k, h) * dis::topK(k, h)),
+        Some(h) => jmax(0.05, dis::as_v_sp(k, h) * dis::top_k(k, h)),
         None => 0.3,
     };
     const KISA: f64 = 15.0;
     let bk: Option<Op> = w.iter().find(|p| p.team != team && bekci(p) && !p.noTouch).cloned();
     let tac = k.mac.as_ref().map(|m| m.tac.clone()).unwrap_or_default();
-    let vk = bk.as_ref().map(|b| dis::AS_vSp(k, b)).unwrap_or(0.0);
-    let rk = bk.as_ref().map(|b| jmax(0.0, dis::ALAN_TEPKI(k, b, "kovala"))).unwrap_or(0.0);
+    let vk = bk.as_ref().map(|b| dis::as_v_sp(k, b)).unwrap_or(0.0);
+    let rk = bk.as_ref().map(|b| jmax(0.0, dis::alan_tepki(k, b, "kovala"))).unwrap_or(0.0);
     let mut zs: Vec<ImkZ> = Vec::new();
     {
         let mut x = if gx == GW { GW - 4.0 } else { 4.0 };
@@ -513,13 +513,13 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             while y <= GCY + 18.0 {
                 // ALAN_IMK_KUYU_IZ: kuyu süresini dolduracak savunmacı bu hücreye giremez (temas::kuyu_girer)
                 let tr = rak.iter().map(|o| {
-                    let t = varB(k, o, x, y);
-                    if imk_kuyu() && !crate::kafa::kafa2_tarti::kuyuOlabilir(&o.p, x, y, t, &kr) { 1e9 } else { t }
+                    let t = var_b(k, o, x, y);
+                    if imk_kuyu() && !crate::kafa::kafa2_tarti::kuyu_olabilir(&o.p, x, y, t, &kr) { 1e9 } else { t }
                 }).collect();
                 let yer = bk.as_ref().map(|b| {
                     sahte_ile(team, x, y, -1.0, |hold| {
                         let fm = dis::Fm { tac: &tac, ps: w, holder: Some(crate::dunya::Yerde::oyuncu(hold)) };
-                        dis::AS_bekci(k, b, nk(x, y), Some(&fm))
+                        dis::as_bekci(k, b, nk(x, y), Some(&fm))
                     })
                 });
                 zs.push(ImkZ { i: zs.len(), x, y, tr, yer });
@@ -528,7 +528,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             x += if gx == GW { -IMK_HUC } else { IMK_HUC };
         }
     }
-    let topYol = |k: &mut Kafa, x: f64, y: f64| -> TopYol {
+    let top_yol = |k: &mut Kafa, x: f64, y: f64| -> TopYol {
         let L = hypot(x - B.x, y - B.y);
         let mut best = TopYol { t: 1e9, k: 0.0, s: None };
         let mut kk_ = 1.0;
@@ -537,17 +537,17 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             if s > 0.0 {
                 let f = jmin(1.0, s / L);
                 let tk = s / vh;
-                kk_ = jmin(kk_, imkSg((rakVar(k, B.x + (x - B.x) * f, B.y + (y - B.y) * f) - tk) / imkTau(tk)));
+                kk_ = jmin(kk_, imk_sg((rak_var(k, B.x + (x - B.x) * f, B.y + (y - B.y) * f) - tk) / imk_tau(tk)));
             }
             let kalan = jmax(0.0, L - s);
-            if kalan > jmax(KISA, if s == 0.0 { dis::pasMax(k) } else { KISA }) {
+            if kalan > jmax(KISA, if s == 0.0 { dis::pas_max(k) } else { KISA }) {
                 s += IMK_HUC;
                 continue;
             }
             let fq = if L != 0.0 { s / L } else { 0.0 };
             let q = nk(B.x + (x - B.x) * fq, B.y + (y - B.y) * fq);
-            let lo = if kalan > 0.5 { dis::laneOk(k, w, team, q, nk(x, y), Some(k.D.arriveFirm), Some(k.D.sutHazir)) } else { 1.0 };
-            let t = s / vh + if kalan > 0.5 { dis::ucusT(k, kalan, k.D.arriveFirm, None) + k.D.sutHazir } else { 0.0 };
+            let lo = if kalan > 0.5 { dis::lane_ok(k, w, team, q, nk(x, y), Some(k.D.arriveFirm), Some(k.D.sut_hazir)) } else { 1.0 };
+            let t = s / vh + if kalan > 0.5 { dis::ucus_t(k, kalan, k.D.arriveFirm, None) + k.D.sut_hazir } else { 0.0 };
             let kk = kk_ * lo;
             if x == 104.0 && y == 36.0 && crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
                 eprintln!("    ty s {} kalan {:.3} k {:.6} lo {:.6} t {:.3}", s, kalan, kk_, lo, t);
@@ -560,7 +560,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         best
     };
     let mut TY: Vec<Option<TopYol>> = vec![None; zs.len()];
-    let bkAt = |z: &ImkZ, bas: Nokta, kalkis: f64, ta: f64| -> Option<Nokta> {
+    let bk_at = |z: &ImkZ, bas: Nokta, kalkis: f64, ta: f64| -> Option<Nokta> {
         if bk.is_none() {
             return None;
         }
@@ -586,7 +586,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             let r = match TY[z.i] {
                 Some(r) => r,
                 None => {
-                    let r = topYol(k, z.x, z.y);
+                    let r = top_yol(k, z.x, z.y);
                     TY[z.i] = Some(r);
                     r
                 }
@@ -603,7 +603,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             let r = match TY[z.i] {
                 Some(r) => r,
                 None => {
-                    let r = topYol(k, z.x, z.y);
+                    let r = top_yol(k, z.x, z.y);
                     TY[z.i] = Some(r);
                     r
                 }
@@ -617,39 +617,39 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             }
         }
         // ALAN_IMK_KUYU_IZ: hücumcu da kuyuya ancak süresi yetiyorsa girer
-        let kuyu_yok = imk_kuyu() && !crate::kafa::kafa2_tarti::kuyuOlabilir(&o.p, z.x, z.y, ta, &kr);
+        let kuyu_yok = imk_kuyu() && !crate::kafa::kafa2_tarti::kuyu_olabilir(&o.p, z.x, z.y, ta, &kr);
         if ta > IMK_UFUK || kk <= 0.0 || kuyu_yok {
             ImkE { ta, k: 0.0, tv: f64::NAN, kalkis: 0.0, q: None, S: None }
         } else {
-            ImkE { ta, k: kk, tv: ta + k.D.sutHazir, kalkis, q, S: None }
+            ImkE { ta, k: kk, tv: ta + k.D.sut_hazir, kalkis, q, S: None }
         }
     };
     // hücrenin şut yolu açıklığı oyuncuya bağlı değil (sutYol bu girdilerle saf): hücre başına bir kez
     let SY: Vec<std::cell::Cell<Option<f64>>> = vec![std::cell::Cell::new(None); zs.len()];
     // Sof: hücreden şutun değeri
-    let Sof = |k: &mut Kafa, oi: usize, zi: usize, ta: f64, kalkis: f64, q: Option<Nokta>| -> f64 {
+    let sof = |k: &mut Kafa, oi: usize, zi: usize, ta: f64, kalkis: f64, q: Option<Nokta>| -> f64 {
         let o = &biz[oi];
         let z = &zs[zi];
         let bas = match (&bk, q) {
             (Some(b), Some(q)) => {
                 let fm = dis::Fm { tac: &tac, ps: w, holder: h.map(crate::dunya::Yerde::oyuncu) };
-                dis::AS_bekci(k, b, q, Some(&fm))
+                dis::as_bekci(k, b, q, Some(&fm))
             }
             (Some(b), None) => nk(b.x, b.y),
             (None, _) => nk(0.0, 0.0),
         };
-        let r = sutTab(k, w, team, z.x, z.y, ch, Some(&o.p), Some(0.96), z.yer, bkAt(z, bas, kalkis, ta), Some(ta + k.D.sutHazir));
+        let r = sut_tab(k, w, team, z.x, z.y, ch, Some(&o.p), Some(0.96), z.yer, bk_at(z, bas, kalkis, ta), Some(ta + k.D.sut_hazir));
         let sy = match SY[zi].get() {
             Some(v) => v,
             None => {
-                let v = sutYol(k, w, team, z.x, z.y, None);
+                let v = sut_yol(k, w, team, z.x, z.y, None);
                 SY[zi].set(Some(v));
                 v
             }
         };
         r * sy
     };
-    let imk = |k: &mut Kafa, TY: &mut Vec<Option<TopYol>>, IC: &mut Vec<Vec<Option<ImkE>>>, oi: usize, zi: usize, tR: f64| -> (f64, ImkE) {
+    let imk = |k: &mut Kafa, TY: &mut Vec<Option<TopYol>>, IC: &mut Vec<Vec<Option<ImkE>>>, oi: usize, zi: usize, t_r: f64| -> (f64, ImkE) {
         let e = match IC[oi][zi] {
             Some(e) => e,
             None => {
@@ -661,13 +661,13 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         if e.ta > IMK_UFUK || e.k <= 0.0 {
             (0.0, e)
         } else {
-            (e.k * imkSg((tR - e.tv) / imkTau(e.ta)), e)
+            (e.k * imk_sg((t_r - e.tv) / imk_tau(e.ta)), e)
         }
     };
-    let imkS = |k: &mut Kafa, IC: &mut Vec<Vec<Option<ImkE>>>, oi: usize, zi: usize| -> f64 {
+    let imk_s = |k: &mut Kafa, IC: &mut Vec<Vec<Option<ImkE>>>, oi: usize, zi: usize| -> f64 {
         let mut e = IC[oi][zi].unwrap();
         if e.S.is_none() {
-            e.S = Some(if e.k > 0.0 && e.ta <= IMK_UFUK { Sof(k, oi, zi, e.ta, e.kalkis, e.q) } else { 0.0 });
+            e.S = Some(if e.k > 0.0 && e.ta <= IMK_UFUK { sof(k, oi, zi, e.ta, e.kalkis, e.q) } else { 0.0 });
             IC[oi][zi] = Some(e);
         }
         e.S.unwrap()
@@ -681,11 +681,11 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         S: f64,
         ta: f64,
     }
-    let enIyi = |k: &mut Kafa, TY: &mut Vec<Option<TopYol>>, IC: &mut Vec<Vec<Option<ImkE>>>, bos: &Vec<usize>, a: usize, di: Option<isize>| -> EnI {
+    let en_iyi = |k: &mut Kafa, TY: &mut Vec<Option<TopYol>>, IC: &mut Vec<Vec<Option<ImkE>>>, bos: &Vec<usize>, a: usize, di: Option<isize>| -> EnI {
         let mut r = EnI { u: 0.0, z: None, S: 0.0, ta: 0.0 };
         for zi in 0..zs.len() {
             let z = &zs[zi];
-            let tR = match di {
+            let t_r = match di {
                 Some(d) => {
                     if d >= 0 {
                         z.tr[d as usize]
@@ -701,17 +701,17 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
                     t
                 }
             };
-            let (p, e) = imk(k, TY, IC, a, zi, tR);
+            let (p, e) = imk(k, TY, IC, a, zi, t_r);
             if di.is_none() && &*biz[a].p.govde.name == "Kaan" && z.x == 104.0 && z.y == 36.0 && crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
-                eprintln!("    kaan ön z {} {} tR {:.3} p {:.6} ta {:.3} k {} kalkis {} q {:?}", z.x, z.y, tR, p, e.ta, e.k, e.kalkis, e.q.map(|q| (q.x, q.y)));
+                eprintln!("    kaan ön z {} {} tR {:.3} p {:.6} ta {:.3} k {} kalkis {} q {:?}", z.x, z.y, t_r, p, e.ta, e.k, e.kalkis, e.q.map(|q| (q.x, q.y)));
             }
-            if p * imkInan(k, e.ta) <= r.u {
+            if p * imk_inan(k, e.ta) <= r.u {
                 continue;
             }
-            let S = imkS(k, IC, a, zi);
-            let u = p * S * imkInan(k, e.ta);
+            let S = imk_s(k, IC, a, zi);
+            let u = p * S * imk_inan(k, e.ta);
             if di.is_none() && &*biz[a].p.govde.name == "Kaan" && crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
-                eprintln!("    kaan z {} {} tR {:.3} p {:.6} ta {:.3} S {:.6} u {:.6}", z.x, z.y, tR, p, e.ta, S, u);
+                eprintln!("    kaan z {} {} tR {:.3} p {:.6} ta {:.3} S {:.6} u {:.6}", z.x, z.y, t_r, p, e.ta, S, u);
             }
             if u > r.u {
                 r = EnI { u, z: Some(zi), S, ta: e.ta };
@@ -726,7 +726,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             if atanan[a].is_some() {
                 continue;
             }
-            let r = enIyi(k, &mut TY, &mut IC, &bos, a, None);
+            let r = en_iyi(k, &mut TY, &mut IC, &bos, a, None);
             if r.u > bu {
                 bu = r.u;
                 ba = Some(a);
@@ -736,7 +736,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
             Some(a) => a,
             None => break,
         };
-        let rz = enIyi(k, &mut TY, &mut IC, &bos, ba, None).z.unwrap();
+        let rz = en_iyi(k, &mut TY, &mut IC, &bos, ba, None).z.unwrap();
         let mut di: isize = -1;
         let mut dt = 1e9;
         for &i in &bos {
@@ -753,11 +753,11 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
     }
     let mut v: f64 = 0.0;
     for a in 0..biz.len() {
-        let r = enIyi(k, &mut TY, &mut IC, &bos, a, atanan[a]);
+        let r = en_iyi(k, &mut TY, &mut IC, &bos, a, atanan[a]);
         let S = if r.z.is_some() { r.S } else { 0.0 };
         let p = if S > 0.0 { r.u / S } else { 0.0 };
         if crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
-            eprintln!("  hu B ({:.1},{:.1}) ofs {:.0} {} u={:.6} S={:.6} ta={:.3} z={:?} kar={:?}", B.x, B.y, k.k2.IMK_OFS, biz[a].p.govde.name, r.u, S, r.ta, r.z.map(|z| (zs[z].x, zs[z].y)), atanan[a].and_then(|i| if i >= 0 { Some(rak[i as usize].p.govde.name.clone()) } else { None }));
+            eprintln!("  hu B ({:.1},{:.1}) ofs {:.0} {} u={:.6} S={:.6} ta={:.3} z={:?} kar={:?}", B.x, B.y, k.k2.imk_ofs, biz[a].p.govde.name, r.u, S, r.ta, r.z.map(|z| (zs[z].x, zs[z].y)), atanan[a].and_then(|i| if i >= 0 { Some(rak[i as usize].p.govde.name.clone()) } else { None }));
         }
         v = jmax(v, p * S);
     }
@@ -766,14 +766,14 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
 
 /// JS sutYol(w, team, x, y, tS) (decide.js:6591): şutun gövdelerden geçme olasılığı (en açık nişan;
 /// tS verilirse rakiplerin yeri belirsiz: yumuşak).
-pub fn sutYol(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, tS: Option<f64>) -> f64 {
-    let sg = match tS {
+pub fn sut_yol(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, t_s: Option<f64>) -> f64 {
+    let sg = match t_s {
         None => 0.0,
-        Some(t) => imkSap(t),
+        Some(t) => imk_sap(t),
     };
     let gx = if t0(team) { GW } else { 0.0 };
     // sahte taşıyıcı (rolü boş: varsayılan zaten "")
-    let hedef = sahte_ile(team, x, y, -9.0, |hh| dis::sutHedef(k, hh, w, gx));
+    let hedef = sahte_ile(team, x, y, -9.0, |hh| dis::sut_hedef(k, hh, w, gx));
     let mut en: f64 = 0.0;
     for yt in hedef {
         let d = veya(hypot(gx - x, yt - y), 1.0);
@@ -789,11 +789,11 @@ pub fn sutYol(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, tS: Option<f64>
                 continue;
             }
             let pe = (-(p.x - x) * uy + (p.y - y) * ux).abs();
-            let R = crate::core_sabit::Q.reach + jmax(0.0, al / 2.4 - dis::ALAN_TEPKI(k, p, "kovala")) * (0.17 + 0.006 * ALAN_HZ(p)) * dis::ALAN_SPRE(k, p);
+            let R = crate::core_sabit::Q.reach + jmax(0.0, al / 2.4 - dis::alan_tepki(k, p, "kovala")) * (0.17 + 0.006 * alan_hz(p)) * dis::alan_spre(k, p);
             if sg > 0.0 {
-                pass *= 1.0 - (1.0 - k.D.shotThru) * imkSg((R + 0.8 - pe) / sg);
+                pass *= 1.0 - (1.0 - k.D.shot_thru) * imk_sg((R + 0.8 - pe) / sg);
             } else if pe < R + 0.8 {
-                pass *= k.D.shotThru;
+                pass *= k.D.shot_thru;
             }
         }
         if pass > en {
@@ -808,29 +808,29 @@ pub fn sutYol(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, tS: Option<f64>
 
 /// JS sutS(w, team, x, y, ch, k, tS) (decide.js:6618): (x, y)'den şutun değeri (dibindeki rakip
 /// şutu keser; tS: ne kadar sonra).
-pub fn sutS(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Option<&Oyuncu>, tS: Option<f64>) -> f64 {
-    let sg = match tS {
+pub fn sut_s(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Option<&Oyuncu>, t_s: Option<f64>) -> f64 {
+    let sg = match t_s {
         None => 0.0,
-        Some(t) => imkSap(t),
+        Some(t) => imk_sap(t),
     };
     let mut fB = 1.0;
     for p in w {
         if p.team != team && !bekci(p) && !p.noTouch {
             let dd = hypot(p.x - x, p.y - y);
             if sg > 0.0 {
-                fB *= 1.0 - imkSg((2.4 - dd) / sg);
+                fB *= 1.0 - imk_sg((2.4 - dd) / sg);
             } else if dd < 2.4 {
                 return 0.0;
             }
         }
     }
-    let r = sutTab(k, w, team, x, y, ch, kq, None, None, None, None);
-    let yl = sutYol(k, w, team, x, y, tS);
+    let r = sut_tab(k, w, team, x, y, ch, kq, None, None, None, None);
+    let yl = sut_yol(k, w, team, x, y, t_s);
     if let Some(q) = kq {
         if crate::iz_acik() && std::env::var("ALAN_SURD_IZ").ok().as_deref() == Some(&*q.govde.name) {
             let bk = w.iter().find(|p| p.team != team && bekci(p)).map(|b| (b.x, b.y));
             let ra: Vec<String> = w.iter().filter(|p| p.team != team && !bekci(p) && !p.noTouch && hypot(p.x - x, p.y - y) < 8.0).map(|p| format!("{}({:.1},{:.1})", p.govde.name, p.x, p.y)).collect();
-            eprintln!("SUTS ({:.1},{:.1}) tS {:?} fB {:.3} tablo {:.3} yol {:.3} bekçi {:?} yakın {:?}", x, y, tS, fB, r, yl, bk, ra);
+            eprintln!("SUTS ({:.1},{:.1}) tS {:?} fB {:.3} tablo {:.3} yol {:.3} bekçi {:?} yakın {:?}", x, y, t_s, fB, r, yl, bk, ra);
         }
     }
     fB * (r * yl)
@@ -838,7 +838,7 @@ pub fn sutS(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Opti
 
 /// JS sutVakit(w, team, x, y, k) (decide.js:5805): şuta hazırlanacak vakit (sutHazir tik topu tutma);
 /// keepP.son korunur.
-pub fn sutVakit(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, kq: Option<&Oyuncu>) -> f64 {
+pub fn sut_vakit(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, kq: Option<&Oyuncu>) -> f64 {
     let kk: Oyuncu = match kq {
         Some(q) => q.clone(),
         None => {
@@ -860,14 +860,14 @@ pub fn sutVakit(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, kq: Option<&O
             }
         }
     };
-    let s = k.keepP_son.get();
+    let s = k.keep_p_son.get();
     let mut r = kk;
     r.x = x;
     r.y = y;
     r.vx = 0.0;
     r.vy = 0.0;
-    let p = jmax(0.0, jmin(1.0, dis::keepP(k, &r, w, None, k.D.sutHazir)));
-    k.keepP_son.set(s);
+    let p = jmax(0.0, jmin(1.0, dis::keep_p(k, &r, w, None, k.D.sut_hazir)));
+    k.keep_p_son.set(s);
     p
 }
 
@@ -892,13 +892,13 @@ pub fn tasima(k: &mut Kafa, w: &[Op], team: f64, kq: Option<&Oyuncu>, x: f64, y:
         c.vy = 0.0;
         c
     });
-    let vC = 0.1955;
+    let v_c = 0.1955;
     let opp: Vec<Op> = w.iter().filter(|o| o.team != team && !o.noTouch).cloned().collect();
     if ug.x * uf.x < cos(0.35) {
         dirs.push((uf, false));
     }
-    let wb = bekYerW(k, w, team, nk(x, y), None);
-    let mut best = dis::shotQ(k, &wb, team, x, y, ch) * sutVakit(k, w, team, x, y, r.as_ref());
+    let wb = bek_yer_w(k, w, team, nk(x, y), None);
+    let mut best = dis::shot_q(k, &wb, team, x, y, ch) * sut_vakit(k, w, team, x, y, r.as_ref());
     for (u, gol) in dirs {
         let mut L = SUR_BOS;
         L = if gol { jmin(L, dg - 1.5) } else { jmin(L, if t0(team) { GW - 2.0 - x } else { x - 2.0 }) };
@@ -910,29 +910,29 @@ pub fn tasima(k: &mut Kafa, w: &[Op], team: f64, kq: Option<&Oyuncu>, x: f64, y:
                 break;
             }
             let tc = match &r {
-                Some(r) => dis::surSure(k, r, s0, Some(u), None),
-                None => s0 / vC,
+                Some(r) => dis::sur_sure(k, r, s0, Some(u), None),
+                None => s0 / v_c,
             };
             let mut td: f64 = 1e9;
             for o in &opp {
-                td = jmin(td, jmax(0.0, dis::ALAN_TEPKI(k, o, "kovala")) + jmax(0.0, hypot(o.x - P.x, o.y - P.y) - 2.4) / ((0.17 + 0.006 * ALAN_HZ(o)) * dis::ALAN_SPRE(k, o)));
+                td = jmin(td, jmax(0.0, dis::alan_tepki(k, o, "kovala")) + jmax(0.0, hypot(o.x - P.x, o.y - P.y) - 2.4) / ((0.17 + 0.006 * alan_hz(o)) * dis::alan_spre(k, o)));
             }
-            if td - tc < k.D.sutHazir {
+            if td - tc < k.D.sut_hazir {
                 break;
             }
             son = Some(P);
             s0 += 2.0;
         }
         if let Some(son) = son {
-            let wb = bekYerW(k, w, team, son, None);
-            best = jmax(best, dis::shotQ(k, &wb, team, son.x, son.y, ch));
+            let wb = bek_yer_w(k, w, team, son, None);
+            best = jmax(best, dis::shot_q(k, &wb, team, son.x, son.y, ch));
         }
     }
     best
 }
 
 /// JS sutEngel(src, team, x, y) (decide.js:5440): şut çizgisinde kesebilecek gövdeler.
-pub fn sutEngel(k: &Kafa, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
+pub fn sut_engel(k: &Kafa, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
     let gx = if t0(team) { GW } else { 0.0 };
     let d = veya(hypot(gx - x, GCY - y), 1.0);
     let mut pass = 1.0;
@@ -947,17 +947,17 @@ pub fn sutEngel(k: &Kafa, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
             continue;
         }
         let pe = (-(p.x - x) * uy + (p.y - y) * ux).abs();
-        let reachT = jmax(0.0, al / 2.4 - dis::ALAN_TEPKI(k, p, "kovala")) * (0.17 + 0.006 * ALAN_HZ(p)) * dis::ALAN_SPRE(k, p);
-        let R = crate::core_sabit::Q.reach + reachT;
+        let reach_t = jmax(0.0, al / 2.4 - dis::alan_tepki(k, p, "kovala")) * (0.17 + 0.006 * alan_hz(p)) * dis::alan_spre(k, p);
+        let R = crate::core_sabit::Q.reach + reach_t;
         if pe < R + 0.8 {
-            pass *= k.D.shotThru;
+            pass *= k.D.shot_thru;
         }
     }
     pass
 }
 
 /// JS bskTab(team, bk) (decide.js:5427): boşluk noktalarının şut değeri önbelleği (tik başına).
-fn bskTab<'a>(k: &'a mut Kafa, team: f64, bk: Option<&Oyuncu>) -> &'a mut Vec<f64> {
+fn bsk_tab<'a>(k: &'a mut Kafa, team: f64, bk: Option<&Oyuncu>) -> &'a mut Vec<f64> {
     let key = match bk {
         Some(b) => format!("{}|{}|{:?}|{}", team, b.id, b.en, if b.hal._yer { 1 } else { 0 }),
         None => format!("{}|-", team),
@@ -971,7 +971,7 @@ fn bskTab<'a>(k: &'a mut Kafa, team: f64, bk: Option<&Oyuncu>) -> &'a mut Vec<f6
 pub fn bosluk(k: &mut Kafa, src: &[Op], team: f64, bx: f64, by: f64) -> f64 {
     let gx = if t0(team) { GW } else { 0.0 };
     let dir = if t0(team) { -1.0 } else { 1.0 };
-    let O = dis::bosOy(k, src, team, bx, by);
+    let O = dis::bos_oy(k, src, team, bx, by);
     let bk: Option<Op> = src.iter().find(|p| p.team != team && bekci(p) && !p.noTouch).cloned();
     let B = nk(bx, by);
     let mut best = 0.0;
@@ -1001,31 +1001,31 @@ pub fn bosluk(k: &mut Kafa, src: &[Op], team: f64, bx: f64, by: f64) -> f64 {
                 }
             }
         }
-        let tb = dis::ucusT(k, hypot(bx - x, by - y), k.D.arriveFirm, None);
+        let tb = dis::ucus_t(k, hypot(bx - x, by - y), k.D.arriveFirm, None);
         let own = 1.0 / (1.0 + exp((jmax(ta, tb) - td) / 6.0));
         if own <= best {
             continue;
         }
-        let mut sk = bskTab(k, team, bk.as_deref())[kk];
+        let mut sk = bsk_tab(k, team, bk.as_deref())[kk];
         if sk < 0.0 {
             sk = match &bk {
                 Some(b) => {
-                    let g = dis::AS_bekci(k, b, nk(x, y), None);
+                    let g = dis::as_bekci(k, b, nk(x, y), None);
                     let bw = vec![kxyv(b, g.x, g.y, 0.0, 0.0)];
-                    dis::sutKapali(k, &bw, team, x, y, 0.4)
+                    dis::sut_kapali(k, &bw, team, x, y, 0.4)
                 }
-                None => dis::sutKapali(k, src, team, x, y, 0.4),
+                None => dis::sut_kapali(k, src, team, x, y, 0.4),
             };
-            bskTab(k, team, bk.as_deref())[kk] = sk;
+            bsk_tab(k, team, bk.as_deref())[kk] = sk;
         }
         if own * sk <= best {
             continue;
         }
-        let Lo = dis::laneOk(k, src, team, B, nk(x, y), None, None);
+        let Lo = dis::lane_ok(k, src, team, B, nk(x, y), None, None);
         if own * Lo * sk <= best {
             continue;
         }
-        let v = own * Lo * sk * sutEngel(k, src, team, x, y);
+        let v = own * Lo * sk * sut_engel(k, src, team, x, y);
         if v > best {
             best = v;
         }
@@ -1034,6 +1034,6 @@ pub fn bosluk(k: &mut Kafa, src: &[Op], team: f64, bx: f64, by: f64) -> f64 {
 }
 
 /// bekKay'in yeniden dışa açılışı (kafa2_imkan içinden kullananlar için)
-pub fn _bekKay(k: &Kafa, p: &Op, B: Nokta, T: f64) -> Op {
+pub fn _bek_kay(k: &Kafa, p: &Op, B: Nokta, T: f64) -> Op {
     bekKay(k, p, B, T)
 }

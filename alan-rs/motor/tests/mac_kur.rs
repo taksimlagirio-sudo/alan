@@ -1,6 +1,6 @@
 //! Kayıttan maç kurulumu: JS ile bit bit aynılık (sina/mac-vektor.js; yerleşimin slotBase/bekci çağrıları kayıttan).
 mod mac_yardim;
-use alan_motor::mac::kayit::{macKur_ile, Kayit};
+use alan_motor::mac::kayit::{mac_kur_ile, Kayit};
 use alan_motor::mac::kurulum::{tl, KurDis};
 use alan_motor::mac::MacTam as Mac;
 use alan_motor::model::{Pid};
@@ -24,7 +24,7 @@ impl Kayitli {
     }
 }
 impl KurDis for Kayitli {
-    fn slotBase(&mut self, m: &Mac, p: Pid, ex: f64, ey: f64, att: bool) -> (f64, f64) {
+    fn slot_base(&mut self, m: &Mac, p: Pid, ex: f64, ey: f64, att: bool) -> (f64, f64) {
         self.al("s", m, p, ex, ey, att)
     }
     fn bekci(&mut self, m: &Mac, p: Pid, ex: f64, ey: f64) -> (f64, f64) {
@@ -41,13 +41,13 @@ fn kayittan_kurulum_js_ile_ayni() {
         let ad = k["dosya"].as_str().unwrap();
         let d: Kayit = serde_json::from_value(k["kayit"].clone()).unwrap();
         let mut dis = Kayitli { c: k["cagri"].as_array().unwrap().clone(), i: 0, hata: vec![] };
-        let m = macKur_ile(&d, &mut dis);
+        let m = mac_kur_ile(&d, &mut dis);
         if dis.i != dis.c.len() {
             hata.push(format!("{ad}: yerleşim çağrısı rust {} js {}", dis.i, dis.c.len()));
         }
         hata.extend(dis.hata.iter().map(|x| format!("{ad}: {x}")));
         let es = |a: f64, b: &Value| ayni(a, h(b));
-        if m.holder != k["holder"].as_u64().map(|x| x as usize) || !es(m.ch, &k["ch"]) || !es(m.decT, &k["decT"]) || !es(m.len, &k["len"]) || m.devre != k["devre"].as_bool().unwrap() {
+        if m.holder != k["holder"].as_u64().map(|x| x as usize) || !es(m.ch, &k["ch"]) || !es(m.dec_t, &k["decT"]) || !es(m.len, &k["len"]) || m.devre != k["devre"].as_bool().unwrap() {
             hata.push(format!("{ad}: maç alanları"));
         }
         for (t, tj) in k["tac"].as_array().unwrap().iter().enumerate() {

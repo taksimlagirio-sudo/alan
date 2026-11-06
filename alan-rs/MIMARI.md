@@ -51,8 +51,8 @@ Yerleşim ile karar birbirini çağırmaz; ikisi de `deger`'i çağırır.
 değerlendirmesini (`girThr`, `duelP`) kullanır. Bu bir kod kusuru değil, modelin doğası. Bu yüzden bu
 hizmetler `deger` katmanındadır; katman içinde karşılıklı çağrı serbesttir, katmanlar arasında yasak.
 
-Dosya eşlemesi (modüller fiziksel olarak yerinde; başka bir oturum aynı kodda çalıştığı için dosya taşımak
-Aşama 7'ye kaldı, kural `sina/katman.sh`'ta):
+Dosya eşlemesi (Aşama 7c'den beri her katman ayrı crate, `katman/<ad>/`; kaynak dosyalar `motor/src`'de yerinde,
+crate kökü `#[path]` ile bağlar, 3.9. Katmanlar arası kuralı derleyici, katman içi kuralları `sina/katman.sh` zorlar):
 
 | Katman | Dosyalar |
 |---|---|
@@ -142,9 +142,9 @@ kodda çalıştığı için aşamalar küçük parçalarla ve sık `main`'e birl
 | 2 | Değerlendirme katmanı | Yerleşim → kafa iç içe çağrısını kaldırmak; yerleşimin ve değerlendirmenin karar dosyalarına bağını kesmek; katman eşlemesi | ✅ Şut gücü `kural/sut.rs`'e (yedek kafaya düşen çağrı 300 tikte yüz binlerce → 0); `kayipYer`, `riskOf`, `bekYol` `kafa2_zemin`'e; `sina/katman.sh` 4 kural tutuyor. Kalan `Dis` yerleşim yöntemleri (`bekciFm`, `slotBase`, `ilkPres` …) dünya çevirisi gerektirdiği için Aşama 4'te kalkar |
 | 3 | Açık bağlam | Kafa iş parçacığına özel değişkenden değil, maçın kutusundan (`m.mac.kafa`) alınır; kafanın durumuna bağlı olmayan değerlendirmeler saf işlev; gizli bağlam (sprint niyeti, kafanın tiki) açık alan | **3a–d ✅**, **3e-1 ✅** `SF_NIYET` → `MacKural::niyet`, **3e-2 ✅** `D_TICK` → `Mc::dtik`, **3e-3 ✅** `KafaD` yalnız değişmez ayar, geçici bağlam `KafaBag`, **3e-4 ✅** önbellekler `Onbellek`'te ömürlerine göre |
 | 4 | Tek dünya | `Dunya` + `Gorunum`; kimlik `Pid`; köprü çevirileri kalkar | **✅ kapandı (6 Kasım, ölçümle yeniden kapsamlandı):** kimlik değer (`Oyuncu::kim`), dünya kendi tipi (`Dunya`, temel katmanda), gövdeler paylaşımlı, köprülerdeki çift biçimler kalktı. `Gorunum` (taban + değişenler) yapılmadı: dünyaların çoğu sıfırdan kuruluyor (3.1, 4c-2c) |
-| 5 | Veri | **5-1, 5-2 ✅** (3.6: `Oyuncu` 2704 → 288 bayt). `Oyuncu` → `OyuncuDurum` + `OyuncuGovde`; `KafaD` → `Ayar` + geçici durum; `JsDeger` ve gereksiz `Option`'lar | `Oyuncu` kopyası ~300 bayt; `model.rs` üretilmiş taslak değil |
+| 5 | Veri | `Oyuncu` → sıcak alanlar + `OyuncuGovde` + `OyuncuMac`; `KafaD` → `Ayar` + geçici durum; `JsDeger` ve gereksiz `Option`'lar | **✅ (6 Kasım)**: 5-1…5-6 (3.6): `Oyuncu` 2704 → 288 bayt, `model.rs` 6015 → 1950 satır, `JsDeger` yok, hep dolu `Option`'lardan 9'u düz tip (kalan 33'ü bilerek) |
 | 6 | JS bağı | **Karar (5 Kasım): Rust tek doğru kaynak.** JS ile bit bit aynılık kısıtı kalktı; doğrulama `sina/ayni.sh` ve maç istatistikleriyle | ✅ Temizlik: JS vektörüne bağlı 12 sınama gerekçeli `#[ignore]` (vektör üretilince `--ignored` ile çalışır; temiz klonda düşen ya da sessizce geçen sınama kalmadı); `tests/ayni.rs` `cargo test`'in kendisinde parmak izi başvurusunu denetler; `tests/kafa1.rs`'in JS taklit artıkları silindi; motor ve sınamalar uyarısız. Rust adlandırması ertelendi (bkz. Geri dönülecekler) |
-| 7 | Crate'ler | Katmanlar ayrı crate; döngüyü derleyici yasaklar | **7a, 7b ✅** (3.8): temel, yerleşim → maç bağları yok; `MacEk` `Mac`'ten çıktı (`MacTam`); `sina/katman.sh` 7 kural, istisnasız. Katmanlar arasında döngü yok. 7c (fiziksel bölme) bekliyor. Bitti sayılır: `cargo build` katman kuralını zorlar |
+| 7 | Crate'ler | Katmanlar ayrı crate; döngüyü derleyici yasaklar | **7a, 7b ✅** (3.8), **7c ✅** (3.9): `alan-temel` ← `alan-kural`, `alan-dunya` ← `alan-kafa` ← `alan-sekil` ← `alan-mac`; `alan-motor` hepsini eski yollarla yeniden dışa verir. Bitti: üst katmana bağlanmak derlenmez |
 
 ### 3.1 Aşama 3e ve 4'ün birlikte planı (5 Kasım)
 
@@ -206,8 +206,8 @@ Bilerek ertelenen işler; her biri bir karar ya da uygun bir an bekliyor:
 |---|---|---|
 | ~~**`dolanma` davranışı**~~ (3.2 C): hayali bir kopya oyuncu, dünyadaki kendi gerçek gövdesinin etrafından dolanmaya çalışıyordu | **Yapıldı (5 Kasım)**: kopya aslını oyuncu kimliğiyle tanıyıp atlıyor; varsayılan, eski davranış `ALAN_DOLANMA_ESKI` ile (yalnız yerelde). Ölçüm 3.4; başvurular `sina/ayni.sh --yaz` ile yenilendi | — |
 | **4c-2: tek dünya** (kafanın `Op` yerine görünüm `Varlik` üzerinde çalışması, çevirilerin kalkması) | Çeviriler artık sürenin ~%1,5'i; kafanın ~14 bin satırı `&[Op]` üzerinden alanlara doğrudan erişiyor (çok günlük iş, davranış oturumuyla sürekli çakışır); çeviriler arasında nesne paylaşmak `dolanma`'yı değiştirir | `dolanma` kararı verildi; kafa kodu durulduğunda |
-| **Rust adlandırması** (JS adları: `ALAN_SPR`, `decide0K`, `non_snake_case` izinleri) | Binlerce satıra dokunur; davranış oturumuyla sürekli çakışır; değeri okunurluk | Aşama 7 (crate'lere bölme) ile birlikte |
-| **Aşama 5: veri** (`Oyuncu` sıcak/soğuk, `JsDeger`, gereksiz `Option`'lar) | Kopya maliyeti %2,4'e indi; `model.rs` her katmanın ortak tipi, bölmesi 4c-2'ye bağlı | 4c-2 ile |
+| ~~**Rust adlandırması**~~ | **Yapıldı (6 Kasım, 3.10)**: 1198 ad Rust biçiminde; kalanlar (serde/JSON adları, tek harfli matematik adları) bilerek bırakıldı | — |
+| ~~**Aşama 5: veri**~~ | **Yapıldı (6 Kasım)**: 3.6 | — |
 | ~~**3e-4: önbelleklerin ömürleri**~~ | **Yapıldı (6 Kasım)**: `Onbellek` | — |
 
 Her aşamanın sonunda: `sina/ayni.sh` aynı, `cargo test` geçen sayısı düşmemiş, `alan-kos` hızı ölçülmüş
@@ -323,8 +323,16 @@ sayaçları, KafaBag'in üç bağlamı); her yazma yerine elle bakıldı (`Mac.c
 **5-6 ✅ gereksiz `Option`'lar (ölçüldü):** `sina/option-olc.rs` (4 maç × 2700 tik, `{:#?}` dökümünden): 272 `Option`
 alanından 41'i hep dolu, 60'ı hep boş, 171'i ikisi de. Hep boşlardan yalnız 3'üne hiçbir yerde değer yazılmıyor
 (`Secenek.next`, `Secenek.why`, `TopEk.bekM`): silindi, okudukları ölü dallar ve yalnız onlar için hesaplanan
-`dis_lookTo` da. Kalan 57'ye yazılıyor (seyrek yollar, bu maçların kullanmadığı taktik ayarları). Hep dolu 41 alanı
-`Option`'sız yapmak her birinde kurulumdaki "yok" anlamını ayrı ayrı düşünmeyi gerektirir: değeri düşük, ertelendi.
+`dis_lookTo` da. Kalan 57'ye yazılıyor (seyrek yollar, bu maçların kullanmadığı taktik ayarları). Hep dolu 41 alan
+(6 Kasım'da yeniden ölçüldü: 42) tek tek incelendi; **9'u `Option`'sız** (boşluğu hiçbir okumada gözlenmiyordu):
+`Mac._mac_c` (`get_or_insert_with(Default)`), `Mac.tac0`, `Mac.evre` (tembel `vec![None, None]`: boş `Option<Vec>` →
+boş `Vec`, okumalar `get`), `OyuncuMac.hist` (boş `Arc<Vec>`), `lock` (`p.lock > t`, t ≥ 0: yok = 0), `rec`, `_yog`
+(`unwrap_or(0.0)`), `_evx`, `_evy` (yalnız yazılıyor). Kalan 33 bilerek `Option`: `Tac.*` (8; taktik JSON'u,
+`ust` katmanlamasında "verilmedi" anlamlı), `Oyuncu.en` (yok = enerji kuralı kapalı), `Oyuncu.job`, `Mac.E`/`att`/`sh`/
+`ra`/`not` (maçın ilk adımından önce yok; okumalar boşluğa göre dallanıyor), `_kuyu_top` (`== Some(takım)`; yok ≠ 0),
+`_D0`/`_enOnce` (`unwrap_or(NaN)`/`unwrap_or(1.0)`: düz tipte özel varsayılan isterdi), kafanın karar tipleri
+(`Secenek.*`, `Karar.best`, `JODet.P`: JS'in `undefined` karşılaştırmaları) ve olay/not kayıtları. Davranış aynı
+(20 maç × 2700 tik).
 Sonuç: `model.rs` 6015 → 1950 satır, 328 → 82 tip.
 
 Sıra: (1) maç durumu (108 alan, ~500 yer, kafaya dokunmaz: yalnız `mac/`, `sekil/`, `temas`), (2) gövde
@@ -400,6 +408,69 @@ işlevi `m` yerine bu eli alır. Düz veri `kosulAkt` temel modele (taktiğin ke
 
 Yan bulgu: kural 2 bugün davranış oturumunun bir deneyinde bozuk (`kafa2_imkan.rs` → `kafa2_karar::decide`,
 `ALAN_SUT_GERCEK_IZ`, bayrak arkasında).
+
+### 3.9 Aşama 7c: katmanlar ayrı crate (6 Kasım)
+
+Crate'ler ve bağımlılıkları (her crate'in `Cargo.toml`'u katman kuralının kendisi):
+
+| Crate | Modül | Bağlı olduğu |
+|---|---|---|
+| `alan-temel` | kökteki dosyalar (`model`, `mat`, `saha`, `temas`, `mac_veri`, `dunya_tip`, `paket`, `oyun`, `paralel`, `parmak` …), `iz_acik`, `HizliMap` | — |
+| `alan-kural` | `kural` | temel |
+| `alan-dunya` | `dunya` | temel |
+| `alan-kafa` | `kafa` | temel, kural, dünya |
+| `alan-sekil` | `sekil` | temel, kural, dünya, kafa |
+| `alan-mac` | `mac` | hepsi |
+| `alan-motor` | yalnız yeniden dışa verir (`alan_motor::mac::…` gibi eski yollar, `kos`, `wasm`, testler değişmedi) | hepsi |
+
+Kaynak dosyalar taşınmadı: `katman/<ad>/lib.rs` katmanın modülünü `#[path = "../../motor/src/<ad>/mod.rs"]` ile
+bağlar ve alt katmanları yeniden dışa verir (`pub use alan_temel::*;`), bu yüzden `crate::model::…` gibi yollar
+değişmedi. Neden: davranış oturumu aynı dosyalarda çalışıyor; taşıma her birleştirmede çakışma demekti. Dosyalar
+ileride `katman/<ad>/`'a taşınabilir, yalnız `#[path]` satırları değişir.
+
+Bölme derleyicinin bulduğu dört gizli bağı açtı (hepsi davranışı değiştirmeden çözüldü):
+- `temas` (temel) → `kural::enerji::EN3`: `En3`/`EN3` temele (`core_sabit`), `kural::enerji` yeniden dışa verir.
+- `MacZ`'nin (temel tip) yöntemleri kural katmanındaydı: `macW`, `fak`, `MAC_ORAN`, `MAC_UC` ve `impl MacZ`
+  `mac_veri`'ye; `kural::tac` yeniden dışa verir.
+- `impl Kural for MacKural` maç katmanındaydı ve kafa da kullanıyordu (kafa → maç bağı): uygulama ve
+  `ALAN_EN3_KUL` `kural::enerji`'ye. `ALAN_EN3_KUL` kafanın `threat`'ini kullanıyordu (kural → kafa): tehdit
+  geometrisi temelde (`saha::tehdit`), sabitleri (`TEHDIT_K`, `TEHDIT_YAN`, `EN_FARK`) `core_sabit`'te; kafanın
+  `D.threatK`/`D.sideK`/`DU.enFark`'ı ve maçın `DU::enFark`'ı aynı sabitlerden alır (tek kaynak).
+  `MacKural::of(m)` → `mac_kurali(m)` (yabancı tipe yöntem eklenemez).
+- `Default for Rng` maç katmanındaydı: `rng.rs`'e.
+
+Doğrulama: `sina/ayni.sh` aynı, main ile 20 maç × 2700 tik parmak izi birebir, testler 14/0/12, wasm derleniyor.
+Hız gürültü içinde (m00/m05/m10, 600 tik, üçer koşu: 19,05/15,41/17,15 → 19,42/15,34/17,24 ms/tik); release
+derlemesi 60 → 30 sn (crate'ler paralel derleniyor).
+
+### 3.10 Rust adlandırması (6 Kasım)
+
+Derleyicinin `non_snake_case` / `non_upper_case_globals` / `non_camel_case_types` uyarıları (izinler kaldırılınca 1544
+farklı ad) önerdiği adlarla, araçla (`sina/adlandir.py`) değiştirildi: **1198 ad** (işlevler, yöntemler, trait
+yöntemleri, tipler, sabitler, serde dışı alanlar, değişkenler; ör. `ALAN_SPR` → `alan_spr`, `JP_bkE` → `JpBkE`).
+Eşleme `sina/ad-esleme.tsv`'de (eski ad, yeni ad, tür).
+
+Yöntem: eski adın her kod tokeni (yorum ve dizgiler dışında) yeni adla değişir; yeni ad kodda hiçbir yerde geçmiyorsa.
+Bu birebir bir yeniden adlandırmadır, anlam değişemez; adın dışarıdan göründüğü yerler hariç tutuldu:
+- serde alanları (türetilmiş ya da `tac_yap!` gibi makroyla kurulan tipler) ve girdi JSON'larının anahtarları: maçın
+  girdisi ve sitenin okuduğu çıktı aynı kalır (131 ad);
+- biçim dizgisinde yakalanan adlar (`"{ad}"`, 5), wasm'ın dışa verdiği işlevler;
+- yeni adı zaten var olanlar (195; çoğu tek harfli matematik adı: `T` → `t`, `D` → `d`), farklı öneri alanlar (7),
+  aynı yeni ada düşenler (4), aynı tokenin başka türde de kullanıldığı 4 ad (`KOP`, `UA`, `engage`, `oyala`).
+Yorumlardaki JS adları (`/// JS macW`) bilerek değişmedi: JS motoruyla karşılık onlarda.
+
+Kalan adlar yüzünden 48 dosyada izin satırı duruyor; uyarısı kalmayan dosyalarda izin kaldırıldı (yeni kodda uyarı verir).
+
+Eski adlarla yazılmış bir dalı güncellemek (davranış oturumunun dalında denendi, çakışmasız derlendi):
+1. Dala adlandırmadan önceki main'i birleştir: `git merge 6f76ff4` (7c dahil).
+2. Bu commit'in `sina/adlandir.py` ve `sina/ad-esleme.tsv`'sini al (`git checkout <bu commit> -- sina/adlandir.py sina/ad-esleme.tsv`),
+   `python3 sina/adlandir.py --hazir sina/ad-esleme.tsv` (yalnız eşlemedeki adları değiştirir), `cargo check`, commit.
+3. Yeni main'i birleştir; çakışan dosyalarda dalın kendi hâlini al (`git checkout --ours <dosya>`): main'in o dosyalardaki
+   tek değişikliği adlandırma, dalınki zaten adlandırılmış.
+
+Doğrulama: `sina/ayni.sh` aynı, 20 maç × 2700 tik parmak izi birebir, testler 14/0/12, wasm derleniyor. İlk denemede
+`tac_yap!` makrosunun serde alanları (`kpSure` …) yakalanmamıştı ve başvurular ayrıştı; araç makroları ve girdi JSON
+anahtarlarını da dışarıda bırakacak biçimde düzeltildi.
 
 ## 4. Dış kütüphaneler
 

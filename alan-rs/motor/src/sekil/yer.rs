@@ -15,7 +15,7 @@ use super::*;
 
 /// JS gside(a, t, off): `a`dan `t` takımının kalesine doğru `off` kadar.
 pub fn gside(ax: f64, ay: f64, t: u8, off: f64) -> (f64, f64) {
-    let gx = ownX(t);
+    let gx = own_x(t);
     let dx = gx - ax;
     let dy = GH / 2.0 - ay;
     let l = hypot(dx, dy);
@@ -24,14 +24,14 @@ pub fn gside(ax: f64, ay: f64, t: u8, off: f64) -> (f64, f64) {
 }
 
 /// Slot (JS `att && p.rslot ? p.rslot : p.slot`): (d, l).
-pub fn slotOf(p: &Oyuncu, att: bool) -> (f64, f64) {
+pub fn slot_of(p: &Oyuncu, att: bool) -> (f64, f64) {
     match (&p.govde.rslot, att) {
         (Some(r), true) => (r.d, r.l),
         _ => (p.govde.slot.d, p.govde.slot.l),
     }
 }
 /// JS `(q.rslot || q.slot)`.
-pub fn rslotOf(p: &Oyuncu) -> (f64, f64) {
+pub fn rslot_of(p: &Oyuncu) -> (f64, f64) {
     match &p.govde.rslot {
         Some(r) => (r.d, r.l),
         None => (p.govde.slot.d, p.govde.slot.l),
@@ -39,12 +39,12 @@ pub fn rslotOf(p: &Oyuncu) -> (f64, f64) {
 }
 
 /// JS slotBase0(m, p, E, att): takımın bloğunda slotun yeri. `sl`: slot verilirse (JS `{...p, slot, rslot}`).
-pub fn slotBase0(m: &Mac, ps: &[Oyuncu], p: &Oyuncu, sl: Option<(f64, f64)>, ex: f64, ey: f64, att: bool) -> (f64, f64) {
+pub fn slot_base0(m: &Mac, ps: &[Oyuncu], p: &Oyuncu, sl: Option<(f64, f64)>, ex: f64, ey: f64, att: bool) -> (f64, f64) {
     let t = p.takim();
     let tac = &m.tac[t as usize];
-    let s = sl.unwrap_or_else(|| slotOf(p, att));
-    let x0 = ownX(t);
-    let dir = dirOf(t);
+    let s = sl.unwrap_or_else(|| slot_of(p, att));
+    let x0 = own_x(t);
+    let dir = dir_of(t);
     let bd = (ex - x0) * dir;
     let (back, len, wid, sh);
     if att {
@@ -69,13 +69,13 @@ pub fn slotBase0(m: &Mac, ps: &[Oyuncu], p: &Oyuncu, sl: Option<(f64, f64)>, ex:
 }
 
 /// JS durusDef(m, p, k, att): duran top dayanağı k'de slotun yeri.
-pub fn durusDef(m: &Mac, ps: &[Oyuncu], p: &Oyuncu, k: usize, att: bool) -> (f64, f64) {
+pub fn durus_def(m: &Mac, ps: &[Oyuncu], p: &Oyuncu, k: usize, att: bool) -> (f64, f64) {
     let t = p.takim();
-    slotBase0(m, ps, p, None, ownX(t) + dirOf(t) * DUR_A[k], GCY, att)
+    slot_base0(m, ps, p, None, own_x(t) + dir_of(t) * DUR_A[k], GCY, att)
 }
 
 /// JS durusW(f): topun derinliğine göre üç dayanağın payı.
-pub fn durusW(f: f64) -> [f64; 3] {
+pub fn durus_w(f: f64) -> [f64; 3] {
     if f <= DUR_A[0] {
         return [1.0, 0.0, 0.0];
     }
@@ -99,17 +99,17 @@ pub struct Yer {
 }
 
 /// JS slotBase(m, p, E, att): slotun yeri, takımın duran top dizilişiyle kaydırılmış.
-pub fn slotBase(m: &Mac, ps: &[Oyuncu], p: &Oyuncu, ex: f64, ey: f64, att: bool) -> Yer {
-    let b = slotBase0(m, ps, p, None, ex, ey, att);
+pub fn slot_base(m: &Mac, ps: &[Oyuncu], p: &Oyuncu, ex: f64, ey: f64, att: bool) -> Yer {
+    let b = slot_base0(m, ps, p, None, ex, ey, att);
     let t = p.takim();
     let D = match m.tac.get(t as usize).and_then(|q| q.durus.as_ref()) {
         Some(d) => d,
         None => return Yer { x: b.0, y: b.1, el: None },
     };
     let pl = if att { D.huc.iter().map(|v| v.iter().map(|q| (q.f, q.y)).collect::<Vec<_>>()).collect::<Vec<_>>() } else { D.sav.iter().map(|v| v.iter().map(|q| (q.f, q.y)).collect::<Vec<_>>()).collect::<Vec<_>>() };
-    let x0 = ownX(t);
-    let dir = dirOf(t);
-    let w = durusW((ex - x0) * dir);
+    let x0 = own_x(t);
+    let dir = dir_of(t);
+    let w = durus_w((ex - x0) * dir);
     let (mut ox, mut oy, mut el) = (0.0, 0.0, 0.0);
     for k in 0..3 {
         if w[k] == 0.0 || w[k] != w[k] {
@@ -122,7 +122,7 @@ pub fn slotBase(m: &Mac, ps: &[Oyuncu], p: &Oyuncu, ex: f64, ey: f64, att: bool)
         if q.0.is_some() || q.1.is_some() {
             el += w[k];
         }
-        let d0 = durusDef(m, ps, p, k, att);
+        let d0 = durus_def(m, ps, p, k, att);
         if let Some(f) = q.0 {
             ox += w[k] * (x0 + dir * f * GKX - d0.0);
         }
@@ -188,7 +188,7 @@ pub fn bekci(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (
     let sp = jmax(1e-6, crate::kural::enerji::spd(p));
     let mut t = bek_re(p) + hypot(g0.0 - p.x, g0.1 - p.y) / sp;
     // taşıyıcı kale çizgisini geçemez: öngörü çizgide kesilir
-    let gx = ownX(p.takim());
+    let gx = own_x(p.takim());
     let (dx0, dx1) = (ex - gx, ex + hvx * t - gx);
     if dx0 * dx1 <= 0.0 && hvx.abs() > 1e-9 {
         t = jmax(0.0, (gx - ex) / hvx);
@@ -197,7 +197,7 @@ pub fn bekci(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (
 }
 
 fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, _k: &dyn Kural) -> (f64, f64) {
-    let gx = ownX(p.takim());
+    let gx = own_x(p.takim());
     let dx = ex - gx;
     let dy = ey - GCY;
     let L = {
@@ -217,23 +217,23 @@ fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, _k: &dyn Kural) -> (
         let l = nz(hypot(x, y));
         (x / l, y / l)
     };
-    let mut r = if let Some(vb) = m.filter(|m| m.sut).and_then(|m| m.holder).filter(|hh| hh.govde.team != p.team).map(|hh| dis::sutHiz(hh.govde)) {
+    let mut r = if let Some(vb) = m.filter(|m| m.sut).and_then(|m| m.holder).filter(|hh| hh.govde.team != p.team).map(|hh| dis::sut_hiz(hh.govde)) {
         bek_derinlik(p, ex, ey, gx, L, bxu, byu, vb)
     } else {
         let cov = Q.bek_body + 0.8 * bek_dl(p);
-        let MoE = jmax(0.4, MOUTH * dx.abs() / L);
-        cl(L * cl(1.0 - cov / MoE, 0.1, 0.55) + 0.08 * (bekY(p, mek::ACI_DARALT) - 10.0), 2.5, KR)
+        let mo_e = jmax(0.4, MOUTH * dx.abs() / L);
+        cl(L * cl(1.0 - cov / mo_e, 0.1, 0.55) + 0.08 * (bek_y(p, mek::ACI_DARALT) - 10.0), 2.5, KR)
     };
     if let Some(m) = m {
-        if L > S.bekSupL {
-            let mut dD = 1e9;
+        if L > S.bek_sup_l {
+            let mut d_d = 1e9;
             for qi in 0..m.ps.len() {
                 let q = m.ps.get(qi);
                 if q.team == p.team && !q.bekci() {
-                    dD = jmin(dD, hypot(q.x - gx, q.y - GCY));
+                    d_d = jmin(d_d, hypot(q.x - gx, q.y - GCY));
                 }
             }
-            let rs = jmin(jmin(S.bekSupMax + 0.3 * (bekY(p, mek::ACI_DARALT) - 10.0), dD - S.bekSupArka), KR + (L - S.bekSupL) * S.bekSupK);
+            let rs = jmin(jmin(S.bek_sup_max + 0.3 * (bek_y(p, mek::ACI_DARALT) - 10.0), d_d - S.bek_sup_arka), KR + (L - S.bek_sup_l) * S.bek_sup_k);
             if rs > r {
                 r = rs;
             }
@@ -264,16 +264,16 @@ fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, _k: &dyn Kural) -> (
                     }
                 }
                 let w = jmax(cl((dmin - 1.5) / 3.0, 0.0, 1.0), cl((24.0 - L) / 10.0, 0.0, 1.0)) * cl((30.0 - L) / 6.0, 0.0, 1.0);
-                let kk = bekY(p, mek::KARSI_KARSIYA);
+                let kk = bek_y(p, mek::KARSI_KARSIYA);
                 let yakin = L < KR + 6.0;
-                let rOut = cl(
+                let r_out = cl(
                     if yakin { L - 1.2 - 0.05 * (20.0 - kk) } else { jmax(L * (0.35 + 0.01 * kk), L - (6.0 - 0.15 * kk)) },
                     2.5,
                     jmax(2.5, jmin(KR + 4.0, L - if yakin { 1.2 } else { 2.5 })),
                 );
                 /* (rY: taşıyıcının şut hazırlığına göre çıkış yarıçapı — artık kullanılmıyor, hesaplanmaz) */
-                if yakin && rOut > r {
-                    r += (rOut - r) * w;
+                if yakin && r_out > r {
+                    r += (r_out - r) * w;
                 } /* şut hazırlığında her tik bir adım öne çıkma yok (dalış modelinde öne çıkan Bekçi tepkisi içinde yetişemiyordu); yalnız taşıyıcı dibe girince (karşı karşıya) üstüne çıkar */
             }
         }
@@ -452,7 +452,7 @@ fn bek_derinlik0(ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64,
 }
 
 /// JS koyHedef(p, h, ax, ay): taşıyıcının önüne gövde koyma noktası.
-pub fn koyHedef(p: &Oyuncu, h: &Oyuncu, ax: f64, ay: f64) -> (f64, f64) {
+pub fn koy_hedef(p: &Oyuncu, h: &Oyuncu, ax: f64, ay: f64) -> (f64, f64) {
     let BD = 0.95 * TQ.min_d;
     let sp = hypot(h.vx, h.vy);
     let (mut ux, mut uy) = (ax, ay);
@@ -477,17 +477,17 @@ pub struct Yon {
     pub ad: &'static str,
     pub ux: f64,
     pub uy: f64,
-    pub sM: f64,
+    pub s_m: f64,
 }
 
 /// JS tasHamle(h, dt): taşıyıcının gidebileceği yönler (kale, hızı, duvar boyu).
-pub fn tasHamle(hx: f64, hy: f64, hvx: f64, hvy: f64, dt: u8) -> Vec<Yon> {
-    let ox = ownX(dt);
+pub fn tas_hamle(hx: f64, hy: f64, hvx: f64, hvy: f64, dt: u8) -> Vec<Yon> {
+    let ox = own_x(dt);
     let mut yon: Vec<Yon> = Vec::new();
     let mut ek = |ad: &'static str, ux: f64, uy: f64| {
         let l = hypot(ux, uy);
         if l > 0.0 {
-            yon.push(Yon { ad, ux: ux / l, uy: uy / l, sM: 0.0 });
+            yon.push(Yon { ad, ux: ux / l, uy: uy / l, s_m: 0.0 });
         }
     };
     ek("kale", ox - hx, GCY - hy);
@@ -508,18 +508,18 @@ pub fn tasHamle(hx: f64, hy: f64, hvx: f64, hvy: f64, dt: u8) -> Vec<Yon> {
         ek("duvar", 10.0 * g, (if wy == 0.0 { -1.0 } else { 1.0 }) * jmin(if dw - 1.5 > 0.0 { dw - 1.5 } else { 0.0 }, 2.5));
     }
     for Y in yon.iter_mut() {
-        let mut sM = f64::INFINITY;
+        let mut s_m = f64::INFINITY;
         if Y.ux > 0.0 {
-            sM = jmin(sM, (GW - hx) / Y.ux);
+            s_m = jmin(s_m, (GW - hx) / Y.ux);
         }
         if Y.ux < 0.0 {
-            sM = jmin(sM, -hx / Y.ux);
+            s_m = jmin(s_m, -hx / Y.ux);
         }
         if Y.uy > 0.0 {
-            sM = jmin(sM, (GH - hy) / Y.uy);
+            s_m = jmin(s_m, (GH - hy) / Y.uy);
         }
         if Y.uy < 0.0 {
-            sM = jmin(sM, -hy / Y.uy);
+            s_m = jmin(s_m, -hy / Y.uy);
         }
         {
             let R = Q.kuyu_a;
@@ -531,24 +531,24 @@ pub fn tasHamle(hx: f64, hy: f64, hvx: f64, hvy: f64, dt: u8) -> Vec<Yon> {
             if D >= 0.0 {
                 let r = -b - D.sqrt();
                 if r > 0.0 {
-                    sM = jmin(sM, r);
+                    s_m = jmin(s_m, r);
                 }
             }
         }
-        Y.sM = jmax(0.0, sM);
+        Y.s_m = jmax(0.0, s_m);
     }
     yon
 }
 
 /// match.js ALAN_KOSU_TP(pr, d, v1): sprint profiliyle `d` yolun süresi (saf).
-pub fn ALAN_KOSU_TP(pr: Option<dis::KosuPr>, d: f64, v1: f64) -> f64 {
+pub fn alan_kosu_tp(pr: Option<dis::KosuPr>, d: f64, v1: f64) -> f64 {
     match pr {
         Some(pr) if d > 0.0 => {
-            let dS = v1 * pr.Ts;
-            if d <= dS {
+            let d_s = v1 * pr.Ts;
+            if d <= d_s {
                 d / v1
             } else {
-                pr.Ts + (d - dS) / (v1 * pr.k)
+                pr.Ts + (d - d_s) / (v1 * pr.k)
             }
         }
         _ => d / v1,
@@ -558,45 +558,45 @@ pub fn ALAN_KOSU_TP(pr: Option<dis::KosuPr>, d: f64, v1: f64) -> f64 {
 /// JS yolBag(p, h) dönüşü: kesişmenin değişmeyenleri (hızlar, tepki, sprint profilleri, varış tabloları).
 #[derive(Clone, Debug)]
 pub struct YolBag {
-    pub vH: f64,
-    pub vP: f64,
-    pub tR0: f64,
-    pub prH: Option<dis::KosuPr>,
-    pub prP: Option<dis::KosuPr>,
-    pub vSh: f64,
-    pub gH: GecTab,
-    pub gP: GecTab,
+    pub v_h: f64,
+    pub v_p: f64,
+    pub t_r0: f64,
+    pub pr_h: Option<dis::KosuPr>,
+    pub pr_p: Option<dis::KosuPr>,
+    pub v_sh: f64,
+    pub g_h: GecTab,
+    pub g_p: GecTab,
 }
 impl YolBag {
     /// JS `KT(q, d, v1)`: `h` mı `p` mi.
     #[inline]
     pub fn KT(&self, hmi: bool, d: f64, v1: f64) -> f64 {
-        ALAN_KOSU_TP(if hmi { self.prH } else { self.prP }, d, v1)
+        alan_kosu_tp(if hmi { self.pr_h } else { self.pr_p }, d, v1)
     }
 }
 
 /// yolBag/yolKesis'in taşıyıcı hız yanılgısı (görüşe bağlı, 15 tikte bir değişir).
-pub fn hizYanilgi(p: &Oyuncu, h: &Oyuncu, _d: &KafaD, dtik: Option<f64>) -> f64 {
+pub fn hiz_yanilgi(p: &Oyuncu, h: &Oyuncu, _d: &KafaD, dtik: Option<f64>) -> f64 {
     let g = p.govde.yet.ozk("gorus");
     let hs = sinh_k(12.9898 * (p.id + 1.0) + 4.1414 * (h.id + 1.0) + 78.233 * (dtik.filter(|t| *t != 0.0 && *t == *t).unwrap_or(0.0) / 15.0).floor());
     1.0 + (kesir(hs) - 0.5) * (20.0 - g) * 0.02
 }
 
 /// JS yolBag(p, h): `p` (presçi) ile `h` (taşıyıcı) arasındaki yarışın değişmeyenleri.
-pub fn yolBag(p: &Oyuncu, h: &Oyuncu, k: &dyn Kural, d: &KafaD, dtik: Option<f64>) -> YolBag {
-    let prH = dis::ALAN_KOSU_PR(h, k);
-    let prP = dis::ALAN_KOSU_PR(p, k);
-    let vSh = vSp(h, k);
-    let vSq = vSp(p, k);
+pub fn yol_bag(p: &Oyuncu, h: &Oyuncu, k: &dyn Kural, d: &KafaD, dtik: Option<f64>) -> YolBag {
+    let pr_h = dis::alan_kosu_pr(h, k);
+    let pr_p = dis::alan_kosu_pr(p, k);
+    let v_sh = v_sp(h, k);
+    let v_sq = v_sp(p, k);
     YolBag {
-        vH: vSh * dis::topK(h) * hizYanilgi(p, h, d, dtik),
-        vP: vSq,
-        tR0: jmax(0.0, TEPKI(p, Tepki::Kovala, k)),
-        prH,
-        prP,
-        vSh,
-        gH: gecTabV(h, Some(vSh), k),
-        gP: gecTabV(p, Some(vSq), k),
+        v_h: v_sh * dis::top_k(h) * hiz_yanilgi(p, h, d, dtik),
+        v_p: v_sq,
+        t_r0: jmax(0.0, TEPKI(p, Tepki::Kovala, k)),
+        pr_h,
+        pr_p,
+        v_sh,
+        g_h: gec_tab_v(h, Some(v_sh), k),
+        g_p: gec_tab_v(p, Some(v_sq), k),
     }
 }
 
@@ -610,74 +610,74 @@ pub struct Kesis {
 }
 
 /// JS yolKesis(p, h, Y, cx): taşıyıcı `Y` yönünde koşarsa `p`nin onu en erken kestiği nokta.
-pub fn yolKesis(p: &Oyuncu, h: &Oyuncu, Y: &Yon, cx: &YolBag) -> Kesis {
-    let (vH, vP, tR0) = (cx.vH, cx.vP, cx.tR0);
+pub fn yol_kesis(p: &Oyuncu, h: &Oyuncu, Y: &Yon, cx: &YolBag) -> Kesis {
+    let (v_h, v_p, t_r0) = (cx.v_h, cx.v_p, cx.t_r0);
     let wx = h.x - p.x;
     let wy = h.y - p.y;
     let a = wx * Y.ux + wy * Y.uy;
     let w2 = wx * wx + wy * wy;
-    let nok = |s: f64| (h.x + Y.ux * jmin(Y.sM, jmax(0.0, s)), h.y + Y.uy * jmin(Y.sM, jmax(0.0, s)));
-    let (mut vh, mut vp, mut tR, mut s, mut once) = (vH, vP, tR0, 0.0, true);
+    let nok = |s: f64| (h.x + Y.ux * jmin(Y.s_m, jmax(0.0, s)), h.y + Y.uy * jmin(Y.s_m, jmax(0.0, s)));
+    let (mut vh, mut vp, mut t_r, mut s, mut once) = (v_h, v_p, t_r0, 0.0, true);
     for _ in 0..3 {
         let k = vp / vh;
         let A = 1.0 - k * k;
-        let B = 2.0 * a + 2.0 * vp * vp * tR / vh;
-        let Cq = w2 - vp * vp * tR * tR;
-        let sMin = tR * vh;
+        let B = 2.0 * a + 2.0 * vp * vp * t_r / vh;
+        let cq = w2 - vp * vp * t_r * t_r;
+        let s_min = t_r * vh;
         let mut r: Option<f64> = None;
         if A.abs() < 1e-9 {
-            if B != 0.0 && -Cq / B >= sMin {
-                r = Some(-Cq / B);
+            if B != 0.0 && -cq / B >= s_min {
+                r = Some(-cq / B);
             }
         } else {
-            let D = B * B - 4.0 * A * Cq;
+            let D = B * B - 4.0 * A * cq;
             if D >= 0.0 {
                 let mut x = [(-B - D.sqrt()) / (2.0 * A), (-B + D.sqrt()) / (2.0 * A)];
                 if x[0] > x[1] {
                     x.swap(0, 1);
                 }
                 for xx in x {
-                    if xx >= sMin && r.is_none() {
+                    if xx >= s_min && r.is_none() {
                         r = Some(xx);
                     }
                 }
             }
         }
-        once = matches!(r, Some(rr) if rr <= Y.sM);
-        s = if once { r.unwrap() } else if k < 1.0 { (jmax(0.0, w2 - a * a)).sqrt() * k / (1.0 - k * k).sqrt() - a } else { Y.sM };
-        s = jmin(Y.sM, jmax(0.0, s));
+        once = matches!(r, Some(rr) if rr <= Y.s_m);
+        s = if once { r.unwrap() } else if k < 1.0 { (jmax(0.0, w2 - a * a)).sqrt() * k / (1.0 - k * k).sqrt() - a } else { Y.s_m };
+        s = jmin(Y.s_m, jmax(0.0, s));
         let P = nok(s);
         let d = hypot(P.0 - p.x, P.1 - p.y);
-        vh = if s > 0.0 { s / cx.KT(true, s, vH) } else { vH };
-        vp = if d > 0.0 { d / cx.KT(false, d, vP) } else { vP };
-        tR = tR0 + jmax(0.0, gecOf(&cx.gP, P.0, P.1, Some(d))) - jmax(0.0, gecOf(&cx.gH, P.0, P.1, Some(s)));
+        vh = if s > 0.0 { s / cx.KT(true, s, v_h) } else { v_h };
+        vp = if d > 0.0 { d / cx.KT(false, d, v_p) } else { v_p };
+        t_r = t_r0 + jmax(0.0, gec_of(&cx.g_p, P.0, P.1, Some(d))) - jmax(0.0, gec_of(&cx.g_h, P.0, P.1, Some(s)));
     }
     let P = nok(s);
     Kesis { x: P.0, y: P.1, s, once }
 }
 
 /// JS presKesis'in hesabı (yönlerin tehlikesi verilmiş): en tehlikeli kaçışı kapatan kesişme.
-pub fn presKesisT(p: &Oyuncu, h: &Oyuncu, yol: &[Yon], cx: &YolBag, tehl: &[f64]) -> Option<Kesis> {
-    let (vH, vP, tR) = (cx.vSh, cx.vP, cx.tR0);
-    let K: Vec<Kesis> = yol.iter().map(|Y| yolKesis(p, h, Y, cx)).collect();
+pub fn pres_kesis_t(p: &Oyuncu, h: &Oyuncu, yol: &[Yon], cx: &YolBag, tehl: &[f64]) -> Option<Kesis> {
+    let (v_h, v_p, t_r) = (cx.v_sh, cx.v_p, cx.t_r0);
+    let K: Vec<Kesis> = yol.iter().map(|Y| yol_kesis(p, h, Y, cx)).collect();
     let mut best: Option<Kesis> = None;
     let (mut bv, mut bt) = (f64::INFINITY, f64::INFINITY);
     for (xi, X) in K.iter().enumerate() {
         let dX = hypot(X.x - p.x, X.y - p.y);
-        let tX = tR + dX / vP;
+        let t_x = t_r + dX / v_p;
         let mut kal = f64::NEG_INFINITY;
         for (j, Z) in yol.iter().enumerate() {
-            let qa = jmin(Z.sM, jmax(0.0, (X.x - h.x) * Z.ux + (X.y - h.y) * Z.uy));
+            let qa = jmin(Z.s_m, jmax(0.0, (X.x - h.x) * Z.ux + (X.y - h.y) * Z.uy));
             let Qx = h.x + Z.ux * qa;
             let Qy = h.y + Z.uy * qa;
-            let kap = if j == xi { X.once } else { tX + hypot(Qx - X.x, Qy - X.y) / vP <= qa / vH };
+            let kap = if j == xi { X.once } else { t_x + hypot(Qx - X.x, Qy - X.y) / v_p <= qa / v_h };
             if !kap {
                 kal = jmax(kal, tehl[j]);
             }
         }
-        if kal < bv || (kal == bv && tX < bt) {
+        if kal < bv || (kal == bv && t_x < bt) {
             bv = kal;
-            bt = tX;
+            bt = t_x;
             best = Some(*X);
         }
     }
@@ -685,13 +685,13 @@ pub fn presKesisT(p: &Oyuncu, h: &Oyuncu, yol: &[Yon], cx: &YolBag, tehl: &[f64]
 }
 
 /// JS presKesis(p, h, dt, m).
-pub fn presKesis(p: &Oyuncu, h: &Oyuncu, dt: u8, k: &dyn Kural, d: &KafaD, dtik: Option<f64>) -> Option<Kesis> {
-    let yol = tasHamle(h.x, h.y, h.vx, h.vy, dt);
+pub fn pres_kesis(p: &Oyuncu, h: &Oyuncu, dt: u8, k: &dyn Kural, d: &KafaD, dtik: Option<f64>) -> Option<Kesis> {
+    let yol = tas_hamle(h.x, h.y, h.vx, h.vy, dt);
     if yol.is_empty() {
         return Some(Kesis { x: h.x, y: h.y, s: 0.0, once: false });
     }
     let att = h.takim();
-    let cx = yolBag(p, h, k, d, dtik);
-    let tehl: Vec<f64> = yol.iter().map(|Y| dis::threat(att, h.x + Y.ux * Y.sM, h.y + Y.uy * Y.sM)).collect();
-    presKesisT(p, h, &yol, &cx, &tehl)
+    let cx = yol_bag(p, h, k, d, dtik);
+    let tehl: Vec<f64> = yol.iter().map(|Y| dis::threat(att, h.x + Y.ux * Y.s_m, h.y + Y.uy * Y.s_m)).collect();
+    pres_kesis_t(p, h, &yol, &cx, &tehl)
 }

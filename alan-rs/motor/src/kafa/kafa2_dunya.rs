@@ -4,7 +4,7 @@
 #![allow(non_snake_case, clippy::too_many_arguments)]
 
 use super::kafa2_bag as dis;
-use super::kafa2_bag::{ALAN_HZ};
+use super::kafa2_bag::{alan_hz};
 use super::kafa2_baglam::*;
 use crate::mat::{hypot, jmax, jmin, jround};
 use crate::model::Oyuncu;
@@ -35,18 +35,18 @@ pub fn ref_bul0(k: &Kafa, src: &[Op], pid: Pid) -> Option<Op> {
 
 /// JS bekKay(p, B, T) (decide.js:4824): Bekçi'nin topa göre yeri, T + sutHazir tikte varabildiği kadar.
 /// Bekçi yer değiştirdiyse yeni yeri (yeni kopya), değiştirmediyse `None`: "değişti mi" açıkça (MIMARI.md 3.2 B).
-pub fn bekKay_d(k: &Kafa, p: &Op, B: Nokta, T: f64) -> Option<Op> {
+pub fn bek_kay_d(k: &Kafa, p: &Op, B: Nokta, T: f64) -> Option<Op> {
     if p.noTouch {
         return None;
     }
-    let g = dis::AS_bekci(k, p, B, None);
+    let g = dis::as_bekci(k, p, B, None);
     let dx = g.x - p.x;
     let dy = g.y - p.y;
     let L = hypot(dx, dy);
     if L < 0.05 {
         return None;
     }
-    let mv = jmin(L, (T + k.D.sutHazir) * (0.17 + 0.006 * ALAN_HZ(p)) * dis::ALAN_SPRE(k, p) * crate::temas::bek_kay(p));
+    let mv = jmin(L, (T + k.D.sut_hazir) * (0.17 + 0.006 * alan_hz(p)) * dis::alan_spre(k, p) * crate::temas::bek_kay(p));
     if mv > 0.0 {
         Some(kxy(p, p.x + dx / L * mv, p.y + dy / L * mv))
     } else {
@@ -55,20 +55,20 @@ pub fn bekKay_d(k: &Kafa, p: &Op, B: Nokta, T: f64) -> Option<Op> {
 }
 /// JS bekKay(p, B, T): değişmediyse aynı nesne.
 pub fn bekKay(k: &Kafa, p: &Op, B: Nokta, T: f64) -> Op {
-    bekKay_d(k, p, B, T).unwrap_or_else(|| p.clone())
+    bek_kay_d(k, p, B, T).unwrap_or_else(|| p.clone())
 }
 
 /// JS bekSav(p, h, T, src) (decide.js:4789): Bekçi T tik boyunca topu taşıyanın (h, hızıyla ilerler)
 /// karşısına kayar (kale çevresinde yanal hız sınırıyla).
-pub fn bekSav(k: &Kafa, p: &Op, h: &Oyuncu, T: f64, src: &[Op]) -> Op {
+pub fn bek_sav(k: &Kafa, p: &Op, h: &Oyuncu, T: f64, src: &[Op]) -> Op {
     if p.noTouch {
         return p.clone();
     }
     let mut q = kv(p);
     let gx = if t0(p.team) { 0.0 } else { GW };
     let kc0 = crate::temas::bek_kay(p);
-    let v0 = dis::AM_spd(k, p);
-    let sK = dis::AM_sprK(k, p);
+    let v0 = dis::am_spd(k, p);
+    let s_k = dis::am_spr_k(k, p);
     let mut t = 0usize;
     while (t as f64) < T {
         let tf = t as f64;
@@ -76,12 +76,12 @@ pub fn bekSav(k: &Kafa, p: &Op, h: &Oyuncu, T: f64, src: &[Op]) -> Op {
         let hv = crate::dunya::Yerde { govde: h, x: h.x + 0.5 * veya(h.vx, 0.0) * tf, y: h.y + 0.5 * veya(h.vy, 0.0) * tf };
         let g = {
             let fm = dis::Fm { tac: &[], ps: src, holder: Some(hv) };
-            dis::AS_bekci(k, p, nk(hv.x, hv.y), Some(&fm))
+            dis::as_bekci(k, p, nk(hv.x, hv.y), Some(&fm))
         };
         let dx = g.x - q.x;
         let dy = g.y - q.y;
         let L = hypot(dx, dy);
-        let v = v0 * if L > 1.2 { sK } else { 1.0 };
+        let v = v0 * if L > 1.2 { s_k } else { 1.0 };
         let want = if L < 0.3 { 0.0 } else { jmin(v, 0.25 * L) };
         let mut wx = if L != 0.0 { dx / L * want } else { 0.0 };
         let mut wy = if L != 0.0 { dy / L * want } else { 0.0 };
@@ -103,7 +103,7 @@ pub fn bekSav(k: &Kafa, p: &Op, h: &Oyuncu, T: f64, src: &[Op]) -> Op {
                 }
             }
         }
-        dis::AM_ivme(k, &mut q, wx, wy, v);
+        dis::am_ivme(k, &mut q, wx, wy, v);
         q.x = jmax(0.8, jmin(GW - 0.8, q.x + q.vx));
         q.y = jmax(0.8, jmin(GH - 0.8, q.y + q.vy));
         t += 1;
@@ -136,14 +136,14 @@ fn kos_adim(k: &Kafa, q: &mut Oyuncu, t: usize, gx: &mut f64, gy: &mut f64, sw: 
             wy = ey / e * v;
         }
     }
-    dis::AM_ivme(k, q, wx, wy, vmax);
+    dis::am_ivme(k, q, wx, wy, vmax);
     q.x += q.vx;
     q.y += q.vy;
 }
 
 /// JS pwKos(p, gx0, gy0, sw0, vmax, rc, n, IV) (decide.js:4838): oyuncunun hedefe koşusu, n tik
 /// (tik başına önbellekli: aynı oyuncu nesnesi ve aynı koşu → kaldığı yerden sürer).
-pub fn pwKos(k: &mut Kafa, p: &Op, gx0: f64, gy0: f64, sw0: Option<Sw>, vmax: f64, rc: f64, n: usize) -> Op {
+pub fn pw_kos(k: &mut Kafa, p: &Op, gx0: f64, gy0: f64, sw0: Option<Sw>, vmax: f64, rc: f64, n: usize) -> Op {
     let anahtar = Arc::as_ptr(p) as usize;
     let mut L = match k.ob.pwm.remove(&anahtar) {
         Some((_, L)) => L,
@@ -203,17 +203,17 @@ pub fn pwKos(k: &mut Kafa, p: &Op, gx0: f64, gy0: f64, sw0: Option<Sw>, vmax: f6
 }
 
 /// JS adamMi (predictWorld): adam adama savunan
-fn adamMi(k: &Kafa, p: &Oyuncu) -> bool {
-    p.hal.markRef.is_some() && dis::AM_tl(k, p, "sav", "adam") >= 0.5
+fn adam_mi(k: &Kafa, p: &Oyuncu) -> bool {
+    p.hal.markRef.is_some() && dis::am_tl(k, p, "sav", "adam") >= 0.5
 }
 
 /// JS predictWorld(src, team, B, T, cevapAyri, resp, pasta, tas) (decide.js:4920): top B'deyken T tik
 /// sonra herkes nerede. `resp`: cevap veren rakipler (sıra; verilmezse topa en yakın iki rakip),
 /// `pasta`: pres işindekiler topa koşar, `tas`: topu taşıyan (pres işindekiler onu izler).
-pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevapAyri: bool, resp: Option<&[usize]>, pasta: bool, tas: Option<Nokta>) -> Dunya {
+pub fn predict_world(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap_ayri: bool, resp: Option<&[usize]>, pasta: bool, tas: Option<Nokta>) -> Dunya {
     let n_src = src.len();
     // near: topa en yakın iki rakip (Bekçi değil), kararlı sıralama
-    let near: Vec<usize> = if cevapAyri {
+    let near: Vec<usize> = if cevap_ayri {
         Vec::new()
     } else {
         let mut v: Vec<(usize, f64)> = (0..n_src).filter(|&i| src[i].team != team && !bekci(&src[i])).map(|i| (i, uz(src[i].x, src[i].y, B.x, B.y))).collect();
@@ -245,12 +245,12 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
             _ => None,
         };
         let mr_id = |k: &Kafa, p: &Oyuncu| ref_nesne(k, src, p.hal.markRef.unwrap()).id;
-        let acik: Vec<Op> = basan.iter().filter(|&&i| adamMi(k, &src[i]) && Some(mr_id(k, &src[i])) != tid).map(|&i| ref_bul(k, src, src[i].hal.markRef.unwrap())).collect();
+        let acik: Vec<Op> = basan.iter().filter(|&&i| adam_mi(k, &src[i]) && Some(mr_id(k, &src[i])) != tid).map(|&i| ref_bul(k, src, src[i].hal.markRef.unwrap())).collect();
         let mut alinan: Vec<Op> = Vec::new();
         if !acik.is_empty() && tid.is_some() {
             for fi in 0..n_src {
                 let f = &src[fi];
-                if f.team == team || bekci(f) || basan.contains(&fi) || !adamMi(k, f) || Some(mr_id(k, f)) != tid {
+                if f.team == team || bekci(f) || basan.contains(&fi) || !adam_mi(k, f) || Some(mr_id(k, f)) != tid {
                     continue;
                 }
                 let mut bq: Option<&Op> = None;
@@ -280,7 +280,7 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
             out.push(if p.noTouch || (p.x == B.x && p.y == B.y) { p.clone() } else { bekKay(k, p, B, T) });
             continue;
         }
-        let sp = 0.17 + 0.006 * ALAN_HZ(p);
+        let sp = 0.17 + 0.006 * alan_hz(p);
         let (mut gx, mut gy);
         let mut sw: Option<Sw> = None;
         let pm;
@@ -319,7 +319,7 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
                     let mr: Option<Op> = match &devir[i] {
                         Some(d) => Some(d.clone()),
                         None => {
-                            if p.hal.markRef.is_some() && dis::AM_tl(k, p, "sav", "adam") >= 0.5 {
+                            if p.hal.markRef.is_some() && dis::am_tl(k, p, "sav", "adam") >= 0.5 {
                                 Some(ref_bul(k, src, p.hal.markRef.unwrap()))
                             } else {
                                 None
@@ -336,15 +336,15 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
                         if let (Some(kv_), Some(otx)) = (&mr.hal._kv, mr.hal.otx) {
                             let oty = mr.hal.oty.unwrap_or(f64::NAN);
                             let L2 = veya(hypot(gxk - otx, GCY - oty), 1.0);
-                            let t1 = hypot(kv_.x - mr.x, kv_.y - mr.y) / ((0.17 + 0.006 * ALAN_HZ(&mr)) * dis::ALAN_SPRE(k, &mr));
-                            let lag = jmax(1.0, jround(dis::ALAN_TEPKI(k, p, "algi"))) * 0.5;
+                            let t1 = hypot(kv_.x - mr.x, kv_.y - mr.y) / ((0.17 + 0.006 * alan_hz(&mr)) * dis::alan_spre(k, &mr));
+                            let lag = jmax(1.0, jround(dis::alan_tepki(k, p, "algi"))) * 0.5;
                             sw = Some(Sw { yer: false, t: Some(t1 + lag), x: otx + (gxk - otx) / L2 * 1.6, y: oty + (GCY - oty) / L2 * 1.6 });
                         }
                     } else {
                         let m = k.mac.as_ref().unwrap();
                         let hold = m.holder.map(|h| m.ps[h].clone());
                         let fm = dis::Fm { tac: &m.tac, ps: &m.ps, holder: hold.as_deref().map(crate::dunya::Yerde::oyuncu) };
-                        let sb = dis::AS_slotBase(k, &fm, p, B, false);
+                        let sb = dis::as_slot_base(k, &fm, p, B, false);
                         gx = sb.x;
                         gy = sb.y;
                         pm = false;
@@ -385,11 +385,11 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
             }
         }
         let rk = p.team != team;
-        let vmax = sp * if rk || p.sprint { dis::ALAN_SPR(k, p) } else { 1.0 };
-        let rc = if rk { jmax(0.0, dis::ALAN_TEPKI(k, p, "kovala")) } else { 0.0 };
+        let vmax = sp * if rk || p.sprint { dis::alan_spr(k, p) } else { 1.0 };
+        let rc = if rk { jmax(0.0, dis::alan_tepki(k, p, "kovala")) } else { 0.0 };
         let n = jmin(jround(T), 60.0).max(0.0) as usize;
         if pm {
-            out.push(pwKos(k, p, gx, gy, sw, vmax, rc, n));
+            out.push(pw_kos(k, p, gx, gy, sw, vmax, rc, n));
             continue;
         }
         let mut q = kv(p);
@@ -402,11 +402,11 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
 }
 
 /// JS bekYerW(w, team, B, T) (decide.js:5796): rakip Bekçi topa göre yerleşmiş dünya.
-pub fn bekYerW(k: &Kafa, w: &[Op], team: f64, B: Nokta, T: Option<f64>) -> Dunya {
+pub fn bek_yer_w(k: &Kafa, w: &[Op], team: f64, B: Nokta, T: Option<f64>) -> Dunya {
     let i = w.iter().position(|z| z.team != team && bekci(z) && !z.noTouch);
     let mut w2 = w.to_vec();
     if let Some(i) = i {
-        if let Some(b2) = bekKay_d(k, &w[i], B, T.unwrap_or(30.0)) {
+        if let Some(b2) = bek_kay_d(k, &w[i], B, T.unwrap_or(30.0)) {
             w2[i] = b2;
         }
     }
@@ -415,9 +415,9 @@ pub fn bekYerW(k: &Kafa, w: &[Op], team: f64, B: Nokta, T: Option<f64>) -> Dunya
 
 /// JS geriCekil(w, team, A, E, T, ilk) (decide.js:6779): taşıyıcı A'dan E'ye sürerken yakındaki
 /// savunmacıların T tikteki cevabı (pres: önüne, arkadakiler: izler, ötekiler: E çevresine).
-pub fn geriCekil(k: &Kafa, w: &[Op], team: f64, A: Nokta, E: Nokta, T: f64, ilk: bool) -> Dunya {
+pub fn geri_cekil(k: &Kafa, w: &[Op], team: f64, A: Nokta, E: Nokta, T: f64, ilk: bool) -> Dunya {
     let gx = if t0(team) { GW } else { 0.0 };
-    let dA = hypot(gx - A.x, GCY - A.y);
+    let d_a = hypot(gx - A.x, GCY - A.y);
     let mx = E.x - A.x;
     let my = E.y - A.y;
     w.iter()
@@ -429,13 +429,13 @@ pub fn geriCekil(k: &Kafa, w: &[Op], team: f64, A: Nokta, E: Nokta, T: f64, ilk:
             if d > 16.0 {
                 return o.clone();
             }
-            let run = jmax(0.0, T - if ilk { jmax(0.0, dis::ALAN_TEPKI(k, o, "kovala")) } else { 0.0 }) * (0.17 + 0.006 * ALAN_HZ(o)) * dis::ALAN_SPRE(k, o);
+            let run = jmax(0.0, T - if ilk { jmax(0.0, dis::alan_tepki(k, o, "kovala")) } else { 0.0 }) * (0.17 + 0.006 * alan_hz(o)) * dis::alan_spre(k, o);
             let (tx, ty);
             if o.press {
                 let gl = veya(hypot(gx - E.x, GCY - E.y), 1.0);
                 tx = E.x + (gx - E.x) / gl * 1.6;
                 ty = E.y + (GCY - E.y) / gl * 1.6;
-            } else if hypot(gx - o.x, GCY - o.y) < dA && d < 10.0 && d > 2.4 + 1.5 {
+            } else if hypot(gx - o.x, GCY - o.y) < d_a && d < 10.0 && d > 2.4 + 1.5 {
                 tx = o.x + mx;
                 ty = o.y + my;
             } else {
@@ -488,7 +488,7 @@ pub fn paylastir(k: &Kafa, W: &[Op], team: f64, T: f64, haric: &[usize]) -> Duny
                 continue;
             }
             let p = &W[z];
-            let t = jmax(0.0, dis::ALAN_TEPKI(k, p, "kovala")) + hypot(p.x - g.x, p.y - g.y) / ((0.17 + 0.006 * ALAN_HZ(p)) * dis::ALAN_SPRE(k, p));
+            let t = jmax(0.0, dis::alan_tepki(k, p, "kovala")) + hypot(p.x - g.x, p.y - g.y) / ((0.17 + 0.006 * alan_hz(p)) * dis::alan_spre(k, p));
             if t < bt {
                 bt = t;
                 bz = Some(z);
@@ -500,7 +500,7 @@ pub fn paylastir(k: &Kafa, W: &[Op], team: f64, T: f64, haric: &[usize]) -> Duny
         };
         kul.push(bz);
         let d = &W[bz];
-        let run = jmax(0.0, T - jmax(0.0, dis::ALAN_TEPKI(k, d, "kovala"))) * (0.17 + 0.006 * ALAN_HZ(d)) * dis::ALAN_SPRE(k, d);
+        let run = jmax(0.0, T - jmax(0.0, dis::alan_tepki(k, d, "kovala"))) * (0.17 + 0.006 * alan_hz(d)) * dis::alan_spre(k, d);
         let dx = g.x - d.x;
         let dy = g.y - d.y;
         let L = hypot(dx, dy);

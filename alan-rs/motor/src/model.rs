@@ -84,7 +84,7 @@ pub struct Oyuncu {
     /// `_dke`: number (sonradan eklenir)
     pub _dke: Option<f64>,
     /// `_sf`: null|object
-    pub _sf: Option<JP_sf>,
+    pub _sf: Option<JpSf>,
     /// `den`: number (sonradan eklenir)
     pub den: Option<f64>,
     /// `pplan`: object (sonradan eklenir)
@@ -146,9 +146,9 @@ pub struct OyuncuMac {
     /// `bekBas`: null|number
     pub bekBas: Option<f64>,
     /// `hist`: dizi (sonradan eklenir)
-    pub hist: Option<std::sync::Arc<Vec<JPHistE>>>,
+    pub hist: std::sync::Arc<Vec<JPHistE>>,
     /// `lock`: number (sonradan eklenir)
-    pub lock: Option<f64>,
+    pub lock: f64,
     /// `kapPrev`: OYUNCU|null (yerleşim: kapatma işinin adamı)
     pub kapPrev: Option<Pid>,
     /// `zonePrev`: OYUNCU|null
@@ -158,15 +158,15 @@ pub struct OyuncuMac {
     /// `uaPrev`: OYUNCU|null
     pub uaPrev: Option<Pid>,
     /// `rec`: number (sonradan eklenir)
-    pub rec: Option<f64>,
+    pub rec: f64,
     /// `tutQ`: OYUNCU|null
     pub tutQ: Option<Pid>,
     /// `otx`: null|number
     pub otx: Option<f64>,
     /// `_bk`: dizi (sonradan eklenir)
-    pub _bk: Option<std::sync::Arc<Vec<Option<JP_bkE>>>>,
+    pub _bk: Option<std::sync::Arc<Vec<Option<JpBkE>>>>,
     /// `_ktB`: object (sonradan eklenir)
-    pub _ktB: Option<JP_ktB>,
+    pub _ktB: Option<JpKtB>,
     /// `_topSpr`: boolean
     pub _topSpr: bool,
     /// `_kosuK`: null|string
@@ -174,11 +174,11 @@ pub struct OyuncuMac {
     /// `_hizK`: null|number
     pub _hizK: Option<f64>,
     /// `_evx`: number (sonradan eklenir)
-    pub _evx: Option<f64>,
+    pub _evx: f64,
     /// `_evy`: number (sonradan eklenir)
-    pub _evy: Option<f64>,
+    pub _evy: f64,
     /// `_yog`: number (sonradan eklenir)
-    pub _yog: Option<f64>,
+    pub _yog: f64,
     /// `_D0`: number (sonradan eklenir)
     pub _D0: Option<f64>,
     /// `_Dl`: number (sonradan eklenir)
@@ -196,15 +196,15 @@ pub struct OyuncuMac {
     /// `_otB`: null|object (yerleşim: bindirmenin taşıyıcısı; yalnız var/yok okunur)
     pub _otB: Option<Pid>,
     /// `_otE`: object (sonradan eklenir)
-    pub _otE: Option<JP_otE>,
+    pub _otE: Option<JpOtE>,
     /// `_otF`: OYUNCU|null
     pub _otF: Option<Pid>,
     /// `_kv`: null|object
-    pub _kv: Option<JP_kv>,
+    pub _kv: Option<JpKv>,
     /// `_amacJob`: null|string
     pub _amacJob: Option<std::sync::Arc<str>>,
     /// `_kt`: object (sonradan eklenir)
-    pub _kt: Option<JP_kt>,
+    pub _kt: Option<JpKt>,
     /// `_hizF`: number (sonradan eklenir)
     pub _hizF: Option<f64>,
     /// `kuyuT`: number (sonradan eklenir)
@@ -226,9 +226,9 @@ pub struct OyuncuMac {
     /// `holdD`: boolean
     pub holdD: bool,
     /// `_plan`: null|object
-    pub _plan: Option<JP_plan>,
+    pub _plan: Option<JpPlan>,
     /// `_surK`: null|object
-    pub _surK: Option<JP_surK>,
+    pub _surK: Option<JpSurK>,
     /// `_sprIst`: boolean
     pub _sprIst: bool,
     /// `sarj`: boolean
@@ -259,9 +259,9 @@ pub struct OyuncuMac {
     /// `_preT`: number (sonradan eklenir)
     pub _preT: Option<f64>,
     /// `_otA`: object (sonradan eklenir)
-    pub _otA: Option<JP_otA>,
+    pub _otA: Option<JpOtA>,
     /// `_onH`: null|object
-    pub _onH: Option<JP_onH>,
+    pub _onH: Option<JpOnH>,
     /// `_donDir`: number (sonradan eklenir)
     pub _donDir: Option<f64>,
     /// `_donT`: number (sonradan eklenir)
@@ -279,7 +279,7 @@ pub struct OyuncuMac {
     /// `_presH`: OYUNCU (sonradan eklenir)
     pub _presH: Option<Pid>,
     /// `_onK`: object (sonradan eklenir)
-    pub _onK: Option<JP_onK>,
+    pub _onK: Option<JpOnK>,
     /// `_omEv`: number (sonradan eklenir)
     pub _omEv: Option<f64>,
     /// `fiskeCd`: number (sonradan eklenir)
@@ -301,19 +301,19 @@ pub struct OyuncuMac {
     /// `adT`: object (sonradan eklenir)
     pub adT: Option<JPAdT>,
     /// `_gvKaz`: object (sonradan eklenir)
-    pub _gvKaz: Option<JP_gvKaz>,
+    pub _gvKaz: Option<JpGvKaz>,
     /// `_winSeen`: number (sonradan eklenir)
     pub _winSeen: Option<f64>,
     /// `son`: object (sonradan eklenir)
     pub son: Option<JPSon>,
     /// `_kh`: object (sonradan eklenir)
-    pub _kh: Option<JP_kh>,
+    pub _kh: Option<JpKh>,
     /// `_khT`: number (sonradan eklenir)
     pub _khT: Option<f64>,
     /// `_khQ`: OYUNCU (sonradan eklenir)
     pub _khQ: Option<Pid>,
     /// `_omuz`: object (sonradan eklenir)
-    pub _omuz: Option<JP_omuz>,
+    pub _omuz: Option<JpOmuz>,
     /// `adNeden`: string (sonradan eklenir)
     pub adNeden: Option<std::sync::Arc<str>>,
     /// `_kAn`: number (sonradan eklenir)
@@ -401,7 +401,7 @@ pub struct TopEk {
     /// `gon`: boolean
     pub gon: bool,
     /// `shotPk`: number (sonradan eklenir)
-    pub shotPk: Option<f64>,
+    pub shot_pk: Option<f64>,
     /// (mac) `_dk0`: direk sayacının son görülen değeri
     pub _dk0: f64,
 }
@@ -428,7 +428,7 @@ pub struct Mac {
     /// `ch`: number
     pub ch: f64,
     /// `decT`: number
-    pub decT: f64,
+    pub dec_t: f64,
     /// `over`: boolean
     pub over: bool,
     /// `fl`: null|object
@@ -438,7 +438,7 @@ pub struct Mac {
     /// `st`: object
     pub st: JMSt,
     /// `winT`: null|number
-    pub winT: Option<f64>,
+    pub win_t: Option<f64>,
     /// `gecis`: boolean
     pub gecis: bool,
     /// `gc`: null|object
@@ -448,11 +448,11 @@ pub struct Mac {
     /// `ra`: dizi (sonradan eklenir)
     pub ra: Option<Vec<std::collections::BTreeMap<usize, JMRaEE>>>,
     /// `tac0`: dizi (sonradan eklenir)
-    pub tac0: Option<Vec<Option<crate::mac_veri::Tac>>>,
+    pub tac0: Vec<Option<crate::mac_veri::Tac>>,
     /// `evre`: dizi (sonradan eklenir)
-    pub evre: Option<Vec<Option<JMEvreE>>>,
+    pub evre: Vec<Option<JMEvreE>>,
     /// `_macC`: object (sonradan eklenir)
-    pub _macC: Option<std::collections::BTreeMap<String, crate::mac_veri::MacW>>,
+    pub _mac_c: std::collections::BTreeMap<String, crate::mac_veri::MacW>,
     /// `E`: object (sonradan eklenir)
     pub E: Option<JME>,
     /// `att`: number (sonradan eklenir)
@@ -460,7 +460,7 @@ pub struct Mac {
     /// `_perde`: null
     pub _perde: Option<crate::mac_veri::Perde>,
     /// `_kuyuTop`: number (sonradan eklenir)
-    pub _kuyuTop: Option<f64>,
+    pub _kuyu_top: Option<f64>,
     /// `not`: object (sonradan eklenir)
     pub not: Option<JMNot>,
     /// `pre`: null|object
@@ -468,27 +468,27 @@ pub struct Mac {
     /// `ctl`: null|object
     pub ctl: Option<JMCtl>,
     /// `_prT`: object (sonradan eklenir)
-    pub _prT: Option<JM_prT>,
+    pub _pr_t: Option<JmPrT>,
     /// `_sec`: object (sonradan eklenir)
-    pub _sec: Option<JM_sec>,
+    pub _sec: Option<JmSec>,
     /// `lastDec`: object (sonradan eklenir)
-    pub lastDec: Option<JMLastDec>,
+    pub last_dec: Option<JMLastDec>,
     /// `_pas`: object (sonradan eklenir)
-    pub _pas: Option<JM_pas>,
+    pub _pas: Option<JmPas>,
     /// `_gelenB`: TOPKOPYA|null|object
-    pub _gelenB: Option<Box<MacTop>>,
+    pub _gelen_b: Option<Box<MacTop>>,
     /// `_onHk`: null
-    pub _onHk: Option<JP_onH>,
+    pub _on_hk: Option<JpOnH>,
     /// `_inSp`: number (sonradan eklenir)
-    pub _inSp: Option<f64>,
+    pub _in_sp: Option<f64>,
     /// `hhKul`: boolean
-    pub hhKul: bool,
+    pub hh_kul: bool,
     /// `kp`: null|object
     pub kp: Option<JMKp>,
     /// `_yzBas`: number (sonradan eklenir)
-    pub _yzBas: Option<f64>,
+    pub _yz_bas: Option<f64>,
     /// `_yzBekle`: boolean
-    pub _yzBekle: bool,
+    pub _yz_bekle: bool,
     /// (mac) `ps`: oyuncular (Pid = sıra)
     pub ps: Vec<Oyuncu>,
     /// (mac) `r`: maçın zar dizisi
@@ -522,103 +522,103 @@ impl MacTop {
 #[derive(Clone, Debug, Default)]
 pub struct KafaD {
     /// `simMax`: number
-    pub simMax: f64,
+    pub sim_max: f64,
     /// `errOk`: number
-    pub errOk: f64,
+    pub err_ok: f64,
     /// `errPos`: number
-    pub errPos: f64,
+    pub err_pos: f64,
     /// `aimErr`: number
-    pub aimErr: f64,
+    pub aim_err: f64,
     /// `v0Err`: number
-    pub v0Err: f64,
+    pub v0_err: f64,
     /// `arrive`: number
     pub arrive: f64,
     /// `arriveSpace`: number
-    pub arriveSpace: f64,
+    pub arrive_space: f64,
     /// `vmax`: number
     pub vmax: f64,
     /// `shotV`: number
-    pub shotV: f64,
+    pub shot_v: f64,
     /// `plaseV`: number
-    pub plaseV: f64,
+    pub plase_v: f64,
     /// `riskBase`: number
-    pub riskBase: f64,
+    pub risk_base: f64,
     /// `surKarar`: number
     pub surKarar: f64,
     /// `asanPay`: number
-    pub asanPay: f64,
+    pub asan_pay: f64,
     /// `sutHazir`: number
-    pub sutHazir: f64,
+    pub sut_hazir: f64,
     /// `threatK`: number
-    pub threatK: f64,
+    pub threat_k: f64,
     /// `sideK`: number
-    pub sideK: f64,
+    pub side_k: f64,
     /// `b0`: number
     pub b0: f64,
     /// `b1`: number
     pub b1: f64,
     /// `recvKeepT`: number
-    pub recvKeepT: f64,
+    pub recv_keep_t: f64,
     /// `shotThru`: number
-    pub shotThru: f64,
+    pub shot_thru: f64,
     /// `bekTempo`: number
-    pub bekTempo: f64,
+    pub bek_tempo: f64,
     /// `otErr`: number
-    pub otErr: f64,
+    pub ot_err: f64,
     /// `otMargin`: number
     pub otMargin: f64,
     /// `passMaxF`: number
-    pub passMaxF: f64,
+    pub pass_max_f: f64,
     /// `useSpace`: boolean
-    pub useSpace: bool,
+    pub use_space: bool,
     /// `aimPow`: number
-    pub aimPow: f64,
+    pub aim_pow: f64,
     /// `aimPlase`: number
-    pub aimPlase: f64,
+    pub aim_plase: f64,
     /// `arriveFirm`: number
     pub arriveFirm: f64,
     /// `vK`: number
-    pub vK: f64,
+    pub v_k: f64,
     /// `combo`: number
     pub combo: f64,
     /// `chgMin`: number
-    pub chgMin: f64,
+    pub chg_min: f64,
     /// `sarjUfuk`: number
-    pub sarjUfuk: f64,
+    pub sarj_ufuk: f64,
     /// `chg0`: number
     pub chg0: f64,
     /// `chgTek`: number
-    pub chgTek: f64,
+    pub chg_tek: f64,
     /// `chgPasif`: number
-    pub chgPasif: f64,
+    pub chg_pasif: f64,
     /// `enHizV`: number
-    pub enHizV: f64,
+    pub en_hiz_v: f64,
     /// `enUfuk`: number
-    pub enUfuk: f64,
+    pub en_ufuk: f64,
     /// `enTmin`: number
-    pub enTmin: f64,
+    pub en_tmin: f64,
     /// `kontraL`: number
-    pub kontraL: f64,
+    pub kontra_l: f64,
     /// `zoneMin`: number
-    pub zoneMin: f64,
+    pub zone_min: f64,
     /// `zoneD`: number
-    pub zoneD: f64,
+    pub zone_d: f64,
     /// `bankOk`: number
-    pub bankOk: f64,
+    pub bank_ok: f64,
     /// `bankIf`: number
-    pub bankIf: f64,
+    pub bank_if: f64,
     /// `bankN`: number
-    pub bankN: f64,
+    pub bank_n: f64,
     /// `trials`: number
     pub trials: f64,
     /// `nFull`: number
-    pub nFull: f64,
+    pub n_full: f64,
     /// `yokD`: number
-    pub yokD: f64,
+    pub yok_d: f64,
     /// `nMates`: number
-    pub nMates: f64,
+    pub n_mates: f64,
     /// `shotRange`: number
-    pub shotRange: f64,
+    pub shot_range: f64,
 }
 
 /// Kafanın geçici bağlamı (JS `D`'nin `_` alanları): bir hesabın süresince kurulup geri alınan değerler
@@ -629,37 +629,37 @@ pub struct KafaBag {
     /// `_tick`: number (sonradan eklenir)
     pub _tick: Option<f64>,
     /// `_tekL`: undef
-    pub _tekL: Option<f64>,
+    pub _tek_l: Option<f64>,
     /// `_sut`: number (sonradan eklenir)
     pub _sut: Option<SutBag>,
     /// `_savT`: undef
     pub _savT: Option<f64>,
     /// `_savW`: undef
-    pub _savW: Option<f64>,
+    pub _sav_w: Option<f64>,
     /// `_savU`: undef
-    pub _savU: Option<f64>,
+    pub _sav_u: Option<f64>,
     /// `_savCa`: undef
-    pub _savCa: Option<f64>,
+    pub _sav_ca: Option<f64>,
     /// `_kenar`: undef
     pub _kenar: Option<bool>,
     /// `_gPr`: undef
-    pub _gPr: Option<f64>,
+    pub _g_pr: Option<f64>,
     /// `_enWD`: undef
-    pub _enWD: Option<f64>,
+    pub _en_wd: Option<f64>,
     /// `_enTm`: undef
-    pub _enTm: Option<f64>,
+    pub _en_tm: Option<f64>,
     /// `_kanca`: undef
     pub _kanca: Option<DKanca>,
     /// `_ot`: number (sonradan eklenir)
     pub _ot: Option<f64>,
     /// `_tekD`: boolean
-    pub _tekD: bool,
+    pub _tek_d: bool,
     /// `_itme`: undef
     pub _itme: Option<bool>,
     /// `_gon`: undef
     pub _gon: Option<bool>,
     /// `_sYon`: undef
-    pub _sYon: Option<f64>,
+    pub _s_yon: Option<f64>,
 }
 
 
@@ -859,7 +859,7 @@ pub struct JPHistE {
 
 /// JS `p._bk[]`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct JP_bkE {
+pub struct JpBkE {
     /// `x`: number
     pub x: f64,
     /// `y`: number
@@ -876,7 +876,7 @@ pub struct JP_bkE {
 
 /// JS `p._ktB`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct JP_ktB {
+pub struct JpKtB {
     /// `x`: number
     pub x: f64,
     /// `y`: number
@@ -933,7 +933,7 @@ pub struct JPEg {
 
 /// JS `p._otE`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct JP_otE {
+pub struct JpOtE {
     /// `x`: number
     pub x: f64,
     /// `y`: number
@@ -942,7 +942,7 @@ pub struct JP_otE {
 
 /// JS `p._kv`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct JP_kv {
+pub struct JpKv {
     /// `x`: number
     pub x: f64,
     /// `y`: number
@@ -953,7 +953,7 @@ pub struct JP_kv {
 
 /// JS `p._kt`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct JP_kt {
+pub struct JpKt {
     /// `x`: number
     pub x: f64,
     /// `y`: number
@@ -971,13 +971,13 @@ pub struct JPPastE {
 
 /// JS `p._plan`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct JP_plan {
+pub struct JpPlan {
     /// `kind`: string
     pub kind: String,
     /// `q`: OYUNCU
     pub q: Pid,
     /// `to`: object
-    pub to: JP_planTo,
+    pub to: JpPlanTo,
     /// `P`: number
     pub P: f64,
     /// `t`: number
@@ -986,11 +986,11 @@ pub struct JP_plan {
 
 /// JS `p._surK`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct JP_surK {
+pub struct JpSurK {
     /// `id`: number
     pub id: f64,
     /// `to`: object
-    pub to: JP_surKTo,
+    pub to: JpSurKto,
     /// `t`: number
     pub t: f64,
     /// `T`: number
@@ -1026,7 +1026,7 @@ pub struct JPSavur {
 
 /// JS `p._otA`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct JP_otA {
+pub struct JpOtA {
     /// `b`: TOP|TOPKOPYA|object
     pub b: TopRef,
     /// `ok`: boolean
@@ -1035,7 +1035,7 @@ pub struct JP_otA {
 
 /// JS `p._onH`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct JP_onH {
+pub struct JpOnH {
     /// `b`: TOP
     pub b: TopRef,
     /// `tArr`: number
@@ -1060,7 +1060,7 @@ pub struct JP_onH {
 
 /// JS `p._sf`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct JP_sf {
+pub struct JpSf {
     /// `t0`: number
     pub t0: f64,
     /// `f`: string
@@ -1069,7 +1069,7 @@ pub struct JP_sf {
 
 /// JS `p._onK`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct JP_onK {
+pub struct JpOnK {
     /// `h`: number
     pub h: f64,
     /// `koy`: boolean
@@ -1103,7 +1103,7 @@ pub struct JPAdT {
 
 /// JS `p._gvKaz`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct JP_gvKaz {
+pub struct JpGvKaz {
     /// `h`: number
     pub h: f64,
     /// `t`: number
@@ -1129,7 +1129,7 @@ pub struct JPSon {
 
 /// JS `p._kh`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct JP_kh {
+pub struct JpKh {
     /// `dx`: number
     pub dx: f64,
     /// `dy`: number
@@ -1138,7 +1138,7 @@ pub struct JP_kh {
 
 /// JS `p._omuz`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct JP_omuz {
+pub struct JpOmuz {
     /// `t`: number
     pub t: f64,
     /// `q`: number
@@ -1232,11 +1232,11 @@ pub struct JMSt {
     /// `duel`: dizi
     pub duel: Vec<f64>,
     /// `duelW`: dizi
-    pub duelW: Vec<f64>,
+    pub duel_w: Vec<f64>,
     /// `pass`: dizi
     pub pass: Vec<f64>,
     /// `passOk`: dizi
-    pub passOk: Vec<f64>,
+    pub pass_ok: Vec<f64>,
     /// `shot`: dizi
     pub shot: Vec<f64>,
     /// `steal`: dizi
@@ -1252,18 +1252,18 @@ pub struct JMSt {
     /// `swarm`: number
     pub swarm: f64,
     /// `enH`: dizi
-    pub enH: Vec<crate::mac_veri::EnSayac>,
+    pub en_h: Vec<crate::mac_veri::EnSayac>,
     /// `sprF`: dizi
-    pub sprF: Vec<f64>,
+    pub spr_f: Vec<f64>,
     /// `sprT`: dizi
-    pub sprT: Vec<f64>,
+    pub spr_t: Vec<f64>,
     /// `enCal`: dizi
-    pub enCal: Vec<f64>,
+    pub en_cal: Vec<f64>,
     /// `calim`: dizi
     pub calim: Vec<f64>,
     /// (mac) taslakta olmayan sayaçlar (boş = yok)
     pub fake: Vec<f64>,
-    pub fakeOk: Vec<f64>,
+    pub fake_ok: Vec<f64>,
     pub ot: Vec<f64>,
     pub combo: Vec<f64>,
     pub direk: Vec<f64>,
@@ -1386,11 +1386,11 @@ pub struct JMCtl {
 
 /// JS `m._prT`
 #[derive(Clone, Debug, Default)]
-pub struct JM_prT {
+pub struct JmPrT {
     /// `team`: number
     pub team: f64,
     /// `hId`: number
-    pub hId: f64,
+    pub h_id: f64,
     /// `t`: number
     pub t: f64,
     /// `m`: Map
@@ -1405,13 +1405,13 @@ pub struct JM_prT {
 
 /// JS `m._sec`
 #[derive(Clone, Debug, Default)]
-pub struct JM_sec {
+pub struct JmSec {
     /// `h`: OYUNCU
     pub h: Pid,
     /// `t`: number
     pub t: f64,
     /// `o`: dizi
-    pub o: Vec<JM_secOE>,
+    pub o: Vec<JmSecOe>,
     /// `tut`: number
     pub tut: f64,
 }
@@ -1433,7 +1433,7 @@ pub struct JMLastDec {
 
 /// JS `m._pas`
 #[derive(Clone, Debug, Default)]
-pub struct JM_pas {
+pub struct JmPas {
     /// `team`: number
     pub team: f64,
     /// `fx`: number
@@ -1448,7 +1448,7 @@ pub struct JM_pas {
 
 /// JS `m._temas`
 #[derive(Clone, Debug, Default)]
-pub struct JM_temas {
+pub struct JmTemas {
     /// `x`: number
     pub x: f64,
     /// `y`: number
@@ -1542,7 +1542,7 @@ pub struct JOLaunch {
 
 /// JS `p._plan.to`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct JP_planTo {
+pub struct JpPlanTo {
     /// `x`: number
     pub x: f64,
     /// `y`: number
@@ -1551,7 +1551,7 @@ pub struct JP_planTo {
 
 /// JS `p._surK.to`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct JP_surKTo {
+pub struct JpSurKto {
     /// `x`: number
     pub x: f64,
     /// `y`: number
@@ -1625,7 +1625,7 @@ pub struct JMShGs {
     /// `on`: boolean
     pub on: bool,
     /// `onP`: boolean
-    pub onP: bool,
+    pub on_p: bool,
     /// `oy`: boolean
     pub oy: bool,
 }
@@ -1659,7 +1659,7 @@ pub struct JMShFr {
 
 /// JS `m._temaslar.L[]`
 #[derive(Clone, Debug, Default)]
-pub struct JM_temaslarLE {
+pub struct JmTemaslarLe {
     /// `i`: number
     pub i: f64,
     /// `j`: number
@@ -1674,7 +1674,7 @@ pub struct JM_temaslarLE {
 
 /// JS `m._sec.o[]`
 #[derive(Clone, Debug, Default)]
-pub struct JM_secOE {
+pub struct JmSecOe {
     /// `k`: string
     pub k: String,
     /// `x`: number

@@ -141,3 +141,25 @@ pub struct Tqp {
     pub min_d: f64,
 }
 pub const TQ: Tqp = Tqp { taraf_iyi: 1.12, taraf_kotu: 0.9, w0: 0.1, w_sk: 0.008, w_v: 0.6, v_ref: 0.25, flick_w: 0.2, time_k: 0.003, react: 14.0, react_ok: 0.5, grab: 0.0, riv_v: 0.2, p_hold: 0.3, p_hold_sk: 0.025, cd_hold: 12.0, p_loose: 0.55, cd_loose: 3.0, tail: 6.0, shield: 0.8, min_d: 1.7 };
+
+/// Enerji kuralının temasın da kullandığı parçası (`kural::enerji` yeniden dışa verir).
+/// JS ALAN_EN3
+#[allow(non_snake_case)]
+pub struct En3 {
+    pub r0: f64,
+    pub r_sahip: f64,
+    pub r_yer: f64,
+    pub r_bek: f64,
+    pub baski_r0: f64,
+    pub baski_r1: f64,
+    pub yer_d: f64,
+    pub tepe_alt: f64,
+    pub tepkiK: f64,
+}
+pub const EN3: En3 = En3 { r0: 1.0 / 1350.0, r_sahip: 1.0 / 270.0, r_yer: 1.0 / 450.0, r_bek: 1.0 / 450.0, baski_r0: 1.0, baski_r1: 6.0, yer_d: 4.0, tepe_alt: 0.25, tepkiK: 0.25 };
+
+/// Kafanın tehdit ölçüsü (JS `D.threatK`, `D.sideK`) ve enerji farkının katı (JS `DU.enFark`): kafa
+/// (`kafa1_param`) ve kural (`kural::enerji::ALAN_EN3_KUL`) ikisi de buradan alır (Aşama 7c: kural kafaya bağlanmaz).
+pub const TEHDIT_K: f64 = 22.0;
+pub const TEHDIT_YAN: f64 = 0.35;
+pub const EN_FARK: f64 = 0.15;

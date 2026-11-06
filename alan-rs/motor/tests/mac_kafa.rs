@@ -1,6 +1,6 @@
 //! Kafa günlüğü: kafaSapma'nın yazıları JS ile aynı (gerçek maçın kayıtlarından).
 mod mac_yardim;
-use alan_motor::mac::kafa_bag::{kafaSapma, KafaKayit, Son};
+use alan_motor::mac::kafa_bag::{kafa_sapma, KafaKayit, Son};
 use mac_yardim::*;
 use serde_json::Value;
 
@@ -19,7 +19,7 @@ fn kafa_sapmasi_js_ile_ayni() {
     for c in v["sapma"].as_array().unwrap() {
         let r = &c["r"];
         let so = &r["son"];
-        let son = Son { t: so["t"].as_f64().unwrap_or(0.0), santra: so["santra"].is_number(), devam: so["devam"].is_number(), kim: s(&so["kim"]), kimId: n(&so["kimId"]), kimT: n(&so["kimT"]), x: n(&so["x"]), y: n(&so["y"]), gol: n(&so["gol"]) };
+        let son = Son { t: so["t"].as_f64().unwrap_or(0.0), santra: so["santra"].is_number(), devam: so["devam"].is_number(), kim: s(&so["kim"]), kim_id: n(&so["kimId"]), kim_t: n(&so["kimT"]), x: n(&so["x"]), y: n(&so["y"]), gol: n(&so["gol"]) };
         let k = KafaKayit {
             t: r["t"].as_f64().unwrap(),
             ad: s(&r["ad"]).unwrap_or_default(),
@@ -42,14 +42,14 @@ fn kafa_sapmasi_js_ile_ayni() {
             x: n(&r["x"]),
             y: n(&r["y"]),
             cikis: n(&r["cikis"]),
-            hizC: n(&r["hizC"]),
-            hizG: n(&r["hizG"]),
+            hiz_c: n(&r["hizC"]),
+            hiz_g: n(&r["hizG"]),
             bozuldu: s(&r["bozuldu"]),
             sek: n(&r["sek"]),
             son: Some(son),
             sapma: vec![],
         };
-        let rs = kafaSapma(&k);
+        let rs = kafa_sapma(&k);
         let js = c["s"].as_array().unwrap();
         say += js.len();
         let a: Vec<String> = rs.iter().map(|x| format!("{}|{}|{}", x.k, x.a, x.y)).collect();

@@ -1,0 +1,19 @@
+[package]
+name = "alan-mac"
+version = "0.1.0"
+edition = "2021"
+description = "ALAN motorunun mac katmanı (MIMARI.md 2.1, Aşama 7c)"
+
+[lib]
+name = "alan_mac"
+path = "lib.rs"
+
+[dependencies]
+alan-temel = { path = "../temel" }
+alan-kural = { path = "../kural" }
+alan-dunya = { path = "../dunya" }
+alan-kafa = { path = "../kafa" }
+alan-sekil = { path = "../sekil" }
+serde = { version = "1", features = ["derive", "rc"] }
+bincode = "1.3"
+serde_json = { version = "1", features = ["float_roundtrip"] }

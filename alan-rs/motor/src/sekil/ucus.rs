@@ -69,33 +69,33 @@ pub fn okuT(b: Option<&mut TopT>, p: &Oyuncu, ps: &[Oyuncu], d: f64, bek0: bool)
 
 /// JS menzilP(p) (AlanCore.menzil).
 #[inline]
-pub fn menzilP(p: &Oyuncu, k: &dyn Kural) -> f64 {
+pub fn menzil_p(p: &Oyuncu, k: &dyn Kural) -> f64 {
     menzil(p, k.ik_yavas())
 }
 
 /// JS menzilO(p, tp, b, bek): rakibin uzanması topun yaşıyla büyür.
-pub fn menzilO(p: &Oyuncu, tp: f64, b: Option<&mut TopT>, ps: &[Oyuncu], bek: bool, k: &dyn Kural) -> f64 {
+pub fn menzil_o(p: &Oyuncu, tp: f64, b: Option<&mut TopT>, ps: &[Oyuncu], bek: bool, k: &dyn Kural) -> f64 {
     let o = okuT(b, p, ps, TEPKI(p, Tepki::Uzanma, k), bek);
-    jmax(1.15, jmin(menzilP(p, k), Q.reach_body + jmax(0.0, tp - o) * Q.reach_grow))
+    jmax(1.15, jmin(menzil_p(p, k), Q.reach_body + jmax(0.0, tp - o) * Q.reach_grow))
 }
 
 /// JS inK: (Kuyu açık) bu tikte oraya giremez.
 #[inline]
-fn inK(p: &Oyuncu, q: &Nokta, i: f64, k: &dyn Kural) -> bool {
+fn in_k(p: &Oyuncu, q: &Nokta, i: f64, k: &dyn Kural) -> bool {
     !kuyu_girer(p, q.x, q.y, i, false, k)
 }
 
 /// JS aliciDirenc(pts, p, rc, iMin, rP): alıcı topa yetişemiyorsa en az geç kaldığı nokta.
-pub fn aliciDirenc(pts: &[Nokta], p: &Oyuncu, rc: f64, iMin: f64, rP: Option<f64>, k: &dyn Kural) -> Option<Ar> {
+pub fn alici_direnc(pts: &[Nokta], p: &Oyuncu, rc: f64, i_min: f64, r_p: Option<f64>, k: &dyn Kural) -> Option<Ar> {
     let nb = !p.bekci();
-    let v = vSp(p, k);
-    let G = gecTab(p, k);
-    let rP = rP.unwrap_or(1.4);
+    let v = v_sp(p, k);
+    let G = gec_tab(p, k);
+    let r_p = r_p.unwrap_or(1.4);
     let mut bb: Option<(f64, f64, f64, f64, f64)> = None; // g, sk, t, x, y
-    let mut i = jmax(0.0, iMin) as usize;
+    let mut i = jmax(0.0, i_min) as usize;
     let lim = jmin(pts.len() as f64, 60.0) as usize;
     // JS: i = max(0, iMin || 0) (kesirli olabilir); i < min(len, 60); i += 2
-    let mut fi = jmax(0.0, if iMin == iMin { iMin } else { 0.0 });
+    let mut fi = jmax(0.0, if i_min == i_min { i_min } else { 0.0 });
     let _ = &mut i;
     while fi < lim as f64 {
         let ix = fi as usize;
@@ -104,12 +104,12 @@ pub fn aliciDirenc(pts: &[Nokta], p: &Oyuncu, rc: f64, iMin: f64, rP: Option<f64
             break;
         }
         let q = &pts[ix];
-        if nb && inK(p, q, fi, k) {
+        if nb && in_k(p, q, fi, k) {
             fi += 2.0;
             continue;
         }
-        let dr = hypot(q.x - p.x, q.y - p.y) - rP;
-        let tr = jmax(rc + jmax(0.0, dr) / v + gecOf(&G, q.x, q.y, Some(dr)), dis::frenT(p, q.x, q.y, rP, fi - rc, v));
+        let dr = hypot(q.x - p.x, q.y - p.y) - r_p;
+        let tr = jmax(rc + jmax(0.0, dr) / v + gec_of(&G, q.x, q.y, Some(dr)), dis::fren_t(p, q.x, q.y, r_p, fi - rc, v));
         let g = jmax(0.0, tr - fi);
         let sk = g + 0.25 * fi;
         if bb.is_none() || sk < bb.unwrap().1 - 1e-9 {
@@ -122,22 +122,22 @@ pub fn aliciDirenc(pts: &[Nokta], p: &Oyuncu, rc: f64, iMin: f64, rP: Option<f64
 
 /// JS alici(pts, p, ps, rc, iMax, tp0, iMin, buf, b): alıcının topu en rahat alacağı nokta (rakipten önce
 /// varır, en boşta). `w`: dünya (JS `ps`), `oy`: bedenlerin oyuncuları, `p`: alıcının bedeni.
-pub fn alici(pts: &[Nokta], p: &Oyuncu, w: &[Varlik], oy: &[Oyuncu], rc: f64, iMax: f64, tp0: Option<f64>, iMin: f64, buf: Option<f64>, mut b: Option<&mut TopT>, k: &dyn Kural, d: &crate::model::KafaD) -> Option<Ar> {
+pub fn alici(pts: &[Nokta], p: &Oyuncu, w: &[Varlik], oy: &[Oyuncu], rc: f64, i_max: f64, tp0: Option<f64>, i_min: f64, buf: Option<f64>, mut b: Option<&mut TopT>, k: &dyn Kural, d: &crate::model::KafaD) -> Option<Ar> {
     let _ = d;
     let nb = !p.bekci();
-    let v = vSp(p, k);
+    let v = v_sp(p, k);
     let opp: Vec<&Varlik> = w.iter().filter(|o| o.team != p.takim() && !o.bekci).collect();
-    let oT: Vec<f64> = opp.iter().map(|o| { let g = o.govde(oy); jmax(0.0, okuT(b.as_deref_mut(), g, oy, TEPKI(g, Tepki::Kovala, k), true)) }).collect();
-    let oV: Vec<f64> = opp.iter().map(|o| vSp(o.govde(oy), k)).collect();
+    let o_t: Vec<f64> = opp.iter().map(|o| { let g = o.govde(oy); jmax(0.0, okuT(b.as_deref_mut(), g, oy, TEPKI(g, Tepki::Kovala, k), true)) }).collect();
+    let o_v: Vec<f64> = opp.iter().map(|o| v_sp(o.govde(oy), k)).collect();
     let (px, py) = (p.x, p.y);
-    let gP = gecTab(p, k);
-    let gO: Vec<GecTab> = opp.iter().map(|o| gecTab(o.r0(oy), k)).collect();
+    let g_p = gec_tab(p, k);
+    let g_o: Vec<GecTab> = opp.iter().map(|o| gec_tab(o.r0(oy), k)).collect();
     let MP = tp0.is_some();
-    let rP = menzilP(p, k);
+    let r_p = menzil_p(p, k);
     let mut yol = 1e9;
-    let aB = 0.018 * ag(&p.govde.yet, p.den, p.bekci(), k.ik_yavas());
-    let vS = IN.v_set;
-    let setT = |q: &Nokta, q2: &Nokta, dr: f64| -> f64 {
+    let a_b = 0.018 * ag(&p.govde.yet, p.den, p.bekci(), k.ik_yavas());
+    let v_s = IN.v_set;
+    let set_t = |q: &Nokta, q2: &Nokta, dr: f64| -> f64 {
         if dr <= 0.0 {
             return 0.0;
         }
@@ -151,8 +151,8 @@ pub fn alici(pts: &[Nokta], p: &Oyuncu, w: &[Varlik], oy: &[Oyuncu], rc: f64, iM
             return 0.0;
         }
         let vt = -v * (bx * rx + by * ry) / (bl * rl);
-        if vt > vS {
-            (vt - vS) * (vt - vS) / (2.0 * aB * v)
+        if vt > v_s {
+            (vt - v_s) * (vt - v_s) / (2.0 * a_b * v)
         } else {
             0.0
         }
@@ -160,32 +160,32 @@ pub fn alici(pts: &[Nokta], p: &Oyuncu, w: &[Varlik], oy: &[Oyuncu], rc: f64, iM
     let mut bs = -1e9;
     let mut best: Option<Ar> = None;
     let mut i = 0usize;
-    while i < pts.len() && !(i as f64 > iMax) {
+    while i < pts.len() && !(i as f64 > i_max) {
         let fi = i as f64;
-        if iMin != 0.0 && iMin == iMin && fi < iMin {
+        if i_min != 0.0 && i_min == i_min && fi < i_min {
             i += 2;
             continue;
         }
         let q = &pts[i];
-        if nb && inK(p, q, fi, k) {
+        if nb && in_k(p, q, fi, k) {
             i += 2;
             continue;
         }
         let mut td = 1e9;
         for kk in 0..opp.len() {
             let o = opp[kk];
-            let dk = hypot(q.x - o.x, q.y - o.y) - if MP { menzilO(o.govde(oy), tp0.unwrap() + fi, b.as_deref_mut(), oy, true, k) } else { 1.4 };
-            td = jmin(td, oT[kk] + jmax(0.0, dk) / oV[kk] + gecOf(&gO[kk], q.x, q.y, Some(dk)));
+            let dk = hypot(q.x - o.x, q.y - o.y) - if MP { menzil_o(o.govde(oy), tp0.unwrap() + fi, b.as_deref_mut(), oy, true, k) } else { 1.4 };
+            td = jmin(td, o_t[kk] + jmax(0.0, dk) / o_v[kk] + gec_of(&g_o[kk], q.x, q.y, Some(dk)));
         }
         yol = jmin(yol, td - fi);
         if yol < 0.0 {
             break;
         }
-        let dr = hypot(q.x - px, q.y - py) - if MP { rP } else { 1.4 };
+        let dr = hypot(q.x - px, q.y - py) - if MP { r_p } else { 1.4 };
         let q2 = pts.get(i + 1).unwrap_or(q);
-        let tr0 = rc + jmax(0.0, dr) / v + gecOf(&gP, q.x, q.y, Some(dr)) + setT(q, q2, dr);
-        let tF = dis::frenT(p, q.x, q.y, if MP { rP } else { 1.4 }, fi - rc, v);
-        let tr = jmax(tr0, tF);
+        let tr0 = rc + jmax(0.0, dr) / v + gec_of(&g_p, q.x, q.y, Some(dr)) + set_t(q, q2, dr);
+        let t_f = dis::fren_t(p, q.x, q.y, if MP { r_p } else { 1.4 }, fi - rc, v);
+        let tr = jmax(tr0, t_f);
         if tr + buf.unwrap_or(0.0) > fi {
             i += 2;
             continue;
@@ -195,19 +195,19 @@ pub fn alici(pts: &[Nokta], p: &Oyuncu, w: &[Varlik], oy: &[Oyuncu], rc: f64, iM
             continue;
         }
         let margin = yol;
-        if best.is_some() && margin < S.rcvMarginT {
+        if best.is_some() && margin < S.rcv_margin_t {
             i += 2;
             continue;
         }
         if best.is_some() && fi > dis::PNC_GORUS {
             break;
         }
-        let sc = dis::freeAt(w, oy, p.team, q.x, q.y) - S.rcvRisk * exp(-margin / S.rcvMarginT);
+        let sc = dis::free_at(w, oy, p.team, q.x, q.y) - S.rcv_risk * exp(-margin / S.rcv_margin_t);
         if sc > bs {
             bs = sc;
-            best = Some(Ar { t: fi, x: q.x, y: q.y, est: 0.0, fren: tF > tr0, direnc: false });
+            best = Some(Ar { t: fi, x: q.x, y: q.y, est: 0.0, fren: t_f > tr0, direnc: false });
         }
-        if best.is_some() && margin >= S.rcvMarginT {
+        if best.is_some() && margin >= S.rcv_margin_t {
             break;
         }
         i += 2;
@@ -216,7 +216,7 @@ pub fn alici(pts: &[Nokta], p: &Oyuncu, w: &[Varlik], oy: &[Oyuncu], rc: f64, iM
 }
 
 /// JS kendiTopu(m): kendi pasının alıcısı ve topa varışı (uçuş okunuşu taze ise ondan).
-pub fn kendiTopu(c: &mut Mc) -> Option<(Pid, f64)> {
+pub fn kendi_topu(c: &mut Mc) -> Option<(Pid, f64)> {
     let fq = c.m.fl.as_ref().and_then(|f| f.q)?;
     let b = c.ball.as_ref()?;
     if b.b.done.is_some() || b.t.from != Some(fq) {
@@ -224,12 +224,12 @@ pub fn kendiTopu(c: &mut Mc) -> Option<(Pid, f64)> {
     }
     let bid = b.t.kimlik;
     let taze = match &c.ek.sh.fr {
-        Some(fr) if c.ek.sh.frB == Some(bid) && c.ek.sh.frT > c.m.tick - 3.0 => Some(fr.clone()),
+        Some(fr) if c.ek.sh.fr_b == Some(bid) && c.ek.sh.fr_t > c.m.tick - 3.0 => Some(fr.clone()),
         _ => None,
     };
     let fr = match taze {
         Some(f) => f,
-        None => Arc::new(flightRead(c)?),
+        None => Arc::new(flight_read(c)?),
     };
     if fr.first != Some(fq) {
         return None;
@@ -239,7 +239,7 @@ pub fn kendiTopu(c: &mut Mc) -> Option<(Pid, f64)> {
 
 /// JS flightRead(m): topun yolu ve her oyuncunun ona en erken nerede, ne zaman vardığı; alıcının alış yeri
 /// (`p._rcv*`). Bekçi kendi tepkisiyle (bekRe) çıkar.
-pub fn flightRead(c: &mut Mc) -> Option<Fr> {
+pub fn flight_read(c: &mut Mc) -> Option<Fr> {
     let k = c.k;
     let tick = c.m.tick;
     let fl_q = c.m.fl.as_ref().and_then(|f| f.q);
@@ -285,44 +285,44 @@ pub fn flightRead(c: &mut Mc) -> Option<Fr> {
             };
             jmax(0.0, r - (tick - t0))
         };
-        let v = vSp(p, k);
+        let v = v_sp(p, k);
         let mut best: Option<Ar> = None;
-        let isRecv = p.takim() == bteam && fl_q == Some(pi) && bdefl == 0.0;
+        let is_recv = p.takim() == bteam && fl_q == Some(pi) && bdefl == 0.0;
         let cdsv = c.ball.as_deref().unwrap().t.cds.get(&pi).copied().unwrap_or(0.0);
-        let iMin = jmax(if bfrom == Some(pi) { jmax(0.0, 8.0 - bt) } else { 0.0 }, jmax(0.0, cdsv - bt));
+        let i_min = jmax(if bfrom == Some(pi) { jmax(0.0, 8.0 - bt) } else { 0.0 }, jmax(0.0, cdsv - bt));
         let tp0 = btp.unwrap_or(bt);
         let mut rcv: Option<Option<(TopRef, f64, f64, f64, Option<f64>)>> = None;
-        if isRecv {
-            let iMx = if p.hal._rcvB == Some(bid) { p.hal._rcvAbs.unwrap_or(f64::NAN) + 2.0 - tick } else { 1e9 };
-            best = alici(&pts, p, &w, ps, rc, iMx, Some(tp0), iMin, Some(S.rcvBuf), c.ball.as_deref_mut(), k, c.d);
+        if is_recv {
+            let i_mx = if p.hal._rcvB == Some(bid) { p.hal._rcvAbs.unwrap_or(f64::NAN) + 2.0 - tick } else { 1e9 };
+            best = alici(&pts, p, &w, ps, rc, i_mx, Some(tp0), i_min, Some(S.rcv_buf), c.ball.as_deref_mut(), k, c.d);
             if best.is_none() {
-                best = alici(&pts, p, &w, ps, rc, iMx, Some(tp0), iMin, None, c.ball.as_deref_mut(), k, c.d);
+                best = alici(&pts, p, &w, ps, rc, i_mx, Some(tp0), i_min, None, c.ball.as_deref_mut(), k, c.d);
             }
             rcv = Some(best.map(|b| {
-                let T = b.t - rc - S.rcvBuf;
+                let T = b.t - rc - S.rcv_buf;
                 (bid, tick + b.t, b.x, b.y, if T > 1.0 && !b.fren { Some(hypot(b.x - p.x, b.y - p.y) / T) } else { None })
             }));
             if best.is_none() {
-                best = aliciDirenc(&pts, p, rc, iMin, Some(menzilP(p, k)), k);
+                best = alici_direnc(&pts, p, rc, i_min, Some(menzil_p(p, k)), k);
             }
         }
         if best.is_none() {
-            let G = gecTab(p, k);
+            let G = gec_tab(p, k);
             let mut i = 0usize;
             while i < pts.len() {
                 let fi = i as f64;
-                if fi < iMin {
+                if fi < i_min {
                     i += 2;
                     continue;
                 }
                 let q = &pts[i];
-                if nb && inK(p, q, fi, k) {
+                if nb && in_k(p, q, fi, k) {
                     i += 2;
                     continue;
                 }
-                let r = if p.takim() == bteam { menzilP(p, k) } else { menzilO(p, tp0 + fi, c.ball.as_deref_mut(), ps, false, k) };
+                let r = if p.takim() == bteam { menzil_p(p, k) } else { menzil_o(p, tp0 + fi, c.ball.as_deref_mut(), ps, false, k) };
                 let dr = hypot(q.x - p.x, q.y - p.y) - r;
-                let tr = rc + jmax(0.0, dr) / v + gecOf(&G, q.x, q.y, Some(dr));
+                let tr = rc + jmax(0.0, dr) / v + gec_of(&G, q.x, q.y, Some(dr));
                 if tr <= fi {
                     best = Some(Ar { t: fi, x: q.x, y: q.y, ..Default::default() });
                     break;
@@ -335,10 +335,10 @@ pub fn flightRead(c: &mut Mc) -> Option<Fr> {
             None => {
                 let b = c.ball.as_deref().unwrap();
                 let mut q = pts.last().copied().unwrap_or(Nokta { x: b.b.x, y: b.b.y, e: 0.0 });
-                if nb && inK(p, &q, pts.len() as f64 - 1.0, k) {
+                if nb && in_k(p, &q, pts.len() as f64 - 1.0, k) {
                     let mut i = pts.len() as i64 - 1;
                     while i >= 0 {
-                        if !inK(p, &pts[i as usize], i as f64, k) {
+                        if !in_k(p, &pts[i as usize], i as f64, k) {
                             q = pts[i as usize];
                             break;
                         }

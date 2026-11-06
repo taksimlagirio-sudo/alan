@@ -4,7 +4,7 @@
 //!
 //! JS'te `window.AlanShape`. Kaynak: `alan-rs/kaynak/shape.js` (sade), anlam için `alan-v5/shape.js`.
 //! Yabancı modüllerin (AlanDecide, AlanMatch) işlevleri `gecici_dis.rs`'te (`todo!()`).
-#![allow(non_snake_case, non_upper_case_globals, clippy::too_many_arguments)]
+#![allow(clippy::too_many_arguments)]
 
 pub mod gecici_dis;
 pub mod sabit;
@@ -17,15 +17,15 @@ pub mod pres;
 pub mod takim;
 pub mod konum;
 
-pub use gec::{gec, gecOf, gecTab, gecTabV, gecY, GecTab, GecY};
+pub use gec::{gec, gec_of, gec_tab, gec_tab_v, gec_y, GecTab, GecY};
 pub use gor::{bak, gorulen, seen, Gorulen};
 pub use konum::position;
-pub use pres::{ilkPres, macPres, presLim};
+pub use pres::{ilk_pres, mac_pres, pres_lim};
 pub use sabit::*;
-pub use takim::{govdeF, kurO, yerV, yolP, KurO, TvAday, coverSpots, kapatHat, laneOpen, metrics, teamV, tehlike, yolT, Metrik, Tehlike};
-pub use ucus::{menzilO, menzilP, okuT, alici, aliciDirenc, flightRead, kendiTopu, Ar, Fr, Nokta};
+pub use takim::{govde_f, kur_o, yer_v, yol_p, KurO, TvAday, cover_spots, kapat_hat, lane_open, metrics, team_v, tehlike, yol_t, Metrik, Tehlike};
+pub use ucus::{menzil_o, menzil_p, okuT, alici, alici_direnc, flight_read, kendi_topu, Ar, Fr, Nokta};
 pub use varlik::*;
-pub use yer::{bekci, rslotOf, slotOf, BekM, Yer, ALAN_KOSU_TP, hizYanilgi, presKesisT, durusDef, durusW, gside, koyHedef, presKesis, slotBase, slotBase0, tasHamle, yolBag, yolKesis, Kesis, YolBag, Yon};
+pub use yer::{bekci, rslot_of, slot_of, BekM, Yer, alan_kosu_tp, hiz_yanilgi, pres_kesis_t, durus_def, durus_w, gside, koy_hedef, pres_kesis, slot_base, slot_base0, tas_hamle, yol_bag, yol_kesis, Kesis, YolBag, Yon};
 
 use crate::mat::{jround, sin};
 use crate::model::Oyuncu;
@@ -44,7 +44,7 @@ pub fn cl(v: f64, a: f64, b: f64) -> f64 {
     }
 }
 #[inline(always)]
-pub fn dirOf(t: u8) -> f64 {
+pub fn dir_of(t: u8) -> f64 {
     if t == 0 {
         1.0
     } else {
@@ -52,7 +52,7 @@ pub fn dirOf(t: u8) -> f64 {
     }
 }
 #[inline(always)]
-pub fn ownX(t: u8) -> f64 {
+pub fn own_x(t: u8) -> f64 {
     if t == 0 {
         0.0
     } else {
@@ -60,7 +60,7 @@ pub fn ownX(t: u8) -> f64 {
     }
 }
 #[inline(always)]
-pub fn oppX(t: u8) -> f64 {
+pub fn opp_x(t: u8) -> f64 {
     if t == 0 {
         GW
     } else {
@@ -98,24 +98,24 @@ pub fn tohum(seed: f64) -> u32 {
 }
 
 // Koşu, sprint ve tepki kuralları kural katmanında (MIMARI.md Aşama 1); eski adlarıyla buradan da görünür.
-pub use crate::kural::enerji::{spd, ALAN_EN2_SB as EN2_SB, ALAN_EN2_TS as EN2_TS, ALAN_EN_S as EN_S};
-pub use crate::kural::kos::{lagOf, spre_k as ALAN_SPRE, tepki, vSp, TEPKI};
+pub use crate::kural::enerji::{spd, alan_en2_sb as EN2_SB, alan_en2_ts as EN2_TS, alan_en_s as EN_S};
+pub use crate::kural::kos::{lag_of, spre_k as alan_spre, tepki, v_sp, TEPKI};
 
 // Yetenek kısayolları (ALAN_YET.acik(5/6/8) açık: hep yeni mekanikler).
 #[inline(always)]
-pub fn yerS(p: &Oyuncu) -> f64 {
+pub fn yer_s(p: &Oyuncu) -> f64 {
     p.govde.yet.y(mek::BOLGE)
 }
 #[inline(always)]
-pub fn yerM(p: &Oyuncu) -> f64 {
+pub fn yer_m(p: &Oyuncu) -> f64 {
     p.govde.yet.y(mek::ADAM_YETIS)
 }
 #[inline(always)]
-pub fn yerH(p: &Oyuncu) -> f64 {
+pub fn yer_h(p: &Oyuncu) -> f64 {
     p.govde.yet.y(mek::BOSLUK)
 }
 #[inline(always)]
-pub fn yerF(p: &Oyuncu) -> f64 {
+pub fn yer_f(p: &Oyuncu) -> f64 {
     p.govde.yet.y(mek::BOS_FARK)
 }
 #[inline(always)]
@@ -123,7 +123,7 @@ pub fn niyet(p: &Oyuncu) -> f64 {
     p.govde.yet.y(mek::NIYET_SEZ)
 }
 #[inline(always)]
-pub fn geriK(p: &Oyuncu) -> f64 {
+pub fn geri_k(p: &Oyuncu) -> f64 {
     1.0 + 0.015 * (p.govde.yet.y(mek::GERI_KOSU) - 10.0)
 }
 #[inline(always)]
@@ -131,7 +131,7 @@ pub fn kurtul(p: &Oyuncu) -> f64 {
     p.govde.yet.y(mek::MARKAJ_KURTUL)
 }
 #[inline(always)]
-pub fn bekY(p: &Oyuncu, m: usize) -> f64 {
+pub fn bek_y(p: &Oyuncu, m: usize) -> f64 {
     p.govde.yet.y(m)
 }
 

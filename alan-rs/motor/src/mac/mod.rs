@@ -30,7 +30,7 @@ impl std::ops::DerefMut for MacTam {
     }
 }
 pub use crate::mat::{js_num, to_fixed};
-pub use crate::saha::{dirOf, ownX, KX, KY, SN};
+pub use crate::saha::{dir_of, own_x, KX, KY, SN};
 pub mod dongu;
 pub mod enerji;
 pub mod gecici_dis;
@@ -47,9 +47,9 @@ pub mod motor;
 pub mod vurus;
 
 pub use dongu::{run, step, take};
-pub use enerji::{EnSayac, MacKural};
-pub use kurulum::{assignRoles, createMatch, dizSlots, dizUygula, kickoff, Diz, DizV, KurSecenek};
-pub use tac::{macEff, tacEff, MacW, MacZ, Tac};
+pub use enerji::{mac_kurali, EnSayac, MacKural};
+pub use kurulum::{assign_roles, create_match, diz_slots, diz_uygula, kickoff, Diz, DizV, KurSecenek};
+pub use tac::{mac_eff, tac_eff, MacW, MacZ, Tac};
 
 use crate::mat::{dogru, hypot};
 use crate::model::{Oyuncu, Pid};
@@ -57,12 +57,6 @@ use crate::mac::MacTam as Mac;
 use crate::saha::W;
 
 
-/// Maçın zar dizisinin varsayılanı (Mac Default için; gerçek tohum createMatch'te verilir).
-impl Default for crate::rng::Rng {
-    fn default() -> Self {
-        crate::rng::Rng::yeni(1)
-    }
-}
 
 
 
@@ -133,21 +127,21 @@ pub struct MacEk {
     /// JS `m._kafa` (kafaAc ile açılır)
     pub _kafa: Option<kafa_bag::KafaGunluk>,
     /// JS `self.__mH`: son karar veren taşıyıcı (team, id) — sprint katı bunu okur
-    pub __mH: Option<(f64, f64)>,
+    pub __m_h: Option<(f64, f64)>,
     /// JS `m.fake`
     pub fake: Option<Fake>,
     /// JS `m._perdeQ`: id → tik
-    pub _perdeQ: Vec<(f64, f64)>,
+    pub _perde_q: Vec<(f64, f64)>,
     /// oyuncuların ham özellikleri (JS `p.a`, sırayla); Pid sırası
     pub ham: Vec<HamA>,
     /// top kimliği sayacı (JS nesne kimliği)
-    pub topSay: u64,
+    pub top_say: u64,
     /// kafa günlüğü seçenek kimliği sayacı
-    pub oSay: u64,
+    pub o_say: u64,
     /// yerleşimin maç üstündeki durumu (JS m._sn, m._kayL, m.sh …)
     pub sekil: crate::sekil::varlik::SekilDurum,
     /// kafanın pres tartısı (JS m._prT): kafa yazar, sonraki kararda kafa okur
-    pub prT_k: Option<crate::kafa::gecici_dis1::PrT>,
+    pub pr_t_k: Option<crate::kafa::gecici_dis1::PrT>,
     /// maçın kafası (JS AlanDecide)
     pub kafa: kafa_dis::KafaKutu,
     /// ölçüm (alan-kos tutma): bir sonraki taşıyıcı kararında kafanın kendi sürme seçeneklerinden `sira`'ıncısı

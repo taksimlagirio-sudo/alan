@@ -1,5 +1,5 @@
 //! Kuyu (match.js 2009–2094): Kuyu alanında süre, sönme, alandan çıkış yönü ve süresi.
-use super::enerji::{spd, sprK, vK, MacKural};
+use super::enerji::{spd, spr_k, v_k, MacKural};
 use super::*;
 use crate::core_sabit::Q;
 use crate::mat::{atan2, cos, hypot, jmax, jmin, sin};
@@ -18,7 +18,7 @@ pub struct CikYon {
 }
 
 /// JS kuyuCikYon(m, p): Kuyu alanından en kısa (önü açık) çıkış.
-pub fn kuyuCikYon(m: &Mac, pi: Pid) -> Option<CikYon> {
+pub fn kuyu_cik_yon(m: &Mac, pi: Pid) -> Option<CikYon> {
     let p = &m.ps[pi];
     let gx = if hypot(p.x, p.y - CY) < hypot(p.x - W, p.y - CY) { 0.0 } else { W };
     let a0 = atan2(p.y - CY, p.x - gx);
@@ -57,16 +57,16 @@ pub fn kuyuCikYon(m: &Mac, pi: Pid) -> Option<CikYon> {
 }
 
 /// JS kuyuCikT(m, p, Y): alandan çıkmanın süresi (tik), ivmeyle benzetim.
-pub fn kuyuCikT(m: &Mac, pi: Pid, y: Option<CikYon>, k: &MacKural) -> f64 {
+pub fn kuyu_cik_t(m: &Mac, pi: Pid, y: Option<CikYon>, k: &MacKural) -> f64 {
     let p = &m.ps[pi];
     let gx = if hypot(p.x, p.y - CY) < hypot(p.x - W, p.y - CY) { 0.0 } else { W };
     let mut q = p.clone();
     q.vx = or0(p.vx);
     q.vy = or0(p.vy);
-    let vS = spd(p) * sprK(p, k);
-    let Some(y) = y.or_else(|| kuyuCikYon(m, pi)) else { return 40.0 };
+    let v_s = spd(p) * spr_k(p, k);
+    let Some(y) = y.or_else(|| kuyu_cik_yon(m, pi)) else { return 40.0 };
     for t in 1..=40 {
-        super::hareket::ivme(&mut q, y.ux * vS, y.uy * vS, vS);
+        super::hareket::ivme(&mut q, y.ux * v_s, y.uy * v_s, v_s);
         q.x += q.vx;
         q.y += q.vy;
         if hypot(q.x - gx, q.y - CY) >= Q.kuyu_a {
@@ -77,12 +77,12 @@ pub fn kuyuCikT(m: &Mac, pi: Pid, y: Option<CikYon>, k: &MacKural) -> f64 {
 }
 
 /// JS kuyuSaat(m): Kuyu alanındaki süre; dolunca sönük, dolmadan çıkış; hedefi alanın içindeyse dışına al.
-pub fn kuyuSaat(m: &mut Mac, mt: f64, mH: Option<Pid>) {
+pub fn kuyu_saat(m: &mut Mac, mt: f64, m_h: Option<Pid>) {
     let tb = match m.holder {
         Some(h) => Some((m.ps[h].x, m.ps[h].y)),
         None => m.ball.as_ref().map(|b| (b.x, b.y)),
     };
-    let topK = match tb {
+    let top_k = match tb {
         Some((x, y)) if kuyu_mer(x, y) < Q.kuyu_a => {
             if x < W / 2.0 {
                 0.0
@@ -92,8 +92,8 @@ pub fn kuyuSaat(m: &mut Mac, mt: f64, mH: Option<Pid>) {
         }
         _ => -1.0,
     };
-    m._kuyuTop = Some(topK);
-    let kk = MacKural::of(m);
+    m._kuyu_top = Some(top_k);
+    let kk = mac_kurali(m);
     for pi in 0..m.ps.len() {
         if m.ps[pi].bekci() {
             continue;
@@ -102,7 +102,7 @@ pub fn kuyuSaat(m: &mut Mac, mt: f64, mH: Option<Pid>) {
         let (px, py) = (m.ps[pi].x, m.ps[pi].y);
         let d = kuyu_mer(px, py);
         let ic = d < Q.kuyu_a;
-        let dur = ic && topK == if px < W / 2.0 { 0.0 } else { 1.0 };
+        let dur = ic && top_k == if px < W / 2.0 { 0.0 } else { 1.0 };
         if dur {
             m.ps[pi].hal_mut()._kuyuCik = false;
             if !m.ps[pi].hal.sonuk {
@@ -128,12 +128,12 @@ pub fn kuyuSaat(m: &mut Mac, mt: f64, mH: Option<Pid>) {
             if !ic {
                 m.ps[pi].hal_mut()._kuyuCik = false;
             }
-        } else if oo(p.hal.kuyuT) + kuyuCikT(m, pi, None, &kk) + 1.0 >= Q.kuyu_sn {
+        } else if oo(p.hal.kuyuT) + kuyu_cik_t(m, pi, None, &kk) + 1.0 >= Q.kuyu_sn {
             m.ps[pi].hal_mut()._kuyuCik = true;
         }
         let p = &m.ps[pi];
         if p.hal.sonuk || (p.hal._kuyuCik && !holder) {
-            if let Some(y) = kuyuCikYon(m, pi) {
+            if let Some(y) = kuyu_cik_yon(m, pi) {
                 m.ps[pi].tx = cl(y.x + 0.7 * y.ux, 1.0, W - 1.0);
                 m.ps[pi].ty = cl(y.y + 0.7 * y.uy, 1.0, H - 1.0);
             }
@@ -141,7 +141,7 @@ pub fn kuyuSaat(m: &mut Mac, mt: f64, mH: Option<Pid>) {
             p.sprint = true;
             p.job = Some(if p.hal.sonuk { "sönük · alandan çıkıyor" } else { "Kuyu alanından çıkıyor" }.into());
         } else if !holder && (ic || alan_ic(p.tx, p.ty)) {
-            let v = jmax(0.05, spd(p) * vK(p, mH == Some(pi), mt, &kk));
+            let v = jmax(0.05, spd(p) * v_k(p, m_h == Some(pi), mt, &kk));
             let tv = hypot(p.tx - p.x, p.ty - p.y) / v;
             let topa = bas(job(p), &["kovala", "alıcı"]) || m.fl.as_ref().map_or(false, |f| f.q == Some(pi));
             if !kuyu_girer(p, p.tx, p.ty, tv, !topa, &kk) {

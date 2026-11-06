@@ -327,7 +327,7 @@ fn main() {
                             let t = m._sec.as_ref().map(|s| s.t);
                             if t.is_some() && t != son_k {
                                 son_k = t;
-                                if let Some(d) = &m.lastDec {
+                                if let Some(d) = &m.last_dec {
                                     let o: Vec<String> = d.opts.iter().map(|o| format!("[{},{},{:.3},{}]", serde_json::to_string(&o.kind).unwrap(), serde_json::to_string(&o.q).unwrap(), o.v, o.to.as_ref().map_or("-".to_string(), |t| format!("({:.1},{:.1})", t.x, t.y)))).collect();
                                     // her türün en iyisi (bütün seçenekler)
                                     let mut en: Vec<(String, f64, f64, f64)> = Vec::new();
@@ -407,7 +407,7 @@ fn main() {
                         let z = match c.mac.zorla_sonuc.take() { Some(z) => z, None => break };
                         let (hx, hy) = (c.ps[h].x, c.ps[h].y);
                         let T = (((z.to.0 - hx).powi(2) + (z.to.1 - hy).powi(2)).sqrt() / 0.25).round() + 6.0;
-                        c.decT = T;
+                        c.dec_t = T;
                         let t0 = c.tick;
                         let mut sonuc = "tuttu";
                         let mut j = 0.0;
@@ -416,7 +416,7 @@ fn main() {
                         let kilit = std::env::var("ALAN_TUTMA_KILIT").is_ok();
                         while j < T && !c.over {
                             if kilit && c.holder == Some(h) {
-                                c.decT = T - j + 1.0;
+                                c.dec_t = T - j + 1.0;
                             }
                             alan_motor::mac::step(&mut c);
                             j += 1.0;
@@ -446,7 +446,7 @@ fn main() {
             let t = m._sec.as_ref().map(|s| s.t);
             if t.is_some() && t != son_karar {
                 son_karar = t;
-                if let Some(d) = &m.lastDec {
+                if let Some(d) = &m.last_dec {
                     if let Some(o) = d.opts.first() {
                         if o.kind.starts_with("gönder") {
                             sut_bekle.push((m.tick, d.team as usize, d.name.clone(), d.x, d.y, o.P, m.score[d.team as usize]));
@@ -472,7 +472,7 @@ fn main() {
             let t = m._sec.as_ref().map(|s| s.t);
             if t.is_some() && t != son_karar {
                 son_karar = t;
-                if let Some(d) = &m.lastDec {
+                if let Some(d) = &m.last_dec {
                     let o: Vec<String> = d.opts.iter().map(|o| format!("[{},{},{},{}]", serde_json::to_string(&o.kind).unwrap(), serde_json::to_string(&o.q).unwrap(), if o.v.is_finite() { format!("{}", o.v) } else { "null".into() }, o.to.as_ref().map_or("null".to_string(), |t| format!("[{},{}]", t.x, t.y)))).collect();
                     // bütün seçenekler (m._sec.o): tür, hedef, değer
                     let hep: Vec<String> = m._sec.as_ref().map_or(vec![], |s| s.o.iter().map(|e| format!("[{},{},{},{}]", serde_json::to_string(&e.k).unwrap(), e.x, e.y, if e.v.is_finite() { format!("{}", e.v) } else { "null".into() })).collect());
@@ -503,19 +503,19 @@ fn main() {
     let dt = t0.elapsed().as_secs_f64();
     if kip == "boyut" {
         for p in mt.m.ps.iter().take(3) {
-            eprintln!("{} hist {:?} past {:?} _bk {:?} job {:?} sizeof {}", p.govde.name, p.hal.hist.as_ref().map(|v| v.len()), p.hal.past.as_ref().map(|v| v.len()), p.hal._bk.as_ref().map(|v| v.len()), p.job.as_ref().map(|j| j.len()), std::mem::size_of::<alan_motor::model::Oyuncu>());
+            eprintln!("{} hist {:?} past {:?} _bk {:?} job {:?} sizeof {}", p.govde.name, Some(p.hal.hist.len()), p.hal.past.as_ref().map(|v| v.len()), p.hal._bk.as_ref().map(|v| v.len()), p.job.as_ref().map(|j| j.len()), std::mem::size_of::<alan_motor::model::Oyuncu>());
         }
         let t = std::time::Instant::now();
         let mut n = 0usize;
         for _ in 0..100000 { let c = mt.m.ps[3].clone(); n += c.govde.name.len(); }
         eprintln!("klon 100k: {:?} ({})", t.elapsed(), n);
-        let mut q = mt.m.ps[3].clone(); q.hal_mut().hist = None; q.hal_mut().past = None; q.hal_mut()._bk = None;
+        let mut q = mt.m.ps[3].clone(); q.hal_mut().hist = Default::default(); q.hal_mut().past = None; q.hal_mut()._bk = None;
         let t = std::time::Instant::now();
         for _ in 0..100000 { let c = q.clone(); n += c.govde.name.len(); }
         eprintln!("klon hist/past/_bk yok 100k: {:?} ({})", t.elapsed(), n);
     }
     if kip == "karar" {
-        if let Some(d) = &mt.m.lastDec {
+        if let Some(d) = &mt.m.last_dec {
             println!("karar {} ({},{})", d.name, d.x, d.y);
             for o in &d.opts {
                 println!("  {:<40} q={:<8} v={:.6} P={:.4} to={:?}", o.kind, o.q, o.v, o.P, o.to.as_ref().map(|t| (t.x, t.y)));

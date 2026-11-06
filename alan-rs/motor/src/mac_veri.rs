@@ -153,3 +153,59 @@ pub struct FakeShow {
 
 /// Enerji sayacı (JS {sprint: 0, ivme: 0, …}): ekleme sırasıyla.
 pub type EnSayac = Vec<(String, f64)>;
+
+// Maç değeri (JS macW / macZ): `MacZ`'nin yöntemleri tipiyle aynı crate'te olmalı (Aşama 7c); `kural::tac` yeniden dışa verir.
+use crate::mat::{exp, jmax, pow};
+
+pub const MAC_ORAN: f64 = 1.8 / 5400.0;
+pub const MAC_UC: [f64; 2] = [0.35, 2.8];
+
+
+pub fn fak(k: usize) -> f64 {
+    let mut r = 1.0;
+    for i in 2..=k {
+        r *= i as f64;
+    }
+    r
+}
+
+/// JS macW(d, kal): kalan sürede gol sayılarının Poisson dağılımıyla atılan/yenen golün puan değeri.
+pub fn mac_w(d: f64, kal: f64) -> MacW {
+    let lam = MAC_ORAN * jmax(0.0, kal);
+    let mut pk = [0.0f64; 12];
+    let mut s = 0.0;
+    for k in 0..12 {
+        let p = exp(-lam) * pow(lam, k as f64) / fak(k);
+        pk[k] = p;
+        s += p;
+    }
+    pk[11] += jmax(0.0, 1.0 - s);
+    let e = |dd: f64| {
+        let mut e = 0.0;
+        for a in 0..12 {
+            for b in 0..12 {
+                let x = dd + a as f64 - b as f64;
+                e += pk[a] * pk[b] * if x > 0.0 { 3.0 } else if x == 0.0 { 1.0 } else { 0.0 };
+            }
+        }
+        e
+    };
+    let e0 = e(d);
+    MacW { g: e(d + 1.0) - e0, c: e0 - e(d - 1.0), e0 }
+}
+
+impl MacZ {
+    fn e_k(&self, k: f64) -> f64 {
+        mac_w(self.d, 60.0 * k).e0
+    }
+    fn e_t(&self, dt: f64) -> f64 {
+        let r = jmax(0.0, self.kal - dt) / 60.0;
+        let k = r.floor();
+        let f = r - k;
+        self.e_k(k) * (1.0 - f) + self.e_k(k + 1.0) * f
+    }
+    /// JS macZ(dt)
+    pub fn zaman(&self, dt: f64) -> f64 {
+        (self.e_t(dt) - self.e_t(0.0)) / self.birim
+    }
+}

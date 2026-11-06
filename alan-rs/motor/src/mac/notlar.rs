@@ -11,7 +11,7 @@ fn ekle(n: &mut JMNot, id: f64, x: f64) {
 }
 
 /// JS notTik(m)
-pub fn notTik(m: &mut Mac) {
+pub fn not_tik(m: &mut Mac) {
     if m.mac._ic || m.mac._lite {
         return;
     }
@@ -19,7 +19,7 @@ pub fn notTik(m: &mut Mac) {
         m.not = Some(JMNot::default());
     }
     let h = m.holder;
-    let cp = super::hareket::corePos(m);
+    let cp = super::hareket::core_pos(m);
     let n = m.not.as_ref().unwrap();
     let mut s = n.s;
     let team = match h {
@@ -57,7 +57,7 @@ pub fn notTik(m: &mut Mac) {
 }
 
 /// JS notSayi(m, t, atan): sayı olunca atana ve yenen Bekçi'ye
-pub fn notSayi(m: &mut Mac, t: f64, atan: Option<Pid>) {
+pub fn not_sayi(m: &mut Mac, t: f64, atan: Option<Pid>) {
     let bk = m.ps.iter().position(|p| p.team != t && p.bekci());
     let atan_id = atan.map(|a| m.ps[a].id);
     let bk_id = bk.map(|b| m.ps[b].id);

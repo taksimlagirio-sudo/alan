@@ -2,7 +2,7 @@
 #![allow(dead_code)]
 use alan_motor::mac::{HamA, HamV};
 use alan_motor::mac::MacTam as Mac;
-use alan_motor::model::{MacTop, Oyuncu, JMFl, JP_sf};
+use alan_motor::model::{MacTop, Oyuncu, JMFl, JpSf};
 use alan_motor::temas::{TopT, TopTemas};
 use alan_motor::top::{Bitis, Top};
 use serde_json::Value;
@@ -54,7 +54,7 @@ pub fn oyuncu(v: &Value) -> Oyuncu {
             }
         }
     }
-    alan_motor::mac::kurulum::yetKur(&mut p, &a);
+    alan_motor::mac::kurulum::yet_kur(&mut p, &a);
     p.D = 1.0;
     for (k, x) in v["n"].as_object().unwrap() {
         let x = h(x);
@@ -73,9 +73,9 @@ pub fn oyuncu(v: &Value) -> Oyuncu {
             "cd" => p.cd = x,
             "en" => p.en = Some(x),
             "den" => p.den = Some(x),
-            "_evx" => p.hal_mut()._evx = Some(x),
-            "_evy" => p.hal_mut()._evy = Some(x),
-            "_yog" => p.hal_mut()._yog = Some(x),
+            "_evx" => p.hal_mut()._evx = x,
+            "_evy" => p.hal_mut()._evy = x,
+            "_yog" => p.hal_mut()._yog = x,
             "_dolYok" => p.hal_mut()._dolYok = Some(x),
             "_Dl" => p.hal_mut()._Dl = Some(x),
             "_D0" => p.hal_mut()._D0 = Some(x),
@@ -108,7 +108,7 @@ pub fn oyuncu(v: &Value) -> Oyuncu {
     p.press = bo["press"].as_bool().unwrap();
     p.hal_mut()._kuyuCik = bo["_kuyuCik"].as_bool().unwrap();
     if !v["sf"].is_null() {
-        p._sf = Some(JP_sf { t0: h(&v["sf"]["t0"]), f: v["sf"]["f"].as_str().unwrap().into() });
+        p._sf = Some(JpSf { t0: h(&v["sf"]["t0"]), f: v["sf"]["f"].as_str().unwrap().into() });
     }
     p
 }
@@ -139,7 +139,7 @@ pub fn mac(v: &Value) -> Mac {
         m.fl = Some(JMFl { q: Some(q as usize), kind: "pas".into(), ..Default::default() });
     }
     if let Some(a) = v["mh"].as_array() {
-        m.mac.__mH = Some((a[0].as_f64().unwrap(), a[1].as_f64().unwrap()));
+        m.mac.__m_h = Some((a[0].as_f64().unwrap(), a[1].as_f64().unwrap()));
     }
     m.st.loose = vec![0.0, 0.0];
     m

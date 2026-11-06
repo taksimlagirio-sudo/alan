@@ -22,19 +22,19 @@ pub use crate::dunya::varlik::{hayal, Beden, Varlik};
 #[derive(Clone, Debug, Default)]
 pub struct Sh {
     pub fr: Option<Arc<Fr>>,
-    pub frT: f64,
-    pub frB: Option<TopRef>,
+    pub fr_t: f64,
+    pub fr_b: Option<TopRef>,
     pub att: Option<u8>,
     pub aday: Option<u8>,
-    pub adayT: f64,
+    pub aday_t: f64,
     pub gain: f64,
     /// JS `sh.ball` (top kimliği; `undefined` → None, `null` → Some(None))
     pub ball: Option<Option<TopRef>>,
-    pub ballT: f64,
+    pub ball_t: f64,
     pub defl: f64,
     pub yr: Option<Yr>,
     pub gs: Option<Gs>,
-    pub yvBas: Option<(Pid, f64)>,
+    pub yv_bas: Option<(Pid, f64)>,
 }
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Yr {
@@ -47,7 +47,7 @@ pub struct Gs {
     pub t: f64,
     pub dt: u8,
     pub on: bool,
-    pub onP: bool,
+    pub on_p: bool,
     pub oy: bool,
 }
 
@@ -63,10 +63,10 @@ pub type KayipF = Arc<dyn Fn(KafaEl, f64, f64) -> f64 + Send + Sync>;
 #[derive(Clone)]
 pub struct KpC {
     pub L: KayipF,
-    pub LE: f64,
+    pub le: f64,
     /// JS `Hr`: taşıyıcının E'deki kopyası
     pub Hr: Oyuncu,
-    pub kH: f64,
+    pub k_h: f64,
     pub mut_: i32,
     /// JS `kc`: dünya (görenin sırası) × T → keepP
     pub kc: crate::HizliMap<(Pid, u64), f64>,
@@ -79,19 +79,19 @@ pub struct SekilDurum {
     pub sh: Sh,
     /// JS `m._sn` / `m._snT`: görenin sırası → gördükleri
     pub sn: Vec<Option<Arc<Vec<Varlik>>>>,
-    pub snT: Option<f64>,
+    pub sn_t: Option<f64>,
     /// hayalet bedenleri (oyuncu sırasıyla; aynı tikte bir kez kurulur)
     pub hy: Vec<Option<Arc<Oyuncu>>>,
-    pub hyT: Option<f64>,
-    pub kpC: Option<KpC>,
+    pub hy_t: Option<f64>,
+    pub kp_c: Option<KpC>,
     /// JS `_tbC`: (tik, p.id, H.id) → teamV tabanı
-    pub tbC: Option<((u64, u64, u64), f64)>,
+    pub tb_c: Option<((u64, u64, u64), f64)>,
     /// JS `m._kayL`
-    pub kayL: Option<(String, KayipF)>,
+    pub kay_l: Option<(String, KayipF)>,
     /// JS `m._acikK`
-    pub acikK: Option<(String, Vec<(f64, f64, f64)>)>,
+    pub acik_k: Option<(String, Vec<(f64, f64, f64)>)>,
     /// JS `p._bkCik` (oyuncu sırasıyla)
-    pub bkCik: Vec<Option<TopRef>>,
+    pub bk_cik: Vec<Option<TopRef>>,
     /// JS `b._pc` (hayali maçta topun yolu): top, tik, yol
     pub pc: Option<(TopRef, f64, Arc<Vec<super::ucus::Nokta>>)>,
     /// seyrek yerleşim: hücumcunun son tam hesabı (tik, tx, ty, job, sprint), oyuncu sırasıyla
@@ -158,9 +158,9 @@ impl<'a> Mc<'a> {
     /// Hayalet bedeni (aynı tikte önbellekli).
     pub fn hayal(&mut self, j: Pid) -> Arc<Oyuncu> {
         let t = self.m.tick;
-        if self.ek.hyT != Some(t) || self.ek.hy.len() != self.ps.len() {
+        if self.ek.hy_t != Some(t) || self.ek.hy.len() != self.ps.len() {
             self.ek.hy = vec![None; self.ps.len()];
-            self.ek.hyT = Some(t);
+            self.ek.hy_t = Some(t);
         }
         if let Some(h) = &self.ek.hy[j] {
             return h.clone();
@@ -177,6 +177,6 @@ impl<'a> Mc<'a> {
 
 impl std::fmt::Debug for SekilDurum {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("SekilDurum").field("snT", &self.snT).field("hyT", &self.hyT).finish_non_exhaustive()
+        f.debug_struct("SekilDurum").field("snT", &self.sn_t).field("hyT", &self.hy_t).finish_non_exhaustive()
     }
 }

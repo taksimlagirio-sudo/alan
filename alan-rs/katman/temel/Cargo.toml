@@ -1,0 +1,15 @@
+[package]
+name = "alan-temel"
+version = "0.1.0"
+edition = "2021"
+description = "ALAN motorunun temel katmanı (MIMARI.md 2.1, Aşama 7c)"
+
+[lib]
+name = "alan_temel"
+path = "lib.rs"
+
+[dependencies]
+
+serde = { version = "1", features = ["derive", "rc"] }
+bincode = "1.3"
+serde_json = { version = "1", features = ["float_roundtrip"] }

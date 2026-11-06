@@ -222,7 +222,7 @@ pub unsafe extern "C" fn degistir(p: *const u8, n: usize) -> i32 {
             ci += 1;
         }
         // T'ye kadarki kayıtlar sayfada zaten var
-        alan_motor::mac::kafa_bag::kafaAc(&mut m);
+        alan_motor::mac::kafa_bag::kafa_ac(&mut m);
         let mut s0 = String::new();
         karar_json(&m, &mut s0);
         *son_karar = s0;
@@ -252,7 +252,7 @@ fn yuv(x: f64, n: i32) -> serde_json::Value {
 /// Taşıyıcının son kararı (mac-isci.js kaydet'in karar kısmı): değişmişse karar kartı (JSON), değişmemişse yok.
 fn karar_json(m: &MacTam, son: &mut String) -> Option<String> {
     use serde_json::{json, Map, Value};
-    let d = m.lastDec.as_ref()?;
+    let d = m.last_dec.as_ref()?;
     let hi = m.ps.iter().position(|p| &*p.govde.name == d.name);
     let okuma = hi.and_then(|i| {
         let h = &m.mac.ham.get(i)?.0;
@@ -325,7 +325,7 @@ fn kafa_json(r: &alan_motor::mac::kafa_bag::KafaKayit) -> serde_json::Value {
     koy("qid", r.qid.map(|x| json!(x)));
     koy("shot", r.shot.as_ref().map(|x| json!(x)));
     koy("ot", r.ot.then(|| json!(1)));
-    for (k, v) in [("v", r.v), ("P", r.P), ("Ps", r.Ps), ("Pk", r.Pk), ("hiz", r.hiz), ("savT", r.savT), ("tf", r.tf), ("x", r.x), ("y", r.y), ("cikis", r.cikis), ("hizC", r.hizC), ("hizG", r.hizG), ("sek", r.sek)] {
+    for (k, v) in [("v", r.v), ("P", r.P), ("Ps", r.Ps), ("Pk", r.Pk), ("hiz", r.hiz), ("savT", r.savT), ("tf", r.tf), ("x", r.x), ("y", r.y), ("cikis", r.cikis), ("hizC", r.hiz_c), ("hizG", r.hiz_g), ("sek", r.sek)] {
         koy(k, v.filter(|x| x.is_finite()).map(|x| json!(x)));
     }
     koy("alis", r.alis.map(|(x, y)| json!({"x": x, "y": y})));
@@ -339,7 +339,7 @@ fn kafa_json(r: &alan_motor::mac::kafa_bag::KafaKayit) -> serde_json::Value {
         if s.devam {
             so.insert("devam".into(), json!(1));
         }
-        for (k, v) in [("kimId", s.kimId), ("kimT", s.kimT), ("x", s.x), ("y", s.y), ("gol", s.gol)] {
+        for (k, v) in [("kimId", s.kim_id), ("kimT", s.kim_t), ("x", s.x), ("y", s.y), ("gol", s.gol)] {
             if let Some(v) = v {
                 so.insert(k.into(), json!(v));
             }

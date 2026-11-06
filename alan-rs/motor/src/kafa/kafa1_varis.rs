@@ -134,29 +134,29 @@ pub struct UA<'a> {
     pub G0: Option<Option<GecTab>>,
     pub v: f64,
     pub rc: f64,
-    pub dMax: f64,
+    pub d_max: f64,
     pub hm: f64,
     pub rakip: bool,
     pub yv: bool,
     pub bek: bool,
     pub R0: f64,
-    pub rR: f64,
-    pub rR0: f64,
-    pub rcY: Option<f64>,
-    pub dV: f64,
+    pub r_r: f64,
+    pub r_r0: f64,
+    pub rc_y: Option<f64>,
+    pub d_v: f64,
     pub kay: f64,
     pub tau: f64,
     pub ben: bool,
     pub bk0: bool,
-    pub gvT: f64,
+    pub gv_t: f64,
     // denemeler arası durum
     pub tc: f64,
     pub M: f64,
     pub Gk: f64,
     pub kov: Option<bool>,
-    pub kovT: Option<f64>,
+    pub kov_t: Option<f64>,
     pub kt: Option<Nk>,
-    pub ktT: f64,
+    pub kt_t: f64,
     pub kj: Option<Kj>,
     pub kj2t: Option<Nk>,
     pub est: f64,
@@ -164,13 +164,13 @@ pub struct UA<'a> {
     pub ky: f64,
     pub c: (f64, f64),
     pub Gy: Option<GecTab>,
-    pub Gkk: Option<GecTab>,
+    pub gkk: Option<GecTab>,
     pub ec: f64,
-    pub pG: Option<Oyuncu>,
+    pub p_g: Option<Oyuncu>,
     /// JS `A.pT` (alışa koşan kopyanın hızı)
-    pub pT: Option<(f64, f64)>,
-    pub ucX: Option<f64>,
-    pub gvNow: bool,
+    pub p_t: Option<(f64, f64)>,
+    pub uc_x: Option<f64>,
+    pub gv_now: bool,
 }
 impl<'a> UA<'a> {
     pub fn yeni(p: Cow<'a, Oyuncu>, pi: Option<usize>) -> UA<'a> {
@@ -181,28 +181,28 @@ impl<'a> UA<'a> {
             G0: None,
             v: f64::NAN,
             rc: f64::NAN,
-            dMax: f64::NAN,
+            d_max: f64::NAN,
             hm: 0.0,
             rakip: false,
             yv: false,
             bek: false,
             R0: f64::NAN,
-            rR: f64::NAN,
-            rR0: f64::NAN,
-            rcY: None,
-            dV: f64::NAN,
+            r_r: f64::NAN,
+            r_r0: f64::NAN,
+            rc_y: None,
+            d_v: f64::NAN,
             kay: f64::NAN,
             tau: f64::NAN,
             ben: false,
             bk0: false,
-            gvT: 0.0,
+            gv_t: 0.0,
             tc: 0.0,
             M: -1e9,
             Gk: 0.0,
             kov: None,
-            kovT: None,
+            kov_t: None,
             kt: None,
-            ktT: 0.0,
+            kt_t: 0.0,
             kj: None,
             kj2t: None,
             est: f64::NAN,
@@ -210,17 +210,17 @@ impl<'a> UA<'a> {
             ky: f64::NAN,
             c: (0.0, 0.0),
             Gy: None,
-            Gkk: None,
+            gkk: None,
             ec: f64::NAN,
-            pG: None,
-            pT: None,
-            ucX: None,
-            gvNow: false,
+            p_g: None,
+            p_t: None,
+            uc_x: None,
+            gv_now: false,
         }
     }
     /// JS `A.pT || A.p`: hızı değişmiş kopyası
     pub fn pv(&self) -> Cow<'_, Oyuncu> {
-        match self.pT {
+        match self.p_t {
             Some((vx, vy)) => {
                 let mut q = (*self.p).clone();
                 q.vx = vx;
@@ -260,7 +260,7 @@ pub struct Lane {
 }
 
 /// Frenle varış (saf): p'nin (x, y)'ye R yakınlığa T tikte varamadığı ek süre (yetenek ve kuraldan).
-pub fn frenT_p(p: &Oyuncu, x: f64, y: f64, R: f64, T: f64, v: f64) -> f64 {
+pub fn fren_t_p(p: &Oyuncu, x: f64, y: f64, R: f64, T: f64, v: f64) -> f64 {
     let vx = z0(p.vx);
     let vy = z0(p.vy);
     let s0 = hypot(vx, vy);
@@ -274,14 +274,14 @@ pub fn frenT_p(p: &Oyuncu, x: f64, y: f64, R: f64, T: f64, v: f64) -> f64 {
     let xa = dx * ux + dy * uy;
     let xl = (-dx * uy + dy * ux).abs();
     let ag = crate::yetenek::ag(&p.govde.yet, p.den, p.bekci(), crate::kural::ikili::IK.yavas);
-    let aB = 0.018 * ag;
-    let aL = 0.021 * ag;
-    let tS = s0 / aB;
-    let aMin = if T <= tS { s0 * T - aB * T * T / 2.0 } else { s0 * tS / 2.0 - jmin(v * (T - tS), 0.025 * (T - tS) * (T - tS)) };
-    let aMax = s0 * T + jmin((v - s0) * T, 0.18 * v * 0.5 * crate::yetenek::ah(&p.govde.yet) * T * T);
-    let rA = jmax(jmax(0.0, aMin - xa), xa - aMax);
-    let rL = jmax(0.0, xl - jmin(v * T, aL * T * T / 2.0));
-    let def = hypot(rA, rL) - R;
+    let a_b = 0.018 * ag;
+    let a_l = 0.021 * ag;
+    let t_s = s0 / a_b;
+    let a_min = if T <= t_s { s0 * T - a_b * T * T / 2.0 } else { s0 * t_s / 2.0 - jmin(v * (T - t_s), 0.025 * (T - t_s) * (T - t_s)) };
+    let a_max = s0 * T + jmin((v - s0) * T, 0.18 * v * 0.5 * crate::yetenek::ah(&p.govde.yet) * T * T);
+    let r_a = jmax(jmax(0.0, a_min - xa), xa - a_max);
+    let r_l = jmax(0.0, xl - jmin(v * T, a_l * T * T / 2.0));
+    let def = hypot(r_a, r_l) - R;
     if def > 0.0 {
         T + def / v
     } else {
@@ -291,14 +291,14 @@ pub fn frenT_p(p: &Oyuncu, x: f64, y: f64, R: f64, T: f64, v: f64) -> f64 {
 
 impl Kafa {
     /// Bekçi kendi alanının dışına çıkar mı (decide.js:1603).
-    pub fn bekCikar(&self, bk: &Oyuncu, X: f64, Y: f64, tB: f64, tm: f64) -> bool {
+    pub fn bek_cikar(&self, bk: &Oyuncu, X: f64, Y: f64, t_b: f64, tm: f64) -> bool {
         let S = self.dis.S();
-        let bekOnce = S.as_ref().and_then(|s| s.bekOnce).unwrap_or(2.0);
-        let marginT = S.as_ref().map_or(0.6, |s| s.marginT);
-        hypot(X - ox_of(bk.team), Y - GCY) <= KR || tB + bekOnce + (20.0 - bk.govde.yet.y(mek::CIKIS)) * marginT < tm
+        let bek_once = S.as_ref().and_then(|s| s.bek_once).unwrap_or(2.0);
+        let margin_t = S.as_ref().map_or(0.6, |s| s.margin_t);
+        hypot(X - ox_of(bk.team), Y - GCY) <= KR || t_b + bek_once + (20.0 - bk.govde.yet.y(mek::CIKIS)) * margin_t < tm
     }
     /// Kale önündeki sekmede topun bizde kalma payı (decide.js:1363).
-    pub fn rbAt(&self, src: &[Op], team: f64, P: Nk) -> f64 {
+    pub fn rb_at(&self, src: &[Op], team: f64, P: Nk) -> f64 {
         let gxk = if team == 0.0 { GW } else { 0.0 };
         if hypot(P.x - gxk, P.y - GCY) >= 16.0 {
             return 0.4;
@@ -319,31 +319,31 @@ impl Kafa {
         A / (A + Dn)
     }
     /// Koşan oyuncunun durup (x, y)'ye dönmesinin gecikmesi (decide.js:1604).
-    pub fn frenT(&self, p: &Oyuncu, x: f64, y: f64, R: f64, T: f64, v: f64) -> f64 {
-        frenT_p(p, x, y, R, T, v)
+    pub fn fren_t(&self, p: &Oyuncu, x: f64, y: f64, R: f64, T: f64, v: f64) -> f64 {
+        fren_t_p(p, x, y, R, T, v)
     }
     /// JS ucusFormul'ün `arr(p, x, y, G)`: p'nin (x, y)'ye varış süresi.
     pub fn arr(&self, p: &Oyuncu, x: f64, y: f64, G: Option<&GecTab>) -> f64 {
         let d = hypot(p.x - x, p.y - y);
         (match G {
-            Some(G) => self.dis.gecOf(G, x, y, Some(d)),
+            Some(G) => self.dis.gec_of(G, x, y, Some(d)),
             None => self.dis.gec(p, x, y, Some(d)).unwrap_or(0.0),
-        }) + d / self.vS(p)
+        }) + d / self.v_s(p)
     }
     /// Kaçan topu arkadaşın alma payı (decide.js:1610).
-    pub fn kacanAl(&self, p: &Oyuncu, ad: &[UA], P: Nk, bvx: f64, bvy: f64, Tb: f64) -> f64 {
+    pub fn kacan_al(&self, p: &Oyuncu, ad: &[UA], P: Nk, bvx: f64, bvy: f64, Tb: f64) -> f64 {
         let sp = hypot(bvx, bvy);
-        let cdT = jmax(Q.cd_min, jround((Q.cd - 0.5 * (p.govde.yet.y(mek::YENIDEN_DOKUN) - 10.0)) * jmin(1.0, sp / Q.cd_v)));
-        let mut tO: f64 = 1e9;
+        let cd_t = jmax(Q.cd_min, jround((Q.cd - 0.5 * (p.govde.yet.y(mek::YENIDEN_DOKUN) - 10.0)) * jmin(1.0, sp / Q.cd_v)));
+        let mut t_o: f64 = 1e9;
         for A in ad {
             if A.rakip && !A.bek {
-                tO = jmin(tO, A.rcY.unwrap_or(A.rc) + self.arr(&A.p, P.x, P.y, A.G.as_ref()));
+                t_o = jmin(t_o, A.rc_y.unwrap_or(A.rc) + self.arr(&A.p, P.x, P.y, A.G.as_ref()));
             }
         }
-        1.0 / (1.0 + exp(-(tO - Tb - cdT - 1.0) / 3.0))
+        1.0 / (1.0 + exp(-(t_o - Tb - cd_t - 1.0) / 3.0))
     }
     /// Rakip topa yandan koşar (decide.js:1616): yeni hız (None: değişmez).
-    pub fn akHiz(&self, p: &Oyuncu, A: &UA, bvx: f64, bvy: f64, cx: f64, cy: f64, vA: f64) -> Option<(f64, f64)> {
+    pub fn ak_hiz(&self, p: &Oyuncu, A: &UA, bvx: f64, bvy: f64, cx: f64, cy: f64, v_a: f64) -> Option<(f64, f64)> {
         let bl = hypot(bvx, bvy);
         if bl < 1e-6 {
             return None;
@@ -359,12 +359,12 @@ impl Kafa {
         if pl < 1e-6 {
             return None;
         }
-        let vn = jmin(A.v, vA);
+        let vn = jmin(A.v, v_a);
         Some((px / pl * vn, py / pl * vn))
     }
     /// Arkadaş alışa koşar (decide.js:1626): yeni hız.
     #[allow(clippy::too_many_arguments)]
-    pub fn alHiz(&self, p: &Oyuncu, A: &UA, dd: f64, R: f64, cx: f64, cy: f64, bvx: f64, bvy: f64, Tb: f64, vS: f64) -> (f64, f64) {
+    pub fn al_hiz(&self, p: &Oyuncu, A: &UA, dd: f64, R: f64, cx: f64, cy: f64, bvx: f64, bvy: f64, Tb: f64, v_s: f64) -> (f64, f64) {
         let mut vx = 0.0;
         let mut vy = 0.0;
         let bs = hypot(bvx, bvy);
@@ -378,15 +378,15 @@ impl Kafa {
             vx = mx / ml * vn;
             vy = my / ml * vn;
             let vt = -(vx * ux + vy * uy);
-            if vt > vS {
-                vx += (vt - vS) * ux;
-                vy += (vt - vS) * uy;
+            if vt > v_s {
+                vx += (vt - v_s) * ux;
+                vy += (vt - v_s) * uy;
             }
         }
         (vx, vy)
     }
     /// J'ye koşanın T tik sonraki yeri (decide.js:1644).
-    pub fn kosYer(&self, p: &Oyuncu, J: &Kj, T: f64) -> (f64, f64) {
+    pub fn kos_yer(&self, p: &Oyuncu, J: &Kj, T: f64) -> (f64, f64) {
         let x0 = p.x;
         let y0 = p.y;
         let vx = z0(p.vx);
@@ -430,7 +430,7 @@ impl Kafa {
         }
     }
     /// J'ye koşanın T tik sonraki hızı (decide.js:1665).
-    pub fn kosHiz(&self, p: &Oyuncu, J: &Kj, T: f64) -> (f64, f64) {
+    pub fn kos_hiz(&self, p: &Oyuncu, J: &Kj, T: f64) -> (f64, f64) {
         let vx = z0(p.vx);
         let vy = z0(p.vy);
         let r = jmax(0.0, jmin(T, J.r));
@@ -454,7 +454,7 @@ impl Kafa {
         if dv < 1e-9 {
             return (vx, vy);
         }
-        let (qx, qy) = self.kosYer(p, J, T);
+        let (qx, qy) = self.kos_yer(p, J, T);
         if hypot(qx - J.t.x, qy - J.t.y) < 1e-6 {
             (0.0, 0.0)
         } else if t <= tau {
@@ -466,23 +466,23 @@ impl Kafa {
 
     /// Topa değen oyuncudan seken topun yarışı (decide.js:1376): [biz, kuyu, bizim yer x, y, rakip yer x, y].
     #[allow(clippy::too_many_arguments)]
-    pub fn sekYaris(&self, src: &[Op], team: f64, A: &UA, bL: &mut TopT, from: Option<&Oyuncu>, cx: f64, cy: f64, Tb: f64, e0: Option<f64>, hK: Option<usize>, gecik: f64, sizar: bool, etP: &[Etki], kc: Kc) -> Sek {
+    pub fn sek_yaris(&self, src: &[Op], team: f64, A: &UA, b_l: &mut TopT, from: Option<&Oyuncu>, cx: f64, cy: f64, Tb: f64, e0: Option<f64>, h_k: Option<usize>, gecik: f64, sizar: bool, et_p: &[Etki], kc: Kc) -> Sek {
         let p: &Oyuncu = &A.p;
         let pv = A.pv();
         let kr = self.kural();
-        let mut T = kap_al(bL, &pv, from, src, &kr);
-        if let Some(x) = A.ucX {
+        let mut T = kap_al(b_l, &pv, from, src, &kr);
+        if let Some(x) = A.uc_x {
             if !A.bek {
                 T.cap *= uc_k(x, Some(p));
             }
         }
         let left = jmax(0.0, T.vr - jmax(0.0, T.cap));
-        let (bvx, bvy) = (bL.b.vx, bL.b.vy);
+        let (bvx, bvy) = (b_l.b.vx, b_l.b.vy);
         let sp = ya(hypot(bvx, bvy), 1e-6);
         let bkP = A.bek;
-        let GV = A.gvNow;
+        let gv = A.gv_now;
         let pd = hypot(p.x - cx, p.y - cy);
-        let TY = !GV && !A.bek && pd > Q.reach;
+        let TY = !gv && !A.bek && pd > Q.reach;
         let mut ex = if pd > 1e-9 { (p.x - cx) / pd } else { 0.0 };
         let mut ey = if pd > 1e-9 { (p.y - cy) / pd } else { 0.0 };
         if TY {
@@ -515,7 +515,7 @@ impl Kafa {
         let dn = ux * qx + uy * qy;
         let mut nx = ux;
         let mut ny = uy;
-        if dn < 0.0 && p.takim() != bL.b.team {
+        if dn < 0.0 && p.takim() != b_l.b.team {
             nx = ux - (1.0 + Q.rest2) * dn * qx;
             ny = uy - (1.0 + Q.rest2) * dn * qy;
         }
@@ -532,7 +532,7 @@ impl Kafa {
             ix = (gx - p.x) / il;
             iy = (GCY - p.y) / il;
         }
-        if GV {
+        if gv {
             let rx = bvx - z0(pv.vx);
             let ry = bvy - z0(pv.vy);
             let vn = rx * qx + ry * qy;
@@ -547,23 +547,23 @@ impl Kafa {
             ny = oy / ya(v, 1.0);
         }
         let (nx0, ny0) = (nx, ny);
-        let _S = self.dis.S();
-        let cdT = jmax(Q.cd_min, jround(Q.cd * jmin(1.0, sp / Q.cd_v)));
-        let tv: Option<Oyuncu> = match A.pT {
-            Some((vx, vy)) if !GV => {
+        let _s = self.dis.S();
+        let cd_t = jmax(Q.cd_min, jround(Q.cd * jmin(1.0, sp / Q.cd_v)));
+        let tv: Option<Oyuncu> = match A.p_t {
+            Some((vx, vy)) if !gv => {
                 let mut o = (*A.p).clone();
                 o.vx = vx;
                 o.vy = vy;
-                o.x = px + vx * cdT;
-                o.y = py + vy * cdT;
+                o.x = px + vx * cd_t;
+                o.y = py + vy * cd_t;
                 Some(o)
             }
             _ => None,
         };
-        let tvG = tv.as_ref().and_then(|o| self.dis.gecTab(o, true));
-        let bch = bL.b.ch;
-        let bteam = bL.b.team as f64;
-        let ayniP = |o: &Oyuncu, oi: usize| A.pi == Some(oi) && std::ptr::eq(o, p);
+        let tv_g = tv.as_ref().and_then(|o| self.dis.gec_tab(o, true));
+        let bch = b_l.b.ch;
+        let bteam = b_l.b.team as f64;
+        let ayni_p = |o: &Oyuncu, oi: usize| A.pi == Some(oi) && std::ptr::eq(o, p);
         struct H {
             siz: bool,
             nx: f64,
@@ -576,44 +576,44 @@ impl Kafa {
             let mut nx = Hh.as_ref().map_or(nx0, |h| h.nx);
             let mut ny = Hh.as_ref().map_or(ny0, |h| h.ny);
             let siz = Hh.as_ref().map_or(false, |h| h.siz);
-            let st = if GV || siz { 0.0 } else { jmin(1.0, Q.steer * (if bkP { Q.bek_steer } else { jmax(0.0, jmin(1.0, T.cap / ya(T.vr, 1.0))) }) * (0.5 + 0.04 * (T.sk - 10.0))) };
+            let st = if gv || siz { 0.0 } else { jmin(1.0, Q.steer * (if bkP { Q.bek_steer } else { jmax(0.0, jmin(1.0, T.cap / ya(T.vr, 1.0))) }) * (0.5 + 0.04 * (T.sk - 10.0))) };
             nx = nx * (1.0 - st) + ix * st;
             ny = ny * (1.0 - st) + iy * st;
             let nl = ya(hypot(nx, ny), 1.0);
             nx /= nl;
             ny /= nl;
-            let bx = jmax(1.0, jmin(GW - 1.0, match &Hh { Some(h) => h.x, None => if GV { p.x + qx * BODY_R } else { px + qx * (Q.reach + 0.05) } }));
-            let by = jmax(1.0, jmin(GH - 1.0, match &Hh { Some(h) => h.y, None => if GV { p.y + qy * BODY_R } else { py + qy * (Q.reach + 0.05) } }));
+            let bx = jmax(1.0, jmin(GW - 1.0, match &Hh { Some(h) => h.x, None => if gv { p.x + qx * BODY_R } else { px + qx * (Q.reach + 0.05) } }));
+            let by = jmax(1.0, jmin(GH - 1.0, match &Hh { Some(h) => h.y, None => if gv { p.y + qy * BODY_R } else { py + qy * (Q.reach + 0.05) } }));
             let vv = Hh.as_ref().and_then(|h| h.v).unwrap_or(v);
-            let b0x = if GV || siz { 0.0 } else { z0(pv.vx) };
-            let b0y = if GV || siz { 0.0 } else { z0(pv.vy) };
+            let b0x = if gv || siz { 0.0 } else { z0(pv.vx) };
+            let b0y = if gv || siz { 0.0 } else { z0(pv.vy) };
             let mut b = top_yap(bx, by, b0x + nx * vv, b0y + ny * vv, bteam, Some(bch), None);
             if let Some(e0) = e0 {
-                b.e = jmax(0.0, e0 - if GV { 0.0 } else { Q.defl_e });
+                b.e = jmax(0.0, e0 - if gv { 0.0 } else { Q.defl_e });
                 b.alive = b.e > 0.0;
             }
             b.defl = 1.0;
             b.defl_b = false;
-            let (pts, end) = kaynakla(etP, kc, |k| tahmin(&b, k, &crate::saha::P, Some(100)));
+            let (pts, end) = kaynakla(et_p, kc, |k| tahmin(&b, k, &crate::saha::P, Some(100)));
             let n = pts.len();
-            let (mut tm, mut tO, mut tB): (f64, f64, f64) = (1e9, 1e9, 1e9);
+            let (mut tm, mut t_o, mut t_b): (f64, f64, f64) = (1e9, 1e9, 1e9);
             let mut bk: Option<&Oyuncu> = None;
-            let (mut bX, mut bY) = (0.0, 0.0);
-            let (mut mX, mut mY, mut oX, mut oY): (Option<f64>, Option<f64>, Option<f64>, Option<f64>) = (None, None, None, None);
+            let (mut b_x, mut b_y) = (0.0, 0.0);
+            let (mut m_x, mut m_y, mut o_x, mut o_y): (Option<f64>, Option<f64>, Option<f64>, Option<f64>) = (None, None, None, None);
             let kos = |o: &Oyuncu, oi: usize, Bo: f64| -> (f64, f64, f64) {
-                let op = ayniP(o, oi);
-                let t0 = jmax(Tb + if op { if GV { jmax(0.0, A.gvT - Tb) } else { cdT } } else { jmax(0.0, self.TEPKI(o, Tepki::BosTop)) }, if hK == Some(oi) { z0(gecik) + 8.0 } else { 0.0 });
+                let op = ayni_p(o, oi);
+                let t0 = jmax(Tb + if op { if gv { jmax(0.0, A.gv_t - Tb) } else { cd_t } } else { jmax(0.0, self.TEPKI(o, Tepki::BosTop)) }, if h_k == Some(oi) { z0(gecik) + 8.0 } else { 0.0 });
                 if t0 >= Bo {
                     return (1e9, 0.0, 0.0);
                 }
-                let v = self.vS(o);
-                let Gt: Option<GecTab> = if tv.is_some() && op { tvG.clone() } else { self.dis.gecTab(o, false) };
+                let v = self.v_s(o);
+                let Gt: Option<GecTab> = if tv.is_some() && op { tv_g.clone() } else { self.dis.gec_tab(o, false) };
                 let BD = o.bekci() && !op;
                 let gxo = ox_of(o.team);
                 let reo = if BD { bek_re(o) } else { 0.0 };
-                let DLo = if BD { bek_dl(o) } else { 0.0 };
-                let DVo = if BD { bek_dv(o) } else { 0.0 };
-                let KAo = if BD { v * bek_kay(o) } else { 0.0 };
+                let dlo = if BD { bek_dl(o) } else { 0.0 };
+                let dvo = if BD { bek_dv(o) } else { 0.0 };
+                let kao = if BD { v * bek_kay(o) } else { 0.0 };
                 let adim = if BD { 1 } else { 3 };
                 let mut i = 0;
                 while i < n {
@@ -627,8 +627,8 @@ impl Kafa {
                         continue;
                     }
                     if BD && hypot(P.x - gxo, GCY - P.y) <= KR {
-                        let Rd = Q.bek_body + jmin(DLo, jmax(0.0, fi - reo) * DVo);
-                        let ta = Tb + jmax(0.0, reo) + jmax(0.0, hypot(o.x - P.x, o.y - P.y) - Rd) / KAo;
+                        let rd = Q.bek_body + jmin(dlo, jmax(0.0, fi - reo) * dvo);
+                        let ta = Tb + jmax(0.0, reo) + jmax(0.0, hypot(o.x - P.x, o.y - P.y) - rd) / kao;
                         if ta <= Tb + fi || i + 3 >= n {
                             return (jmax(ta, Tb + fi), P.x, P.y);
                         }
@@ -639,7 +639,7 @@ impl Kafa {
                         i += adim;
                         continue;
                     }
-                    let (oX0, oY0) = if op {
+                    let (o_x0, o_y0) = if op {
                         match &tv {
                             Some(t) => (t.x, t.y),
                             None => (px, py),
@@ -647,12 +647,12 @@ impl Kafa {
                     } else {
                         (o.x, o.y)
                     };
-                    let kX0 = jmax(0.0, hypot(oX0 - P.x, oY0 - P.y) - Q.reach) / v;
-                    if i + 3 < n && t0 + kX0 > Tb + fi {
+                    let k_x0 = jmax(0.0, hypot(o_x0 - P.x, o_y0 - P.y) - Q.reach) / v;
+                    if i + 3 < n && t0 + k_x0 > Tb + fi {
                         i += adim;
                         continue;
                     }
-                    let ta = t0 + match &Gt { Some(G) => self.dis.gecOf(G, P.x, P.y, Some(hypot(oX0 - P.x, oY0 - P.y) - Q.reach)), None => 0.0 } + kX0;
+                    let ta = t0 + match &Gt { Some(G) => self.dis.gec_of(G, P.x, P.y, Some(hypot(o_x0 - P.x, o_y0 - P.y) - Q.reach)), None => 0.0 } + k_x0;
                     if ta <= Tb + fi || i + 3 >= n {
                         return (jmax(ta, Tb + fi), P.x, P.y);
                     }
@@ -660,56 +660,56 @@ impl Kafa {
                 }
                 (1e9, 0.0, 0.0)
             };
-            let mut bkL: Vec<usize> = Vec::new();
+            let mut bk_l: Vec<usize> = Vec::new();
             for (oi, o) in src.iter().enumerate() {
                 if o.noTouch {
                     continue;
                 }
                 if o.team == team {
-                    let (tk, kX, kY) = kos(o, oi, tm);
+                    let (tk, k_x, k_y) = kos(o, oi, tm);
                     if tk < tm {
                         tm = tk;
-                        mX = Some(kX);
-                        mY = Some(kY);
+                        m_x = Some(k_x);
+                        m_y = Some(k_y);
                     }
                 } else if o.bekci() {
-                    bkL.push(oi);
+                    bk_l.push(oi);
                 } else {
-                    let (tk, kX, kY) = kos(o, oi, tO);
-                    if tk < tO {
-                        tO = tk;
-                        oX = Some(kX);
-                        oY = Some(kY);
+                    let (tk, k_x, k_y) = kos(o, oi, t_o);
+                    if tk < t_o {
+                        t_o = tk;
+                        o_x = Some(k_x);
+                        o_y = Some(k_y);
                     }
                 }
             }
-            for &oi in &bkL {
-                let (tk, kX, kY) = kos(&src[oi], oi, tO);
-                tB = tk;
+            for &oi in &bk_l {
+                let (tk, k_x, k_y) = kos(&src[oi], oi, t_o);
+                t_b = tk;
                 bk = Some(&src[oi]);
-                bX = kX;
-                bY = kY;
+                b_x = k_x;
+                b_y = k_y;
             }
             if let Some(bk) = bk {
-                if self.bekCikar(bk, bX, bY, tB, tm) && tB < tO {
-                    tO = tB;
-                    oX = Some(bX);
-                    oY = Some(bY);
+                if self.bek_cikar(bk, b_x, b_y, t_b, tm) && t_b < t_o {
+                    t_o = t_b;
+                    o_x = Some(b_x);
+                    o_y = Some(b_y);
                 }
             }
-            let mut pK = 0.0;
+            let mut p_k = 0.0;
             if let Some(d) = end.done {
                 if d == Bitis::KuyuSag || d == Bitis::KuyuSol {
                     let tE = Tb + n as f64 - 1.0;
-                    let kz = sgm((jmin(tm, tO) - tE) / 4.0);
-                    pK = if (d == Bitis::KuyuSag) == (team == 0.0) { kz } else { 0.0 };
-                    if pK == 0.0 {
-                        tO = jmin(tO, tE);
+                    let kz = sgm((jmin(tm, t_o) - tE) / 4.0);
+                    p_k = if (d == Bitis::KuyuSag) == (team == 0.0) { kz } else { 0.0 };
+                    if p_k == 0.0 {
+                        t_o = jmin(t_o, tE);
                     }
                 }
             }
             let Pe = pts[n - 1];
-            [(1.0 - pK) * sgm((tO - tm) / 4.0), pK, mX.unwrap_or(Pe.x), mY.unwrap_or(Pe.y), oX.unwrap_or(Pe.x), oY.unwrap_or(Pe.y)]
+            [(1.0 - p_k) * sgm((t_o - tm) / 4.0), p_k, m_x.unwrap_or(Pe.x), m_y.unwrap_or(Pe.y), o_x.unwrap_or(Pe.x), o_y.unwrap_or(Pe.y)]
         };
         if sizar {
             let a0 = atan2(uy, ux);
@@ -733,14 +733,14 @@ impl Kafa {
         if bkP {
             let out = if p.team == 0.0 { 1.0 } else { -1.0 };
             let own = ox_of(p.team);
-            let Lq = jmax(3.0, jmin(14.0, 15.0 * v));
+            let lq = jmax(3.0, jmin(14.0, 15.0 * v));
             let (mut a0, mut a1, mut sw, mut mx, mut my, mut ox, mut oy, mut mw, mut ow) = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
             for a in BEK_YON {
                 let r = a * PI / 180.0;
                 let dx = cos(r) * out;
                 let dy = sin(r);
-                let ppx = jmax(1.0, jmin(GW - 1.0, p.x + dx * Lq));
-                let ppy = jmax(1.0, jmin(GH - 1.0, p.y + dy * Lq));
+                let ppx = jmax(1.0, jmin(GW - 1.0, p.x + dx * lq));
+                let ppy = jmax(1.0, jmin(GH - 1.0, p.y + dy * lq));
                 let mut od: f64 = 12.0;
                 for o in src {
                     if !(o.team == p.team || o.noTouch) {
@@ -762,7 +762,7 @@ impl Kafa {
             }
             return Sek::alti([a0 / sw, a1 / sw, if mw > 1e-12 { mx / mw } else { p.x }, if mw > 1e-12 { my / mw } else { p.y }, if ow > 1e-12 { ox / ow } else { p.x }, if ow > 1e-12 { oy / ow } else { p.y }]);
         }
-        if !GV && pd < BODY_R + 0.5 {
+        if !gv && pd < BODY_R + 0.5 {
             let R1 = yaris(ix, iy, None);
             let R2 = yaris(ix, iy, Some(H { siz: false, nx: -ux, ny: -uy, v: None, x: cx - 0.05 * ux, y: cy - 0.05 * uy }));
             let w1 = R1[0] + R2[0];
@@ -781,11 +781,11 @@ impl Kafa {
 
     /// Topun yolunda kovalayanlar (decide.js:808): src sırasıyla (oyuncu sırası, hedef), takımca en erken
     /// varanlar ve yetişenler.
-    pub fn chasePlan(&self, pts: &[Nk], ps: &[Op], t0: f64, lane: Option<Lane>) -> Vec<(usize, Kovala)> {
-        let bekSerbest = self.dis.S().map_or(false, |s| s.bekSerbest);
+    pub fn chase_plan(&self, pts: &[Nk], ps: &[Op], t0: f64, lane: Option<Lane>) -> Vec<(usize, Kovala)> {
+        let bek_serbest = self.dis.S().map_or(false, |s| s.bek_serbest);
         let mut arr: Vec<(usize, Kovala, bool)> = Vec::new();
         for (pi, p) in ps.iter().enumerate() {
-            if p.bekci() && !bekSerbest && hypot(p.x - ox_of(p.team), p.y - GCY) > 12.0 {
+            if p.bekci() && !bek_serbest && hypot(p.x - ox_of(p.team), p.y - GCY) > 12.0 {
                 continue;
             }
             let rc = if lane.map_or(false, |l| l.loose) {
@@ -793,7 +793,7 @@ impl Kafa {
             } else {
                 jmax(0.0, self.TEPKI(p, Tepki::Kovala) - z0(t0) + lane.map_or(0.0, |l| l.lag)) - self.bag._savT.map_or(0.0, z0)
             };
-            let v = self.vS(p);
+            let v = self.v_s(p);
             let (px, py) = (p.x, p.y);
             let mut g: Option<Kovala> = None;
             let mut i = jmax(0.0, 2.0 * (rc / 2.0).ceil()) as usize;
@@ -841,11 +841,11 @@ impl Kafa {
         out
     }
     /// Alıcının topu karşılayacağı yer (decide.js:849).
-    pub fn recvPoint(&self, pts: &[Nk], p: &Oyuncu) -> Nk {
-        if let Some(r) = self.dis.aliciDirenc(pts, p, 0.0, 0.0, 1.4) {
+    pub fn recv_point(&self, pts: &[Nk], p: &Oyuncu) -> Nk {
+        if let Some(r) = self.dis.alici_direnc(pts, p, 0.0, 0.0, 1.4) {
             return r;
         }
-        let v = self.vS(p);
+        let v = self.v_s(p);
         let mut i = 0;
         while i < pts.len() {
             let q = pts[i];

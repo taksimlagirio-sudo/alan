@@ -155,7 +155,7 @@ pub struct MacGor {
 #[derive(Clone, Debug, Default)]
 pub struct PrT {
     pub team: f64,
-    pub hId: f64,
+    pub h_id: f64,
     pub t: Option<f64>,
     /// arkadaş id → değer
     pub m: Vec<(f64, f64)>,
@@ -171,7 +171,7 @@ impl PrT {
     pub fn d1(&self) -> super::gecici_dis1::PrT {
         super::gecici_dis1::PrT {
             team: self.team,
-            hId: Some(self.hId),
+            h_id: Some(self.h_id),
             t: self.t.unwrap_or(f64::NAN),
             h: Some(self.h),
             hm: self.hm.as_ref().map(|x| x.0.clone()),
@@ -214,14 +214,14 @@ pub struct Sw {
 #[derive(Default)]
 pub struct Kafa2Durum {
     /// bosluk: dünya (kimlik) → anahtar → değer
-    pub BSC: crate::HizliMap<usize, (Arc<Dunya>, f64, crate::HizliMap<String, f64>)>,
-    pub IMK_OFS: f64,
-    pub IMK_INAN_T: f64,
+    pub bsc: crate::HizliMap<usize, (Arc<Dunya>, f64, crate::HizliMap<String, f64>)>,
+    pub imk_ofs: f64,
+    pub imk_inan_t: f64,
     /// JS `self.__sahF` (görünüm için)
-    pub sahF_iz: Option<(Option<f64>, f64, Arc<crate::kafa::kafa2_zemin::Sahiplik>)>,
+    pub sah_f_iz: Option<(Option<f64>, f64, Arc<crate::kafa::kafa2_zemin::Sahiplik>)>,
     /// JS `_noHold` / `_noFake` / `_dalgada` / `_kayipYap` (KafaD'de yok)
-    pub _noHold: bool,
-    pub _noFake: bool,
+    pub _no_hold: bool,
+    pub _no_fake: bool,
     pub _dalgada: bool,
     /// JS `h._sfNiyet` / `h._sfNiyetK` (tartı süresince taşıyanın sprint niyeti): (id, team, niyet, itK)
     pub sfNiyet: Option<(f64, f64, String, Option<f64>)>,
@@ -244,22 +244,22 @@ pub fn kafa_d() -> KafaD {
 
 /// D'nin `_` alanlarını (`_tick` dışında) boşaltır (JS: `for (k of Object.keys(D)) if (k[0] === "_" && k !== "_tick") delete D[k]`).
 pub fn d_alt_bosalt(d: &mut crate::model::KafaBag) {
-    d._tekL = None;
+    d._tek_l = None;
     d._sut = None;
     d._savT = None;
-    d._savW = None;
-    d._savU = None;
-    d._savCa = None;
+    d._sav_w = None;
+    d._sav_u = None;
+    d._sav_ca = None;
     d._kenar = None;
-    d._gPr = None;
-    d._enWD = None;
-    d._enTm = None;
+    d._g_pr = None;
+    d._en_wd = None;
+    d._en_tm = None;
     d._kanca = None;
     d._ot = None;
-    d._tekD = false;
+    d._tek_d = false;
     d._itme = None;
     d._gon = None;
-    d._sYon = None;
+    d._s_yon = None;
 }
 
 // maçın talimatından kafanınkine (maç köprüsünden taşındı, Aşama 7b)

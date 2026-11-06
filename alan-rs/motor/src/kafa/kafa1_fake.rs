@@ -19,7 +19,7 @@ pub struct FakeSh {
 }
 
 /// JS alP(d): seçeneğin arkadaşa varma olasılığı (sekmeden gelen pay çıkar).
-pub fn alP(d: Option<&JODet>) -> Option<f64> {
+pub fn al_p(d: Option<&JODet>) -> Option<f64> {
     d.and_then(|d| match (d.P, d.Ps) {
         (Some(P), Some(Ps)) => Some(jmax(0.0, P - Ps)),
         (P, _) => P,
@@ -28,7 +28,7 @@ pub fn alP(d: Option<&JODet>) -> Option<f64> {
 
 impl Kafa {
     /// Rakibin kanma olasılığı (decide.js:303).
-    pub fn fakeP(&self, h: &Oyuncu, p: &Oyuncu, k: &str, c: Option<f64>) -> f64 {
+    pub fn fake_p(&self, h: &Oyuncu, p: &Oyuncu, k: &str, c: Option<f64>) -> f64 {
         let ok = p.govde.yet.y(mek::FAKE_KAN);
         let sk = h.govde.yet.y(if k == "gövde" { mek::FAKE_GOVDE } else { mek::FAKE_INAN });
         let base = jmax(0.08, jmin(0.9, 0.5 + 0.04 * (sk - ok)));
@@ -37,11 +37,11 @@ impl Kafa {
         base * (1.0 - g + g * cc)
     }
     /// Fake'in süresi (decide.js:307).
-    pub fn fakeT(&self, h: &Oyuncu) -> f64 {
+    pub fn fake_t(&self, h: &Oyuncu) -> f64 {
         jmax(8.0, jmin(18.0, jround(14.0 - 0.5 * (h.govde.yet.y(mek::FAKE_SURE) - 10.0))))
     }
     /// Kanan rakibin koşacağı yer (decide.js:308).
-    pub fn fakeHedef(&self, p: &Oyuncu, h: &Oyuncu, sh: &FakeSh) -> Nk {
+    pub fn fake_hedef(&self, p: &Oyuncu, h: &Oyuncu, sh: &FakeSh) -> Nk {
         if sh.k == "gönder" && p.bekci() {
             let gx = if p.team == 0.0 { 0.0 } else { GW };
             return nk(gx + if p.team == 0.0 { 1.4 } else { -1.4 }, jmax(GCY - MOUTH, jmin(GCY + MOUTH, GCY + 0.9 * (sh.to.y - GCY))));
@@ -56,7 +56,7 @@ impl Kafa {
         nk(h.x + ax * u, h.y + ay * u)
     }
     /// Rakip bu fake'le ilgili mi (decide.js:326).
-    pub fn fakeIlgili(&self, p: &Oyuncu, h: &Oyuncu, sh: &FakeSh) -> bool {
+    pub fn fake_ilgili(&self, p: &Oyuncu, h: &Oyuncu, sh: &FakeSh) -> bool {
         if p.team == h.team {
             return false;
         }
@@ -69,7 +69,7 @@ impl Kafa {
         if p.bekci() {
             return false;
         }
-        let t = self.fakeHedef(p, h, sh);
+        let t = self.fake_hedef(p, h, sh);
         hypot(t.x - p.x, t.y - p.y) < 7.0
     }
 }

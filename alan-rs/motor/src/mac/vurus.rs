@@ -1,7 +1,7 @@
 //! Vuruş (match.js 2751–2893): Çekirdeği bırakma (pas, önüne, kenardan, gönder, çalım) ve top üretimi.
 use super::enerji::*;
 use super::gecici_dis as dis;
-use super::hareket::corePos;
+use super::hareket::core_pos;
 use super::*;
 use crate::alan::{Etki, Kaynak};
 use crate::core_sabit::IN;
@@ -31,20 +31,20 @@ pub struct TopIstek {
 }
 
 /// JS vurTaban(p): vuruşun tabanı (topun en az enerjisi)
-pub fn vurTaban(p: &Oyuncu) -> f64 {
+pub fn vur_taban(p: &Oyuncu) -> f64 {
     P.tek_taban * jmax(0.5, jmin(1.5, 1.0 + 0.05 * (p.govde.yet.y(mek::VURUS_TABAN) - 10.0)))
 }
 
 /// JS K.makeBall(o): yeni top (yeni kimlikle).
-pub fn makeBall(m: &mut Mac, o: TopIstek) -> MacTop {
+pub fn make_ball(m: &mut Mac, o: TopIstek) -> MacTop {
     let taban = match o.vur {
-        Some(v) => vurTaban(&m.ps[v]),
+        Some(v) => vur_taban(&m.ps[v]),
         None => P.tek_taban,
     };
     let mut b = Top::yeni(o.x, o.y, o.vx, o.vy, o.team as u8, o.ch, taban);
     b.defl = o.defl;
-    m.mac.topSay += 1;
-    let t = TopTemas { kimlik: m.mac.topSay, from: o.from, recv: o.recv, ..Default::default() };
+    m.mac.top_say += 1;
+    let t = TopTemas { kimlik: m.mac.top_say, from: o.from, recv: o.recv, ..Default::default() };
     MacTop { tt: TopT { b, t }, ek: TopEk { ..Default::default() } }
 }
 
@@ -57,18 +57,18 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
     let F = &SPR_FAZ;
     let ht = m.ps[h].team;
     let hname = m.ps[h].govde.name.clone();
-    if F.itKos && o.q == Some(h) && o.kind != "gönder" {
+    if F.it_kos && o.q == Some(h) && o.kind != "gönder" {
         if m.ps[h]._sf.is_some() {
             if !m.mac._lite {
                 ev(m, "pas", ht, format!("{hname} topu yine önüne itti"));
             }
         } else {
-            if o.itK.is_some() && SPK() {
+            if o.itK.is_some() && spk() {
                 m.ps[h].hal_mut()._itK = o.itK;
             }
             let spr = o.spr.map_or(false, crate::mat::dogru);
-            if spr && F.ayir && !m.ps[h].bekci() && m.ps[h].en.unwrap_or(1.0) >= ALAN_EN3_SGIR(&m.ps[h], SBED()) {
-                sprintBasla(m, h, Some(format!("{hname} topu önüne itti")));
+            if spr && F.ayir && !m.ps[h].bekci() && m.ps[h].en.unwrap_or(1.0) >= alan_en3_sgir(&m.ps[h], sbed()) {
+                sprint_basla(m, h, Some(format!("{hname} topu önüne itti")));
             } else if !m.mac._lite {
                 ev(m, "pas", ht, format!("{hname} topu önüne itti"));
             }
@@ -81,10 +81,10 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
             _ => (m.ps[h].x, m.ps[h].y),
         };
         let hp = &m.ps[h];
-        m._pas = Some(crate::model::JM_pas { team: ht, fx: hp.x, tx, len: hypot(tx - hp.x, ty - hp.y), t: m.tick });
+        m._pas = Some(crate::model::JmPas { team: ht, fx: hp.x, tx, len: hypot(tx - hp.x, ty - hp.y), t: m.tick });
     }
     if o.to.is_some() && o.launch.is_some() && matches!(o.kind.as_str(), "pas" | "önüne" | "kenardan") {
-        if let Some(c0) = corePos(m) {
+        if let Some(c0) = core_pos(m) {
             let l = o.launch.as_mut().unwrap();
             let to = o.to.as_ref().unwrap();
             let sp = hypot(l.vx, l.vy);
@@ -100,15 +100,15 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
     let gon = o.kind == "gönder";
     let kenar = o.kind == "kenardan";
     let mut ek = o.ot.filter(|&x| dogru(x)).unwrap_or(1.0);
-    ek *= if gon { dis::gonEk(m, h, o.shot.as_deref()) } else { dis::pasEk(m, h) };
+    ek *= if gon { dis::gon_ek(m, h, o.shot.as_deref()) } else { dis::pas_ek(m, h) };
     let la = o.launch.clone().unwrap_or_default();
     let v: (f64, f64) = if o.noErr {
         (la.vx, la.vy)
     } else {
         let mut r = std::mem::take(&mut m.r);
         let v = match o.savW {
-            Some(sw) => dis::applyErrorSav(m, h, (la.vx, la.vy), &mut r, ek, gon, sw, o.savU.unwrap_or(f64::NAN), o.shot.as_deref(), kenar),
-            None => dis::applyError(m, h, (la.vx, la.vy), &mut r, ek, gon, o.shot.as_deref(), kenar),
+            Some(sw) => dis::apply_error_sav(m, h, (la.vx, la.vy), &mut r, ek, gon, sw, o.savU.unwrap_or(f64::NAN), o.shot.as_deref(), kenar),
+            None => dis::apply_error(m, h, (la.vx, la.vy), &mut r, ek, gon, o.shot.as_deref(), kenar),
         };
         m.r = r;
         v
@@ -126,10 +126,10 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
             ev(m, "pas", t, format!("{hname} tek dokunuşla → {qn} · şarj %{ch}"));
         }
     }
-    super::kafa_bag::kafaCikis(m, &o, v);
-    let cp = corePos(m).unwrap_or((m.ps[h].x, m.ps[h].y));
+    super::kafa_bag::kafa_cikis(m, &o, v);
+    let cp = core_pos(m).unwrap_or((m.ps[h].x, m.ps[h].y));
     let ch = m.ch;
-    let mut b = makeBall(m, TopIstek { x: cp.0, y: cp.1, vx: v.0, vy: v.1, team: t, ch: Some(ch), from: Some(h), recv: o.q, vur: Some(h), defl: 0.0 });
+    let mut b = make_ball(m, TopIstek { x: cp.0, y: cp.1, vx: v.0, vy: v.1, team: t, ch: Some(ch), from: Some(h), recv: o.q, vur: Some(h), defl: 0.0 });
     b.tt.t.kt = Some(m.tick);
     b.tt.t.kz = (((if dogru(m.seed) { m.seed } else { 1.0 }) as i64 as u32) % 9973) as f64;
     b.tt.t.cue = (if o.ot.map_or(false, dogru) { IN.cue_ot } else { IN.cue0 }) + jmax(0.0, oo(o.savT));
@@ -139,15 +139,15 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
     m.holder = None;
     if o.q.is_some() && !gon && !o.noErr && o.launch.is_some() {
         let e1 = tahmin(&b.tt.b, &mut Kaynak::Sec(&[]), &P, Some(600)).1;
-        let b0 = makeBall(m, TopIstek { x: cp.0, y: cp.1, vx: la.vx, vy: la.vy, team: t, ch: Some(ch), from: Some(h), recv: o.q, vur: Some(h), defl: 0.0 });
-        m.mac.topSay -= 1;
+        let b0 = make_ball(m, TopIstek { x: cp.0, y: cp.1, vx: la.vx, vy: la.vy, team: t, ch: Some(ch), from: Some(h), recv: o.q, vur: Some(h), defl: 0.0 });
+        m.mac.top_say -= 1;
         let e0 = tahmin(&b0.tt.b, &mut Kaynak::Sec(&[]), &P, Some(600)).1;
         if hypot(e1.x - e0.x, e1.y - e0.y) > 6.0 {
             b.tt.t.sap = true;
         }
     }
     if let Some(bk) = m.ps.iter().position(|p| p.team != t && p.bekci()) {
-        let kk = MacKural::of(m);
+        let kk = mac_kurali(m);
         b.tt.t.bek_id = Some(m.ps[bk].id as u32);
         b.tt.t.bek_m = crate::temas::bek_har(&m.ps[bk], b.x, b.y, b.vx, b.vy, &kk);
     }
@@ -160,7 +160,7 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
         let b = m.m.ball.as_mut().unwrap();
         b.tt.t.gon = true;
         m.m.st.shot[ti] += 1.0;
-        b.ek.shotPk = o.det.as_ref().and_then(|d| d.Pk);
+        b.ek.shot_pk = o.det.as_ref().and_then(|d| d.Pk);
         // JS `!m.lite` (yazım: m.lite hiç yok) → her zaman
         let sh = o.shot.clone().unwrap_or_default();
         let ch = js_num(jround(100.0 * m.ch));

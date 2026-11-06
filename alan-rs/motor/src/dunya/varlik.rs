@@ -4,7 +4,7 @@
 //! R, D, team, role, press, ref, gvx, gvy}`) ve kopya (`{...p, x, y, vx, vy}`). Rust'ta hepsi `Varlik`:
 //! konum/hız varlığın kendinde, yetenek/sprint/tepki için "beden" (gerçek oyuncu ya da ayrı kurulmuş bir
 //! `Oyuncu`), `r` = JS `o.ref`, `kim` = nesnenin kimin kopyası olduğu (JS `o === q`, `o.id === d.id`).
-#![allow(non_snake_case)]
+
 
 use std::sync::Arc;
 
