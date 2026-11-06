@@ -396,6 +396,8 @@ impl Kafa {
         }
         // ---- şut ----
         let gd = hypot(gx - h.x, GCY - h.y);
+        let n_sut0 = res.out.len();
+        let sut_say_iz = crate::iz_acik() && std::env::var("ALAN_SUT_SAY_IZ").is_ok();
         if gd < D.shot_range * (0.75 + 0.5 * match &B._sut { Some(SutBag::Egilim(v)) => *v, _ => 0.5 }) {
             for ty in self.sut_hedef(h, src, gx) {
                 for sy in [1.0, -1.0] {
@@ -413,6 +415,9 @@ impl Kafa {
                     res.out.push(o);
                 }
             }
+        }
+        if sut_say_iz && gd < 26.0 {
+            eprintln!("SUTURET {} {} {:.1} {}", self.tick(), h.govde.name, gd, res.out.len() - n_sut0);
         }
         let fx = gx - h.x;
         let fy = GCY - h.y;

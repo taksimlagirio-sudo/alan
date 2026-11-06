@@ -354,7 +354,11 @@ fn tart_g(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut
         let g0 = k.bag._gon;
         let s0 = k.bag._sut.clone();
         let ks = kanca_s(k);
+        let sut_say_iz = crate::iz_acik() && std::env::var("ALAN_SUT_SAY_IZ").is_ok();
         if o.sYon.map(dogru).unwrap_or(false) && k.bag._kanca.is_some() && dogru(ks) && o.sYon != Some(ks) {
+            if sut_say_iz {
+                eprintln!("SUTDUS {} {} kanca", k.tick(), h.govde.name);
+            }
             o.v = None;
             return;
         }
@@ -367,6 +371,9 @@ fn tart_g(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut
             let mut sv = match dis::savur_plan(k, &h, launch.vx, launch.vy, ca, w0, sy_o, &src, plase, v_e) {
                 Some(s) => s,
                 None => {
+                    if sut_say_iz {
+                        eprintln!("SUTDUS {} {} savur", k.tick(), h.govde.name);
+                    }
                     o.v = None;
                     return;
                 }
