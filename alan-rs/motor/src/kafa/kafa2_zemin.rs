@@ -652,6 +652,15 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
             let kac = Sahiplik::oku_n(&o.N, NX, NY, f.gxo, GCY);
             for c in 0..f.S.len() {
                 let mut b = if f.S[c] > 0.0 { f.S[c] - (1.0 - f.S[c]) * kac } else { f64::NEG_INFINITY };
+                if crate::kafa::kafa2_tarti::sah_yumusak() {
+                    // ALAN_SAH_YUMUSAK_IZ: şut ve en iyi üç yolun ortalaması
+                    let mut vs: Vec<f64> = f.H[c].iter().map(|e| e.k * g * Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y) - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly)).collect();
+                    vs.sort_by(|a, b| b.partial_cmp(a).unwrap_or(std::cmp::Ordering::Equal));
+                    let n = vs.len().min(3);
+                    let yol = if n > 0 { vs[..n].iter().sum::<f64>() / n as f64 } else { f64::NEG_INFINITY };
+                    n2[t][c] = jmax(b, yol);
+                    continue;
+                }
                 for e in &f.H[c] {
                     let v = e.k * g * Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y) - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly);
                     if v > b {

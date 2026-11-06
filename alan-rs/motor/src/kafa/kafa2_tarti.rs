@@ -252,6 +252,23 @@ pub fn sur_e() -> bool {
     }
     SUR_E_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_SUR_E_ESKI").is_err())
 }
+thread_local! {
+    static UFUK: std::cell::Cell<f64> = const { std::cell::Cell::new(12.0) };
+}
+/// Deney (ALAN_SUR_UFUK_IZ; ölçümde SUR_UFUK_ZORLA): sürme, taşıyıcının yeniden karar vereceği ana dek tartılır (tutma da değer
+/// de oradaki ara noktada); uzun sürme bütün yolu boyunca, kısa hamle yalnız birkaç tik tartılıyordu (k85-1159: Cansu).
+pub static SUR_UFUK_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sur_ufuk() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SUR_UFUK_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SUR_UFUK_IZ").is_ok())
+}
+/// Deney (ALAN_SAH_YUMUSAK_IZ; ölçümde SAH_YUMUSAK_ZORLA): sahiplik haritasında hücrenin değeri en iyi tek yoldan değil, en iyi
+/// üç yolun ortalamasından (bir yol kapanınca değer çökmez; tek kaynağın değeri zincir boyunca söner).
+pub static SAH_YUMUSAK_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sah_yumusak() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAH_YUMUSAK_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_YUMUSAK_IZ").is_ok())
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
@@ -936,7 +953,10 @@ pub fn prensip_degerle(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
     k.bag._g_pr = Some(pr_gam(k, &src[hi], tac));
     k.bag._en_wd = Some(veyo(tac.and_then(|t| t.enDinlen), 0.0));
     k.bag._en_tm = Some(team);
+    // ALAN_SUR_UFUK_IZ: taşıyıcının yeniden karar vereceği ortalama süre (maçın decT'si: 5 + (1 − tempo)·8 + zar 0–3)
+    let u0 = UFUK.with(|u| u.replace(5.0 + (1.0 - tac.and_then(|t| t.tempo).unwrap_or(0.5)) * 8.0 + 1.5));
     prensip_degerle0(k, hi, src, ch, team, opts, loss_at, T);
+    UFUK.with(|u| u.set(u0));
     k.bag._g_pr = g0;
     k.bag._en_wd = w0;
     k.bag._en_tm = t0_;
@@ -1083,12 +1103,22 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
             o._pT = Some(tf);
             dok_dk(&t_a.1, o);
         } else if kind == "sür" || kind == "çalım" {
-            let E = o.toE.or(o.to).unwrap_or(nk(h.x, h.y));
-            let le = hypot(E.x - h.x, E.y - h.y);
-            let Ts = jmax(6.0, match o.dir {
+            let mut E = o.toE.or(o.to).unwrap_or(nk(h.x, h.y));
+            let mut le = hypot(E.x - h.x, E.y - h.y);
+            let mut Ts = jmax(6.0, match o.dir {
                 Some(dr) => dis::sur_sure(k, &h, le, Some(dr), None),
                 None => le / 0.2,
             });
+            // ALAN_SUR_UFUK_IZ: yeniden karar anına (H) dek: yolun o ana dek gidilen kısmı
+            if sur_ufuk() {
+                let H = UFUK.with(|u| u.get());
+                if Ts > H && le > 0.5 {
+                    let f = H / Ts;
+                    E = nk(h.x + (E.x - h.x) * f, h.y + (E.y - h.y) * f);
+                    le *= f;
+                    Ts = H;
+                }
+            }
             // ALAN_SUR_E_IZ: tutma, değerin tartıldığı ara noktaya (E) dek; sürmenin son hedefine dek değil (orada yeniden karar verilir)
             let P = if sur_e() && le > 0.5 {
                 let hk: Option<Oyuncu> = if o.spr.map(crate::mat::dogru).unwrap_or(false) { Some(dis::spr_kop(k, &h)) } else { None };
