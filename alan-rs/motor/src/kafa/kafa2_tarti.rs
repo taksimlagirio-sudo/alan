@@ -341,10 +341,15 @@ pub fn sah_belirsiz() -> bool {
 }
 /// Deney (ALAN_KOVSUZ_SABIT_IZ; ölçümde KOVSUZ_SABIT_ZORLA): uçuşta kovalamayan savunmacının tepkiden sonra topun
 /// yoluna tam hızla koşabileceği varsayımı kalkar (görevindeki yerine göre).
+/// Varsayılan açık; kapatmak: KOVSUZ_SABIT_KAPALI (wasm: ?kovsuz=0) ya da ALAN_KOVSUZ_SABIT_ESKI=1.
 pub static KOVSUZ_SABIT_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub static KOVSUZ_SABIT_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn kovsuz_sabit() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    KOVSUZ_SABIT_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_KOVSUZ_SABIT_IZ").is_ok())
+    if KOVSUZ_SABIT_KAPALI.load(std::sync::atomic::Ordering::Relaxed) {
+        return false;
+    }
+    KOVSUZ_SABIT_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_KOVSUZ_SABIT_ESKI").is_err())
 }
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.

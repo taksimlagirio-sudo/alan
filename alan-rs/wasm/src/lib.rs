@@ -414,6 +414,12 @@ pub extern "C" fn plan_sur(acik: i32) {
     alan_motor::kafa::kafa1_secim::PLAN_SUR_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
 }
 
+/// kovsuz: 1 açık (varsayılan), 0 kapalı.
+#[no_mangle]
+pub extern "C" fn kovsuz(acik: i32) {
+    alan_motor::kafa::kafa2_tarti::KOVSUZ_SABIT_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
+}
+
 /// kayip_sahip: 1 açık (varsayılan), 0 kapalı.
 #[no_mangle]
 pub extern "C" fn kayip_sahip(acik: i32) {
