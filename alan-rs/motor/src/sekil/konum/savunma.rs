@@ -701,8 +701,12 @@ impl Sv {
                         .map(|(j, &q)| {
                             let s0 = sv.iter().find(|o| o.r == Some(q)).map(|o| (o.x, o.y)).unwrap_or((c.ps[q].x, c.ps[q].y));
                             let g = gside(s0.0, s0.1, dt, yada(S.mark_off, 2.5));
-                            let t = hypot(g.0 - pp.x, g.1 - pp.y) / v - if pp.hal.markRef == Some(q) { rc } else { 0.0 };
-                            DG[j] * jmax(0.0, jmin(1.0, (TQ[j] + SH - t) / SH))
+                            let once = pp.hal.markRef == Some(q);
+                            // ALAN_UA_HIST_IZ (S2): önceki adama süreklilik: yetişme süresinde pay ve değerde ayrıcalık (iş değiştirme
+                            // maliyeti); yoksa yetişme sınırındaki adam her tik verilip alınıyor (markaj ↔ arkada · alan)
+                            let hist = ua_hist() && once;
+                            let t = hypot(g.0 - pp.x, g.1 - pp.y) / v - if once { rc } else { 0.0 } - if hist { UA_HIST * SH } else { 0.0 };
+                            DG[j] * jmax(0.0, jmin(1.0, (TQ[j] + SH - t) / SH)) * if hist { 1.0 + UA_HIST } else { 1.0 }
                         })
                         .collect(),
                 );
@@ -786,4 +790,13 @@ pub static PRES_KAZANC_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic:
 pub fn pres_kazanc() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     PRES_KAZANC_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_PRES_KAZANC_IZ").is_ok())
+}
+
+/// Deney (ALAN_UA_HIST_IZ; ölçümde UA_HIST_ZORLA; GOREV-savunma S2): eşleşme atamasında önceki tikin işine ayrıcalık
+/// (değeri × (1 + UA_HIST)): iş değiştirme maliyeti.
+pub const UA_HIST: f64 = 0.25;
+pub static UA_HIST_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn ua_hist() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    UA_HIST_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_UA_HIST_IZ").is_ok())
 }

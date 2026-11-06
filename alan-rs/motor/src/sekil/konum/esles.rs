@@ -9,7 +9,7 @@ use crate::yetenek::ah;
 
 use super::super::gecici_dis as dis;
 use super::super::*;
-use super::savunma::{dal_sinir, pres_kazanc, Sv};
+use super::savunma::{dal_sinir, pres_kazanc, ua_hist, Sv, UA_HIST};
 use super::yardim::*;
 
 impl Sv {
@@ -367,6 +367,20 @@ impl Sv {
                             0.0
                         }
                     }
+                };
+                // ALAN_UA_HIST_IZ (S2): önceki tikin işi sürüyorsa değeri UA_HIST kadar artar (iş değiştirme maliyeti):
+                // birbirine yakın değerlerde atama her tik dönmesin, oyuncu iki işin arasında gidip gelmesin
+                let val = if ua_hist() && val > 0.0 && {
+                    let pp = &c.ps[p];
+                    match tr {
+                        1 => pp.hal._savCar == Some(tick - 1.0),
+                        0 => J.qp().map_or(false, |q| pp.hal.uaPrev == Some(q) || pp.hal.markRef == Some(q)),
+                        _ => false,
+                    }
+                } {
+                    val * (1.0 + UA_HIST)
+                } else {
+                    val
                 };
                 row.push(val);
             }
