@@ -15,6 +15,8 @@ git for-each-ref --format='%(refname:short) %(objectname) %(committerdate:iso-st
   [ "$dal" = "$BEN" ] || [ "$dal" = "HEAD" ] && continue
   [[ "$tarih" < "$ESIK" ]] && continue
   grep -q "^$dal $sha$" "$DURUM" && continue
+  # aynı commit başka dal adıyla zaten oynandıysa yalnız kaydet
+  if grep -q " $sha$" "$DURUM"; then echo "$dal $sha" >> "$DURUM"; echo "AYNI $dal ${sha:0:7} (başka dal adıyla oynandı)"; continue; fi
   # yalnız motoru değiştiren (analizin başvurusuna göre)
   if git diff --quiet 1f0ec1a "$sha" -- motor katman 2>/dev/null; then echo "$dal $sha" >> "$DURUM"; echo "ATLA $dal ${sha:0:7} (motor aynı)"; continue; fi
   ad="${dal//\//_}-${sha:0:7}"; OUT="$KOK/analiz/out/izle/$ad"; WT=/tmp/izle-wt-$ad
