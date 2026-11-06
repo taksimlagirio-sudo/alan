@@ -294,10 +294,15 @@ pub static PLAN_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::Atomic
 pub static PLAN_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 /// Deney (ALAN_PLAN_SUR_IZ; ölçümde PLAN_SUR_ZORLA): plan yalnız sürmeyi kapsar; pas/şut/tut seçimine dokunmaz,
 /// plansız seçimin kazananı sürmeyse planla uyumlu sürme yönü seçilir.
+/// Varsayılan açık (20 maç: pas 327 → 344, dönüş 0.51 → 0.44); kapatmak: PLAN_SUR_KAPALI (wasm: ?plansur=0) ya da ALAN_PLAN_SUR_ESKI=1.
 pub static PLAN_SUR_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub static PLAN_SUR_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn plan_sur() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    PLAN_SUR_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_PLAN_SUR_IZ").is_ok())
+    if PLAN_SUR_KAPALI.load(std::sync::atomic::Ordering::Relaxed) {
+        return false;
+    }
+    PLAN_SUR_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_PLAN_SUR_ESKI").is_err())
 }
 pub fn plan_acik() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();

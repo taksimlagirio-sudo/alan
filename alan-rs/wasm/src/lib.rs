@@ -408,6 +408,12 @@ pub extern "C" fn sah_surekli(acik: i32) {
     alan_motor::kafa::kafa2_tarti::SAH_SUREKLI_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
 }
 
+/// plan_sur: 1 açık (varsayılan), 0 kapalı.
+#[no_mangle]
+pub extern "C" fn plan_sur(acik: i32) {
+    alan_motor::kafa::kafa1_secim::PLAN_SUR_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
+}
+
 /// kayip_sahip: 1 açık (varsayılan), 0 kapalı.
 #[no_mangle]
 pub extern "C" fn kayip_sahip(acik: i32) {
