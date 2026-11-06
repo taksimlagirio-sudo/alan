@@ -396,7 +396,7 @@ pub fn secim(m: &Mac, h: Pid, r: &Karar, g: &[Oyuncu]) -> usize {
     crate::mac::kafa_dis::kural_tazele(m);
     let src = op_dunya(g);
     // ALAN_PLAN_IZ: oyuncunun son planı (topu sürekli tuttuğu sürece: son kararından bu yana en çok 30 tik)
-    let plan = if crate::kafa::kafa1_secim::plan_acik() { m.mac.plan_son.get(h).cloned().flatten().filter(|p| m.tick - p.t <= 30.0) } else { None };
+    let plan = if crate::kafa::kafa1_secim::plan_acik() || crate::kafa::kafa1_secim::plan_sur() { m.mac.plan_son.get(h).cloned().flatten().filter(|p| m.tick - p.t <= 30.0) } else { None };
     crate::kafa::kafa1_secim::PLAN_SIMDI.with(|p| *p.borrow_mut() = plan);
     let i = kafa_mac(m, |k| k.secim(ozne(g, &src, &m.ps[h]), &r.opts, r.best, r.T, &src)).or(r.best).unwrap_or(0);
     crate::kafa::kafa1_secim::PLAN_SIMDI.with(|p| *p.borrow_mut() = None);
@@ -404,7 +404,7 @@ pub fn secim(m: &Mac, h: Pid, r: &Karar, g: &[Oyuncu]) -> usize {
 }
 /// ALAN_PLAN_IZ: seçilen seçeneğin planı (maç seçimden sonra yazar)
 pub fn plan_yaz(m: &mut Mac, h: Pid, o: &Secenek, g: &[Oyuncu]) {
-    if !crate::kafa::kafa1_secim::plan_acik() {
+    if !(crate::kafa::kafa1_secim::plan_acik() || crate::kafa::kafa1_secim::plan_sur()) {
         return;
     }
     let src = op_dunya(g);

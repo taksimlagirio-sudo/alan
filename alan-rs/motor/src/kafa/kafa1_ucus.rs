@@ -949,7 +949,8 @@ impl Kafa {
                             let uu = if u0 < 0.0 { 0.0 } else if u0 > 1.0 { 1.0 } else { u0 };
                             let d2 = hypot(Pp.x + bvx * uu - qx, Pp.y + bvy * uu - qy);
                             // ALAN_GOVDE_YOL_IZ: kovalamayan savunmacı da tepkisinden sonra yola koşabilir (görevi değişebilir): olabilirlik
-                            let d2z = if crate::kafa::kafa2_tarti::govde_yol() { jmax(0.0, d2 - jmax(0.0, Tb - A.rc) * A.v) } else { d2 };
+                            // ALAN_KOVSUZ_SABIT_IZ: kovalamayan savunmacı yola koşmaz (motorda koşmuyor: kafapas ölçümü, 0.2–0.6 dilimi %0 kesildi)
+                            let d2z = if crate::kafa::kafa2_tarti::govde_yol() && !crate::kafa::kafa2_tarti::kovsuz_sabit() { jmax(0.0, d2 - jmax(0.0, Tb - A.rc) * A.v) } else { d2 };
                             zz = jmax(zz, (R - d2z) / BKS);
                             if ok1 {
                                 xm[j] = Some(jmin(xm[j].unwrap(), jmin(d2, R) / R));

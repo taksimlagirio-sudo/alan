@@ -374,7 +374,10 @@ pub fn sut_tab(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, sh: O
             let pe = (-(p.x - x) * uy2 + (p.y - y) * ux2).abs();
             let kv_ = imk_kov(k, p);
             let R = crate::core_sabit::Q.reach + jmax(0.0, veyo(tOnce, 0.0) + al / v_sg - kv_.0) * kv_.1;
-            if pe < R + 0.8 {
+            let sg = GOV_SG.with(|c| c.get());
+            if sg > 0.0 {
+                g *= 1.0 - (1.0 - k.D.shot_thru) * imk_sg((R + 0.8 - pe) / sg);
+            } else if pe < R + 0.8 {
                 g *= k.D.shot_thru;
             }
         }
@@ -929,6 +932,10 @@ pub fn sut_yol(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, t_s: Option<f6
 
 /// JS sutS(w, team, x, y, ch, k, tS) (decide.js:6618): (x, y)'den şutun değeri (dibindeki rakip
 /// şutu keser; tS: ne kadar sonra).
+thread_local! {
+    /// sut_tab'ın gövde engeli için savunmacı yer belirsizliği (0: keskin eşik)
+    static GOV_SG: std::cell::Cell<f64> = const { std::cell::Cell::new(0.0) };
+}
 pub fn sut_s(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Option<&Oyuncu>, t_s: Option<f64>) -> f64 {
     let sg = match t_s {
         None => 0.0,
@@ -945,7 +952,11 @@ pub fn sut_s(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Opt
             }
         }
     }
+    // ALAN_SAH_BELIRSIZ_IZ: süre verilince tablodaki gövde engeli de savunmacının yer belirsizliğiyle (sg) yumuşar
+    let gsg = if crate::kafa::kafa2_tarti::sah_belirsiz() { sg } else { 0.0 };
+    GOV_SG.with(|c| c.set(gsg));
     let r = sut_tab(k, w, team, x, y, ch, kq, None, None, None, None);
+    GOV_SG.with(|c| c.set(0.0));
     let yl = sut_yol(k, w, team, x, y, t_s);
     if let Some(q) = kq {
         if crate::iz_acik() && std::env::var("ALAN_SURD_IZ").ok().as_deref() == Some(&*q.govde.name) {
