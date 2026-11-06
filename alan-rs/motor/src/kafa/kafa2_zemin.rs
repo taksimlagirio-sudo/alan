@@ -534,6 +534,29 @@ struct SahYol {
 
 /// JS sahiplikKur(w, team, ch, B0) (decide.js:6634): her hücrede şut değeri (S) ve komşu hücreye
 /// sürme / arkadaşa pas yolları; üç adımlık değer yinelemesi (rakibin karşı değeriyle).
+/// ALAN_SAH_SUREKLI_IZ: pas yolunun açıklığı zaman payıyla (sürme geçişleri ve imkân yarışı gibi): her savunmacı için
+/// yolun üstündeki en yakın noktaya (tepki + uzaklık / hız) varış ile topun oraya varışı arasındaki fark, kafanın yarış
+/// belirsizliğiyle (imk_tau); lane_ok'un 0,6 br'lik eşiği bir savunmacı 1 br kayınca yolu açıktan kapalıya çeviriyordu.
+pub fn yol_sure(k: &mut Kafa, w: &[Op], team: f64, A: Nokta, B: Nokta) -> f64 {
+    let L = hypot(B.x - A.x, B.y - A.y).max(1.0);
+    let (ux, uy) = ((B.x - A.x) / L, (B.y - A.y) / L);
+    let mut acik = 1.0;
+    for o in w {
+        if o.team == team || bekci(o) || o.noTouch {
+            continue;
+        }
+        let al = (o.x - A.x) * ux + (o.y - A.y) * uy;
+        if al <= 0.0 || al >= L + 1.0 {
+            continue;
+        }
+        let pe = (-(o.x - A.x) * uy + (o.y - A.y) * ux).abs();
+        let tb = dis::ucus_t(k, L, k.D.arriveFirm, Some(al)) + k.D.sut_hazir;
+        let to = jmax(0.0, dis::alan_tepki(k, o, "kovala")) + jmax(0.0, pe - 1.6) / dis::as_v_sp(k, o).max(0.05);
+        acik *= imk_sg((to - tb) / imk_tau(tb));
+    }
+    acik
+}
+
 pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>) -> Sahiplik {
     let KG = IMK_HUC;
     let NX = (GW / KG).round() as usize + 1;
@@ -635,7 +658,8 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
                         continue;
                     }
                     let A = nk(x, y);
-                    let kk = dis::lane_ok(k, w, t, A, nk(q.x, q.y), Some(k.D.arriveFirm), Some(k.D.sut_hazir)) * bek_yol(k, w, t, A, nk(q.x, q.y), Some(k.D.sut_hazir));
+                    let acik = if crate::kafa::kafa2_tarti::sah_surekli() { yol_sure(k, w, t, A, nk(q.x, q.y)) } else { dis::lane_ok(k, w, t, A, nk(q.x, q.y), Some(k.D.arriveFirm), Some(k.D.sut_hazir)) };
+                    let kk = acik * bek_yol(k, w, t, A, nk(q.x, q.y), Some(k.D.sut_hazir));
                     yol.push(SahYol { x: q.x, y: q.y, k: kk, lx: (x + q.x) / 2.0, ly: (y + q.y) / 2.0 });
                 }
                 H[c] = yol;

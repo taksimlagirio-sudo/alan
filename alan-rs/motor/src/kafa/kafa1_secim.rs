@@ -197,13 +197,48 @@ impl Kafa {
         let B = jmin(1.0, self.press_at(src, h.team, h.x, h.y));
         let mut bi: Option<usize> = None;
         let mut bv = f64::NEG_INFINITY;
+        // ALAN_PLAN_IZ: plana devam eden seçenek: sürmede önceki yöne en yakın sürme (90°'den az sapan), diğerlerinde aynı tür ve alıcı
+        let devam: Vec<bool> = if plan_acik() {
+            PLAN_SIMDI.with(|p| {
+                let p = p.borrow();
+                let Some(p) = p.as_ref() else { return vec![false; opts.len()] };
+                let ps: Vec<PlanIz> = opts.iter().map(|o| plan_of(h, o, src, 0.0)).collect();
+                match p.aci {
+                    Some(a0) => {
+                        let fark = |q: &PlanIz| -> f64 {
+                            if q.tur != p.tur || q.q != p.q {
+                                return f64::INFINITY;
+                            }
+                            match q.aci {
+                                Some(x) => {
+                                    let mut d = (x - a0).abs() % (2.0 * std::f64::consts::PI);
+                                    if d > std::f64::consts::PI {
+                                        d = 2.0 * std::f64::consts::PI - d;
+                                    }
+                                    d
+                                }
+                                None => f64::INFINITY,
+                            }
+                        };
+                        let en = ps.iter().map(|q| fark(q)).fold(f64::INFINITY, f64::min);
+                        ps.iter().map(|q| { let d = fark(q); d < std::f64::consts::FRAC_PI_2 && d <= en + 1e-9 }).collect()
+                    }
+                    None => ps.iter().map(|q| plan_uyar(p, q)).collect(),
+                }
+            })
+        } else {
+            Vec::new()
+        };
         for (i, o) in opts.iter().enumerate() {
             let ov = match o.v {
                 Some(v) => v,
                 None => continue,
             };
             let w = self.secim_w(h, B, false, Some(self.tarti_k(o))) * self.ufuk_k(h, o, T);
-            let v = if w > 0.0 { ov + self.secim_z(h, o, w, src) } else { ov };
+            let mut v = if w > 0.0 { ov + self.secim_z(h, o, w, src) } else { ov };
+            if devam.get(i).copied().unwrap_or(false) {
+                v += self.secim_w(h, B, false, Some(self.tarti_k(o)));
+            }
             if v > bv {
                 bv = v;
                 bi = Some(i);
@@ -223,6 +258,57 @@ pub fn gurultu_surekli() -> bool {
         return false;
     }
     GURULTU_SUREKLI_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_GURULTU_SUREKLI_ESKI").is_err())
+}
+
+/// Deney (ALAN_PLAN_IZ; ölçümde PLAN_ZORLA): oyuncu planına sadıktır: son kararının planına (tür; pasta alıcı, sürmede yön)
+/// karşılık gelen seçenek, seçimde oyuncunun karar gürültüsünün genişliği kadar önde sayılır (ayırt edemediği farkla planını
+/// bozmaz; belirgin biçimde iyi bir şey çıkınca bozar). Yalnız seçim anında; değere karışmaz. Ayrıca sürmenin süresine
+/// hızlanma payı yerine maçın dönüş tablosundan dönme bedeli (kafa1_enerji::sur_sure).
+pub static PLAN_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn plan_acik() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    PLAN_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_PLAN_IZ").is_ok())
+}
+/// Bir taşıyıcı kararının planı: tür öbeği, pasın alıcısı (kimlik), sürmenin yönü (açı), karar tiki.
+#[derive(Clone, Debug, Default)]
+pub struct PlanIz {
+    pub tur: String,
+    pub q: Option<f64>,
+    pub aci: Option<f64>,
+    pub t: f64,
+}
+thread_local! {
+    /// seçim süresince geçerli plan (maç kafaya seçimden hemen önce verir, sonra alır)
+    pub static PLAN_SIMDI: std::cell::RefCell<Option<PlanIz>> = const { std::cell::RefCell::new(None) };
+}
+/// Seçeneğin planı (tür öbeği: pas türleri "pas", sürme ve çalım "sür", diğerleri kendi adı).
+pub fn plan_of(h: &Oyuncu, o: &Secenek, src: &[Op], t: f64) -> PlanIz {
+    let tur = match o.kind.as_str() {
+        "pas" | "önüne" | "kenardan" => "pas",
+        "sür" | "çalım" => "sür",
+        k => k,
+    }
+    .to_string();
+    let q = o.q.and_then(|i| src.get(i)).map(|q| q.id + 1000.0 * q.team);
+    let kendine = o.q.and_then(|i| src.get(i)).map_or(false, |q| q.id == h.id && q.team == h.team);
+    let aci = if (o.q.is_none() || kendine) && tur != "gönder" { o.to.as_ref().map(|t2| crate::mat::atan2(t2.y - h.y, t2.x - h.x)) } else { None };
+    PlanIz { tur, q: if kendine { None } else { q }, aci, t }
+}
+fn plan_uyar(a: &PlanIz, b: &PlanIz) -> bool {
+    if a.tur != b.tur || a.q != b.q {
+        return false;
+    }
+    match (a.aci, b.aci) {
+        (Some(x), Some(y)) => {
+            let mut d = (x - y).abs() % (2.0 * std::f64::consts::PI);
+            if d > std::f64::consts::PI {
+                d = 2.0 * std::f64::consts::PI - d;
+            }
+            d < std::f64::consts::PI / 8.0
+        }
+        (None, None) => true,
+        _ => false,
+    }
 }
 
 /// Sayının JS dizgisi (tam sayılar ve kısa ondalıklar için yeterli).

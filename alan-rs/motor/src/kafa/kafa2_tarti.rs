@@ -298,6 +298,12 @@ pub fn iki_kademe() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     IKI_KADEME_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_IKI_KADEME_IZ").is_ok())
 }
+/// Deney (ALAN_SAH_SUREKLI_IZ; ölçümde SAH_SUREKLI_ZORLA): sahiplik haritasında pas yolu zaman payıyla sürekli (kafa2_zemin::yol_sure).
+pub static SAH_SUREKLI_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sah_surekli() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAH_SUREKLI_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_SUREKLI_IZ").is_ok())
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
