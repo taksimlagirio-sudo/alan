@@ -338,7 +338,8 @@ pub fn ileriKur(k: &mut Kafa, m: &MacGor) -> Option<IleriTab> {
                     }
                     if let Some(bi) = bi {
                         let g = dis::AS_gside(k, E, 1.0 - tf, 2.2);
-                        sav[bi] = kxy(&sav[bi], g.x, g.y);
+                        let yeni = kxy(&sav[bi], g.x, g.y);
+                        sav.koy(bi, yeni);
                     }
                 }
                 let huc: Dunya = {

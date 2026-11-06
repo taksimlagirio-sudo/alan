@@ -810,12 +810,12 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
                     let mut sure = Vec::new();
                     let pk = crate::iz_acik() && std::env::var("ALAN_PAKET_IZ").is_ok() && DALGA_DER.with(|d| d.get()) == 1;
                     if pk {
-                        let mp: Vec<Op> = k.mac.as_ref().map(|m| m.ps.clone()).unwrap_or_default();
+                        let mp: Dunya = k.mac.as_ref().map(|m| m.ps.clone()).unwrap_or_default();
                         crate::paket::taban_kur([src], mp.iter());
                     }
                     let bol = !ters && !pk && crate::paralel::hazir(n);
                     if bol {
-                        let mp: Vec<Op> = k.mac.as_ref().map(|m| m.ps.clone()).unwrap_or_default();
+                        let mp: Dunya = k.mac.as_ref().map(|m| m.ps.clone()).unwrap_or_default();
                         crate::paket::taban_kur([src], mp.iter());
                     }
                     let mut bir = |i: usize, pb: Option<&[u8]>| -> Option<Vec<u8>> {

@@ -737,7 +737,7 @@ pub struct Secenek {
     pub bekci: Option<f64>,
     pub _at: Option<Nokta>,
     #[serde(with = "crate::paket::dunya_kod")]
-    pub _w: Option<std::sync::Arc<Vec<std::sync::Arc<Oyuncu>>>>,
+    pub _w: Option<std::sync::Arc<crate::dunya_tip::Dunya>>,
     pub _T: Option<f64>,
     pub _en: Option<f64>,
     pub sonra: Option<String>,
