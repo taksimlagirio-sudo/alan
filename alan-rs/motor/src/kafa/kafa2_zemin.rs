@@ -587,16 +587,22 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
             v: f64,
             R: f64,
             rc: f64,
+            bek: bool,
         }
         let rak: Vec<R> = w
             .iter()
             // ALAN_SAH_BEKCI_IZ: komşu hücreye varış yarışına rakip Bekçi de girer (yakın direği kapatır)
             .filter(|p| p.team != t && !p.noTouch && (!bekci(p) || crate::kafa::kafa2_tarti::sah_bekci()))
-            .map(|p| R { p: p.clone(), G: dis::as_gec_tab(k, p), v: dis::as_v_sp(k, p), R: jmin(2.0, crate::temas::menzil(p, 0.35)), rc: jmax(0.0, dis::alan_tepki(k, p, "kovala")) })
+            .map(|p| R { p: p.clone(), G: dis::as_gec_tab(k, p), v: dis::as_v_sp(k, p), R: jmin(2.0, crate::temas::menzil(p, 0.35)), rc: jmax(0.0, dis::alan_tepki(k, p, "kovala")), bek: bekci(p) })
             .collect();
+        // Bekçi yalnız kalesinin dibinde (bek_yol'un alanı: kale merkezine KR + 6) yolu kapatır; dışarı çıkıp yarışmaz
+        let gx_r = if t == 0.0 { GW } else { 0.0 };
         let rv = |x: f64, y: f64| -> f64 {
             let mut m = 1e9;
             for o in &rak {
+                if o.bek && hypot(x - gx_r, y - GCY) > KR + 6.0 {
+                    continue;
+                }
                 let d = jmax(0.0, hypot(o.p.x - x, o.p.y - y) - o.R);
                 if !(o.rc + d / o.v >= m) {
                     m = jmin(m, o.rc + o.G.as_ref().map_or(0.0, |g| kd.gec_of(g, x, y, Some(d))) + d / o.v);
