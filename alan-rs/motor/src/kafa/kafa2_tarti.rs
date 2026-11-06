@@ -318,6 +318,20 @@ pub fn sekme_bedel() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     SEKME_BEDEL_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SEKME_BEDEL_IZ").is_ok())
 }
+/// Deney (ALAN_KAYIP_SAHIP_IZ; ölçümde KAYIP_SAHIP_ZORLA): topu kaybetmenin bedeline elimizdeki sahipliğin değeri de
+/// girer. Sahiplik değeri V0 = topu tutan seçeneklerin (şut dışı) en iyisinin değeri; her seçenek, topun takımda kalmama
+/// olasılığı kadar V0 öder (şut: 1 − gol, pas: 1 − alıcıya doğrudan varma, sür/tut: 1 − tutma). Tutma şansı yoksa
+/// (V0 ≈ 0) bedel kalkar, şut çekilir.
+/// Varsayılan açık (20 maç: uzak şut 29 → 10, gol 10 → 9); kapatmak: KAYIP_SAHIP_KAPALI (wasm: ?kayipsahip=0) ya da ALAN_KAYIP_SAHIP_ESKI=1.
+pub static KAYIP_SAHIP_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub static KAYIP_SAHIP_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn kayip_sahip() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    if KAYIP_SAHIP_KAPALI.load(std::sync::atomic::Ordering::Relaxed) {
+        return false;
+    }
+    KAYIP_SAHIP_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_KAYIP_SAHIP_ESKI").is_err())
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
@@ -1157,6 +1171,9 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
             let Pl = if sekme_bedel() { jmax(0.0, 1.0 - P) } else { Pl };
             o.v = Some(P - Pl * Lv);
             o.dok = Some(Dok::yeni(&[("gol", P), ("kayip", -Pl * Lv)]));
+            if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
+                eprintln!("GONV {} {} ->({:.1},{:.1}) Pk {:.3} Pl {:.3} kayip {:.3} v {:.3}", k.tick(), h.govde.name, e_o.x, e_o.y, P, Pl, Lv, P - Pl * Lv);
+            }
         } else if kind == "pas" || kind == "önüne" || kind == "kenardan" {
             let at = o._at.or(d.endD).or(d.endM).or(o.to).unwrap_or_else(|| {
                 let q = &src[o.q.unwrap()];
@@ -1342,6 +1359,26 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
         cx.PD.clear();
         if let Some(m) = &cx.IM {
             m.borrow_mut().clear();
+        }
+    }
+    if kayip_sahip() {
+        let v0 = opts.iter().filter(|o| o.kind != "gönder").filter_map(|o| o.v).fold(0.0, jmax);
+        for o in opts.iter_mut() {
+            let Some(v) = o.v else { continue };
+            let tut = match o.dok.as_ref() {
+                Some(d) if o.kind == "gönder" => d.al("gol"),
+                Some(d) => d.al("tutar"),
+                None => None,
+            };
+            let Some(tut) = tut else { continue };
+            let bedel = jmax(0.0, 1.0 - tut) * v0;
+            o.v = Some(v - bedel);
+            if let Some(d) = o.dok.as_mut() {
+                d.koy("sahip", -bedel);
+            }
+            if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
+                eprintln!("SAHIP {} {} {} tut {:.3} V0 {:.3} v {:.3} -> {:.3}", k.tick(), h.govde.name, o.kind, tut, v0, v, v - bedel);
+            }
         }
     }
     // m._prT: arkadaşların ve taşıyanın değeri, bir rakip olmasa ne kazanılırdı
