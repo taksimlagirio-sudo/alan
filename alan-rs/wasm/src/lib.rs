@@ -352,3 +352,9 @@ fn kafa_json(r: &alan_motor::mac::kafa_bag::KafaKayit) -> serde_json::Value {
     o.insert("sapma".into(), Value::Array(r.sapma.iter().map(|x| json!({"k": x.k, "a": x.a, "y": x.y})).collect()));
     Value::Object(o)
 }
+
+/// Kafanın uçuşunda yoldaki gövde ve kovalamayan savunmacının yola koşabilmesi (kafa2_tarti::govde_yol): 1 açık, 0 kapalı.
+#[no_mangle]
+pub extern "C" fn govde_yol(acik: i32) {
+    alan_motor::kafa::kafa2_tarti::GOVDE_YOL_ZORLA.store(acik != 0, std::sync::atomic::Ordering::Relaxed);
+}

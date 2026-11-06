@@ -6,12 +6,14 @@
 const ALAN_SURUM_Q = (v => v ? '?v=' + v[1] : '')(/[?&]v=(\w+)/.exec(self.location && self.location.search || ''));
 /* seyrek yerleşim (uzak hücumcunun işi 3 tikte bir; motorun varsayılanı): adreste seyrek=0 ise kapalı, eski davranış */
 const SEYREK = !/[?&]seyrek=0(&|$)/.test(self.location && self.location.search || '');
+/* kafanın uçuşunda yoldaki gövde ve kovalamayan savunmacının yola koşabilmesi (varsayılan açık): adreste govdeyol=0 ise kapalı */
+const GOVDE_YOL = !/[?&]govdeyol=0(&|$)/.test(self.location && self.location.search || '');
 let W = null, mem = null, gen = 0, len = 5400, dur = 5400, kosuyor = false, istek = null, buf = null, hazir = null;
 /* wasm'da panik geri sarılmaz: örnek bozuk kalır (Rust'taki kilit açık kalır, sonraki her çağrı düşer). Hatadan sonra örnek atılır, sonraki 'yeni' taze örnek kurar. */
 function birak() { hazir = null; W = null; mem = null; }
 /* wasm göstericileri işaretli i32 gelir: bellek 2 GB'ı aşınca negatif olur ("byteOffset cannot be negative"); >>> 0 ile işaretsiz */
 const NF = 174, dek = new TextDecoder(), kod = new TextEncoder();
-function yukle() { if (!hazir) hazir = fetch('alan.wasm' + ALAN_SURUM_Q).then(r => { if (!r.ok) throw new Error('alan.wasm yüklenemedi (' + r.status + ')'); return r.arrayBuffer(); }).then(b => WebAssembly.instantiate(b, {})).then(r => { W = r.instance.exports; mem = W.memory; if (W.seyrek) W.seyrek(SEYREK ? 1 : 0); }); return hazir; }
+function yukle() { if (!hazir) hazir = fetch('alan.wasm' + ALAN_SURUM_Q).then(r => { if (!r.ok) throw new Error('alan.wasm yüklenemedi (' + r.status + ')'); return r.arrayBuffer(); }).then(b => WebAssembly.instantiate(b, {})).then(r => { W = r.instance.exports; mem = W.memory; if (W.seyrek) W.seyrek(SEYREK ? 1 : 0); if (W.govde_yol) W.govde_yol(GOVDE_YOL ? 1 : 0); }); return hazir; }
 const metin = n => dek.decode(new Uint8Array(mem.buffer, (W.metin_ptr() >>> 0), n));
 function yeniBuf() { return { kare: [], olay: [], karar: [], kafa: [], is: [] }; }
 function kaydet() { const p = (W.kare() >>> 0); const f = new Float32Array(NF); f.set(new Float32Array(mem.buffer, p, NF)); buf.kare.push([W.tik(), f]); const y = JSON.parse(metin(W.yenilikler())); for (const o of y.olay) buf.olay.push(o); for (const j of y.is) buf.is.push(j); if (y.karar) for (const k of y.karar) buf.karar.push(k); if (y.kafa) for (const k of y.kafa) buf.kafa.push(k); }
