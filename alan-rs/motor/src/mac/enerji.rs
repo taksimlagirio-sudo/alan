@@ -117,6 +117,8 @@ pub fn enerji2(m: &mut Mac) {
             }
             let d_t = hypot(p.tx - p.x, p.ty - p.y);
             let yer_k = if sahip { 0.0 } else { jmax(0.0, 1.0 - d_t / EN3.yer_d) * jmax(0.0, 1.0 - v / b) };
+            // yürü: dolum hıza bağlı (hedefe uzaklıktan bağımsız): yavaş hareket eden barını hızlı doldurur
+            let yer_k = if yuru() && !sahip { jmax(yer_k, jmax(0.0, 1.0 - v / b)) } else { yer_k };
             dol = alan_en3_dol(p, sahip, nd, yer_k);
         }
         if gt(p.hal._dolYok, tick) {
@@ -344,6 +346,23 @@ pub fn fr_top(m: &Mac) -> Option<crate::model::JMShFr> {
     })
 }
 
+/// yürü: en yavaş kat (normal koşunun).
+pub const YURU_MIN: f64 = 0.35;
+/// Deney (ALAN_YURU_IZ; ölçümde/wasm'da YURU_ZORLA): hız seçimine normal koşunun altı (yürüme) girer ve bar dolumu hıza
+/// bağlanır (yavaş hareket eden hızlı dolar). Varsayılan kapalı.
+pub static YURU_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn yuru() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    YURU_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_YURU_IZ").is_ok())
+}
+/// yürü: taşıyıcı ya da topun alıcısı mı (onlar yürümeyi seçmez).
+fn bizde_sahip(m: &Mac, pi: Pid) -> bool {
+    m.holder == Some(pi) || m.fl.as_ref().map_or(false, |f| f.q == Some(pi))
+}
+
+/// onde_ac: önde bekleyenin yürüme katı (normal koşunun).
+pub const ONDE_YURU: f64 = 0.5;
+
 /// JS sprintKarar3(m): her koşucu için koşu hızı (tempo → sprint arası sürekli kat, _hizK).
 pub fn sprint_karar3(m: &mut Mac) {
     let F = &SPR_FAZ;
@@ -376,6 +395,14 @@ pub fn sprint_karar3(m: &mut Mac) {
             continue;
         }
         let j = job(p).to_string();
+        // onde_ac: önde bekleyen, rakip topu tutarken acelesi yok: yürür (bar dolar); top havadayken (kazanılabilir) normal hız
+        if crate::sekil::konum::onde_ac() && j == "önde bekle" && h.map_or(false, |h| m.ps[h].team != p.team) {
+            let p = &mut m.ps[pi];
+            p.hal_mut()._hizK = Some(ONDE_YURU);
+            p.sprint = false;
+            p.hal_mut()._kosuK = Some("yürü".into());
+            continue;
+        }
         if sp_zorla(&j) {
             let p = &mut m.ps[pi];
             p.hal_mut()._topSpr = true;
@@ -423,15 +450,19 @@ pub fn sprint_karar3(m: &mut Mac) {
         let hk = hk_k(p, SPR0(p));
         let pat = sbed();
         let e = jmax(0.0, jmin(1.0, p.en.unwrap_or(1.0)));
-        let dol = {
+        let nd = {
             let mut nd = 1e9;
             for q in &m.ps {
                 if !(q.team == p.team || q.noTouch) {
                     nd = jmin(nd, hypot(q.x - p.x, q.y - p.y));
                 }
             }
-            alan_en3_dol(p, bizde, nd, 0.0)
+            nd
         };
+        let dol = alan_en3_dol(p, bizde, nd, 0.0);
+        // yürü: normal koşunun altındaki katta tik başına fazladan dolum (enerji2'deki hıza bağlı dolumla aynı)
+        let yuru_ek = |k: f64| -> f64 { alan_en3_dol(p, bizde, nd, jmax(0.0, jmin(1.0, 1.0 - k))) - dol };
+        let yuru_a = yuru() && !bizde_sahip(m, pi);
         let dK = dol;
         let pk = sf_pk(p);
         let s0 = SPR0(p);
@@ -483,19 +514,39 @@ pub fn sprint_karar3(m: &mut Mac) {
                     bd += Sy * (en_iyi(e_a) - en_iyi(e_b)) + ku(e_a) - ku(e_b);
                 }
             }
+            if c < 0.0 {
+                // yürü: kazanılan bar (c < 0), harcamanın aynası: fark dolumla kapanana dek her adımda ilerideki yetişme
+                // ve barın kendi değeri
+                let d_e = jmax(dol, EN3.r0 * sd_p) * jmax(1.0, T0);
+                for i in 0..20 {
+                    let g = d_e * i as f64;
+                    if g >= -c {
+                        break;
+                    }
+                    let e_a = jmin(1.0, e - c + g);
+                    let e_b = jmin(1.0, e + g);
+                    bd -= Sy * (en_iyi(e_a) - en_iyi(e_b)) + ku(e_a) - ku(e_b);
+                }
+            }
             bd *= hr_k;
             Sy * wf(T, tD) - bd
         };
         // SPK: sürekli kat
         let kM = jmax(1.0, pk);
         let c_k = |f: f64| -> (f64, f64, f64) {
+            if f < 0.0 {
+                // yürü: f −1'de YURU_MIN katı; bedel eksi (kazanç), varışa dek fazladan dolum
+                let k = 1.0 + f * (1.0 - YURU_MIN);
+                let T = d / (b * k);
+                return (k, T, -T * jmax(0.0, yuru_ek(k)));
+            }
             let k = 1.0 + f * (kM - 1.0);
             let T = d / (b * k);
             (k, T, if f > 0.0 { T * (en2.tepe * jmin(1.0, (b * k - b) / jmax(1e-6, vm - b)) / Sb + dK) } else { 0.0 })
         };
         let (mut fB, mut v_b) = (0.0, -1e9);
         let dene = |f: f64, fB: &mut f64, v_b: &mut f64| {
-            if !(0.0..=1.0).contains(&f) {
+            if !((if yuru_a { -1.0 } else { 0.0 })..=1.0).contains(&f) {
                 return;
             }
             let (_, T, c) = c_k(f);
@@ -511,6 +562,11 @@ pub fn sprint_karar3(m: &mut Mac) {
         for f in [0.0, 0.2, 0.4, 0.6, 0.8, 1.0] {
             dene(f, &mut fB, &mut v_b);
         }
+        if yuru_a {
+            for f in [-1.0, -0.6, -0.3] {
+                dene(f, &mut fB, &mut v_b);
+            }
+        }
         let f0 = fB;
         dene(f0 - 0.1, &mut fB, &mut v_b);
         dene(f0 + 0.1, &mut fB, &mut v_b);
@@ -525,7 +581,7 @@ pub fn sprint_karar3(m: &mut Mac) {
         let p = &mut m.ps[pi];
         p.hal_mut()._hizK = Some(k_s);
         p.hal_mut()._hizF = Some(fB);
-        p.hal_mut()._kosuK = Some(if fB < 0.05 { "tempo" } else if fB < 0.7 { "hızlı" } else { "sprint" }.into());
+        p.hal_mut()._kosuK = Some(if fB < -0.05 { "yürü" } else if fB < 0.05 { "tempo" } else if fB < 0.7 { "hızlı" } else { "sprint" }.into());
         p.sprint = fB >= 0.05;
         p.hal_mut()._topSpr = false;
     }

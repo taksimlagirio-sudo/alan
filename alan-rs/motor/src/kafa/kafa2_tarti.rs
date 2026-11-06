@@ -395,6 +395,13 @@ pub fn sah_zaman() -> bool {
 pub fn ufuk_simdi() -> f64 {
     UFUK.with(|u| u.get())
 }
+/// Deney (ALAN_KAYIP_HARITA_IZ; ölçümde KAYIP_HARITA_ZORLA): kayıp bedelinin sahiplik değeri (V0) en az taşıyıcının
+/// bölgesinin sahiplik haritası değeri.
+pub static KAYIP_HARITA_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn kayip_harita() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    KAYIP_HARITA_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_KAYIP_HARITA_IZ").is_ok())
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
@@ -1456,6 +1463,9 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
     }
     if kayip_sahip() {
         let v0 = opts.iter().filter(|o| o.kind != "gönder").filter_map(|o| o.v).fold(0.0, jmax);
+        // ALAN_KAYIP_HARITA_IZ: sahipliğin değeri en az bölgenin sahiplik değeri (harita); kısa ufuklu somut seçenekler
+        // uzakta topu tutmanın değerini küçük görüyordu (uzak şutun bedeli ucuzluyordu)
+        let v0 = if kayip_harita() { jmax(v0, zemin_s(k, src, team, h.x, h.y, ch, Some(&h))) } else { v0 };
         for o in opts.iter_mut() {
             let Some(v) = o.v else { continue };
             // pas: rakibe geçme olasılığı (Pl; sekip bizde kalan kayıp değil). ALAN_KAYIP_SAHIP_PD_IZ: eski (1 − doğrudan varma)
