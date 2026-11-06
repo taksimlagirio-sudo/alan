@@ -1700,12 +1700,16 @@ pub struct JMLastDecOptsE {
     pub P: f64,
     /// `v`: number
     pub v: f64,
-    /// `en`: object|undef
-    pub en: Option<JMLastDecOptsEEn>,
+    /// `en`: object|undef (enerji payı)
+    pub en: Option<JOEn>,
     /// `kh`: string|undef
     pub kh: Option<String>,
     /// `devam`: number|undef
     pub devam: Option<f64>,
+    /// `dok`: değer dökümü (karar kartında)
+    pub dok: Option<Dok>,
+    /// `sjK`
+    pub sjK: Option<f64>,
 }
 
 

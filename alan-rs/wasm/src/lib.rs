@@ -19,6 +19,8 @@ struct Durum {
     gecmis: Vec<Degisim>,
     /// her KOP tikte maçın kopyası: değişiklik gelince baştan değil en yakın kopyadan yeniden oynanır (mac-isci.js anlikK)
     kopyalar: Vec<(f64, MacTam)>,
+    /// son gönderilen karar kartının imzası (JS sonDec)
+    son_karar: String,
     isler: IsSozluk,
     is_gonderilen: usize,
     kare: [f32; 174],
@@ -26,7 +28,7 @@ struct Durum {
 }
 
 thread_local! {
-    static D: RefCell<Durum> = RefCell::new(Durum { mt: None, kurulum: None, gecmis: Vec::new(), kopyalar: Vec::new(), isler: IsSozluk::default(), is_gonderilen: 0, kare: [0.0; 174], metin: Vec::new() });
+    static D: RefCell<Durum> = RefCell::new(Durum { mt: None, kurulum: None, gecmis: Vec::new(), kopyalar: Vec::new(), son_karar: String::new(), isler: IsSozluk::default(), is_gonderilen: 0, kare: [0.0; 174], metin: Vec::new() });
 }
 
 #[no_mangle]
@@ -52,6 +54,7 @@ pub unsafe extern "C" fn kur(p: *const u8, n: usize) -> i32 {
         d.is_gonderilen = 0;
         d.gecmis.clear();
         d.kopyalar.clear();
+        d.son_karar.clear();
         let r = serde_json::from_str::<serde_json::Value>(s).map_err(|e| e.to_string()).and_then(|v| Motor::kayittan(&v).map(|mt| (v, mt)));
         match r {
             Ok((v, mt)) => {
@@ -126,17 +129,27 @@ pub extern "C" fn statik() -> usize {
 pub extern "C" fn yenilikler() -> usize {
     let s = D.with(|d| {
         let mut d = d.borrow_mut();
-        let Durum { mt, isler, is_gonderilen, .. } = &mut *d;
+        let Durum { mt, isler, is_gonderilen, son_karar, .. } = &mut *d;
         let mut olay = Vec::new();
+        let mut karar = Vec::new();
+        let mut kafa = Vec::new();
         if let Some(mt) = mt.as_mut() {
             let t = mt.m.tick;
             for e in mt.yeni_olaylar() {
                 olay.push(format!("{{\"tick\":{},\"t\":{},\"type\":{},\"team\":{},\"text\":{}}}", t, serde_json::to_string(&e.t).unwrap(), serde_json::to_string(&e.r#type).unwrap(), e.team, serde_json::to_string(&e.text).unwrap()));
             }
+            if let Some(k) = karar_json(&mt.m, son_karar) {
+                karar.push(k);
+            }
+            if let Some(K) = mt.m.mac._kafa.as_mut() {
+                for r in K.L.drain(..) {
+                    kafa.push(kafa_json(&r).to_string());
+                }
+            }
         }
         let is: Vec<String> = isler.yazilar[*is_gonderilen..].iter().map(|j| serde_json::to_string(j).unwrap()).collect();
         *is_gonderilen = isler.yazilar.len();
-        format!("{{\"olay\":[{}],\"is\":[{}]}}", olay.join(","), is.join(","))
+        format!("{{\"olay\":[{}],\"is\":[{}],\"karar\":[{}],\"kafa\":[{}]}}", olay.join(","), is.join(","), karar.join(","), kafa.join(","))
     });
     metin_koy(s)
 }
@@ -183,7 +196,7 @@ pub unsafe extern "C" fn degistir(p: *const u8, n: usize) -> i32 {
     };
     let r = D.with(|d| -> Result<(), String> {
         let mut d = d.borrow_mut();
-        let Durum { mt, kurulum, gecmis, kopyalar, .. } = &mut *d;
+        let Durum { mt, kurulum, gecmis, kopyalar, son_karar, .. } = &mut *d;
         let T = c.tick;
         gecmis.retain(|g| g.tick < T);
         gecmis.push(c);
@@ -210,6 +223,9 @@ pub unsafe extern "C" fn degistir(p: *const u8, n: usize) -> i32 {
         }
         // T'ye kadarki kayıtlar sayfada zaten var
         alan_motor::mac::kafa_bag::kafaAc(&mut m);
+        let mut s0 = String::new();
+        karar_json(&m, &mut s0);
+        *son_karar = s0;
         let mut yeni = Motor::yeni(m);
         yeni.olaylar_gonderildi();
         *mt = Some(yeni);
@@ -222,4 +238,117 @@ pub unsafe extern "C" fn degistir(p: *const u8, n: usize) -> i32 {
             1
         }
     }
+}
+
+/// sayıyı n basamağa yuvarla (JS +x.toFixed(n)); sonlu değilse null
+fn yuv(x: f64, n: i32) -> serde_json::Value {
+    if !x.is_finite() {
+        return serde_json::Value::Null;
+    }
+    let k = 10f64.powi(n);
+    serde_json::json!((x * k).round() / k)
+}
+
+/// Taşıyıcının son kararı (mac-isci.js kaydet'in karar kısmı): değişmişse karar kartı (JSON), değişmemişse yok.
+fn karar_json(m: &MacTam, son: &mut String) -> Option<String> {
+    use serde_json::{json, Map, Value};
+    let d = m.lastDec.as_ref()?;
+    let hi = m.ps.iter().position(|p| &*p.govde.name == d.name);
+    let okuma = hi.and_then(|i| {
+        let h = &m.mac.ham.get(i)?.0;
+        let al = |k: &str| h.iter().find(|e| e.0 == k).and_then(|e| if let alan_motor::mac::HamV::S(x) = e.1 { Some(x) } else { None });
+        Some(al("gorus").or_else(|| al("okuma")).unwrap_or(10.0))
+    });
+    let aday: Vec<Value> = d
+        .opts
+        .iter()
+        .map(|o| {
+            let mut a = Map::new();
+            a.insert("kind".into(), json!(o.kind.clone() + &if o.q.is_empty() { String::new() } else { format!(" → {}", o.q) }));
+            a.insert("v".into(), yuv(if o.v.is_finite() { o.v } else { 0.0 }, 3));
+            a.insert("p".into(), if o.P.is_finite() { yuv(o.P, 2) } else { json!(0) });
+            a.insert("to".into(), o.to.as_ref().map_or(Value::Null, |t| json!({"x": t.x, "y": t.y})));
+            if let Some(dv) = o.devam.filter(|x| *x != 0.0) {
+                a.insert("devam".into(), json!(dv));
+            }
+            if let Some(e) = &o.en {
+                if e.ek != 0.0 {
+                    a.insert("en".into(), json!({"ek": e.ek, "sab": 0, "hb": e.hizBiz, "hr": e.hizRakip}));
+                }
+                a.insert("bz".into(), yuv(e.biz, 3));
+                if let Some(i) = hi {
+                    let h = &m.ps[i];
+                    let key = format!("{}:{}", h.team, h.id);
+                    let v = e.per.iter().find(|x| x.0 == key).map_or(0.0, |x| x.1);
+                    a.insert("bh".into(), yuv(v, 3));
+                }
+            }
+            if let Some(x) = o.sjK.filter(|x| *x != 0.0) {
+                a.insert("sjK".into(), json!(x));
+            }
+            if let Some(dk) = &o.dok {
+                let mut r = Map::new();
+                for (k, v) in &dk.k {
+                    if v.abs() >= 0.0005 {
+                        r.insert(k.clone(), yuv(*v, 4));
+                    }
+                }
+                a.insert("dok".into(), Value::Object(r));
+            }
+            Value::Object(a)
+        })
+        .collect();
+    let imza = format!("{}|{}|{}|{}", d.name, d.x, d.y, serde_json::to_string(&aday).unwrap_or_default());
+    if *son == imza {
+        return None;
+    }
+    *son = imza;
+    Some(json!({"tip": "karar", "tick": m.tick, "ad": d.name, "team": d.team, "okuma": okuma, "x": d.x, "y": d.y, "aday": aday, "secilen": 0}).to_string())
+}
+
+/// Kafa ↔ gerçek kaydı (match.js kafaBasla/kafaBitir'in r'si) JSON olarak; JS'teki gibi boş alanlar yazılmaz.
+fn kafa_json(r: &alan_motor::mac::kafa_bag::KafaKayit) -> serde_json::Value {
+    use serde_json::{json, Map, Value};
+    let mut o = Map::new();
+    let mut koy = |k: &str, v: Option<Value>| {
+        if let Some(v) = v {
+            o.insert(k.into(), v);
+        }
+    };
+    koy("t", Some(json!(r.t)));
+    koy("ad", Some(json!(r.ad)));
+    koy("id", Some(json!(r.id)));
+    koy("team", Some(json!(r.team)));
+    koy("kind", Some(json!(r.kind)));
+    koy("kendine", r.kendine.then(|| json!(1)));
+    koy("q", r.q.as_ref().map(|x| json!(x)));
+    koy("qid", r.qid.map(|x| json!(x)));
+    koy("shot", r.shot.as_ref().map(|x| json!(x)));
+    koy("ot", r.ot.then(|| json!(1)));
+    for (k, v) in [("v", r.v), ("P", r.P), ("Ps", r.Ps), ("Pk", r.Pk), ("hiz", r.hiz), ("savT", r.savT), ("tf", r.tf), ("x", r.x), ("y", r.y), ("cikis", r.cikis), ("hizC", r.hizC), ("hizG", r.hizG), ("sek", r.sek)] {
+        koy(k, v.filter(|x| x.is_finite()).map(|x| json!(x)));
+    }
+    koy("alis", r.alis.map(|(x, y)| json!({"x": x, "y": y})));
+    koy("bozuldu", r.bozuldu.as_ref().map(|x| json!(x)));
+    if let Some(s) = &r.son {
+        let mut so = Map::new();
+        so.insert("t".into(), json!(s.t));
+        if s.santra {
+            so.insert("santra".into(), json!(1));
+        }
+        if s.devam {
+            so.insert("devam".into(), json!(1));
+        }
+        for (k, v) in [("kimId", s.kimId), ("kimT", s.kimT), ("x", s.x), ("y", s.y), ("gol", s.gol)] {
+            if let Some(v) = v {
+                so.insert(k.into(), json!(v));
+            }
+        }
+        if let Some(k) = &s.kim {
+            so.insert("kim".into(), json!(k));
+        }
+        o.insert("son".into(), Value::Object(so));
+    }
+    o.insert("sapma".into(), Value::Array(r.sapma.iter().map(|x| json!({"k": x.k, "a": x.a, "y": x.y})).collect()));
+    Value::Object(o)
 }

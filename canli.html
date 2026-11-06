@@ -16,12 +16,12 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:'Bricolage Grote
 a{color:#8EA2FF}a:hover{color:var(--gold)}
 button,select,input{font:inherit;color:inherit}
 </style>
-<script src="alan-v5/kadro.js?v=202611060240"></script>
-<script src="alan-v5/yetenek.js?v=202611060240"></script>
-<script src="alan-v5/core.js?v=202611060240"></script>
-<script src="alan-v5/saha-ciz.js?v=202611060240"></script>
-<script src="alan-v5/enerji-gorunum.js?v=202611060240"></script>
-<script>window.ALAN_SURUM = '202611060240'; /* v5 · motor sürümü: işçi ve motor betikleri bu etiketle yüklenir; motor değişince etiket değişir, tarayıcı eski kopyayı kullanamaz */</script>
+<script src="alan-v5/kadro.js?v=202611060255"></script>
+<script src="alan-v5/yetenek.js?v=202611060255"></script>
+<script src="alan-v5/core.js?v=202611060255"></script>
+<script src="alan-v5/saha-ciz.js?v=202611060255"></script>
+<script src="alan-v5/enerji-gorunum.js?v=202611060255"></script>
+<script>window.ALAN_SURUM = '202611060255'; /* v5 · motor sürümü: işçi ve motor betikleri bu etiketle yüklenir; motor değişince etiket değişir, tarayıcı eski kopyayı kullanamaz */</script>
 <script>/* v5 · paralel kafa: maç işçisinin adresi. Deney: sayfa adresine ?paralel=N (kabuk içindeyse kabuğun adresine: alan…/?paralel=4) ya da localStorage 'alan-paralel' = N (1: kapalı, tek çekirdek; verilmezse işçi kendisi seçer) */ window.isciAdres = function (ek, jsIste) { var oku = function (w) { try { return new URLSearchParams(w.location.search).get('paralel'); } catch (e) { return null; } }, p = oku(window) || oku(window.top) || ''; if (!p) try { p = localStorage.getItem('alan-paralel') || ''; } catch (e) {} var spr = (function () { try { return new URLSearchParams(window.location.search).get('sprint') || new URLSearchParams(window.top.location.search).get('sprint') || localStorage.getItem('alan-sprint') || ''; } catch (e) { return ''; } })(); var dok = (function () { try { return new URLSearchParams(window.location.search).get('dokunus') || new URLSearchParams(window.top.location.search).get('dokunus') || localStorage.getItem('alan-dokunus') || ''; } catch (e) { return ''; } })(); /* seyrek yerleşim (Rust motoru): ?seyrek=0 ya da localStorage 'alan-seyrek' = '0' ile kapalı (eski davranış) */ var sey = (function () { try { return new URLSearchParams(window.location.search).get('seyrek') || new URLSearchParams(window.top.location.search).get('seyrek') || localStorage.getItem('alan-seyrek') || ''; } catch (e) { return ''; } })(); var a = [ek, /^\d+$/.test(p) ? 'paralel=' + p : '', spr === '1' ? 'sprint=1' : spr === '0' ? 'sprint=0' : '', dok === '1' ? 'dokunus=1' : dok === '0' ? 'dokunus=0' : '', sey === '0' ? 'seyrek=0' : '', 'v=' + window.ALAN_SURUM].filter(Boolean).join('&'); var mot = (function () { try { return new URLSearchParams(window.location.search).get('motor') || new URLSearchParams(window.top.location.search).get('motor') || localStorage.getItem('alan-motor') || ''; } catch (e) { return ''; } })(); /* v5 · ana motor Rust (WebAssembly). JS motoru: sayfa adresine ?motor=js ya da localStorage 'alan-motor' = 'js'; Rust'ta henüz olmayan işler için (anlar) sayfa jsIste ile JS işçisi açar */ return (mot === 'js' || jsIste ? 'alan-v5/mac-isci.js' : 'alan-v5/rust-isci.js') + (a ? '?' + a : ''); };</script>
 </helmet>
 <div style="min-height:100vh;display:flex;flex-direction:column;background:var(--bg)">

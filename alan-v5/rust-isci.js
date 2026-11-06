@@ -1,7 +1,8 @@
 /* Rust motoru (WebAssembly): sitenin ana maç işçisi (mac-isci.js'in yerine). JS motoruna dönmek için sayfa adresine ?motor=js ya da localStorage 'alan-motor' = 'js' (isciAdres).
    Motor alan-rs/ (Rust) altından derlenir: alan-v5/alan.wasm. İletiler mac-isci.js ile aynı: 'yeni' ile maç kurulur, 'basla' ve 60 tikte bir 'kare' gider (kare: 174 sayı, kaydet'in biçimi).
    Maç içi taktik değişikliği ('degistir'): motor her 60 tikte maçın kopyasını alır, değişiklik gelince en yakın kopyadan yeniden oynar (mac-isci.js gibi); 'izle' ile oynatılanın gerisindeki ara kopyalar atılır.
-   Henüz yok: anlar ('an'; sayfa bunun için JS işçisi açar), kafa kartları (karar/kafa listeleri boş gider). */
+   Karar kartı (karar: taşıyıcının son kararı, seçenekler, değer dökümü) ve kafa ↔ gerçek kayıtları (kafa: sürpriz) motordan gelir.
+   Henüz yok: anlar ('an'; sayfa bunun için JS işçisi açar); karar kartında JS kafasına özgü birkaç ayrıntı (hw, cek, neden, bak, rc, drk, am). */
 const ALAN_SURUM_Q = (v => v ? '?v=' + v[1] : '')(/[?&]v=(\w+)/.exec(self.location && self.location.search || ''));
 /* seyrek yerleşim (uzak hücumcunun işi 3 tikte bir; motorun varsayılanı): adreste seyrek=0 ise kapalı, eski davranış */
 const SEYREK = !/[?&]seyrek=0(&|$)/.test(self.location && self.location.search || '');
@@ -13,7 +14,7 @@ const NF = 174, dek = new TextDecoder(), kod = new TextEncoder();
 function yukle() { if (!hazir) hazir = fetch('alan.wasm' + ALAN_SURUM_Q).then(r => { if (!r.ok) throw new Error('alan.wasm yüklenemedi (' + r.status + ')'); return r.arrayBuffer(); }).then(b => WebAssembly.instantiate(b, {})).then(r => { W = r.instance.exports; mem = W.memory; if (W.seyrek) W.seyrek(SEYREK ? 1 : 0); }); return hazir; }
 const metin = n => dek.decode(new Uint8Array(mem.buffer, (W.metin_ptr() >>> 0), n));
 function yeniBuf() { return { kare: [], olay: [], karar: [], kafa: [], is: [] }; }
-function kaydet() { const p = (W.kare() >>> 0); const f = new Float32Array(NF); f.set(new Float32Array(mem.buffer, p, NF)); buf.kare.push([W.tik(), f]); const y = JSON.parse(metin(W.yenilikler())); for (const o of y.olay) buf.olay.push(o); for (const j of y.is) buf.is.push(j); }
+function kaydet() { const p = (W.kare() >>> 0); const f = new Float32Array(NF); f.set(new Float32Array(mem.buffer, p, NF)); buf.kare.push([W.tik(), f]); const y = JSON.parse(metin(W.yenilikler())); for (const o of y.olay) buf.olay.push(o); for (const j of y.is) buf.is.push(j); if (y.karar) for (const k of y.karar) buf.karar.push(k); if (y.kafa) for (const k of y.kafa) buf.kafa.push(k); }
 let hsT0 = 0;
 function gonder(g, son, yari) { const n = performance.now(), ms = hsT0 ? n - hsT0 : 0; hsT0 = n; postMessage({ ms, pd: null, tip: 'kare', gen: g, kare: buf.kare, olay: buf.olay, karar: buf.karar, kafa: buf.kafa, is: buf.is, tick: W.tik(), son: !!son, yari: !!yari }); buf = yeniBuf(); }
 /* Döngü beklerken yeni maç gelirse istek not edilir; eski döngü çıkınca yeni maçı o başlatır (eskiden hiç başlamıyordu). */
