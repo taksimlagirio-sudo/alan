@@ -644,6 +644,30 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
         let N = S.clone();
         ff.push(F { S, H, N, gxo });
     }
+    // ALAN_SAH_BEKLENEN_IZ: hücrede taşıyıcının yollar arasından gürültülü seçiminin beklenen değeri; genişlik o
+    // takımın taşıyıcısının (topa en yakın oyuncu) karar gürültüsü ve hücredeki baskı (secim_w). Gürültü kafa1_secim gibi
+    // iki eşit dağılımın toplamı (ss 0.408·w); kapalı biçimde Gumbel eşleniği: seçilme olasılığı softmax(v / β),
+    // β = 0.408·w·√6/π.
+    let bek = crate::kafa::kafa2_tarti::sah_beklenen();
+    let mut BW: [Vec<f64>; 2] = [Vec::new(), Vec::new()];
+    if bek {
+        for t in 0..2 {
+            let tf = t as f64;
+            let b0 = B0.unwrap_or(nk(GW / 2.0, GCY));
+            let tas = w.iter().filter(|p| p.team == tf && !p.noTouch && !bekci(p)).min_by(|a, b| hypot(a.x - b0.x, a.y - b0.y).partial_cmp(&hypot(b.x - b0.x, b.y - b0.y)).unwrap_or(std::cmp::Ordering::Equal)).cloned();
+            let mut v = vec![0.0; NX * NY];
+            if let Some(h) = tas {
+                for i in 0..NX {
+                    for j in 0..NY {
+                        let (x, y) = (i as f64 * KG, j as f64 * KG);
+                        let B = jmin(1.0, k.press_at(w, tf, x, y));
+                        v[i * NY + j] = 0.408 * k.secim_w(&h, B, false, None) * 6f64.sqrt() / std::f64::consts::PI;
+                    }
+                }
+            }
+            BW[t] = v;
+        }
+    }
     for _ in 0..SAH_ADIM {
         let mut n2 = [vec![0.0; NX * NY], vec![0.0; NX * NY]];
         for t in 0..2 {
@@ -652,7 +676,27 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
             let kac = Sahiplik::oku_n(&o.N, NX, NY, f.gxo, GCY);
             for c in 0..f.S.len() {
                 let mut b = if f.S[c] > 0.0 { f.S[c] - (1.0 - f.S[c]) * kac } else { f64::NEG_INFINITY };
-                if crate::kafa::kafa2_tarti::sah_yumusak() {
+                if bek && BW[t][c] > 0.0 {
+                    let mut vs: Vec<f64> = f.H[c].iter().map(|e| e.k * g * Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y) - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly)).collect();
+                    if b > f64::NEG_INFINITY {
+                        vs.push(b);
+                    }
+                    if vs.is_empty() {
+                        n2[t][c] = b;
+                        continue;
+                    }
+                    let be = BW[t][c];
+                    let mx = vs.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
+                    let (mut sw, mut sv) = (0.0, 0.0);
+                    for v in &vs {
+                        let e = crate::mat::exp((v - mx) / be);
+                        sw += e;
+                        sv += e * v;
+                    }
+                    n2[t][c] = sv / sw;
+                    continue;
+                }
+                if crate::kafa::kafa2_tarti::sah_yumusak() && !bek {
                     // ALAN_SAH_YUMUSAK_IZ: şut ve en iyi üç yolun ortalaması
                     let mut vs: Vec<f64> = f.H[c].iter().map(|e| e.k * g * Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y) - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly)).collect();
                     vs.sort_by(|a, b| b.partial_cmp(a).unwrap_or(std::cmp::Ordering::Equal));

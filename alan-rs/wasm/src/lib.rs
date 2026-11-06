@@ -394,3 +394,9 @@ pub extern "C" fn sah_yumusak(acik: i32) {
 pub extern "C" fn gurultu_surekli(acik: i32) {
     alan_motor::kafa::kafa1_secim::GURULTU_SUREKLI_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
 }
+
+/// bölge değeri haritası (kafa2_tarti::bolge): 1 açık (varsayılan), 0 kapalı (eski sahiplik haritası).
+#[no_mangle]
+pub extern "C" fn bolge(acik: i32) {
+    alan_motor::kafa::kafa2_tarti::BOLGE_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
+}

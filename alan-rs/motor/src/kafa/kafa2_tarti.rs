@@ -187,9 +187,14 @@ pub fn sahsiz() -> bool {
 }
 /// Deney (ALAN_BOLGE_IZ; ölçümde BOLGE_ZORLA): sahiplik haritası yerine bölge değeri haritası (kafa2_zemin::sahiplikBolge)
 pub static BOLGE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+/// Varsayılan açık (sitedeki kafa); kapatmak: BOLGE_KAPALI (wasm: ?bolge=0) ya da ALAN_BOLGE_ESKI=1.
+pub static BOLGE_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn bolge() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    BOLGE_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_BOLGE_IZ").is_ok())
+    if BOLGE_KAPALI.load(std::sync::atomic::Ordering::Relaxed) {
+        return false;
+    }
+    BOLGE_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_BOLGE_ESKI").is_err())
 }
 /// Deney (ALAN_KUYU_GEC_IZ; ölçümde KUYU_GEC_ZORLA): kafanın olabilirlik hesaplarında kuyu kuralı "t tik sonra
 /// (x, y)'de olabilir mi" diye sorulur: savunmacı alana hemen girip beklemek zorunda değil, dışarıda bekleyip
@@ -277,7 +282,15 @@ pub fn sah_yumusak() -> bool {
     if SAH_YUMUSAK_KAPALI.load(std::sync::atomic::Ordering::Relaxed) {
         return false;
     }
-    SAH_YUMUSAK_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_SAH_YUMUSAK_ESKI").is_err())
+    // bölge haritası varsayılan olunca kapandı (20 maç: tek iyi yolu sulandırıp uzak şut getiriyordu); açmak: ALAN_SAH_YUMUSAK_IZ
+    SAH_YUMUSAK_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_YUMUSAK_IZ").is_ok())
+}
+/// Deney (ALAN_SAH_BEKLENEN_IZ; ölçümde SAH_BEKLENEN_ZORLA): sahiplik haritasında hücrenin değeri taşıyıcının yollar arasından
+/// gürültülü seçiminin beklenen değeri (yumuşak bölge değerinin yerine: tek iyi yolu sulandırmaz, bir yol kapanınca çökmez).
+pub static SAH_BEKLENEN_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sah_beklenen() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAH_BEKLENEN_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_BEKLENEN_IZ").is_ok())
 }
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
