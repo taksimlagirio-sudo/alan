@@ -9,7 +9,7 @@ use crate::yetenek::ah;
 
 use super::super::gecici_dis as dis;
 use super::super::*;
-use super::savunma::{dal_sinir, Sv};
+use super::savunma::{dal_sinir, pres_kazanc, Sv};
 use super::yardim::*;
 
 impl Sv {
@@ -190,6 +190,15 @@ impl Sv {
                 let w0 = match self.t_p.as_ref().and_then(|t| t.h) {
                     Some(th) => th * P.K,
                     None => P.G,
+                };
+                // ALAN_PRES_KAZANC_IZ (S1): baskının değerine kendi kazancımız da girer: topu taşıyıcının yerinde kazanırsak
+                // rakip kalesine yakınlık (savunan takımın tehdidi) × taktiğin pres ayarı × hat katı. Kafanın "o olmasa"
+                // değerinden (t_p.h, rakibin haritası) bağımsız; pres = 0 olan takımda 0.
+                let w0 = if pres_kazanc() {
+                    let hp = &c.ps[hh];
+                    w0 + self.dtac.t.pres.unwrap_or(0.0).max(0.0) * jmax(0.0, dis::threat(dt, hp.x, hp.y)) * P.K
+                } else {
+                    w0
                 };
                 Js.push(Is { q: IsQ::P(hh), w: w0 * if car == 0 { 1.0 } else { 1.0 - P.P0 }, g: (c.ps[hh].x, c.ps[hh].y), job: String::new(), derin: false, bul: false, oku_f: false, grp: None, car: Some(car), zone: None, rq: vec![], thr: 0.0 });
             }

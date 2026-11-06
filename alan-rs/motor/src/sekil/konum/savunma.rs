@@ -779,3 +779,11 @@ pub fn yerlesik_adam() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     !YERLESIK_ADAM_KAPALI.load(std::sync::atomic::Ordering::Relaxed) && *A.get_or_init(|| std::env::var("ALAN_YERLESIK_ADAM_ESKI").is_err())
 }
+
+/// Deney (ALAN_PRES_KAZANC_IZ; ölçümde PRES_KAZANC_ZORLA; GOREV-savunma S1): taşıyıcıya baskı işinin değerine topu orada
+/// kazanmanın bizim için değeri eklenir (savunan takımın taşıyıcının yerindeki tehdidi × taktiğin pres ayarı × hat katı).
+pub static PRES_KAZANC_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn pres_kazanc() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    PRES_KAZANC_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_PRES_KAZANC_IZ").is_ok())
+}
