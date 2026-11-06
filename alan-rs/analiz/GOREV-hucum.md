@@ -3,6 +3,33 @@
 Analizci oturumdan. Bulgular maç 217468'den (Liman 3–0 Kale Duvarı, güncel main motoru, 9000 tik).
 Sen değişikliği yaparsın, analizci yeniden ölçer. Savunma tarafı ayrı bir oturumda (`GOREV-savunma.md`).
 
+## Güncel durum (analizci, 6 Kasım ~19:00)
+
+- **Yeni başvuru:** main `d0a344f` ile maç 217468 sonucu 0–5; değeri ≈0 karar 86 / 518 (`analiz/out/izle/claude_wizardly-knuth-1vc0a3-d0a344f/`). Aşağıdaki 313 / 804 ve diğer sayılar eski main `1f0ec1a`'ya ait. Karşılaştırmayı `d0a344f`'ye göre yap.
+- **Tek maçla karar verme.** Aynı taktikle beş koşunun skorları 0–5, 3–3, 1–2, 1–2 ve 2–4. `analiz/cok.sh <çıktı> [tohumlar]` aynı taktik ve kadroyla birden fazla tohum oynatıp ortalamayı veriyor; varsayılan 6 tohum. `ALAN_*` bayrakları ortamdan geçer:
+  ```bash
+  ALAN_SAH_YAKINSA_IZ=1 alan-rs/analiz/cok.sh alan-rs/analiz/out/sahyak
+  ```
+  Tek tohum için `TOHUM=<n> analiz/olc.sh <çıktı>`.
+- **H1, sahyak (`wizardly-knuth` `09be289`):** değeri ≈0 karar 86'dan 18'e indi; kabul. **Yan etki:** 5 sn'den uzun baskısız tutma 2'den 6'ya çıktı. Mert 7792'de tut 0.106, en iyi pas 0.087. Tut haritanın iyimser pas tahmininden değer alıyor.
+  - **Analizcinin önerisi (a):** tut = eldeki en iyi seçenek × zaman indirimi. İndirim taktiğin tempo/sabır ayarına bağlansın; buna yalnızca beklenen bir açılmanın (arkadaşın koşusu, rakibin kayması) payı eklensin.
+  - **(b), harita ile uçuş simülasyonunun pası farklı değerlemesi:** ayrı iş. Baskı, koşu skoru ve alıcı değeri de haritadan geliyor.
+  - **Okuma notu:** "baskısız tutma" sayısında baskı yapmayan takım Kale Duvarı (pres=0). Liman'ın taktiği tempo .25 / sabır .75, yani bir miktar beklemek beklenen davranış. Sorun yalnız hiçbir şey değişmezken beklemek.
+- **onsira:** işe yaramadı (86 → 143); kapalı kalsın.
+- **H2 düzeltmesi:** "kaleye yakın kararların ~%90'ında şut seçeneği yok" sonucu yanlış ölçüme dayanıyor.
+  - Bu ölçü `firsat.py`'den geliyor; `kararlar.txt`'deki seçenek listesi motorda ilk 14 seçenekle kesik (`dongu.rs:1315 take(14)`). `d0a344f`'de kaleye yakın 152 kararın 151'inde liste tam 14'te kesik.
+  - Şut üretimini ve savurmada düşmeyi doğrudan izle ölç:
+    - `kafa1_secenek.rs` şut bloğunda üretilen `gönder` sayısı.
+    - `kafa2_karar.rs:367`'de `savur_plan` None dönen sayı.
+    - `mac/kafa_bag.rs kafa_not` içindeki "savurmanın yolu kapalı" reddi.
+  - `1f0ec1a`'da 130 kararın 44'ünde bütün şutlar savurmada düşüyordu. savtepki (`797b00d`) bu ölçüyle yeniden değerlendirilmeli.
+- **Main'de yeni çıkan (`d0a344f`):**
+  - Liman 30–42 br'den ve köşeden şut çekiyor (Ece (92, 1.7), 39 br): 9 şutun 7'si doğrudan rakibe gitti, gol yok.
+  - Kale Duvarı'nda hiç açık pas seçeneği olmayan tik oranı %47'den %72'ye çıktı.
+- **Aras:** kendi kalesinde 12–15 sn topla bekliyor. Bekçi'nin Kuyu alanındaki süre sınırının dışında olabilir.
+- `cargo test --release` her değişiklikte çalıştırılmalı (AJAN.md).
+- Analizci saatlik izliyor: motoru değiştiren yeni uç commit'leri kendiliğinden oynatıp `analiz/out/izle/` altına yazıyor. Bayrakla açılan davranış için hangi bayrakların açılacağını analizciye söyle; varsayılan kapalı bayrak izleyicide görünmez.
+
 ## Kurulum ve ölçüm
 
 - Kayıt: `alan-rs/analiz/mac-217468.json` (Liman = takım 0, sağa hücum; Kale Duvarı = takım 1, yapay zekâ).
