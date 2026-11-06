@@ -447,7 +447,7 @@ derlemesi 60 → 30 sn (crate'ler paralel derleniyor).
 wasm'da hiç kurulmayan paralel bölüştürücünün (`paralel::hazir` hep `false`) ve iz kancalarının (`iz_acik`, wasm'da
 `false`) arkasındaki kodu ölü bulup atıyordu; crate sınırında bunu kanıtlayamadı (112 KB bincode paketleme kodu ve
 iz dökümleri wasm'a girdi). Çözüm: `iz_acik` `#[inline]`, `paralel::hazir` wasm'da sabit `false` (bölüştürücüyü yalnız
-`alan-kos` kurar) → 2,71 MB; `lto = "fat"` (tek crate'teki gibi bütün program birlikte iyileştirilir) → **2,62 MB**.
+`alan-kos` kurar) → 2,71 MB; `lto = "fat"` (tek crate'teki gibi bütün program birlikte iyileştirilir) → **2,62 MB** (gzip 827 KB; 7c öncesi 805).
 Yerel hız gürültü içinde (fat biraz önde), release derlemesi 30 → 50 sn.
 
 ### 3.10 Rust adlandırması (6 Kasım)
