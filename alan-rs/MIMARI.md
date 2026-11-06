@@ -312,6 +312,18 @@ korunur (ihtiyatlı). Hiç okunmayan ve yazılmayan ya da yalnız yapı ifadesin
 ifadeler de). Sonuç: `model.rs` 6015 → 2379 satır, 328 → 120 tip. Davranış aynı (20 maç × 2700 tik). Yazılan ama
 okunmayan 57 alan (yazma deyimleri yan etkili olabilir) ayrı adımda.
 
+**5-4 ✅ yazılan ama okunmayan alanlar:** 23 alan (Secenek'in günlük alanları, Mac'in istatistik ve anıları, JMSt
+sayaçları, KafaBag'in üç bağlamı); her yazma yerine elle bakıldı (`Mac.ctl` aslında okunuyor: kaldı), onları besleyen
+ölü hesaplar da (iki `sonDunya`, değerlendirmede iki ilerleme hesabı). 39 tip daha ölü.
+**5-5 ✅ `JsDeger` kalktı:** tek gerçek kullanımı `KafaBag._sut` (kararın başında taktiğin şut eğilimi, hayali şutta
+şutun türü) → `SutBag { Egilim(f64), Tur(String) }`; diğer 7 `JsDeger` alanı hiç okunmuyordu.
+**5-6 ✅ gereksiz `Option`'lar (ölçüldü):** `sina/option-olc.rs` (4 maç × 2700 tik, `{:#?}` dökümünden): 272 `Option`
+alanından 41'i hep dolu, 60'ı hep boş, 171'i ikisi de. Hep boşlardan yalnız 3'üne hiçbir yerde değer yazılmıyor
+(`Secenek.next`, `Secenek.why`, `TopEk.bekM`): silindi, okudukları ölü dallar ve yalnız onlar için hesaplanan
+`dis_lookTo` da. Kalan 57'ye yazılıyor (seyrek yollar, bu maçların kullanmadığı taktik ayarları). Hep dolu 41 alanı
+`Option`'sız yapmak her birinde kurulumdaki "yok" anlamını ayrı ayrı düşünmeyi gerektirir: değeri düşük, ertelendi.
+Sonuç: `model.rs` 6015 → 1950 satır, 328 → 82 tip.
+
 Sıra: (1) maç durumu (108 alan, ~500 yer, kafaya dokunmaz: yalnız `mac/`, `sekil/`, `temas`), (2) gövde
 (~1000 okuma, çoğu `p.yet`/`p.team`/`p.id`: düz değiştirme), her biri `sina/ayni.sh` + 20 maçlık parmak iziyle.
 

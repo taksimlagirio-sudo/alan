@@ -869,16 +869,8 @@ pub fn r#move(m: &mut Mac) {
     {
         let lite = m.mac._lite;
         let h = m.holder;
-        let mut bag = IkBag { ikt: None, ikm: Some(IkHedef { st: &mut m.m.st, lite }), ikl: if lite { None } else { Some(vec![]) } };
+        let mut bag = IkBag { ikt: None, ikm: Some(IkHedef { st: &mut m.m.st, lite }), ikl: None };
         govdeAyir(&mut m.m.ps, Some(h), &mut bag);
-        let (ikl, ikt) = (bag.ikl.take(), bag.ikt.take());
-        if let Some(l) = ikl {
-            m._temaslar = Some(crate::model::JM_temaslar { t: m.tick, L: l });
-        }
-        if let Some(mut t) = ikt {
-            t.t = m.tick;
-            m._temas = Some(t);
-        }
     }
     super::ikili::denge(m);
     topGovdeIt(m);

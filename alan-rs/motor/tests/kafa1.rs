@@ -192,7 +192,7 @@ fn js_ile_bit_bit_ayni() {
         let mut k = Kafa::yeni(dis);
         k.bag._tick = Some(tk);
         k.bag._gon = Some(false);
-        k.bag._sut = Some(alan_motor::model::JsDeger::Sayi(0.5));
+        k.bag._sut = Some(alan_motor::model::SutBag::Egilim(0.5));
         k.bag._ot = Some(1.0);
         k.bag._savT = Some(0.0);
         k.bag._sYon = Some(0.0);
@@ -268,10 +268,10 @@ fn js_ile_bit_bit_ayni() {
             let gon = u["gon"].as_bool().unwrap();
             let b = &u["b0"];
             k.bag._gon = Some(gon);
-            k.bag._sut = Some(if gon { alan_motor::model::JsDeger::Metin("güçlü".into()) } else { alan_motor::model::JsDeger::Sayi(0.5) });
+            k.bag._sut = Some(if gon { alan_motor::model::SutBag::Tur("güçlü".into()) } else { alan_motor::model::SutBag::Egilim(0.5) });
             let r = k.ucusFormul(hh, &ps, UcusB0 { x: h(&b[0]), y: h(&b[1]), vx: h(&b[2]), vy: h(&b[3]), ch: h(&b[4]), aim: None }, None, None, None);
             k.bag._gon = Some(false);
-            k.bag._sut = Some(alan_motor::model::JsDeger::Sayi(0.5));
+            k.bag._sut = Some(alan_motor::model::SutBag::Egilim(0.5));
             let rv = [r.P, r.Pk, r.Pl, r.end.x, r.end.y, r.endM.x, r.endM.y, r.endO.x, r.endO.y, r.Ps, r.endS.x, r.endS.y, r.endD.x, r.endD.y, r.Psek, r.endSek.x, r.endSek.y];
             let ad = if gon { "ucusFormul(şut)" } else { "ucusFormul(pas)" };
             for (i, x) in rv.iter().enumerate() {

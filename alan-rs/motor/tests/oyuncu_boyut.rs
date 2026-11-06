@@ -96,7 +96,6 @@ fn oyuncu_boyut() {
     v.push(("_preT", std::mem::size_of::<Option<f64>>()));
     v.push(("_otA", std::mem::size_of::<Option<JP_otA>>()));
     v.push(("_onH", std::mem::size_of::<Option<JP_onH>>()));
-    v.push(("_lc", std::mem::size_of::<Option<JsDeger>>()));
     v.push(("_donDir", std::mem::size_of::<Option<f64>>()));
     v.push(("_donT", std::mem::size_of::<Option<f64>>()));
     v.push(("_omuzT", std::mem::size_of::<Option<f64>>()));

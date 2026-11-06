@@ -1,13 +1,18 @@
 //! Ortak veri modeli: TASLAK, çalışma anı envanterinden üretildi (sina/model-uret.py, sina/ic-sekil2.txt).
 //! Alan adları JS adlarıyla birebir (izlenebilirlik). Tipler gözlemden: Option = null/undefined görüldü;
 //! Pid = m.ps içindeki oyuncunun sırası; TopRef = topun kimliği (JS nesne kimliği / kopya).
-//! JsDeger = karışık tip görüldü: sahibi olan modül uygun tipe çevirir. Biçimi değiştirmek: model-sahiplik.md
+//! Karışık tipli JS değerleri (JsDeger) gerçek tiplerine çevrildi (MIMARI.md 3.6, Aşama 5).
 #![allow(non_snake_case, non_camel_case_types, dead_code)]
 pub type Pid = usize;
 pub type TopRef = u64;
 #[derive(Clone, Debug, Default)] pub struct JsFn;
-/// Karışık tipli JS değeri (taslakta; sahibi düzeltir).
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)] pub enum JsDeger { #[default] Yok, Sayi(f64), Metin(String), Mantik(bool), Dizi(Vec<JsDeger>), Nesne(Vec<(String, JsDeger)>) }
+/// Kafanın bağlamındaki şut bilgisi (JS `D._sut`: karışık tipliydi): kararın başında taktiğin şut eğilimi,
+/// hayali bir şut tartılırken şutun türü ("güçlü" / "plase").
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+pub enum SutBag {
+    Egilim(f64),
+    Tur(String),
+}
 
 /// Dünyadaki bir varlığın kimliği: gerçek oyuncu (kopyaları dahil) `id`'siyle, hayaleti `HAYALET + id` ile;
 /// `YOK` (sahte/boş oyuncu) hiçbir şeye eşit değil.
@@ -257,8 +262,6 @@ pub struct OyuncuMac {
     pub _otA: Option<JP_otA>,
     /// `_onH`: null|object
     pub _onH: Option<JP_onH>,
-    /// `_lc`: null
-    pub _lc: Option<JsDeger>,
     /// `_donDir`: number (sonradan eklenir)
     pub _donDir: Option<f64>,
     /// `_donT`: number (sonradan eklenir)
@@ -375,8 +378,6 @@ pub struct TopEk {
     pub dist: f64,
     /// `walls`: number
     pub walls: f64,
-    /// `done`: null
-    pub done: Option<JsDeger>,
     /// `log`: dizi
     pub log: Vec<JBLogE>,
     /// `from`: OYUNCU (sonradan eklenir)
@@ -391,14 +392,10 @@ pub struct TopEk {
     pub cue: Option<f64>,
     /// `bekId`: number (sonradan eklenir)
     pub bekId: Option<f64>,
-    /// `bekM`: number (sonradan eklenir)
-    pub bekM: Option<f64>,
     /// `tp`: number (sonradan eklenir)
     pub tp: Option<f64>,
     /// `cds`: Map (sonradan eklenir)
     pub cds: Option<Vec<(Pid, f64)>>,
-    /// `defl`: boolean|number (sonradan eklenir)
-    pub defl: Option<JsDeger>,
     /// `sap`: boolean
     pub sap: bool,
     /// `gon`: boolean
@@ -440,8 +437,6 @@ pub struct Mac {
     pub tac: Vec<crate::mac_veri::Tac>,
     /// `st`: object
     pub st: JMSt,
-    /// `diz`: dizi (sonradan eklenir)
-    pub diz: Option<Vec<Option<crate::mac_veri::Diz>>>,
     /// `winT`: null|number
     pub winT: Option<f64>,
     /// `gecis`: boolean
@@ -458,8 +453,6 @@ pub struct Mac {
     pub evre: Option<Vec<Option<JMEvreE>>>,
     /// `_macC`: object (sonradan eklenir)
     pub _macC: Option<std::collections::BTreeMap<String, crate::mac_veri::MacW>>,
-    /// `macDurum`: dizi (sonradan eklenir)
-    pub macDurum: Option<Vec<Option<JMMacDurumE>>>,
     /// `E`: object (sonradan eklenir)
     pub E: Option<JME>,
     /// `att`: number (sonradan eklenir)
@@ -468,8 +461,6 @@ pub struct Mac {
     pub _perde: Option<crate::mac_veri::Perde>,
     /// `_kuyuTop`: number (sonradan eklenir)
     pub _kuyuTop: Option<f64>,
-    /// `_temaslar`: object (sonradan eklenir)
-    pub _temaslar: Option<JM_temaslar>,
     /// `not`: object (sonradan eklenir)
     pub not: Option<JMNot>,
     /// `pre`: null|object
@@ -490,14 +481,8 @@ pub struct Mac {
     pub _onHk: Option<JP_onH>,
     /// `_inSp`: number (sonradan eklenir)
     pub _inSp: Option<f64>,
-    /// `_temas`: object (sonradan eklenir)
-    pub _temas: Option<JM_temas>,
-    /// `winTeam`: number (sonradan eklenir)
-    pub winTeam: Option<f64>,
     /// `hhKul`: boolean
     pub hhKul: bool,
-    /// `gecisGeri`: number (sonradan eklenir)
-    pub gecisGeri: Option<f64>,
     /// `kp`: null|object
     pub kp: Option<JMKp>,
     /// `_yzBas`: number (sonradan eklenir)
@@ -512,8 +497,6 @@ pub struct Mac {
     pub events: Vec<crate::mac_veri::Olay>,
     /// (mac) bugüne dek çıkan olay sayısı (events 120'de kesilir; yeni olayları bulmak için)
     pub ev_n: u64,
-    /// JS `m.kosulAkt`: takımların etkin taktik koşulları (kural::tac yazar)
-    pub kosulAkt: Option<[Vec<String>; 2]>,
 }
 
 /// (mac) Maç topu `m.ball`: fizik ve temas `temas::TopT`'de, ek alanlar `TopEk`'te
@@ -648,11 +631,7 @@ pub struct KafaBag {
     /// `_tekL`: undef
     pub _tekL: Option<f64>,
     /// `_sut`: number (sonradan eklenir)
-    pub _sut: Option<JsDeger>,
-    /// `_zin`: null
-    pub _zin: Option<JsDeger>,
-    /// `_kuyruk`: undef
-    pub _kuyruk: Option<JsDeger>,
+    pub _sut: Option<SutBag>,
     /// `_savT`: undef
     pub _savT: Option<f64>,
     /// `_savW`: undef
@@ -663,8 +642,6 @@ pub struct KafaBag {
     pub _savCa: Option<f64>,
     /// `_kenar`: undef
     pub _kenar: Option<bool>,
-    /// `_kayipYap`: undef
-    pub _kayipYap: Option<JsDeger>,
     /// `_gPr`: undef
     pub _gPr: Option<f64>,
     /// `_enWD`: undef
@@ -724,11 +701,6 @@ pub struct Secenek {
     pub dok: Option<Dok>,
     pub det: Option<JODet>,
     pub en: Option<JOEn>,
-    pub enV: Option<f64>,
-    pub prensip: Option<String>,
-    /// tartının dünyası (JS `o._pw`)
-    #[serde(with = "crate::paket::dunya_kod")]
-    pub _pw: Option<std::sync::Arc<Vec<std::sync::Arc<Oyuncu>>>>,
     pub _pT: Option<f64>,
     /// JS `o.spr` (sprint niyeti: true ya da kat)
     pub spr: Option<f64>,
@@ -748,7 +720,6 @@ pub struct Secenek {
     pub kh: Option<String>,
     pub lf0: Option<JOLaunch>,
     pub siddet: Option<f64>,
-    pub asim: Option<f64>,
     pub kendine: bool,
     pub lead: Option<Nokta>,
     pub hold: Option<f64>,
@@ -763,23 +734,14 @@ pub struct Secenek {
     pub _kafaId: Option<u64>,
     pub shot: Option<String>,
     // --- Kafa 2'nin tartısının yazdıkları ---
-    pub kE: Option<f64>,
     pub bekci: Option<f64>,
-    pub asan: Option<f64>,
     pub _at: Option<Nokta>,
     #[serde(with = "crate::paket::dunya_kod")]
     pub _w: Option<std::sync::Arc<Vec<std::sync::Arc<Oyuncu>>>>,
     pub _T: Option<f64>,
-    #[serde(with = "crate::paket::dunya_kod")]
-    pub _wE: Option<std::sync::Arc<Vec<std::sync::Arc<Oyuncu>>>>,
     pub _en: Option<f64>,
-    pub _enB: Option<f64>,
-    pub _enR: Option<f64>,
-    pub _enS: Option<f64>,
-    pub next: Option<f64>,
     pub sonra: Option<String>,
     pub ust: Option<f64>,
-    pub why: Option<String>,
     pub zaman: Option<f64>,
     pub wp: Option<Nokta>,
     pub wp1: Option<Nokta>,
@@ -811,22 +773,7 @@ impl Dok {
     }
 }
 
-/// JS `o.hw` (beklemenin hayali dünyası)
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct SecHw {
-    pub kayip: bool,
-    pub tik: Option<f64>,
-    pub T: f64,
-    pub v: Option<f64>,
-    pub sonra: Option<String>,
-    pub Pk: Option<f64>,
-}
 
-/// JS `o.amac`
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct SecAmac {
-    pub gec: f64,
-}
 
 /// JS `p.slot`
 #[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
@@ -1222,12 +1169,6 @@ pub struct JBLogE {
     pub txt: String,
 }
 
-/// JS `b._oku`
-#[derive(Clone, Debug, Default)]
-pub struct JB_oku {
-    /// `2`: object
-    pub k2: JB_okuK2,
-}
 
 /// JS `m.fl`
 #[derive(Clone, Debug, Default)]
@@ -1310,12 +1251,8 @@ pub struct JMSt {
     pub loose: Vec<f64>,
     /// `swarm`: number
     pub swarm: f64,
-    /// `swN`: number
-    pub swN: f64,
     /// `enH`: dizi
     pub enH: Vec<crate::mac_veri::EnSayac>,
-    /// `enP`: object
-    pub enP: std::collections::BTreeMap<usize, crate::mac_veri::EnSayac>,
     /// `sprF`: dizi
     pub sprF: Vec<f64>,
     /// `sprT`: dizi
@@ -1324,8 +1261,6 @@ pub struct JMSt {
     pub enCal: Vec<f64>,
     /// `calim`: dizi
     pub calim: Vec<f64>,
-    /// `cal`: object
-    pub cal: Option<JMStCal>,
     /// (mac) taslakta olmayan sayaçlar (boş = yok)
     pub fake: Vec<f64>,
     pub fakeOk: Vec<f64>,
@@ -1395,50 +1330,8 @@ pub struct JMEvreE {
 }
 
 
-/// JS `m.macDurum[]`
-#[derive(Clone, Debug, Default)]
-pub struct JMMacDurumE {
-    /// `oran`: number
-    pub oran: f64,
-    /// `g`: number
-    pub g: f64,
-    /// `c`: number
-    pub c: f64,
-}
 
-/// JS `m._sn{v}[]`
-#[derive(Clone, Debug, Default)]
-pub struct JM_snVE {
-    /// `a`: object
-    pub a: JM_snVEA,
-    /// `x`: number
-    pub x: f64,
-    /// `y`: number
-    pub y: f64,
-    /// `R`: number
-    pub R: f64,
-    /// `D`: number
-    pub D: f64,
-    /// `team`: number
-    pub team: f64,
-    /// `role`: string
-    pub role: String,
-    /// `press`: boolean
-    pub press: bool,
-    /// `ref`: OYUNCU
-    pub r#ref: Pid,
-    /// `gvx`: number
-    pub gvx: f64,
-    /// `gvy`: number
-    pub gvy: f64,
-}
 
-/// JS `m._kayL`
-#[derive(Clone, Debug, Default)]
-pub struct JM_kayL {
-    /// `f`: function
-    pub f: JsFn,
-}
 
 /// JS `m.E`
 #[derive(Clone, Debug, Default)]
@@ -1449,14 +1342,6 @@ pub struct JME {
     pub y: f64,
 }
 
-/// JS `m._temaslar`
-#[derive(Clone, Debug, Default)]
-pub struct JM_temaslar {
-    /// `t`: number
-    pub t: f64,
-    /// `L`: dizi
-    pub L: Vec<JM_temaslarLE>,
-}
 
 /// JS `m.not`
 #[derive(Clone, Debug, Default)]
@@ -1589,12 +1474,6 @@ pub struct JMKp {
     pub sahip: Option<Pid>,
 }
 
-/// JS `m._acikK`
-#[derive(Clone, Debug, Default)]
-pub struct JM_acikK {
-    /// `v`: dizi
-    pub v: Vec<JM_acikKVE>,
-}
 
 
 
@@ -1680,230 +1559,30 @@ pub struct JP_surKTo {
 }
 
 
-/// JS `b._oku.111`
-#[derive(Clone, Debug, Default)]
-pub struct JB_okuK111 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.112`
-#[derive(Clone, Debug, Default)]
-pub struct JB_okuK112 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.113`
-#[derive(Clone, Debug, Default)]
-pub struct JB_okuK113 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.114`
-#[derive(Clone, Debug, Default)]
-pub struct JB_okuK114 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.115`
-#[derive(Clone, Debug, Default)]
-pub struct JB_okuK115 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.116`
-#[derive(Clone, Debug, Default)]
-pub struct JB_okuK116 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.-112`
-#[derive(Clone, Debug, Default)]
-pub struct JB_oku_112 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.-113`
-#[derive(Clone, Debug, Default)]
-pub struct JB_oku_113 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.-114`
-#[derive(Clone, Debug, Default)]
-pub struct JB_oku_114 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.-115`
-#[derive(Clone, Debug, Default)]
-pub struct JB_oku_115 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.-116`
-#[derive(Clone, Debug, Default)]
-pub struct JB_oku_116 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.-117`
-#[derive(Clone, Debug, Default)]
-pub struct JB_oku_117 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.1`
-#[derive(Clone, Debug, Default)]
-pub struct JB_okuK1 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.2`
-#[derive(Clone, Debug, Default)]
-pub struct JB_okuK2 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.3`
-#[derive(Clone, Debug, Default)]
-pub struct JB_okuK3 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.4`
-#[derive(Clone, Debug, Default)]
-pub struct JB_okuK4 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.5`
-#[derive(Clone, Debug, Default)]
-pub struct JB_okuK5 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.6`
-#[derive(Clone, Debug, Default)]
-pub struct JB_okuK6 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.-2`
-#[derive(Clone, Debug, Default)]
-pub struct JB_oku_2 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.-3`
-#[derive(Clone, Debug, Default)]
-pub struct JB_oku_3 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.-4`
-#[derive(Clone, Debug, Default)]
-pub struct JB_oku_4 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.-5`
-#[derive(Clone, Debug, Default)]
-pub struct JB_oku_5 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.-6`
-#[derive(Clone, Debug, Default)]
-pub struct JB_oku_6 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.-7`
-#[derive(Clone, Debug, Default)]
-pub struct JB_oku_7 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
-/// JS `b._oku.-2110`
-#[derive(Clone, Debug, Default)]
-pub struct JB_oku_2110 {
-    /// `k`: number
-    pub k: f64,
-    /// `on`: number
-    pub on: f64,
-}
 
 /// JS `m.fl.to`
 #[derive(Clone, Debug, Default)]
@@ -1934,25 +1613,7 @@ pub struct JMTacEDurus {
 
 
 
-/// JS `m.st.cal`
-#[derive(Clone, Debug, Default)]
-pub struct JMStCal {
-    /// `n`: number
-    pub n: f64,
-    /// `pk`: number
-    pub pk: f64,
-    /// `g`: number
-    pub g: f64,
-}
 
-/// JS `m.sh.yr`
-#[derive(Clone, Debug, Default)]
-pub struct JMShYr {
-    /// `dt`: number
-    pub dt: f64,
-    /// `on`: boolean
-    pub on: bool,
-}
 
 /// JS `m.sh.gs`
 #[derive(Clone, Debug, Default)]
@@ -1969,14 +1630,6 @@ pub struct JMShGs {
     pub oy: bool,
 }
 
-/// JS `m.sh.yvBas`
-#[derive(Clone, Debug, Default)]
-pub struct JMShYvBas {
-    /// `h`: OYUNCU
-    pub h: Pid,
-    /// `t`: number
-    pub t: f64,
-}
 
 /// JS `m.sh.fr`
 #[derive(Clone, Debug, Default)]
@@ -2003,54 +1656,6 @@ pub struct JMShFr {
 
 
 
-/// JS `m._sn{v}[].a`
-#[derive(Clone, Debug, Default)]
-pub struct JM_snVEA {
-    /// `hiz`: number
-    pub hiz: f64,
-    /// `ceviklik`: number
-    pub ceviklik: f64,
-    /// `guc`: number
-    pub guc: f64,
-    /// `uzanma`: number
-    pub uzanma: f64,
-    /// `alan`: number
-    pub alan: f64,
-    /// `kontrol`: number
-    pub kontrol: f64,
-    /// `surme`: number
-    pub surme: f64,
-    /// `pas`: number
-    pub pas: f64,
-    /// `gonderme`: number
-    pub gonderme: f64,
-    /// `yukleme`: number
-    pub yukleme: f64,
-    /// `tepki`: number
-    pub tepki: f64,
-    /// `gorus`: number
-    pub gorus: f64,
-    /// `yeralma`: number
-    pub yeralma: f64,
-    /// `sogukkanlilik`: number
-    pub sogukkanlilik: f64,
-    /// `kesme`: number
-    pub kesme: f64,
-    /// `refleks`: number
-    pub refleks: f64,
-    /// `yerlesim`: number
-    pub yerlesim: f64,
-    /// `hakimiyet`: number
-    pub hakimiyet: f64,
-    /// `taraf`: string
-    pub taraf: String,
-    /// `enerji`: number
-    pub enerji: f64,
-    /// `govde`: number
-    pub govde: f64,
-    /// `caliskanlik`: number
-    pub caliskanlik: f64,
-}
 
 /// JS `m._temaslar.L[]`
 #[derive(Clone, Debug, Default)]
@@ -2095,30 +1700,14 @@ pub struct JMLastDecOptsE {
     pub P: f64,
     /// `v`: number
     pub v: f64,
-    /// `am`: undef
-    pub am: Option<JsDeger>,
     /// `en`: object|undef
     pub en: Option<JMLastDecOptsEEn>,
     /// `kh`: string|undef
     pub kh: Option<String>,
-    /// `rc`: undef
-    pub rc: Option<JsDeger>,
     /// `devam`: number|undef
     pub devam: Option<f64>,
-    /// `neden`: undef
-    pub neden: Option<JsDeger>,
-    /// `bak`: undef
-    pub bak: Option<JsDeger>,
 }
 
-/// JS `m._acikK.v[]`
-#[derive(Clone, Debug, Default)]
-pub struct JM_acikKVE {
-    /// `x`: number
-    pub x: f64,
-    /// `y`: number
-    pub y: f64,
-}
 
 
 
@@ -2227,24 +1816,6 @@ pub struct JMLastDecOptsEEn {
     pub ek: f64,
 }
 
-/// JS `m.lastDec.opts[].dok`
-#[derive(Clone, Debug, Default)]
-pub struct JMLastDecOptsEDok {
-    /// `durum`: number
-    pub durum: f64,
-    /// `kayip`: number
-    pub kayip: f64,
-    /// `sure`: number
-    pub sure: f64,
-    /// `sut`: number
-    pub sut: f64,
-    /// `surme`: number
-    pub surme: f64,
-    /// `sonra`: string
-    pub sonra: String,
-    /// `gol`: number
-    pub gol: f64,
-}
 
 
 

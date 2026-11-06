@@ -167,7 +167,6 @@ pub fn take(m: &mut Mac, p: Pid, how: Option<String>) {
     }
     m.fl = None;
     m.ps[p].hal_mut().driveTo = None;
-    m.ps[p].hal_mut()._lc = None;
     let pt = m.ps[p].team;
     if prev == Some(pt) {
         if let Some(fl) = fl.filter(|f| f.kind != "gönder") {
@@ -222,7 +221,6 @@ pub fn take(m: &mut Mac, p: Pid, how: Option<String>) {
     } else {
         m.st.steal[pt as usize] += 1.0;
         m.winT = Some(m.tick);
-        m.winTeam = Some(pt);
         gecisBasla(m, p);
         let t = how.unwrap_or_else(|| format!("{} Çekirdeği aldı", m.ps[p].govde.name));
         ev(m, "kesme", pt, t);
@@ -506,7 +504,6 @@ pub fn _step(m: &mut Mac) {
     {
         let sw = dis::metrics_swarm(m);
         m.st.swarm += sw;
-        m.st.swN += 1.0;
     }
     if let Some(h) = m.holder {
         if tasiyici(m, h) {
@@ -1384,7 +1381,7 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
             ev(m, "sarj", ht, format!("{n} şarj ediyor · %{ch}"));
         }
     }
-    let why = o.why.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| o.kind.clone());
+    let why = o.kind.clone();
     if o.kind == "sür" {
         let to = o.to.clone().unwrap_or_default();
         {
@@ -1414,16 +1411,6 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
             m.decT = hd;
             m.ps[h].hal_mut().holdD = true;
         }
-        let lw = m.ps[h].hal.lastWhy.clone();
-        let n = m.ps[h].govde.name.clone();
-        let look = o.det.as_ref().and_then(|_| dis_lookTo(m, &o));
-        if o.why.as_deref() == Some("çek") && lw.as_deref() != Some("çek") {
-            ev(m, "pas", ht, format!("{n} rakibi üstüne çekiyor{}", look.as_ref().map_or(String::new(), |l| format!(" · {l} açılacak"))));
-        } else if o.why.as_deref() == Some("koşu") && lw.as_deref() != Some("koşu") {
-            if let Some(l) = look {
-                ev(m, "pas", ht, format!("{n} bekliyor · {l} koşusunu bitirince verecek"));
-            }
-        }
         m.ps[h].hal_mut().lastWhy = Some(why.into());
     } else {
         m.ps[h].hal_mut().lastWhy = Some(why.into());
@@ -1437,10 +1424,6 @@ fn karar(m: &mut Mac, h: Pid) -> bool {
     false
 }
 
-/// JS o.det.lookTo.name: kafanın bakılan oyuncusu (taslakta yok; kafa ekleyecek).
-fn dis_lookTo(_m: &Mac, _o: &Secenek) -> Option<String> {
-    None
-}
 
 /// Boştaki top: durduysa en yakın alır; yoksa alan seçimi, topun tiki ve temas, gövde, sayı.
 fn bostaTop(m: &mut Mac) {
@@ -1534,9 +1517,6 @@ fn bostaTop(m: &mut Mac) {
             m.score[sc as usize] += 1.0;
             kafaBitir(m, Son { gol: Some(sc), ..Default::default() });
             if pk.is_some() {
-                if let Some(c) = m.st.cal.as_mut() {
-                    c.g += 1.0;
-                }
             }
             let t = format!("SAYI · {} · {}–{}", from.map_or(String::new(), |f| m.ps[f].govde.name.to_string()), js_num(m.score[0]), js_num(m.score[1]));
             ev(m, "sayi", sc, t);

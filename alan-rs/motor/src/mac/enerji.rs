@@ -43,7 +43,7 @@ fn ekle(s: &mut EnSayac, k: &str, v: f64) {
 }
 
 /// JS enSay(m, p, k, v)
-pub fn enSay_p(st: &mut JMSt, lite: bool, team: f64, pi: Pid, k: &str, v: f64) {
+pub fn enSay_p(st: &mut JMSt, lite: bool, team: f64, _pi: Pid, k: &str, v: f64) {
     if lite || !(v > 0.0) {
         return;
     }
@@ -52,7 +52,6 @@ pub fn enSay_p(st: &mut JMSt, lite: bool, team: f64, pi: Pid, k: &str, v: f64) {
         st.enH = vec![z.clone(), z];
     }
     ekle(&mut st.enH[team as usize], k, v);
-    ekle(st.enP.entry(pi).or_default(), k, v);
 }
 pub fn enSay(m: &mut Mac, pi: Pid, k: &str, v: f64) {
     if crate::iz_acik() && !m.mac._lite && v > 0.0 && &*m.ps[pi].govde.name == "Cansu" && std::env::var("ALAN_EN_IZ").ok().and_then(|x| x.parse::<f64>().ok()).map_or(false, |x| m.tick >= x - 1.0 && m.tick <= x) { eprintln!("EN {} {} {} {}", m.tick, m.ps[pi].govde.name, k, v); }
