@@ -235,6 +235,13 @@ pub fn govde_yol() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     GOVDE_YOL_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_GOVDE_YOL_IZ").is_ok())
 }
+/// Deney (ALAN_SUR_E_IZ; ölçümde SUR_E_ZORLA): sürmenin tutma olasılığı değerin tartıldığı ara noktaya (toE) varış süresiyle;
+/// eskiden sürmenin son hedefine (to) dek, değer ise toE'de tartılıyordu (k74-2536: kaleci 12–19. tiklerde yetişir sanıldı).
+pub static SUR_E_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sur_e() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SUR_E_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SUR_E_IZ").is_ok())
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
@@ -1072,9 +1079,15 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                 Some(dr) => dis::surSure(k, &h, LE, Some(dr), None),
                 None => LE / 0.2,
             });
-            let P = match d.P {
-                Some(p) => p,
-                None => crate::kafa::kafa1_ikili::kp_kal(dis::keepP(k, &h, src, o.dir, Ts)),
+            // ALAN_SUR_E_IZ: tutma, değerin tartıldığı ara noktaya (E) dek; sürmenin son hedefine dek değil (orada yeniden karar verilir)
+            let P = if sur_e() && LE > 0.5 {
+                let hk: Option<Oyuncu> = if o.spr.map(crate::mat::dogru).unwrap_or(false) { Some(dis::sprKop(k, &h)) } else { None };
+                crate::kafa::kafa1_ikili::kp_kal(dis::keepP(k, hk.as_ref().unwrap_or(&*h), src, o.dir, Ts))
+            } else {
+                match d.P {
+                    Some(p) => p,
+                    None => crate::kafa::kafa1_ikili::kp_kal(dis::keepP(k, &h, src, o.dir, Ts)),
+                }
             };
             // ALAN_SEND_GEC_IZ: sendelemeyle kesilen sürmede varış, topu geri alana dek sonrasının dünyası
             let TsD = Ts + o.sendGec.unwrap_or(0.0);
