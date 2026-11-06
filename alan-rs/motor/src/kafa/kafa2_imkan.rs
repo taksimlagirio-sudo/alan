@@ -25,9 +25,15 @@ pub const IMK_L: [f64; 4] = [5.0, 10.0, 15.0, 20.0];
 const TAB_BOY: usize = 9 * 7 * 9 * 3 * 4;
 /// 16 tablo (şutçu L × Bekçi L, sıra L[a]-L[b]), her biri DS×SY×KO×KD×CH, değer −1 (yok) ya da 0–100.
 static IMK_SUT: &[u8; 16 * TAB_BOY] = include_bytes!("kafa2_imk_sut.bin");
+/// Dosyadaki tablo ne zaman kullanılır: ALAN_IMK_TABLO_HEP ortamda ya da ölçümde (kopya maçlar) IMK_TABLO_ZORLA
+pub static IMK_TABLO_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+fn tablo_dis_acik() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    IMK_TABLO_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_IMK_TABLO_HEP").is_ok())
+}
 #[inline(always)]
 fn tab_v(tab: usize, i: usize) -> f64 {
-    match imk_tablo_dis() {
+    match if tablo_dis_acik() { imk_tablo_dis() } else { None } {
         Some(t) => t[tab * TAB_BOY + i] as i8 as f64,
         None => IMK_SUT[tab * TAB_BOY + i] as i8 as f64,
     }
