@@ -464,3 +464,5 @@ anahtar!(sav_taban, alan_motor::sekil::konum::SAV_TABAN_ZORLA);
 pub extern "C" fn s7(bit: i32) {
     alan_motor::sekil::S7_ZORLA.store(bit as u8, std::sync::atomic::Ordering::Relaxed);
 }
+// H4a: hücum dizilişinin ön ucu toptan en çok bir pas menzili ileride (hucumboy)
+anahtar!(hucum_boy, alan_motor::sekil::yer::HUCUM_BOY_ZORLA);
