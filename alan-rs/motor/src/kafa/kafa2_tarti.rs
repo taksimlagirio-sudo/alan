@@ -322,10 +322,15 @@ pub fn sekme_bedel() -> bool {
 /// girer. Sahiplik değeri V0 = topu tutan seçeneklerin (şut dışı) en iyisinin değeri; her seçenek, topun takımda kalmama
 /// olasılığı kadar V0 öder (şut: 1 − gol, pas: 1 − alıcıya doğrudan varma, sür/tut: 1 − tutma). Tutma şansı yoksa
 /// (V0 ≈ 0) bedel kalkar, şut çekilir.
+/// Varsayılan açık (20 maç: uzak şut 29 → 10, gol 10 → 9); kapatmak: KAYIP_SAHIP_KAPALI (wasm: ?kayipsahip=0) ya da ALAN_KAYIP_SAHIP_ESKI=1.
 pub static KAYIP_SAHIP_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub static KAYIP_SAHIP_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn kayip_sahip() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    KAYIP_SAHIP_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_KAYIP_SAHIP_IZ").is_ok())
+    if KAYIP_SAHIP_KAPALI.load(std::sync::atomic::Ordering::Relaxed) {
+        return false;
+    }
+    KAYIP_SAHIP_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_KAYIP_SAHIP_ESKI").is_err())
 }
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
