@@ -66,7 +66,7 @@ impl Sv {
             let bs = self.base[p].unwrap();
             let dr = if self.d_max > 0.0 { jmin(1.0, self.dng(c, q) / self.d_max) } else { 0.0 };
             if let Some(sn) = sn {
-                if hypot(sn.x - bs.x, sn.y - bs.y) < 1.5 * (S.zone_r + yer_s(&c.ps[p]) * S.zone_ok + S.zone_dng * dr) {
+                if self.yerlesik || hypot(sn.x - bs.x, sn.y - bs.y) < 1.5 * (S.zone_r + yer_s(&c.ps[p]) * S.zone_ok + S.zone_dng * dr) {
                     self.taken[p] = true;
                     self.mark[p] = Some(q);
                     z_tak[q] = true;
@@ -91,7 +91,8 @@ impl Sv {
                 let sn = ileri_v(sn0, oku_tp(&c.ps[p]), Some(&c.ps[q]), c.ps, self.sg);
                 let bs = self.base[p].unwrap();
                 let d = hypot(sn.0 - bs.x, sn.1 - bs.y);
-                if d < S.zone_r + yer_s(&c.ps[p]) * S.zone_ok + S.zone_dng * dr && d < bd {
+                // yerleşik hücumda bölge yarıçapı yok: en yakın boştaki savunmacı
+                if (self.yerlesik || d < S.zone_r + yer_s(&c.ps[p]) * S.zone_ok + S.zone_dng * dr) && d < bd {
                     bd = d;
                     bp = Some(p);
                 }

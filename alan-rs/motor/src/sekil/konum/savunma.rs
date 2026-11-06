@@ -251,9 +251,10 @@ impl Sv {
 
     /// Savunma: pres, süpürücüler, markaj, eşleşme, yedek işler, takım düzeltmeleri.
     ///
-    /// Savunmacı, adamının kale tarafı kendi blok derinliğinden öndeyse adamın peşinden çıkmaz, bloğunda kalır
-    /// ("arkada · blokta"): orta sahaya çekilmesin. Rakip yarı sahamıza yerleşmiş ve top kuyunun önündeyken (`yerlesik`)
-    /// korunacak alan kalmaz: blok kalkar, adamını kale tarafından tutar (6 Kasım 2026, kullanıcı kararı).
+    /// Alan savunması (taktik "alan", bölge yarıçapı, blok derinliği) savunmacının tutacağı adam yokken orta sahaya
+    /// çıkmaması için. Rakip yarı sahamıza yerleşmiş ve top kuyunun önündeyken (`yerlesik`) korunacak alan kalmaz
+    /// (6 Kasım 2026, kullanıcı kararı): adam adama (taktik alan olsa da), bölge oyuncusu yarıçapa bakmadan boştaki
+    /// adamı alır, blok kalkar (adamını kale tarafından tutar), topa en çok bir presçi.
     pub fn savunma(&mut self, c: &mut Mc) {
         let k = c.k;
         let tick = c.m.tick;
@@ -294,15 +295,18 @@ impl Sv {
             }
             wx
         };
+        self.yerlesik = yerlesik_adam() && {
+            let ra: Vec<Pid> = (0..n).filter(|&q| c.ps[q].takim() == att && !c.ps[q].bekci()).collect();
+            let yarida = ra.iter().filter(|&&q| (c.ps[q].x - own_x(dt)).abs() < crate::saha::W / 2.0).count();
+            self.g_d(E.0, E.1) < YERLESIK_TOP_D && 2 * yarida >= ra.len() && !ra.is_empty()
+        };
         let p_lim = pres_lim(c, &self.dtac, h, att);
+        // yerleşik hücumda topa en çok bir presçi: ötekiler adam tutar
+        let p_lim = if self.yerlesik { p_lim.min(1) } else { p_lim };
         if let Some(h) = h {
             self.pres_sec(c, h, p_lim);
         }
         self.atk_all = (0..n).filter(|&q| c.ps[q].takim() == att && !c.ps[q].bekci()).collect();
-        self.yerlesik = yerlesik_adam() && {
-            let yarida = self.atk_all.iter().filter(|&&q| (c.ps[q].x - own_x(dt)).abs() < crate::saha::W / 2.0).count();
-            self.g_d(E.0, E.1) < YERLESIK_TOP_D && 2 * yarida >= self.atk_all.len() && !self.atk_all.is_empty()
-        };
         self.atk = self.atk_all.iter().copied().filter(|&q| Some(q) != h).collect();
         self.TH = tehlike(c.m, c.ps, h, c.d);
         self.covered = match h {
@@ -448,7 +452,8 @@ impl Sv {
     /// JS `adamT(p)`: adam adama savunma (paylaşım dalgası yokken).
     #[inline]
     pub fn adam_t(&self, c: &Mc, p: Pid) -> bool {
-        tl0(&c.ps[p], "sav", "adam") >= 0.5 && !self.YR
+        // yerleşik hücumda (top kuyunun önünde) takımın taktiği alan savunması olsa da adam adama
+        (tl0(&c.ps[p], "sav", "adam") >= 0.5 || self.yerlesik) && !self.YR
     }
 
     /// Pres seçimi (JS `if (h) {…}` bloğu): adaylar, değerleri, kilit, kontrpres, sıra.
