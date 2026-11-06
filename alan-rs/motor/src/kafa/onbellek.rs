@@ -40,6 +40,9 @@ pub struct Onbellek {
     pub suty: RefCell<HizliMap<i64, Arc<Vec<f64>>>>,
     /// JS `SHT`'nin tabloda olmayan hücreleri (hesaplanmış)
     pub sht_ek: RefCell<HizliMap<i64, f64>>,
+    /// topun yolu (`top::tahmin`, seçimli K ile): girdinin tamamı (top + alan kaynakları + adım sınırı) → sonuç.
+    /// Saf; bir tikte aynı top aynı dünyada çok kez tahmin ediliyor (ölçüm: m00, çağrıların %38'i).
+    pub tahmin: RefCell<HizliMap<Vec<u64>, Arc<(Vec<crate::top::YolNokta>, crate::top::Top)>>>,
     /// imkBol (tablo × konum)
     pub imkb: HizliMap<[u64; 4], Arc<std::sync::Mutex<super::kafa2_imkan::ImkBol>>>,
 }
@@ -53,6 +56,7 @@ impl Onbellek {
             self.rnb.get_mut().clear();
             self.pwm.clear();
             self.bsk.clear();
+            self.tahmin.get_mut().clear();
             self.tik = t;
         }
     }

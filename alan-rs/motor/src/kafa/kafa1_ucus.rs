@@ -17,7 +17,7 @@ use crate::model::{JOLaunch, Oyuncu};
 use crate::oyuncu::Tepki;
 use crate::saha::{CY as GCY, H as GH, KR, W as GW};
 use crate::temas::{bek_dl, bek_dv, bek_har, bek_kay, bek_oku_e, bek_re, bek_uc, kuyu_girer, thru_p, TopT, TopTemas};
-use crate::top::{adim, tahmin, Bitis, Top};
+use crate::top::{adim, Bitis, Top};
 use crate::yetenek::mek;
 use std::borrow::Cow;
 
@@ -618,7 +618,7 @@ impl Kafa {
             let s = sin(an);
             let kv = 1.0 + z0(zs) * r#as;
             let b = top_yap(o0.x, o0.y, (b0.vx * c - b0.vy * s) * kv, (b0.vx * s + b0.vy * c) * kv, team, Some(b0.ch), Some(h));
-            let (pts, end) = kaynakla(&et_p, kc, |kk| tahmin(&b, kk, &crate::saha::P, Some(D.sim_max as usize)));
+            let (pts, end) = tahmin_ob(&self.ob, &b, &et_p, kc, D.sim_max as usize);
             let n = pts.len();
             for A in ad.iter_mut() {
                 if let Some(g0) = A.G0.take() {

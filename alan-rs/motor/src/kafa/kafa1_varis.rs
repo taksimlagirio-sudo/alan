@@ -17,7 +17,7 @@ use crate::model::Oyuncu;
 use crate::oyuncu::Tepki;
 use crate::saha::{CY as GCY, H as GH, KR, W as GW};
 use crate::temas::{bek_dl, bek_dv, bek_kay, bek_re, kuyu_girer, uc_k, Kap, Kural, TopT};
-use crate::top::{hyp, tahmin, Bitis};
+use crate::top::{hyp, Bitis};
 use crate::yetenek::{mek, yum, zar, DK_ALIS};
 use std::borrow::Cow;
 
@@ -594,7 +594,7 @@ impl Kafa {
             }
             b.defl = 1.0;
             b.defl_b = false;
-            let (pts, end) = kaynakla(et_p, kc, |k| tahmin(&b, k, &crate::saha::P, Some(100)));
+            let (pts, end) = tahmin_ob(&self.ob, &b, et_p, kc, 100);
             let n = pts.len();
             let (mut tm, mut t_o, mut t_b): (f64, f64, f64) = (1e9, 1e9, 1e9);
             let mut bk: Option<&Oyuncu> = None;

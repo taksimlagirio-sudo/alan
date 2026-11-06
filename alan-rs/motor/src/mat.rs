@@ -30,6 +30,18 @@ fn yuv(x: f64) -> f64 {
     }
 }
 
+/// `yuv`, exp'in aralığında (0,5 ≤ |x| ≤ ~1100): floor/ceil yerine tamsayıya kesme. Kesme, negatif olmayan sayıda
+/// floor'la, pozitif olmayanda ceil'le aynıdır; x ≥ 0,5 iken x + 0,5 ≥ 1, x ≤ −0,5 iken x − 0,5 ≤ −1 (−0 çıkmaz),
+/// sonuç bit bit aynı. Bilgisayarda floor/ceil kütüphane çağrısı (SSE4.1'siz x86-64), kesme tek komut.
+#[inline(always)]
+fn yuv_e(x: f64) -> f64 {
+    if x >= 0.0 {
+        ((x + 0.5) as i64) as f64
+    } else {
+        ((x - 0.5) as i64) as f64
+    }
+}
+
 const LN2H: f64 = 6.9314718036912381649e-1;
 const LN2L: f64 = 1.90821492927058770002e-10;
 const ILN2: f64 = 1.442695040888963387;
@@ -52,7 +64,7 @@ pub fn exp(x: f64) -> f64 {
     if x.abs() < 3.725290298461914e-9 {
         return 1.0 + x;
     }
-    let k = if x.abs() < 0.34657359027997264 { 0.0 } else { yuv(x * ILN2) };
+    let k = if x.abs() < 0.34657359027997264 { 0.0 } else { yuv_e(x * ILN2) };
     let hi = x - k * LN2H;
     let lo = k * LN2L;
     let r = hi - lo;
