@@ -78,7 +78,7 @@ fn oyuncu(v: &Value) -> Oyuncu {
     p.hal_mut().sonuk = v["sonuk"].as_bool().unwrap();
     p.hal_mut().kuyuT = ho(&v["kuyuT"]);
     p.cd = h(&v["cd"]);
-    p.hal_mut().hist = Some(v["hist"].as_array().unwrap().iter().map(|e| JPHistE { x: h(&e[0]), y: h(&e[1]), vx: h(&e[2]), vy: h(&e[3]) }).collect::<Vec<_>>().into());
+    p.hal_mut().hist = v["hist"].as_array().unwrap().iter().map(|e| JPHistE { x: h(&e[0]), y: h(&e[1]), vx: h(&e[2]), vy: h(&e[3]) }).collect::<Vec<_>>().into();
     p.hal_mut().past = Some(v["past"].as_array().unwrap().iter().map(|e| JPPastE { x: h(&e[0]), y: h(&e[1]) }).collect::<Vec<_>>().into());
     p.hal_mut()._bk = bk(&v["bk"]).map(std::sync::Arc::new);
     p.hal_mut()._rcvB = if v["rcvB"].as_bool().unwrap() { Some(1) } else { None };

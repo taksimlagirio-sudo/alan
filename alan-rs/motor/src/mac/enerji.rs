@@ -97,7 +97,7 @@ pub fn enerji2(m: &mut Mac) {
         }
         let r = v / b;
         let act = if v > b { 0.0 } else if r <= 0.6 { 1.0 - 0.5 * r } else { jmax(en2.tempo_dol, 0.7 - 1.125 * (r - 0.6)) };
-        let y0 = p.hal._yog.unwrap_or(0.0);
+        let y0 = p.hal._yog;
         let yog = y0 + (d / Sb - y0) / en2.yog_tau;
         let _yog_f = jmax(en2.yog_min, 1.0 - en2.yog_k * yog / (en2.tepe / Sb));
         let _ = (Sd, act);
@@ -129,9 +129,9 @@ pub fn enerji2(m: &mut Mac) {
             en_say_p(&mut m.st, lite, team, pi, k, x);
         }
         let p = &mut m.ps[pi];
-        p.hal_mut()._evx = Some(vx);
-        p.hal_mut()._evy = Some(vy);
-        p.hal_mut()._yog = Some(yog);
+        p.hal_mut()._evx = vx;
+        p.hal_mut()._evy = vy;
+        p.hal_mut()._yog = yog;
         let en = jmax(0.0, jmin(1.0, en - d / Sb + dol));
         p.en = Some(en);
         if p.hal._Dl.map_or(true, |dl| p.D != dl) {

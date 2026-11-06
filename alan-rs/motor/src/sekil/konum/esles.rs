@@ -475,7 +475,7 @@ impl Sv {
                 for &p in &es {
                     if !yeni_p.contains(&p) {
                         c.ps[p].press = false;
-                        c.ps[p].hal_mut().lock = Some(0.0);
+                        c.ps[p].hal_mut().lock = 0.0;
                     }
                 }
                 let hp = (c.ps[h.unwrap()].x, c.ps[h.unwrap()].y);
@@ -565,7 +565,7 @@ impl Sv {
     fn geri_kosu(&self, c: &mut Mc, p: Pid, bs: &Yer) -> bool {
         let tick = c.m.tick;
         let pp = &c.ps[p];
-        let rec = pp.hal.rec.unwrap_or(0.0);
+        let rec = pp.hal.rec;
         if !(!self.up[p] && (pp.hal.markRef.is_none() || !self.adam_t(c, p)) && rec != 0.0 && rec == rec && tick >= rec && self.since < S.rec_t * geri_k(pp) && (pp.x - self.E.0) * dir_of(pp.takim()) > -1.0) {
             return false;
         }

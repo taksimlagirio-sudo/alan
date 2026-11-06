@@ -14,7 +14,7 @@ use super::*;
 /// Görenin bir oyuncudan aklındaki son kare (JS `B[j]`) ya da yoksa geçmişten okunan.
 fn hist_oku(q: &Oyuncu, dl: f64) -> (f64, f64, f64, f64) {
     match &q.hal.hist {
-        Some(h) if !h.is_empty() => {
+        h if !h.is_empty() => {
             let i = jmax(0.0, h.len() as f64 - 1.0 - dl) as usize;
             let e = &h[i];
             (e.x, e.y, e.vx, e.vy)
@@ -157,17 +157,17 @@ pub fn bak(c: &mut Mc) {
             }
             let q = &c.ps[j];
             let (hl, kf) = match &q.hal.hist {
-                Some(h) if !h.is_empty() => (h.len(), jmin(dl, h.len() as f64 - 1.0)),
+                h if !h.is_empty() => (h.len(), jmin(dl, h.len() as f64 - 1.0)),
                 _ => (0, 0.0),
             };
             let kk = kf as usize;
-            let (hx, hy, hvx0, hvy0) = if kk > 0 { let e = &q.hal.hist.as_ref().unwrap()[hl - 1 - kk]; (e.x, e.y, e.vx, e.vy) } else { (q.x, q.y, q.vx, q.vy) };
+            let (hx, hy, hvx0, hvy0) = if kk > 0 { let e = &q.hal.hist[hl - 1 - kk]; (e.x, e.y, e.vx, e.vy) } else { (q.x, q.y, q.vx, q.vy) };
             let (mut hvx, mut hvy) = (hvx0, hvy0);
             if kk > 0 && q.team != pteam {
                 if let Some(kj) = kur[j] {
                     let d2 = jround(S.gizle_t * jmax(0.0, kj - ny_p) / 10.0);
                     if d2 > 0.0 {
-                        let H0 = q.hal.hist.as_ref().unwrap();
+                        let H0 = &q.hal.hist;
                         let ix = jmin(kf + d2, hl as f64 - 1.0) as usize;
                         let e = &H0[hl - 1 - ix];
                         hvx = e.vx;

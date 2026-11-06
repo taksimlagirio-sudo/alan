@@ -37,7 +37,7 @@ pub fn position(c: &mut Mc) {
     let h: Option<Pid> = c.m.holder.or(KT.map(|x| x.0));
     for p in c.ps.iter_mut() {
         let e = JPHistE { x: p.x, y: p.y, vx: p.vx, vy: p.vy };
-        let hs = std::sync::Arc::make_mut(p.hal_mut().hist.get_or_insert_with(Default::default));
+        let hs = std::sync::Arc::make_mut(&mut p.hal_mut().hist);
         hs.push(e);
         if hs.len() > 14 {
             hs.remove(0);
@@ -142,16 +142,16 @@ pub fn position(c: &mut Mc) {
         c.ek.sh.att = Some(att);
         c.ek.sh.gain = tick;
         for p in c.ps.iter_mut() {
-            p.hal_mut().lock = Some(0.0);
+            p.hal_mut().lock = 0.0;
             p.hal_mut().kapPrev = None;
             p.hal_mut().zonePrev = None;
             p.hal_mut().swPrev = None;
             p.hal_mut().uaPrev = None;
-            p.hal_mut().rec = Some(if fresh && p.takim() != att && !p.bekci() && (p.x - E.0) * dir_of(p.takim()) > 2.0 {
+            p.hal_mut().rec = if fresh && p.takim() != att && !p.bekci() && (p.x - E.0) * dir_of(p.takim()) > 2.0 {
                 tick + jmax(2.0, jround(26.0 - p.govde.yet.y(mek::PRES_BASLA) * S.rec_ok))
             } else {
                 0.0
-            });
+            };
         }
     }
     {
@@ -167,7 +167,7 @@ pub fn position(c: &mut Mc) {
     if let Some(h) = h {
         for p in c.ps.iter_mut() {
             if kilitli(p, tick) && p.hal._lockH != Some(h) {
-                p.hal_mut().lock = Some(0.0);
+                p.hal_mut().lock = 0.0;
             }
         }
     }
