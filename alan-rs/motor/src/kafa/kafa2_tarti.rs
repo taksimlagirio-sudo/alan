@@ -1157,6 +1157,9 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
             let Pl = if sekme_bedel() { jmax(0.0, 1.0 - P) } else { Pl };
             o.v = Some(P - Pl * Lv);
             o.dok = Some(Dok::yeni(&[("gol", P), ("kayip", -Pl * Lv)]));
+            if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
+                eprintln!("GONV {} {} ->({:.1},{:.1}) Pk {:.3} Pl {:.3} kayip {:.3} v {:.3}", k.tick(), h.govde.name, e_o.x, e_o.y, P, Pl, Lv, P - Pl * Lv);
+            }
         } else if kind == "pas" || kind == "önüne" || kind == "kenardan" {
             let at = o._at.or(d.endD).or(d.endM).or(o.to).unwrap_or_else(|| {
                 let q = &src[o.q.unwrap()];
