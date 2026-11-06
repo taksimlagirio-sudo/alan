@@ -478,6 +478,8 @@ struct ImkO {
     v: f64,
     R: f64,
     rc: f64,
+    /// koşu profili (kosuPr: yalnız oyuncuya ve maçın kural görüntüsüne bağlı, imkân boyunca sabit)
+    pr: Option<crate::kural::enerji::KosuPr>,
 }
 struct ImkZ {
     i: usize,
@@ -513,11 +515,13 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
     let gx = if t0(team) { GW } else { 0.0 };
     let mut biz: Vec<ImkO> = Vec::new();
     let mut rak: Vec<ImkO> = Vec::new();
+    // maçın kural görüntüsü imkân boyunca değişmez: bir kez alınır (varış başına kopyalanmaz)
+    let kr = k.dis.kural();
     for p in w {
         if p.noTouch {
             continue;
         }
-        let o = ImkO { p: p.clone(), G: dis::as_gec_tab(k, p), v: dis::as_v_sp(k, p), R: jmin(2.0, crate::temas::menzil(p, 0.35)), rc: 0.0 };
+        let o = ImkO { p: p.clone(), G: dis::as_gec_tab(k, p), v: dis::as_v_sp(k, p), R: jmin(2.0, crate::temas::menzil(p, 0.35)), rc: 0.0, pr: crate::kural::enerji::kosuPr(p, &kr) };
         if p.team == team {
             if !bekci(p) {
                 biz.push(o);
@@ -529,15 +533,13 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         }
     }
     const IMK_BLOK: f64 = 2.4;
-    // maçın kural görüntüsü imkân boyunca değişmez: bir kez alınır (varış başına kopyalanmaz)
-    let kr = k.dis.kural();
     let var_b = |k: &Kafa, o: &ImkO, x: f64, y: f64| -> f64 {
         let d = jmax(0.0, hypot(o.p.x - x, o.p.y - y) - IMK_BLOK);
-        o.rc + dis::as_gec_of(k, &o.G, x, y, d) + crate::kural::enerji::alan_kosu_t(&o.p, d, o.v, &kr)
+        o.rc + dis::as_gec_of(k, &o.G, x, y, d) + crate::kural::enerji::alan_kosu_tp(o.pr, d, o.v)
     };
     let var_ = |k: &Kafa, o: &ImkO, x: f64, y: f64, rc: f64| -> f64 {
         let d = jmax(0.0, hypot(o.p.x - x, o.p.y - y) - o.R);
-        rc + dis::as_gec_of(k, &o.G, x, y, d) + crate::kural::enerji::alan_kosu_t(&o.p, d, o.v, &kr)
+        rc + dis::as_gec_of(k, &o.G, x, y, d) + crate::kural::enerji::alan_kosu_tp(o.pr, d, o.v)
     };
     let rak_var = |k: &Kafa, x: f64, y: f64| -> f64 {
         let mut t = 1e9;

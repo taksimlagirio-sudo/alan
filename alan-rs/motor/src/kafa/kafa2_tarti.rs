@@ -391,6 +391,9 @@ pub fn yol_olabilir_b(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t
         let bek = bekci(p);
         let R = if bek { crate::core_sabit::Q.bek_body + crate::temas::bek_dl(p) } else { jmin(2.0, crate::temas::menzil(p, 0.35)) };
         let rc = jmax(0.0, if bek { crate::temas::bek_re(p) } else { dis::alan_tepki(k, p, "kovala") });
+        // koşu profilleri (kosuPr) yol boyunca sabit: bir kez
+        let pr_p = crate::kural::enerji::kosuPr(p, &kr);
+        let pr_q = al.as_ref().and_then(|a| crate::kural::enerji::kosuPr(&a.0, &kr));
         let mut en = 0.0f64;
         let mut s = 1.5;
         while s < L - 1.0 {
@@ -399,11 +402,11 @@ pub fn yol_olabilir_b(k: &mut Kafa, src: &[Op], team: f64, A: Nokta, B: Nokta, t
             let tb = t0 + dis::ucus_t(k, L, k.D.arriveFirm, Some(s));
             let d = jmax(0.0, hypot(p.x - x, p.y - y) - R);
             // savunmacı pası ancak vurulunca görür: koşusu vuruştan (t0) başlar; o ana dek yeri bilinmez (belirsizlik payı)
-            let tp = tt + rc + dis::as_gec_of(k, &G, x, y, d) + crate::kural::enerji::alan_kosu_t(p, d, v, &kr);
+            let tp = tt + rc + dis::as_gec_of(k, &G, x, y, d) + crate::kural::enerji::alan_kosu_tp(pr_p, d, v);
             let tq = match &al {
                 Some((q, Gq, vq, Rq)) => {
                     let dq = jmax(0.0, hypot(q.x - x, q.y - y) - Rq);
-                    dis::as_gec_of(k, Gq, x, y, dq) + crate::kural::enerji::alan_kosu_t(q, dq, *vq, &kr)
+                    dis::as_gec_of(k, Gq, x, y, dq) + crate::kural::enerji::alan_kosu_tp(pr_q, dq, *vq)
                 }
                 None => f64::INFINITY,
             };

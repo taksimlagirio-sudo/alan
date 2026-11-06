@@ -43,6 +43,8 @@ pub struct Onbellek {
     /// topun yolu (`top::tahmin`, seçimli K ile): girdinin tamamı (top + alan kaynakları + adım sınırı) → sonuç.
     /// Saf; bir tikte aynı top aynı dünyada çok kez tahmin ediliyor (ölçüm: m00, çağrıların %38'i).
     pub tahmin: RefCell<HizliMap<Vec<u64>, Arc<(Vec<crate::top::YolNokta>, crate::top::Top)>>>,
+    /// tahmin anahtarının kurulduğu tampon (her çağrıda ayırmamak için; önbelleğe eklerken kopyalanır)
+    pub tahmin_tampon: RefCell<Vec<u64>>,
     /// imkBol (tablo × konum)
     pub imkb: HizliMap<[u64; 4], Arc<std::sync::Mutex<super::kafa2_imkan::ImkBol>>>,
 }
