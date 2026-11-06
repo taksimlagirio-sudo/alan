@@ -297,8 +297,8 @@ fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, _k: &dyn Kural) -> (
     // çok çıkmaz: açıortayda topun üstüne çıkınca yakın direkle arası açılıyor, içeri çekilen şut uzak köşeye gidiyordu
     if bek_direk() && (ey - GCY).abs() > MOUTH {
         let yan = if ey > GCY { 1.0 } else { -1.0 };
-        let ust = MOUTH - 0.6 * Q.bek_body;
-        let qy = if (qy - GCY) * yan > ust { GCY + yan * ust } else { qy };
+        // yakın direği gövdeyle kapatır (açıortayda çizgiye inince kale ortasına düşüyor, direkte gövdeden geniş boşluk kalıyordu)
+        let qy = GCY + yan * (MOUTH - Q.bek_body);
         let dr = if qx > gx { 1.0 } else { -1.0 };
         let qx = if (qx - gx).abs() > BEK_DIREK_DER { gx + dr * BEK_DIREK_DER } else { qx };
         return (qx, qy);
