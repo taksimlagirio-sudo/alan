@@ -292,7 +292,27 @@ fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, _k: &dyn Kural) -> (
     bx /= bl;
     by /= bl;
     let st = jmax(0.0, L - _r);
-    (ex + bx * st, ey + by * st)
+    let (qx, qy) = (ex + bx * st, ey + by * st);
+    // deney (bek_direk): top direğin dışındayken (dar açı) Bekçi yakın direğin dışına taşmaz, çizgiden direğin gerektirdiğinden
+    // çok çıkmaz: açıortayda topun üstüne çıkınca yakın direkle arası açılıyor, içeri çekilen şut uzak köşeye gidiyordu
+    if bek_direk() && (ey - GCY).abs() > MOUTH {
+        let yan = if ey > GCY { 1.0 } else { -1.0 };
+        let ust = MOUTH - 0.6 * Q.bek_body;
+        let qy = if (qy - GCY) * yan > ust { GCY + yan * ust } else { qy };
+        let dr = if qx > gx { 1.0 } else { -1.0 };
+        let qx = if (qx - gx).abs() > BEK_DIREK_DER { gx + dr * BEK_DIREK_DER } else { qx };
+        return (qx, qy);
+    }
+    (qx, qy)
+}
+
+/// bek_direk: dar açıda Bekçi'nin çizgiden en çok çıkışı (br).
+pub const BEK_DIREK_DER: f64 = 1.5;
+/// Deney (ALAN_BEK_DIREK_IZ; ölçümde/wasm'da BEK_DIREK_ZORLA): dar açıda Bekçi yakın direği tutar. Varsayılan kapalı.
+pub static BEK_DIREK_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn bek_direk() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    BEK_DIREK_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_BEK_DIREK_IZ").is_ok())
 }
 
 /// Bekçi'nin derinliği değerle (dalış modeliyle aynı hesap): açıortay üstündeki aday derinliklerde, taşıyıcının kale
