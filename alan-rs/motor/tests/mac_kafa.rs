@@ -35,6 +35,7 @@ fn kafa_sapmasi_js_ile_ayni() {
             P: n(&r["P"]),
             Ps: n(&r["Ps"]),
             Pk: n(&r["Pk"]),
+            Pl: n(&r["Pl"]),
             hiz: n(&r["hiz"]),
             savT: n(&r["savT"]),
             tf: n(&r["tf"]),
