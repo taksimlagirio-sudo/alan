@@ -5,6 +5,7 @@ KR=[json.loads(l) for l in open(os.path.join(S,'kararlar.txt'))]
 def seg_d(px,py,ax,ay,bx,by):
   vx,vy=bx-ax,by-ay; L=vx*vx+vy*vy or 1e-9; u=max(0,min(1,((px-ax)*vx+(py-ay)*vy)/L)); return d(px,py,ax+u*vx,ay+u*vy)
 print("=== KALEYE YAKIN KARARLAR (<=26 br) ===")
+print("UYARI: 'en iyi şut' kararlar.txt'deki seçenek listesinden; liste motorda ilk 14 seçenekle kesik (dongu.rs take(14)): None, şut seçeneği üretilmedi demek DEĞİL")
 for r in KR:
   t,ad,team,x,y,o4,hep=r
   gx=120 if team==0 else 0

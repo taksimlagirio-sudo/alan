@@ -3,6 +3,47 @@
 Analizci oturumdan. Bulgular maç 217468'den (Liman 3–0 Kale Duvarı, güncel main motoru, 9000 tik).
 Sen değişikliği yaparsın, analizci yeniden ölçer. Hücum tarafı ayrı bir oturumda (`GOREV-hucum.md`).
 
+## Analizci değerlendirmesi: RAPOR-savunma.md (S1–S3, `youthful-cerf` `c9574c5`), 6 Kasım ~19:40
+
+Bağımsız ölçüm: `cok.sh`, 4 tohum (217468, 1, 2, 3), `ALAN_YERLESIK_ADAM_ESKI=1`. Çıktı: `analiz/out/sav/{once,s123}/`.
+
+| | Önce (bayraklar kapalı) | S1+S2+S3 |
+|---|---|---|
+| Skor (Liman–Kale Duvarı) | 3-0, 2-1, 3-2, 2-1 (Liman 4/4 kazanıyor) | **2-3, 1-3, 1-2, 1-2** (Liman 4/4 kaybediyor) |
+| Kale Duvarı şut / gol (4 maç) | 11 / 4 | 13 / **10** |
+| Kimse pres işinde değil (Liman savunurken) | %61 | **%30** |
+| En yakın savunmacı 15+ br | %27 | %12 |
+| 5 sn+ baskısız dönem | 6 (83 sn) | 1 (6 sn) |
+| Değeri ≈0 karar | 239 | 101 |
+| Liman hedef sıçraması | 865 | 827 |
+
+**Düzelen:** Baskı kuruluyor. S1 hedefini tutturuyor; uzun baskısız dönemler bitti.
+
+**Yeni çıkan, ağır:** Kale Duvarı'nın şut sayısı aynı kaldığı hâlde gol sayısı 2.5 katına çıktı. On golün dokuzunda şutçunun hattında hiç Liman savunmacısı yok. Mekanizma her seferinde aynı:
+- Taşıyıcı çoğunlukla Ok, yani Kale Duvarı'nın `onde=1` ile önde bırakılan oyuncusu. 25–30 br'den 13–16 br'ye kadar sürüp şut çekiyor.
+- Karşısında tek bir Liman savunmacısı var; çoğu zaman Deniz.
+- Bu savunmacı 30–60 tik boyunca 2–5 br mesafede "pres · yandan giriyor · dolanıyor" ya da "pres · yolu kapat" işinde dolanıyor. Topa girmiyor, şut hattını da kapatmıyor.
+- Öteki Liman oyuncuları 15–50 br geride, "geri koşu · kale" ya da "markaj X · geri" işinde.
+
+Örnekler:
+- **t217468, 2568:** Ok (21, 37). Deniz 3.9 br'de "pres · yandan giriyor · dolanıyor"; Kaan ve Cansu 48–50 br geride.
+- **t1, 3011:** Ok (21, 22). Deniz 2.0 br'de, aynı iş.
+- **t3, 5008:** Mert'in barı .04–.11, Deniz'inki .24. Baskı barı tüketiyor; geç gollerde savunmacılar boş barla.
+
+**Ölçüm uyarıları:**
+- Dal main'in son beş motor commit'ini içermiyor: `441ce0b` sahbelirsiz, `afc56a9` / `da32777` plansur, `c6e692f` / `e0411be` kovsuz. Raporun ve bu tablonun "önce" sütunu eski motora göre.
+- Main'de (`d0a344f`) aynı maç 0–5 bitiyor ve Kale Duvarı'nın golleri yine yakın, savunmasız şutlar. Bu da yukarıdaki sorunla aynı aile.
+- S1 kafanın `t_p.h` değerine de bağlı; sahbelirsiz bu değeri değiştiriyor.
+- **Main'i birleştirip yeniden ölçmek şart.**
+
+**Raporda gözden kaçmaması gereken bir bulgu:** `tests/mac_kafa.rs` main'de `1f0ec1a`'dan beri derlenmiyor (`Pl` alanı). Main'e ayrı bir commit olarak gitmeli.
+
+**Sıradaki iş (öneri): S7, tek savunmacının taşıyıcıyı durdurmaması.**
+- Baskıcı taşıyıcının kale tarafında, şut hattının üstünde durmuyor; yandan dolanıyor.
+- İkinci savunmacı yardıma gelmiyor (`p_lim`, tetik yoksa 1).
+- Geride kalanlar kale önüne değil adamına koşuyor.
+- Ölçü: Kale Duvarı'nın şut başına golü ve şut anında hatta savunmacı olma oranı. `sut.txt` "hatta" alanından okunabilir.
+
 ## Kurulum ve ölçüm
 
 - Kayıt: `alan-rs/analiz/mac-217468.json`.
