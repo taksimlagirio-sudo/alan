@@ -1233,7 +1233,7 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
             if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
                 eprintln!("PASV {} {} [{}{}→{} hız {:?}] ->({:.1},{:.1}) Pd {:.3} alici {:.3} durum {:.3} Ps {:.3} Pl {:.3} kayip {:.3} v {:.3} | şut {:.3} zemin {:.3} pas {:.3} sür {:.3} {:?} T {:.0}", k.tick(), h.govde.name, o.kind, if o.tek.map_or(false, crate::mat::dogru) { "·tek" } else { "" }, rq.govde.name, o.launch.as_ref().map(|l| ((l.vx * 100.0).round() / 100.0, (l.vy * 100.0).round() / 100.0)), at.x, at.y, Pd, t_a.2, t_a.1.v, Ps, Pl, Lv, Pd * t_a.0 + Ps * t_s - Pl * Lv, t_a.1.sut, t_a.1.zem, t_a.1.pas, t_a.1.sur, t_a.1.pas_k, tf);
             }
-            o.dok = Some(Dok::yeni(&[("tutar", Pd), ("alici", t_a.2), ("durum", t_a.1.v), ("sekme", Ps * t_s), ("kayip", -Pl * Lv), ("sure", tf)]));
+            o.dok = Some(Dok::yeni(&[("tutar", Pd), ("alici", t_a.2), ("durum", t_a.1.v), ("sekme", Ps * t_s), ("kayip", -Pl * Lv), ("kayp", Pl), ("sure", tf)]));
             o._pT = Some(tf);
             dok_dk(&t_a.1, o);
         } else if kind == "sür" || kind == "çalım" {
@@ -1365,8 +1365,11 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
         let v0 = opts.iter().filter(|o| o.kind != "gönder").filter_map(|o| o.v).fold(0.0, jmax);
         for o in opts.iter_mut() {
             let Some(v) = o.v else { continue };
+            // pas: rakibe geçme olasılığı (Pl; sekip bizde kalan kayıp değil). ALAN_KAYIP_SAHIP_PD_IZ: eski (1 − doğrudan varma)
+            let pd_eski = crate::iz_acik() && std::env::var("ALAN_KAYIP_SAHIP_PD_IZ").is_ok();
             let tut = match o.dok.as_ref() {
                 Some(d) if o.kind == "gönder" => d.al("gol"),
+                Some(d) if !pd_eski && d.al("kayp").is_some() => d.al("kayp").map(|l| 1.0 - l),
                 Some(d) => d.al("tutar"),
                 None => None,
             };
