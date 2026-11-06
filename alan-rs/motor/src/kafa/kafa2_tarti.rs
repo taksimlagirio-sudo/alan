@@ -226,6 +226,15 @@ pub fn kuyuOlabilir(p: &crate::model::Oyuncu, x: f64, y: f64, t: f64, kr: &dyn c
     let cik = (Q.kuyu_a - d_p + 0.3) / v + 1.0 / (0.18 * crate::yetenek::ah(&p.govde.yet));
     cik + ic <= t
 }
+/// Deney (ALAN_GOVDE_YOL_IZ; ölçümde GOVDE_YOL_ZORLA): kafanın uçuşunda top yolundaki gövde (merkezi yola BODY_R'den
+/// yakın; alıcı, Bekçi ve pası atan dışında, rakip ya da arkadaş) topa çarpar: tepkiden önce saf çarpma (sekme), sonra
+/// topa ulaşmış sayılır (maçta temas::govde herkese uygulanır); eskiden yalnız adanmış ya da sendeleyen rakip için.
+/// Kovalamayan savunmacı da (kafa onu o anki hızıyla yürütür) tepkisinden sonra yola koşabilir: görevi değişebilir.
+pub static GOVDE_YOL_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn govde_yol() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    GOVDE_YOL_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_GOVDE_YOL_IZ").is_ok())
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);

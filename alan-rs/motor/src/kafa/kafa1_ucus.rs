@@ -828,7 +828,9 @@ impl Kafa {
                     KF[j] = None;
                     CX[j] = cx;
                     CY[j] = cy;
-                    A.gvNow = A.gvT > Tb;
+                    // ALAN_GOVDE_YOL_IZ: yoldaki gövde (alıcı, Bekçi ve pası atan dışında herkes) topa çarpar: tepkiden önce saf çarpma
+                    let gyol = OK1 && !A.bek && dd < BODY_R && A.p.id != h.id && !qqI.map_or(false, |qi| A.p.id == src[qi].id && A.p.team == src[qi].team) && crate::kafa::kafa2_tarti::govde_yol();
+                    A.gvNow = A.gvT > Tb || (gyol && Tb <= A.rc);
                     if A.gvNow {
                         if dd < BODY_R {
                             F[j] = 1.0;
@@ -911,7 +913,7 @@ impl Kafa {
                             jmax(A.rc + A.G.as_ref().map_or(0.0, |G| self.dis.gecOf(G, cx, cy, Some(dd - R))) + jmax(0.0, dd - R) / A.v, if A.rakip { 0.0 } else { self.frenT(&A.p, cx, cy, R, Tb - A.rc, A.v) })
                         };
                         zz = (Tb - t - if !A.rakip { rcvB } else { 0.0 }) / A.tau;
-                        if ucus_iz && !A.rakip && UC_IZ_DER.with(|c| c.get()) == 1 && Tb < 40.0 {
+                        if ucus_iz && (!A.rakip || std::env::var("ALAN_UCUS_RAKIP").ok().as_deref() == Some(&*A.p.govde.name)) && UC_IZ_DER.with(|c| c.get()) == 1 && Tb < 40.0 {
                             eprintln!("UCUS   ~ i {:3} {:8} Tb {:.0} t {:.1} rcvB {:.1} tau {:.2} zz {:.2} dd {:.1} R {:.2} v {:.3} rc {:.1} gec {:.1} fren {:.1} yer ({:.1},{:.1}) hız ({:.2},{:.2}) iv {:?} vm {:.3}", i, &*A.p.govde.name, Tb, t, rcvB, A.tau, zz, dd, R, A.v, A.rc, A.G.as_ref().map_or(0.0, |G| self.dis.gecOf(G, cx, cy, Some(dd - R))), self.frenT(&A.p, cx, cy, R, Tb - A.rc, A.v), A.p.x, A.p.y, z0(A.p.vx), z0(A.p.vy), crate::kural::gec::IVK(&A.p, &kr), A.G.as_ref().map_or(f64::NAN, |G| G.vm));
                         }
                         let p: &Oyuncu = &A.p;
@@ -946,7 +948,9 @@ impl Kafa {
                             let u0 = if sl > 1e-12 { ((qx - Pp.x) * bvx + (qy - Pp.y) * bvy) / sl } else { 1.0 };
                             let uu = if u0 < 0.0 { 0.0 } else if u0 > 1.0 { 1.0 } else { u0 };
                             let d2 = hypot(Pp.x + bvx * uu - qx, Pp.y + bvy * uu - qy);
-                            zz = jmax(zz, (R - d2) / BKS);
+                            // ALAN_GOVDE_YOL_IZ: kovalamayan savunmacı da tepkisinden sonra yola koşabilir (görevi değişebilir): olabilirlik
+                            let d2z = if crate::kafa::kafa2_tarti::govde_yol() { jmax(0.0, d2 - jmax(0.0, Tb - A.rc) * A.v) } else { d2 };
+                            zz = jmax(zz, (R - d2z) / BKS);
                             if OK1 {
                                 XM[j] = Some(jmin(XM[j].unwrap(), jmin(d2, R) / R));
                             }
@@ -954,6 +958,10 @@ impl Kafa {
                     }
                     if !(A.rakip || A.bek || qqI.is_none() || A.p.id == src[qqI.unwrap()].id || gon) {
                         zz = jmin(zz, (R - dd) / BKS);
+                    }
+                    if gyol {
+                        // tepki verebilen ama gövdesi zaten yolda olan: topa ulaşır (kontrolü ayrıca)
+                        zz = jmax(zz, 8.0);
                     }
                     let f;
                     if zz > A.M {
