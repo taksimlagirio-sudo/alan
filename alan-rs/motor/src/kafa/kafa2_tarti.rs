@@ -1428,9 +1428,16 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
             }
             let Some(d) = o.dok.as_ref() else { continue };
             let (Some(P), Some(Th), Some(ky)) = (d.al("tutar"), d.al("sure"), d.al("kayip")) else { continue };
-            let acilan = jmax(jmax(d.al("sut").unwrap_or(0.0), d.al("ileri").unwrap_or(0.0)), d.al("surme").unwrap_or(0.0));
-            let bekle = if simdi.is_finite() { simdi * crate::mat::pow(g, Th / jmax(u, 1.0)) } else { 0.0 };
-            let v = P * jmax(bekle, acilan) + ky;
+            // açılan: beklemenin sonunda gerçekten açılan (pozitif) şut/pas/sür; yoksa sayılmaz (beklemenin 0 tabanı olmaz)
+            let acilan = [d.al("sut"), d.al("ileri"), d.al("surme")].iter().flatten().copied().filter(|x| *x > 1e-9).fold(f64::NEG_INFINITY, jmax);
+            // bekleme indirimi: artı değer beklemeyle azalır, eksi değer beklemeyle kötüleşir (sıfıra yaklaşmaz)
+            let ind = crate::mat::pow(g, Th / jmax(u, 1.0));
+            let bekle = if !simdi.is_finite() { f64::NEG_INFINITY } else if simdi >= 0.0 { simdi * ind } else { simdi / ind };
+            let en = jmax(bekle, acilan);
+            if !en.is_finite() {
+                continue;
+            }
+            let v = P * en + ky;
             if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
                 eprintln!("TUTE {} {} Th {:.0} P {:.3} şimdi {:.3} g {:.3} bekle {:.3} açılan {:.3} v {:.3} -> {:.3}", k.tick(), h.govde.name, Th, P, simdi, g, bekle, acilan, o.v.unwrap_or(0.0), v);
             }
