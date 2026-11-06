@@ -569,7 +569,7 @@ fn durum(m: &alan_motor::mac::MacTam) -> String {
 }
 
 /// Şut modelinin parmak izi (sutizi kipi): sabit 64 deneme şutu, kafanın kendi şut hesabıyla.
-fn sut_izi(m: &alan_motor::model::Mac) -> String {
+fn sut_izi(m: &alan_motor::mac::MacTam) -> String {
     use alan_motor::kafa::kafa2_imkan::IMK_L;
     let sut0 = m.ps.iter().find(|p| p.team == 0.0 && !p.bekci()).expect("şutçu şablonu").clone();
     let bek0 = m.ps.iter().find(|p| p.team == 1.0 && p.bekci()).expect("Bekçi şablonu").clone();

@@ -133,3 +133,46 @@ pub fn macKur_ile(d: &Kayit, dis: &mut dyn KurDis) -> Mac {
     kafa_bag::kafaAc(&mut m);
     m
 }
+
+/// Maç içi taktik değişikliği (mac-isci.js `degistir` iletisi / `gecmis` öğesi): snapT tikinde t takımına.
+#[derive(Clone, Debug, Default, Deserialize)]
+pub struct Degisim {
+    #[serde(default, rename = "snapT")]
+    pub tick: f64,
+    #[serde(default)]
+    pub t: f64,
+    #[serde(default)]
+    pub tac: Option<Tac>,
+    #[serde(default)]
+    pub diz: Option<Diz>,
+    #[serde(default)]
+    pub roller: Option<Vec<Option<super::kurulum::Rol>>>,
+}
+
+/// JS uygula(m, c) (mac-isci.js): taktik o anki taktiğe yazılır; koşul kuralı etkinken (`_ev`) temel taktiğe de
+/// (maç her tik taktiği temel taktik + etkin koşullardan yeniden kurar); roller ve diziliş.
+pub fn uygula(m: &mut Mac, c: &Degisim) {
+    uygula_ile(m, c, &mut GeciciKur)
+}
+pub fn uygula_ile(m: &mut Mac, c: &Degisim, dis: &mut dyn KurDis) {
+    let t = c.t as usize;
+    if let Some(tc) = &c.tac {
+        if t < m.tac.len() {
+            m.tac[t] = m.tac[t].ust(tc);
+            if m.tac[t]._ev.as_deref().map_or(false, |s| !s.is_empty()) {
+                if let Some(Some(b)) = m.tac0.as_mut().and_then(|v| v.get_mut(t)) {
+                    *b = b.ust(tc);
+                }
+            }
+        }
+    }
+    if let Some(r) = &c.roller {
+        let mut R: Roller = vec![None, None];
+        R[t] = Some(r.clone());
+        assignRoles_ile(m, &R, dis);
+        egUy(m, &R);
+    }
+    if let Some(z) = &c.diz {
+        dizUygula_ile(m, c.t, z, dis);
+    }
+}

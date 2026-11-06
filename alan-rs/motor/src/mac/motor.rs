@@ -66,6 +66,11 @@ fn olay_k(e: &super::Olay) -> (String, String, String) {
 }
 
 impl Motor {
+    /// Olay imleci şimdiye: o ana kadarki olaylar gönderilmiş sayılır (yeniden oynatmadan sonra; JS m._sonOlay = m.events[0])
+    pub fn olaylar_gonderildi(&mut self) {
+        self.son_olay = self.m.events.first().map(olay_k);
+        self.ev_say = self.m.ev_n;
+    }
     /// Son çağrıdan bu yana çıkan olaylar (eskiden yeniye). JS kaydet'in olay kısmı.
     pub fn yeni_olaylar(&mut self) -> Vec<super::Olay> {
         let ev = &self.m.events;

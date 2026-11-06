@@ -1,6 +1,7 @@
-/* DENEY · Rust motoru (WebAssembly): mac-isci.js'in yerine geçen maç işçisi. Sayfa adresine ?motor=rust ya da localStorage 'alan-motor' = 'rust' ile açılır (isciAdres).
+/* Rust motoru (WebAssembly): sitenin ana maç işçisi (mac-isci.js'in yerine). JS motoruna dönmek için sayfa adresine ?motor=js ya da localStorage 'alan-motor' = 'js' (isciAdres).
    Motor alan-rs/ (Rust) altından derlenir: alan-v5/alan.wasm. İletiler mac-isci.js ile aynı: 'yeni' ile maç kurulur, 'basla' ve 60 tikte bir 'kare' gider (kare: 174 sayı, kaydet'in biçimi).
-   Henüz yok: maç içi taktik değişikliği ('degistir'), anlar ('an'), kafa kartları (karar/kafa listeleri boş gider). */
+   Maç içi taktik değişikliği ('degistir'): motor her 60 tikte maçın kopyasını alır, değişiklik gelince en yakın kopyadan yeniden oynar (mac-isci.js gibi); 'izle' ile oynatılanın gerisindeki ara kopyalar atılır.
+   Henüz yok: anlar ('an'; sayfa bunun için JS işçisi açar), kafa kartları (karar/kafa listeleri boş gider). */
 const ALAN_SURUM_Q = (v => v ? '?v=' + v[1] : '')(/[?&]v=(\w+)/.exec(self.location && self.location.search || ''));
 /* seyrek yerleşim (uzak hücumcunun işi 3 tikte bir; motorun varsayılanı): adreste seyrek=0 ise kapalı, eski davranış */
 const SEYREK = !/[?&]seyrek=0(&|$)/.test(self.location && self.location.search || '');
@@ -22,7 +23,14 @@ async function calistir(g) { if (kosuyor) { istek = g; return; } if (!W) return;
   finally { kosuyor = false; const r = istek; istek = null; if (r !== null && r !== g && r === gen && W) calistir(r); }
   if (g === gen) { if (W.bitti() || W.tik() >= len) gonder(g, true); else gonder(g, false, true); } }
 onmessage = async e => { const d = e.data;
-  if (d.tip === 'izle' || d.tip === 'kur' || d.tip === 'paralel') return;
+  if (d.tip === 'izle') { if (d.gen === gen && W && W.seyrelt) W.seyrelt(d.tick); return; }
+  if (d.tip === 'kur' || d.tip === 'paralel') return;
+  if (d.tip === 'degistir') { if (!W) return; gen = d.gen;
+    try { const b = kod.encode(JSON.stringify(d)), p = (W.ayir(b.length) >>> 0); new Uint8Array(mem.buffer, p, b.length).set(b);
+      const r = W.degistir(p, b.length); W.birak(p, b.length);
+      if (r !== 0) { postMessage({ tip: 'hata', msg: 'Rust motoru taktik değişikliğini uygulayamadı: ' + metin(W.metin_len()) }); return; } }
+    catch (er) { birak(); postMessage({ tip: 'hata', msg: 'Rust motoru taktik değişikliğinde durdu: ' + String(er && er.message || er) }); return; }
+    buf = yeniBuf(); calistir(gen); return; }
   if (d.tip === 'devam') { if (d.gen !== gen) return; dur = len; if (!kosuyor) calistir(gen); return; }
   if (d.tip === 'yeni') { gen = d.gen; len = d.len || 5400; dur = d.dur || len;
     try { await yukle(); } catch (er) { postMessage({ tip: 'hata', msg: String(er && er.message || er) }); return; }
@@ -33,4 +41,4 @@ onmessage = async e => { const d = e.data;
       buf = yeniBuf(); kaydet(); ps = JSON.parse(metin(W.statik())); }
     catch (er) { birak(); postMessage({ tip: 'hata', msg: 'Rust motoru maçı kurarken durdu: ' + String(er && er.message || er) }); return; }
     postMessage({ tip: 'basla', gen, ps }); calistir(gen); return; }
-  if (d.tip === 'degistir' || d.tip === 'an') { postMessage({ tip: 'hata', msg: 'Rust motorunda bu henüz yok: ' + (d.tip === 'an' ? 'anlar' : 'maç içinde taktik değişikliği') + '. JS motoruna dönmek için adresten ?motor=rust kaldırılır.' }); return; } };
+  if (d.tip === 'an') { postMessage({ tip: 'hata', msg: 'Rust motorunda bu henüz yok: anlar. JS motoruna dönmek için adrese ?motor=js eklenir.' }); return; } };

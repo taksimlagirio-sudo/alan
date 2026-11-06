@@ -4,10 +4,21 @@
 
 use alan_motor::mac::motor::Motor;
 use alan_motor::oyun::{IsSozluk, MacMotoru};
+use alan_motor::mac::kayit::{uygula, Degisim};
+use alan_motor::mac::MacTam;
 use std::cell::RefCell;
+
+/// kopya aralığı (mac-isci.js KOP)
+const KOP: f64 = 60.0;
 
 struct Durum {
     mt: Option<Motor>,
+    /// kurulum iletisi (baştan yeniden oynatmak için)
+    kurulum: Option<serde_json::Value>,
+    /// maç içi değişiklikler (tike göre sıralı)
+    gecmis: Vec<Degisim>,
+    /// her KOP tikte maçın kopyası: değişiklik gelince baştan değil en yakın kopyadan yeniden oynanır (mac-isci.js anlikK)
+    kopyalar: Vec<(f64, MacTam)>,
     isler: IsSozluk,
     is_gonderilen: usize,
     kare: [f32; 174],
@@ -15,7 +26,7 @@ struct Durum {
 }
 
 thread_local! {
-    static D: RefCell<Durum> = RefCell::new(Durum { mt: None, isler: IsSozluk::default(), is_gonderilen: 0, kare: [0.0; 174], metin: Vec::new() });
+    static D: RefCell<Durum> = RefCell::new(Durum { mt: None, kurulum: None, gecmis: Vec::new(), kopyalar: Vec::new(), isler: IsSozluk::default(), is_gonderilen: 0, kare: [0.0; 174], metin: Vec::new() });
 }
 
 #[no_mangle]
@@ -39,9 +50,12 @@ pub unsafe extern "C" fn kur(p: *const u8, n: usize) -> i32 {
         let mut d = d.borrow_mut();
         d.isler = IsSozluk::default();
         d.is_gonderilen = 0;
-        let r = serde_json::from_str::<serde_json::Value>(s).map_err(|e| e.to_string()).and_then(|v| Motor::kayittan(&v));
+        d.gecmis.clear();
+        d.kopyalar.clear();
+        let r = serde_json::from_str::<serde_json::Value>(s).map_err(|e| e.to_string()).and_then(|v| Motor::kayittan(&v).map(|mt| (v, mt)));
         match r {
-            Ok(mt) => {
+            Ok((v, mt)) => {
+                d.kurulum = Some(v);
                 d.mt = Some(mt);
                 0
             }
@@ -58,9 +72,14 @@ pub unsafe extern "C" fn kur(p: *const u8, n: usize) -> i32 {
 pub extern "C" fn adim() -> f64 {
     D.with(|d| {
         let mut d = d.borrow_mut();
-        let mt = d.mt.as_mut().expect("maç kurulmadı");
+        let Durum { mt, kopyalar, .. } = &mut *d;
+        let mt = mt.as_mut().expect("maç kurulmadı");
         mt.adim();
-        mt.m.tick
+        let t = mt.m.tick;
+        if t % KOP == 0.0 && !kopyalar.iter().any(|k| k.0 == t) {
+            kopyalar.push((t, mt.m.clone()));
+        }
+        t
     })
 }
 
@@ -136,4 +155,71 @@ pub extern "C" fn metin_len() -> usize {
 #[no_mangle]
 pub extern "C" fn seyrek(acik: i32) {
     alan_motor::sekil::konum::SEYREK_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
+}
+
+/// mac-isci.js seyrelt(T): oynatılanın (T) gerisindeki ara kopyalar atılır (300'ün katları ve son 60 tik kalır);
+/// taktik değişikliği oynatılan andan geriye gidemez.
+fn seyrelt_ic(k: &mut Vec<(f64, MacTam)>, T: f64) {
+    k.retain(|a| a.0 % 300.0 == 0.0 || a.0 >= T - 60.0);
+}
+
+/// Sayfanın oynattığı tik (JS `izle`)
+#[no_mangle]
+pub extern "C" fn seyrelt(T: f64) {
+    D.with(|d| seyrelt_ic(&mut d.borrow_mut().kopyalar, T));
+}
+
+/// Maç içi taktik değişikliği (JS `degistir` iletisinin JSON'u: {snapT, t, tac, diz, roller}). Maç snapT'ye en yakın
+/// kopyadan (yoksa baştan) değişikliklerle yeniden oynanır (mac-isci.js yeniden). 0: tamam, 1: hata (metin: neden).
+#[no_mangle]
+pub unsafe extern "C" fn degistir(p: *const u8, n: usize) -> i32 {
+    let s = std::str::from_utf8(std::slice::from_raw_parts(p, n)).unwrap_or("");
+    let c: Degisim = match serde_json::from_str(s) {
+        Ok(c) => c,
+        Err(e) => {
+            metin_koy(e.to_string());
+            return 1;
+        }
+    };
+    let r = D.with(|d| -> Result<(), String> {
+        let mut d = d.borrow_mut();
+        let Durum { mt, kurulum, gecmis, kopyalar, .. } = &mut *d;
+        let T = c.tick;
+        gecmis.retain(|g| g.tick < T);
+        gecmis.push(c);
+        kopyalar.retain(|a| a.0 <= T);
+        seyrelt_ic(kopyalar, T);
+        let mut m = match kopyalar.last() {
+            Some(a) => a.1.clone(),
+            None => Motor::kayittan(kurulum.as_ref().ok_or("maç kurulmadı")?)?.m,
+        };
+        let mut ci = 0;
+        while ci < gecmis.len() && gecmis[ci].tick < m.tick {
+            ci += 1;
+        }
+        while m.tick < T && !m.over {
+            while ci < gecmis.len() && gecmis[ci].tick <= m.tick {
+                uygula(&mut m, &gecmis[ci]);
+                ci += 1;
+            }
+            alan_motor::mac::step(&mut m);
+        }
+        while ci < gecmis.len() && gecmis[ci].tick <= m.tick {
+            uygula(&mut m, &gecmis[ci]);
+            ci += 1;
+        }
+        // T'ye kadarki kayıtlar sayfada zaten var
+        alan_motor::mac::kafa_bag::kafaAc(&mut m);
+        let mut yeni = Motor::yeni(m);
+        yeni.olaylar_gonderildi();
+        *mt = Some(yeni);
+        Ok(())
+    });
+    match r {
+        Ok(()) => 0,
+        Err(e) => {
+            metin_koy(e);
+            1
+        }
+    }
 }
