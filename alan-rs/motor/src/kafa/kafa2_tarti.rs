@@ -351,6 +351,27 @@ pub fn kovsuz_sabit() -> bool {
     }
     KOVSUZ_SABIT_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_KOVSUZ_SABIT_ESKI").is_err())
 }
+/// Deney (ALAN_ON_SIRA_IZ; ölçümde ON_SIRA_ZORLA): pas/sürme adaylarının ön elemesi işarete değil sıraya bakar
+/// (en iyi adaylar eksi değerde de tartıya girer; "tut"a karşı karşılaştırmayı tartı yapar).
+pub static ON_SIRA_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn on_sira() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    ON_SIRA_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_ON_SIRA_IZ").is_ok())
+}
+/// Deney (ALAN_SAH_YAKINSA_IZ; ölçümde SAH_YAKINSA_ZORLA): sahiplik haritası sabit SAH_ADIM yerine değerler
+/// değişmeyene kadar yayılır (değer yinelemesinin sabit noktası).
+pub static SAH_YAKINSA_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sah_yakinsa() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAH_YAKINSA_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_YAKINSA_IZ").is_ok())
+}
+/// Deney (ALAN_SAVUR_TEPKI_IZ; ölçümde SAVUR_TEPKI_ZORLA): savurma yolu denetiminde (kafa ve maç) yakındaki rakip
+/// Çekirdeğe tepki süresinden sonra koşar; o süre boyunca kendi hızıyla sürer (eskisi: hemen, tam hızla).
+pub static SAVUR_TEPKI_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn savur_tepki() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAVUR_TEPKI_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAVUR_TEPKI_IZ").is_ok())
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
