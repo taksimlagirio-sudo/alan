@@ -332,6 +332,13 @@ pub fn kayip_sahip() -> bool {
     }
     KAYIP_SAHIP_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_KAYIP_SAHIP_ESKI").is_err())
 }
+/// Deney (ALAN_SAH_BELIRSIZ_IZ; ölçümde SAH_BELIRSIZ_ZORLA): sahiplik haritası hücrenin şutunu topun oraya varış
+/// süresiyle (Tc) değerlendirir: savunmacıların o andaki yeri belirsiz (imk_sap), engel keskin eşik değil olasılık.
+pub static SAH_BELIRSIZ_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sah_belirsiz() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAH_BELIRSIZ_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_BELIRSIZ_IZ").is_ok())
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
