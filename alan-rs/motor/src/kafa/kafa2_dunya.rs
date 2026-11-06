@@ -144,12 +144,8 @@ fn kos_adim(k: &Kafa, q: &mut Oyuncu, t: usize, gx: &mut f64, gy: &mut f64, sw: 
 /// JS pwKos(p, gx0, gy0, sw0, vmax, rc, n, IV) (decide.js:4838): oyuncunun hedefe koşusu, n tik
 /// (tik başına önbellekli: aynı oyuncu nesnesi ve aynı koşu → kaldığı yerden sürer).
 pub fn pwKos(k: &mut Kafa, p: &Op, gx0: f64, gy0: f64, sw0: Option<Sw>, vmax: f64, rc: f64, n: usize) -> Op {
-    if k.k2.PWT != k.bag._tick {
-        k.k2.PWM.clear();
-        k.k2.PWT = k.bag._tick;
-    }
     let anahtar = Arc::as_ptr(p) as usize;
-    let mut L = match k.k2.PWM.remove(&anahtar) {
+    let mut L = match k.ob.pwm.remove(&anahtar) {
         Some((_, L)) => L,
         None => Vec::new(),
     };
@@ -202,7 +198,7 @@ pub fn pwKos(k: &mut Kafa, p: &Op, gx0: f64, gy0: f64, sw0: Option<Sw>, vmax: f6
     r.y = e.S[i + 1];
     r.vx = e.S[i + 2];
     r.vy = e.S[i + 3];
-    k.k2.PWM.insert(anahtar, (p.clone(), L));
+    k.ob.pwm.insert(anahtar, (p.clone(), L));
     Arc::new(r)
 }
 

@@ -30,6 +30,7 @@ pub mod kafa1_sut_tablo;
 pub mod kafa1_tehlike;
 pub mod kafa1_ucus;
 pub mod kafa1_varis;
+pub mod onbellek;
 
 pub use gecici_dis1::Dis;
 pub use kafa1_baglam::Kafa;

@@ -213,22 +213,8 @@ pub struct Sw {
 /// IMKK/IMKKt, IMKO, IT, SAH_F, IMK_OFS, IMK_INAN_T, DRM).
 #[derive(Default)]
 pub struct Kafa2Durum {
-    /// pwKos: oyuncu nesnesi (kimlik) → koşu satırları
-    pub PWM: crate::HizliMap<usize, (Op, Vec<PwE>)>,
-    pub PWT: Option<f64>,
-    /// bskTab
-    pub BSK: crate::HizliMap<String, Vec<f64>>,
-    pub BSKt: Option<f64>,
     /// bosluk: dünya (kimlik) → anahtar → değer
     pub BSC: crate::HizliMap<usize, (Arc<Dunya>, f64, crate::HizliMap<String, f64>)>,
-    /// imkBol önbelleği (tablo × konum)
-    pub IMKB: crate::HizliMap<[u64; 4], Arc<std::sync::Mutex<crate::kafa::kafa2_imkan::ImkBol>>>,
-    pub IMKBT: bool,
-    /// imkKov: "team|id" → (tepki, hız)
-    pub IMKK: crate::HizliMap<(u64, u64), (f64, f64)>,
-    pub IMKKt: Option<Option<f64>>,
-    /// ileriTab: (tick, anahtar, tablo)
-    pub IT: Option<(f64, String, Option<Arc<crate::kafa::kafa2_zemin::IleriTab>>)>,
     pub IMK_OFS: f64,
     pub IMK_INAN_T: f64,
     /// JS `self.__sahF` (görünüm için)

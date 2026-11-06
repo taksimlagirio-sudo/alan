@@ -222,7 +222,7 @@ impl Kafa {
     pub fn ucusYol(&self, L: f64, arrive: f64) -> Arc<UcusYol> {
         let Li = jmax(1.0, jmin(80.0, jround(L))) as usize;
         let key = arrive.to_bits();
-        if let Some(r) = self.ucus.borrow().get(&key).and_then(|a| a.get(Li).cloned().flatten()) {
+        if let Some(r) = self.ob.ucus.borrow().get(&key).and_then(|a| a.get(Li).cloned().flatten()) {
             return r;
         }
         let h = Cikis::yer(5.0, GCY, 0.0);
@@ -246,7 +246,7 @@ impl Kafa {
             t += 1;
         }
         let r = Arc::new(UcusYol { v0, cum, T });
-        let mut m = self.ucus.borrow_mut();
+        let mut m = self.ob.ucus.borrow_mut();
         let a = m.entry(key).or_default();
         if a.len() <= Li {
             a.resize(Li + 1, None);

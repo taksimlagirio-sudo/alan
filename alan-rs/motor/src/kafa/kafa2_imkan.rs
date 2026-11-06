@@ -129,38 +129,34 @@ fn nb(x: f64) -> u64 {
 
 /// JS imkBol(T, fr, team, x, y, dd, sy, ch) (decide.js:6074)
 fn imkBol(k: &mut Kafa, team: f64, x: f64, y: f64, dd: f64, sy: f64, ch: f64) -> Arc<Mutex<ImkBol>> {
-    if !k.k2.IMKBT {
-        k.k2.IMKBT = true;
-        k.k2.IMKB = Default::default();
-    }
     let key = [nb(team), nb(x), nb(y), nb(ch)];
-    if let Some(e) = k.k2.IMKB.get(&key) {
+    if let Some(e) = k.ob.imkb.get(&key) {
         return e.clone();
     }
-    if k.k2.IMKB.len() > 4000 {
-        k.k2.IMKB.clear();
+    if k.ob.imkb.len() > 4000 {
+        k.ob.imkb.clear();
     }
     let (di, dt) = fr(&IMK_DS, dd);
     let (si, st) = fr(&IMK_SY, sy);
     let (ci, ct) = fr(&IMK_CH, ch);
     let e = Arc::new(Mutex::new(ImkBol { di, dt, si, st, ci, ct, tabs: Default::default() }));
-    k.k2.IMKB.insert(key, e.clone());
+    k.ob.imkb.insert(key, e.clone());
     e
 }
 
 /// JS imkKov(p) (decide.js:6113): rakibin kovalama tepkisi ve hızı (maç tiki başına önbellek, team|id).
 pub fn imkKov(k: &mut Kafa, p: &Oyuncu) -> (f64, f64) {
     let t = k.mac.as_ref().map(|m| m.tick);
-    if k.k2.IMKKt != Some(t) {
-        k.k2.IMKKt = Some(t);
-        k.k2.IMKK = Default::default();
+    if k.ob.imkk.0 != Some(t) {
+        k.ob.imkk.0 = Some(t);
+        k.ob.imkk.1 = Default::default();
     }
     let key = (crate::js_sayi_k(p.team), crate::js_sayi_k(p.id));
-    if let Some(r) = k.k2.IMKK.get(&key) {
+    if let Some(r) = k.ob.imkk.1.get(&key) {
         return *r;
     }
     let r = (dis::ALAN_TEPKI(k, p, "kovala"), (0.17 + 0.006 * ALAN_HZ(p)) * dis::ALAN_SPRE(k, p));
-    k.k2.IMKK.insert(key, r);
+    k.ob.imkk.1.insert(key, r);
     r
 }
 
@@ -962,16 +958,12 @@ pub fn sutEngel(k: &Kafa, src: &[Op], team: f64, x: f64, y: f64) -> f64 {
 
 /// JS bskTab(team, bk) (decide.js:5427): boşluk noktalarının şut değeri önbelleği (tik başına).
 fn bskTab<'a>(k: &'a mut Kafa, team: f64, bk: Option<&Oyuncu>) -> &'a mut Vec<f64> {
-    if k.k2.BSKt != k.bag._tick || k.k2.BSKt.is_none() {
-        k.k2.BSK.clear();
-        k.k2.BSKt = k.bag._tick;
-    }
     let key = match bk {
         Some(b) => format!("{}|{}|{:?}|{}", team, b.id, b.en, if b.hal._yer { 1 } else { 0 }),
         None => format!("{}|-", team),
     };
     let n = dis::SPT().len();
-    k.k2.BSK.entry(key).or_insert_with(|| vec![-1.0; n])
+    k.ob.bsk.entry(key).or_insert_with(|| vec![-1.0; n])
 }
 
 /// JS bosluk(src, team, bx, by) (decide.js:5454; eski kafa): top (bx, by)'deyken kale önündeki
