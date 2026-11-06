@@ -157,6 +157,7 @@ fn main() {
         alan_motor::kafa::kafa2_imkan::BEK_YER_BOS_ZORLA.store(ek.split(',').any(|x| x == "bekbos"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::SUR_UFUK_ZORLA.store(ek.split(',').any(|x| x == "ufuk"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::SAH_YUMUSAK_ZORLA.store(ek.split(',').any(|x| x == "yumusak"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa1_secim::GURULTU_SUREKLI_ZORLA.store(ek.split(',').any(|x| x == "surekli"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::KUYU_GEC_ZORLA.store(ek.split(',').any(|x| x == "kuyugec"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::GOVDE_YOL_ZORLA.store(ek.split(',').any(|x| x == "govdeyol"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::SUR_E_ZORLA.store(ek.split(',').any(|x| x == "surE"), std::sync::atomic::Ordering::Relaxed);
@@ -317,6 +318,7 @@ fn main() {
                     alan_motor::kafa::kafa2_imkan::BEK_YER_BOS_ZORLA.store(acik && ek.split(',').any(|x| x == "bekbos"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::SUR_UFUK_ZORLA.store(acik && ek.split(',').any(|x| x == "ufuk"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::SAH_YUMUSAK_ZORLA.store(acik && ek.split(',').any(|x| x == "yumusak"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa1_secim::GURULTU_SUREKLI_ZORLA.store(acik && ek.split(',').any(|x| x == "surekli"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::KUYU_GEC_ZORLA.store(acik && ek.split(',').any(|x| x == "kuyugec"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::GOVDE_YOL_ZORLA.store(acik && ek.split(',').any(|x| x == "govdeyol"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::SUR_E_ZORLA.store(acik && ek.split(',').any(|x| x == "surE"), std::sync::atomic::Ordering::Relaxed);
@@ -387,6 +389,7 @@ fn main() {
                 alan_motor::kafa::kafa2_imkan::BEK_YER_BOS_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa2_tarti::SUR_UFUK_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa2_tarti::SAH_YUMUSAK_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
+                alan_motor::kafa::kafa1_secim::GURULTU_SUREKLI_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa2_tarti::KUYU_GEC_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa2_tarti::GOVDE_YOL_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
                 alan_motor::kafa::kafa2_tarti::SUR_E_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
