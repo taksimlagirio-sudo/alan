@@ -472,3 +472,5 @@ anahtar!(bek_direk, alan_motor::sekil::yer::BEK_DIREK_ZORLA);
 // önde bekleyen pasa açılır (ondeac); Kuyu alanından paylı ve koşarak çıkış (kuyupay)
 anahtar!(onde_ac, alan_motor::sekil::konum::ONDE_AC_ZORLA);
 anahtar!(kuyu_pay, alan_motor::mac::kuyu::KUYU_PAY_ZORLA);
+// harita kenarının indirimi eylemin süresine göre (sahzaman; yeni=1'de yok)
+anahtar!(sah_zaman, alan_motor::kafa::kafa2_tarti::SAH_ZAMAN_ZORLA);
