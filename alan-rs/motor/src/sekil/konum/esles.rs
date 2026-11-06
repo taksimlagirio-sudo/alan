@@ -953,6 +953,22 @@ impl Sv {
                         continue;
                     }
                     let pp = &c.ps[p];
+                    // S7d: tehlike bölgesinde geçilmiş herkes (ilk presçi dışında, baskıcılar da) kale önüne döner; adamı topun
+                    // önündeyse (kaleye toptan yakın) onu tutmayı sürdürür
+                    if s7(8) && g_e < S7_D && self.press.first() != Some(&p) && self.g_d(pp.x, pp.y) >= g_e + 1.0 && {
+                        let q = pp.hal.tutQ.or(pp.hal.markRef);
+                        q.map_or(true, |q| self.g_d(c.ps[q].x, c.ps[q].y) >= g_e - 2.0)
+                    } {
+                        let bs = self.base[p].map(|b| (b.x, b.y)).unwrap_or((pp.x, pp.y));
+                        let (lx, ly) = (E.0 + 0.55 * (own_x(dt) - E.0), E.1 + 0.55 * (GCY - E.1));
+                        let pp = &mut c.ps[p];
+                        pp.tx = lx;
+                        pp.ty = cl(ly + 0.25 * (bs.1 - ly), 3.0, GH - 3.0);
+                        pp.sprint = true;
+                        pp.job = Some("geri koşu · kale önü".into());
+                        pp.hal_mut().tutQ = None;
+                        continue;
+                    }
                     let ex = self.press.contains(&p) || bas(&pp.job, &["pres", "karşıla", "kovala", "sekme", "alıcı"]) || pp.hal._savD == Some(tick) || pp.hal._savT == Some(tick);
                     if ex || self.g_d(pp.tx, pp.ty) < g_e + pay {
                         // S7c: tehlike bölgesinde geçilmiş (topun gerisinde kalmış) savunmacı adamına değil kale önüne,

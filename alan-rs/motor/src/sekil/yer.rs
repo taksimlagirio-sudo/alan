@@ -38,6 +38,13 @@ pub fn rslot_of(p: &Oyuncu) -> (f64, f64) {
     }
 }
 
+/// Deney (ALAN_HUCUM_BOY_IZ; ölçümde HUCUM_BOY_ZORLA): hücum dizilişinin ön ucu toptan en çok bir pas menzili ileride.
+pub static HUCUM_BOY_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn hucum_boy() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    HUCUM_BOY_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_HUCUM_BOY_IZ").is_ok())
+}
+
 /// JS slotBase0(m, p, E, att): takımın bloğunda slotun yeri. `sl`: slot verilirse (JS `{...p, slot, rslot}`).
 pub fn slot_base0(m: &Mac, ps: &[Oyuncu], p: &Oyuncu, sl: Option<(f64, f64)>, ex: f64, ey: f64, att: bool) -> (f64, f64) {
     let t = p.takim();
@@ -55,7 +62,11 @@ pub fn slot_base0(m: &Mac, ps: &[Oyuncu], p: &Oyuncu, sl: Option<(f64, f64)>, ex
                 last = jmax(last, (q.x - x0) * dir);
             }
         }
-        let front = jmin(94.0 * GKX, jmax(back + 24.0 * GKX, last + 1.0));
+        let mut front = jmin(94.0 * GKX, jmax(back + 24.0 * GKX, last + 1.0));
+        // ALAN_HUCUM_BOY_IZ: ön uç toptan bir pas menzilinden ileri gitmez (öndekiler topla bağlantıda kalır)
+        if hucum_boy() {
+            front = jmax(back + 24.0 * GKX, jmin(front, bd + crate::kafa::kafa2_baglam::ayar().pass_max_f));
+        }
         len = front - back;
         wid = tac.genislik.as_deref().and_then(GEN).unwrap_or(38.0 * GKY);
         sh = 0.15;

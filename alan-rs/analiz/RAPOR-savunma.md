@@ -79,3 +79,43 @@ eşleşmiş fark ± standart hata:
 Gol ve şut değişmiyor: maç 217468'deki 2-3 tek tohumun oynaklığı gibi görünüyor, çok kurulumda "arkada boşluk, fazla gol"
 yok. Belirgin olan pas isabetinin düşmesi ve top kaybının artması: baskı topu kazanıyor (S1'in amacı). Analizcinin
 başka tohumlarla ölçmesi önerilir: Liman/Kale Duvarı gibi pres = 1 / pres = 0 eşleşmelerinde ayrı ayrı.
+
+## Main birleştikten sonra yeniden ölçüm ve S7 (6 tohum, `cok.sh`)
+
+Dal main'i (`441ce0b`, `afc56a9`, `da32777`, `c6e692f`, `e0411be`, `d0a344f`) ve analizci dalını (`1ec253c`) içeriyor.
+Yerleşik adam adama artık **varsayılan kapalı** deney (`ALAN_YERLESIK_ADAM_IZ`, sitede `?yerlesik=1`); main ile birleşince
+`tests/ayni.rs` onun yüzünden ayrışıyordu. `ALAN_YERLESIK_ADAM_ESKI` artık gerekmiyor. `tests/mac_kafa.rs` düzeltmesi main'e
+ayrı commit olarak gitti (`63197f0`).
+
+### S7 — taşıyıcıyı durdurmak (`62c21f0`, `sekil/pres.rs`, `savunma.rs`, `esles.rs`; varsayılan kapalı)
+Tehlike bölgesi: taşıyıcı kale ortasına `S7_D = 32 GKX`'ten yakın.
+- **a** `ALAN_S7A_IZ`: kale tarafında olmayan ilk presçi yandan dolanmaz ("pres · yandan giriyor / yanında / yolu kapat"
+  yerine), taşıyıcı → kale ortası çizgisinde taşıyıcıdan önce varabildiği ilk noktaya koşar: **"pres · şut hattı"**.
+  Dibindeyken (1,6 br, gövde arkasında değil) topa girme yolu aynı.
+- **b** `ALAN_S7B_IZ`: tehlike bölgesinde tetik beklemeden `p_lim` ≥ 2.
+- **c** `ALAN_S7C_IZ`: topun gerisinde kalmış savunmacı adamına değil kale önüne, şut hattının %55'ine:
+  "geri koşu · kale önü".
+- `ALAN_S7_IZ` üçü birden; ölçüm/wasm için `S7_ZORLA` (bit 1/2/4).
+
+### Sonuçlar (tohum 217468, 1–5; skor Liman–Kale Duvarı; `analiz/py/hatta.py`)
+
+| | Skorlar | Liman G/M | KD şut | KD gol | gol/şut | hattı boş şut / gol |
+|---|---|---|---|---|---|---|
+| Kapalı (yeni main) | 2-2 2-4 0-5 2-3 0-1 1-6 | 0/5 | 39 | 21 | 0,54 | 26 / 16 |
+| **S7a** | 2-2 0-2 2-0 0-1 0-0 4-3 | 2/2 | **18** | **8** | 0,44 | 11 / 5 |
+| S7b | 1-3 1-4 2-5 2-4 2-2 3-4 | 0/5 | 40 | 22 | 0,55 | 23 / 14 |
+| S7c | 4-3 3-4 2-4 1-8 3-3 3-4 | 1/4 | 44 | 26 | 0,59 | 21 / 15 |
+| S7 (a+b+c) | 1-2 0-1 0-0 1-3 1-3 2-4 | 0/5 | 23 | 13 | 0,57 | 8 / 3 |
+| S1+S2+S3 | 2-4 1-4 3-2 2-4 3-2 5-2 | 3/3 | 32 | 18 | 0,56 | 16 / 9 |
+| S1+S2+S3+S7 | 2-2 2-5 2-2 2-5 2-1 2-2 | 1/2 | 25 | 17 | 0,68 | 19 / 14 |
+
+Yorum:
+- **Analizcinin 4 tohumluk sonucu yeni main'de tersine döndü:** S1–S3'ün sorunu değil, main'in kendisi (kapalıyken Liman 0/6
+  kazanıyor, KD 21 gol, 16'sı hattı boş şuttan). S1+S2+S3 bunu kısmen düzeltiyor (3/6 galibiyet, hattı boş gol 16 → 9).
+- **S7a işin özü:** KD şutu 39 → 18, golü 21 → 8. Tek savunmacının yandan dolanması gerçekten sorundu.
+- **S7b etkisiz, S7c zararlı** (KD 26 gol): geçilen savunmacıları kale önüne çekmek adamlarını boş bırakıyor; pas alan boş adam
+  şut çekiyor. c'yi açmayın.
+- S1+S2+S3+S7'deki hattı boş gollerin çoğu **kontra**: Liman hücumdayken top kaybı, savunmacılar 50–90 br geride tam hızla
+  dönüyor (iz: t2 5438–5478). S7'nin konusu değil; geçiş (hücumdan savunmaya) ayrı iş.
+- Gol/şut hâlâ yüksek (0,44–0,68): hatta savunmacı olsa da şutlar giriyor. Kaleci / şut sapması tarafı ayrıca bakılmalı.
+- Baskıcının barı (geç gollerde .04–.11) bu turda ele alınmadı.
