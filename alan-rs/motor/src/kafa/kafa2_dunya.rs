@@ -277,7 +277,7 @@ pub fn predictWorld(k: &mut Kafa, src: &[Op], team: f64, B: Nokta, T: f64, cevap
         }
     }
     let mac_var = k.mac.is_some();
-    let mut out: Dunya = Vec::with_capacity(n_src);
+    let mut out: Dunya = Dunya::with_capacity(n_src);
     for i in 0..n_src {
         let p = &src[i];
         if bekci(p) {
@@ -414,7 +414,7 @@ pub fn bekYerW(k: &Kafa, w: &[Op], team: f64, B: Nokta, T: Option<f64>) -> Dunya
             w2[i] = b2;
         }
     }
-    w2
+    crate::dunya::Dunya::from(w2)
 }
 
 /// JS geriCekil(w, team, A, E, T, ilk) (decide.js:6779): taşıyıcı A'dan E'ye sürerken yakındaki
@@ -468,7 +468,7 @@ pub fn paylastir(k: &Kafa, W: &[Op], team: f64, T: f64, haric: &[usize]) -> Duny
     let mut at: Vec<(Op, f64)> = W.iter().filter(|p| p.team == team && !bekci(p) && !p.noTouch).map(|p| (p.clone(), dis::threat(k, team, p.x, p.y))).collect();
     at.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
     if at.is_empty() {
-        return W.to_vec();
+        return crate::dunya::Dunya::from(W.to_vec());
     }
     let wMax = at[0].1;
     let dfs: Vec<usize> = (0..W.len()).filter(|&i| W[i].team != team && !bekci(&W[i]) && !W[i].noTouch && !haric.contains(&i)).collect();
@@ -510,6 +510,6 @@ pub fn paylastir(k: &Kafa, W: &[Op], team: f64, T: f64, haric: &[usize]) -> Duny
         let L = hypot(dx, dy);
         W2[bz] = if L <= run { kxyv(d, g.x, g.y, 0.0, 0.0) } else { kxy(d, d.x + dx / L * run, d.y + dy / L * run) };
     }
-    W2
+    crate::dunya::Dunya::from(W2)
 }
 

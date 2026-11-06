@@ -605,7 +605,7 @@ pub fn surD(k: &mut Kafa, w: &[Op], team: f64, kq: &Oyuncu, at: Nokta, ch: f64, 
             continue;
         }
         let mut pos = at;
-        let mut ww: Dunya = w.to_vec();
+        let mut ww: Dunya = crate::dunya::Dunya::from(w.to_vec());
         let mut Pc = 1.0;
         let mut T = 0.0;
         let mut yol = 0.0;
@@ -928,7 +928,7 @@ fn en_gec<R>(k: &mut Kafa, cx: &mut Cx, q: &Op, w: &[Op], f: impl FnOnce(&mut Ka
             let eski_h = cx.h.clone();
             if let Some(i) = cx.src.iter().position(|z| ayni_varlik(z, q)) {
                 let mut s = (*cx.src).clone();
-                s[i] = q2.clone();
+                s.koy(i, q2.clone());
                 cx.src = Arc::new(s);
             }
             if ayni_varlik(&cx.h, q) {
@@ -1116,7 +1116,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
     // sınaması 289. tikte ayrışır, bu yüzden bölüşülmez (PR_BOL kapalı).
     let bol = (PR_BOL || taze) && !ters && crate::paralel::hazir(n);
     if bol {
-        let mp: Vec<Op> = k.mac.as_ref().map(|m| m.ps.clone()).unwrap_or_default();
+        let mp: Dunya = k.mac.as_ref().map(|m| m.ps.clone()).unwrap_or_default();
         crate::paket::taban_kur([src], mp.iter());
     }
     {
