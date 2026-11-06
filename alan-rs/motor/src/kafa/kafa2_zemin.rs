@@ -506,6 +506,8 @@ pub struct Sahiplik {
     pub N: [Vec<f64>; 2],
     pub NX: usize,
     pub NY: usize,
+    /// hücrenin kendi şut değeri (ölçüm izi için; yalnız sahiplik_kur doldurur)
+    pub S: [Vec<f64>; 2],
 }
 impl Sahiplik {
     fn oku_n(N: &[f64], NX: usize, NY: usize, x: f64, y: f64) -> f64 {
@@ -521,6 +523,11 @@ impl Sahiplik {
     /// JS `SAH_F(t, x, y)`
     pub fn oku(&self, t: f64, x: f64, y: f64) -> f64 {
         Self::oku_n(&self.N[t as usize], self.NX, self.NY, x, y)
+    }
+    /// hücrenin şut değeri (iz için)
+    pub fn oku_s(&self, t: f64, x: f64, y: f64) -> f64 {
+        if self.S[t as usize].is_empty() { return f64::NAN; }
+        Self::oku_n(&self.S[t as usize], self.NX, self.NY, x, y)
     }
 }
 
@@ -583,7 +590,8 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
         }
         let rak: Vec<R> = w
             .iter()
-            .filter(|p| p.team != t && !p.noTouch && !bekci(p))
+            // ALAN_SAH_BEKCI_IZ: komşu hücreye varış yarışına rakip Bekçi de girer (yakın direği kapatır)
+            .filter(|p| p.team != t && !p.noTouch && (!bekci(p) || crate::kafa::kafa2_tarti::sah_bekci()))
             .map(|p| R { p: p.clone(), G: dis::as_gec_tab(k, p), v: dis::as_v_sp(k, p), R: jmin(2.0, crate::temas::menzil(p, 0.35)), rc: jmax(0.0, dis::alan_tepki(k, p, "kovala")) })
             .collect();
         let rv = |x: f64, y: f64| -> f64 {
@@ -790,9 +798,10 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
             }
         }
     }
-    let n1 = ff.pop().unwrap().N;
-    let n0 = ff.pop().unwrap().N;
-    Sahiplik { N: [n0, n1], NX, NY }
+    let f1 = ff.pop().unwrap();
+    let f0 = ff.pop().unwrap();
+    let iz_s = crate::iz_acik() && std::env::var("ALAN_SUT_SAY_IZ").is_ok();
+    Sahiplik { N: [f0.N, f1.N], NX, NY, S: if iz_s { [f0.S, f1.S] } else { [Vec::new(), Vec::new()] } }
 }
 
 /// ALAN_SAHSIZ_IZ: sahiplik haritasının yerine, seçenek üretimi için aynı ızgarada yerel değer: her hücre kendi
@@ -809,7 +818,7 @@ pub fn sahiplik_yerel(k: &mut Kafa, w: &[Op], ch: f64) -> Sahiplik {
             }
         }
     }
-    Sahiplik { N, NX, NY }
+    Sahiplik { N, NX, NY, S: [Vec::new(), Vec::new()] }
 }
 
 /// ALAN_BOLGE_IZ: bölge değeri haritası (sahiplikKur'un yerine), aynı ızgara ve arayüz. Her hücre: oradan şutun değeri
@@ -951,7 +960,7 @@ pub fn sahiplik_bolge(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nok
             }
         }
     }
-    Sahiplik { N, NX, NY }
+    Sahiplik { N, NX, NY, S: [Vec::new(), Vec::new()] }
 }
 
 /// JS zeminS(w, team, x, y, ch, k) (decide.js:6747): sahiplik haritası varsa ondan

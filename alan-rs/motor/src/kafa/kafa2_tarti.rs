@@ -379,6 +379,12 @@ pub fn tut_elde() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     TUT_ELDE_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_TUT_ELDE_IZ").is_ok())
 }
+/// Deney (ALAN_SAH_BEKCI_IZ; ölçümde SAH_BEKCI_ZORLA): sahiplik haritasında komşu hücreye varış yarışına rakip Bekçi de girer.
+pub static SAH_BEKCI_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sah_bekci() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAH_BEKCI_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_BEKCI_IZ").is_ok())
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
@@ -1462,7 +1468,9 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
             let bg = opts.iter().filter(|o| o.kind == "gönder").filter_map(|o| o.v).fold(f64::NEG_INFINITY, jmax);
             let bo = opts.iter().filter(|o| o.kind != "gönder").filter_map(|o| o.v).fold(f64::NEG_INFINITY, jmax);
             let pk = opts.iter().filter(|o| o.kind == "gönder" && o.v.is_some()).filter_map(|o| o.det.as_ref().and_then(|d| d.Pk)).fold(0.0, jmax);
-            eprintln!("SUTSON {} {} tartida {} degerli {} en_iyi_sut {:.3} en_iyi_diger {:.3} Pk {:.3}", k.tick(), h.govde.name, ng, nv, bg, bo, pk);
+            let zs = zemin_s(k, src, team, h.x, h.y, ch, Some(&h));
+            let hs = k.sah_f.as_ref().map_or(f64::NAN, |f| f.oku_s(team, h.x, h.y));
+            eprintln!("SUTSON {} {} tartida {} degerli {} en_iyi_sut {:.3} en_iyi_diger {:.3} Pk {:.3} harita {:.3} haritaS {:.3}", k.tick(), h.govde.name, ng, nv, bg, bo, pk, zs, hs);
         }
     }
     // m._prT: arkadaşların ve taşıyanın değeri, bir rakip olmasa ne kazanılırdı
