@@ -1,13 +1,18 @@
 //! Ortak veri modeli: TASLAK, çalışma anı envanterinden üretildi (sina/model-uret.py, sina/ic-sekil2.txt).
 //! Alan adları JS adlarıyla birebir (izlenebilirlik). Tipler gözlemden: Option = null/undefined görüldü;
 //! Pid = m.ps içindeki oyuncunun sırası; TopRef = topun kimliği (JS nesne kimliği / kopya).
-//! JsDeger = karışık tip görüldü: sahibi olan modül uygun tipe çevirir. Biçimi değiştirmek: model-sahiplik.md
+//! Karışık tipli JS değerleri (JsDeger) gerçek tiplerine çevrildi (MIMARI.md 3.6, Aşama 5).
 #![allow(non_snake_case, non_camel_case_types, dead_code)]
 pub type Pid = usize;
 pub type TopRef = u64;
 #[derive(Clone, Debug, Default)] pub struct JsFn;
-/// Karışık tipli JS değeri (taslakta; sahibi düzeltir).
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)] pub enum JsDeger { #[default] Yok, Sayi(f64), Metin(String), Mantik(bool), Dizi(Vec<JsDeger>), Nesne(Vec<(String, JsDeger)>) }
+/// Kafanın bağlamındaki şut bilgisi (JS `D._sut`: karışık tipliydi): kararın başında taktiğin şut eğilimi,
+/// hayali bir şut tartılırken şutun türü ("güçlü" / "plase").
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+pub enum SutBag {
+    Egilim(f64),
+    Tur(String),
+}
 
 /// Dünyadaki bir varlığın kimliği: gerçek oyuncu (kopyaları dahil) `id`'siyle, hayaleti `HAYALET + id` ile;
 /// `YOK` (sahte/boş oyuncu) hiçbir şeye eşit değil.
@@ -257,8 +262,6 @@ pub struct OyuncuMac {
     pub _otA: Option<JP_otA>,
     /// `_onH`: null|object
     pub _onH: Option<JP_onH>,
-    /// `_lc`: null
-    pub _lc: Option<JsDeger>,
     /// `_donDir`: number (sonradan eklenir)
     pub _donDir: Option<f64>,
     /// `_donT`: number (sonradan eklenir)
@@ -375,8 +378,6 @@ pub struct TopEk {
     pub dist: f64,
     /// `walls`: number
     pub walls: f64,
-    /// `done`: null
-    pub done: Option<JsDeger>,
     /// `log`: dizi
     pub log: Vec<JBLogE>,
     /// `from`: OYUNCU (sonradan eklenir)
@@ -397,8 +398,6 @@ pub struct TopEk {
     pub tp: Option<f64>,
     /// `cds`: Map (sonradan eklenir)
     pub cds: Option<Vec<(Pid, f64)>>,
-    /// `defl`: boolean|number (sonradan eklenir)
-    pub defl: Option<JsDeger>,
     /// `sap`: boolean
     pub sap: bool,
     /// `gon`: boolean
@@ -634,7 +633,7 @@ pub struct KafaBag {
     /// `_tekL`: undef
     pub _tekL: Option<f64>,
     /// `_sut`: number (sonradan eklenir)
-    pub _sut: Option<JsDeger>,
+    pub _sut: Option<SutBag>,
     /// `_savT`: undef
     pub _savT: Option<f64>,
     /// `_savW`: undef
@@ -1705,20 +1704,12 @@ pub struct JMLastDecOptsE {
     pub P: f64,
     /// `v`: number
     pub v: f64,
-    /// `am`: undef
-    pub am: Option<JsDeger>,
     /// `en`: object|undef
     pub en: Option<JMLastDecOptsEEn>,
     /// `kh`: string|undef
     pub kh: Option<String>,
-    /// `rc`: undef
-    pub rc: Option<JsDeger>,
     /// `devam`: number|undef
     pub devam: Option<f64>,
-    /// `neden`: undef
-    pub neden: Option<JsDeger>,
-    /// `bak`: undef
-    pub bak: Option<JsDeger>,
 }
 
 

@@ -167,7 +167,6 @@ pub fn take(m: &mut Mac, p: Pid, how: Option<String>) {
     }
     m.fl = None;
     m.ps[p].hal_mut().driveTo = None;
-    m.ps[p].hal_mut()._lc = None;
     let pt = m.ps[p].team;
     if prev == Some(pt) {
         if let Some(fl) = fl.filter(|f| f.kind != "gönder") {

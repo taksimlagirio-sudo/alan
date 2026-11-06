@@ -411,7 +411,7 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
         let shot = o.shot.clone().unwrap_or_default();
         k.bag._ot = Some(veyo(ot0, 1.0) * dis::gonEk(k, &h, &src, &shot));
         k.bag._gon = Some(true);
-        k.bag._sut = Some(crate::model::JsDeger::Metin(shot));
+        k.bag._sut = Some(crate::model::SutBag::Tur(shot));
         k.bag._sYon = Some(syO);
         let tr = { 6.0 };
         let im = dis::imagine(k, &h, &src, dis::Top0 { x: h.x, y: h.y, vx: launch.vx, vy: launch.vy, ch, aim: None }, rnd, tr, None, None);
@@ -644,7 +644,7 @@ fn bankHedef(ad: &dis::Secenekler, src: &[Op], team: f64, qi: Pid) -> Vec<(Nokta
 /// JS decide0K(h, src, ch, rnd, tac) (decide.js:7402): adayları kurar, budar, tartar; kenardan ve
 /// çalım adaylarını ekler; enerji muhasebesi; prensip tartısı. Sonuç değere göre sıralı.
 pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar, tac: Option<&Tac>) -> Karar {
-    k.bag._sut = Some(crate::model::JsDeger::Sayi(tac.and_then(|t| t.sut).unwrap_or(0.5)));
+    k.bag._sut = Some(crate::model::SutBag::Egilim(tac.and_then(|t| t.sut).unwrap_or(0.5)));
     let h = src[hi].clone();
     let team = h.team;
     let mut ad = dis::options(k, &h, src, ch);

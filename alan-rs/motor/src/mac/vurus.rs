@@ -202,14 +202,3 @@ pub fn launch(m: &mut Mac, h: Pid, mut o: Secenek) {
     }
 }
 
-/// JS doğruluğu (karışık tipli değer)
-pub fn js_dogru(v: &crate::model::JsDeger) -> bool {
-    use crate::model::JsDeger::*;
-    match v {
-        Yok => false,
-        Sayi(x) => dogru(*x),
-        Metin(s) => !s.is_empty(),
-        Mantik(b) => *b,
-        Dizi(_) | Nesne(_) => true,
-    }
-}

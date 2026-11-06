@@ -379,7 +379,7 @@ fn main() {
     let dt = t0.elapsed().as_secs_f64();
     if kip == "boyut" {
         for p in mt.m.ps.iter().take(3) {
-            eprintln!("{} hist {:?} past {:?} _bk {:?} job {:?} _lc {} sizeof {}", p.govde.name, p.hal.hist.as_ref().map(|v| v.len()), p.hal.past.as_ref().map(|v| v.len()), p.hal._bk.as_ref().map(|v| v.len()), p.job.as_ref().map(|j| j.len()), p.hal._lc.is_some(), std::mem::size_of::<alan_motor::model::Oyuncu>());
+            eprintln!("{} hist {:?} past {:?} _bk {:?} job {:?} sizeof {}", p.govde.name, p.hal.hist.as_ref().map(|v| v.len()), p.hal.past.as_ref().map(|v| v.len()), p.hal._bk.as_ref().map(|v| v.len()), p.job.as_ref().map(|j| j.len()), std::mem::size_of::<alan_motor::model::Oyuncu>());
         }
         let t = std::time::Instant::now();
         let mut n = 0usize;
