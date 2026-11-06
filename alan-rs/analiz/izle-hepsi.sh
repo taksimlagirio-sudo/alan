@@ -38,7 +38,8 @@ def ort(d):
     o[takim]={}
     for k in R[0][takim]:
       v=[r[takim][k] for r in R if r[takim][k] is not None]
-      o[takim][k]=round(sum(v)/len(v),1) if v else None
+      if v and all(isinstance(x,(int,float)) for x in v): o[takim][k]=round(sum(v)/len(v),1)
+      else: o[takim][k]=[x for x in v if x] or None
   return o
 a=ort(out); print('DAVRANIŞ (ortalama, %d tohum):'%len(ts)); print(json.dumps(a,ensure_ascii=False))
 b=ort(os.path.join(os.path.dirname(out),onceki)) if onceki else None
