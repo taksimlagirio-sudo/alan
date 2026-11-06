@@ -414,8 +414,9 @@ pub extern "C" fn kayip_sahip(acik: i32) {
     alan_motor::kafa::kafa2_tarti::KAYIP_SAHIP_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
 }
 
-/// plan: 1 açık (varsayılan), 0 kapalı.
+/// plan: 1 açık, 0 kapalı (varsayılan).
 #[no_mangle]
 pub extern "C" fn plan(acik: i32) {
     alan_motor::kafa::kafa1_secim::PLAN_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
+    alan_motor::kafa::kafa1_secim::PLAN_ZORLA.store(acik != 0, std::sync::atomic::Ordering::Relaxed);
 }

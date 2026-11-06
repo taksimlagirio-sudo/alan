@@ -272,7 +272,8 @@ pub fn plan_acik() -> bool {
     if PLAN_KAPALI.load(std::sync::atomic::Ordering::Relaxed) {
         return false;
     }
-    PLAN_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_PLAN_ESKI").is_err())
+    // varsayılan kapandı (20 maç: pas 355 → 217; devam ödülü hep sürmeye gidiyor); açmak: ALAN_PLAN_IZ (sitede ?plan=1)
+    PLAN_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_PLAN_IZ").is_ok())
 }
 /// Bir taşıyıcı kararının planı: tür öbeği, pasın alıcısı (kimlik), sürmenin yönü (açı), karar tiki.
 #[derive(Clone, Debug, Default)]
