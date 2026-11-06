@@ -43,7 +43,8 @@ pub const S7_D: f64 = 32.0 * GKX;
 /// hattına geç), ALAN_S7B_IZ (tehlike bölgesinde ikinci presçi), ALAN_S7C_IZ (geçilen savunmacı adamına değil kale önüne);
 /// ALAN_S7_IZ üçü birden. Sonradan: ALAN_S7D_IZ (bit 8; geniş dönüş: geçilen herkes, baskıcılar da, adamı topun önünde
 /// değilse kale önüne), ALAN_S7E_IZ (bit 16; varılamayan şut hattı yerine kendi tarafından kale önüne çekil).
-/// Ölçümde S7_ZORLA (bitler). Varsayılan kapalı.
+/// ALAN_S7F_IZ (bit 32): tehlike bölgesinde, adamı tehlike bölgesinde olan markajcı ikinci (ve sonraki) presçi olmaz:
+/// adamını devretmeden buluşmaya / kale önüne gitmesin. Ölçümde S7_ZORLA (bitler). Varsayılan kapalı.
 pub static S7_ZORLA: std::sync::atomic::AtomicU8 = std::sync::atomic::AtomicU8::new(0);
 pub fn s7(parca: u8) -> bool {
     static A: std::sync::OnceLock<u8> = std::sync::OnceLock::new();
@@ -52,7 +53,7 @@ pub fn s7(parca: u8) -> bool {
             return 0;
         }
         let v = |k: &str| std::env::var(k).is_ok();
-        (if v("ALAN_S7_IZ") { 7 } else { 0 }) | (if v("ALAN_S7A_IZ") { 1 } else { 0 }) | (if v("ALAN_S7B_IZ") { 2 } else { 0 }) | (if v("ALAN_S7C_IZ") { 4 } else { 0 }) | (if v("ALAN_S7D_IZ") { 8 } else { 0 }) | (if v("ALAN_S7E_IZ") { 16 } else { 0 })
+        (if v("ALAN_S7_IZ") { 7 } else { 0 }) | (if v("ALAN_S7A_IZ") { 1 } else { 0 }) | (if v("ALAN_S7B_IZ") { 2 } else { 0 }) | (if v("ALAN_S7C_IZ") { 4 } else { 0 }) | (if v("ALAN_S7D_IZ") { 8 } else { 0 }) | (if v("ALAN_S7E_IZ") { 16 } else { 0 }) | (if v("ALAN_S7F_IZ") { 32 } else { 0 })
     });
     (e | S7_ZORLA.load(std::sync::atomic::Ordering::Relaxed)) & parca != 0
 }

@@ -544,6 +544,14 @@ impl Sv {
             if self.press.len() >= p_lim {
                 break;
             }
+            // S7f: tehlike bölgesinde ilk presçiden sonrakiler, tehlikeli adamı tutuyorsa adamını bırakmaz
+            if s7(32) && !self.press.is_empty() && self.g_d(hp.x, hp.y) < S7_D {
+                if let Some(m) = c.ps[*q].hal.markRef.filter(|&m| m != h) {
+                    if self.g_d(c.ps[m].x, c.ps[m].y) < S7_D {
+                        continue;
+                    }
+                }
+            }
             let yet = e.P * jmin(1.0, 2.0 * hat_k) > S.pr_pmin;
             // başlamak için hem yetişmek hem değer gerekir; başlamış (kilitli) presçi ikisinden biri sürdükçe bırakmaz:
             // eşikte her tik girip çıkmak oyuncuyu presle arka iş arasında titretiyor, ikisini de yaptırmıyordu

@@ -7,7 +7,8 @@
 #  baskici_kale_tarafi_% : rakip kendi yarımızda topta iken en yakın baskıcının (pres/kovala/kapatma işi) taşıyıcı ile kalemiz arasında olduğu tik
 #  sut_hatta_bos_%  : şut anında şutçu–kale hattında (2 br) savunmacı olmayan şut
 #  rakibe_pas_%     : pas+önüne+kenardan uçuşlarının rakipte biten oranı
-#  donma            : değeri ≈0 karar
+#  donma            : değeri ≈0 (|v|<1e-4) karar
+#  uzun_tutma       : 10 sn'den uzun tek elde tutma (oyuncu@tik/sn)
 import os,json,math,sys
 sys.path.insert(0,os.path.dirname(__file__))
 from yukle import K,AD,TK,d,S
@@ -31,7 +32,7 @@ for T,n in ((0,'Liman'),(1,'KaleDuvari')):
         break
   k25=[r for r in R if d(r[3],r[4],gx,30)<=25]
   sut=sum(1 for r in k25 if r[5][0][0].startswith('gönder'))
-  donma=sum(1 for r in R if r[5][0][2] is not None and abs(r[5][0][2])<1e-6)
+  donma=sum(1 for r in R if r[5][0][2] is not None and abs(r[5][0][2])<1e-4)
   # tik ölçüleri
   giris=0;cur=None;destek_yok=0;topta=0;bas_n=0;bas_ok=0
   for k in K:
@@ -70,7 +71,13 @@ for T,n in ((0,'Liman'),(1,'KaleDuvari')):
         while j<len(K) and K[j]['h']<0: j+=1
         if j<len(K) and TK[K[j]['h']]!=T: pas_rak+=1
     prev=k
+  uzun=[];cur=None
+  for k in K:
+    h=k['h']
+    if cur and h==cur[0]: cur[2]=k['t']; continue
+    if cur and cur[0]>=0 and TK[cur[0]]==T and cur[2]-cur[1]>=300: uzun.append(f'{AD[cur[0]]}@{cur[1]}/{round((cur[2]-cur[1])/30)}sn')
+    cur=[h,k['t'],k['t']]
   pc=lambda a,b: round(100*a/b) if b else None
   o[n]={'donma':donma,'bekleme_bosa_%':pc(bosa,tut),'tut_karar':tut,'kale25_karar':len(k25),'sut_orani_%':pc(sut,len(k25)),'kutuya_giris':giris,
-        'destek_yok_%':pc(destek_yok,topta),'baskici_kale_tarafi_%':pc(bas_ok,bas_n),'sut':sut_n,'sut_hatta_bos_%':pc(sut_bos,sut_n),'rakibe_pas_%':pc(pas_rak,pas_n)}
+        'destek_yok_%':pc(destek_yok,topta),'baskici_kale_tarafi_%':pc(bas_ok,bas_n),'sut':sut_n,'sut_hatta_bos_%':pc(sut_bos,sut_n),'rakibe_pas_%':pc(pas_rak,pas_n),'uzun_tutma':uzun}
 print(json.dumps(o,ensure_ascii=False))

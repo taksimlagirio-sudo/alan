@@ -948,27 +948,55 @@ impl Sv {
             c.ek.sh.gs = Some(Gs { t: tick, dt, on, on_p, oy: kp_a.is_none() && (on_p || self.YR) });
             let pay = if on { -1.0 } else { 3.0 };
             if on || (self.YR && g_e < 64.0 * GKX) {
+                // S7d: bu tik tutulan adamlar (savunmacıların tutQ'su)
+                // S7f: yalnız adamını gerçekten tutanlar (presçi değil, işi adam işi) sayılır; buluşmaya / prese giden adamını devreder
+                let mut s7_tut: Vec<Pid> = if s7(8) {
+                    self.defs.iter().filter(|&&d| !s7(32) || (!self.press.contains(&d) && bas(&c.ps[d].job, &["markaj", "arkada", "kapatma", "geri koşu", "yolu kes"]))).filter_map(|&d| c.ps[d].hal.tutQ).collect()
+                } else {
+                    Vec::new()
+                };
                 for &p in &self.defs.clone() {
                     if self.up[p] {
                         continue;
                     }
                     let pp = &c.ps[p];
-                    // S7d: tehlike bölgesinde geçilmiş herkes (ilk presçi dışında, baskıcılar da) kale önüne döner; adamı topun
-                    // önündeyse (kaleye toptan yakın) onu tutmayı sürdürür
-                    if s7(8) && g_e < S7_D && self.press.first() != Some(&p) && self.g_d(pp.x, pp.y) >= g_e + 1.0 && {
+                    // S7d: tehlike bölgesinde geçilmiş (topun gerisinde kalmış) savunmacı, ilk presçi dışında (baskıcılar da):
+                    // adamı tehlikeliyse (topun önünde ya da kendisi tehlike bölgesinde, uzak taraf dahil) onu tutmayı sürdürür;
+                    // değilse önce tehlike bölgesinde kimsenin tutmadığı adama (kaleye en yakın), o da yoksa kale önüne döner
+                    let gecildi = self.g_d(pp.x, pp.y) >= g_e + 1.0;
+                    // S7f: geçilmemiş bölgecisi de tehlike bölgesinde boşta kalan adamı alır (kale önüne gitmez)
+                    let bolgeci = s7(32) && !gecildi && !self.press.contains(&p) && bas(&pp.job, &["bölge"]);
+                    if s7(8) && g_e < S7_D && self.press.first() != Some(&p) && (gecildi || bolgeci) && {
                         let q = pp.hal.tutQ.or(pp.hal.markRef);
-                        q.map_or(true, |q| self.g_d(c.ps[q].x, c.ps[q].y) >= g_e - 2.0)
+                        q.map_or(true, |q| { let d = self.g_d(c.ps[q].x, c.ps[q].y); !(d < g_e - 2.0 || d < S7_D) })
                     } {
-                        let bs = self.base[p].map(|b| (b.x, b.y)).unwrap_or((pp.x, pp.y));
-                        let (lx, ly) = (E.0 + 0.55 * (own_x(dt) - E.0), E.1 + 0.55 * (GCY - E.1));
-                        let pp = &mut c.ps[p];
-                        pp.tx = lx;
-                        pp.ty = cl(ly + 0.25 * (bs.1 - ly), 3.0, GH - 3.0);
-                        pp.sprint = true;
-                        pp.job = Some("geri koşu · kale önü".into());
-                        pp.hal_mut().tutQ = None;
-                        continue;
+                        let bos = self.atk.iter().copied().filter(|&q| Some(q) != h && !s7_tut.contains(&q) && self.g_d(c.ps[q].x, c.ps[q].y) < S7_D).min_by(|&u, &v| sira(self.g_d(c.ps[u].x, c.ps[u].y) - self.g_d(c.ps[v].x, c.ps[v].y)));
+                        if let Some(q) = bos {
+                            s7_tut.push(q);
+                            let (qx, qy) = (c.ps[q].x, c.ps[q].y);
+                            let l = jmax(0.01, self.g_d(qx, qy));
+                            let nm = c.ps[q].govde.name.clone();
+                            let pp = &mut c.ps[p];
+                            pp.tx = qx + 2.0 * (own_x(dt) - qx) / l;
+                            pp.ty = qy + 2.0 * (GCY - qy) / l;
+                            pp.sprint = true;
+                            pp.job = Some(format!("geri koşu · {}", nm).into());
+                            pp.hal_mut().tutQ = Some(q);
+                            continue;
+                        }
+                        if gecildi {
+                            let bs = self.base[p].map(|b| (b.x, b.y)).unwrap_or((pp.x, pp.y));
+                            let (lx, ly) = (E.0 + 0.55 * (own_x(dt) - E.0), E.1 + 0.55 * (GCY - E.1));
+                            let pp = &mut c.ps[p];
+                            pp.tx = lx;
+                            pp.ty = cl(ly + 0.25 * (bs.1 - ly), 3.0, GH - 3.0);
+                            pp.sprint = true;
+                            pp.job = Some("geri koşu · kale önü".into());
+                            pp.hal_mut().tutQ = None;
+                            continue;
+                        }
                     }
+                    let pp = &c.ps[p];
                     let ex = self.press.contains(&p) || bas(&pp.job, &["pres", "karşıla", "kovala", "sekme", "alıcı"]) || pp.hal._savD == Some(tick) || pp.hal._savT == Some(tick);
                     if ex || self.g_d(pp.tx, pp.ty) < g_e + pay {
                         // S7c: tehlike bölgesinde geçilmiş (topun gerisinde kalmış) savunmacı adamına değil kale önüne,
