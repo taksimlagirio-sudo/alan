@@ -37,6 +37,24 @@ pub fn mac_pres(c: &mut Mc, t: u8) -> f64 {
     }
 }
 
+/// S7 tehlike bölgesi: taşıyıcı kalemize bundan yakınken (br, kale ortasına) tek savunmacı yetmez.
+pub const S7_D: f64 = 32.0 * GKX;
+/// Deney (GOREV-savunma S7): taşıyıcıyı durdurmak. Parçalar ayrı ölçülsün diye: ALAN_S7A_IZ (kale tarafında değilsen şut
+/// hattına geç), ALAN_S7B_IZ (tehlike bölgesinde ikinci presçi), ALAN_S7C_IZ (geçilen savunmacı adamına değil kale önüne);
+/// ALAN_S7_IZ üçü birden. Ölçümde S7_ZORLA (bit 1/2/4). Varsayılan kapalı.
+pub static S7_ZORLA: std::sync::atomic::AtomicU8 = std::sync::atomic::AtomicU8::new(0);
+pub fn s7(parca: u8) -> bool {
+    static A: std::sync::OnceLock<u8> = std::sync::OnceLock::new();
+    let e = *A.get_or_init(|| {
+        if !crate::iz_acik() {
+            return 0;
+        }
+        let v = |k: &str| std::env::var(k).is_ok();
+        (if v("ALAN_S7_IZ") { 7 } else { 0 }) | (if v("ALAN_S7A_IZ") { 1 } else { 0 }) | (if v("ALAN_S7B_IZ") { 2 } else { 0 }) | (if v("ALAN_S7C_IZ") { 4 } else { 0 })
+    });
+    (e | S7_ZORLA.load(std::sync::atomic::Ordering::Relaxed)) & parca != 0
+}
+
 /// JS presLim(m, dt, h, att): tetik (geri pas, kanat, zayıf kontrol, arkası dönük, uzun pas) yoksa tek presçi.
 pub fn pres_lim(c: &Mc, dt: &dis::TacE, h: Option<Pid>, att: u8) -> usize {
     let n = 2usize;
@@ -111,6 +129,24 @@ pub fn ilk_pres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]
         };
         if crate::kafa::kafa1_ikili::ks_iz() { eprintln!("      IP tick {} KS {:?} T1 {:?} g {:?} kt {} d0 {} h {} {} {} {} p {} {} {} {}", tick, KS, T1.as_ref().map(|t| t.0), g, kt, d0, h.x, h.y, h.vx, h.vy, px, py, c.ps[pi].vx, c.ps[pi].vy); }
         if !kt && (!(d0 < 1.6) || shielded(h.x, h.y, px, py, co.0, co.1)) {
+            // S7a: tehlike bölgesinde kale tarafında değilsen yandan dolanma; taşıyıcıdan önce varabildiğin ilk şut hattı
+            // noktasına (taşıyıcı → kale ortası) geç
+            let lg = hypot(ox - h.x, GCY - h.y);
+            if s7(1) && lg < S7_D && lg > 4.0 {
+                let (ux, uy) = ((ox - h.x) / lg, (GCY - h.y) / lg);
+                let vp = jmax(0.05, v_sp(&c.ps[pi], k));
+                let vh = jmax(0.02, hypot(h.vx, h.vy));
+                let sm = jmax(2.0, lg - 4.0);
+                let mut s = 2.0;
+                while s < sm && hypot(h.x + ux * s - px, h.y + uy * s - py) / vp > s / vh {
+                    s += 0.5;
+                }
+                let s = jmin(s, sm);
+                set(c, h.x + ux * s, h.y + uy * s);
+                job(c, "pres · şut hattı".into());
+                c.ps[pi].sprint = true;
+                return;
+            }
             let hk = (h.vx * (ox - h.x) + h.vy * (GCY - h.y)) / {
                 let l = hypot(ox - h.x, GCY - h.y);
                 if l != 0.0 && l == l {

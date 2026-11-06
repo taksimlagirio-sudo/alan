@@ -303,6 +303,8 @@ impl Sv {
         let p_lim = pres_lim(c, &self.dtac, h, att);
         // yerleşik hücumda topa en çok bir presçi: ötekiler adam tutar
         let p_lim = if self.yerlesik { p_lim.min(1) } else { p_lim };
+        // S7b: taşıyıcı tehlike bölgesindeyken tetik beklemeden ikinci presçi
+        let p_lim = if s7(2) && h.is_some() && self.g_d(E.0, E.1) < S7_D { p_lim.max(2) } else { p_lim };
         if let Some(h) = h {
             self.pres_sec(c, h, p_lim);
         }

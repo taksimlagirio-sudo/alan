@@ -955,6 +955,19 @@ impl Sv {
                     let pp = &c.ps[p];
                     let ex = self.press.contains(&p) || bas(&pp.job, &["pres", "karşıla", "kovala", "sekme", "alıcı"]) || pp.hal._savD == Some(tick) || pp.hal._savT == Some(tick);
                     if ex || self.g_d(pp.tx, pp.ty) < g_e + pay {
+                        // S7c: tehlike bölgesinde geçilmiş (topun gerisinde kalmış) savunmacı adamına değil kale önüne,
+                        // taşıyıcının şut hattına döner
+                        if s7(4) && !ex && g_e < S7_D && self.g_d(pp.x, pp.y) >= g_e + 1.0 {
+                            let bs = self.base[p].map(|b| (b.x, b.y)).unwrap_or((pp.x, pp.y));
+                            let (lx, ly) = (E.0 + 0.55 * (own_x(dt) - E.0), E.1 + 0.55 * (GCY - E.1));
+                            let pp = &mut c.ps[p];
+                            pp.tx = lx;
+                            pp.ty = cl(ly + 0.25 * (bs.1 - ly), 3.0, GH - 3.0);
+                            pp.sprint = true;
+                            pp.job = Some("geri koşu · kale önü".into());
+                            pp.hal_mut().tutQ = None;
+                            continue;
+                        }
                         if self.g_d(pp.x, pp.y) >= g_e + pay && !pp.sprint {
                             let pp = &mut c.ps[p];
                             pp.sprint = true;
