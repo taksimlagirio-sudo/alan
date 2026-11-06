@@ -10,10 +10,10 @@ use crate::yetenek::{ag, ah};
 pub fn ivme(p: &mut Oyuncu, wx: f64, wy: f64, vmax: f64) {
     let sp = hypot(p.vx, p.vy);
     let k0 = 0.18;
-    let kH = k0 * ah(&p.govde.yet) * if p._sf.as_ref().map_or(false, |s| s.f == "patlama") { SPR_FAZ.patK } else { 1.0 };
+    let k_h = k0 * ah(&p.govde.yet) * if p._sf.as_ref().map_or(false, |s| s.f == "patlama") { SPR_FAZ.pat_k } else { 1.0 };
     if sp < 0.001 {
-        p.vx += (wx - p.vx) * kH;
-        p.vy += (wy - p.vy) * kH;
+        p.vx += (wx - p.vx) * k_h;
+        p.vy += (wy - p.vy) * k_h;
         return;
     }
     let ux = p.vx / sp;
@@ -25,18 +25,18 @@ pub fn ivme(p: &mut Oyuncu, wx: f64, wy: f64, vmax: f64) {
     let py = dvy - al * uy;
     let r = jmin(1.0, sp / jmax(0.05, vmax));
     let g = ag(&p.govde.yet, p.den, p.bekci(), IK.yavas);
-    let kA = if al >= 0.0 { kH } else { k0 * g * (1.0 - 0.55 * r) };
-    let kT = k0 * g * (1.0 - 0.45 * r);
-    let mut ba = al * kA;
-    let mut tx = px * kT;
-    let mut ty = py * kT;
+    let k_a = if al >= 0.0 { k_h } else { k0 * g * (1.0 - 0.55 * r) };
+    let k_t = k0 * g * (1.0 - 0.45 * r);
+    let mut ba = al * k_a;
+    let mut tx = px * k_t;
+    let mut ty = py * k_t;
     {
-        let bkA = if p.bekci() { 2.0 } else { 1.0 };
+        let bk_a = if p.bekci() { 2.0 } else { 1.0 };
         if ba < 0.0 {
-            ba = jmax(ba, -0.018 * g * bkA);
+            ba = jmax(ba, -0.018 * g * bk_a);
         }
         let tl = hypot(tx, ty);
-        let tm = 0.021 * g * bkA;
+        let tm = 0.021 * g * bk_a;
         if tl > tm && sp > 0.1 {
             tx *= tm / tl;
             ty *= tm / tl;
@@ -47,6 +47,6 @@ pub fn ivme(p: &mut Oyuncu, wx: f64, wy: f64, vmax: f64) {
 }
 
 /// JS kuyuSafe: Kuyu açıkken null.
-pub fn kuyuSafe(_x: f64, _y: f64) -> Option<(f64, f64)> {
+pub fn kuyu_safe(_x: f64, _y: f64) -> Option<(f64, f64)> {
     None
 }

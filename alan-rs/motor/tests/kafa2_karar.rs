@@ -8,7 +8,7 @@
 use alan_motor::kafa::gecici_dis1::KuralErisim as _;
 use alan_motor::kafa::kafa2_baglam::*;
 use alan_motor::kafa::{kafa2_dunya, kafa2_imkan, kafa2_karar, kafa2_zemin};
-use alan_motor::model::{JMTacE, JPEg, JPTl, JP_kv, Oyuncu};
+use alan_motor::model::{JMTacE, JPEg, JPTl, JpKv, Oyuncu};
 use alan_motor::yetenek::{Ham, Yetenek};
 use serde_json::Value;
 use std::sync::Arc;
@@ -92,7 +92,7 @@ fn oyuncu(v: &Value) -> Oyuncu {
     p.job = v["job"].as_str().map(|s| s.into());
     p.hal_mut().markRef = v["markRef"].as_u64().map(|x| x as usize);
     p.hal_mut().tutQ = v["tutQ"].as_u64().map(|x| x as usize);
-    p.hal_mut()._kv = nok(&v["kv"]).map(|n| JP_kv { x: n.x, y: n.y, t: 0.0 });
+    p.hal_mut()._kv = nok(&v["kv"]).map(|n| JpKv { x: n.x, y: n.y, t: 0.0 });
     p.hal_mut().otx = ho(&v["otx"]);
     p.hal_mut().oty = ho(&v["oty"]);
     p.ca = ho(&v["ca"]);
@@ -126,7 +126,7 @@ fn oyuncu(v: &Value) -> Oyuncu {
         p.govde_mut().eg = Some(JPEg { ps: h(&v["eg"]["ps"]), rk: h(&v["eg"]["rk"]) });
     }
     if let Some(sf) = v["sf"].as_object() {
-        p._sf = Some(alan_motor::model::JP_sf { t0: h(&sf["t0"]), f: sf["f"].as_str().unwrap_or("").into() });
+        p._sf = Some(alan_motor::model::JpSf { t0: h(&sf["t0"]), f: sf["f"].as_str().unwrap_or("").into() });
     }
     p
 }
@@ -157,40 +157,40 @@ mod tdis {
     }
     impl Dis for TDis {
     fn kural(&self) -> alan_motor::kural::enerji::MacKural { self.m.kural() }
-    fn ALAN_EN3_KUL(&self, p: &Oyuncu, e: f64, bizde: bool, bx: f64, by: f64) -> f64 { self.m.ALAN_EN3_KUL(p, e, bizde, bx, by) }
+    fn alan_en3_kul(&self, p: &Oyuncu, e: f64, bizde: bool, bx: f64, by: f64) -> f64 { self.m.alan_en3_kul(p, e, bizde, bx, by) }
     fn S(&self) -> Option<ShapeS> { self.m.S() }
-    fn GR(&self) -> Option<ShapeGR> { self.m.GR() }
-    fn GR_yasHata(&self, yas: f64) -> f64 { self.m.GR_yasHata(yas) }
+    fn gr(&self) -> Option<ShapeGR> { self.m.gr() }
+    fn gr_yas_hata(&self, yas: f64) -> f64 { self.m.gr_yas_hata(yas) }
     fn gside(&self, a: Nk, t: f64, off: f64) -> Nk { self.m.gside(a, t, off) }
     fn bekci(&self, p: &Oyuncu, b: Nk) -> Option<Nk> { self.m.bekci(p, b) }
-    fn aliciDirenc(&self, pts: &[Nk], p: &Oyuncu, rc: f64, iMin: f64, rP: f64) -> Option<Nk> { self.m.aliciDirenc(pts, p, rc, iMin, rP) }
+    fn alici_direnc(&self, pts: &[Nk], p: &Oyuncu, rc: f64, i_min: f64, r_p: f64) -> Option<Nk> { self.m.alici_direnc(pts, p, rc, i_min, r_p) }
     fn tehlike(&self, h: &Oyuncu) -> Vec<Tehlike> { self.m.tehlike(h) }
-    fn AS_ilkPres_var(&self) -> bool { self.m.AS_ilkPres_var() }
+    fn as_ilk_pres_var(&self) -> bool { self.m.as_ilk_pres_var() }
     fn mac_var(&self) -> bool { self.m.mac_var() }
     fn mac_ch(&self) -> Option<f64> { self.m.mac_ch() }
     fn mac_holder(&self) -> Option<(f64, f64, f64, f64)> { self.m.mac_holder() }
-    fn tac_enHarcama(&self, team: f64) -> Option<f64> { self.m.tac_enHarcama(team) }
+    fn tac_en_harcama(&self, team: f64) -> Option<f64> { self.m.tac_en_harcama(team) }
     fn tac_siddet(&self, team: f64) -> Option<(Option<f64>, bool, f64)> { self.m.tac_siddet(team) }
-    fn tacEff(&self, team: f64) -> TacEff { self.m.tacEff(team) }
+    fn tac_eff(&self, team: f64) -> TacEff { self.m.tac_eff(team) }
     fn sh_gs(&self) -> Option<JMShGs> { self.m.sh_gs() }
-    fn prT(&self) -> Option<PrT> { self.m.prT() }
+    fn pr_t(&self) -> Option<PrT> { self.m.pr_t() }
     fn algi_e(&self, p: &Oyuncu) -> Option<f64> { self.m.algi_e(p) }
     fn algi_yas(&self, p: &Oyuncu) -> Option<f64> { self.m.algi_yas(p) }
-    fn ilkPres(&self, dtik: f64, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[Tehlike], dtac: &TacEff, gs: &Option<JMShGs>) { self.m.ilkPres(dtik, tick, qv, hx, team, TH, dtac, gs) }
-        fn bekciFm(&self, p: &Oyuncu, B: Nk, fm: &Fm) -> Nk {
+    fn ilk_pres(&self, dtik: f64, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[Tehlike], dtac: &TacEff, gs: &Option<JMShGs>) { self.m.ilk_pres(dtik, tick, qv, hx, team, TH, dtac, gs) }
+        fn bekci_fm(&self, p: &Oyuncu, B: Nk, fm: &Fm) -> Nk {
             let ps = kisi(fm.ps);
             let ben = fm.ps.iter().position(|q| q.id == p.id && q.team == p.team);
             let bm = alan_motor::sekil::yer::BekM { ps: alan_motor::sekil::yer::BekPs::Duz(&ps), holder: fm.holder, ben, sut: true };
             let (x, y) = alan_motor::sekil::yer::bekci(p, B.x, B.y, Some(&bm), &self.m.kural.get());
             nk(x, y)
         }
-        fn slotBase(&self, fm: &Fm, p: &Oyuncu, B: Nk, hucum: bool) -> Nk {
+        fn slot_base(&self, fm: &Fm, p: &Oyuncu, B: Nk, hucum: bool) -> Nk {
             let ps = kisi(fm.ps);
-            let y = alan_motor::sekil::yer::slotBase(&self.m.mac, &ps, p, B.x, B.y, hucum);
+            let y = alan_motor::sekil::yer::slot_base(&self.m.mac, &ps, p, B.x, B.y, hucum);
             nk(y.x, y.y)
         }
-        fn S_prHat(&self, blok: &str) -> Option<f64> {
-            alan_motor::sekil::sabit::prHat(blok)
+        fn s_pr_hat(&self, blok: &str) -> Option<f64> {
+            alan_motor::sekil::sabit::pr_hat(blok)
         }
         fn tl(&self, p: &Oyuncu, ev: &str, k: &str) -> Option<f64> {
             alan_motor::mac::kurulum::tl(p, ev, k)
@@ -259,12 +259,12 @@ fn kafa2_dunyalar_js_ile() {
         let p = Arc::new(oyuncu(&g["p"]));
         let r = kafa2_dunya::bekKay(&k, &p, nok(&g["B"]).unwrap(), h(&g["T"]));
         if !ayni_b(r.x, h(&g["R"][0])) || !ayni_b(r.y, h(&g["R"][1])) {
-            let g0 = alan_motor::kafa::kafa2_bag::AS_bekci(&k, &p, nok(&g["B"]).unwrap(), None);
+            let g0 = alan_motor::kafa::kafa2_bag::as_bekci(&k, &p, nok(&g["B"]).unwrap(), None);
             let (jx, jy) = (h(&g["R"][0]), h(&g["R"][1]));
             let L = ((g0.x - p.x).powi(2) + (g0.y - p.y).powi(2)).sqrt();
             let mvj = ((jx - p.x).powi(2) + (jy - p.y).powi(2)).sqrt();
             let mvr = ((r.x - p.x).powi(2) + (r.y - p.y).powi(2)).sqrt();
-            hata.push(format!("bekKay t{}: L {L} mv rs {mvr} js {mvj}; yön rs ({}, {}) js ({}, {}); SPRE {}", g["tick"], r.x - p.x, r.y - p.y, jx - p.x, jy - p.y, k.dis.ALAN_SPRE(&p)));
+            hata.push(format!("bekKay t{}: L {L} mv rs {mvr} js {mvj}; yön rs ({}, {}) js ({}, {}); SPRE {}", g["tick"], r.x - p.x, r.y - p.y, jx - p.x, jy - p.y, k.dis.alan_spre(&p)));
         }
         say += 1;
     }
@@ -272,7 +272,7 @@ fn kafa2_dunyalar_js_ile() {
         let mut k = kafa(g);
         let src = dunya(&g["src"]);
         let resp: Option<Vec<usize>> = g["resp"].as_array().map(|a| a.iter().map(|x| x.as_u64().unwrap() as usize).collect());
-        let r = kafa2_dunya::predictWorld(&mut k, &src, g["team"].as_f64().unwrap(), nok(&g["B"]).unwrap(), h(&g["T"]), g["ca"].as_bool().unwrap(), resp.as_deref(), g["pasta"].as_bool().unwrap(), nok(&g["tas"]));
+        let r = kafa2_dunya::predict_world(&mut k, &src, g["team"].as_f64().unwrap(), nok(&g["B"]).unwrap(), h(&g["T"]), g["ca"].as_bool().unwrap(), resp.as_deref(), g["pasta"].as_bool().unwrap(), nok(&g["tas"]));
         for (i, q) in g["R"].as_array().unwrap().iter().enumerate() {
             if !ayni_b(r[i].x, h(&q[0])) || !ayni_b(r[i].y, h(&q[1])) {
                 hata.push(format!("predictWorld t{} oyuncu {i}", g["tick"]));
@@ -304,7 +304,7 @@ fn kafa2_imkan_sahiplik_js_ile() {
     for g in v["sahiplikKur"].as_array().into_iter().flatten() {
         let mut k = kafa(g);
         let src = dunya(&g["src"]);
-        let f = kafa2_zemin::sahiplikKur(&mut k, &src, g["team"].as_f64().unwrap(), h(&g["ch"]), nok(&g["B0"]));
+        let f = kafa2_zemin::sahiplik_kur(&mut k, &src, g["team"].as_f64().unwrap(), h(&g["ch"]), nok(&g["B0"]));
         for e in g["R"].as_array().unwrap() {
             let x = f.oku(e[0].as_f64().unwrap(), h(&e[1]), h(&e[2]));
             if !ayni_b(x, h(&e[3])) {

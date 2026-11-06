@@ -16,7 +16,7 @@ pub fn mek_sira(ad: &str) -> usize {
 }
 
 /// JS sHash: dizginin UTF-16 birimleriyle djb2, 100003'e göre.
-pub fn sHash(s: &str) -> f64 {
+pub fn s_hash(s: &str) -> f64 {
     let mut x: i32 = 5381;
     for c in s.encode_utf16() {
         x = (x.wrapping_shl(5)).wrapping_add(x).wrapping_add(c as i32);
@@ -26,11 +26,11 @@ pub fn sHash(s: &str) -> f64 {
 
 impl Kafa {
     /// Kenardan pası düşünür mü (decide.js:155).
-    pub fn kenarAkil(&self, h: &Oyuncu) -> bool {
-        zar(h.id, (self.tick() / 20.0).floor(), 13.0) < kademe(h.govde.yet.y(mek::KENAR_PAS_DUSUN), self.D.bankOk)
+    pub fn kenar_akil(&self, h: &Oyuncu) -> bool {
+        zar(h.id, (self.tick() / 20.0).floor(), 13.0) < kademe(h.govde.yet.y(mek::KENAR_PAS_DUSUN), self.D.bank_ok)
     }
     /// Seçeneğin imzası (decide.js:156); `src`: seçeneklerin dünyası (o.q'nun sırası).
-    pub fn sigY(&self, o: &Secenek, src: &[Op]) -> String {
+    pub fn sig_y(&self, o: &Secenek, src: &[Op]) -> String {
         let q = match o.q.and_then(|i| src.get(i)) {
             Some(q) => js_int(q.id),
             None => String::new(),
@@ -47,7 +47,7 @@ impl Kafa {
         format!("{}:{}:{}:{}:{}", o.kind, q, to, shot, sy)
     }
     /// Tartının gürültüsünün genişliği (decide.js:162); `k`: mekaniğin adı.
-    pub fn secimW(&self, h: &Oyuncu, B: f64, sut: bool, k: Option<&str>) -> f64 {
+    pub fn secim_w(&self, h: &Oyuncu, B: f64, sut: bool, k: Option<&str>) -> f64 {
         let m = match k {
             Some(k) => mek_sira(k),
             None => {
@@ -61,8 +61,8 @@ impl Kafa {
         self.D.otMargin * (20.0 - h.govde.yet.y(m) + 10.0 * DK_SUT.b * B * yum(&h.govde.yet, "B")) / 10.0
     }
     /// Seçeneğin gürültüsü (decide.js:162).
-    pub fn secimZ(&self, h: &Oyuncu, o: &Secenek, w: f64, src: &[Op]) -> f64 {
-        let k = sHash(&self.sigY(o, src));
+    pub fn secim_z(&self, h: &Oyuncu, o: &Secenek, w: f64, src: &[Op]) -> f64 {
+        let k = s_hash(&self.sig_y(o, src));
         let t = (self.tick() / 20.0).floor();
         let z = zar(h.id, t, k) + zar(h.id + 101.0, t, k) - 1.0;
         let dk = o.dok.as_ref();
@@ -88,7 +88,7 @@ impl Kafa {
         (Pg - P) * (durum + L)
     }
     /// Seçeneğin tartısını hangi mekanik bozar (decide.js:178).
-    pub fn tartiK(&self, o: &Secenek) -> &'static str {
+    pub fn tarti_k(&self, o: &Secenek) -> &'static str {
         if o.kind == "gönder" {
             "sutHedefSec"
         } else if o.kind == "kenardan" || o.kind == "çalım" || o.kind == "fake" || (o.kind == "sür" && o.duvar) {
@@ -98,7 +98,7 @@ impl Kafa {
         }
     }
     /// Uzak gelecekteki seçeneğin gürültüsü büyür (decide.js:178).
-    pub fn ufukK(&self, h: &Oyuncu, o: &Secenek, T: f64) -> f64 {
+    pub fn ufuk_k(&self, h: &Oyuncu, o: &Secenek, T: f64) -> f64 {
         if o.kind == "gönder" || !(T > 0.0) {
             return 1.0;
         }
@@ -115,9 +115,9 @@ impl Kafa {
             if tf != 0.0 {
                 tf
             } else {
-                let dT = o.det.as_ref().and_then(|d| d.T).map_or(0.0, z0);
-                if dT != 0.0 {
-                    dT
+                let d_t = o.det.as_ref().and_then(|d| d.T).map_or(0.0, z0);
+                if d_t != 0.0 {
+                    d_t
                 } else {
                     jmax(8.0, ln / 0.8)
                 }
@@ -126,7 +126,7 @@ impl Kafa {
         (dt / (T * jmax(1.0, h.govde.yet.y(mek::ILERI_BAKIS)) / 10.0)).sqrt()
     }
     /// Tek seçeneğin gürültüsü (decide.js:183).
-    pub fn secimN(&self, h: &Oyuncu, o: Option<&Secenek>, src: &[Op], T: f64) -> f64 {
+    pub fn secim_n(&self, h: &Oyuncu, o: Option<&Secenek>, src: &[Op], T: f64) -> f64 {
         let o = match o {
             Some(o) => o,
             None => return 0.0,
@@ -134,10 +134,10 @@ impl Kafa {
         if h.id < 0.0 {
             return 0.0;
         }
-        let B = jmin(1.0, self.pressAt(src, h.team, h.x, h.y));
-        let w = self.secimW(h, B, false, Some(self.tartiK(o))) * self.ufukK(h, o, T);
+        let B = jmin(1.0, self.press_at(src, h.team, h.x, h.y));
+        let w = self.secim_w(h, B, false, Some(self.tarti_k(o))) * self.ufuk_k(h, o, T);
         if w > 0.0 {
-            self.secimZ(h, o, w, src)
+            self.secim_z(h, o, w, src)
         } else {
             0.0
         }
@@ -147,7 +147,7 @@ impl Kafa {
         if h.id < 0.0 {
             return best;
         }
-        let B = jmin(1.0, self.pressAt(src, h.team, h.x, h.y));
+        let B = jmin(1.0, self.press_at(src, h.team, h.x, h.y));
         let mut bi: Option<usize> = None;
         let mut bv = f64::NEG_INFINITY;
         for (i, o) in opts.iter().enumerate() {
@@ -155,8 +155,8 @@ impl Kafa {
                 Some(v) => v,
                 None => continue,
             };
-            let w = self.secimW(h, B, false, Some(self.tartiK(o))) * self.ufukK(h, o, T);
-            let v = if w > 0.0 { ov + self.secimZ(h, o, w, src) } else { ov };
+            let w = self.secim_w(h, B, false, Some(self.tarti_k(o))) * self.ufuk_k(h, o, T);
+            let v = if w > 0.0 { ov + self.secim_z(h, o, w, src) } else { ov };
             if v > bv {
                 bv = v;
                 bi = Some(i);

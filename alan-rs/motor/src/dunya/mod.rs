@@ -14,7 +14,7 @@
 //! nesneleri başka bir çevirininkilerle aynı **değildir**. Çeviriler arasında nesne paylaşmak davranışı
 //! değiştirir (ör. `dolanma`: kopya kendi aslını atlamaya başlar); bu yüzden yapılmaz.
 //! Bağımlılık: yalnız temel katman ve `model` (katman kuralı `sina/katman.sh`).
-#![allow(non_snake_case)]
+
 
 use std::sync::Arc;
 

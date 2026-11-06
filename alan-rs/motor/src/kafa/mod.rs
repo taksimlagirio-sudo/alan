@@ -1,4 +1,4 @@
-#![allow(non_snake_case, non_upper_case_globals)]
+
 //! Kafa (decide.js): karar modülü.
 //!
 //! JS'te `decide.js` tek bir kapanıştır; ortak durum `D` ve modül düzeyi önbellekler/sabitler orada

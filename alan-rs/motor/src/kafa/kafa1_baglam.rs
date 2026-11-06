@@ -38,22 +38,22 @@ pub struct Kafa {
     /// geçici bağlam (JS `D`'nin `_` alanları)
     pub bag: crate::model::KafaBag,
     pub dis: Arc<dyn Dis>,
-    pub SAH_F: Option<SahF>,
+    pub sah_f: Option<SahF>,
     /// JS `keepP.son`: tutmanın son ilerleyişi (ilk kesişmeye dek)
-    pub keepP_son: Cell<f64>,
+    pub keep_p_son: Cell<f64>,
     /// JS `kesisK.son`
-    pub kesisK_son: Cell<f64>,
+    pub kesis_k_son: Cell<f64>,
     /// sendelemeyle biten benzetimde topu geri almaya dek beklenen süre (tik); keepP_gec: ilk kesişmenin ki
-    pub kesisK_gec: Cell<f64>,
-    pub keepP_gec: Cell<f64>,
+    pub kesis_k_gec: Cell<f64>,
+    pub keep_p_gec: Cell<f64>,
     /// JS `D._mac` (kafa2'nin okuduğu maç görünümü; maç döngüsü kararın önünde doldurur)
     pub mac: Option<MacGor>,
     /// JS `m._prT` çıktısı (kafa2 yazar; maç ve kafa1'in girEsik'i `Dis::prT` ile okur, bkz. `PrT::d1`)
-    pub prT: Option<PrT>,
+    pub pr_t: Option<PrT>,
     /// kafa2'nin modül düzeyi önbellekleri ve bayrakları
     pub k2: Kafa2Durum,
     /// decide0'ın `srcC._kc`'si (kararın K önbelleği; launchFor/ucusSure/bankSure/bankFor buna bakar)
-    pub srcC_kc: Option<RefCell<KOnbellek>>,
+    pub src_c_kc: Option<RefCell<KOnbellek>>,
     /// önbellekler, ömürlerine göre (MIMARI.md 3e-4)
     pub ob: super::onbellek::Onbellek,
 }
@@ -64,15 +64,15 @@ impl Kafa {
             D: d_js(),
             bag: Default::default(),
             dis,
-            SAH_F: None,
-            keepP_son: Cell::new(f64::INFINITY),
-            kesisK_son: Cell::new(0.0),
-            kesisK_gec: Cell::new(0.0),
-            keepP_gec: Cell::new(0.0),
+            sah_f: None,
+            keep_p_son: Cell::new(f64::INFINITY),
+            kesis_k_son: Cell::new(0.0),
+            kesis_k_gec: Cell::new(0.0),
+            keep_p_gec: Cell::new(0.0),
             mac: None,
-            prT: None,
-            k2: Kafa2Durum { IMK_INAN_T: 60.0, ..Default::default() },
-            srcC_kc: None,
+            pr_t: None,
+            k2: Kafa2Durum { imk_inan_t: 60.0, ..Default::default() },
+            src_c_kc: None,
             ob: Default::default(),
         }
     }
@@ -107,8 +107,8 @@ impl Kafa {
     }
     /// `(.17 + .006 * ALAN_HZ(p)) * ALAN_SPRE(p)`
     #[inline(always)]
-    pub fn vS(&self, p: &Oyuncu) -> f64 {
-        self.spd(p) * self.dis.ALAN_SPRE(p)
+    pub fn v_s(&self, p: &Oyuncu) -> f64 {
+        self.spd(p) * self.dis.alan_spre(p)
     }
     /// JS ALAN_TEPKI(p, k)
     pub fn TEPKI(&self, p: &Oyuncu, k: Tepki) -> f64 {
@@ -141,7 +141,7 @@ impl Kafa {
 pub struct KuralK<'a>(pub &'a dyn Dis);
 impl<'a> Kural for KuralK<'a> {
     fn spr(&self, p: &Oyuncu) -> f64 {
-        self.0.ALAN_SPR(p)
+        self.0.alan_spr(p)
     }
     fn ik_yavas(&self) -> f64 {
         match self.0.IK() {

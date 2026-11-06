@@ -77,7 +77,7 @@ impl Default for Fizik {
 pub const KX: f64 = W / 100.0;
 pub const KY: f64 = H / 50.0;
 #[inline(always)]
-pub fn dirOf(t: f64) -> f64 {
+pub fn dir_of(t: f64) -> f64 {
     if t == 0.0 {
         1.0
     } else {
@@ -86,7 +86,7 @@ pub fn dirOf(t: f64) -> f64 {
 }
 
 #[inline(always)]
-pub fn ownX(t: f64) -> f64 {
+pub fn own_x(t: f64) -> f64 {
     if t == 0.0 {
         0.0
     } else {

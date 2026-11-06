@@ -206,7 +206,7 @@ Bilerek ertelenen işler; her biri bir karar ya da uygun bir an bekliyor:
 |---|---|---|
 | ~~**`dolanma` davranışı**~~ (3.2 C): hayali bir kopya oyuncu, dünyadaki kendi gerçek gövdesinin etrafından dolanmaya çalışıyordu | **Yapıldı (5 Kasım)**: kopya aslını oyuncu kimliğiyle tanıyıp atlıyor; varsayılan, eski davranış `ALAN_DOLANMA_ESKI` ile (yalnız yerelde). Ölçüm 3.4; başvurular `sina/ayni.sh --yaz` ile yenilendi | — |
 | **4c-2: tek dünya** (kafanın `Op` yerine görünüm `Varlik` üzerinde çalışması, çevirilerin kalkması) | Çeviriler artık sürenin ~%1,5'i; kafanın ~14 bin satırı `&[Op]` üzerinden alanlara doğrudan erişiyor (çok günlük iş, davranış oturumuyla sürekli çakışır); çeviriler arasında nesne paylaşmak `dolanma`'yı değiştirir | `dolanma` kararı verildi; kafa kodu durulduğunda |
-| **Rust adlandırması** (JS adları: `ALAN_SPR`, `decide0K`, `non_snake_case` izinleri) | Binlerce satıra dokunur; davranış oturumuyla sürekli çakışır; değeri okunurluk | 7c bitti; sırada |
+| ~~**Rust adlandırması**~~ | **Yapıldı (6 Kasım, 3.10)**: 1198 ad Rust biçiminde; kalanlar (serde/JSON adları, tek harfli matematik adları) bilerek bırakıldı | — |
 | **Aşama 5: veri** (`Oyuncu` sıcak/soğuk, `JsDeger`, gereksiz `Option`'lar) | Kopya maliyeti %2,4'e indi; `model.rs` her katmanın ortak tipi, bölmesi 4c-2'ye bağlı | 4c-2 ile |
 | ~~**3e-4: önbelleklerin ömürleri**~~ | **Yapıldı (6 Kasım)**: `Onbellek` | — |
 
@@ -434,6 +434,31 @@ Bölme derleyicinin bulduğu dört gizli bağı açtı (hepsi davranışı deği
 Doğrulama: `sina/ayni.sh` aynı, main ile 20 maç × 2700 tik parmak izi birebir, testler 14/0/12, wasm derleniyor.
 Hız gürültü içinde (m00/m05/m10, 600 tik, üçer koşu: 19,05/15,41/17,15 → 19,42/15,34/17,24 ms/tik); release
 derlemesi 60 → 30 sn (crate'ler paralel derleniyor).
+
+### 3.10 Rust adlandırması (6 Kasım)
+
+Derleyicinin `non_snake_case` / `non_upper_case_globals` / `non_camel_case_types` uyarıları (izinler kaldırılınca 1544
+farklı ad) önerdiği adlarla, araçla (`sina/adlandir.py`) değiştirildi: **1198 ad** (işlevler, yöntemler, trait
+yöntemleri, tipler, sabitler, serde dışı alanlar, değişkenler; ör. `ALAN_SPR` → `alan_spr`, `JP_bkE` → `JpBkE`).
+Eşleme `sina/ad-esleme.tsv`'de (eski ad, yeni ad, tür).
+
+Yöntem: eski adın her kod tokeni (yorum ve dizgiler dışında) yeni adla değişir; yeni ad kodda hiçbir yerde geçmiyorsa.
+Bu birebir bir yeniden adlandırmadır, anlam değişemez; adın dışarıdan göründüğü yerler hariç tutuldu:
+- serde alanları (türetilmiş ya da `tac_yap!` gibi makroyla kurulan tipler) ve girdi JSON'larının anahtarları: maçın
+  girdisi ve sitenin okuduğu çıktı aynı kalır (131 ad);
+- biçim dizgisinde yakalanan adlar (`"{ad}"`, 5), wasm'ın dışa verdiği işlevler;
+- yeni adı zaten var olanlar (195; çoğu tek harfli matematik adı: `T` → `t`, `D` → `d`), farklı öneri alanlar (7),
+  aynı yeni ada düşenler (4), aynı tokenin başka türde de kullanıldığı 4 ad (`KOP`, `UA`, `engage`, `oyala`).
+Yorumlardaki JS adları (`/// JS macW`) bilerek değişmedi: JS motoruyla karşılık onlarda.
+
+Kalan adlar yüzünden 48 dosyada izin satırı duruyor; uyarısı kalmayan dosyalarda izin kaldırıldı (yeni kodda uyarı verir).
+
+Eski adlarla yazılmış bir dalı güncellemek: `python3 sina/adlandir.py --hazir sina/ad-esleme.tsv` (yalnız eşlemedeki
+adları değiştirir; sonra `cargo check`).
+
+Doğrulama: `sina/ayni.sh` aynı, 20 maç × 2700 tik parmak izi birebir, testler 14/0/12, wasm derleniyor. İlk denemede
+`tac_yap!` makrosunun serde alanları (`kpSure` …) yakalanmamıştı ve başvurular ayrıştı; araç makroları ve girdi JSON
+anahtarlarını da dışarıda bırakacak biçimde düzeltildi.
 
 ## 4. Dış kütüphaneler
 

@@ -170,7 +170,7 @@ pub fn fak(k: usize) -> f64 {
 }
 
 /// JS macW(d, kal): kalan sürede gol sayılarının Poisson dağılımıyla atılan/yenen golün puan değeri.
-pub fn macW(d: f64, kal: f64) -> MacW {
+pub fn mac_w(d: f64, kal: f64) -> MacW {
     let lam = MAC_ORAN * jmax(0.0, kal);
     let mut pk = [0.0f64; 12];
     let mut s = 0.0;
@@ -195,17 +195,17 @@ pub fn macW(d: f64, kal: f64) -> MacW {
 }
 
 impl MacZ {
-    fn eK(&self, k: f64) -> f64 {
-        macW(self.d, 60.0 * k).e0
+    fn e_k(&self, k: f64) -> f64 {
+        mac_w(self.d, 60.0 * k).e0
     }
-    fn eT(&self, dt: f64) -> f64 {
+    fn e_t(&self, dt: f64) -> f64 {
         let r = jmax(0.0, self.kal - dt) / 60.0;
         let k = r.floor();
         let f = r - k;
-        self.eK(k) * (1.0 - f) + self.eK(k + 1.0) * f
+        self.e_k(k) * (1.0 - f) + self.e_k(k + 1.0) * f
     }
     /// JS macZ(dt)
     pub fn zaman(&self, dt: f64) -> f64 {
-        (self.eT(dt) - self.eT(0.0)) / self.birim
+        (self.e_t(dt) - self.e_t(0.0)) / self.birim
     }
 }

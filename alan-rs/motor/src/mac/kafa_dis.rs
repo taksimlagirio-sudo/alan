@@ -31,7 +31,7 @@ pub struct MacDis {
     pub siddet: [(Option<f64>, bool, f64); 2],
     pub enHarcama: [Option<f64>; 2],
     pub gs: std::cell::RefCell<Option<JMShGs>>,
-    pub prT: std::cell::RefCell<Option<d1::PrT>>,
+    pub pr_t: std::cell::RefCell<Option<d1::PrT>>,
     /// yerleşimin tehlike'si için: son seçenekler, oyuncu kimlikleri, maçın tiki
     pub mac: Arc<Mac>,
 }
@@ -58,14 +58,14 @@ impl MacDis {
     pub fn kur(m: &mut Mac) -> MacDis {
         let kural = mac_kurali(m);
         let tacE = [0u8, 1].map(|t| {
-            let tq = crate::mac::tac::tacEff(m, t as f64);
+            let tq = crate::mac::tac::tac_eff(m, t as f64);
             let kp = tq._kp.is_some();
             sekil::gecici_dis::TacE { t: tq, kp }
         });
         let siddet = [0usize, 1].map(|t| {
             let tq = m.tac.get(t).cloned().unwrap_or_default();
             let yz = tq.yz == Some(true);
-            let mk = crate::mac::tac::macEff(m, t as f64, Default::default()).macK.unwrap_or(1.0);
+            let mk = crate::mac::tac::mac_eff(m, t as f64, Default::default()).macK.unwrap_or(1.0);
             (tq.siddet, yz, mk)
         });
         let enHarcama = [0usize, 1].map(|t| m.tac.get(t).and_then(|q| q.enHarcama));
@@ -73,8 +73,8 @@ impl MacDis {
             let p = &m.ps[h];
             (p.id, p.team, p.x, p.y)
         });
-        let gs = m.mac.sekil.sh.gs.as_ref().map(|g| JMShGs { t: g.t, dt: g.dt as f64, on: g.on, onP: g.onP, oy: g.oy, ..Default::default() });
-        MacDis { kural: std::cell::Cell::new(kural), ch: std::cell::Cell::new(Some(m.ch)), holder: std::cell::Cell::new(holder), tacE, siddet, enHarcama, gs: std::cell::RefCell::new(gs), prT: std::cell::RefCell::new(m.mac.prT_k.clone()), mac: Arc::new(hafif(m)) }
+        let gs = m.mac.sekil.sh.gs.as_ref().map(|g| JMShGs { t: g.t, dt: g.dt as f64, on: g.on, on_p: g.on_p, oy: g.oy, ..Default::default() });
+        MacDis { kural: std::cell::Cell::new(kural), ch: std::cell::Cell::new(Some(m.ch)), holder: std::cell::Cell::new(holder), tacE, siddet, enHarcama, gs: std::cell::RefCell::new(gs), pr_t: std::cell::RefCell::new(m.mac.pr_t_k.clone()), mac: Arc::new(hafif(m)) }
     }
     fn takim_tac(&self, t: f64) -> &sekil::gecici_dis::TacE {
         &self.tacE[if t == 1.0 { 1 } else { 0 }]
@@ -92,19 +92,19 @@ impl Dis for MacDis {
         eski
     }
     // ---- enerji / sprint ----
-    fn ALAN_EN3_KUL(&self, p: &Oyuncu, e: f64, bizde: bool, bx: f64, by: f64) -> f64 {
-        en::ALAN_EN3_KUL(p, e, bizde, Some((bx, by)), &self.kural.get())
+    fn alan_en3_kul(&self, p: &Oyuncu, e: f64, bizde: bool, bx: f64, by: f64) -> f64 {
+        en::alan_en3_kul(p, e, bizde, Some((bx, by)), &self.kural.get())
     }
     // ---- yerleşim ----
     fn S(&self) -> Option<d1::ShapeS> {
         let S = &sekil::sabit::S;
-        Some(d1::ShapeS { react: Some(S.react), rcvBuf: S.rcvBuf, marginT: S.marginT, markOff: Some(S.markOff), bekOnce: Some(S.bekOnce), bekSerbest: S.bekSerbest })
+        Some(d1::ShapeS { react: Some(S.react), rcv_buf: S.rcv_buf, margin_t: S.margin_t, mark_off: Some(S.mark_off), bek_once: Some(S.bek_once), bek_serbest: S.bek_serbest })
     }
-    fn GR(&self) -> Option<d1::ShapeGR> {
-        Some(d1::ShapeGR { yasH: sekil::sabit::GR.yasH })
+    fn gr(&self) -> Option<d1::ShapeGR> {
+        Some(d1::ShapeGR { yas_h: sekil::sabit::gr.yas_h })
     }
-    fn GR_yasHata(&self, yas: f64) -> f64 {
-        sekil::sabit::GR.yasHata(yas)
+    fn gr_yas_hata(&self, yas: f64) -> f64 {
+        sekil::sabit::gr.yas_hata(yas)
     }
     fn gside(&self, a: Nk, t: f64, off: f64) -> Nk {
         let (x, y) = sekil::yer::gside(a.x, a.y, if t == 1.0 { 1 } else { 0 }, off);
@@ -114,9 +114,9 @@ impl Dis for MacDis {
         let (x, y) = sekil::yer::bekci(p, b.x, b.y, None, &self.kural.get());
         Some(nk(x, y))
     }
-    fn aliciDirenc(&self, pts: &[Nk], p: &Oyuncu, rc: f64, iMin: f64, rP: f64) -> Option<Nk> {
+    fn alici_direnc(&self, pts: &[Nk], p: &Oyuncu, rc: f64, i_min: f64, r_p: f64) -> Option<Nk> {
         let yol: Vec<sekil::ucus::Nokta> = pts.iter().map(|q| sekil::ucus::Nokta { x: q.x, y: q.y, e: 0.0 }).collect();
-        sekil::ucus::aliciDirenc(&yol, p, rc, iMin, Some(rP), &self.kural.get()).map(|a| nk(a.x, a.y))
+        sekil::ucus::alici_direnc(&yol, p, rc, i_min, Some(r_p), &self.kural.get()).map(|a| nk(a.x, a.y))
     }
     fn tehlike(&self, h: &Oyuncu) -> Vec<d1::Tehlike> {
         let m = &*self.mac;
@@ -128,7 +128,7 @@ impl Dis for MacDis {
             .map(|t| d1::Tehlike { an: t.an, w: t.w, w0: t.w0, x: t.x, y: t.y, k: t.k, L: t.L })
             .collect()
     }
-    fn ilkPres(&self, dtik: f64, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[d1::Tehlike], _dtac: &d1::TacEff, gs: &Option<JMShGs>) {
+    fn ilk_pres(&self, dtik: f64, tick: f64, qv: &mut Oyuncu, hx: &Oyuncu, team: f64, TH: &[d1::Tehlike], _dtac: &d1::TacEff, gs: &Option<JMShGs>) {
         use sekil::varlik::{Gs, Mc};
         // JS ilkPres(vm, …): vm yalnız tik taşır; yerleşimin pres hesabı maçtan yalnız tiki okur.
         // Boş maç ve yerleşim durumu her çağrıda kurulmaz (kesişme döngüsünde çok sık çağrılır).
@@ -136,8 +136,8 @@ impl Dis for MacDis {
             let mut t = t.borrow_mut();
             let IlkTampon { m, ek, ps } = &mut *t;
             m.tick = tick;
-            ek.sh.gs = gs.as_ref().map(|g| Gs { t: g.t, dt: g.dt as u8, on: g.on, onP: g.onP, oy: g.oy });
-            let onK0 = qv.hal._onK.clone(); // ilkPres_h okur (kafa görünümünde), sonra geri konur
+            ek.sh.gs = gs.as_ref().map(|g| Gs { t: g.t, dt: g.dt as u8, on: g.on, on_p: g.on_p, oy: g.oy });
+            let on_k0 = qv.hal._onK.clone(); // ilkPres_h okur (kafa görünümünde), sonra geri konur
             // qv tampona yer değiştirerek girer (kopya yok); tamponda hep tek oyuncu
             if ps.len() != 1 {
                 ps.clear();
@@ -151,15 +151,15 @@ impl Dis for MacDis {
             let kural = self.kural.get();
             // kafanın kendi pres sınaması: boş maçta, kafasız (yerleşim buradan kafaya dönmez)
             let mut c = Mc { m, ps, ball: None, ek, kafa: None, k: &kural, d, lite: true, rnd: None, dtik: Some(dtik) };
-            sekil::pres::ilkPres_h(&mut c, 0, hx, if team == 1.0 { 1 } else { 0 }, Some(&th), dtac);
+            sekil::pres::ilk_pres_h(&mut c, 0, hx, if team == 1.0 { 1 } else { 0 }, Some(&th), dtac);
             // sonuç (tx, ty, job dahil) qv'ye geri döner; tamponda eski hâli kalır, bir sonraki çağrıda üzerine yazılır
             std::mem::swap(qv, &mut ps[0]);
             // JS: qv nesnesi kesişme simülasyonu boyunca yaşar; ilkPres'in yazdığı pres planı (fake/iç) ve
             // sprint bir sonraki adımda görülür. (_onK bu görünümde yazılmaz.)
-            qv.hal_mut()._onK = onK0;
+            qv.hal_mut()._onK = on_k0;
         });
     }
-    fn AS_ilkPres_var(&self) -> bool {
+    fn as_ilk_pres_var(&self) -> bool {
         true
     }
     // ---- maç ----
@@ -173,21 +173,21 @@ impl Dis for MacDis {
     fn mac_holder(&self) -> Option<(f64, f64, f64, f64)> {
         self.holder.get()
     }
-    fn tac_enHarcama(&self, team: f64) -> Option<f64> {
+    fn tac_en_harcama(&self, team: f64) -> Option<f64> {
         self.enHarcama[if team == 1.0 { 1 } else { 0 }]
     }
     fn tac_siddet(&self, team: f64) -> Option<(Option<f64>, bool, f64)> {
         Some(self.siddet[if team == 1.0 { 1 } else { 0 }])
     }
-    fn tacEff(&self, team: f64) -> d1::TacEff {
+    fn tac_eff(&self, team: f64) -> d1::TacEff {
         // kafa yalnız taşır (ilkPres'e geri verir); takımı işaretle
         d1::TacEff(vec![("team".into(), team)])
     }
     fn sh_gs(&self) -> Option<JMShGs> {
         self.gs.borrow().clone()
     }
-    fn prT(&self) -> Option<d1::PrT> {
-        self.prT.borrow().clone()
+    fn pr_t(&self) -> Option<d1::PrT> {
+        self.pr_t.borrow().clone()
     }
     // ---- algı kopyaları ----
     fn algi_e(&self, p: &Oyuncu) -> Option<f64> {
@@ -196,21 +196,21 @@ impl Dis for MacDis {
     fn algi_yas(&self, p: &Oyuncu) -> Option<f64> {
         p.hal.__yas
     }
-    fn bekciFm(&self, p: &Oyuncu, B: Nk, fm: &d1::Fm) -> Nk {
+    fn bekci_fm(&self, p: &Oyuncu, B: Nk, fm: &d1::Fm) -> Nk {
         // dünya kopyalanmaz: Bekçi oyuncuların yalnız yerini ve takımını okur
         let ben = fm.ps.iter().position(|q| q.id == p.id && q.team == p.team);
         let bm = sekil::yer::BekM { ps: sekil::yer::BekPs::Pay(fm.ps), holder: fm.holder, ben, sut: true };
         let (x, y) = sekil::yer::bekci(p, B.x, B.y, Some(&bm), &self.kural.get());
         nk(x, y)
     }
-    fn slotBase(&self, fm: &d1::Fm, p: &Oyuncu, B: Nk, hucum: bool) -> Nk {
+    fn slot_base(&self, fm: &d1::Fm, p: &Oyuncu, B: Nk, hucum: bool) -> Nk {
         dunya_kopya(fm.ps, |ps| {
-            let y = sekil::yer::slotBase(&self.mac, ps, p, B.x, B.y, hucum);
+            let y = sekil::yer::slot_base(&self.mac, ps, p, B.x, B.y, hucum);
             nk(y.x, y.y)
         })
     }
-    fn S_prHat(&self, blok: &str) -> Option<f64> {
-        sekil::sabit::prHat(blok)
+    fn s_pr_hat(&self, blok: &str) -> Option<f64> {
+        sekil::sabit::pr_hat(blok)
     }
     fn tl(&self, p: &Oyuncu, ev: &str, k: &str) -> Option<f64> {
         crate::mac::kurulum::tl(p, ev, k)
@@ -251,7 +251,7 @@ pub fn kafa_hazirla(m: &mut Mac) -> Rc<RefCell<Kafa>> {
         // JS m._prT: kafanın yazdığı pres tartısını maç tutar, kafa1 (girEsik) dış dünyadan okur
         if let Some(k) = m.mac.kafa.k.as_ref() {
             if let Ok(k) = k.try_borrow() {
-                m.mac.prT_k = k.prT.as_ref().map(|p| p.d1());
+                m.mac.pr_t_k = k.pr_t.as_ref().map(|p| p.d1());
             }
         }
         let d = Arc::new(MacDis::kur(m));
@@ -297,12 +297,12 @@ pub fn kafa_mac<R>(m: &Mac, f: impl FnOnce(&mut Kafa) -> R) -> R {
 
 /// JS `m._prT`: kafa kararda yazar (D._mac === m). Rust'ta kafa kendinde tutar; karardan hemen sonra
 /// maça (yerleşim okur) ve kafa1'in dış dünyasına (girEsik okur) aktarılır.
-pub fn prT_esitle(m: &mut Mac) {
-    let p = m.mac.kafa.k.as_ref().and_then(|k| k.try_borrow().ok().and_then(|k| k.prT.clone()));
+pub fn pr_t_esitle(m: &mut Mac) {
+    let p = m.mac.kafa.k.as_ref().and_then(|k| k.try_borrow().ok().and_then(|k| k.pr_t.clone()));
     if let Some(p) = p {
         let (hm, _) = p.hm.clone().unwrap_or_default();
-        m._prT = Some(crate::model::JM_prT { team: p.team, hId: p.hId, t: p.t.unwrap_or(f64::NAN), m: p.m.clone(), mm: p.mm.clone(), hm, h: p.h });
-        m.mac.prT_k = Some(p.d1());
+        m._pr_t = Some(crate::model::JmPrT { team: p.team, h_id: p.h_id, t: p.t.unwrap_or(f64::NAN), m: p.m.clone(), mm: p.mm.clone(), hm, h: p.h });
+        m.mac.pr_t_k = Some(p.d1());
     }
 }
 
@@ -314,7 +314,7 @@ pub fn kural_tazele(m: &Mac) {
         d.holder.set(m.holder.map(|h| { let p = &m.ps[h]; (p.id, p.team, p.x, p.y) }));
         d.ch.set(Some(m.ch));
         // JS m._prT ve m.sh.gs canlı okunur: aynı tikte önceki kararın yazdığı görülür
-        *d.prT.borrow_mut() = m.mac.prT_k.clone();
-        *d.gs.borrow_mut() = m.mac.sekil.sh.gs.as_ref().map(|g| JMShGs { t: g.t, dt: g.dt as f64, on: g.on, onP: g.onP, oy: g.oy, ..Default::default() });
+        *d.pr_t.borrow_mut() = m.mac.pr_t_k.clone();
+        *d.gs.borrow_mut() = m.mac.sekil.sh.gs.as_ref().map(|g| JMShGs { t: g.t, dt: g.dt as f64, on: g.on, on_p: g.on_p, oy: g.oy, ..Default::default() });
     }
 }

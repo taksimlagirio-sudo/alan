@@ -35,19 +35,19 @@ fn ikili_katsayilari_js_ile_ayni() {
         };
         f("kutle", kutle(&p, ph), &c["kutle"]);
         f("direnc", direnc(&p, ph), &c["direnc"]);
-        f("omuzK", omuzK(&p), &c["omuzK"]);
-        f("ikEn", ikEn(&p), &c["ikEn"]);
-        f("sendS", sendS(&p), &c["sendS"]);
-        f("dengeKayip", dengeKayip(&p, t), &c["dk"]);
+        f("omuzK", omuz_k(&p), &c["omuzK"]);
+        f("ikEn", ik_en(&p), &c["ikEn"]);
+        f("sendS", send_s(&p), &c["sendS"]);
+        f("dengeKayip", denge_kayip(&p, t), &c["dk"]);
         if !c["h"].is_null() {
             let hh = oyuncu(&c["h"]);
-            f("durtFark", durtFark(&p, &hh), &c["durt"]);
+            f("durtFark", durt_fark(&p, &hh), &c["durt"]);
         }
         if !ph {
             let mut m = Mac::default();
             m.tick = t;
             m.ps = vec![p.clone()];
-            f("dengeHiz", dengeHiz(&m, 0), &c["dh"]);
+            f("dengeHiz", denge_hiz(&m, 0), &c["dh"]);
         }
     }
     eprintln!("ikili {}", v["ik"].as_array().unwrap().len());
@@ -62,7 +62,7 @@ fn govde_ayir_js_ile_ayni() {
         let mut ps: Vec<_> = c["ps"].as_array().unwrap().iter().map(oyuncu).collect();
         let hi = c["h"].as_i64().unwrap();
         let h_ = if hi < 0 { None } else { Some(hi as usize) };
-        govdeAyir(&mut ps, Some(h_), &mut IkBag::default());
+        govde_ayir(&mut ps, Some(h_), &mut IkBag::default());
         for (i, s) in c["son"].as_array().unwrap().iter().enumerate() {
             let p = &ps[i];
             if !ayni(p.x, h(&s[0])) || !ayni(p.y, h(&s[1])) || !ayni(p.vx, h(&s[2])) || !ayni(p.vy, h(&s[3])) || !ayni_o(p.den, &s[4]) {

@@ -54,21 +54,21 @@ pub struct KurSecenek {
 
 /// Kurulumun yerleşime sorduğu (shape.js slotBase, bekci). Sınamalarda kayıttan verilir.
 pub trait KurDis {
-    fn slotBase(&mut self, m: &Mac, p: Pid, ex: f64, ey: f64, att: bool) -> (f64, f64);
+    fn slot_base(&mut self, m: &Mac, p: Pid, ex: f64, ey: f64, att: bool) -> (f64, f64);
     fn bekci(&mut self, m: &Mac, p: Pid, ex: f64, ey: f64) -> (f64, f64);
 }
 /// Gerçek yerleşim (gecici_dis).
 pub struct GeciciKur;
 impl KurDis for GeciciKur {
-    fn slotBase(&mut self, m: &Mac, p: Pid, ex: f64, ey: f64, att: bool) -> (f64, f64) {
-        gecici_dis::slotBase(m, p, ex, ey, att)
+    fn slot_base(&mut self, m: &Mac, p: Pid, ex: f64, ey: f64, att: bool) -> (f64, f64) {
+        gecici_dis::slot_base(m, p, ex, ey, att)
     }
     fn bekci(&mut self, m: &Mac, p: Pid, ex: f64, ey: f64) -> (f64, f64) {
         gecici_dis::bekci(m, p, ex, ey)
     }
 }
 
-pub fn SLOTS() -> [JPSlot; 7] {
+pub fn slots() -> [JPSlot; 7] {
     let s = |r: &str, d: f64, l: f64| JPSlot { role: r.into(), d, l };
     [s("Bekçi", 0.0, 0.0), s("Bek", 0.2, -0.5), s("Bek", 0.2, 0.5), s("Orta", 0.45, -0.35), s("Orta", 0.45, 0.35), s("Kanat", 0.75, -0.85), s("Uç", 0.8, 0.25)]
 }
@@ -78,7 +78,7 @@ pub const NAMES: [[&str; 7]; 2] = [["Aras", "Deniz", "Ece", "Kaan", "Mert", "Sel
 pub const A_ADLAR: [&str; 18] = ["hiz", "ceviklik", "guc", "uzanma", "alan", "kontrol", "surme", "pas", "gonderme", "yukleme", "tepki", "gorus", "yeralma", "sogukkanlilik", "kesme", "refleks", "yerlesim", "hakimiyet"];
 
 /// Ham özelliklerden oyuncunun `a`sı (JS p.a) ve yetenek satırı.
-pub fn yetKur(p: &mut Oyuncu, a: &HamA) {
+pub fn yet_kur(p: &mut Oyuncu, a: &HamA) {
     let mut j = crate::model::JPA::default();
     for (k, v) in &a.0 {
         let x = match v {
@@ -120,11 +120,11 @@ pub fn yetKur(p: &mut Oyuncu, a: &HamA) {
 }
 
 /// JS createMatch(seed, o) (yerleşim gerçek: gecici_dis).
-pub fn createMatch(seed: f64, o: &KurSecenek) -> Mac {
-    createMatch_ile(seed, o, &mut GeciciKur)
+pub fn create_match(seed: f64, o: &KurSecenek) -> Mac {
+    create_match_ile(seed, o, &mut GeciciKur)
 }
 
-pub fn createMatch_ile(seed: f64, o: &KurSecenek, dis: &mut dyn KurDis) -> Mac {
+pub fn create_match_ile(seed: f64, o: &KurSecenek, dis: &mut dyn KurDis) -> Mac {
     let mut m = Mac::default();
     m.r = Rng::yeni(if dogru(seed) { seed as i64 as u32 } else { 1 });
     m.seed = seed;
@@ -137,14 +137,14 @@ pub fn createMatch_ile(seed: f64, o: &KurSecenek, dis: &mut dyn KurDis) -> Mac {
     m.devre2 = false;
     m.score = vec![0.0, 0.0];
     m.ch = 0.3;
-    m.decT = 0.0;
+    m.dec_t = 0.0;
     m.tac = (0..2).map(|t| {
         let x = o.tac.as_ref().and_then(|v| v.get(t).cloned().flatten()).unwrap_or_default();
         TAC0().ust(&x)
     }).collect();
     let z2 = || vec![0.0, 0.0];
-    m.st = crate::model::JMSt { duel: z2(), duelW: z2(), pass: z2(), passOk: z2(), shot: z2(), steal: z2(), poss: z2(), bank: z2(), lead: z2(), loose: z2(), ..Default::default() };
-    let sl = SLOTS();
+    m.st = crate::model::JMSt { duel: z2(), duel_w: z2(), pass: z2(), pass_ok: z2(), shot: z2(), steal: z2(), poss: z2(), bank: z2(), lead: z2(), loose: z2(), ..Default::default() };
+    let sl = slots();
     for t in 0..2 {
         for (i, s) in sl.iter().enumerate() {
             let mut a = HamA::default();
@@ -159,18 +159,18 @@ pub fn createMatch_ile(seed: f64, o: &KurSecenek, dis: &mut dyn KurDis) -> Mac {
             }
             let bek = &*s.role == "Bekçi";
             let mut p = Oyuncu { id: (10 * t + i) as f64, team: t as f64, govde: std::sync::Arc::new(crate::model::OyuncuGovde { i: i as f64, role: s.role.clone(), slot: s.clone(), name: NAMES[t][i].into(), ..Default::default() }), R: if bek { 7.0 } else { 8.0 }, D: if bek { 1.2 } else { 1.0 }, x: W / 2.0, y: CY, vx: 0.0, vy: 0.0, tx: W / 2.0, ty: CY, cd: 0.0, kim: crate::model::Kim::oyuncu((10 * t + i) as f64), ..Default::default() };
-            yetKur(&mut p, &a);
+            yet_kur(&mut p, &a);
             m.ps.push(p);
             m.mac.ham.push(a);
         }
     }
     if let Some(r) = &o.roles {
-        assignRoles_ile(&mut m, r, dis);
+        assign_roles_ile(&mut m, r, dis);
     }
     if let Some(dz) = &o.diz {
         for t in 0..2 {
             if let Some(Some(d)) = dz.get(t) {
-                dizUygula_ile(&mut m, t as f64, d, dis);
+                diz_uygula_ile(&mut m, t as f64, d, dis);
             }
         }
     }
@@ -179,7 +179,7 @@ pub fn createMatch_ile(seed: f64, o: &KurSecenek, dis: &mut dyn KurDis) -> Mac {
 }
 
 /// JS dizSlots("3-2-1")
-pub fn dizSlots(s: &str) -> Vec<Yer> {
+pub fn diz_slots(s: &str) -> Vec<Yer> {
     let rows: Vec<usize> = s.split('-').map(|x| x.trim().parse::<f64>().unwrap_or(f64::NAN)).filter(|&n| n > 0.0).map(|n| n as usize).collect();
     let r = rows.len();
     let ls = |n: usize| -> &'static [f64] {
@@ -202,15 +202,15 @@ pub fn dizSlots(s: &str) -> Vec<Yer> {
     out
 }
 
-pub fn dizUygula(m: &mut Mac, t: f64, dz: &Diz) {
-    dizUygula_ile(m, t, dz, &mut GeciciKur)
+pub fn diz_uygula(m: &mut Mac, t: f64, dz: &Diz) {
+    diz_uygula_ile(m, t, dz, &mut GeciciKur)
 }
 
-pub fn dizUygula_ile(m: &mut Mac, t: f64, dz: &Diz, dis: &mut dyn KurDis) {
+pub fn diz_uygula_ile(m: &mut Mac, t: f64, dz: &Diz, dis: &mut dyn KurDis) {
     let sl = |v: &Option<DizV>| -> Option<Vec<Yer>> {
         match v {
             Some(DizV::Dizi(a)) => Some(a.clone()),
-            Some(DizV::Metin(s)) if !s.is_empty() => Some(dizSlots(s)),
+            Some(DizV::Metin(s)) if !s.is_empty() => Some(diz_slots(s)),
             _ => None,
         }
     };
@@ -237,7 +237,7 @@ pub fn dizUygula_ile(m: &mut Mac, t: f64, dz: &Diz, dis: &mut dyn KurDis) {
     if let Some(e) = m.evre.as_mut() {
         e[t as usize] = None;
     }
-    markAta_ile(m, dis);
+    mark_ata_ile(m, dis);
 }
 
 
@@ -260,7 +260,7 @@ pub fn tlv(p: &Oyuncu, ev: &str, k: &str) -> f64 {
 }
 
 /// JS tlKur(r)
-pub fn tlKur(r: &Rol) -> JPTl {
+pub fn tl_kur(r: &Rol) -> JPTl {
     let mut t = JPTl::default();
     for (k, v) in PAKET("h", r.h.as_deref().unwrap_or("")) {
         t.huc.insert(k.into(), v);
@@ -300,10 +300,10 @@ pub fn RSLOT(ad: &str, s: &JPSlot) -> Option<(f64, f64)> {
 }
 
 /// JS markAta: adam adama oynayanlara en ucuz eşleme (bütün eşlemeler denenir).
-pub fn markAta(m: &mut Mac) {
-    markAta_ile(m, &mut GeciciKur)
+pub fn mark_ata(m: &mut Mac) {
+    mark_ata_ile(m, &mut GeciciKur)
 }
-pub fn markAta_ile(m: &mut Mac, dis: &mut dyn KurDis) {
+pub fn mark_ata_ile(m: &mut Mac, dis: &mut dyn KurDis) {
     for t in [0.0, 1.0] {
         let d: Vec<Pid> = (0..m.ps.len()).filter(|&i| m.ps[i].team == t && !m.ps[i].bekci() && tlv(&m.ps[i], "sav", "adam") >= 0.5).collect();
         let o: Vec<Pid> = (0..m.ps.len()).filter(|&i| m.ps[i].team != t && !m.ps[i].bekci()).collect();
@@ -313,8 +313,8 @@ pub fn markAta_ile(m: &mut Mac, dis: &mut dyn KurDis) {
         let dir = if t == 0.0 { 1.0 } else { -1.0 };
         let ex = (if t == 0.0 { 0.0 } else { W }) + 30.0 * dir * KX;
         let ey = CY;
-        let dp: Vec<(f64, f64)> = d.iter().map(|&p| dis.slotBase(m, p, ex, ey, false)).collect();
-        let op: Vec<(f64, f64)> = o.iter().map(|&q| dis.slotBase(m, q, ex, ey, true)).collect();
+        let dp: Vec<(f64, f64)> = d.iter().map(|&p| dis.slot_base(m, p, ex, ey, false)).collect();
+        let op: Vec<(f64, f64)> = o.iter().map(|&q| dis.slot_base(m, q, ex, ey, true)).collect();
         let cost: Vec<Vec<f64>> = dp.iter().map(|a| op.iter().map(|b| hypot(a.0 - b.0, a.1 - b.1)).collect()).collect();
         let mut best: Option<Vec<usize>> = None;
         let mut bc = 1e9;
@@ -348,11 +348,11 @@ pub fn markAta_ile(m: &mut Mac, dis: &mut dyn KurDis) {
     }
 }
 
-pub fn assignRoles(m: &mut Mac, roles: &Roller) {
-    assignRoles_ile(m, roles, &mut GeciciKur)
+pub fn assign_roles(m: &mut Mac, roles: &Roller) {
+    assign_roles_ile(m, roles, &mut GeciciKur)
 }
 
-pub fn assignRoles_ile(m: &mut Mac, roles: &Roller, dis: &mut dyn KurDis) {
+pub fn assign_roles_ile(m: &mut Mac, roles: &Roller, dis: &mut dyn KurDis) {
     let rol = |roles: &Roller, t: usize, i: f64| -> Option<Rol> { roles.get(t).cloned().flatten().and_then(|r| r.get((i as i64 - 1) as usize).cloned().flatten()) };
     for t in 0..2 {
         if roles.get(t).map_or(true, |r| r.is_none()) {
@@ -365,7 +365,7 @@ pub fn assignRoles_ile(m: &mut Mac, roles: &Roller, dis: &mut dyn KurDis) {
             if let Some(r) = rol(roles, t, p.govde.i) {
                 p.govde_mut().rh = Some(r.h.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| "Serbest".into()).into());
                 p.govde_mut().rs = Some(r.s.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| "Bölge".into()).into());
-                p.govde_mut().tl = Some(std::sync::Arc::new(tlKur(&r)));
+                p.govde_mut().tl = Some(std::sync::Arc::new(tl_kur(&r)));
             }
         }
     }
@@ -434,12 +434,12 @@ pub fn assignRoles_ile(m: &mut Mac, roles: &Roller, dis: &mut dyn KurDis) {
             }
         }
     }
-    markAta_ile(m, dis);
+    mark_ata_ile(m, dis);
     m.ra = Some(vec![Default::default(), Default::default()]);
 }
 
 /// JS roleSample: rol uyumu sayacı (her 10 tikte).
-pub fn roleSample(m: &mut Mac) {
+pub fn role_sample(m: &mut Mac) {
     let Some(h) = m.holder else { return };
     if m.tick % 10.0 != 0.0 {
         return;
@@ -451,7 +451,7 @@ pub fn roleSample(m: &mut Mac) {
             continue;
         }
         let t = p.team;
-        let dir = dirOf(t);
+        let dir = dir_of(t);
         let atk = hteam == t;
         let rsl = p.govde.rslot.as_ref().map_or((p.govde.slot.d, p.govde.slot.l), |r| (r.d, r.l));
         let mut k: Option<&str>;
@@ -463,7 +463,7 @@ pub fn roleSample(m: &mut Mac) {
             } else if tlv(p, "huc", "destek") < 0.35 {
                 ok = (p.x - ex) * dir < -2.0;
             } else if tlv(p, "huc", "kosu") >= 0.75 {
-                let ox = W - ownX(t);
+                let ox = W - own_x(t);
                 let mut last: Option<f64> = None;
                 for q in &m.ps {
                     if q.team != t && !q.bekci() && last.map_or(true, |l| (q.x - ox).abs() < (l - ox).abs()) {
@@ -475,7 +475,7 @@ pub fn roleSample(m: &mut Mac) {
                 if (ex - W / 2.0) * dir <= 0.0 {
                     k = None;
                 } else {
-                    ok = hypot(p.x - (W - ownX(t)), p.y - CY) < 28.0 && (p.y - CY).abs() < 12.0;
+                    ok = hypot(p.x - (W - own_x(t)), p.y - CY) < 28.0 && (p.y - CY).abs() < 12.0;
                 }
             } else {
                 k = None;
@@ -486,10 +486,10 @@ pub fn roleSample(m: &mut Mac) {
                 let mut deep = 1e9;
                 for q in &m.ps {
                     if q.team == t && !q.bekci() {
-                        deep = jmin(deep, (q.x - ownX(t)).abs());
+                        deep = jmin(deep, (q.x - own_x(t)).abs());
                     }
                 }
-                ok = (p.x - ownX(t)).abs() <= deep + 3.0;
+                ok = (p.x - own_x(t)).abs() <= deep + 3.0;
             } else if tlv(p, "sav", "pres") >= 0.75 {
                 ok = p.press;
             } else if tlv(p, "sav", "adam") >= 0.5 {
@@ -519,7 +519,7 @@ pub fn kickoff(m: &mut Mac, t: f64) {
 }
 
 pub fn kickoff_ile(m: &mut Mac, t: f64, dis: &mut dyn KurDis) {
-    kafa_bag::kafaBitir(m, kafa_bag::Son { santra: true, ..Default::default() });
+    kafa_bag::kafa_bitir(m, kafa_bag::Son { santra: true, ..Default::default() });
     for p in m.ps.iter_mut() {
         p.en = Some(jmin(1.0, p.en.unwrap_or(1.0) + enerji::EN.santra));
     }
@@ -529,8 +529,8 @@ pub fn kickoff_ile(m: &mut Mac, t: f64, dis: &mut dyn KurDis) {
         let huc = p.team == t;
         let s = if huc { p.govde.rslot0.as_ref().map(|r| (r.d, r.l)).or(p.govde.rslot.as_ref().map(|r| (r.d, r.l))) } else { None };
         let s = s.or(p.govde.slot0.as_ref().map(|r| (r.d, r.l))).unwrap_or((p.govde.slot.d, p.govde.slot.l));
-        let x0 = ownX(p.team);
-        let dir = dirOf(p.team);
+        let x0 = own_x(p.team);
+        let dir = dir_of(p.team);
         let bl = match tq.blok.as_deref() {
             Some("Düşük") => [8.0, 24.0],
             Some("Yüksek") => [13.0, 33.0],
@@ -546,13 +546,13 @@ pub fn kickoff_ile(m: &mut Mac, t: f64, dis: &mut dyn KurDis) {
         p.hal_mut().driveTo = None;
         p.hal_mut()._dur = None;
     }
-    m.winT = None;
+    m.win_t = None;
     m.gecis = false;
     m.gc = None;
     let k = (0..m.ps.len()).find(|&i| m.ps[i].team == t && m.ps[i].bekci()).or_else(|| (0..m.ps.len()).find(|&i| m.ps[i].team == t && m.ps[i].govde.i == 3.0)).unwrap();
     {
         let kp = &mut m.ps[k];
-        kp.x = ownX(t) + 4.0 * dirOf(t);
+        kp.x = own_x(t) + 4.0 * dir_of(t);
         kp.y = CY;
         kp.tx = kp.x;
         kp.ty = kp.y;
@@ -563,7 +563,7 @@ pub fn kickoff_ile(m: &mut Mac, t: f64, dis: &mut dyn KurDis) {
     }
     m.ball = None;
     m.ch = 0.3;
-    m.decT = 30.0;
+    m.dec_t = 30.0;
     m.fl = None;
     m.sh = Some(Default::default());
     let (ex, ey) = (m.ps[k].x, m.ps[k].y);
@@ -571,20 +571,20 @@ pub fn kickoff_ile(m: &mut Mac, t: f64, dis: &mut dyn KurDis) {
         if pi == k {
             continue;
         }
-        let b = if m.ps[pi].bekci() { dis.bekci(m, pi, ex, ey) } else { dis.slotBase(m, pi, ex, ey, m.ps[pi].team == t) };
+        let b = if m.ps[pi].bekci() { dis.bekci(m, pi, ex, ey) } else { dis.slot_base(m, pi, ex, ey, m.ps[pi].team == t) };
         if b.0.is_finite() && b.1.is_finite() {
             let p = &mut m.ps[pi];
             p.x = jmax(0.8, jmin(W - 0.8, b.0));
             p.y = jmax(0.8, jmin(H - 0.8, b.1));
             // outOfKuyu: KUYU açıkken bir şey yapmaz
             if p.team != t {
-                let kg = ownX(t);
+                let kg = own_x(t);
                 let dx = p.x - kg;
                 let dy = p.y - CY;
                 let d = hypot(dx, dy);
                 let r = Q.kuyu_a + 1.0;
                 if d < r {
-                    let ux = if d > 1e-6 { dx / d } else { dirOf(t) };
+                    let ux = if d > 1e-6 { dx / d } else { dir_of(t) };
                     let uy = if d > 1e-6 { dy / d } else { 0.0 };
                     p.x = jmax(0.8, jmin(W - 0.8, kg + ux * r));
                     p.y = jmax(0.8, jmin(H - 0.8, CY + uy * r));
@@ -594,16 +594,16 @@ pub fn kickoff_ile(m: &mut Mac, t: f64, dis: &mut dyn KurDis) {
             p.ty = p.y;
         }
     }
-    ikili::govdeAyir(&mut m.ps, None, &mut ikili::IkBag::default());
+    ikili::govde_ayir(&mut m.ps, None, &mut ikili::IkBag::default());
 }
 
 /// JS slotPos (eski yerleşimin yeri; dışa açık).
-pub fn slotPos(m: &Mac, p: &Oyuncu, bx: f64, by: f64, att: bool) -> (f64, f64) {
+pub fn slot_pos(m: &Mac, p: &Oyuncu, bx: f64, by: f64, att: bool) -> (f64, f64) {
     let t = p.team;
     let tac = &m.tac[t as usize];
     let s = &p.govde.slot;
-    let x0 = ownX(t);
-    let dir = dirOf(t);
+    let x0 = own_x(t);
+    let dir = dir_of(t);
     let bd = (bx - x0) * dir;
     if &*s.role == "Bekçi" {
         let (gx, gy) = (x0, CY);
