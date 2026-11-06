@@ -1,6 +1,6 @@
 //! Kayıttan maç kurma (alan-v5/mac-isci.js: kurUygula, egUy, rastgele; `yeni` iletisinin kurulumu).
 //! Kayıt: kayit-*.json → `yeni` = {tohum, tac, diz, len, devre, oz, kadro, oyuncular, roller}.
-use super::kurulum::{assignRoles_ile, createMatch_ile, dizUygula_ile, yetKur, Diz, GeciciKur, KurDis, KurSecenek, Roller};
+use super::kurulum::{assign_roles_ile, create_match_ile, diz_uygula_ile, yet_kur, Diz, GeciciKur, KurDis, KurSecenek, Roller};
 use super::*;
 use serde::Deserialize;
 
@@ -46,7 +46,7 @@ impl Kayit {
     }
 }
 
-fn hamV(v: &serde_json::Value) -> Option<HamV> {
+fn ham_v(v: &serde_json::Value) -> Option<HamV> {
     match v {
         serde_json::Value::Number(n) => n.as_f64().map(HamV::S),
         serde_json::Value::String(s) => Some(HamV::M(s.clone())),
@@ -55,7 +55,7 @@ fn hamV(v: &serde_json::Value) -> Option<HamV> {
 }
 
 /// JS egUy(m, R): oyuncu eğilimleri
-pub fn egUy(m: &mut Mac, r: &Roller) {
+pub fn eg_uy(m: &mut Mac, r: &Roller) {
     for p in m.ps.iter_mut() {
         let e = r.get(p.team as usize).cloned().flatten().and_then(|v| v.get((p.govde.i as i64 - 1) as usize).cloned().flatten()).and_then(|x| x.eg);
         if let Some(e) = e {
@@ -65,7 +65,7 @@ pub fn egUy(m: &mut Mac, r: &Roller) {
 }
 
 /// JS kurUygula(m, d): kadro (ad, özellikler), roller, diziliş.
-pub fn kurUygula(m: &mut Mac, d: &Kayit, dis: &mut dyn KurDis) {
+pub fn kur_uygula(m: &mut Mac, d: &Kayit, dis: &mut dyn KurDis) {
     if let Some(oy) = &d.oyuncular {
         for t in 0..2 {
             let Some(Some(a)) = oy.get(t) else { continue };
@@ -79,23 +79,23 @@ pub fn kurUygula(m: &mut Mac, d: &Kayit, dis: &mut dyn KurDis) {
                 }
                 let mut h = m.mac.ham[pi].clone();
                 for (k, v) in &o.a {
-                    if let Some(v) = hamV(v) {
+                    if let Some(v) = ham_v(v) {
                         h.koy(k, v);
                     }
                 }
-                yetKur(&mut m.ps[pi], &h);
+                yet_kur(&mut m.ps[pi], &h);
                 m.mac.ham[pi] = h;
             }
         }
     }
     if let Some(r) = &d.roller {
-        assignRoles_ile(m, r, dis);
-        egUy(m, r);
+        assign_roles_ile(m, r, dis);
+        eg_uy(m, r);
     }
     if let Some(dz) = &d.diz {
         for t in 0..2 {
             if let Some(Some(z)) = dz.get(t) {
-                dizUygula_ile(m, t as f64, z, dis);
+                diz_uygula_ile(m, t as f64, z, dis);
             }
         }
     }
@@ -113,24 +113,24 @@ pub fn rastgele(m: &mut Mac, kadro: f64) {
         for e in h.0.iter_mut() {
             e.1 = HamV::S(6.0 + (r() * 11.0).floor());
         }
-        yetKur(&mut m.ps[pi], &h);
+        yet_kur(&mut m.ps[pi], &h);
         m.mac.ham[pi] = h;
     }
 }
 
 /// Kayıttan maç (mac-isci.js `yeni`): createMatch → (rastgele) → kurUygula → kafaAc.
-pub fn macKur(d: &Kayit) -> Mac {
-    macKur_ile(d, &mut GeciciKur)
+pub fn mac_kur(d: &Kayit) -> Mac {
+    mac_kur_ile(d, &mut GeciciKur)
 }
-pub fn macKur_ile(d: &Kayit, dis: &mut dyn KurDis) -> Mac {
+pub fn mac_kur_ile(d: &Kayit, dis: &mut dyn KurDis) -> Mac {
     let len = d.len.filter(|&l| dogru(l)).unwrap_or(5400.0);
     let o = KurSecenek { tac: d.tac.clone(), len: Some(len), diz: d.diz.clone(), devre: Some(d.devre.unwrap_or(false)), ..Default::default() };
-    let mut m = createMatch_ile(d.tohum, &o, dis);
+    let mut m = create_match_ile(d.tohum, &o, dis);
     if d.oz.as_deref() == Some("rastgele") {
         rastgele(&mut m, d.kadro.unwrap_or(0.0));
     }
-    kurUygula(&mut m, d, dis);
-    kafa_bag::kafaAc(&mut m);
+    kur_uygula(&mut m, d, dis);
+    kafa_bag::kafa_ac(&mut m);
     m
 }
 
@@ -169,10 +169,10 @@ pub fn uygula_ile(m: &mut Mac, c: &Degisim, dis: &mut dyn KurDis) {
     if let Some(r) = &c.roller {
         let mut R: Roller = vec![None, None];
         R[t] = Some(r.clone());
-        assignRoles_ile(m, &R, dis);
-        egUy(m, &R);
+        assign_roles_ile(m, &R, dis);
+        eg_uy(m, &R);
     }
     if let Some(z) = &c.diz {
-        dizUygula_ile(m, c.t, z, dis);
+        diz_uygula_ile(m, c.t, z, dis);
     }
 }

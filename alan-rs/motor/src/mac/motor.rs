@@ -23,7 +23,7 @@ impl Motor {
 impl MacMotoru for Motor {
     fn kayittan(yeni: &serde_json::Value) -> Result<Self, String> {
         let k: super::kayit::Kayit = serde_json::from_value(yeni.get("yeni").cloned().unwrap_or_else(|| yeni.clone())).map_err(|e| e.to_string())?;
-        Ok(Motor::yeni(super::kayit::macKur(&k)))
+        Ok(Motor::yeni(super::kayit::mac_kur(&k)))
     }
     fn adim(&mut self) {
         self.h0 = self.m.holder;
@@ -163,7 +163,7 @@ impl Motor {
         f[171] = it.map_or(-1.0, |i| i.0 as f32);
         f[172] = it.map_or(nan, |i| i.1 as f32);
         f[173] = it.map_or(nan, |i| i.2 as f32);
-        let c = super::hareket::corePos(m);
+        let c = super::hareket::core_pos(m);
         f[28] = c.map_or(nan, |c| c.0 as f32);
         f[29] = c.map_or(nan, |c| c.1 as f32);
         f[30] = m.holder.map_or(-1.0, |h| h as f32);

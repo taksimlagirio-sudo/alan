@@ -1,0 +1,1198 @@
+ALAN_DENGE_KAYIP	alan_denge_kayip	trait method
+ALAN_DOKUNUS	alan_dokunus	trait method
+ALAN_EN	alan_en	trait method
+ALAN_EN2	alan_en2	trait method
+ALAN_EN2_SB	alan_en2_sb	function,trait method
+ALAN_EN2_SD	alan_en2_sd	function
+ALAN_EN2_SPRE	alan_en2_spre	function
+ALAN_EN2_TS	alan_en2_ts	function,trait method
+ALAN_EN3_DOL	alan_en3_dol	function,trait method
+ALAN_EN3_KUL	alan_en3_kul	function,trait method
+ALAN_EN3_SGIR	alan_en3_sgir	function,trait method
+ALAN_EN3_TEPE	alan_en3_tepe	function,trait method
+ALAN_EN_S	alan_en_s	function,trait method
+ALAN_EN_SD	alan_en_sd	function
+ALAN_HZ	alan_hz	function
+ALAN_KOSU_M	alan_kosu_m	function,trait method
+ALAN_KOSU_PR	alan_kosu_pr	function
+ALAN_KOSU_T	alan_kosu_t	function,trait method
+ALAN_KOSU_TP	alan_kosu_tp	function
+ALAN_OZ	alan_oz	function
+ALAN_SPR	alan_spr	function,trait method
+ALAN_SPRE	alan_spre	function,trait method
+ALAN_SPR_AFTER	alan_spr_after	function
+ALAN_SPR_FAZ	alan_spr_faz	trait method
+ALAN_SPR_H	alan_spr_h	function
+ALAN_SPR_HK	alan_spr_hk	function,trait method
+ALAN_TASIYICI_SONRA_YAVAS	alan_tasiyici_sonra_yavas	trait method
+ALAN_TEPKI	alan_tepki	function
+ALAN_Y	alan_y	function
+ALAN_YOL_VER_TEPKI	alan_yol_ver_tepki	trait method
+AM_ivme	am_ivme	function
+AM_spd	am_spd	function
+AM_sprK	am_spr_k	function
+AM_tl	am_tl	function
+AS_S_prHat	as_s_pr_hat	function
+AS_S_rcvBuf	as_s_rcv_buf	function
+AS_bekci	as_bekci	function
+AS_gec	as_gec	function
+AS_gecOf	as_gec_of	function
+AS_gecTab	as_gec_tab	function
+AS_gside	as_gside	function
+AS_ilkPres_var	as_ilk_pres_var	trait method
+AS_slotBase	as_slot_base	function
+AS_vSp	as_v_sp	function
+A_to	a_to	variable
+As	r#as	variable
+BEKLE_BOZ	bekle_boz	trait method
+BENF	benf	variable
+BSC	bsc	structure field
+BSV	bsv	variable
+C0dk	c0dk	variable
+CRk	crk	variable
+CXS	cxs	variable
+Cq	cq	variable
+DLo	dlo	variable
+DU_engage	DU_ENGAGE	constant
+DU_fakeT	DU_FAKE_T	constant
+DVo	dvo	variable
+EN2	en2	function
+ENG	eng	variable
+FF	ff	variable
+GECIS_VARS	gecis_vars	function
+GR	gr	trait method,variable
+GR_yasHata	gr_yas_hata	trait method
+GRk	grk	variable
+GV	gv	variable
+Gkk	gkk	structure field
+Gp	gp	variable
+H2	h2	variable
+IMK_INAN_T	imk_inan_t	structure field
+IMK_OFS	imk_ofs	structure field
+IVK	ivk	function
+JM_pas	JmPas	type
+JM_prT	JmPrT	type
+JM_sec	JmSec	type
+JM_secOE	JmSecOe	type
+JM_temas	JmTemas	type
+JM_temaslarLE	JmTemaslarLe	type
+JP_bkE	JpBkE	type
+JP_gvKaz	JpGvKaz	type
+JP_kh	JpKh	type
+JP_kt	JpKt	type
+JP_ktB	JpKtB	type
+JP_kv	JpKv	type
+JP_omuz	JpOmuz	type
+JP_onH	JpOnH	type
+JP_onK	JpOnK	type
+JP_otA	JpOtA	type
+JP_otE	JpOtE	type
+JP_plan	JpPlan	type
+JP_planTo	JpPlanTo	type
+JP_sf	JpSf	type
+JP_surK	JpSurK	type
+JP_surKTo	JpSurKto	type
+KAo	kao	variable
+KIZ	kiz	variable
+KJy	kjy	variable
+KOP2	kop2	variable
+KP_VARS	kp_vars	function
+KRf	krf	method,variable
+KTy	kty	variable
+KU	ku	variable
+KUC	kuc	variable
+LE	le	structure field,variable
+Lm	lm	variable
+Lq	lq	variable
+MO	mo	variable
+MoE	mo_e	variable
+N2	n2	variable
+OK1	ok1	variable
+PRS	prs	structure field
+PdK	pd_k	variable
+Pf	pf	variable
+Pn	pn	variable
+Rd	rd	variable
+Rof	rof	variable
+Rw	rw	variable
+SAH	sah	variable
+SAH_F	sah_f	structure field
+SBED	sbed	function
+SHs	shs	variable
+SKa	ska	variable
+SKi	ski	variable
+SKx	skx	variable
+SKy	sky	variable
+SLOTS	slots	function
+SPK	spk	function,method
+SPKv	spkv	variable
+SUT_TABAN	sut_taban	method
+SZ	sz	variable
+SZa	sza	variable
+SZi	szi	variable
+SZx	szx	variable
+SZy	szy	variable
+S_prHat	s_pr_hat	trait method
+Sof	sof	variable
+T3	t3	variable
+T4	t4	variable
+TRF	trf	function
+TRG	trg	function
+TRI	tri	function
+TRM	trm	function
+TZ	tz	variable
+ThP	th_p	variable
+Topt	topt	variable
+Ts0	ts0	variable
+TsD	ts_d	variable
+UCs	ucs	variable
+UCsY	ucs_y	variable
+Vc	vc	variable
+Vend	vend	function,method,variable
+Wf	wf	variable
+Wt	wt	variable
+XM	xm	variable
+YF	yf	variable
+Z5	z5	function
+_S	_s	variable
+__mH	__m_h	structure field
+_bekKay	_bek_kay	function
+_enTm	_en_tm	structure field
+_enWD	_en_wd	structure field
+_gPr	_g_pr	structure field
+_gelenB	_gelen_b	structure field
+_hAtt	_h_att	variable
+_inSp	_in_sp	structure field
+_kuyuTop	_kuyu_top	structure field
+_macC	_mac_c	structure field
+_noFake	_no_fake	structure field
+_noHold	_no_hold	structure field
+_onHk	_on_hk	structure field
+_perdeQ	_perde_q	structure field
+_prT	_pr_t	structure field
+_sYon	_s_yon	structure field
+_savCa	_sav_ca	structure field
+_savU	_sav_u	structure field
+_savW	_sav_w	structure field
+_tekD	_tek_d	structure field
+_tekL	_tek_l	structure field
+_topK_eski	_top_k_eski	method
+_yogF	_yog_f	variable
+_yzBas	_yz_bas	structure field
+_yzBekle	_yz_bekle	structure field
+aA	a_a	variable
+aB	a_b	variable
+aF	a_f	variable
+aFs	a_fs	variable
+aL	a_l	variable
+aMax	a_max	structure field,variable
+aMin	a_min	variable
+aP	a_p	variable
+aS	a_s	variable
+aSk	a_sk	structure field
+acikAci	acik_aci	method
+acikK	acik_k	structure field
+adK	ad_k	variable
+adP	ad_p	variable
+adS	ad_s	structure field
+adamH	adam_h	variable
+adamMi	adam_mi	function
+adamT	adam_t	method
+adayT	aday_t	structure field
+aimErr	aim_err	structure field
+aimPlase	aim_plase	structure field
+aimPow	aim_pow	structure field
+akHiz	ak_hiz	method
+alHiz	al_hiz	method
+alP	al_p	function
+alanMin	alan_min	structure field
+alanSec	alan_sec	function
+alanYz	alan_yz	function
+aliciDirenc	alici_direnc	function,trait method
+amBitir	am_bitir	function
+amYok	am_yok	function
+applyError	apply_error	function,method
+applyErrorSav	apply_error_sav	function,method
+arkaMarkaj	arka_markaj	method
+arriveSpace	arrive_space	structure field
+asanPay	asan_pay	structure field
+assignRoles	assign_roles	function
+assignRoles_ile	assign_roles_ile	function
+atkAll	atk_all	structure field
+ayniP	ayni_p	variable
+bAh	b_ah	variable
+bH	b_h	variable
+bL	b_l	variable
+bP	b_p	variable
+bS	b_s	variable
+bT	b_t	variable
+bX	b_x	variable
+bY	b_y	variable
+ballT	ball_t	structure field,variable
+bankBir	bank_bir	function
+bankFor	bank_for	function,method
+bankHedef	bank_hedef	function
+bankIf	bank_if	structure field
+bankN	bank_n	structure field
+bankOk	bank_ok	structure field
+bankQ	bank_q	variable
+bankSure	bank_sure	function,method
+basR	bas_r	variable
+baskiR0	baski_r0	structure field
+baskiR1	baski_r1	structure field
+bekCikPay	bek_cik_pay	structure field
+bekCikR	bek_cik_r	structure field
+bekCikSaha	bek_cik_saha	structure field
+bekCikSur	bek_cik_sur	structure field
+bekCikar	bek_cikar	method
+bekKay_d	bek_kay_d	function
+bekOnce	bek_once	structure field,variable
+bekSav	bek_sav	function
+bekSerbest	bek_serbest	structure field,variable
+bekSupArka	bek_sup_arka	structure field
+bekSupK	bek_sup_k	structure field
+bekSupL	bek_sup_l	structure field
+bekSupMax	bek_sup_max	structure field
+bekTempo	bek_tempo	structure field
+bekY	bek_y	function
+bekYerW	bek_yer_w	function
+bekYol	bek_yol	function
+bekciFm	bekci_fm	trait method
+bestCk	best_ck	variable
+bestE	best_e	variable
+bestS	best_s	variable
+bindCak	bind_cak	function
+bindK	bind_k	structure field
+bindOn	bind_on	structure field
+bindT	bind_t	structure field
+bindYol	bind_yol	structure field
+bkA	bk_a	variable
+bkAt	bk_at	variable
+bkCik	bk_cik	structure field,variable
+bkIc	bk_ic	variable
+bkL	bk_l	variable
+bkPos	bk_pos	variable
+bkR	bk_r	variable
+bkYer	bk_yer	variable
+blokDis	blok_dis	method
+bosOy	bos_oy	function,method
+bosaDus	bosa_dus	function
+bostaTop	bosta_top	function
+bskTab	bsk_tab	function
+byC	by_c	variable
+byE	by_e	variable
+cK	c_k	variable
+cL	c_l	variable
+cP	c_p	variable
+cT	c_t	variable
+caG	ca_g	variable
+caOf	ca_of	function,method
+cdT	cd_t	variable
+cekAmac	cek_amac	method
+cekEtiket	cek_etiket	structure field
+cekK	cek_k	structure field
+cevK	cev_k	method
+cevapAyri	cevap_ayri	variable
+chC	ch_c	variable
+chCtrl	ch_ctrl	variable
+chFull	ch_full	variable
+chKayip	ch_kayip	function,method
+chargeRate	charge_rate	function,method
+chaseMargin	chase_margin	structure field
+chasePlan	chase_plan	function,method
+chgMin	chg_min	structure field
+chgPasif	chg_pasif	structure field
+chgTek	chg_tek	structure field
+closeS	close_s	structure field
+commitThr	commit_thr	function,method
+coreAng	core_ang	function,method
+corePos	core_pos	function
+coreSide	core_side	function,method
+coreSide_p	core_side_p	function
+coreV	core_v	structure field
+cosA	cos_a	variable
+coverSpots	cover_spots	function
+createMatch	create_match	function
+createMatch_ile	create_match_ile	function
+ctrlBest	ctrl_best	variable
+cvQ	cv_q	structure field,variable
+dA	d_a	variable
+dB	d_b	variable
+dCarp	d_carp	variable
+dD	d_d	variable
+dE	d_e	variable
+dF	d_f	variable
+dG0	d_g0	variable
+dGirdi	d_girdi	variable
+dH	d_h	variable
+dJ	d_j	variable
+dK0	d_k0	variable
+dK1	d_k1	variable
+dL	d_l	variable
+dMax	d_max	structure field
+dMin	d_min	structure field
+dMx	d_mx	variable
+dQ	d_q	variable
+dR	d_r	variable
+dS	d_s	variable
+dT	d_t	variable
+dV	d_v	structure field
+dW	d_w	variable
+dalisDolYok	dalis_dol_yok	structure field
+ddB	dd_b	variable
+decT	dec_t	structure field
+decide0K	decide0_k	function
+decideOT	decide_ot	function
+deepA	deep_a	variable
+deepO	deep_o	structure field
+defReach	def_reach	structure field
+dengeDolumK	denge_dolum_k	function
+dengeHiz	denge_hiz	function
+dengeKayip	denge_kayip	function
+depoOn	depo_on	function
+destekK	destek_k	structure field
+dirOf	dir_of	function
+dirYaz	dir_yaz	variable
+dizSlots	diz_slots	function
+dizUygula	diz_uygula	function
+dizUygula_ile	diz_uygula_ile	function
+dkAg	dk_ag	variable
+dkE0	dk_e0	variable
+dkKap	dk_kap	variable
+dlH	dl_h	structure field
+dlK	dl_k	variable
+dlQ	dl_q	structure field
+dlQs	dl_qs	structure field
+dlReach	dl_reach	structure field
+dngC	dng_c	structure field
+dogL	dog_l	method
+dokEk	dok_ek	function
+dokKar	dok_kar	function
+dolEsik	dol_esik	structure field
+dolT	dol_t	structure field
+dolumS	dolum_s	structure field
+donS	don_s	function,method
+donT	don_t	method
+donus_T	donus_t	function
+duelP	duel_p	function,method
+duelP_k	duel_p_k	method
+duelW	duel_w	structure field
+durtFark	durt_fark	function,trait method
+durumD	durum_d	function
+durusDef	durus_def	function
+durusEl	durus_el	structure field
+durusW	durus_w	function
+dvC	dv_c	variable
+eA	e_a	variable
+eAt	e_at	variable
+eB	e_b	variable
+eH	e_h	variable
+eJ	e_j	variable
+eK	e_k	method
+eL	e_l	variable
+eM	e_m	variable
+eM_ok	e_m_ok	variable
+eO	e_o	variable
+eP	e_p	variable
+eT	e_t	method
+eY	e_y	variable
+effFric	eff_fric	method
+egUy	eg_uy	function
+elDar	el_dar	method,variable
+elOf	el_of	method
+enCal	en_cal	function,structure field
+enGec_en	en_gec_en	method
+enH	en_h	structure field
+enHarca	en_harca	function
+enHarca_p	en_harca_p	function
+enHizV	en_hiz_v	structure field
+enIkiliEk	en_ikili_ek	function,method
+enIyi	en_iyi	variable
+enIyiPas	en_iyi_pas	function
+enIyiPas0	en_iyi_pas0	function
+enMuh2	en_muh2	method
+enMuhasebe	en_muhasebe	function,method
+enSay	en_say	function
+enSay_p	en_say_p	function
+enTmin	en_tmin	structure field
+enUfuk	en_ufuk	structure field
+enV	en_v	variable
+enW	en_w	function,method
+enYerDin	en_yer_din	structure field
+enYerK	en_yer_k	structure field
+enYerUst	en_yer_ust	structure field
+errOk	err_ok	structure field
+errPos	err_pos	structure field
+etP	et_p	variable
+evAyr	ev_ayr	structure field
+evAyrBek	ev_ayr_bek	structure field
+evBolge	ev_bolge	structure field
+evreBul	evre_bul	function
+evreUygula	evre_uygula	function
+fA	f_a	variable
+fO	f_o	variable
+fakeBasla	fake_basla	function
+fakeHedef	fake_hedef	function,method
+fakeIlgili	fake_ilgili	function,method
+fakeOk	fake_ok	structure field
+fakeOkunmaz	fake_okunmaz	method
+fakeP	fake_p	function,method
+fakeT	fake_t	function,method,structure field
+fakeYonet	fake_yonet	function
+firstMate	first_mate	variable
+fizK	fiz_k	structure field
+fkD	fk_d	structure field
+fkOk	fk_ok	structure field
+flightRead	flight_read	function
+frAl	fr_al	function
+frB	fr_b	structure field
+frT	fr_t	structure field
+frTop	fr_top	function
+freeAt	free_at	function,method
+freeAt_d	free_at_d	function
+frenT	fren_t	function,method,structure field
+frenT_p	fren_t_p	function
+gA	g_a	variable
+gB	g_b	structure field,variable
+gD	g_d	method
+gE	g_e	variable
+gEb	g_eb	variable
+gG	g_g	variable
+gH	g_h	structure field
+gK	g_k	variable
+gO	g_o	variable
+gP	g_p	structure field,variable
+gainH	gain_h	variable
+gecK	gec_k	function
+gecK_m	gec_k_m	function
+gecOf	gec_of	function,trait method
+gecTab	gec_tab	function,trait method
+gecTabV	gec_tab_v	function
+gecY	gec_y	function
+gecY_donus	gec_y_donus	function
+gecYk	gec_yk	function
+gecYk9	gec_yk9	function
+gecisBasla	gecis_basla	function
+gecisGuncelle	gecis_guncelle	function
+genisK	genis_k	structure field
+geriCekil	geri_cekil	function
+geriK	geri_k	function,structure field
+geriKosu	geri_kosu	method
+geriOk	geri_ok	variable
+geriSay	geri_say	function
+girEk	gir_ek	method
+girEsik	gir_esik	function,method
+girThr	gir_thr	function,method
+gizleT	gizle_t	structure field
+golAz	gol_az	structure field
+golCok	gol_cok	structure field
+gonEk	gon_ek	function,method
+gorevYeri	gorev_yeri	function
+govOf	gov_of	variable
+govdeAyir	govde_ayir	function
+govdeF	govde_f	function
+govdeV	govde_v	function,method
+govdeVur	govde_vur	function
+govdeVurP	govde_vur_p	function,method
+gvNow	gv_now	structure field,variable
+gvT	gv_t	structure field
+gxL	gx_l	variable
+hA	h_a	variable
+hArg	h_arg	variable
+hAtt	h_att	variable
+hBase	h_base	variable
+hD	h_d	variable
+hI	h_i	variable
+hI0	h_i0	variable
+hIc	h_ic	variable
+hId	h_id	structure field
+hK	h_k	variable
+hKI	h_ki	variable
+hOpt	h_opt	variable
+hR	h_r	variable
+hS	h_s	variable
+hT	h_t	variable
+hamV	ham_v	function
+harR	har_r	variable
+hatD	hat_d	variable
+hatK	hat_k	variable
+hataF	hata_f	method
+hedefQ	hedef_q	method
+hedefW	hedef_w	variable
+hhKul	hh_kul	structure field
+hizAlt	hiz_alt	structure field
+hizC	hiz_c	structure field
+hizDus	hiz_dus	structure field
+hizEsik	hiz_esik	structure field
+hizG	hiz_g	structure field
+hizMin	hiz_min	structure field
+hizYanilgi	hiz_yanilgi	function
+hkK	hk_k	function
+hkPay	hk_pay	structure field
+hmA	hm_a	variable
+holdF	hold_f	function
+holdVal	hold_val	method
+hrK	hr_k	variable
+hvB	hv_b	variable
+hvC	hv_c	variable
+hyT	hy_t	structure field
+iA	i_a	variable
+iB	i_b	variable
+iH	i_h	structure field
+iM	i_m	variable
+iMax	i_max	variable
+iMin	i_min	variable
+iMx	i_mx	variable
+iQ	i_q	structure field
+iaSk	ia_sk	structure field
+icOmuz	ic_omuz	method
+idStr	id_str	function
+ikDen	ik_den	method
+ikEn	ik_en	function,trait method
+ikHiz	ik_hiz	method
+ikK	ik_k	variable
+ikKafa	ik_kafa	function
+ikOn	ik_on	function
+ikiliGiris	ikili_giris	function
+ikiliMin	ikili_min	structure field
+ikiliTemas	ikili_temas	function
+ilG	il_g	variable
+ilS	il_s	variable
+ileriDeger	ileri_deger	function
+ileriKur	ileri_kur	function
+ileriP	ileri_p	function
+ileriTab	ileri_tab	function
+ileriV	ileri_v	function
+ilkPres	ilk_pres	function,trait method
+ilkPres_h	ilk_pres_h	function
+imP	im_p	variable
+imkBol	imk_bol	function
+imkInan	imk_inan	function
+imkKov	imk_kov	function
+imkOrt	imk_ort	function
+imkS	imk_s	variable
+imkSap	imk_sap	function
+imkSg	imk_sg	function
+imkTau	imk_tau	function
+imkUzak	imk_uzak	function
+inK	in_k	function
+inSp	in_sp	variable
+inWin	in_win	function
+isP	is_p	variable
+isRecv	is_recv	variable
+itBos	it_bos	structure field
+itHk	it_hk	method
+itKf	it_kf	method
+itKos	it_kos	structure field
+itPk	it_pk	method
+itT	it_t	method
+itTab	it_tab	method
+itV	it_v	method
+kA	k_a	structure field,variable
+kE	k_e	variable
+kG	k_g	variable
+kH	k_h	structure field,variable
+kHiz	k_hiz	function
+kL	k_l	variable
+kO	k_o	variable
+kOf	k_of	variable
+kS	k_s	variable
+kT	k_t	variable
+kW	k_w	variable
+kWof	k_wof	method
+kX	k_x	structure field,variable
+kX0	k_x0	variable
+kY	k_y	variable
+kacanAl	kacan_al	method
+kafaAc	kafa_ac	function
+kafaBasla	kafa_basla	function
+kafaBitir	kafa_bitir	function
+kafaCikis	kafa_cikis	function
+kafaNot	kafa_not	function
+kafaSapma	kafa_sapma	function
+kalS	kal_s	structure field,variable
+kalkanR	kalkan_r	structure field
+kanatK	kanat_k	structure field
+kanatT	kanat_t	structure field
+kancaK	kanca_k	function
+kancaOf	kanca_of	function
+kapatHat	kapat_hat	function
+kapiG	kapi_g	variable
+kayL	kay_l	structure field
+kayT	kay_t	variable
+kayipF	kayip_f	function
+kayipSur	kayip_sur	structure field
+kayipYer	kayip_yer	function
+kazanImk	kazan_imk	method
+keepP	keep_p	function,method
+keepP_gec	keep_p_gec	structure field
+keepP_son	keep_p_son	structure field
+kenarAkil	kenar_akil	function,method
+kenarIm	kenar_im	function,method
+kendiTopu	kendi_topu	function
+kesisK	kesis_k	method
+kesisK_gec	kesis_k_gec	structure field
+kesisK_son	kesis_k_son	structure field
+kilitAn	kilit_an	function
+kimId	kim_id	structure field
+kimT	kim_t	structure field
+kmA	km_a	variable
+kmX	km_x	variable
+kmY	km_y	variable
+kontraL	kontra_l	structure field
+korumaBaski	koruma_baski	function
+kosHiz	kos_hiz	method,structure field
+kosMin	kos_min	structure field
+kosYer	kos_yer	method
+kovT	kov_t	structure field
+koyHedef	koy_hedef	function
+kpA	kp_a	variable
+kpAkt	kp_akt	function
+kpC	kp_c	structure field
+kpEff	kp_eff	function
+kpOf	kp_of	function
+kpOn	kp_on	variable
+ktT	kt_t	structure field
+kurO	kur_o	function
+kurUygula	kur_uygula	function
+kurucuK	kurucu_k	structure field
+kuyuCikT	kuyu_cik_t	function
+kuyuCikYon	kuyu_cik_yon	function
+kuyuD	kuyu_d	function
+kuyuOlabilir	kuyu_olabilir	function
+kuyuSaat	kuyu_saat	function
+kuyuSafe	kuyu_safe	function
+kuyuTop	kuyu_top	variable
+kuyuVar	kuyu_var	variable
+kyF	ky_f	variable
+lMax	l_max	structure field
+lRun	l_run	structure field
+lRunS	l_run_s	structure field
+lagOf	lag_of	function
+laneIn	lane_in	function
+laneOk	lane_ok	function,method
+laneOk0	lane_ok0	function
+laneOpen	lane_open	function
+lastD	last_d	variable
+lastDec	last_dec	structure field
+latA	lat_a	variable
+launchFor	launch_for	function,method
+launchFor0	launch_for0	function
+leashK	leash_k	method
+lossAt	loss_at	structure field,variable
+mA	m_a	variable
+mB	m_b	variable
+mD	m_d	variable
+mE0	m_e0	variable
+mH	m_h	structure field,variable
+mL	m_l	variable
+mQ	m_q	structure field,variable
+mResp	m_resp	variable
+mX	m_x	variable
+mY	m_y	variable
+macEff	mac_eff	function
+macEff_macK	mac_eff_mac_k	function
+macKur	mac_kur	function
+macKur_ile	mac_kur_ile	function
+macPres	mac_pres	function
+macW	mac_w	function
+makeBall	make_ball	function
+marginT	margin_t	structure field,variable
+markAta	mark_ata	function
+markAta_ile	mark_ata_ile	function
+markOff	mark_off	structure field
+markW	mark_w	structure field
+markajBolge	markaj_bolge	method
+markedRef	marked_ref	variable
+mateObjs	mate_objs	variable
+menzilO	menzil_o	function
+menzilP	menzil_p	function
+mkRef0	mk_ref0	variable
+myOpt	my_opt	variable
+myW	my_w	variable
+nA	n_a	variable
+nArk	n_ark	variable
+nC	n_c	variable
+nD	n_d	variable
+nDS	n_ds	variable
+nF	n_f	variable
+nFull	n_full	structure field
+nG	n_g	variable
+nH	n_h	variable
+nK	n_k	variable
+nL	n_l	variable
+nMates	n_mates	structure field
+nP	n_p	variable
+nS	n_s	variable
+nT	n_t	variable
+nV	n_v	variable
+ndH	nd_h	variable
+ndQ	nd_q	variable
+noFake	no_fake	structure field
+noHold	no_hold	structure field
+nodeV	node_v	function
+notSayi	not_sayi	function
+notTik	not_tik	function
+nyP	ny_p	variable
+oB	o_b	structure field
+oC	o_c	variable
+oE	o_e	variable
+oE0	o_e0	variable
+oEk	o_ek	variable
+oK	o_k	variable
+oP	o_p	variable
+oS	o_s	variable
+oSay	o_say	structure field
+oT	o_t	variable
+oV	o_v	variable
+oX	o_x	variable
+oX0	o_x0	variable
+oY	o_y	variable
+oY0	o_y0	variable
+okD	ok_d	variable
+okH	ok_h	variable
+okP	ok_p	variable
+okQ	ok_q	variable
+okS	ok_s	variable
+okT	ok_t	variable
+okuB	oku_b	variable
+okuF	oku_f	structure field
+okuL	oku_l	variable
+okuTp	oku_tp	function
+olabTau	olab_tau	function
+omuzK	omuz_k	function,trait method
+omuzV	omuz_v	structure field
+onE	on_e	variable
+onHareket	on_hareket	function
+onK0	on_k0	variable
+onP	on_p	structure field,variable
+onP0	on_p0	variable
+onPlan	on_plan	function,method
+onRef	on_ref	function
+ondeBekle	onde_bekle	method
+onuBos	onu_bos	variable
+ooS	oo_s	variable
+openK	open_k	structure field
+oppAt	opp_at	function,method
+oppAt_p	opp_at_p	function
+oppIn	opp_in	function
+oppX	opp_x	function
+ortakMin	ortak_min	structure field
+ortakR	ortak_r	structure field
+otAkil	ot_akil	function
+otErr	ot_err	structure field
+otFactor	ot_factor	function
+otOk	OT_OK	constant
+outOfKuyu	out_of_kuyu	function
+ownPass	own_pass	variable
+ownS	own_s	structure field,variable
+ownX	own_x	function
+oyalaD	oyala_d	structure field
+oyalaEk	oyala_ek	method
+pDunya	p_dunya	function
+pG	p_g	structure field,variable
+pK	p_k	variable
+pK1	p_k1	variable
+pLim	p_lim	structure field,variable
+pQ	p_q	variable
+pS	p_s	variable
+pT	p_t	structure field,variable
+pasEk	pas_ek	function,method
+pasK	pas_k	method,structure field,variable
+pasKv	pas_kv	method
+pasMax	pas_max	function,method,variable
+pasR	pas_r	method
+passMaxF	pass_max_f	structure field,variable
+passOk	pass_ok	structure field
+patK	pat_k	structure field
+patT	pat_t	structure field
+pcOf	pc_of	variable
+pivotGap	pivot_gap	structure field
+pkE	pk_e	variable
+plaseV	plase_v	structure field
+pokeAc	poke_ac	structure field
+pokeDn	poke_dn	structure field
+pokeK	poke_k	structure field
+pokeT	poke_t	structure field
+prC	pr_c	variable
+prCost	pr_cost	structure field
+prDis	pr_dis	structure field
+prGam	pr_gam	function
+prH	pr_h	structure field,variable
+prHat	pr_hat	function
+prHold	pr_hold	structure field
+prP	pr_p	structure field,variable
+prPmin	pr_pmin	structure field
+prStill	pr_still	structure field
+prT	pr_t	structure field,trait method,variable
+prT0	pr_t0	structure field
+prT_esitle	pr_t_esitle	function
+prT_k	pr_t_k	structure field
+prV	pr_v	method
+predictWorld	predict_world	function
+prensipDegerle	prensip_degerle	function
+prensipDegerle0	prensip_degerle0	function
+presKesis	pres_kesis	function
+presKesisT	pres_kesis_t	function
+presLim	pres_lim	function
+presRol	pres_rol	method
+presSec	pres_sec	method
+pressAt	press_at	function,method
+pressAt_d	press_at_d	function
+pwKos	pw_kos	function
+qA	q_a	variable
+qCd	q_cd	structure field
+qH	q_h	variable
+qMin	q_min	structure field
+qO	q_o	variable
+qP	q_p	variable
+qS	q_s	structure field
+qT	q_t	variable
+qqI	qq_i	variable
+rA	r_a	variable
+rBek	r_bek	structure field
+rH	r_h	structure field,variable
+rK	r_k	variable
+rL	r_l	variable
+rOut	r_out	variable
+rP	r_p	variable
+rQ	r_q	structure field,variable
+rR	r_r	structure field
+rR0	r_r0	structure field
+rSahip	r_sahip	structure field
+rYer	r_yer	structure field
+rakOf	rak_of	variable
+rakVar	rak_var	variable
+rakYar	rak_yar	variable
+rakipKovala	rakip_kovala	function
+rbAt	rb_at	method
+rcY	rc_y	structure field
+rcvB	rcv_b	variable
+rcvBuf	rcv_buf	structure field
+rcvMarginT	rcv_margin_t	structure field
+rcvRisk	rcv_risk	structure field
+reachDist	reach_dist	method
+reachSpeed	reach_speed	method
+reachT	reach_t	variable
+reachTime	reach_time	method
+recOk	rec_ok	structure field
+recT	rec_t	structure field
+recvCh	recv_ch	function,method
+recvCh_p	recv_ch_p	function
+recvFirst	recv_first	variable
+recvKeepT	recv_keep_t	structure field
+recvPoint	recv_point	function,method
+refIs	ref_is	variable
+refL	ref_l	structure field
+riskBase	risk_base	structure field
+riskEski	risk_eski	structure field
+riskOf	risk_of	function
+rkX	rk_x	variable
+rkY	rk_y	variable
+roleLeash	role_leash	method
+roleRun	role_run	method
+roleSample	role_sample	function
+roleY	role_y	method
+rqE	rq_e	variable
+rqT	rq_t	variable
+rslotOf	rslot_of	function
+runK	run_k	structure field
+runOn	run_on	function,method
+runSprint	run_sprint	structure field
+runSut	run_sut	method
+runV	run_v	method
+sA	s_a	variable
+sB	s_b	variable
+sE	s_e	variable
+sG	s_g	variable
+sHash	s_hash	function
+sIn	s_in	variable
+sK	s_k	variable
+sL	s_l	variable
+sM	s_m	structure field,variable
+sMin	s_min	variable
+sN	s_n	variable
+sOf	s_of	variable
+sQ	s_q	variable
+sV	s_v	variable
+sahF_iz	sah_f_iz	structure field
+sahiplikBolge	sahiplik_bolge	function
+sahiplikKur	sahiplik_kur	function
+sahiplikYerel	sahiplik_yerel	function
+sakinEn	sakin_en	structure field
+sakinUzak	sakin_uzak	structure field
+sarjBd	sarj_bd	method
+sarjKap	SARJ_KAP	constant
+sarjKarar	sarj_karar	function,method
+sarjMal	sarj_mal	function,method
+sarjTut	sarj_tut	function,method
+sarjUfuk	sarj_ufuk	structure field
+sarjVerim	sarj_verim	method
+savunmaAtama	savunma_atama	function
+savurAdim	savur_adim	function
+savurBasla	savur_basla	function
+savurEngel	savur_engel	method
+savurPlan	savur_plan	function,method
+savurYol	savur_yol	method
+sdW	sd_w	variable
+secS	sec_s	variable
+secT	sec_t	variable
+secT_i	sec_t_i	variable
+secimN	secim_n	function,method
+secimW	secim_w	function,method
+secimZ	secim_z	method
+seenQ	seen_q	variable
+segD	seg_d	function
+sekPay	sek_pay	method
+sekYaris	sek_yaris	method
+sendS	send_s	function,trait method
+sendY	send_y	structure field
+sertT	sert_t	function
+setT	set_t	variable
+sfE	sf_e	variable
+sfKesin	sf_kesin	function
+sfPk	sf_pk	function
+shieldK	shield_k	structure field
+shotCell	shot_cell	method
+shotPk	shot_pk	structure field
+shotQ	shot_q	function,method
+shotRange	shot_range	structure field
+shotTab	shot_tab	method
+shotThru	shot_thru	structure field
+shotV	shot_v	structure field
+siddetFor	siddet_for	method
+siddetQ	siddet_q	method
+sideK	side_k	structure field
+sigY	sig_y	method
+simMax	sim_max	structure field
+slotBase	slot_base	function,trait method
+slotBase0	slot_base0	function
+slotOf	slot_of	function
+slotPos	slot_pos	function
+slowK	SLOW_K	constant
+snT	sn_t	structure field
+sogK	sog_k	method
+solveTo	solve_to	method
+solveV	solve_v	method
+sonDunya	son_dunya	method
+spG	sp_g	structure field
+spK	sp_k	variable
+spU	sp_u	structure field,variable
+sprEsik	spr_esik	structure field
+sprF	spr_f	structure field
+sprFaz	spr_faz	function
+sprK	spr_k	function,trait method
+sprKafa	spr_kafa	method
+sprKar	spr_kar	method
+sprKop	spr_kop	function,method
+sprPres	spr_pres	structure field
+sprT	spr_t	structure field
+sprintBasla	sprint_basla	function
+sprintKarar3	sprint_karar3	function
+srcC_kc	src_c_kc	structure field
+stunOk	stun_ok	structure field
+surD	sur_d	function
+surSure	sur_sure	function,method
+sutEngel	sut_engel	function
+sutGuc	sut_guc	function,method
+sutHazir	sut_hazir	structure field
+sutHedef	sut_hedef	function,method
+sutHiz	sut_hiz	function
+sutKapali	sut_kapali	function,method
+sutKapatR	sut_kapat_r	structure field
+sutM	sut_m	variable
+sutS	sut_s	function
+sutT	sut_t	method
+sutTab	sut_tab	function
+sutTab_k	sut_tab_k	function
+sutUC	sut_uc	method
+sutV	sut_v	function,method
+sutVakit	sut_vakit	function
+sutYol	sut_yol	function
+swL	sw_l	structure field,variable
+swPrevS	sw_prev_s	variable
+swT	sw_t	structure field
+swTg	sw_tg	method
+syO	sy_o	variable
+tA	t_a	variable
+tAt	t_at	variable
+tB	t_b	variable
+tBiz	t_biz	variable
+tCik	t_cik	variable
+tDol	t_dol	variable
+tF	t_f	variable
+tG	t_g	variable
+tH	t_h	variable
+tHW	t_hw	variable
+tHv	t_hv	variable
+tK	t_k	structure field,variable
+tKW	t_kw	variable
+tL0	t_l0	variable
+tN	t_n	variable
+tO	t_o	variable
+tP	t_p	structure field,variable
+tR	t_r	structure field,variable
+tR0	t_r0	structure field,variable
+tRak	t_rak	variable
+tS	t_s	variable
+tX	t_x	variable
+tY	t_y	variable
+tacEff	tac_eff	function,trait method
+tacEff0	tac_eff0	function
+tac_enHarcama	tac_en_harcama	trait method
+tarK	tar_k	structure field
+tarMin	tar_min	structure field
+tartG	tart_g	function
+tartiK	tarti_k	method
+tasHamle	tas_hamle	function
+tbC	tb_c	structure field
+teK	te_k	function
+teamV	team_v	function
+tekC	tek_c	structure field,variable
+tekF	tek_f	method
+tekH	tek_h	structure field
+tekSutDeger	tek_sut_deger	function
+tempoDol	tempo_dol	structure field
+tepeAlt	tepe_alt	structure field
+tepeT	tepe_t	structure field
+tercihEk	tercih_ek	function,method
+thrCover	thr_cover	structure field
+threatK	threat_k	structure field
+tlKur	tl_kur	function
+toMate	to_mate	variable
+topBen	top_ben	variable
+topGovdeIt	top_govde_it	function
+topHiz	top_hiz	function
+topK	top_k	function,method,variable
+topK_p	top_k_p	function
+topSay	top_say	structure field
+topTakim	top_takim	function
+topYol	top_yol	variable
+topaYigilma	topa_yigilma	function
+toplaBos	topla_bos	structure field
+toplaG	topla_g	structure field
+tpE	tp_e	variable
+tqOk	tq_ok	variable
+trK	tr_k	variable
+trapA	trap_a	structure field
+trapR	trap_r	structure field
+triF	tri_f	function
+tutS	tut_s	variable
+tvDrive	tv_drive	structure field
+tvEgim	tv_egim	structure field
+tvG	tv_g	variable
+tvPass	tv_pass	structure field
+uIn	u_in	variable
+uM1	u_m1	variable
+uMax	u_max	variable
+uSh	u_sh	structure field,variable
+uSk	u_sk	structure field
+ucX	uc_x	structure field
+ucusFormul	ucus_formul	method
+ucusSure	ucus_sure	function,method
+ucusT	ucus_t	function,method
+ucusYol	ucus_yol	method
+ufukK	ufuk_k	method
+upBas	up_bas	method
+upHat	up_hat	structure field
+useSpace	use_space	structure field
+uzanDolYok	uzan_dol_yok	structure field
+v0Err	v0_err	structure field
+vA	v_a	variable
+vB	v_b	structure field,variable
+vC	v_c	variable
+vCap	v_cap	variable
+vCk	v_ck	variable
+vE	v_e	variable
+vE0	v_e0	variable
+vH	v_h	structure field,variable
+vK	v_k	function,structure field,variable
+vL	v_l	variable
+vM	v_m	variable
+vO	v_o	variable
+vP	v_p	structure field,variable
+vQ	v_q	variable
+vQ0	v_q0	structure field,variable
+vQf	v_qf	structure field,variable
+vQs	v_qs	structure field,variable
+vS	v_s	method,variable
+vSG	v_sg	variable
+vSh	v_sh	structure field,variable
+vSp	v_sp	function
+vSq	v_sq	variable
+vTo	v_to	variable
+vV	v_v	variable
+vW	v_w	variable
+vY	v_y	variable
+vacEmpty	vac_empty	structure field
+vacL	vac_l	method
+vacLeash	vac_leash	structure field
+vacLeft	vac_left	structure field
+vacOk0	vac_ok0	structure field
+vacOkStep	vac_ok_step	structure field
+varA	var_a	method
+varB	var_b	variable
+varE	var_e	variable
+vmQ	vm_q	variable
+vmaxOf	vmax_of	method
+voK	vo_k	method
+vqD	vq_d	variable
+vurE	vur_e	function,method
+vurTaban	vur_taban	function
+wB	w_b	variable
+wE	w_e	variable
+wHi	w_hi	variable
+wLo	w_lo	variable
+wMax0	w_max0	structure field
+wMaxSk	w_max_sk	structure field
+wRel	w_rel	structure field
+wT	w_t	variable
+wY	w_y	variable
+winT	win_t	structure field
+yH	y_h	variable
+yI	y_i	variable
+yL	y_l	variable
+yOf	y_of	variable
+yP	y_p	variable
+yanOf	yan_of	method
+yanilT	yanil_t	method
+yarisEn	yaris_en	function
+yasB	yas_b	structure field
+yasC	yas_c	structure field
+yasH	yas_h	structure field
+yasHata	yas_hata	method
+yeniP	yeni_p	variable
+yerD	yer_d	structure field
+yerDeger	yer_deger	function
+yerF	yer_f	function
+yerH	yer_h	function
+yerK	yer_k	variable
+yerM	yer_m	function
+yerS	yer_s	function
+yerV	yer_v	function
+yetKur	yet_kur	function
+yogK	yog_k	structure field
+yogMin	yog_min	structure field
+yogTau	yog_tau	structure field
+yokD	yok_d	structure field
+yolBag	yol_bag	function
+yolGovde	yol_govde	variable
+yolKesis	yol_kesis	function
+yolOlabilirB	yol_olabilir_b	function
+yolP	yol_p	function
+yolT	yol_t	function
+yolVer	yol_ver	method
+yuruDol	yuru_dol	structure field
+yvBas	yv_bas	structure field
+yzUyum	yz_uyum	function
+zA	z_a	variable
+zTak	z_tak	variable
+zeminH	zemin_h	function
+zeminS	zemin_s	function
+zoneD	zone_d	structure field
+zoneDng	zone_dng	structure field
+zoneMin	zone_min	structure field
+zoneOk	zone_ok	structure field
+zoneR	zone_r	function,method,structure field
+zoneR_d	zone_r_d	function
+zorK	zor_k	variable

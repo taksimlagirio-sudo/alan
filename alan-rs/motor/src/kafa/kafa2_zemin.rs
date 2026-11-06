@@ -2,15 +2,15 @@
 //! (ileriKur, ileriTab, ileriDeger, ilerleme), zemin, sahiplik haritası (sahiplikKur, zeminS), yerDeger.
 #![allow(non_snake_case, clippy::too_many_arguments)]
 
-use crate::kafa::kafa2_bag::ALAN_HZ;
+use crate::kafa::kafa2_bag::alan_hz;
 use crate::mat::dogru;
 use crate::mat::exp;
 use crate::saha::KR;
 use crate::kafa::gecici_dis1::KuralErisim as _;
 use super::kafa2_bag as dis;
 use super::kafa2_baglam::*;
-use super::kafa2_dunya::{bekYerW, predictWorld};
-use super::kafa2_imkan::{imkSg, imkTau, imkUzak, imkan, sutS, sutVakit, tasima, IMK_HUC};
+use super::kafa2_dunya::{bek_yer_w, predict_world};
+use super::kafa2_imkan::{imk_sg, imk_tau, imk_uzak, imkan, sut_s, sut_vakit, tasima, IMK_HUC};
 use crate::mat::{hypot, jmax, jmin};
 use crate::model::Oyuncu;
 use crate::saha::{CY as GCY, H as GH, W as GW};
@@ -20,7 +20,7 @@ use std::sync::Arc;
 /// JS gam() (decide.js:5939): sonraki adımın indirimi (prensip tartısında D._gPr)
 #[inline(always)]
 pub fn gam(k: &Kafa) -> f64 {
-    k.bag._gPr.unwrap_or(k.D.combo)
+    k.bag._g_pr.unwrap_or(k.D.combo)
 }
 
 /// JS kayipF(src, team, ch, risk) (decide.js:5867): top (x, y)'de kaybedilirse rakibin kazancı:
@@ -33,8 +33,8 @@ pub struct KayipF {
     ot: f64,
     c: crate::HizliMap<u64, f64>,
     yq: Option<Vec<(Op, f64)>>,
-    gB: Option<f64>,
-    oB: f64,
+    g_b: Option<f64>,
+    o_b: f64,
     /// Önceden hesaplama (deney, ALAN_KF_ONDEN): kararın ızgarasıysa takımı; istenen hücreler ve
     /// önceden hesaplanıp henüz istenmemiş olanlar.
     kayit: Option<usize>,
@@ -42,8 +42,8 @@ pub struct KayipF {
     onden: crate::HizliMap<u64, ()>,
 }
 
-pub fn kayipF(k: &Kafa, src: Arc<Dunya>, team: f64, ch: f64, risk: f64) -> KayipF {
-    KayipF { src, team, risk, cc: dis::chKayip(k, ch), ot: 1.0 - team, c: Default::default(), yq: None, gB: k.bag._gPr, oB: k.k2.IMK_OFS, kayit: None, istenen: Default::default(), onden: Default::default() }
+pub fn kayip_f(k: &Kafa, src: Arc<Dunya>, team: f64, ch: f64, risk: f64) -> KayipF {
+    KayipF { src, team, risk, cc: dis::ch_kayip(k, ch), ot: 1.0 - team, c: Default::default(), yq: None, g_b: k.bag._g_pr, o_b: k.k2.imk_ofs, kayit: None, istenen: Default::default(), onden: Default::default() }
 }
 
 // ------------------------------------------------------------------ kararın ızgarasını önceden hesaplama
@@ -103,8 +103,8 @@ impl Drop for KayipF {
 }
 
 impl KayipF {
-    fn kazanImk(&self, k: &mut Kafa, X: f64, Y: f64) -> f64 {
-        if imkUzak(self.ot, X, Y) {
+    fn kazan_imk(&self, k: &mut Kafa, X: f64, Y: f64) -> f64 {
+        if imk_uzak(self.ot, X, Y) {
             return 0.0;
         }
         let mut q: Option<&Op> = None;
@@ -129,12 +129,12 @@ impl KayipF {
         });
         imkan(k, &self.src, self.ot, nk(X, Y), r.as_ref(), self.cc)
     }
-    fn pasR(&mut self, k: &mut Kafa, X: f64, Y: f64) -> f64 {
+    fn pas_r(&mut self, k: &mut Kafa, X: f64, Y: f64) -> f64 {
         if self.yq.is_none() {
             let mut v = Vec::new();
             for q in self.src.iter() {
                 if q.team == self.ot && !q.noTouch && !bekci(q) {
-                    let d = yerDeger(k, &self.src, self.ot, q.x, q.y, self.cc);
+                    let d = yer_deger(k, &self.src, self.ot, q.x, q.y, self.cc);
                     v.push((q.clone(), d));
                 }
             }
@@ -145,10 +145,10 @@ impl KayipF {
         let yq = self.yq.clone().unwrap();
         for (q, v) in &yq {
             let L = hypot(q.x - X, q.y - Y);
-            if L < 5.0 || L > dis::pasMax(k) || *v <= b {
+            if L < 5.0 || L > dis::pas_max(k) || *v <= b {
                 continue;
             }
-            let lo = dis::laneOk(k, &self.src, self.ot, A, nk(q.x, q.y), Some(k.D.arriveFirm), Some(k.D.sutHazir)) * bekYol(k, &self.src, self.ot, A, nk(q.x, q.y), Some(k.D.sutHazir));
+            let lo = dis::lane_ok(k, &self.src, self.ot, A, nk(q.x, q.y), Some(k.D.arriveFirm), Some(k.D.sut_hazir)) * bek_yol(k, &self.src, self.ot, A, nk(q.x, q.y), Some(k.D.sut_hazir));
             b = jmax(b, lo * v);
         }
         gam(k) * b
@@ -196,20 +196,20 @@ impl KayipF {
         if let Some(v) = self.c.get(&key) {
             return *v;
         }
-        let g1 = k.bag._gPr;
-        let o1 = k.k2.IMK_OFS;
-        let ba = g1 != self.gB || o1 != self.oB;
+        let g1 = k.bag._g_pr;
+        let o1 = k.k2.imk_ofs;
+        let ba = g1 != self.g_b || o1 != self.o_b;
         if ba {
-            k.bag._gPr = self.gB;
-            k.k2.IMK_OFS = self.oB;
+            k.bag._g_pr = self.g_b;
+            k.k2.imk_ofs = self.o_b;
         }
-        let a = self.kazanImk(k, X, Y);
-        let b = zeminS(k, &self.src.clone(), 1.0 - self.team, X, Y, self.cc, None);
-        let c = self.pasR(k, X, Y);
+        let a = self.kazan_imk(k, X, Y);
+        let b = zemin_s(k, &self.src.clone(), 1.0 - self.team, X, Y, self.cc, None);
+        let c = self.pas_r(k, X, Y);
         let v = jmax(jmax(a, b), c);
         if ba {
-            k.bag._gPr = g1;
-            k.k2.IMK_OFS = o1;
+            k.bag._g_pr = g1;
+            k.k2.imk_ofs = o1;
         }
         self.c.insert(key, v);
         v
@@ -267,7 +267,7 @@ struct Yol {
 }
 
 /// JS ileriKur(m) (decide.js:5941): diziliş yerleşmiş varsayılarak her hücrenin değeri (40 yineleme).
-pub fn ileriKur(k: &mut Kafa, m: &MacGor) -> Option<IleriTab> {
+pub fn ileri_kur(k: &mut Kafa, m: &MacGor) -> Option<IleriTab> {
     let nx = ((GW - 4.0) / ITX).floor() as usize + 1;
     let ny = ((GH - 4.0) / ITY).floor() as usize + 1;
     let ch = 0.3;
@@ -304,7 +304,7 @@ pub fn ileriKur(k: &mut Kafa, m: &MacGor) -> Option<IleriTab> {
     let kd = k.dis.clone();
     let hat = |t: usize| -> f64 {
         let blok = m.tac.get(1 - t).map(|x| x.blok.clone()).unwrap_or_default();
-        kd.S_prHat(&blok).unwrap_or(62.0 * (GW / 100.0))
+        kd.s_pr_hat(&blok).unwrap_or(62.0 * (GW / 100.0))
     };
     let tasi = |p: &Op, g: Nokta| -> Op {
         let mut q = (**p).clone();
@@ -321,7 +321,7 @@ pub fn ileriKur(k: &mut Kafa, m: &MacGor) -> Option<IleriTab> {
             .map(|&E| {
                 let mut sav: Dunya = {
                     let fm = dis::Fm { tac: &m.tac, ps: &dinc, holder: None };
-                    dinc.iter().filter(|p| p.team != tf).map(|p| tasi(p, if bekci(p) { dis::AS_bekci(k, p, E, Some(&fm)) } else { dis::AS_slotBase(k, &fm, p, E, false) })).collect()
+                    dinc.iter().filter(|p| p.team != tf).map(|p| tasi(p, if bekci(p) { dis::as_bekci(k, p, E, Some(&fm)) } else { dis::as_slot_base(k, &fm, p, E, false) })).collect()
                 };
                 if (if t == 0 { GW - E.x } else { E.x }) < hat(t) {
                     let mut bi: Option<usize> = None;
@@ -337,14 +337,14 @@ pub fn ileriKur(k: &mut Kafa, m: &MacGor) -> Option<IleriTab> {
                         }
                     }
                     if let Some(bi) = bi {
-                        let g = dis::AS_gside(k, E, 1.0 - tf, 2.2);
+                        let g = dis::as_gside(k, E, 1.0 - tf, 2.2);
                         let yeni = kxy(&sav[bi], g.x, g.y);
                         sav.koy(bi, yeni);
                     }
                 }
                 let huc: Dunya = {
                     let fm2 = dis::Fm { tac: &m.tac, ps: &sav, holder: None };
-                    dinc.iter().filter(|p| p.team == tf).map(|p| tasi(p, if bekci(p) { dis::AS_bekci(k, p, E, Some(&fm2)) } else { dis::AS_slotBase(k, &fm2, p, E, true) })).collect()
+                    dinc.iter().filter(|p| p.team == tf).map(|p| tasi(p, if bekci(p) { dis::as_bekci(k, p, E, Some(&fm2)) } else { dis::as_slot_base(k, &fm2, p, E, true) })).collect()
                 };
                 let mut W: Dunya = sav.clone();
                 W.extend(huc.iter().cloned());
@@ -380,8 +380,8 @@ pub fn ileriKur(k: &mut Kafa, m: &MacGor) -> Option<IleriTab> {
                         }
                         let L = hypot(B.x - E.x, B.y - E.y);
                         let u = nk((B.x - E.x) / L, (B.y - E.y) / L);
-                        let Ts = jmax(4.0, dis::surSure(k, r, L, Some(u), None));
-                        let p = jmax(0.0, jmin(1.0, dis::keepP(k, r, &W, Some(u), Ts)));
+                        let Ts = jmax(4.0, dis::sur_sure(k, r, L, Some(u), None));
+                        let p = jmax(0.0, jmin(1.0, dis::keep_p(k, r, &W, Some(u), Ts)));
                         if p > 0.05 {
                             sur.push(Yol { x: B.x, y: B.y, lo: p, mx: (E.x + B.x) / 2.0, my: (E.y + B.y) / 2.0 });
                         }
@@ -392,10 +392,10 @@ pub fn ileriKur(k: &mut Kafa, m: &MacGor) -> Option<IleriTab> {
                         continue;
                     }
                     let L = hypot(a.x - E.x, a.y - E.y);
-                    if L < 5.0 || L > dis::pasMax(k) {
+                    if L < 5.0 || L > dis::pas_max(k) {
                         continue;
                     }
-                    let lo = dis::laneOk(k, &W, tf, E, nk(a.x, a.y), Some(k.D.arriveFirm), Some(k.D.sutHazir)) * bekYol(k, &W, tf, E, nk(a.x, a.y), Some(k.D.sutHazir));
+                    let lo = dis::lane_ok(k, &W, tf, E, nk(a.x, a.y), Some(k.D.arriveFirm), Some(k.D.sut_hazir)) * bek_yol(k, &W, tf, E, nk(a.x, a.y), Some(k.D.sut_hazir));
                     if lo > 0.05 {
                         yol.push(Yol { x: a.x, y: a.y, lo, mx: (E.x + a.x) / 2.0, my: (E.y + a.y) / 2.0 });
                     }
@@ -434,7 +434,7 @@ pub fn ileriKur(k: &mut Kafa, m: &MacGor) -> Option<IleriTab> {
 }
 
 /// JS ileriTab() (decide.js:6546): maçın ileri tablosu (taktik ya da kadro değişince yeniden).
-pub fn ileriTab(k: &mut Kafa) -> Option<Arc<IleriTab>> {
+pub fn ileri_tab(k: &mut Kafa) -> Option<Arc<IleriTab>> {
     let m = k.mac.clone()?;
     let ayni_tik = matches!(&k.ob.it, Some((t, _, _)) if *t == m.tick);
     if !ayni_tik {
@@ -452,16 +452,16 @@ pub fn ileriTab(k: &mut Kafa) -> Option<Arc<IleriTab>> {
             // D'nin `_` alanları (_tick dışında) geçici olarak boşaltılır; D._mac sade maç görünümü.
             let sakla_d = k.bag.clone();
             super::kafa2_baglam::d_alt_bosalt(&mut k.bag);
-            let sakla_k2 = (k.k2._noHold, k.k2._noFake, k.k2._dalgada);
-            k.k2._noHold = false;
-            k.k2._noFake = false;
+            let sakla_k2 = (k.k2._no_hold, k.k2._no_fake, k.k2._dalgada);
+            k.k2._no_hold = false;
+            k.k2._no_fake = false;
             k.k2._dalgada = false;
             let sakla_mac = k.mac.replace(MacGor { tick: 0.0, len: m.len, tac: m.tac.clone(), ps: m.ps.clone(), holder: None });
-            let tab = ileriKur(k, &m).map(Arc::new);
+            let tab = ileri_kur(k, &m).map(Arc::new);
             k.mac = sakla_mac;
             k.bag = sakla_d;
-            k.k2._noHold = sakla_k2.0;
-            k.k2._noFake = sakla_k2.1;
+            k.k2._no_hold = sakla_k2.0;
+            k.k2._no_fake = sakla_k2.1;
             k.k2._dalgada = sakla_k2.2;
             k.ob.it = Some((m.tick, key, tab));
         } else {
@@ -473,16 +473,16 @@ pub fn ileriTab(k: &mut Kafa) -> Option<Arc<IleriTab>> {
 }
 
 /// JS ileriDeger(team, x, y) (decide.js:6585)
-pub fn ileriDeger(k: &mut Kafa, team: f64, x: f64, y: f64) -> f64 {
-    match ileriTab(k) {
+pub fn ileri_deger(k: &mut Kafa, team: f64, x: f64, y: f64) -> f64 {
+    match ileri_tab(k) {
         Some(T) => T.oku(team, x, y),
         None => k.D.b1 * dis::threat(k, team, x, y),
     }
 }
 /// JS ilerleme(w, team, x, y) (decide.js:6589)
 pub fn ilerleme(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64) -> f64 {
-    let d = ileriDeger(k, team, x, y);
-    let f = dis::freeAt(k, w, team, x, y);
+    let d = ileri_deger(k, team, x, y);
+    let f = dis::free_at(k, w, team, x, y);
     if crate::iz_acik() && std::env::var("ALAN_YD_IZ").is_ok() {
         eprintln!("  iler {} {} ileriDeger {:.9} freeAt {:.9}", x, y, d, f);
     }
@@ -534,23 +534,23 @@ struct SahYol {
 
 /// JS sahiplikKur(w, team, ch, B0) (decide.js:6634): her hücrede şut değeri (S) ve komşu hücreye
 /// sürme / arkadaşa pas yolları; üç adımlık değer yinelemesi (rakibin karşı değeriyle).
-pub fn sahiplikKur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>) -> Sahiplik {
+pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>) -> Sahiplik {
     let KG = IMK_HUC;
     let NX = (GW / KG).round() as usize + 1;
     let NY = (GH / KG).round() as usize + 1;
     let g = gam(k);
-    let vC = 0.1955;
-    let PM = dis::pasMax(k);
+    let v_c = 0.1955;
+    let PM = dis::pas_max(k);
     struct F {
         S: Vec<f64>,
         H: Vec<Vec<SahYol>>,
         N: Vec<f64>,
         gxo: f64,
     }
-    let mut FF: Vec<F> = Vec::new();
+    let mut ff: Vec<F> = Vec::new();
     let kd = k.dis.clone();
     for t in [0.0, 1.0] {
-        let cT = if t == team { ch } else { dis::chKayip(k, ch) };
+        let c_t = if t == team { ch } else { dis::ch_kayip(k, ch) };
         struct R {
             p: Op,
             G: Option<dis::GecTab>,
@@ -561,14 +561,14 @@ pub fn sahiplikKur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>
         let rak: Vec<R> = w
             .iter()
             .filter(|p| p.team != t && !p.noTouch && !bekci(p))
-            .map(|p| R { p: p.clone(), G: dis::AS_gecTab(k, p), v: dis::AS_vSp(k, p), R: jmin(2.0, crate::temas::menzil(p, 0.35)), rc: jmax(0.0, dis::ALAN_TEPKI(k, p, "kovala")) })
+            .map(|p| R { p: p.clone(), G: dis::as_gec_tab(k, p), v: dis::as_v_sp(k, p), R: jmin(2.0, crate::temas::menzil(p, 0.35)), rc: jmax(0.0, dis::alan_tepki(k, p, "kovala")) })
             .collect();
         let rv = |x: f64, y: f64| -> f64 {
             let mut m = 1e9;
             for o in &rak {
                 let d = jmax(0.0, hypot(o.p.x - x, o.p.y - y) - o.R);
                 if !(o.rc + d / o.v >= m) {
-                    m = jmin(m, o.rc + o.G.as_ref().map_or(0.0, |g| kd.gecOf(g, x, y, Some(d))) + d / o.v);
+                    m = jmin(m, o.rc + o.G.as_ref().map_or(0.0, |g| kd.gec_of(g, x, y, Some(d))) + d / o.v);
                 }
             }
             m
@@ -582,14 +582,14 @@ pub fn sahiplikKur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>
                 let x = i as f64 * KG;
                 let y = j as f64 * KG;
                 let c = i * NY + j;
-                if !imkUzak(t, x, y) {
+                if !imk_uzak(t, x, y) {
                     let Tc = match B0 {
-                        Some(b) => jmax(30.0, dis::ucusT(k, hypot(x - b.x, y - b.y), k.D.arriveFirm, None)),
+                        Some(b) => jmax(30.0, dis::ucus_t(k, hypot(x - b.x, y - b.y), k.D.arriveFirm, None)),
                         None => 30.0,
                     };
                     let P = nk(x, y);
-                    let wb0 = bekYerW(k, w, t, P, Some(Tc));
-                    let kOf = |wb: &[Op]| -> Option<Oyuncu> {
+                    let wb0 = bek_yer_w(k, w, t, P, Some(Tc));
+                    let k_of = |wb: &[Op]| -> Option<Oyuncu> {
                         let mut bd = 1e9;
                         let mut k0: Option<&Op> = None;
                         for o in wb {
@@ -604,15 +604,15 @@ pub fn sahiplikKur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>
                         }
                         k0.map(|o| (**o).clone())
                     };
-                    let sOf = |k: &mut Kafa, wb: &[Op]| -> f64 {
-                        let k0 = kOf(wb);
-                        sutS(k, wb, t, x, y, cT, k0.as_ref(), None) * sutVakit(k, wb, t, x, y, k0.as_ref())
+                    let s_of = |k: &mut Kafa, wb: &[Op]| -> f64 {
+                        let k0 = k_of(wb);
+                        sut_s(k, wb, t, x, y, c_t, k0.as_ref(), None) * sut_vakit(k, wb, t, x, y, k0.as_ref())
                     };
-                    let mut sv = sOf(k, &wb0);
+                    let mut sv = s_of(k, &wb0);
                     if sv > 0.005 {
-                        let pw = predictWorld(k, w, t, P, Tc, false, None, false, None);
-                        let wb = bekYerW(k, &pw, t, P, Some(Tc));
-                        sv = sOf(k, &wb);
+                        let pw = predict_world(k, w, t, P, Tc, false, None, false, None);
+                        let wb = bek_yer_w(k, &pw, t, P, Some(Tc));
+                        sv = s_of(k, &wb);
                     }
                     S[c] = sv;
                 }
@@ -625,8 +625,8 @@ pub fn sahiplikKur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>
                     }
                     let x2 = a as f64 * KG;
                     let y2 = b as f64 * KG;
-                    let tk = hypot(x2 - x, y2 - y) / vC;
-                    let kk = jmin(imkSg((rv((x + x2) / 2.0, (y + y2) / 2.0) - tk / 2.0) / imkTau(tk / 2.0)), imkSg((rv(x2, y2) - tk) / imkTau(tk)));
+                    let tk = hypot(x2 - x, y2 - y) / v_c;
+                    let kk = jmin(imk_sg((rv((x + x2) / 2.0, (y + y2) / 2.0) - tk / 2.0) / imk_tau(tk / 2.0)), imk_sg((rv(x2, y2) - tk) / imk_tau(tk)));
                     yol.push(SahYol { x: x2, y: y2, k: kk, lx: x2, ly: y2 });
                 }
                 for q in &biz {
@@ -635,20 +635,20 @@ pub fn sahiplikKur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>
                         continue;
                     }
                     let A = nk(x, y);
-                    let kk = dis::laneOk(k, w, t, A, nk(q.x, q.y), Some(k.D.arriveFirm), Some(k.D.sutHazir)) * bekYol(k, w, t, A, nk(q.x, q.y), Some(k.D.sutHazir));
+                    let kk = dis::lane_ok(k, w, t, A, nk(q.x, q.y), Some(k.D.arriveFirm), Some(k.D.sut_hazir)) * bek_yol(k, w, t, A, nk(q.x, q.y), Some(k.D.sut_hazir));
                     yol.push(SahYol { x: q.x, y: q.y, k: kk, lx: (x + q.x) / 2.0, ly: (y + q.y) / 2.0 });
                 }
                 H[c] = yol;
             }
         }
         let N = S.clone();
-        FF.push(F { S, H, N, gxo });
+        ff.push(F { S, H, N, gxo });
     }
     for _ in 0..SAH_ADIM {
-        let mut N2 = [vec![0.0; NX * NY], vec![0.0; NX * NY]];
+        let mut n2 = [vec![0.0; NX * NY], vec![0.0; NX * NY]];
         for t in 0..2 {
-            let f = &FF[t];
-            let o = &FF[1 - t];
+            let f = &ff[t];
+            let o = &ff[1 - t];
             let kac = Sahiplik::oku_n(&o.N, NX, NY, f.gxo, GCY);
             for c in 0..f.S.len() {
                 let mut b = if f.S[c] > 0.0 { f.S[c] - (1.0 - f.S[c]) * kac } else { f64::NEG_INFINITY };
@@ -658,12 +658,12 @@ pub fn sahiplikKur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>
                         b = v;
                     }
                 }
-                N2[t][c] = b;
+                n2[t][c] = b;
             }
         }
-        let [a, b] = N2;
-        FF[0].N = a;
-        FF[1].N = b;
+        let [a, b] = n2;
+        ff[0].N = a;
+        ff[1].N = b;
     }
     // ALAN_SAH_IZ=x,y: o hücrenin şut değeri, son değeri ve en iyi yolu (takım `team` için)
     if crate::iz_acik() {
@@ -673,8 +673,8 @@ pub fn sahiplikKur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>
                 let t = team as usize;
                 let (i, j) = ((p[0] / KG).round() as usize, (p[1] / KG).round() as usize);
                 let c = i * NY + j;
-                let f = &FF[t];
-                let o = &FF[1 - t];
+                let f = &ff[t];
+                let o = &ff[1 - t];
                 let kac = Sahiplik::oku_n(&o.N, NX, NY, f.gxo, GCY);
                 let mut ys: Vec<(f64, String)> = vec![(if f.S[c] > 0.0 { f.S[c] - (1.0 - f.S[c]) * kac } else { f64::NEG_INFINITY }, format!("şut S {:.3}", f.S[c]))];
                 for e in &f.H[c] {
@@ -687,14 +687,14 @@ pub fn sahiplikKur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>
             }
         }
     }
-    let n1 = FF.pop().unwrap().N;
-    let n0 = FF.pop().unwrap().N;
+    let n1 = ff.pop().unwrap().N;
+    let n0 = ff.pop().unwrap().N;
     Sahiplik { N: [n0, n1], NX, NY }
 }
 
 /// ALAN_SAHSIZ_IZ: sahiplik haritasının yerine, seçenek üretimi için aynı ızgarada yerel değer: her hücre kendi
 /// basit konum değeri (zemin: oradan taşıyıp şut ya da ilerleme), komşudan yayılma ve yineleme yok.
-pub fn sahiplikYerel(k: &mut Kafa, w: &[Op], ch: f64) -> Sahiplik {
+pub fn sahiplik_yerel(k: &mut Kafa, w: &[Op], ch: f64) -> Sahiplik {
     let KG = IMK_HUC;
     let NX = (GW / KG).round() as usize + 1;
     let NY = (GH / KG).round() as usize + 1;
@@ -714,13 +714,13 @@ pub fn sahiplikYerel(k: &mut Kafa, w: &[Op], ch: f64) -> Sahiplik {
 /// şutçunun dibine (2.4 br) yetişememesi; ya da oradan bir geçişle (komşu hücreye sürme ya da arkadaşa pas) şut
 /// değeri olan bir yere varmak: geçişin başarısı, savunmacıların birikmiş süreye (varış + geçiş) dek yetişememesi.
 /// En çok bir geçiş (iki hamle), yineleme ve sabit indirim yok; zaman biriktikçe savunma yetiştiği için yol pahalılaşır.
-pub fn sahiplikBolge(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>) -> Sahiplik {
+pub fn sahiplik_bolge(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>) -> Sahiplik {
     let KG = IMK_HUC;
     let NX = (GW / KG).round() as usize + 1;
     let NY = (GH / KG).round() as usize + 1;
     let g = gam(k);
-    let vC = 0.1955;
-    let PM = dis::pasMax(k);
+    let v_c = 0.1955;
+    let PM = dis::pas_max(k);
     let kd = k.dis.clone();
     let kr = k.dis.kural();
     // takım başına: savunmacılar, varış süresi; şut değeri S
@@ -732,17 +732,17 @@ pub fn sahiplikBolge(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokt
         v: f64,
         rc: f64,
     }
-    let rakOf = |k: &Kafa, t: f64| -> Vec<R> {
-        w.iter().filter(|p| p.team != t && !p.noTouch && !bekci(p)).map(|p| R { p: p.clone(), G: dis::AS_gecTab(k, p), v: dis::AS_vSp(k, p), rc: jmax(0.0, dis::ALAN_TEPKI(k, p, "kovala")) }).collect()
+    let rak_of = |k: &Kafa, t: f64| -> Vec<R> {
+        w.iter().filter(|p| p.team != t && !p.noTouch && !bekci(p)).map(|p| R { p: p.clone(), G: dis::as_gec_tab(k, p), v: dis::as_v_sp(k, p), rc: jmax(0.0, dis::alan_tepki(k, p, "kovala")) }).collect()
     };
     let varis = |o: &R, x: f64, y: f64, Rr: f64| -> f64 {
         let d = jmax(0.0, hypot(o.p.x - x, o.p.y - y) - Rr);
-        o.rc + o.G.as_ref().map_or(0.0, |g| kd.gecOf(g, x, y, Some(d))) + d / o.v
+        o.rc + o.G.as_ref().map_or(0.0, |g| kd.gec_of(g, x, y, Some(d))) + d / o.v
     };
     for ti in 0..2 {
         let t = ti as f64;
-        let cT = if t == team { ch } else { dis::chKayip(k, ch) };
-        let rak = rakOf(k, t);
+        let c_t = if t == team { ch } else { dis::ch_kayip(k, ch) };
+        let rak = rak_of(k, t);
         // yalnız Bekçi'li dünya: tablonun saf şut değeri (yakın rakip ve yol olabilirlikle ayrıca)
         let wbk: Vec<Op> = w.iter().filter(|p| p.team == t || bekci(p)).cloned().collect();
         for i in 0..NX {
@@ -751,26 +751,26 @@ pub fn sahiplikBolge(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokt
                 let y = j as f64 * KG;
                 let c = i * NY + j;
                 let Tc = match B0 {
-                    Some(b) if t == team => dis::ucusT(k, hypot(x - b.x, y - b.y), k.D.arriveFirm, None),
+                    Some(b) if t == team => dis::ucus_t(k, hypot(x - b.x, y - b.y), k.D.arriveFirm, None),
                     _ => 30.0,
                 };
                 TC[ti][c] = Tc;
-                if imkUzak(t, x, y) {
+                if imk_uzak(t, x, y) {
                     continue;
                 }
                 let P = nk(x, y);
-                let wb = bekYerW(k, &wbk, t, P, Some(Tc));
-                let tab = sutS(k, &wb, t, x, y, cT, None, None);
+                let wb = bek_yer_w(k, &wbk, t, P, Some(Tc));
+                let tab = sut_s(k, &wb, t, x, y, c_t, None, None);
                 if tab <= 0.0005 {
                     continue;
                 }
                 let mut fB = 1.0;
                 for o in &rak {
                     let tp = varis(o, x, y, 2.4);
-                    if !crate::kafa::kafa2_tarti::kuyuOlabilir(&o.p, x, y, tp, &kr) {
+                    if !crate::kafa::kafa2_tarti::kuyu_olabilir(&o.p, x, y, tp, &kr) {
                         continue;
                     }
-                    fB *= 1.0 - imkSg((Tc - tp) / imkTau(Tc));
+                    fB *= 1.0 - imk_sg((Tc - tp) / imk_tau(Tc));
                 }
                 SS[ti][c] = tab * fB;
             }
@@ -788,10 +788,10 @@ pub fn sahiplikBolge(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokt
     };
     for ti in 0..2 {
         let t = ti as f64;
-        let rak = rakOf(k, t);
+        let rak = rak_of(k, t);
         let rv = |x: f64, y: f64| -> f64 { rak.iter().map(|o| varis(o, x, y, 2.0)).fold(1e9, jmin) };
         let biz: Vec<Op> = w.iter().filter(|p| p.team == t && !p.noTouch && !bekci(p)).cloned().collect();
-        let oS = |x: f64, y: f64| -> f64 { Sahiplik::oku_n(&SS[1 - ti], NX, NY, x, y) };
+        let o_s = |x: f64, y: f64| -> f64 { Sahiplik::oku_n(&SS[1 - ti], NX, NY, x, y) };
         for i in 0..NX {
             for j in 0..NY {
                 let x = i as f64 * KG;
@@ -814,11 +814,11 @@ pub fn sahiplikBolge(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokt
                     if hedef <= 0.0 {
                         continue;
                     }
-                    let tk = hypot(x2 - x, y2 - y) / vC;
-                    let kk = jmin(imkSg((rv((x + x2) / 2.0, (y + y2) / 2.0) - (t0 + tk / 2.0)) / imkTau(t0 + tk / 2.0)), imkSg((rv(x2, y2) - (t0 + tk)) / imkTau(t0 + tk)));
-                    let v = kk * g * hedef - (1.0 - kk) * oS(x2, y2);
+                    let tk = hypot(x2 - x, y2 - y) / v_c;
+                    let kk = jmin(imk_sg((rv((x + x2) / 2.0, (y + y2) / 2.0) - (t0 + tk / 2.0)) / imk_tau(t0 + tk / 2.0)), imk_sg((rv(x2, y2) - (t0 + tk)) / imk_tau(t0 + tk)));
+                    let v = kk * g * hedef - (1.0 - kk) * o_s(x2, y2);
                     if iz {
-                        eprintln!("  sür → ({:.0},{:.0}) kk {:.3} hedefS {:.3} rakS {:.3} v {:.3}", x2, y2, kk, hedef, oS(x2, y2), v);
+                        eprintln!("  sür → ({:.0},{:.0}) kk {:.3} hedefS {:.3} rakS {:.3} v {:.3}", x2, y2, kk, hedef, o_s(x2, y2), v);
                     }
                     if v > b {
                         b = v;
@@ -834,9 +834,9 @@ pub fn sahiplikBolge(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokt
                         continue;
                     }
                     let A = nk(x, y);
-                    let tf = dis::ucusT(k, L, k.D.arriveFirm, None);
-                    let kk = dis::laneOk(k, w, t, A, nk(q.x, q.y), Some(k.D.arriveFirm), Some(k.D.sutHazir)) * bekYol(k, w, t, A, nk(q.x, q.y), Some(k.D.sutHazir)) * imkSg((rv(q.x, q.y) - (t0 + tf)) / imkTau(t0 + tf));
-                    let v = kk * g * hedef - (1.0 - kk) * oS((x + q.x) / 2.0, (y + q.y) / 2.0);
+                    let tf = dis::ucus_t(k, L, k.D.arriveFirm, None);
+                    let kk = dis::lane_ok(k, w, t, A, nk(q.x, q.y), Some(k.D.arriveFirm), Some(k.D.sut_hazir)) * bek_yol(k, w, t, A, nk(q.x, q.y), Some(k.D.sut_hazir)) * imk_sg((rv(q.x, q.y) - (t0 + tf)) / imk_tau(t0 + tf));
+                    let v = kk * g * hedef - (1.0 - kk) * o_s((x + q.x) / 2.0, (y + q.y) / 2.0);
                     if iz {
                         eprintln!("  pas → {} ({:.0},{:.0}) kk {:.3} hedefS {:.3} v {:.3}", q.govde.name, q.x, q.y, kk, hedef, v);
                     }
@@ -852,21 +852,21 @@ pub fn sahiplikBolge(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokt
 }
 
 /// JS zeminS(w, team, x, y, ch, k) (decide.js:6747): sahiplik haritası varsa ondan
-pub fn zeminS(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Option<&Oyuncu>) -> f64 {
+pub fn zemin_s(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Option<&Oyuncu>) -> f64 {
     // ALAN_SAHSIZ_IZ: sahiplik haritası değerlendirmede kullanılmaz (basit konum değeri)
     if crate::kafa::kafa2_tarti::sahsiz() {
         return zemin(k, w, team, x, y, ch, kq);
     }
-    match &k.SAH_F {
+    match &k.sah_f {
         Some(f) => f.oku(team, x, y),
         None => zemin(k, w, team, x, y, ch, kq),
     }
 }
 
 /// JS yerDeger(w, team, x, y, ch) (decide.js:6773): oyuncunun yerinin değeri (şut ya da zemin)
-pub fn yerDeger(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64) -> f64 {
-    let wb = bekYerW(k, w, team, nk(x, y), None);
-    let a = dis::shotQ(k, &wb, team, x, y, ch) * sutVakit(k, w, team, x, y, None);
+pub fn yer_deger(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64) -> f64 {
+    let wb = bek_yer_w(k, w, team, nk(x, y), None);
+    let a = dis::shot_q(k, &wb, team, x, y, ch) * sut_vakit(k, w, team, x, y, None);
     let b = k.D.combo * zemin(k, w, team, x, y, ch, None);
     jmax(a, b)
 }
@@ -875,7 +875,7 @@ pub fn yerDeger(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64) -> f
 // (MIMARI.md Aşama 2: yerleşim kararın dosyalarına bağlanmaz; bunlar değerlendirme katmanında)
 
 /// JS bekYol(w, team, A, B, lag) (decide.js:6876): A→B pasını rakip Bekçi'nin kesmeme olasılığı.
-pub fn bekYol(k: &mut Kafa, w: &[Op], team: f64, A: Nokta, B: Nokta, lag: Option<f64>) -> f64 {
+pub fn bek_yol(k: &mut Kafa, w: &[Op], team: f64, A: Nokta, B: Nokta, lag: Option<f64>) -> f64 {
     let kb = match w.iter().find(|o| o.team != team && bekci(o) && !o.noTouch) {
         Some(b) => b.clone(),
         None => return 1.0,
@@ -890,15 +890,15 @@ pub fn bekYol(k: &mut Kafa, w: &[Op], team: f64, A: Nokta, B: Nokta, lag: Option
         return 1.0;
     }
     let Q = &crate::core_sabit::Q;
-    let t = dis::ucusT(k, s, k.D.arriveFirm, None) + veyo(lag, 0.0);
+    let t = dis::ucus_t(k, s, k.D.arriveFirm, None) + veyo(lag, 0.0);
     let rc = crate::temas::bek_re(&kb);
-    let vk = (0.17 + 0.006 * ALAN_HZ(&kb)) * dis::ALAN_SPRE(k, &kb);
+    let vk = (0.17 + 0.006 * alan_hz(&kb)) * dis::alan_spre(k, &kb);
     let R = Q.bek_body + jmin(crate::temas::bek_dl(&kb), jmax(0.0, t - rc) * crate::temas::bek_dv(&kb)) + jmax(0.0, t - rc - 2.0) * vk * 0.6;
     1.0 / (1.0 + exp(-(hypot(kb.x - cx0, kb.y - cy0) - R) / 0.3))
 }
 
 /// JS riskOf(h, tac) (decide.js:5423)
-pub fn riskOf(k: &Kafa, h: &Oyuncu, tac: Option<&Tac>) -> f64 {
+pub fn risk_of(k: &Kafa, h: &Oyuncu, tac: Option<&Tac>) -> f64 {
     let tr = match tac.and_then(|t| t.risk) {
         Some(r) => 1.4 - 0.8 * r,
         None => 1.0,
@@ -908,11 +908,11 @@ pub fn riskOf(k: &Kafa, h: &Oyuncu, tac: Option<&Tac>) -> f64 {
         Some(m) if dogru(m) => m,
         _ => 1.0,
     };
-    k.D.riskBase * tr * (1.4 - 0.8 * pr) * mk
+    k.D.risk_base * tr * (1.4 - 0.8 * pr) * mk
 }
 
 /// JS kayipYer(src, team, ch, h, tac) (decide.js:8801): kayıp haritası (dışarıdan)
-pub fn kayipYer(k: &mut Kafa, src: &Arc<Dunya>, team: f64, ch: f64, h: &Oyuncu, tac: Option<&Tac>) -> KayipF {
-    let r = riskOf(k, h, tac);
-    kayipF(k, src.clone(), team, ch, r)
+pub fn kayip_yer(k: &mut Kafa, src: &Arc<Dunya>, team: f64, ch: f64, h: &Oyuncu, tac: Option<&Tac>) -> KayipF {
+    let r = risk_of(k, h, tac);
+    kayip_f(k, src.clone(), team, ch, r)
 }

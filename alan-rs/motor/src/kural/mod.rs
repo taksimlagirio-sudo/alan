@@ -10,4 +10,4 @@ pub mod kos;
 pub mod sut;
 
 /// Bekleyen taşıyıcının beklemeyi bozduğu en yakın rakip uzaklığı (br).
-pub const BEKLE_BOZ: f64 = 3.5;
+pub const bekle_boz: f64 = 3.5;

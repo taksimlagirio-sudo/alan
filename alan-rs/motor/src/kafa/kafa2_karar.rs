@@ -3,13 +3,13 @@
 //! dalgaKos, decideOT, otFactor, riskOf, realize, kayipYer.
 #![allow(non_snake_case, clippy::too_many_arguments)]
 
-pub use super::kafa2_zemin::{kayipYer, riskOf};
+pub use super::kafa2_zemin::{kayip_yer, risk_of};
 use super::kafa2_bag as dis;
-use super::kafa2_bag::{ALAN_HZ, ALAN_Y};
+use super::kafa2_bag::{alan_hz, alan_y};
 use super::kafa2_baglam::*;
 use super::kafa2_imkan::tasima;
-use super::kafa2_tarti::{kay, prensipDegerle, KayipRef};
-use super::kafa2_zemin::{kayipF, sahiplikKur};
+use super::kafa2_tarti::{kay, prensip_degerle, KayipRef};
+use super::kafa2_zemin::{kayip_f, sahiplik_kur};
 use crate::mat::{atan2, cos, dogru, exp, hypot, jmax, jmin, jround, sin, PI};
 use crate::model::{Dok, JODet, JOLaunch, Oyuncu, Secenek};
 use crate::saha::{CY as GCY, H as GH, KR, W as GW};
@@ -22,23 +22,23 @@ const GH8: f64 = if GH == 50.0 { 49.2 } else { GH - 0.8 };
 
 
 /// JS otFactor(p, inSp) (decide.js:5252): tek dokunuşun hata katı (gelen topun hızına göre)
-pub fn otFactor(k: &Kafa, p: &Oyuncu, inSp: f64) -> f64 {
-    1.0 + k.D.otErr * jmin(1.0, inSp / 0.8) * jmax(0.4, 1.0 - 0.06 * (ALAN_Y(p, "tekDokunusIsabet") - 10.0))
+pub fn ot_factor(k: &Kafa, p: &Oyuncu, in_sp: f64) -> f64 {
+    1.0 + k.D.ot_err * jmin(1.0, in_sp / 0.8) * jmax(0.4, 1.0 - 0.06 * (alan_y(p, "tekDokunusIsabet") - 10.0))
 }
 
 /// JS decideOT(h, src, ch, rnd, tac, ot) (decide.js:5255): tek dokunuşla oynanacak en iyi vuruş.
-pub fn decideOT(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar, tac: Option<&Tac>, ot: f64) -> Option<Secenek> {
+pub fn decide_ot(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar, tac: Option<&Tac>, ot: f64) -> Option<Secenek> {
     let ot0 = k.bag._ot;
-    let td0 = k.bag._tekD;
+    let td0 = k.bag._tek_d;
     k.bag._ot = Some(ot);
-    k.bag._tekD = true;
+    k.bag._tek_d = true;
     let r = decide(k, hi, src, ch, rnd, tac);
     let opts: Vec<Secenek> = r.opts.into_iter().filter(|o| o.kind != "sür" && o.kind != "tut" && o.launch.is_some()).collect();
     let s = dis::secim(k, &src[hi], opts, r.T, src);
     // JS finally: D._ot = 0; D._tekD = false (öncekine dönmez)
     let _ = (ot0, td0);
     k.bag._ot = Some(0.0);
-    k.bag._tekD = false;
+    k.bag._tek_d = false;
     s
 }
 
@@ -54,34 +54,34 @@ pub struct Karar {
 /// JS decide(h, src, ch, rnd, tac) (decide.js:7293): topu tutan h'nin seçenekleri ve en iyisi.
 /// `hi`: h'nin dünyadaki sırası; seçeneklerin `q`'su da bu dünyadaki sıra.
 pub fn decide(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar, tac: Option<&Tac>) -> Karar {
-    let tL0 = k.bag._tekL;
-    k.bag._tekL = if dis::depoOn() && tac.map(|t| t.kontra).unwrap_or(false) { Some(k.D.kontraL) } else { None };
+    let t_l0 = k.bag._tek_l;
+    k.bag._tek_l = if dis::depo_on() && tac.map(|t| t.kontra).unwrap_or(false) { Some(k.D.kontra_l) } else { None };
     let r = decide0(k, hi, src, ch, rnd, tac);
-    k.bag._tekL = tL0;
+    k.bag._tek_l = t_l0;
     r
 }
 
 /// JS decide0 (decide.js:7388): sahiplik haritası kurulur (kararın süresince SAH_F).
 pub fn decide0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar, tac: Option<&Tac>) -> Karar {
-    let s0 = k.SAH_F.clone();
+    let s0 = k.sah_f.clone();
     {
         let h = src[hi].clone();
         // ALAN_SAHSIZ_IZ: seçenek üretiminin ızgarası yerel değerle (yayılmasız)
         let f = Arc::new(if crate::kafa::kafa2_tarti::bolge() {
-            crate::kafa::kafa2_zemin::sahiplikBolge(k, src, h.team, ch, Some(nk(h.x, h.y)))
+            crate::kafa::kafa2_zemin::sahiplik_bolge(k, src, h.team, ch, Some(nk(h.x, h.y)))
         } else if crate::kafa::kafa2_tarti::sahsiz() {
-            crate::kafa::kafa2_zemin::sahiplikYerel(k, src, ch)
+            crate::kafa::kafa2_zemin::sahiplik_yerel(k, src, ch)
         } else {
-            sahiplikKur(k, src, h.team, ch, Some(nk(h.x, h.y)))
+            sahiplik_kur(k, src, h.team, ch, Some(nk(h.x, h.y)))
         });
-        k.k2.sahF_iz = Some((k.bag._tick, h.team, f.clone()));
-        k.SAH_F = Some(f);
+        k.k2.sah_f_iz = Some((k.bag._tick, h.team, f.clone()));
+        k.sah_f = Some(f);
     }
     // JS decide0K: srcC = Object.assign(src.slice(), {_kc: new Map}) (kararın K önbelleği)
-    let kc0 = k.srcC_kc.replace(std::cell::RefCell::new(crate::alan::KOnbellek::yeni()));
-    let r = decide0K(k, hi, src, ch, rnd, tac);
-    k.srcC_kc = kc0;
-    k.SAH_F = s0;
+    let kc0 = k.src_c_kc.replace(std::cell::RefCell::new(crate::alan::KOnbellek::yeni()));
+    let r = decide0_k(k, hi, src, ch, rnd, tac);
+    k.src_c_kc = kc0;
+    k.sah_f = s0;
     r
 }
 
@@ -134,16 +134,16 @@ pub struct DalgaR {
 struct DAnlik {
     /// geçici bağlam (ayar değişmez, saklanmaz)
     bag: crate::model::KafaBag,
-    noHold: bool,
-    noFake: bool,
+    no_hold: bool,
+    no_fake: bool,
 }
 fn d_al(k: &Kafa) -> DAnlik {
-    DAnlik { bag: k.bag.clone(), noHold: k.k2._noHold, noFake: k.k2._noFake }
+    DAnlik { bag: k.bag.clone(), no_hold: k.k2._no_hold, no_fake: k.k2._no_fake }
 }
 fn d_geri(k: &mut Kafa, a: &DAnlik) {
     k.bag = a.bag.clone();
-    k.k2._noHold = a.noHold;
-    k.k2._noFake = a.noFake;
+    k.k2._no_hold = a.no_hold;
+    k.k2._no_fake = a.no_fake;
 }
 
 
@@ -170,34 +170,34 @@ struct Ctx0<'a> {
     DOK: bool,
     risk: f64,
     tac: Option<&'a Tac>,
-    lossAt: Option<KayipRef>,
+    loss_at: Option<KayipRef>,
     RV: Option<(f64, f64, f64, f64)>,
 }
 
 impl<'a> Ctx0<'a> {
     /// JS lossAt(x, y)
     fn loss(&mut self, k: &mut Kafa, x: f64, y: f64) -> f64 {
-        match &self.lossAt {
+        match &self.loss_at {
             Some(f) => kay(k, f, x, y),
             None => {
                 let src = self.src.clone();
-                self.voK(k, &src, x, y) * self.risk
+                self.vo_k(k, &src, x, y) * self.risk
             }
         }
     }
     /// JS VoK(w, x, y)
-    fn voK(&mut self, k: &mut Kafa, w: &[Op], x: f64, y: f64) -> f64 {
-        let vo = dis::V(k, w, 1.0 - self.team, x, y, dis::chKayip(k, self.ch));
+    fn vo_k(&mut self, k: &mut Kafa, w: &[Op], x: f64, y: f64) -> f64 {
+        let vo = dis::V(k, w, 1.0 - self.team, x, y, dis::ch_kayip(k, self.ch));
         vo
     }
     /// JS sonDunya(D0, Topt, kind)
-    fn sonDunya(&mut self, k: &mut Kafa, D0: Nokta, Topt: f64, kind: &str) -> Arc<Dunya> {
+    fn son_dunya(&mut self, k: &mut Kafa, D0: Nokta, topt: f64, kind: &str) -> Arc<Dunya> {
         // yeni kafada (PR) son dünya başlangıç dünyasıdır; eski kafanın cevap dünyası kalktı
-        let _ = (k, D0, Topt, kind);
+        let _ = (k, D0, topt, kind);
         self.src.clone()
     }
     /// JS sekPay(im, tf)
-    fn sekPay(&mut self, k: &mut Kafa, im: &JODet) -> f64 {
+    fn sek_pay(&mut self, k: &mut Kafa, im: &JODet) -> f64 {
         // yeni kafada (PR) sekme payı yok; eski kafanın hesabı kalktı
         let _ = (k, im);
         0.0
@@ -225,17 +225,17 @@ fn kanca_u(k: &Kafa) -> Option<f64> {
 }
 
 /// tartG: bir adayı tartar (JS decide0K içinde tartG).
-fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut Zar) {
+fn tart_g(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut Zar) {
     let h = c.h.clone();
     let src = c.src.clone();
     let team = c.team;
     let ch = c.ch;
     if o.kind == "tut" {
         let Th = veyo(o.hold, c.T);
-        let w = c.sonDunya(k, nk(h.x, h.y), Th, "drive");
-        let p1 = dis::keepP(k, &h, &src, None, Th / 2.0);
+        let w = c.son_dunya(k, nk(h.x, h.y), Th, "drive");
+        let p1 = dis::keep_p(k, &h, &src, None, Th / 2.0);
         let wR = dis::respond(k, &src, team, nk(h.x, h.y), Th / 2.0, "drive");
-        let hR: Oyuncu = if dis::ikKafa(k) {
+        let h_r: Oyuncu = if dis::ik_kafa(k) {
             let mut q: Option<&Op> = None;
             let mut qd = 1e9;
             for o2 in wR.iter() {
@@ -252,7 +252,7 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
                 Some(q) => {
                     let mut v = (*h).clone();
                     let w0 = |a: f64| atan2(sin(a), cos(a));
-                    let c0 = h.ca.unwrap_or_else(|| dis::coreAng(k, &h));
+                    let c0 = h.ca.unwrap_or_else(|| dis::core_ang(k, &h));
                     let dd = w0(atan2(h.y - q.y, h.x - q.x) - c0);
                     let om = crate::donus::omega(&h, qd < 4.0, 0.35);
                     v.ca = Some(c0 + crate::mat::jsign(dd) * jmin(dd.abs(), om * Th / 2.0));
@@ -262,43 +262,43 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
         } else {
             (*h).clone()
         };
-        let p2 = dis::keepP(k, &hR, &wR, None, Th / 2.0);
+        let p2 = dis::keep_p(k, &h_r, &wR, None, Th / 2.0);
         let P = p1 * p2;
-        let tS = dis::sarjTut(k, &h, &src, ch, 1.0, Th);
-        let c2 = match tS {
+        let t_s = dis::sarj_tut(k, &h, &src, ch, 1.0, Th);
+        let c2 = match t_s {
             Some(t) => t.c2,
-            None => jmin(1.0, ch + dis::chargeRate(k, &h, &src, 1.0, ch) * Th),
+            None => jmin(1.0, ch + dis::charge_rate(k, &h, &src, 1.0, ch) * Th),
         };
-        let vY = dis::V(k, &w, team, h.x, h.y, c2);
-        let vE = { vY };
+        let v_y = dis::V(k, &w, team, h.x, h.y, c2);
+        let v_e = { v_y };
         let LH = c.loss(k, h.x, h.y);
-        let kE = {
+        let k_e = {
             1.0
         };
-        let bed = tS.map(|t| t.bed).unwrap_or(0.0);
-        let v = (if kE < 1.0 { P * (kE * vE - (1.0 - kE) * LH) } else { P * vE }) - (1.0 - P) * LH - bed;
+        let bed = t_s.map(|t| t.bed).unwrap_or(0.0);
+        let v = (if k_e < 1.0 { P * (k_e * v_e - (1.0 - k_e) * LH) } else { P * v_e }) - (1.0 - P) * LH - bed;
         o.v = Some(v);
-        if kE < 1.0 {
+        if k_e < 1.0 {
         }
         if c.DOK {
-            o.dok = Some(Dok::yeni(&[("konum", P * kE * vY), ("acti", P * kE * (vE - vY)), ("risk", -(1.0 - P) * LH - P * (1.0 - kE) * LH), ("enBiz", -bed)]));
+            o.dok = Some(Dok::yeni(&[("konum", P * k_e * v_y), ("acti", P * k_e * (v_e - v_y)), ("risk", -(1.0 - P) * LH - P * (1.0 - k_e) * LH), ("enBiz", -bed)]));
         }
         o.det = Some(JODet { P: Some(P), ch: Some(c2), ..Default::default() });
         o._w = Some(w);
         o._T = Some(Th);
-        if tS.is_some() {
+        if t_s.is_some() {
             o.sjK = Some(sabit(c2 - ch, 3));
         }
     } else if o.kind == "sür" {
         let to = o.to.unwrap();
-        let Ts = jmax(6.0, dis::surSure(k, &h, hypot(to.x - h.x, to.y - h.y), o.dir, o.spr));
+        let Ts = jmax(6.0, dis::sur_sure(k, &h, hypot(to.x - h.x, to.y - h.y), o.dir, o.spr));
         // JS keepP(o.spr ? sprKop(h) : h, …): sprintsizde taşıyıcının kendisi (dünyadaki nesne; dolanma onu kimliğiyle atlar)
-        let hk: Option<Oyuncu> = if o.spr.map(dogru).unwrap_or(false) { Some(dis::sprKop(k, &h)) } else { None };
+        let hk: Option<Oyuncu> = if o.spr.map(dogru).unwrap_or(false) { Some(dis::spr_kop(k, &h)) } else { None };
         let kpq = crate::iz_acik() && std::env::var("ALAN_KPQ_IZ").is_ok();
         if kpq {
             crate::kafa::kafa1_ikili::KP_KAYIT.with(|c| *c.borrow_mut() = Some(Vec::new()));
         }
-        let P = crate::kafa::kafa1_ikili::kp_kal(dis::keepP(k, hk.as_ref().unwrap_or(&*h), &src, o.dir, Ts));
+        let P = crate::kafa::kafa1_ikili::kp_kal(dis::keep_p(k, hk.as_ref().unwrap_or(&*h), &src, o.dir, Ts));
         if kpq {
             let v = crate::kafa::kafa1_ikili::KP_KAYIT.with(|c| c.borrow_mut().take()).unwrap_or_default();
             let gx = if h.team == 0.0 { GW } else { 0.0 };
@@ -307,9 +307,9 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
                 eprintln!("KPQ [{},{:?},{:.2},{:.2},[{:.2},{:.2}],{},{:.1},{:.4},[{}]]", k.tick(), &*h.govde.name, h.x, h.y, to.x, to.y, o.spr.map_or(false, dogru), Ts, P, q.join(","));
             }
         }
-        let pr = k.keepP_son.get();
-        let gec = k.keepP_gec.get();
-        let (A, A_to) = {
+        let pr = k.keep_p_son.get();
+        let gec = k.keep_p_gec.get();
+        let (A, a_to) = {
             let L = hypot(to.x - h.x, to.y - h.y);
             if pr < L {
                 (nk(h.x + (to.x - h.x) / veya(L, 1.0) * jmax(0.0, pr), h.y + (to.y - h.y) / veya(L, 1.0) * jmax(0.0, pr)), false)
@@ -317,28 +317,28 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
                 (to, true)
             }
         };
-        let sS = dis::sarjTut(k, &h, &src, ch, 0.0, Ts);
+        let sS = dis::sarj_tut(k, &h, &src, ch, 0.0, Ts);
         let c2 = match sS {
             Some(t) => t.c2,
-            None => jmin(1.0, ch + dis::chargeRate(k, &h, &src, 0.0, ch) * Ts),
+            None => jmin(1.0, ch + dis::charge_rate(k, &h, &src, 0.0, ch) * Ts),
         };
-        let w = c.sonDunya(k, A, Ts, "drive");
-        if !A_to {
+        let w = c.son_dunya(k, A, Ts, "drive");
+        if !a_to {
             o.toE = Some(A);
             o.TsE = Some(Ts);
             if gec > 0.0 && crate::kafa::kafa1_ikili::send_gec() {
                 o.sendGec = Some(gec);
             }
         }
-        let vY = 0.0;
-        let Vend = 0.0;
-        let vE0 = Vend;
-        let kE = 1.0;
+        let v_y = 0.0;
+        let vend = 0.0;
+        let v_e0 = vend;
+        let k_e = 1.0;
         let LA = c.loss(k, A.x, A.y);
-        let v = P * Vend - (1.0 - P) * LA;
+        let v = P * vend - (1.0 - P) * LA;
         o.v = Some(v);
         if c.DOK {
-            o.dok = Some(Dok::yeni(&[("konum", P * kE * vY), ("acti", P * kE * (vE0 - vY)), ("risk", v - P * kE * vE0)]));
+            o.dok = Some(Dok::yeni(&[("konum", P * k_e * v_y), ("acti", P * k_e * (v_e0 - v_y)), ("risk", v - P * k_e * v_e0)]));
         }
         o.det = Some(JODet { P: Some(P), ch: Some(c2), ..Default::default() });
         o._w = Some(w);
@@ -348,7 +348,7 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
         let dx = to.x - h.x;
         let dy = to.y - h.y;
         let L = veya(hypot(dx, dy), 1.0);
-        let v0 = o.v.unwrap_or(f64::NAN) * crate::top::chg_mul(ch) * dis::sutGuc(k, &h);
+        let v0 = o.v.unwrap_or(f64::NAN) * crate::top::chg_mul(ch) * dis::sut_guc(k, &h);
         let mut launch = JOLaunch { vx: dx / L * v0, vy: dy / L * v0, ok: false };
         let ot0 = k.bag._ot;
         let g0 = k.bag._gon;
@@ -358,13 +358,13 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
             o.v = None;
             return;
         }
-        let syO = if k.bag._kanca.is_some() && dogru(ks) { ks } else { veyo(o.sYon, 0.0) };
+        let sy_o = if k.bag._kanca.is_some() && dogru(ks) { ks } else { veyo(o.sYon, 0.0) };
         let plase = o.shot.as_deref() == Some("plase");
         {
-            let vE = dis::vurE(k, &h, Some(ch), true);
-            let ca = dis::caOf(k, &h);
+            let v_e = dis::vur_e(k, &h, Some(ch), true);
+            let ca = dis::ca_of(k, &h);
             let w0 = kanca_w0(k);
-            let mut sv = match dis::savurPlan(k, &h, launch.vx, launch.vy, ca, w0, syO, &src, plase, vE) {
+            let mut sv = match dis::savur_plan(k, &h, launch.vx, launch.vy, ca, w0, sy_o, &src, plase, v_e) {
                 Some(s) => s,
                 None => {
                     o.v = None;
@@ -378,10 +378,10 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
                 let ry = h.y + veya(h.vy, 0.0) * g * 0.5 + sin(caR) * B;
                 let ex = to.x - rx;
                 let ey = to.y - ry;
-                let eL = veya(hypot(ex, ey), 1.0);
-                let L2 = JOLaunch { vx: ex / eL * v0, vy: ey / eL * v0, ok: false };
-                let ca = dis::caOf(k, &h);
-                if let Some(s2) = dis::savurPlan(k, &h, L2.vx, L2.vy, ca, kanca_w0(k), syO, &src, plase, vE) {
+                let e_l = veya(hypot(ex, ey), 1.0);
+                let L2 = JOLaunch { vx: ex / e_l * v0, vy: ey / e_l * v0, ok: false };
+                let ca = dis::ca_of(k, &h);
+                if let Some(s2) = dis::savur_plan(k, &h, L2.vx, L2.vy, ca, kanca_w0(k), sy_o, &src, plase, v_e) {
                     launch = L2;
                     sv = s2;
                 }
@@ -390,25 +390,25 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
                 launch = JOLaunch { vx: launch.vx * sv.k, vy: launch.vy * sv.k, ok: false };
             }
             o.savT = Some(sv.T);
-            k.bag._savW = Some(sv.wRel);
-            k.bag._savU = Some(sv.uSh);
+            k.bag._sav_w = Some(sv.w_rel);
+            k.bag._sav_u = Some(sv.u_sh);
             k.bag._itme = Some(plase);
             if let Some(u) = kanca_u(k) {
                 if sv.T >= 1.0 {
-                    let vO = hypot(launch.vx, launch.vy);
+                    let v_o = hypot(launch.vx, launch.vy);
                     let mx = u * (1.0 - 0.35 * jmin(1.0, sv.A / PI)) + 0.4;
-                    if vO > mx {
-                        let L2 = JOLaunch { vx: launch.vx * mx / vO, vy: launch.vy * mx / vO, ok: false };
-                        let ca = dis::caOf(k, &h);
-                        let s2 = dis::savurPlan(k, &h, L2.vx, L2.vy, ca, kanca_w0(k), ks, &src, plase, vE);
+                    if v_o > mx {
+                        let L2 = JOLaunch { vx: launch.vx * mx / v_o, vy: launch.vy * mx / v_o, ok: false };
+                        let ca = dis::ca_of(k, &h);
+                        let s2 = dis::savur_plan(k, &h, L2.vx, L2.vy, ca, kanca_w0(k), ks, &src, plase, v_e);
                         launch = match s2 {
                             Some(s2) if s2.k < 1.0 => JOLaunch { vx: L2.vx * s2.k, vy: L2.vy * s2.k, ok: false },
                             _ => L2,
                         };
                         if let Some(s2) = s2 {
                             o.savT = Some(s2.T);
-                            k.bag._savW = Some(s2.wRel);
-                            k.bag._savU = Some(s2.uSh);
+                            k.bag._sav_w = Some(s2.w_rel);
+                            k.bag._sav_u = Some(s2.u_sh);
                         }
                     }
                 }
@@ -416,18 +416,18 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
         }
         o.launch = Some(launch.clone());
         let shot = o.shot.clone().unwrap_or_default();
-        k.bag._ot = Some(veyo(ot0, 1.0) * dis::gonEk(k, &h, &src, &shot));
+        k.bag._ot = Some(veyo(ot0, 1.0) * dis::gon_ek(k, &h, &src, &shot));
         k.bag._gon = Some(true);
         k.bag._sut = Some(crate::model::SutBag::Tur(shot));
-        k.bag._sYon = Some(syO);
+        k.bag._s_yon = Some(sy_o);
         let tr = { 6.0 };
         let im = dis::imagine(k, &h, &src, dis::Top0 { x: h.x, y: h.y, vx: launch.vx, vy: launch.vy, ch, aim: None }, rnd, tr, None, None);
-        k.bag._sYon = Some(0.0);
+        k.bag._s_yon = Some(0.0);
         k.bag._ot = ot0;
         k.bag._gon = g0;
         k.bag._sut = s0;
-        k.bag._savW = None;
-        k.bag._savU = None;
+        k.bag._sav_w = None;
+        k.bag._sav_u = None;
         k.bag._itme = None;
         let e = im.endO.or(im.end).unwrap_or_default();
         let rk = -im.Pl.unwrap_or(f64::NAN) * c.loss(k, e.x, e.y);
@@ -443,7 +443,7 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
             Some(l) => l.clone(),
             None => {
                 let arr = o.arrive.unwrap_or(f64::NAN);
-                dis::launchFor(k, &h, to, arr, &src, ch)
+                dis::launch_for(k, &h, to, arr, &src, ch)
             }
         };
         if !lf.ok {
@@ -451,12 +451,12 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
         }
         o.launch = Some(lf.clone());
         let ks = kanca_s(k);
-        let kS = if k.bag._kanca.is_some() && dogru(ks) { ks } else { 0.0 };
-        let o0 = if dogru(kS) || o.sYon.map(dogru).unwrap_or(false) { None } else { Some(o.clone()) };
-        let vE = dis::vurE(k, &h, Some(ch), false);
-        let ca = dis::caOf(k, &h);
-        let syon = if dogru(kS) { kS } else { veyo(o.sYon, 0.0) };
-        let mut sv = match dis::savurPlan(k, &h, lf.vx, lf.vy, ca, kanca_w0(k), syon, &src, false, vE) {
+        let k_s = if k.bag._kanca.is_some() && dogru(ks) { ks } else { 0.0 };
+        let o0 = if dogru(k_s) || o.sYon.map(dogru).unwrap_or(false) { None } else { Some(o.clone()) };
+        let v_e = dis::vur_e(k, &h, Some(ch), false);
+        let ca = dis::ca_of(k, &h);
+        let syon = if dogru(k_s) { k_s } else { veyo(o.sYon, 0.0) };
+        let mut sv = match dis::savur_plan(k, &h, lf.vx, lf.vy, ca, kanca_w0(k), syon, &src, false, v_e) {
             Some(s) => s,
             None => {
                 o.v = None;
@@ -464,9 +464,9 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
             }
         };
         if let Some(o0) = o0 {
-            let sA = dis::savurPlan(k, &h, lf.vx, lf.vy, ca, kanca_w0(k), -sv.s, &src, false, vE);
-            if let Some(sA) = sA {
-                if sA.T <= sv.T + 1.0 {
+            let s_a = dis::savur_plan(k, &h, lf.vx, lf.vy, ca, kanca_w0(k), -sv.s, &src, false, v_e);
+            if let Some(s_a) = s_a {
+                if s_a.T <= sv.T + 1.0 {
                     o.sYon = Some(sv.s);
                     let mut ek = o0;
                     ek.lf0 = Some(lf.clone());
@@ -481,17 +481,17 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
         }
         o.savT = Some(sv.T);
         k.bag._savT = Some(sv.T);
-        k.bag._savW = Some(sv.wRel);
-        k.bag._savU = Some(sv.uSh);
-        k.bag._savCa = Some(sv.caR);
+        k.bag._sav_w = Some(sv.w_rel);
+        k.bag._sav_u = Some(sv.u_sh);
+        k.bag._sav_ca = Some(sv.caR);
         if let Some(u) = kanca_u(k) {
             if sv.T >= 1.0 {
-                let vO = hypot(launch.vx, launch.vy);
+                let v_o = hypot(launch.vx, launch.vy);
                 let mx = u * (1.0 - 0.35 * jmin(1.0, sv.A / PI)) + 0.4;
-                if vO > mx {
-                    let L2 = JOLaunch { vx: launch.vx * mx / vO, vy: launch.vy * mx / vO, ok: launch.ok };
-                    let ca = dis::caOf(k, &h);
-                    let s2 = dis::savurPlan(k, &h, L2.vx, L2.vy, ca, kanca_w0(k), ks, &src, false, vE);
+                if v_o > mx {
+                    let L2 = JOLaunch { vx: launch.vx * mx / v_o, vy: launch.vy * mx / v_o, ok: launch.ok };
+                    let ca = dis::ca_of(k, &h);
+                    let s2 = dis::savur_plan(k, &h, L2.vx, L2.vy, ca, kanca_w0(k), ks, &src, false, v_e);
                     launch = match s2 {
                         Some(s2) if s2.k < 1.0 => JOLaunch { vx: L2.vx * s2.k, vy: L2.vy * s2.k, ok: L2.ok },
                         _ => L2,
@@ -500,9 +500,9 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
                         sv = s2;
                         o.savT = Some(s2.T);
                         k.bag._savT = Some(s2.T);
-                        k.bag._savW = Some(s2.wRel);
-                        k.bag._savU = Some(s2.uSh);
-                        k.bag._savCa = Some(s2.caR);
+                        k.bag._sav_w = Some(s2.w_rel);
+                        k.bag._sav_u = Some(s2.u_sh);
+                        k.bag._sav_ca = Some(s2.caR);
                     }
                 }
             }
@@ -514,31 +514,31 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
         let tr = { k.D.trials };
         let im = dis::imagine(k, &h, &src, dis::Top0 { x: h.x, y: h.y, vx: launch.vx, vy: launch.vy, ch, aim: Some(to) }, rnd, tr, q.as_ref(), if onune { Some(to) } else { None });
         k.bag._savT = None;
-        k.bag._savW = None;
-        k.bag._savU = None;
-        k.bag._savCa = None;
-        let imP = im.P.unwrap_or(f64::NAN);
+        k.bag._sav_w = None;
+        k.bag._sav_u = None;
+        k.bag._sav_ca = None;
+        let im_p = im.P.unwrap_or(f64::NAN);
         let sd = im.Ps.is_some();
-        let Pd = if sd { jmax(0.0, imP - im.Ps.unwrap()) } else { imP };
-        let eM = if sd { im.endD } else { im.endM };
-        let eM_ok = eM.map(|e| e.x.is_finite()).unwrap_or(false);
+        let Pd = if sd { jmax(0.0, im_p - im.Ps.unwrap()) } else { im_p };
+        let e_m = if sd { im.endD } else { im.endM };
+        let e_m_ok = e_m.map(|e| e.x.is_finite()).unwrap_or(false);
         let qpos = q.as_ref().map(|q| nk(q.x, q.y));
         let (at, at_to) = if onune {
-            if Pd > 1e-9 && eM_ok {
-                (eM.unwrap(), false)
-            } else if imP >= 0.5 && im.end.map(|e| e.x.is_finite()).unwrap_or(false) {
+            if Pd > 1e-9 && e_m_ok {
+                (e_m.unwrap(), false)
+            } else if im_p >= 0.5 && im.end.map(|e| e.x.is_finite()).unwrap_or(false) {
                 (im.end.unwrap(), false)
             } else {
                 (to, true)
             }
-        } else if o.kind == "pas" && Pd > 1e-9 && eM_ok {
-            (eM.unwrap(), false)
+        } else if o.kind == "pas" && Pd > 1e-9 && e_m_ok {
+            (e_m.unwrap(), false)
         } else {
             (qpos.unwrap_or(to), false)
         };
-        let tf = dis::ucusSure(k, &h, at, &launch, &src, ch, o.savT);
-        let w = c.sonDunya(k, at, tf, "pass");
-        o._sek = Some(if sd { c.sekPay(k, &im) } else { 0.0 });
+        let tf = dis::ucus_sure(k, &h, at, &launch, &src, ch, o.savT);
+        let w = c.son_dunya(k, at, tf, "pass");
+        o._sek = Some(if sd { c.sek_pay(k, &im) } else { 0.0 });
         let rv = {
             0.0
         };
@@ -548,31 +548,31 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
         let lv = c.loss(k, eo.x, eo.y);
         let mut v = Some(Pk + Pd * rv + o._sek.unwrap() - Pl * lv);
         if c.DOK {
-            if let Some((kA, vY, vM, RL)) = c.RV {
+            if let Some((k_a, v_y, v_m, RL)) = c.RV {
                 let rk = -Pl * lv;
-                let ac0 = Pd * kA * (vM - vY);
+                let ac0 = Pd * k_a * (v_m - v_y);
                 o.dok = Some(Dok::yeni(&[("konum", v.unwrap() - ac0 + Pd * RL - rk), ("acti", ac0), ("risk", rk - Pd * RL)]));
             }
         }
-        if onune && !at_to && imP > 1e-9 {
+        if onune && !at_to && im_p > 1e-9 {
             let lvn = veya(hypot(launch.vx, launch.vy), 1.0);
             let ileri = ((at.x - to.x) * launch.vx + (at.y - to.y) * launch.vy) / lvn;
-            if ileri > k.D.asanPay {
+            if ileri > k.D.asan_pay {
                 v = None;
             }
         }
         o.v = v;
         if o.v.is_some() && onune && !at_to && Pd > 1e-9 {
-            let tf0 = dis::ucusSure(k, &h, to, &launch, &src, ch, o.savT);
+            let tf0 = dis::ucus_sure(k, &h, to, &launch, &src, ch, o.savT);
             let ek = jmax(0.0, tf - tf0);
             if ek > 0.0 {
                 let tempo = match c.tac {
                     Some(t) => t.tempo.unwrap_or(0.5),
                     None => 0.5,
                 };
-                let zx = Pd * tempo * k.D.bekTempo * (ek / 30.0);
+                let zx = Pd * tempo * k.D.bek_tempo * (ek / 30.0);
                 o.v = Some(o.v.unwrap() - zx);
-                dis::dokEk(o, "zaman", -zx);
+                dis::dok_ek(o, "zaman", -zx);
             }
         }
         o.det = Some(im);
@@ -586,22 +586,22 @@ fn tartG(k: &mut Kafa, c: &mut Ctx0, o: &mut Secenek, r: &mut DalgaR, rnd: &mut 
 }
 
 /// JS kancaK(lf): kenardan vuruşun savurma planı (yoksa vuruş yok)
-fn kancaK(k: &mut Kafa, h: &Oyuncu, src: &[Op], ch: f64, lf: JOLaunch) -> Option<JOLaunch> {
+fn kanca_k(k: &mut Kafa, h: &Oyuncu, src: &[Op], ch: f64, lf: JOLaunch) -> Option<JOLaunch> {
     let kc = kanca_u(k);
-    let ca = dis::caOf(k, h);
-    let vE = dis::vurE(k, h, Some(ch), false);
-    let pl = dis::savurPlan(k, h, lf.vx, lf.vy, ca, kanca_w0(k), kanca_s(k), src, false, vE)?;
+    let ca = dis::ca_of(k, h);
+    let v_e = dis::vur_e(k, h, Some(ch), false);
+    let pl = dis::savur_plan(k, h, lf.vx, lf.vy, ca, kanca_w0(k), kanca_s(k), src, false, v_e)?;
     let u = match kc {
         Some(u) if pl.T >= 1.0 => u,
         _ => return Some(lf),
     };
-    let vO = hypot(lf.vx, lf.vy);
+    let v_o = hypot(lf.vx, lf.vy);
     let mx = u * (1.0 - 0.35 * jmin(1.0, pl.A / PI)) + 0.4;
-    Some(if vO > mx { JOLaunch { vx: lf.vx * mx / vO, vy: lf.vy * mx / vO, ok: lf.ok } } else { lf })
+    Some(if v_o > mx { JOLaunch { vx: lf.vx * mx / v_o, vy: lf.vy * mx / v_o, ok: lf.ok } } else { lf })
 }
 
 /// JS segD(p, A, B): noktanın AB parçasına uzaklığı
-fn segD(p: Nokta, A: Nokta, B: Nokta) -> f64 {
+fn seg_d(p: Nokta, A: Nokta, B: Nokta) -> f64 {
     let ax = B.x - A.x;
     let ay = B.y - A.y;
     let L2 = veya(ax * ax + ay * ay, 1.0);
@@ -610,13 +610,13 @@ fn segD(p: Nokta, A: Nokta, B: Nokta) -> f64 {
 }
 
 /// Kenardan sekme adayının hedefleri (JS bankHedef)
-fn bankHedef(ad: &dis::Secenekler, src: &[Op], team: f64, qi: Pid) -> Vec<(Nokta, &'static str, f64, &'static str)> {
+fn bank_hedef(ad: &dis::Secenekler, src: &[Op], team: f64, qi: Pid) -> Vec<(Nokta, &'static str, f64, &'static str)> {
     let q = &src[qi];
     let duvarlar: [(f64, &'static str); 3] = [(0.0, "y"), (GH, "y"), (if t0(team) { GW } else { 0.0 }, "x")];
-    if let Some(tH) = ad.tekH.iter().find(|x| x.0 == qi).map(|x| &x.1) {
-        if !tH.is_empty() {
+    if let Some(t_h) = ad.tek_h.iter().find(|x| x.0 == qi).map(|x| &x.1) {
+        if !t_h.is_empty() {
             let mut A = Vec::new();
-            for P in tH {
+            for P in t_h {
                 let tk = if hypot(P.x - q.x, P.y - q.y) < 0.5 { "ayak" } else { "nokta" };
                 for (wv, ek) in duvarlar {
                     A.push((*P, tk, wv, ek));
@@ -650,15 +650,15 @@ fn bankHedef(ad: &dis::Secenekler, src: &[Op], team: f64, qi: Pid) -> Vec<(Nokta
 
 /// JS decide0K(h, src, ch, rnd, tac) (decide.js:7402): adayları kurar, budar, tartar; kenardan ve
 /// çalım adaylarını ekler; enerji muhasebesi; prensip tartısı. Sonuç değere göre sıralı.
-pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar, tac: Option<&Tac>) -> Karar {
+pub fn decide0_k(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar, tac: Option<&Tac>) -> Karar {
     k.bag._sut = Some(crate::model::SutBag::Egilim(tac.and_then(|t| t.sut).unwrap_or(0.5)));
     let h = src[hi].clone();
     let team = h.team;
     let mut ad = dis::options(k, &h, src, ch);
-    let risk = riskOf(k, &h, tac);
+    let risk = risk_of(k, &h, tac);
     let htempo = h.govde.tl.as_ref().and_then(|t| t.huc.get("tempo").copied()).unwrap_or(0.5);
     let T = jround(10.0 + 14.0 * (1.0 - jmax(0.0, jmin(1.0, tac.and_then(|t| t.tempo).unwrap_or(0.5) + 0.6 * (htempo - 0.5)))) + 3.0);
-    let DOK = !k.k2._noHold && !k.k2._noFake;
+    let DOK = !k.k2._no_hold && !k.k2._no_fake;
     let mut c = Ctx0 {
         h: h.clone(),
         src: src.clone(),
@@ -668,38 +668,38 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
         DOK,
         risk,
         tac,
-        lossAt: None,
+        loss_at: None,
         RV: None,
     };
     {
-        let mut kf = kayipF(k, src.clone(), team, ch, risk);
+        let mut kf = kayip_f(k, src.clone(), team, ch, risk);
         kf.karar_icin(k);
-        c.lossAt = Some(Rc::new(RefCell::new(kf)));
+        c.loss_at = Some(Rc::new(RefCell::new(kf)));
     }
     let mut direct: Vec<(Pid, f64)> = Vec::new();
-    let dirYaz = |direct: &mut Vec<(Pid, f64)>, q: Pid, v: f64| match direct.iter_mut().find(|x| x.0 == q) {
+    let dir_yaz = |direct: &mut Vec<(Pid, f64)>, q: Pid, v: f64| match direct.iter_mut().find(|x| x.0 == q) {
         Some(x) => x.1 = jmax(x.1, v),
         None => direct.push((q, v)),
     };
     // budama
     {
-        let nP = k.D.nFull;
-        let nS = 4.0;
+        let n_p = k.D.n_full;
+        let n_s = 4.0;
         let opts = &mut ad.out;
         let rough = |k: &mut Kafa, o: &mut Secenek| -> f64 {
             let at = if o.kind == "önüne" || o.tek.map(dogru).unwrap_or(false) { o.to.unwrap() } else { o.q.map(|i| nk(src[i].x, src[i].y)).or(o.to).unwrap() };
             if o.kind == "gönder" {
-                return dis::laneOk(k, src, team, nk(h.x, h.y), at, None, None) * dis::shotQ(k, src, team, h.x, h.y, ch) * if o.shot.as_deref() == Some("plase") { 1.0 } else { 1.02 };
+                return dis::lane_ok(k, src, team, nk(h.x, h.y), at, None, None) * dis::shot_q(k, src, team, h.x, h.y, ch) * if o.shot.as_deref() == Some("plase") { 1.0 } else { 1.02 };
             }
             {
-                let z = match if crate::kafa::kafa2_tarti::sahsiz() { &None } else { &k.SAH_F } {
+                let z = match if crate::kafa::kafa2_tarti::sahsiz() { &None } else { &k.sah_f } {
                     Some(f) => f.oku(team, at.x, at.y),
                     None => {
                         let q = o.q.map(|i| (*src[i]).clone());
                         tasima(k, src, team, q.as_ref(), at.x, at.y, ch)
                     }
                 };
-                return dis::laneOk(k, src, team, nk(h.x, h.y), at, Some(k.D.arriveFirm), None) * o._own.unwrap_or(1.0) * jmax(0.002, z);
+                return dis::lane_ok(k, src, team, nk(h.x, h.y), at, Some(k.D.arriveFirm), None) * o._own.unwrap_or(1.0) * jmax(0.002, z);
             }
         };
         let mut pl: Vec<(usize, f64)> = Vec::new();
@@ -721,19 +721,19 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
         }
         sh.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
         let mut keep: Vec<usize> = Vec::new();
-        let mut seenQ: Vec<String> = Vec::new();
+        let mut seen_q: Vec<String> = Vec::new();
         {
             for &(i, _) in &pl {
                 let o = &opts[i];
                 let kq = format!("{}:{}{}{}", src[o.q.unwrap()].id, o.kind, if o.firm.unwrap_or(false) { "+" } else { "" }, if o.arrive.map(|a| a > k.D.arriveFirm).unwrap_or(false) { "!" } else { "" });
-                if !seenQ.contains(&kq) {
-                    seenQ.push(kq);
+                if !seen_q.contains(&kq) {
+                    seen_q.push(kq);
                     keep.push(i);
                 }
             }
         }
         for &(i, _) in &pl {
-            if keep.len() as f64 >= jmax(nP, seenQ.len() as f64) {
+            if keep.len() as f64 >= jmax(n_p, seen_q.len() as f64) {
                 break;
             }
             if !keep.contains(&i) {
@@ -757,26 +757,26 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
             sh.extend(ar);
         }
         let gk = |o: &Secenek| format!("{}:{}", o.shot.clone().unwrap_or_else(|| "undefined".into()), super::kafa2_tarti::to_fixed(o.to.unwrap().y, 2));
-        let mut kG: Vec<String> = Vec::new();
+        let mut k_g: Vec<String> = Vec::new();
         for &(i, _) in &sh {
-            if kG.len() as f64 >= nS {
+            if k_g.len() as f64 >= n_s {
                 break;
             }
             let g = gk(&opts[i]);
-            if !kG.contains(&g) {
-                kG.push(g);
+            if !k_g.contains(&g) {
+                k_g.push(g);
             }
         }
         {
             if let Some(&(i, _)) = sh.iter().find(|x| opts[x.0].shot.as_deref() == Some("plase")) {
                 let g = gk(&opts[i]);
-                if !kG.contains(&g) {
-                    kG.push(g);
+                if !k_g.contains(&g) {
+                    k_g.push(g);
                 }
             }
         }
         let mut drop: Vec<usize> = pl.iter().filter(|x| !keep.contains(&x.0)).map(|x| x.0).collect();
-        drop.extend(sh.iter().filter(|x| !kG.contains(&gk(&opts[x.0]))).map(|x| x.0));
+        drop.extend(sh.iter().filter(|x| !k_g.contains(&gk(&opts[x.0]))).map(|x| x.0));
         let mut i = opts.len();
         while i > 0 {
             i -= 1;
@@ -786,15 +786,15 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
         }
     }
     // tartı dalgaları
-    let SPKv = dis::SPK(k);
+    let spkv = dis::spk(k);
     {
         let mut tart = |k: &mut Kafa, o: &mut Secenek, r: &mut DalgaR, rnd: &mut Zar| {
-            let nY = SPKv && o.q == Some(hi);
+            let nY = spkv && o.q == Some(hi);
             if nY {
                 k.k2.sfNiyet = Some((h.id, h.team, if o.spr.map(dogru).unwrap_or(false) { "sprint".into() } else { "yok".into() }, o.itK));
             }
             let n0 = if nY { k.dis.niyet_koy(Some((h.id, h.team, o.spr.map(dogru).unwrap_or(false), o.itK))) } else { None };
-            tartG(k, &mut c, o, r, rnd);
+            tart_g(k, &mut c, o, r, rnd);
             if nY {
                 k.k2.sfNiyet = None;
                 k.dis.niyet_koy(n0);
@@ -884,7 +884,7 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
                         }
                     }
                     if let Some((q, v)) = r.dir {
-                        dirYaz(direct, q, v);
+                        dir_yaz(direct, q, v);
                     }
                 }
                 a = b;
@@ -904,18 +904,18 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
             let Bq = &crate::core_sabit::Q;
             let yak = |p: &Secenek| -> bool {
                 let t = veyo(p.savT, 0.0) + 2.0;
-                src.iter().any(|q| q.team != team && !q.noTouch && hypot(q.x - h.x, q.y - h.y) < Bq.body + Bq.reach + (0.17 + 0.006 * ALAN_HZ(q)) * dis::ALAN_SPRE(k, q) * t)
+                src.iter().any(|q| q.team != team && !q.noTouch && hypot(q.x - h.x, q.y - h.y) < Bq.body + Bq.reach + (0.17 + 0.006 * alan_hz(q)) * dis::alan_spre(k, q) * t)
             };
             for (pi, x) in B {
                 let p = &ad.out[pi];
-                if p.v.is_none() || p.v.unwrap() >= b1 - k.D.yokD || yak(p) {
+                if p.v.is_none() || p.v.unwrap() >= b1 - k.D.yok_d || yak(p) {
                     ad.out.push(x);
                 }
             }
             dalga(k, &mut ad.out, &mut bekle, &mut direct, n0, rnd);
         }
     }
-    let basR = {
+    let bas_r = {
         let mut s = 0.0;
         for q in src.iter() {
             if q.team == team || bekci(q) {
@@ -924,12 +924,12 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
             let dx = h.x - q.x;
             let dy = h.y - q.y;
             let L = veya(hypot(dx, dy), 1.0);
-            let b = 0.17 + 0.006 * ALAN_HZ(q);
+            let b = 0.17 + 0.006 * alan_hz(q);
             s += jmax(0.0, jmin(1.0, (veya(q.vx, 0.0) * dx + veya(q.vy, 0.0) * dy) / L / b));
         }
         jmin(1.0, s / 2.0)
     };
-    if SPKv {
+    if spkv {
         let n = ad.out.len();
         for i in 0..n {
             let o = &ad.out[i];
@@ -960,25 +960,25 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
             let Tt = match o._T {
                 Some(t) if dogru(t) => t,
                 _ => match o.to {
-                    Some(to) => dis::ucusT(k, hypot(to.x - h.x, to.y - h.y), o.arrive.unwrap_or(k.D.arrive), None) + 4.0,
+                    Some(to) => dis::ucus_t(k, hypot(to.x - h.x, to.y - h.y), o.arrive.unwrap_or(k.D.arrive), None) + 4.0,
                     None => 0.0,
                 },
             };
             if Tt > 0.0 {
                 let bit = if o.kind == "tut" { None } else { o.toE.or(o.to) };
-                let en = dis::enMuhasebe(k, &h, src, &w, Tt, bit, &ad.out[i]);
+                let en = dis::en_muhasebe(k, &h, src, &w, Tt, bit, &ad.out[i]);
                 let o = &mut ad.out[i];
                 o.en = Some(en);
-                let wY = veyo(tac.and_then(|t| t.enYipratma), 0.0);
-                let kT = k.D.enUfuk / jmax(k.D.enTmin, Tt);
-                if dogru(wY) && o.v.is_some() {
+                let w_y = veyo(tac.and_then(|t| t.enYipratma), 0.0);
+                let k_t = k.D.en_ufuk / jmax(k.D.en_tmin, Tt);
+                if dogru(w_y) && o.v.is_some() {
                     let e = o.en.as_ref().unwrap();
-                    let ek = kT * k.D.enHizV * (0.0 * e.hizBiz - wY * (e.hizRakipD + basR * e.hizRakipY));
+                    let ek = k_t * k.D.en_hiz_v * (0.0 * e.hizBiz - w_y * (e.hizRakipD + bas_r * e.hizRakipY));
                     o.v = Some(o.v.unwrap() + ek);
                     o.en.as_mut().unwrap().ek = sabit(ek, 4);
-                    let eb = kT * k.D.enHizV * (0.0 * o.en.as_ref().unwrap().hizBiz);
-                    dis::dokEk(o, "enBiz", eb);
-                    dis::dokEk(o, "enRakip", ek - eb);
+                    let eb = k_t * k.D.en_hiz_v * (0.0 * o.en.as_ref().unwrap().hizBiz);
+                    dis::dok_ek(o, "enBiz", eb);
+                    dis::dok_ek(o, "enRakip", ek - eb);
                     o._en = Some(veyo(o._en, 0.0) + ek);
                 }
             }
@@ -992,7 +992,7 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
         o._T = None;
     }
     // kenardan sekme (arkadaşa)
-    let bankQ: Vec<(Pid, f64)> = if dis::kenarAkil(k, &h) {
+    let bank_q: Vec<(Pid, f64)> = if dis::kenar_akil(k, &h) {
         let mut v: Vec<(Pid, f64, f64)> = Vec::new();
         for qi in 0..src.len() {
             let q = &src[qi];
@@ -1001,21 +1001,21 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
             }
             let Pd = match direct.iter().find(|x| x.0 == qi) {
                 Some(x) => x.1,
-                None => dis::laneOk(k, src, team, nk(h.x, h.y), nk(q.x, q.y), None, None),
+                None => dis::lane_ok(k, src, team, nk(h.x, h.y), nk(q.x, q.y), None, None),
             };
-            if Pd < k.D.bankIf {
+            if Pd < k.D.bank_if {
                 v.push((qi, Pd, dis::threat(k, team, q.x, q.y)));
             }
         }
         v.sort_by(|a, b| b.2.partial_cmp(&a.2).unwrap_or(std::cmp::Ordering::Equal));
-        v.into_iter().take(k.D.bankN as usize).map(|x| (x.0, x.1)).collect()
+        v.into_iter().take(k.D.bank_n as usize).map(|x| (x.0, x.1)).collect()
     } else {
         Vec::new()
     };
     {
         let mut items: Vec<BankIt> = Vec::new();
-        for (q, _) in &bankQ {
-            for (T, tk, wv, ek) in bankHedef(&ad, src, team, *q) {
+        for (q, _) in &bank_q {
+            for (T, tk, wv, ek) in bank_hedef(&ad, src, team, *q) {
                 items.push(BankIt { q: *q, T, tk, wv, ek });
             }
         }
@@ -1023,7 +1023,7 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
         let snap = d_al(k);
         for it in &items {
             d_geri(k, &snap);
-            if let Some(o) = bankBir(k, &mut c, it, rnd) {
+            if let Some(o) = bank_bir(k, &mut c, it, rnd) {
                 yeni.push(o);
             }
             d_geri(k, &snap);
@@ -1056,7 +1056,7 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
                 };
                 for T in Ts {
                     let tk = k.tick();
-                    if opp.iter().any(|q| segD(nk(q.x, q.y), hp, T) < 2.0 || (q.hal.adT.is_some() && veyo(q.hal.adandi, 0.0) > tk && segD(nk(q.hal.adT.as_ref().unwrap().x, q.hal.adT.as_ref().unwrap().y), hp, T) < 2.0)) {
+                    if opp.iter().any(|q| seg_d(nk(q.x, q.y), hp, T) < 2.0 || (q.hal.adT.is_some() && veyo(q.hal.adandi, 0.0) > tk && seg_d(nk(q.hal.adT.as_ref().unwrap().x, q.hal.adT.as_ref().unwrap().y), hp, T) < 2.0)) {
                         continue;
                     }
                     let Ty = if wy == 0.0 { -T.y } else { 2.0 * GH - T.y };
@@ -1065,38 +1065,38 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
                         continue;
                     }
                     let B = nk(h.x + (T.x - h.x) * tt, if wy == 0.0 { 0.8 } else { GH8 });
-                    if opp.iter().any(|q| segD(nk(q.x, q.y), hp, B) < 1.3 || segD(nk(q.x, q.y), B, T) < 1.3) {
+                    if opp.iter().any(|q| seg_d(nk(q.x, q.y), hp, B) < 1.3 || seg_d(nk(q.x, q.y), B, T) < 1.3) {
                         continue;
                     }
-                    let lf0 = dis::bankFor(k, &h, B, T, 0.6 * k.D.arrive, src, ch);
+                    let lf0 = dis::bank_for(k, &h, B, T, 0.6 * k.D.arrive, src, ch);
                     if !lf0.ok {
                         continue;
                     }
-                    let lf = match kancaK(k, &h, src, ch, lf0) {
+                    let lf = match kanca_k(k, &h, src, ch, lf0) {
                         Some(l) => l,
                         None => continue,
                     };
-                    let im = dis::kenarIm(k, &h, src, dis::Top0 { x: h.x, y: h.y, vx: lf.vx, vy: lf.vy, ch, aim: Some(B) }, rnd, k.D.trials, Some(&h), Some(T));
-                    let tf = dis::bankSure(k, &h, B, T, &lf, src, ch, None);
-                    let imP = im.P.unwrap_or(f64::NAN);
-                    let PdK = if im.Ps.is_some() { jmax(0.0, imP - im.Ps.unwrap()) } else { imP };
+                    let im = dis::kenar_im(k, &h, src, dis::Top0 { x: h.x, y: h.y, vx: lf.vx, vy: lf.vy, ch, aim: Some(B) }, rnd, k.D.trials, Some(&h), Some(T));
+                    let tf = dis::bank_sure(k, &h, B, T, &lf, src, ch, None);
+                    let im_p = im.P.unwrap_or(f64::NAN);
+                    let pd_k = if im.Ps.is_some() { jmax(0.0, im_p - im.Ps.unwrap()) } else { im_p };
                     let rv = {
                         0.0
                     };
-                    let sk = c.sekPay(k, &im);
+                    let sk = c.sek_pay(k, &im);
                     let eo = im.endO.or(im.end).unwrap_or_default();
                     let lv = c.loss(k, eo.x, eo.y);
                     let Pl = im.Pl.unwrap_or(f64::NAN);
-                    let v = im.Pk.unwrap_or(f64::NAN) + PdK * rv + sk - Pl * lv;
-                    let mut oK = Secenek { kind: "kenardan".into(), kendine: true, to: Some(B), lead: Some(T), q: Some(hi), launch: Some(lf), det: Some(im), tf: Some(tf), v: Some(v), ..Default::default() };
+                    let v = im.Pk.unwrap_or(f64::NAN) + pd_k * rv + sk - Pl * lv;
+                    let mut o_k = Secenek { kind: "kenardan".into(), kendine: true, to: Some(B), lead: Some(T), q: Some(hi), launch: Some(lf), det: Some(im), tf: Some(tf), v: Some(v), ..Default::default() };
                     if c.DOK {
-                        if let Some((kA, vY, vM, RL)) = c.RV {
+                        if let Some((k_a, v_y, v_m, RL)) = c.RV {
                             let rk = -Pl * lv;
-                            let ac0 = PdK * kA * (vM - vY);
-                            oK.dok = Some(Dok::yeni(&[("konum", v - ac0 + PdK * RL - rk), ("acti", ac0), ("risk", rk - PdK * RL)]));
+                            let ac0 = pd_k * k_a * (v_m - v_y);
+                            o_k.dok = Some(Dok::yeni(&[("konum", v - ac0 + pd_k * RL - rk), ("acti", ac0), ("risk", rk - pd_k * RL)]));
                         }
                     }
-                    ad.out.push(oK);
+                    ad.out.push(o_k);
                 }
             }
         }
@@ -1143,8 +1143,8 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
         }
     }
     {
-        let la = c.lossAt.clone().unwrap();
-        prensipDegerle(k, hi, src, ch, team, &mut ad.out, &la, T, tac);
+        let la = c.loss_at.clone().unwrap();
+        prensip_degerle(k, hi, src, ch, team, &mut ad.out, &la, T, tac);
     }
     let mut ok: Vec<Secenek> = ad.out.into_iter().filter(|o| o.v.is_some()).collect();
     ok.sort_by(|a, b| b.v.unwrap().partial_cmp(&a.v.unwrap()).unwrap_or(std::cmp::Ordering::Equal));
@@ -1152,7 +1152,7 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
 }
 
 /// JS bankBir(it, r): bir kenardan sekme adayı (arkadaşa)
-fn bankBir(k: &mut Kafa, c: &mut Ctx0, it: &BankIt, rnd: &mut Zar) -> Option<Secenek> {
+fn bank_bir(k: &mut Kafa, c: &mut Ctx0, it: &BankIt, rnd: &mut Zar) -> Option<Secenek> {
     let h = c.h.clone();
     let src = c.src.clone();
     let ch = c.ch;
@@ -1180,29 +1180,29 @@ fn bankBir(k: &mut Kafa, c: &mut Ctx0, it: &BankIt, rnd: &mut Zar) -> Option<Sec
         }
     }
     let hedef = if it.tk == "ayak" { nk(q.x, q.y) } else { T };
-    let lf0 = dis::bankFor(k, &h, B, hedef, k.D.arrive, &src, ch);
+    let lf0 = dis::bank_for(k, &h, B, hedef, k.D.arrive, &src, ch);
     if !lf0.ok {
         return None;
     }
-    let lf = kancaK(k, &h, &src, ch, lf0)?;
-    let im = dis::kenarIm(k, &h, &src, dis::Top0 { x: h.x, y: h.y, vx: lf.vx, vy: lf.vy, ch, aim: Some(B) }, rnd, k.D.trials, Some(&q), None);
-    let tf = dis::bankSure(k, &h, B, nk(q.x, q.y), &lf, &src, ch, None);
-    let imP = im.P.unwrap_or(f64::NAN);
+    let lf = kanca_k(k, &h, &src, ch, lf0)?;
+    let im = dis::kenar_im(k, &h, &src, dis::Top0 { x: h.x, y: h.y, vx: lf.vx, vy: lf.vy, ch, aim: Some(B) }, rnd, k.D.trials, Some(&q), None);
+    let tf = dis::bank_sure(k, &h, B, nk(q.x, q.y), &lf, &src, ch, None);
+    let im_p = im.P.unwrap_or(f64::NAN);
     let sd = im.Ps.is_some();
-    let Pd = if sd { jmax(0.0, imP - im.Ps.unwrap()) } else { imP };
+    let Pd = if sd { jmax(0.0, im_p - im.Ps.unwrap()) } else { im_p };
     let rv = {
         0.0
     };
-    let sk = if sd { c.sekPay(k, &im) } else { 0.0 };
+    let sk = if sd { c.sek_pay(k, &im) } else { 0.0 };
     let eo = im.endO.or(im.end).unwrap_or_default();
     let lv = c.loss(k, eo.x, eo.y);
     let Pl = im.Pl.unwrap_or(f64::NAN);
     let v = Pd * rv + sk - Pl * lv;
     let mut o = Secenek { kind: "kenardan".into(), to: Some(B), q: Some(it.q), launch: Some(lf), det: Some(im), kh: Some(it.tk.into()), v: Some(v), ..Default::default() };
     if c.DOK {
-        if let Some((kA, vY, vM, RL)) = c.RV {
+        if let Some((k_a, v_y, v_m, RL)) = c.RV {
             let rk = -Pl * lv;
-            let ac0 = Pd * kA * (vM - vY);
+            let ac0 = Pd * k_a * (v_m - v_y);
             o.dok = Some(Dok::yeni(&[("konum", v - ac0 + Pd * RL - rk), ("acti", ac0), ("risk", rk - Pd * RL)]));
         }
     }
@@ -1229,7 +1229,7 @@ fn calim(k: &mut Kafa, c: &mut Ctx0, ad: &mut dis::Secenekler, src: &Arc<Dunya>,
         }
     }
     let hc = {
-        let (ux, uy, _) = dis::coreSide(k, &h);
+        let (ux, uy, _) = dis::core_side(k, &h);
         let B = crate::core_sabit::Q.body;
         let mut o = (*h).clone();
         o.x = h.x + ux * B;
@@ -1241,9 +1241,9 @@ fn calim(k: &mut Kafa, c: &mut Ctx0, ad: &mut dis::Secenekler, src: &Arc<Dunya>,
         _ => return,
     };
     let tk0 = k.tick();
-    let adK = |q: &Oyuncu| jmax(0.0, veyo(q.hal.adandi, 0.0) - tk0);
-    let qP = |q: &Oyuncu| -> Nokta {
-        if adK(q) > 0.0 {
+    let ad_k = |q: &Oyuncu| jmax(0.0, veyo(q.hal.adandi, 0.0) - tk0);
+    let q_p = |q: &Oyuncu| -> Nokta {
+        if ad_k(q) > 0.0 {
             if let Some(a) = &q.hal.adT {
                 return nk(a.x, a.y);
             }
@@ -1252,12 +1252,12 @@ fn calim(k: &mut Kafa, c: &mut Ctx0, ad: &mut dis::Secenekler, src: &Arc<Dunya>,
     };
     let opp: Vec<Op> = src.iter().filter(|q| q.team != team && !bekci(q)).cloned().collect();
     for wy in [0.0, GH] {
-        let adaylar: Vec<(f64, f64, Option<Nokta>)> = match &ad.tekC {
+        let adaylar: Vec<(f64, f64, Option<Nokta>)> = match &ad.tek_c {
             Some(tc) => {
                 let mut v: Vec<(Nokta, f64)> = tc
                     .iter()
                     .filter(|P| (P.x - nq.x) * g > 1.0 && hypot(P.x - nq.x, P.y - nq.y) < 9.0 && (P.y - wy).abs() < (nq.y - wy).abs() + 4.0)
-                    .map(|P| (*P, k.SAH_F.as_ref().map(|f| f.oku(team, P.x, P.y)).unwrap_or(0.0)))
+                    .map(|P| (*P, k.sah_f.as_ref().map(|f| f.oku(team, P.x, P.y)).unwrap_or(0.0)))
                     .collect();
                 v.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
                 v.into_iter().take(6).map(|x| (0.0, 0.0, Some(x.0))).collect()
@@ -1282,7 +1282,7 @@ fn calim(k: &mut Kafa, c: &mut Ctx0, ad: &mut dis::Secenekler, src: &Arc<Dunya>,
                 }
                 let B = nk(hc.x + (T.x - hc.x) * tt, if wy == 0.0 { 0.8 } else { GH8 });
                 let A = nk(hc.x, hc.y);
-                let yolGovde = |q: &Oyuncu| -> f64 {
+                let yol_govde = |q: &Oyuncu| -> f64 {
                     let kal = jmax(0.0, veyo(q.hal.adandi, 0.0) - tk0);
                     let mut mn: f64 = 1e9;
                     for kk in 0..=8 {
@@ -1301,20 +1301,20 @@ fn calim(k: &mut Kafa, c: &mut Ctx0, ad: &mut dis::Secenekler, src: &Arc<Dunya>,
                     }
                     mn
                 };
-                if opp.iter().any(|q| yolGovde(q) < 1.35) {
+                if opp.iter().any(|q| yol_govde(q) < 1.35) {
                     continue;
                 }
-                let lf = dis::bankFor(k, &hc, B, T, k.D.arrive * ar, src, ch);
+                let lf = dis::bank_for(k, &hc, B, T, k.D.arrive * ar, src, ch);
                 if !lf.ok {
                     continue;
                 }
                 let sy = if wy == 0.0 { 1.0 } else { -1.0 };
                 let W1 = nk(nq.x - 0.6 * g, nq.y + 2.2 * sy);
                 let Wp = nk(nq.x + 1.0 * g, nq.y + 2.2 * sy);
-                let vH = (0.17 + 0.006 * ALAN_HZ(&h)) * dis::ALAN_SPRE(k, &h);
-                let dW = hypot(W1.x - h.x, W1.y - h.y) + hypot(Wp.x - W1.x, Wp.y - W1.y);
+                let v_h = (0.17 + 0.006 * alan_hz(&h)) * dis::alan_spre(k, &h);
+                let d_w = hypot(W1.x - h.x, W1.y - h.y) + hypot(Wp.x - W1.x, Wp.y - W1.y);
                 let pts = {
-                    let taban = dis::vurTaban(&h);
+                    let taban = dis::vur_taban(&h);
                     let b0 = crate::top::Top::yeni(hc.x, hc.y, lf.vx, lf.vy, team as u8, Some(ch), taban);
                     let et: Vec<crate::alan::Etki> = src.iter().map(|p| p.etki()).collect();
                     crate::top::tahmin(&b0, &mut crate::alan::Kaynak::Sec(&et), &crate::saha::P, Some(160)).0
@@ -1332,7 +1332,7 @@ fn calim(k: &mut Kafa, c: &mut Ctx0, ad: &mut dis::Secenekler, src: &Arc<Dunya>,
                                 qx = q.x + (a.x - q.x) * f;
                                 qy = q.y + (a.y - q.y) * f;
                             } else {
-                                let tr = jmin(kk as f64, 0.6 * jmax(0.0, dis::ALAN_TEPKI(k, q, "kovala")));
+                                let tr = jmin(kk as f64, 0.6 * jmax(0.0, dis::alan_tepki(k, q, "kovala")));
                                 qx = q.x + veya(q.vx, 0.0) * tr;
                                 qy = q.y + veya(q.vy, 0.0) * tr;
                             }
@@ -1351,25 +1351,25 @@ fn calim(k: &mut Kafa, c: &mut Ctx0, ad: &mut dis::Secenekler, src: &Arc<Dunya>,
                     let pj = pts[j];
                     let mut tq: f64 = 1e9;
                     for q in &opp {
-                        let qp = qP(q);
+                        let qp = q_p(q);
                         let qd = veya(hypot(pj.x - qp.x, pj.y - qp.y), 1.0);
-                        tq = jmin(tq, jmax(adK(q), 0.6 * jmax(0.0, dis::ALAN_TEPKI(k, q, "kovala"))) + dis::donS(k, q, (pj.x - qp.x) / qd, (pj.y - qp.y) / qd) + jmax(0.0, hypot(qp.x - pj.x, qp.y - pj.y) - 1.4) / ((0.17 + 0.006 * ALAN_HZ(q)) * dis::ALAN_SPRE(k, q)));
+                        tq = jmin(tq, jmax(ad_k(q), 0.6 * jmax(0.0, dis::alan_tepki(k, q, "kovala"))) + dis::don_s(k, q, (pj.x - qp.x) / qd, (pj.y - qp.y) / qd) + jmax(0.0, hypot(qp.x - pj.x, qp.y - pj.y) - 1.4) / ((0.17 + 0.006 * alan_hz(q)) * dis::alan_spre(k, q)));
                     }
                     if tq < j as f64 {
                         cut = j;
                         break;
                     }
                 }
-                let dS = |k: &Kafa, p: &Oyuncu, x: f64, y: f64| {
+                let d_s = |k: &Kafa, p: &Oyuncu, x: f64, y: f64| {
                     let L = veya(hypot(x - p.x, y - p.y), 1.0);
-                    dis::donS(k, p, (x - p.x) / L, (y - p.y) / L)
+                    dis::don_s(k, p, (x - p.x) / L, (y - p.y) / L)
                 };
-                let kapiG = {
-                    let tHW = dS(k, &h, W1.x, W1.y) + dW / (0.82 * vH);
-                    let kq = qP(&nq);
-                    let tKW = jmax(adK(&nq), 0.6 * jmax(0.0, dis::ALAN_TEPKI(k, &nq, "kovala"))) + dS(k, &nq, Wp.x, Wp.y) + jmax(0.0, hypot(Wp.x - kq.x, Wp.y - kq.y) - 1.7) / ((0.17 + 0.006 * ALAN_HZ(&nq)) * dis::ALAN_SPRE(k, &nq));
-                    if tKW < tHW {
-                        tHW - tKW + 8.0
+                let kapi_g = {
+                    let t_hw = d_s(k, &h, W1.x, W1.y) + d_w / (0.82 * v_h);
+                    let kq = q_p(&nq);
+                    let t_kw = jmax(ad_k(&nq), 0.6 * jmax(0.0, dis::alan_tepki(k, &nq, "kovala"))) + d_s(k, &nq, Wp.x, Wp.y) + jmax(0.0, hypot(Wp.x - kq.x, Wp.y - kq.y) - 1.7) / ((0.17 + 0.006 * alan_hz(&nq)) * dis::alan_spre(k, &nq));
+                    if t_kw < t_hw {
+                        t_hw - t_kw + 8.0
                     } else {
                         0.0
                     }
@@ -1379,33 +1379,33 @@ fn calim(k: &mut Kafa, c: &mut Ctx0, ad: &mut dis::Secenekler, src: &Arc<Dunya>,
                 while i < cut {
                     let pt = pts[i];
                     let l1 = veya(hypot(W1.x - h.x, W1.y - h.y), 1.0);
-                    let tH = jmax(i as f64, dis::donS(k, &h, (W1.x - h.x) / l1, (W1.y - h.y) / l1) + (dW + hypot(pt.x - Wp.x, pt.y - Wp.y)) / (0.82 * vH));
-                    let tHv = tH + kapiG;
-                    if tHv > i as f64 + 3.0 {
+                    let t_h = jmax(i as f64, dis::don_s(k, &h, (W1.x - h.x) / l1, (W1.y - h.y) / l1) + (d_w + hypot(pt.x - Wp.x, pt.y - Wp.y)) / (0.82 * v_h));
+                    let t_hv = t_h + kapi_g;
+                    if t_hv > i as f64 + 3.0 {
                         i += 3;
                         continue;
                     }
                     let mut tD: f64 = 1e9;
                     for q in &opp {
                         let ql = veya(hypot(pt.x - q.x, pt.y - q.y), 1.0);
-                        let back = dis::donS(k, q, (pt.x - q.x) / ql, (pt.y - q.y) / ql);
-                        let qp = qP(q);
-                        tD = jmin(tD, jmax(adK(q), jmax(0.0, dis::ALAN_TEPKI(k, q, "kovala"))) + back + jmax(0.0, hypot(qp.x - pt.x, qp.y - pt.y) - 1.4) / ((0.17 + 0.006 * ALAN_HZ(q)) * dis::ALAN_SPRE(k, q)));
+                        let back = dis::don_s(k, q, (pt.x - q.x) / ql, (pt.y - q.y) / ql);
+                        let qp = q_p(q);
+                        tD = jmin(tD, jmax(ad_k(q), jmax(0.0, dis::alan_tepki(k, q, "kovala"))) + back + jmax(0.0, hypot(qp.x - pt.x, qp.y - pt.y) - 1.4) / ((0.17 + 0.006 * alan_hz(q)) * dis::alan_spre(k, q)));
                     }
-                    let pw = 1.0 / (1.0 + exp((tHv - tD) / 5.0)) * (1.0 - 0.3 * jmax(0.0, 1.0 - (ALAN_Y(&h, "kenarCalim") - 6.0) / 10.0));
-                    let vV = dis::V(k, src, team, pt.x, pt.y, 0.5 * ch);
-                    let v = pw * vV - (1.0 - pw) * c.loss(k, pt.x, pt.y);
+                    let pw = 1.0 / (1.0 + exp((t_hv - tD) / 5.0)) * (1.0 - 0.3 * jmax(0.0, 1.0 - (alan_y(&h, "kenarCalim") - 6.0) / 10.0));
+                    let v_v = dis::V(k, src, team, pt.x, pt.y, 0.5 * ch);
+                    let v = pw * v_v - (1.0 - pw) * c.loss(k, pt.x, pt.y);
                     if best.map(|b| v > b.0).unwrap_or(true) {
-                        best = Some((v, pw, nk(pt.x, pt.y), pw * vV));
+                        best = Some((v, pw, nk(pt.x, pt.y), pw * v_v));
                     }
                     i += 3;
                 }
                 if let Some((v, pw, pt, kon)) = best {
-                    let mut oC = Secenek { kind: "çalım".into(), to: Some(pt), wp: Some(Wp), wp1: Some(W1), q: Some(hi), launch: Some(lf), v: Some(v), det: Some(JODet { P: Some(pw), ..Default::default() }), ..Default::default() };
+                    let mut o_c = Secenek { kind: "çalım".into(), to: Some(pt), wp: Some(Wp), wp1: Some(W1), q: Some(hi), launch: Some(lf), v: Some(v), det: Some(JODet { P: Some(pw), ..Default::default() }), ..Default::default() };
                     if c.DOK {
-                        oC.dok = Some(Dok::yeni(&[("konum", kon), ("risk", v - kon)]));
+                        o_c.dok = Some(Dok::yeni(&[("konum", kon), ("risk", v - kon)]));
                     }
-                    ad.out.push(oC);
+                    ad.out.push(o_c);
                 }
             }
         }

@@ -4,19 +4,19 @@
 use crate::core_sabit::Q;
 use crate::donus::shielded;
 use crate::mat::{acos, atan2, cos, hypot, jmax, jmin, jsign, sin};
-use crate::model::{JPPplan, JP_onK, Pid};
+use crate::model::{JPPplan, JpOnK, Pid};
 use crate::yetenek::mek;
 
 use super::gecici_dis as dis;
 use super::*;
 
 /// JS macPres(m, t): yapay zekâ takımında skor/süreye göre presi artır (+1) ya da azalt (−1).
-pub fn macPres(c: &mut Mc, t: u8) -> f64 {
+pub fn mac_pres(c: &mut Mc, t: u8) -> f64 {
     match c.m.tac.get(t as usize) {
         Some(tq) if tq.yz == Some(true) => {}
         _ => return 0.0,
     }
-    let o = dis::macEff_macK(c, t);
+    let o = dis::mac_eff_mac_k(c, t);
     let p0 = c.m.tac[t as usize].pres.unwrap_or(1.0);
     match o {
         None => 0.0,
@@ -38,7 +38,7 @@ pub fn macPres(c: &mut Mc, t: u8) -> f64 {
 }
 
 /// JS presLim(m, dt, h, att): tetik (geri pas, kanat, zayıf kontrol, arkası dönük, uzun pas) yoksa tek presçi.
-pub fn presLim(c: &Mc, dt: &dis::TacE, h: Option<Pid>, att: u8) -> usize {
+pub fn pres_lim(c: &Mc, dt: &dis::TacE, h: Option<Pid>, att: u8) -> usize {
     let n = 2usize;
     let T: &[String] = dt.t.tetik.as_deref().unwrap_or(&[]);
     let h = match h {
@@ -52,7 +52,7 @@ pub fn presLim(c: &Mc, dt: &dis::TacE, h: Option<Pid>, att: u8) -> usize {
     let hp = &c.ps[h];
     let ps = c.m._pas.as_ref();
     let yeni = matches!(ps, Some(p) if p.team == att as f64 && c.m.tick - p.t < 90.0);
-    let dir = dirOf(att);
+    let dir = dir_of(att);
     let on = (has("Geri pas") && yeni && (ps.unwrap().tx - ps.unwrap().fx) * dir < -2.0)
         || (has("Kanatta") && (hp.y - GCY).abs() > 15.0 * GKY)
         || (has("Zayıf kontrol") && dis::slowT(hp) > c.m.tick)
@@ -67,15 +67,15 @@ pub fn presLim(c: &Mc, dt: &dis::TacE, h: Option<Pid>, att: u8) -> usize {
 
 /// JS ilkPres(m, p, h, dt, TH, dtac, sh): ilk presçinin hedefi ve işi (yolu kes, kale tarafı, önüne gövde
 /// koy, yandan gir, fake).
-pub fn ilkPres(c: &mut Mc, pi: Pid, hi: Pid, dt: u8, TH: Option<&[Tehlike]>, dtac: &dis::TacE) {
+pub fn ilk_pres(c: &mut Mc, pi: Pid, hi: Pid, dt: u8, TH: Option<&[Tehlike]>, dtac: &dis::TacE) {
     let h = c.ps[hi].clone();
-    ilkPres_h(c, pi, &h, dt, TH, dtac)
+    ilk_pres_h(c, pi, &h, dt, TH, dtac)
 }
 /// ilkPres, taşıyıcı dışarıdan (yalnız okunur; kafanın pres görünümü kopyalamadan verir).
-pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>, dtac: &dis::TacE) {
+pub fn ilk_pres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>, dtac: &dis::TacE) {
     let k = c.k;
     let tick = c.m.tick;
-    let cs = dis::coreSide(&h);
+    let cs = dis::core_side(&h);
     let B = Q.body;
     let dke = h._dke.unwrap_or(0.0);
     let co = (h.x + cs.0 * (B + dke), h.y + cs.1 * (B + dke));
@@ -89,8 +89,8 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
     };
     let job = |c: &mut Mc, j: String| c.ps[pi].job = Some(j.into());
     if !trap {
-        let ox = ownX(dt);
-        let KS = presKesis(&c.ps[pi], &h, dt, k, c.d, c.dtik);
+        let ox = own_x(dt);
+        let KS = pres_kesis(&c.ps[pi], &h, dt, k, c.d, c.dtik);
         let (lx, ly) = match KS {
             Some(s) => (s.x, s.y),
             None => (h.x + 10.0 * h.vx, h.y + 10.0 * h.vy),
@@ -120,7 +120,7 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
                 }
             };
             if hk > 0.0 && d0 < 4.0 {
-                let vp = vSp(&c.ps[pi], k);
+                let vp = v_sp(&c.ps[pi], k);
                 let tg = hypot(g.0 - px, g.1 - py) / jmax(0.02, vp - hk);
                 let tc = hypot(co.0 - px, co.1 - py) / vp;
                 if tc < tg {
@@ -129,7 +129,7 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
                     return;
                 }
             }
-            if hk > 0.9 * vSp(&c.ps[pi], k) {
+            if hk > 0.9 * v_sp(&c.ps[pi], k) {
                 let ux = ox - lx;
                 let uy = GCY - ly;
                 let ul = {
@@ -190,10 +190,10 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
             } else if c.rnd.is_some() {
                 let (Pd, th) = {
                     let ps = &*c.ps;
-                    (dis::duelP(c.kafa, &ps[pi], &h, ps), dis::girThr(c.kafa, &ps[pi], &h, ps))
+                    (dis::duel_p(c.kafa, &ps[pi], &h, ps), dis::gir_thr(c.kafa, &ps[pi], &h, ps))
                 };
                 let koy = !(Pd >= th);
-                c.ps[pi].hal_mut()._onK = Some(JP_onK { h: h.id, koy, t: tik });
+                c.ps[pi].hal_mut()._onK = Some(JpOnK { h: h.id, koy, t: tik });
                 koy
             } else {
                 c.ps[pi].hal._onK.as_ref().map_or(false, |o| o.h == h.id && o.koy)
@@ -203,7 +203,7 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
                     Some(t) => t.0,
                     None => atan2(GCY - ly, ox - lx),
                 };
-                let kh = koyHedef(&c.ps[pi], &h, cos(an), sin(an));
+                let kh = koy_hedef(&c.ps[pi], &h, cos(an), sin(an));
                 set(c, kh.0, kh.1);
                 job(c, format!("yolu kesiyor · {}", h.govde.name));
                 let p = &mut c.ps[pi];
@@ -217,7 +217,7 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
         }
     }
     if d0 > 4.0 {
-        let g = if trap { (h.x - 1.2 * dirOf(dt), h.y + if h.y < GCY { 2.0 } else { -2.0 }) } else { gside(h.x, h.y, dt, 2.0) };
+        let g = if trap { (h.x - 1.2 * dir_of(dt), h.y + if h.y < GCY { 2.0 } else { -2.0 }) } else { gside(h.x, h.y, dt, 2.0) };
         set(c, g.0, g.1);
         return;
     }
@@ -240,7 +240,7 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
         let rr = c.zar();
         let fake = shd && rr < 0.08 * jmax(0.0, okp - 6.0);
         c.ps[pi].pplan = Some(if fake {
-            JPPplan { k: "fake".into(), s: -side, t0: tick, until: tick + 2.0 * dis::DU_fakeT }
+            JPPplan { k: "fake".into(), s: -side, t0: tick, until: tick + 2.0 * dis::DU_FAKE_T }
         } else {
             JPPplan { k: if trap { "iç".into() } else if shd { "yan".into() } else { "direkt".into() }, s: side, t0: tick, until: tick + 8.0 }
         });
@@ -248,7 +248,7 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
     let pl = c.ps[pi].pplan.clone().unwrap();
     let base = atan2(py - h.y, px - h.x);
     let s2 = if pl.k == "fake" {
-        if tick - pl.t0 < dis::DU_fakeT {
+        if tick - pl.t0 < dis::DU_FAKE_T {
             pl.s
         } else {
             -pl.s
@@ -259,7 +259,7 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
     if pl.k == "direkt" || (pl.k == "iç" && d0 < 2.4) {
         set(c, co.0, co.1);
     } else if pl.k == "iç" {
-        set(c, h.x - 1.2 * dirOf(dt), h.y + if h.y < GCY { 1.6 } else { -1.6 });
+        set(c, h.x - 1.2 * dir_of(dt), h.y + if h.y < GCY { 1.6 } else { -1.6 });
     } else {
         set(c, h.x + 1.9 * cos(base + 1.25 * s2), h.y + 1.9 * sin(base + 1.25 * s2));
     }
@@ -267,7 +267,7 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
     if !trap && pl.k != "iç" {
         let an0 = match TH.and_then(|t| t.first()) {
             Some(t) => t.an,
-            None => atan2(GCY - h.y, ownX(dt) - h.x),
+            None => atan2(GCY - h.y, own_x(dt) - h.x),
         };
         let p = &mut c.ps[pi];
         p.hal_mut()._kAn = Some(an0);
@@ -287,7 +287,7 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
         }
     }
     let j = if pl.k == "fake" {
-        if tick - pl.t0 < dis::DU_fakeT {
+        if tick - pl.t0 < dis::DU_FAKE_T {
             "fake: gösteriyor"
         } else {
             "fake: giriyor"

@@ -122,7 +122,7 @@ fn imk_egrileri() {
     let mut hata = Vec::new();
     for e in v["sap"].as_array().unwrap() {
         let t = h(&e[0]);
-        let r = [kafa2_imkan::imkSap(t), kafa2_imkan::imkTau(t), kafa2_imkan::imkSg(t / 20.0 - 5.0), kafa2_imkan::imkInan(&k, t)];
+        let r = [kafa2_imkan::imk_sap(t), kafa2_imkan::imk_tau(t), kafa2_imkan::imk_sg(t / 20.0 - 5.0), kafa2_imkan::imk_inan(&k, t)];
         for (i, x) in r.iter().enumerate() {
             if !ayni_b(*x, h(&e[i + 1])) {
                 hata.push(format!("t {t}: {i}. {x:e} js {:e}", h(&e[i + 1])));
@@ -156,24 +156,24 @@ fn js_ile_bit_bit_ayni() {
         *sd.spr.borrow_mut() = a["per"].as_array().unwrap().iter().enumerate().map(|(i, e)| (ps[i].id, ps[i].team, h(&e[1]))).collect();
         for (i, e) in a["per"].as_array().unwrap().iter().enumerate() {
             let p = &ps[i];
-            bak("SPRE", tk, dis::ALAN_SPRE(&k, p), &e[0], &mut hata, &mut say[0]);
-            bak("TEPKI kovala", tk, dis::ALAN_TEPKI(&k, p, "kovala"), &e[2], &mut hata, &mut say[0]);
-            bak("TEPKI algi", tk, dis::ALAN_TEPKI(&k, p, "algi"), &e[3], &mut hata, &mut say[0]);
-            bak("TEPKI bosTop", tk, dis::ALAN_TEPKI(&k, p, "bosTop"), &e[4], &mut hata, &mut say[0]);
+            bak("SPRE", tk, dis::alan_spre(&k, p), &e[0], &mut hata, &mut say[0]);
+            bak("TEPKI kovala", tk, dis::alan_tepki(&k, p, "kovala"), &e[2], &mut hata, &mut say[0]);
+            bak("TEPKI algi", tk, dis::alan_tepki(&k, p, "algi"), &e[3], &mut hata, &mut say[0]);
+            bak("TEPKI bosTop", tk, dis::alan_tepki(&k, p, "bosTop"), &e[4], &mut hata, &mut say[0]);
             let _ = &e[5]; // otFactor: rastgele inSp, girdi yazılmadı
         }
         for e in a["nok"].as_array().unwrap() {
             let team = e[0].as_f64().unwrap();
             let (x, y) = (h(&e[1]), h(&e[2]));
             bak("threat", tk, dis::threat(&k, team, x, y), &e[3], &mut hata, &mut say[1]);
-            bak("pressAt", tk, dis::pressAt(&k, &ps, team, x, y), &e[4], &mut hata, &mut say[1]);
-            bak("freeAt", tk, dis::freeAt(&k, &ps, team, x, y), &e[5], &mut hata, &mut say[1]);
-            bak("kuyuD", tk, dis::kuyuD(x, y), &e[6], &mut hata, &mut say[1]);
-            bak("sutEngel", tk, kafa2_imkan::sutEngel(&k, &ps, team, x, y), &e[7], &mut hata, &mut say[2]);
+            bak("pressAt", tk, dis::press_at(&k, &ps, team, x, y), &e[4], &mut hata, &mut say[1]);
+            bak("freeAt", tk, dis::free_at(&k, &ps, team, x, y), &e[5], &mut hata, &mut say[1]);
+            bak("kuyuD", tk, dis::kuyu_d(x, y), &e[6], &mut hata, &mut say[1]);
+            bak("sutEngel", tk, kafa2_imkan::sut_engel(&k, &ps, team, x, y), &e[7], &mut hata, &mut say[2]);
         }
         for e in a["gc"].as_array().unwrap() {
             let team = e[0].as_f64().unwrap();
-            let r = kafa2_dunya::geriCekil(&k, &ps, team, nk(h(&e[1]), h(&e[2])), nk(h(&e[3]), h(&e[4])), h(&e[5]), e[6].as_bool().unwrap());
+            let r = kafa2_dunya::geri_cekil(&k, &ps, team, nk(h(&e[1]), h(&e[2])), nk(h(&e[3]), h(&e[4])), h(&e[5]), e[6].as_bool().unwrap());
             for (i, q) in e[7].as_array().unwrap().iter().enumerate() {
                 for (j, x) in [r[i].x, r[i].y, r[i].vx, r[i].vy].iter().enumerate() {
                     bak(&format!("geriCekil {i}.{j}"), tk, *x, &q[j], &mut hata, &mut say[3]);
@@ -192,7 +192,7 @@ fn js_ile_bit_bit_ayni() {
             let team = e[0].as_f64().unwrap();
             // imkKov'un önbelleği maçın tikine bağlı; JS vektörü her çağrıya taze tik verdi
             k.ob.imkk.1.clear();
-            let r = kafa2_imkan::sutTab(&mut k, &ps, team, h(&e[1]), h(&e[2]), h(&e[3]), None, ho(&e[9]), Some(nk(h(&e[4]), h(&e[5]))), Some(nk(h(&e[6]), h(&e[7]))), ho(&e[8]));
+            let r = kafa2_imkan::sut_tab(&mut k, &ps, team, h(&e[1]), h(&e[2]), h(&e[3]), None, ho(&e[9]), Some(nk(h(&e[4]), h(&e[5]))), Some(nk(h(&e[6]), h(&e[7]))), ho(&e[8]));
             bak("sutTab", tk, r, &e[10], &mut hata, &mut say[5]);
         }
         for e in a["rk"].as_array().unwrap() {
@@ -203,8 +203,8 @@ fn js_ile_bit_bit_ayni() {
                 let t = &e[1];
                 Some(Tac { risk: ho(&t["risk"]), tempo: ho(&t["tempo"]), sabir: ho(&t["sabir"]), kontra: t["kontra"].as_bool().unwrap(), macK: ho(&t["macK"]), ..Default::default() })
             };
-            bak("riskOf", tk, kafa2_karar::riskOf(&k, p, tac.as_ref()), &e[2], &mut hata, &mut say[6]);
-            bak("prGam", tk, kafa2_tarti::prGam(&k, p, tac.as_ref()), &e[3], &mut hata, &mut say[6]);
+            bak("riskOf", tk, kafa2_karar::risk_of(&k, p, tac.as_ref()), &e[2], &mut hata, &mut say[6]);
+            bak("prGam", tk, kafa2_tarti::pr_gam(&k, p, tac.as_ref()), &e[3], &mut hata, &mut say[6]);
         }
     }
     eprintln!("sınanan: oyuncu {} nokta {} sutEngel {} geriCekil {} paylastir {} sutTab {} risk/prGam {}", say[0], say[1], say[2], say[3], say[4], say[5], say[6]);

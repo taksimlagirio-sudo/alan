@@ -42,8 +42,8 @@ impl Kural for KayitKural {
     }
 }
 
-fn bk(v: &Value) -> Option<Vec<Option<JP_bkE>>> {
-    v.as_array().map(|a| a.iter().map(|r| r.as_array().map(|r| JP_bkE { x: h(&r[0]), y: h(&r[1]), vx: h(&r[2]), vy: h(&r[3]), t: h(&r[4]), z: h(&r[5]) })).collect())
+fn bk(v: &Value) -> Option<Vec<Option<JpBkE>>> {
+    v.as_array().map(|a| a.iter().map(|r| r.as_array().map(|r| JpBkE { x: h(&r[0]), y: h(&r[1]), vx: h(&r[2]), vy: h(&r[3]), t: h(&r[4]), z: h(&r[5]) })).collect())
 }
 
 fn oyuncu(v: &Value) -> Oyuncu {
@@ -175,11 +175,11 @@ fn kur(c: &Value) -> Kur {
         m.fl = Some(f);
     }
     if let Some(s) = c.get("sec").filter(|s| !s.is_null()) {
-        m._sec = Some(JM_sec {
+        m._sec = Some(JmSec {
             h: s["h"].as_u64().unwrap() as usize,
             t: h(&s["t"]),
             tut: h(&s["tut"]),
-            o: s["o"].as_array().unwrap().iter().map(|o| JM_secOE { k: o["k"].as_str().unwrap_or("").to_string(), x: h(&o["x"]), y: h(&o["y"]), v: h(&o["v"]), dv: h(&o["dv"]) }).collect(),
+            o: s["o"].as_array().unwrap().iter().map(|o| JmSecOe { k: o["k"].as_str().unwrap_or("").to_string(), x: h(&o["x"]), y: h(&o["y"]), v: h(&o["v"]), dv: h(&o["dv"]) }).collect(),
         });
     }
     let ball = if c["ball"].is_null() { None } else { Some(top(&c["ball"])) };
@@ -187,8 +187,8 @@ fn kur(c: &Value) -> Kur {
     d.surKarar = 0.025;
     d.arrive = 0.3;
     d.arriveFirm = 0.8;
-    d.sutHazir = 5.0;
-    d.recvKeepT = 8.0;
+    d.sut_hazir = 5.0;
+    d.recv_keep_t = 8.0;
     Kur { m, ps, ball, ek: SekilDurum::default(), kk, d }
 }
 impl Kur {
@@ -230,9 +230,9 @@ fn js_ile_bit_bit_ayni() {
         // oyuncu başına: vSp, tepki, gecTab, gec, gecOf
         for (i, pj) in c["per"].as_array().unwrap().iter().enumerate() {
             let p = &K.ps[i];
-            chk(&mut hata, format!("t{tk} {i} vSp"), vSp(p, &K.kk), h(&pj["vSp"]));
+            chk(&mut hata, format!("t{tk} {i} vSp"), v_sp(p, &K.kk), h(&pj["vSp"]));
             chk(&mut hata, format!("t{tk} {i} tepki"), alan_motor::sekil::tepki(p, &K.kk), h(&pj["tepki"]));
-            let G = gecTab(p, &K.kk);
+            let G = gec_tab(p, &K.kk);
             chk(&mut hata, format!("t{tk} {i} gecTab.vm"), G.vm, h(&pj["gvm"]));
             for kk in 0..9 {
                 chk(&mut hata, format!("t{tk} {i} gecTab.t[{kk}]"), G.tb.0[kk], h(&pj["gt"][kk]));
@@ -246,7 +246,7 @@ fn js_ile_bit_bit_ayni() {
             for q in pj["pts"].as_array().unwrap() {
                 let (x, y, sv) = (h(&q[0]), h(&q[1]), ho(&q[2]));
                 chk(&mut hata, format!("t{tk} {i} gec({x},{y},{sv:?})"), gec(p, x, y, sv, &K.kk), h(&q[3]));
-                chk(&mut hata, format!("t{tk} {i} gecOf({x},{y},{sv:?})"), gecOf(&G, x, y, sv), h(&q[4]));
+                chk(&mut hata, format!("t{tk} {i} gecOf({x},{y},{sv:?})"), gec_of(&G, x, y, sv), h(&q[4]));
             }
             say.entry("vSp/tepki/gec").or_default().tamam += 1;
         }
@@ -317,7 +317,7 @@ fn js_ile_bit_bit_ayni() {
             let pi = y["p"].as_u64().unwrap() as usize;
             let (ex, ey) = (h(&y["E"]["x"]), h(&y["E"]["y"]));
             let att = y["att"].as_bool().unwrap();
-            let sb = slotBase(&K.m, &K.ps, &K.ps[pi], ex, ey, att);
+            let sb = slot_base(&K.m, &K.ps, &K.ps[pi], ex, ey, att);
             chk(&mut hata, format!("t{tk} slotBase {pi} x"), sb.x, h(&y["sb"]["x"]));
             chk(&mut hata, format!("t{tk} slotBase {pi} y"), sb.y, h(&y["sb"]["y"]));
             chk(&mut hata, format!("t{tk} slotBase {pi} el"), sb.el.unwrap_or(f64::NAN), h(&y["el"]));
@@ -338,7 +338,7 @@ fn js_ile_bit_bit_ayni() {
             }
         }
         for d in c["dw"].as_array().unwrap() {
-            let w = durusW(h(&d[0]));
+            let w = durus_w(h(&d[0]));
             for kk in 0..3 {
                 chk(&mut hata, format!("t{tk} durusW"), w[kk], h(&d[1][kk]));
             }
@@ -355,7 +355,7 @@ fn js_ile_bit_bit_ayni() {
             for (i, p) in K2.ps.iter_mut().enumerate() {
                 p.hal_mut()._bk = bk(&c["bak"][i]).map(std::sync::Arc::new);
             }
-            match catch_unwind(AssertUnwindSafe(|| flightRead(&mut K2.mc()))) {
+            match catch_unwind(AssertUnwindSafe(|| flight_read(&mut K2.mc()))) {
                 Err(_) => say.entry("flightRead").or_default().atla += 1,
                 Ok(None) => hata.push(format!("t{tk} flightRead yok")),
                 Ok(Some(fr)) => {
@@ -405,7 +405,7 @@ fn js_ile_bit_bit_ayni() {
             say.entry("tehlike").or_default().tamam += 1;
             let hp = K.ps[hi].clone();
             let dt = 1 - hp.takim();
-            let yol = tasHamle(hp.x, hp.y, hp.vx, hp.vy, dt);
+            let yol = tas_hamle(hp.x, hp.y, hp.vx, hp.vy, dt);
             let jy = c["yol"].as_array().unwrap();
             if yol.len() != jy.len() {
                 hata.push(format!("t{tk} tasHamle boy"));
@@ -414,7 +414,7 @@ fn js_ile_bit_bit_ayni() {
                 if Y.ad != q[0].as_str().unwrap() {
                     hata.push(format!("t{tk} tasHamle ad"));
                 }
-                for (ad, x, y) in [("ux", Y.ux, &q[1]), ("uy", Y.uy, &q[2]), ("sM", Y.sM, &q[3])] {
+                for (ad, x, y) in [("ux", Y.ux, &q[1]), ("uy", Y.uy, &q[2]), ("sM", Y.s_m, &q[3])] {
                     chk(&mut hata, format!("t{tk} tasHamle.{ad}"), x, h(y));
                 }
             }
@@ -422,16 +422,16 @@ fn js_ile_bit_bit_ayni() {
             for kj in c["kes"].as_array().unwrap() {
                 let pi = kj["p"].as_u64().unwrap() as usize;
                 let p = &K.ps[pi];
-                let vSh = vSp(&hp, &K.kk);
-                let vSq = vSp(p, &K.kk);
-                chk(&mut hata, format!("t{tk} yolBag.vSh"), vSh, h(&kj["vSh"]));
-                chk(&mut hata, format!("t{tk} yolBag.vP"), vSq, h(&kj["vP"]));
-                let tR0 = jmax0(TEPKI(p, Tepki::Kovala, &K.kk));
-                chk(&mut hata, format!("t{tk} yolBag.tR0"), tR0, h(&kj["tR0"]));
+                let v_sh = v_sp(&hp, &K.kk);
+                let v_sq = v_sp(p, &K.kk);
+                chk(&mut hata, format!("t{tk} yolBag.vSh"), v_sh, h(&kj["vSh"]));
+                chk(&mut hata, format!("t{tk} yolBag.vP"), v_sq, h(&kj["vP"]));
+                let t_r0 = jmax0(TEPKI(p, Tepki::Kovala, &K.kk));
+                chk(&mut hata, format!("t{tk} yolBag.tR0"), t_r0, h(&kj["tR0"]));
                 let pr = |v: &Value| v.as_array().map(|a| KosuPr { Ts: h(&a[0]), k: h(&a[1]) });
-                let cx = YolBag { vH: h(&kj["vH"]), vP: vSq, tR0, prH: pr(&kj["prH"]), prP: pr(&kj["prP"]), vSh, gH: gecTabV(&hp, Some(vSh), &K.kk), gP: gecTabV(p, Some(vSq), &K.kk) };
+                let cx = YolBag { v_h: h(&kj["vH"]), v_p: v_sq, t_r0, pr_h: pr(&kj["prH"]), pr_p: pr(&kj["prP"]), v_sh, g_h: gec_tab_v(&hp, Some(v_sh), &K.kk), g_p: gec_tab_v(p, Some(v_sq), &K.kk) };
                 for (Y, q) in yol.iter().zip(kj["K"].as_array().unwrap()) {
-                    let X = yolKesis(p, &hp, Y, &cx);
+                    let X = yol_kesis(p, &hp, Y, &cx);
                     for (ad, x, y) in [("x", X.x, &q[0]), ("y", X.y, &q[1]), ("s", X.s, &q[2])] {
                         chk(&mut hata, format!("t{tk} yolKesis {pi} {}.{ad}", Y.ad), x, h(y));
                     }
@@ -440,7 +440,7 @@ fn js_ile_bit_bit_ayni() {
                     }
                 }
                 let tehl: Vec<f64> = kj["tehl"].as_array().unwrap().iter().map(h).collect();
-                let PK = presKesisT(p, &hp, &yol, &cx, &tehl);
+                let PK = pres_kesis_t(p, &hp, &yol, &cx, &tehl);
                 match (PK, kj["PK"].is_null()) {
                     (Some(a), false) => {
                         chk(&mut hata, format!("t{tk} presKesis {pi} x"), a.x, h(&kj["PK"]["x"]));
@@ -450,7 +450,7 @@ fn js_ile_bit_bit_ayni() {
                     _ => hata.push(format!("t{tk} presKesis var/yok")),
                 }
                 let kq = &kj["koy"];
-                let kh = koyHedef(p, &hp, h(&kq[0]), h(&kq[1]));
+                let kh = koy_hedef(p, &hp, h(&kq[0]), h(&kq[1]));
                 chk(&mut hata, format!("t{tk} koyHedef x"), kh.0, h(&kq[2]["x"]));
                 chk(&mut hata, format!("t{tk} koyHedef y"), kh.1, h(&kq[2]["y"]));
                 say.entry("yolBag/yolKesis/presKesis/koyHedef").or_default().tamam += 1;
@@ -461,7 +461,7 @@ fn js_ile_bit_bit_ayni() {
             let cs = &c["cs"];
             let xy = |v: &Value| (h(&v["x"]), h(&v["y"]));
             let T: Vec<(f64, f64)> = cs["T"].as_array().unwrap().iter().map(xy).collect();
-            let r = coverSpots(xy(&cs["o"]), cs["att"].as_u64().unwrap() as u8, xy(&cs["E"]), &T, h(&cs["R"]));
+            let r = cover_spots(xy(&cs["o"]), cs["att"].as_u64().unwrap() as u8, xy(&cs["E"]), &T, h(&cs["R"]));
             let js = cs["out"].as_array().unwrap();
             if r.len() != js.len() {
                 hata.push(format!("t{tk} coverSpots boy"));
@@ -472,11 +472,11 @@ fn js_ile_bit_bit_ayni() {
             }
             let lo = &c["lo"];
             let w = K.mc().dunya();
-            let r = laneOpen(None, &w, &K.ps, lo["att"].as_u64().unwrap() as u8, xy(&lo["A"]), xy(&lo["B"]), Some(h(&lo["v"])), &K.kk, &K.d);
+            let r = lane_open(None, &w, &K.ps, lo["att"].as_u64().unwrap() as u8, xy(&lo["A"]), xy(&lo["B"]), Some(h(&lo["v"])), &K.kk, &K.d);
             chk(&mut hata, format!("t{tk} laneOpen"), r, h(&lo["r"]));
             let yt = &c["yt"];
             let pi = yt["p"].as_u64().unwrap() as usize;
-            let (t1, t) = yolT(&K.ps[pi], xy(&yt["c"]), xy(&yt["kv"]), &K.kk);
+            let (t1, t) = yol_t(&K.ps[pi], xy(&yt["c"]), xy(&yt["kv"]), &K.kk);
             chk(&mut hata, format!("t{tk} yolT.t1"), t1, h(&yt["t1"]));
             chk(&mut hata, format!("t{tk} yolT.t"), t, h(&yt["t"]));
             say.entry("coverSpots/laneOpen/yolT").or_default().tamam += 1;

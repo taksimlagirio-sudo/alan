@@ -18,7 +18,7 @@ pub fn spre_k(p: &Oyuncu, k: &dyn Kural) -> f64 {
 
 /// JS `vSp(p)`: sprintle koşu hızı (br/tik).
 #[inline]
-pub fn vSp(p: &Oyuncu, k: &dyn Kural) -> f64 {
+pub fn v_sp(p: &Oyuncu, k: &dyn Kural) -> f64 {
     spd(p) * spre_k(p, k)
 }
 
@@ -33,6 +33,6 @@ pub fn tepki(o: &Oyuncu, k: &dyn Kural) -> f64 {
     jmax(1.0, jround(TEPKI(o, Tepki::Algi, k))) + jmax(0.0, TEPKI(o, Tepki::Kovala, k))
 }
 /// JS `lagOf`.
-pub fn lagOf(o: &Oyuncu, k: &dyn Kural) -> f64 {
+pub fn lag_of(o: &Oyuncu, k: &dyn Kural) -> f64 {
     jmax(1.0, jround(TEPKI(o, Tepki::Algi, k)))
 }

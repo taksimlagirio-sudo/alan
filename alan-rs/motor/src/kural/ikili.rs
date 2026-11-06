@@ -12,39 +12,39 @@ pub struct Ik {
     pub surt: f64,
     pub dengeK: f64,
     pub dolum: f64,
-    pub dolumS: f64,
+    pub dolum_s: f64,
     pub yavas: f64,
     pub sendele: f64,
     pub sendT: f64,
     pub sendCd: f64,
     pub kalkan: f64,
-    pub kalkanR: f64,
-    pub pokeT: f64,
-    pub pokeK: f64,
-    pub pokeAc: f64,
-    pub pokeDn: f64,
-    pub omuzV: f64,
+    pub kalkan_r: f64,
+    pub poke_t: f64,
+    pub poke_k: f64,
+    pub poke_ac: f64,
+    pub poke_dn: f64,
+    pub omuz_v: f64,
 }
 
-pub const IK: Ik = Ik { yerles: 1.6, esnek: 0.15, surt: 0.12, dengeK: 3.2, dolum: 0.012, dolumS: 0.03, yavas: 0.35, sendele: 0.15, sendT: 12.0, sendCd: 40.0, kalkan: 0.7, kalkanR: 3.2, pokeT: 0.22, pokeK: 0.03, pokeAc: 0.5, pokeDn: 0.35, omuzV: 0.2 };
+pub const IK: Ik = Ik { yerles: 1.6, esnek: 0.15, surt: 0.12, dengeK: 3.2, dolum: 0.012, dolum_s: 0.03, yavas: 0.35, sendele: 0.15, sendT: 12.0, sendCd: 40.0, kalkan: 0.7, kalkan_r: 3.2, poke_t: 0.22, poke_k: 0.03, poke_ac: 0.5, poke_dn: 0.35, omuz_v: 0.2 };
 
-pub const fn ikOn() -> bool {
+pub const fn ik_on() -> bool {
     true
 }
 
 /// Enerjinin ikiliye etkisi (Enerji 3.0: barın yarısı kadar).
-pub fn ikEn(p: &Oyuncu) -> f64 {
+pub fn ik_en(p: &Oyuncu) -> f64 {
     match p.en {
         None => 1.0,
         Some(e) => 1.15 * (0.5 + 0.5 * jmax(0.0, jmin(1.0, e))),
     }
 }
 
-pub fn omuzK(q: &Oyuncu) -> f64 {
-    (1.0 + 0.03 * (q.govde.yet.y(mek::OMUZ) - 10.0)) * ikEn(q)
+pub fn omuz_k(q: &Oyuncu) -> f64 {
+    (1.0 + 0.03 * (q.govde.yet.y(mek::OMUZ) - 10.0)) * ik_en(q)
 }
 
-pub fn durtFark(q: &Oyuncu, h: &Oyuncu) -> f64 {
+pub fn durt_fark(q: &Oyuncu, h: &Oyuncu) -> f64 {
     q.govde.yet.y(mek::DURTME) - h.govde.yet.y(mek::DURTME_KORU)
 }
 
@@ -54,23 +54,23 @@ pub fn kutle(p: &Oyuncu, ph: bool) -> f64 {
 }
 
 pub fn direnc(p: &Oyuncu, ph: bool) -> f64 {
-    (0.8 + 0.05 * (p.govde.yet.y(if ph { mek::TOPLU_DENGE } else { mek::DENGE_DIRENC }) - 10.0)) * if !ph && hypot(or0(p.vx), or0(p.vy)) < 0.06 { 1.8 } else { 1.0 } * ikEn(p)
+    (0.8 + 0.05 * (p.govde.yet.y(if ph { mek::TOPLU_DENGE } else { mek::DENGE_DIRENC }) - 10.0)) * if !ph && hypot(or0(p.vx), or0(p.vy)) < 0.06 { 1.8 } else { 1.0 } * ik_en(p)
 }
 
 /// Sendeleme süresi (tik).
-pub fn sendS(p: &Oyuncu) -> f64 {
+pub fn send_s(p: &Oyuncu) -> f64 {
     jmax(2.0, jround(IK.sendT - 0.5 * (p.govde.yet.y(mek::SENDELEME) - 10.0)))
 }
 
-pub fn dengeDolumK(p: &Oyuncu) -> f64 {
+pub fn denge_dolum_k(p: &Oyuncu) -> f64 {
     1.0 + 0.0625 * (p.govde.yet.y(mek::DENGE_DOLUM) - 10.0)
 }
 
 /// JS dengeKayip(p, t): dengesizliğin önümüzdeki tiklerde götüreceği koşu (tik cinsinden).
-pub fn dengeKayip(p: &Oyuncu, t: f64) -> f64 {
+pub fn denge_kayip(p: &Oyuncu, t: f64) -> f64 {
     let Some(mut dn) = p.den else { return 0.0 };
     let mut l = 0.0;
-    let dm = dengeDolumK(p);
+    let dm = denge_dolum_k(p);
     for k in 0..150 {
         let sd = oo(p.hal.sendT) > t + k as f64;
         if !sd && dn >= IK.yavas {
@@ -81,7 +81,7 @@ pub fn dengeKayip(p: &Oyuncu, t: f64) -> f64 {
             f *= 0.45 + 0.55 * dn / IK.yavas;
         }
         l += 1.0 - f;
-        dn = jmin(1.0, dn + (if sd { IK.dolumS } else { IK.dolum }) * dm);
+        dn = jmin(1.0, dn + (if sd { IK.dolum_s } else { IK.dolum }) * dm);
     }
     l
 }

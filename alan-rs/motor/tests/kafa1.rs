@@ -7,7 +7,7 @@ use alan_motor::kafa::kafa1_ucus::UcusB0;
 use alan_motor::kafa::kafa1_varis::Lane;
 use alan_motor::kafa::Kafa;
 use alan_motor::mat::hypot;
-use alan_motor::model::{JMShGs, JPHamle, JPPplan, JP_gvKaz, JP_sf, Oyuncu};
+use alan_motor::model::{JMShGs, JPHamle, JPPplan, JpGvKaz, JpSf, Oyuncu};
 use alan_motor::yetenek::{Ham, Yetenek};
 use serde_json::Value;
 use std::collections::HashMap;
@@ -35,17 +35,17 @@ struct MacK {
     ch: Option<f64>,
     gs: Option<JMShGs>,
     tac: Vec<(Option<f64>, bool, f64)>,
-    prT: Option<PrT>,
+    pr_t: Option<PrT>,
 }
 struct KayitDis {
     mac: Option<MacK>,
 }
 impl Dis for KayitDis {
     fn S(&self) -> Option<ShapeS> {
-        Some(ShapeS { react: Some(0.5), rcvBuf: 3.0, marginT: 0.6, markOff: Some(2.5), bekOnce: Some(2.0), bekSerbest: true })
+        Some(ShapeS { react: Some(0.5), rcv_buf: 3.0, margin_t: 0.6, mark_off: Some(2.5), bek_once: Some(2.0), bek_serbest: true })
     }
-    fn GR(&self) -> Option<ShapeGR> {
-        Some(ShapeGR { yasH: 40.0 })
+    fn gr(&self) -> Option<ShapeGR> {
+        Some(ShapeGR { yas_h: 40.0 })
     }
     fn gside(&self, a: Nk, t: f64, off: f64) -> Nk {
         let gx = if t == 0.0 { 0.0 } else { 120.0 };
@@ -61,7 +61,7 @@ impl Dis for KayitDis {
         };
         nk(a.x + dx / L * off, a.y + dy / L * off)
     }
-    fn AS_ilkPres_var(&self) -> bool {
+    fn as_ilk_pres_var(&self) -> bool {
         true
     }
     fn mac_var(&self) -> bool {
@@ -73,7 +73,7 @@ impl Dis for KayitDis {
     fn mac_holder(&self) -> Option<(f64, f64, f64, f64)> {
         None
     }
-    fn tac_enHarcama(&self, _t: f64) -> Option<f64> {
+    fn tac_en_harcama(&self, _t: f64) -> Option<f64> {
         None
     }
     fn tac_siddet(&self, team: f64) -> Option<(Option<f64>, bool, f64)> {
@@ -82,8 +82,8 @@ impl Dis for KayitDis {
     fn sh_gs(&self) -> Option<JMShGs> {
         self.mac.as_ref().and_then(|m| m.gs.clone())
     }
-    fn prT(&self) -> Option<PrT> {
-        self.mac.as_ref().and_then(|m| m.prT.clone())
+    fn pr_t(&self) -> Option<PrT> {
+        self.mac.as_ref().and_then(|m| m.pr_t.clone())
     }
     fn algi_e(&self, _p: &Oyuncu) -> Option<f64> {
         None
@@ -125,11 +125,11 @@ fn oyuncu(v: &Value) -> Oyuncu {
     p.sprint = v["sprint"].as_bool().unwrap();
     p.job = v["job"].as_str().map(|s| s.into());
     p.press = v["press"].as_bool().unwrap();
-    p._sf = if v["sf"].is_null() { None } else { Some(JP_sf { t0: h(&v["sf"]["t0"]), f: v["sf"]["f"].as_str().unwrap().into() }) };
+    p._sf = if v["sf"].is_null() { None } else { Some(JpSf { t0: h(&v["sf"]["t0"]), f: v["sf"]["f"].as_str().unwrap().into() }) };
     p.hal_mut()._korT = ho(&v["korT"]);
     p.hal_mut().hamle = if v["hamle"].is_null() { None } else { Some(JPHamle { k: v["hamle"]["k"].as_str().unwrap().into(), hid: v["hamle"]["hid"].as_f64().unwrap(), t0: h(&v["hamle"]["t0"]), W: h(&v["hamle"]["W"]) }) };
     p.pplan = v["pplan"].as_str().map(|k| JPPplan { k: k.into(), ..Default::default() });
-    p.hal_mut()._gvKaz = if v["gvKaz"].is_null() { None } else { Some(JP_gvKaz { h: h(&v["gvKaz"][0]), t: h(&v["gvKaz"][1]), kaz: h(&v["gvKaz"][2]) }) };
+    p.hal_mut()._gvKaz = if v["gvKaz"].is_null() { None } else { Some(JpGvKaz { h: h(&v["gvKaz"][0]), t: h(&v["gvKaz"][1]), kaz: h(&v["gvKaz"][2]) }) };
     p.hal_mut().fiskeCd = ho(&v["fiskeCd"]);
     p.hal_mut().sendT = ho(&v["sendT"]);
     p.hal_mut().sendCd = ho(&v["sendCd"]);
@@ -195,7 +195,7 @@ fn js_ile_bit_bit_ayni() {
         k.bag._sut = Some(alan_motor::model::SutBag::Egilim(0.5));
         k.bag._ot = Some(1.0);
         k.bag._savT = Some(0.0);
-        k.bag._sYon = Some(0.0);
+        k.bag._s_yon = Some(0.0);
         k.bag._kenar = Some(false);
         let hi = c["h"].as_u64().unwrap() as usize;
         let hh: &Oyuncu = &ps[hi];
@@ -209,26 +209,26 @@ fn js_ile_bit_bit_ayni() {
             H.bak("threat", k.threat(t[0].as_f64().unwrap(), h(&t[1]), h(&t[2])), h(&t[3]), &et);
         }
         for t in c["ut"].as_array().unwrap() {
-            H.bak("ucusT", k.ucusT(h(&t[0]), h(&t[1]), ho(&t[2])), h(&t[3]), &et);
+            H.bak("ucusT", k.ucus_t(h(&t[0]), h(&t[1]), ho(&t[2])), h(&t[3]), &et);
         }
         for t in c["yer"].as_array().unwrap() {
             let (x, y, ch) = (h(&t[0]), h(&t[1]), h(&t[2]));
-            H.bak("pressAt", k.pressAt(&ps, team, x, y), h(&t[3]), &et);
-            H.bak("freeAt", k.freeAt(&ps, team, x, y), h(&t[4]), &et);
-            H.bak("holdVal", k.holdVal(&ps, team, x, y), h(&t[5]), &et);
+            H.bak("pressAt", k.press_at(&ps, team, x, y), h(&t[3]), &et);
+            H.bak("freeAt", k.free_at(&ps, team, x, y), h(&t[4]), &et);
+            H.bak("holdVal", k.hold_val(&ps, team, x, y), h(&t[5]), &et);
             H.bak("V", k.V(&ps, team, x, y, ch), h(&t[6]), &et);
-            H.bak("shotQ", k.shotQ(&ps, team, x, y, ch), h(&t[7]), &et);
-            H.bak("sutKapali", k.sutKapali(&ps, team, x, y, ch), h(&t[8]), &et);
-            H.bak("oppAt", k.oppAt(&ps, team, x, y), h(&t[9]), &et);
+            H.bak("shotQ", k.shot_q(&ps, team, x, y, ch), h(&t[7]), &et);
+            H.bak("sutKapali", k.sut_kapali(&ps, team, x, y, ch), h(&t[8]), &et);
+            H.bak("oppAt", k.opp_at(&ps, team, x, y), h(&t[9]), &et);
         }
         {
-            let r = k.sutHedef(hh, &ps, gx);
+            let r = k.sut_hedef(hh, &ps, gx);
             let j: Vec<f64> = c["sh"].as_array().unwrap().iter().map(h).collect();
             H.evet("sutHedef", r.len() == j.len() && r.iter().zip(&j).all(|(a, b)| ayni(*a, *b)), format!("{et} {r:?} js {j:?}"));
         }
         for t in c["lo"].as_array().unwrap() {
             let q: &Oyuncu = &ps[t[0].as_u64().unwrap() as usize];
-            H.bak("laneOk", k.laneOk(&ps, team, nk(hh.x, hh.y), nk(q.x, q.y), Some(h(&t[1])), Some(h(&t[2]))), h(&t[3]), &et);
+            H.bak("laneOk", k.lane_ok(&ps, team, nk(hh.x, hh.y), nk(q.x, q.y), Some(h(&t[1])), Some(h(&t[2]))), h(&t[3]), &et);
         }
         H.bak("space", k.space(&ps, team, hh.x, hh.y), h(&c["spf"][0]), &et);
         H.bak("front", k.front(&ps, team, hh.x, hh.y), h(&c["spf"][1]), &et);
@@ -243,7 +243,7 @@ fn js_ile_bit_bit_ayni() {
             H.evet("respond", ok, format!("{et} {r:?} js {j:?}"));
         }
         {
-            let cs = k.coreSide(hh);
+            let cs = k.core_side(hh);
             H.bak("coreSide", cs.ux, h(&c["cs"][0]), &et);
             H.bak("coreSide", cs.uy, h(&c["cs"][1]), &et);
             H.bak("coreSide", cs.off, h(&c["cs"][2]), &et);
@@ -252,24 +252,24 @@ fn js_ile_bit_bit_ayni() {
         for t in c["ik"].as_array().unwrap() {
             let q: &Oyuncu = &ps[t[0].as_u64().unwrap() as usize];
             let e2 = format!("{et} q{}", t[0]);
-            H.bak("duelP", k.duelP(q, hh, &ps, None), h(&t[1]), &e2);
-            H.bak("govdeVurP", k.govdeVurP(q, hh, None, false), h(&t[2]), &e2);
-            H.bak("commitThr", k.commitThr(q, hh, &ps), h(&t[3]), &e2);
-            H.bak("girThr", k.girThr(q, hh, &ps), h(&t[4]), &e2);
+            H.bak("duelP", k.duel_p(q, hh, &ps, None), h(&t[1]), &e2);
+            H.bak("govdeVurP", k.govde_vur_p(q, hh, None, false), h(&t[2]), &e2);
+            H.bak("commitThr", k.commit_thr(q, hh, &ps), h(&t[3]), &e2);
+            H.bak("girThr", k.gir_thr(q, hh, &ps), h(&t[4]), &e2);
         }
         for t in c["kp"].as_array().unwrap() {
             let dir = if t[0].is_null() { None } else { Some(nk(h(&t[0][0]), h(&t[0][1]))) };
             let ad = if dir.is_some() { "keepP(yön, kesisK)" } else { "keepP" };
-            let r = k.keepP(hh, &ps, dir, h(&t[1]));
+            let r = k.keep_p(hh, &ps, dir, h(&t[1]));
             H.bak(ad, r, h(&t[2]), &et);
-            H.bak(if dir.is_some() { "keepP.son(yön)" } else { "keepP.son" }, k.keepP_son.get(), h(&t[3]), &et);
+            H.bak(if dir.is_some() { "keepP.son(yön)" } else { "keepP.son" }, k.keep_p_son.get(), h(&t[3]), &et);
         }
         for u in c["uf"].as_array().unwrap() {
             let gon = u["gon"].as_bool().unwrap();
             let b = &u["b0"];
             k.bag._gon = Some(gon);
             k.bag._sut = Some(if gon { alan_motor::model::SutBag::Tur("güçlü".into()) } else { alan_motor::model::SutBag::Egilim(0.5) });
-            let r = k.ucusFormul(hh, &ps, UcusB0 { x: h(&b[0]), y: h(&b[1]), vx: h(&b[2]), vy: h(&b[3]), ch: h(&b[4]), aim: None }, None, None, None);
+            let r = k.ucus_formul(hh, &ps, UcusB0 { x: h(&b[0]), y: h(&b[1]), vx: h(&b[2]), vy: h(&b[3]), ch: h(&b[4]), aim: None }, None, None, None);
             k.bag._gon = Some(false);
             k.bag._sut = Some(alan_motor::model::SutBag::Egilim(0.5));
             let rv = [r.P, r.Pk, r.Pl, r.end.x, r.end.y, r.endM.x, r.endM.y, r.endO.x, r.endO.y, r.Ps, r.endS.x, r.endS.y, r.endD.x, r.endD.y, r.Psek, r.endSek.x, r.endSek.y];
@@ -279,13 +279,13 @@ fn js_ile_bit_bit_ayni() {
             }
         }
         for t in c["lf"].as_array().unwrap() {
-            let r = k.launchFor(hh, nk(h(&t[0]), h(&t[1])), h(&t[2]), &ps, h(&t[3]), None);
+            let r = k.launch_for(hh, nk(h(&t[0]), h(&t[1])), h(&t[2]), &ps, h(&t[3]), None);
             H.bak("launchFor", r.vx, h(&t[4]), &et);
             H.bak("launchFor", r.vy, h(&t[5]), &et);
             H.evet("launchFor.ok", r.ok == t[6].as_bool().unwrap(), et.clone());
         }
         for t in c["bf"].as_array().unwrap() {
-            let r = k.bankFor(hh, nk(h(&t[0]), h(&t[1])), nk(h(&t[2]), h(&t[3])), h(&t[4]), &ps, h(&t[5]), None);
+            let r = k.bank_for(hh, nk(h(&t[0]), h(&t[1])), nk(h(&t[2]), h(&t[3])), h(&t[4]), &ps, h(&t[5]), None);
             H.bak("bankFor", r.vx, h(&t[6]), &et);
             H.bak("bankFor", r.vy, h(&t[7]), &et);
             H.evet("bankFor.ok", r.ok == t[8].as_bool().unwrap(), et.clone());
@@ -293,11 +293,11 @@ fn js_ile_bit_bit_ayni() {
         for t in c["sp"].as_array().unwrap() {
             let V = nk(h(&t[0]), h(&t[1]));
             let it = t[3].as_bool().unwrap();
-            let r = k.savurPlan(hh, V, h(&t[2]), 0.0, 0.0, Some(&ps), it, 1.0);
+            let r = k.savur_plan(hh, V, h(&t[2]), 0.0, 0.0, Some(&ps), it, 1.0);
             match (r, t[4].is_null()) {
                 (None, true) => H.evet("savurPlan", true, String::new()),
                 (Some(r), false) => {
-                    for (i, x) in [r.s, r.caR, r.A, r.P, r.T, r.wR, r.wRel, r.uSh, r.k].iter().enumerate() {
+                    for (i, x) in [r.s, r.caR, r.A, r.P, r.T, r.wR, r.w_rel, r.u_sh, r.k].iter().enumerate() {
                         H.bak("savurPlan", *x, h(&t[4][i]), &format!("{et} {i}"));
                     }
                 }
@@ -305,7 +305,7 @@ fn js_ile_bit_bit_ayni() {
             }
             let a = alan_motor::mat::atan2(V.y, V.x);
             let _ = a;
-            let r2 = k.onPlan(hh, V, nk(h(&t[6]), h(&t[7])), it, 1.0);
+            let r2 = k.on_plan(hh, V, nk(h(&t[6]), h(&t[7])), it, 1.0);
             match (r2, t[5].is_null()) {
                 (None, true) => H.evet("onPlan", true, String::new()),
                 (Some(r), false) => {
@@ -325,8 +325,8 @@ fn js_ile_bit_bit_ayni() {
                 ri += 1;
                 v
             };
-            let r1 = k.applyError(hh, nk(1.2, 0.4), &mut rnd, 1.0, false, Some(&ps), None, None);
-            let r2 = k.applyErrorSav(hh, nk(1.2, 0.4), &mut rnd, 1.0, true, 0.7, 0.8, Some(&ps), Some("güçlü"), None);
+            let r1 = k.apply_error(hh, nk(1.2, 0.4), &mut rnd, 1.0, false, Some(&ps), None, None);
+            let r2 = k.apply_error_sav(hh, nk(1.2, 0.4), &mut rnd, 1.0, true, 0.7, 0.8, Some(&ps), Some("güçlü"), None);
             H.bak("applyError", r1.x, h(&ae[1]), &et);
             H.bak("applyError", r1.y, h(&ae[2]), &et);
             H.bak("applyErrorSav", r2.x, h(&ae[3]), &et);
@@ -334,15 +334,15 @@ fn js_ile_bit_bit_ayni() {
         }
         {
             let fk = &c["fk"];
-            H.bak("fakeT", k.fakeT(hh), h(&fk["T"]), &et);
+            H.bak("fakeT", k.fake_t(hh), h(&fk["T"]), &et);
             for t in fk["p"].as_array().unwrap() {
                 let q: &Oyuncu = &ps[t[0].as_u64().unwrap() as usize];
                 let sh = alan_motor::kafa::kafa1_fake::FakeSh { k: t[1].as_str().unwrap().into(), to: nk(h(&t[2]), h(&t[3])), c: h(&t[4]) };
-                H.bak("fakeP", k.fakeP(hh, q, &sh.k, Some(sh.c)), h(&t[5]), &et);
-                let fh = k.fakeHedef(q, hh, &sh);
+                H.bak("fakeP", k.fake_p(hh, q, &sh.k, Some(sh.c)), h(&t[5]), &et);
+                let fh = k.fake_hedef(q, hh, &sh);
                 H.bak("fakeHedef", fh.x, h(&t[6]), &et);
                 H.bak("fakeHedef", fh.y, h(&t[7]), &et);
-                H.evet("fakeIlgili", k.fakeIlgili(q, hh, &sh) == t[8].as_bool().unwrap(), et.clone());
+                H.evet("fakeIlgili", k.fake_ilgili(q, hh, &sh) == t[8].as_bool().unwrap(), et.clone());
             }
         }
         {
@@ -360,21 +360,21 @@ fn js_ile_bit_bit_ayni() {
                 ..Default::default()
             }).collect();
             for (o, n) in os.iter().zip(sj["n"].as_array().unwrap()) {
-                H.bak("secimN", k.secimN(hh, Some(o), &ps, T), h(n), &format!("{et} {}", o.kind));
+                H.bak("secimN", k.secim_n(hh, Some(o), &ps, T), h(n), &format!("{et} {}", o.kind));
             }
-            H.bak("secimW", k.secimW(hh, 0.4, true, None), h(&sj["w"][0]), &et);
-            H.bak("secimW", k.secimW(hh, 0.7, false, Some("secenekTur")), h(&sj["w"][1]), &et);
+            H.bak("secimW", k.secim_w(hh, 0.4, true, None), h(&sj["w"][0]), &et);
+            H.bak("secimW", k.secim_w(hh, 0.7, false, Some("secenekTur")), h(&sj["w"][1]), &et);
             let i = k.secim(hh, &os, Some(0), T, &ps);
             H.evet("secim", i == sj["i"].as_u64().map(|x| x as usize), format!("{et} {i:?} js {}", sj["i"]));
         }
         for t in c["cr"].as_array().unwrap() {
-            H.bak("chargeRate", k.chargeRate(hh, &ps, h(&t[0]), h(&t[2]), t[1].as_bool().unwrap()), h(&t[3]), &et);
+            H.bak("chargeRate", k.charge_rate(hh, &ps, h(&t[0]), h(&t[2]), t[1].as_bool().unwrap()), h(&t[3]), &et);
         }
         {
             let cp = &c["cp"];
             let pts: Vec<Nk> = cp["pts"].as_array().unwrap().iter().map(|p| nk(h(&p[0]), h(&p[1]))).collect();
             let opp: Vec<Op> = ps.iter().filter(|q| q.team != team).cloned().collect();
-            let r = k.chasePlan(&pts, &opp, 0.0, Some(Lane { lag: 0.0, loose: false }));
+            let r = k.chase_plan(&pts, &opp, 0.0, Some(Lane { lag: 0.0, loose: false }));
             let j = cp["r"].as_array().unwrap();
             let ok = r.len() == j.len()
                 && r.iter().zip(j).all(|((pi, g), jj)| {
@@ -386,13 +386,13 @@ fn js_ile_bit_bit_ayni() {
         }
         {
             let mj = &c["mac"];
-            let prT = if mj["prT"].is_null() {
+            let pr_t = if mj["prT"].is_null() {
                 None
             } else {
                 let p = &mj["prT"];
                 Some(PrT {
                     team: p["team"].as_f64().unwrap(),
-                    hId: p["hId"].as_f64(),
+                    h_id: p["hId"].as_f64(),
                     t: h(&p["t"]),
                     h: ho(&p["h"]),
                     hm: p["hm"].as_array().map(|a| a.iter().map(|e| (e[0].as_f64().unwrap(), h(&e[1]))).collect()),
@@ -401,7 +401,7 @@ fn js_ile_bit_bit_ayni() {
             };
             let gs = if mj["gs"].is_null() { None } else { Some(JMShGs { t: h(&mj["gs"]["t"]), dt: mj["gs"]["dt"].as_f64().unwrap(), oy: mj["gs"]["oy"].as_bool().unwrap(), ..Default::default() }) };
             let tac = mj["tac"].as_array().unwrap().iter().map(|t| (ho(&t[0]), t[1].as_bool().unwrap(), h(&t[2]))).collect();
-            let dis2 = Arc::new(KayitDis { mac: Some(MacK { ch: ho(&mj["ch"]), gs, tac, prT }) });
+            let dis2 = Arc::new(KayitDis { mac: Some(MacK { ch: ho(&mj["ch"]), gs, tac, pr_t }) });
             let k2 = Kafa::yeni(dis2);
             let mut k2 = k2;
             k2.bag._tick = Some(c["mtick"].as_f64().unwrap() + 0.5);
@@ -411,10 +411,10 @@ fn js_ile_bit_bit_ayni() {
             for t in mj["ge"].as_array().unwrap() {
                 let q: &Oyuncu = &ps[t[0].as_u64().unwrap() as usize];
                 let e2 = format!("{et} q{}", t[0]);
-                let g = k2.girEsik(q, hh, &ps, None);
+                let g = k2.gir_esik(q, hh, &ps, None);
                 H.bak("girEsik(maç)", g.unwrap_or(f64::NAN), ho(&t[1]).unwrap_or(f64::NAN), &e2);
-                H.bak("girThr(maç)", k2.girThr(q, hh, &ps), h(&t[2]), &e2);
-                H.bak("commitThr(maç)", k2.commitThr(q, hh, &ps), h(&t[3]), &e2);
+                H.bak("girThr(maç)", k2.gir_thr(q, hh, &ps), h(&t[2]), &e2);
+                H.bak("commitThr(maç)", k2.commit_thr(q, hh, &ps), h(&t[3]), &e2);
             }
         }
     }

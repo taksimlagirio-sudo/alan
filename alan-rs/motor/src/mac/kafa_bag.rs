@@ -6,17 +6,17 @@ use crate::model::Secenek;
 /// JS KS: sapma eşikleri
 pub struct Ks {
     pub hiz: f64,
-    pub hizMin: f64,
+    pub hiz_min: f64,
     pub gec: f64,
     pub kayip: f64,
-    pub kayipSur: f64,
+    pub kayip_sur: f64,
     pub sans: f64,
     pub yer: f64,
     pub zaman: f64,
-    pub golAz: f64,
-    pub golCok: f64,
+    pub gol_az: f64,
+    pub gol_cok: f64,
 }
-pub const KS: Ks = Ks { hiz: 0.2, hizMin: 0.3, gec: 8.0, kayip: 0.8, kayipSur: 0.85, sans: 0.3, yer: 8.0, zaman: 30.0, golAz: 0.05, golCok: 0.6 };
+pub const KS: Ks = Ks { hiz: 0.2, hiz_min: 0.3, gec: 8.0, kayip: 0.8, kayip_sur: 0.85, sans: 0.3, yer: 8.0, zaman: 30.0, gol_az: 0.05, gol_cok: 0.6 };
 
 /// Kararın sonu (JS son: {t, santra, devam, kim, kimId, kimT, x, y, gol}).
 #[derive(Clone, Debug, Default)]
@@ -25,8 +25,8 @@ pub struct Son {
     pub santra: bool,
     pub devam: bool,
     pub kim: Option<String>,
-    pub kimId: Option<f64>,
-    pub kimT: Option<f64>,
+    pub kim_id: Option<f64>,
+    pub kim_t: Option<f64>,
     pub x: Option<f64>,
     pub y: Option<f64>,
     pub gol: Option<f64>,
@@ -64,8 +64,8 @@ pub struct KafaKayit {
     pub x: Option<f64>,
     pub y: Option<f64>,
     pub cikis: Option<f64>,
-    pub hizC: Option<f64>,
-    pub hizG: Option<f64>,
+    pub hiz_c: Option<f64>,
+    pub hiz_g: Option<f64>,
     pub bozuldu: Option<String>,
     pub sek: Option<f64>,
     pub son: Option<Son>,
@@ -93,38 +93,38 @@ pub fn k3(x: Option<f64>) -> Option<f64> {
         _ => None,
     }
 }
-fn kHiz(v: Option<(f64, f64)>) -> Option<f64> {
+fn k_hiz(v: Option<(f64, f64)>) -> Option<f64> {
     v.map(|v| hypot(v.0, v.1))
 }
 
 /// JS kafaAc(m)
-pub fn kafaAc(m: &mut Mac) {
+pub fn kafa_ac(m: &mut Mac) {
     m.mac._kafa = Some(KafaGunluk::default());
 }
 
 /// JS kafaBitir(m, son)
-pub fn kafaBitir(m: &mut Mac, mut son: Son) {
+pub fn kafa_bitir(m: &mut Mac, mut son: Son) {
     let tick = m.tick;
     let Some(k) = m.mac._kafa.as_mut() else { return };
     let Some(p) = k.P.take() else { return };
     let mut r = p.r;
     son.t = tick;
     r.son = Some(son);
-    r.sapma = kafaSapma(&r);
+    r.sapma = kafa_sapma(&r);
     k.L.push(r);
 }
 
 /// JS kafaBasla(m, h, o, ot)
-pub fn kafaBasla(m: &mut Mac, h: Pid, o: &mut Secenek, ot: bool) {
+pub fn kafa_basla(m: &mut Mac, h: Pid, o: &mut Secenek, ot: bool) {
     if m.mac._kafa.is_none() {
         return;
     }
-    kafaBitir(m, Son { devam: true, ..Default::default() });
+    kafa_bitir(m, Son { devam: true, ..Default::default() });
     if o.kind == "fake" {
         return;
     }
-    m.mac.oSay += 1;
-    let oid = m.mac.oSay;
+    m.mac.o_say += 1;
+    let oid = m.mac.o_say;
     o._kafaId = Some(oid);
     let hp = &m.ps[h];
     let d = o.det.as_ref();
@@ -153,7 +153,7 @@ pub fn kafaBasla(m: &mut Mac, h: Pid, o: &mut Secenek, ot: bool) {
         P: k3(d.and_then(|d| d.P)),
         Ps: d.and_then(|d| d.Ps).and_then(|x| k3(Some(x))),
         Pk: k3(d.and_then(|d| d.Pk)),
-        hiz: k3(kHiz(o.launch.as_ref().map(|l| (l.vx, l.vy)))),
+        hiz: k3(k_hiz(o.launch.as_ref().map(|l| (l.vx, l.vy)))),
         savT: o.savT,
         tf: o.tf.map(jround),
         alis: e.map(|e| (k3(Some(e.0)), k3(Some(e.1)))),
@@ -170,19 +170,19 @@ fn ayni_secenek(m: &Mac, o: &Secenek) -> bool {
 }
 
 /// JS kafaCikis(m, o, v)
-pub fn kafaCikis(m: &mut Mac, o: &Secenek, v: (f64, f64)) {
+pub fn kafa_cikis(m: &mut Mac, o: &Secenek, v: (f64, f64)) {
     if !ayni_secenek(m, o) {
         return;
     }
     let tick = m.tick;
     let r = &mut m.mac._kafa.as_mut().unwrap().P.as_mut().unwrap().r;
     r.cikis = Some(tick);
-    r.hizC = k3(kHiz(o.launch.as_ref().map(|l| (l.vx, l.vy))));
-    r.hizG = k3(kHiz(Some(v)));
+    r.hiz_c = k3(k_hiz(o.launch.as_ref().map(|l| (l.vx, l.vy))));
+    r.hiz_g = k3(k_hiz(Some(v)));
 }
 
 /// JS kafaNot(m, o, y)
-pub fn kafaNot(m: &mut Mac, o: &Secenek, y: &str) {
+pub fn kafa_not(m: &mut Mac, o: &Secenek, y: &str) {
     if ayni_secenek(m, o) {
         m.mac._kafa.as_mut().unwrap().P.as_mut().unwrap().r.bozuldu = Some(y.into());
     }
@@ -196,13 +196,13 @@ fn yuz(x: f64) -> String {
 }
 
 /// JS kafaSapma(r): kafadaki beklentiyle olanın farkları.
-pub fn kafaSapma(r: &KafaKayit) -> Vec<Sapma> {
+pub fn kafa_sapma(r: &KafaKayit) -> Vec<Sapma> {
     let mut s = vec![];
     let d0 = Son::default();
     let S = r.son.as_ref().unwrap_or(&d0);
     let vur = r.hiz.is_some();
-    let bizde = S.kimT == Some(r.team) || S.gol == Some(r.team);
-    let kayip = (S.kimT.is_some() && S.kimT != Some(r.team)) || (S.gol.is_some() && S.gol != Some(r.team));
+    let bizde = S.kim_t == Some(r.team) || S.gol == Some(r.team);
+    let kayip = (S.kim_t.is_some() && S.kim_t != Some(r.team)) || (S.gol.is_some() && S.gol != Some(r.team));
     let sp = |k: &str, a: f64, y: String| Sapma { k: k.into(), a, y };
     if vur {
         match r.cikis {
@@ -215,8 +215,8 @@ pub fn kafaSapma(r: &KafaKayit) -> Vec<Sapma> {
             }
             Some(c) => {
                 let hiz = r.hiz.unwrap();
-                if let Some(hc) = r.hizC {
-                    if hiz > 0.05 && (hc - hiz).abs() > jmax(KS.hizMin, KS.hiz * hiz) {
+                if let Some(hc) = r.hiz_c {
+                    if hiz > 0.05 && (hc - hiz).abs() > jmax(KS.hiz_min, KS.hiz * hiz) {
                         s.push(sp("hız", 3.0, format!("hız kafada {}, çıkan {}", f2(hiz), f2(hc))));
                     }
                 }
@@ -230,9 +230,9 @@ pub fn kafaSapma(r: &KafaKayit) -> Vec<Sapma> {
     }
     if r.kind == "gönder" {
         if let (Some(_), Some(pk)) = (r.cikis, r.Pk) {
-            if S.gol == Some(r.team) && pk < KS.golAz {
+            if S.gol == Some(r.team) && pk < KS.gol_az {
                 s.push(sp("şans", 1.0, format!("gol oldu, kafada gol ihtimali {}", yuz(pk))));
-            } else if S.gol.is_none() && pk >= KS.golCok {
+            } else if S.gol.is_none() && pk >= KS.gol_cok {
                 s.push(sp("kayıp", 1.0, format!("kafada gol ihtimali {}, gol olmadı", yuz(pk))));
             }
         }
@@ -245,15 +245,15 @@ pub fn kafaSapma(r: &KafaKayit) -> Vec<Sapma> {
     let kim = S.kim.clone().filter(|x| !x.is_empty());
     if vur && r.q.as_ref().map_or(false, |q| !q.is_empty()) {
         let q = r.q.clone().unwrap();
-        let aP = jmax(0.0, P - r.Ps.filter(|x| dogru(*x)).unwrap_or(0.0));
-        if aP >= KS.kayip && (S.kim.as_deref() != Some(q.as_str()) || r.sek.map_or(false, dogru)) && (kim.is_some() || S.gol.is_some()) {
+        let a_p = jmax(0.0, P - r.Ps.filter(|x| dogru(*x)).unwrap_or(0.0));
+        if a_p >= KS.kayip && (S.kim.as_deref() != Some(q.as_str()) || r.sek.map_or(false, dogru)) && (kim.is_some() || S.gol.is_some()) {
             let ne = if S.kim.as_deref() == Some(q.as_str()) { "top sekip ona döndü".to_string() } else if let Some(k) = &kim { format!("{k} aldı") } else { "gol yedik".into() };
             let ek = if kayip || S.kim.as_deref() == Some(q.as_str()) { "" } else { " (bizde kaldı)" };
-            s.push(sp(if kayip { "kayıp" } else { "kaçtı" }, 2.0, format!("kafada {} {q} alacaktı, {ne}{ek}", yuz(aP))));
+            s.push(sp(if kayip { "kayıp" } else { "kaçtı" }, 2.0, format!("kafada {} {q} alacaktı, {ne}{ek}", yuz(a_p))));
         }
         return s;
     }
-    if kayip && P >= if vur { KS.kayip } else { KS.kayipSur } {
+    if kayip && P >= if vur { KS.kayip } else { KS.kayip_sur } {
         let kk = kim.as_ref().map_or("gol yedik".to_string(), |k| format!("{k} aldı"));
         let y = if vur {
             format!("kafada {} bizde kalacaktı, {kk}", yuz(P))
@@ -265,7 +265,7 @@ pub fn kafaSapma(r: &KafaKayit) -> Vec<Sapma> {
         s.push(sp("kayıp", 2.0, y));
     }
     if vur && bizde {
-        if let Some(kid) = S.kimId {
+        if let Some(kid) = S.kim_id {
             let hedef = Some(kid) == r.qid;
             let d = match (&r.alis, S.x) {
                 (Some((Some(ax), Some(ay))), Some(sx)) => hypot(sx - ax, S.y.unwrap_or(f64::NAN) - ay),

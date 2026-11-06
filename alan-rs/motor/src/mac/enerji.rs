@@ -13,7 +13,7 @@ pub use crate::kural::enerji::*;
 
 /// Maçın sprint bağlamı (eskiden `MacKural::of`; Aşama 7c: tip kural katmanında, kurucusu maçta).
 pub fn mac_kurali(m: &Mac) -> MacKural {
-    MacKural { niyet: None, mh: m.mac.__mH, tick: m.tick, holder: m.holder.map(|h| kim(&m.ps[h])), flq: m.fl.as_ref().and_then(|f| f.q).map(|q| kim(&m.ps[q])) }
+    MacKural { niyet: None, mh: m.mac.__m_h, tick: m.tick, holder: m.holder.map(|h| kim(&m.ps[h])), flq: m.fl.as_ref().and_then(|f| f.q).map(|q| kim(&m.ps[q])) }
 }
 
 
@@ -29,20 +29,20 @@ fn ekle(s: &mut EnSayac, k: &str, v: f64) {
 }
 
 /// JS enSay(m, p, k, v)
-pub fn enSay_p(st: &mut JMSt, lite: bool, team: f64, _pi: Pid, k: &str, v: f64) {
+pub fn en_say_p(st: &mut JMSt, lite: bool, team: f64, _pi: Pid, k: &str, v: f64) {
     if lite || !(v > 0.0) {
         return;
     }
-    if st.enH.is_empty() {
+    if st.en_h.is_empty() {
         let z: EnSayac = ["sprint", "ivme", "ikili", "alan", "sarj", "dol"].iter().map(|k| (k.to_string(), 0.0)).collect();
-        st.enH = vec![z.clone(), z];
+        st.en_h = vec![z.clone(), z];
     }
-    ekle(&mut st.enH[team as usize], k, v);
+    ekle(&mut st.en_h[team as usize], k, v);
 }
-pub fn enSay(m: &mut Mac, pi: Pid, k: &str, v: f64) {
+pub fn en_say(m: &mut Mac, pi: Pid, k: &str, v: f64) {
     if crate::iz_acik() && !m.mac._lite && v > 0.0 && &*m.ps[pi].govde.name == "Cansu" && std::env::var("ALAN_EN_IZ").ok().and_then(|x| x.parse::<f64>().ok()).map_or(false, |x| m.tick >= x - 1.0 && m.tick <= x) { eprintln!("EN {} {} {} {}", m.tick, m.ps[pi].govde.name, k, v); }
     let t = m.ps[pi].team;
-    enSay_p(&mut m.m.st, m.mac._lite, t, pi, k, v);
+    en_say_p(&mut m.m.st, m.mac._lite, t, pi, k, v);
 }
 
 /// JS verim(p, ...oz): eski özelliklerin ortalamasıyla harcama katı
@@ -55,19 +55,19 @@ pub fn verim(p: &Oyuncu, oz: &[&str]) -> f64 {
 }
 
 /// JS enHarca(m, p, k, v)
-pub fn enHarca_p(st: &mut JMSt, lite: bool, p: &mut Oyuncu, pi: Pid, k: &str, v: f64) {
+pub fn en_harca_p(st: &mut JMSt, lite: bool, p: &mut Oyuncu, pi: Pid, k: &str, v: f64) {
     let Some(en) = p.en else { return };
     if !(v > 0.0) {
         return;
     }
-    let d = jmin(en, v / ALAN_EN2_SB(p));
-    enSay_p(st, lite, p.team, pi, k, d);
+    let d = jmin(en, v / alan_en2_sb(p));
+    en_say_p(st, lite, p.team, pi, k, d);
     p.en = Some(en - d);
 }
-pub fn enHarca(m: &mut Mac, pi: Pid, k: &str, v: f64) {
+pub fn en_harca(m: &mut Mac, pi: Pid, k: &str, v: f64) {
     if crate::iz_acik() && !m.mac._lite && &*m.ps[pi].govde.name == "Cansu" && std::env::var("ALAN_EN_IZ").ok().and_then(|x| x.parse::<f64>().ok()).map_or(false, |x| m.tick >= x - 1.0 && m.tick <= x) { eprintln!("ENH {} {} {} {} en {:?}", m.tick, m.ps[pi].govde.name, k, v, m.ps[pi].en); }
     let lite = m.mac._lite;
-    enHarca_p(&mut m.m.st, lite, &mut m.m.ps[pi], pi, k, v);
+    en_harca_p(&mut m.m.st, lite, &mut m.m.ps[pi], pi, k, v);
 }
 
 /// JS enerji2(m) (Enerji 3): sprint harcar, dinlenme doldurur; bar alan gücünü (D) ölçekler.
@@ -81,25 +81,25 @@ pub fn enerji2(m: &mut Mac) {
             m.ps[pi].en = Some(1.0);
         }
         let p = &m.ps[pi];
-        let Sb = ALAN_EN2_SB(p);
-        let Sd = ALAN_EN2_SD(p);
+        let Sb = alan_en2_sb(p);
+        let Sd = alan_en2_sd(p);
         let vx = or0(p.vx);
         let vy = or0(p.vy);
         let v = hypot(vx, vy);
         let b = spd(p);
-        let vmx = b * ALAN_SPR_H(p.govde.yet.hiz);
+        let vmx = b * alan_spr_h(p.govde.yet.hiz);
         let mut d = 0.0;
         let mut st_ek: Vec<(&str, f64)> = vec![];
         if v > b {
-            let ds = EN2.tepe * pow(jmin(1.0, (v - b) / jmax(1e-6, vmx - b)), 1.0);
+            let ds = en2.tepe * pow(jmin(1.0, (v - b) / jmax(1e-6, vmx - b)), 1.0);
             d += ds;
             st_ek.push(("sprint", ds / Sb));
         }
         let r = v / b;
-        let act = if v > b { 0.0 } else if r <= 0.6 { 1.0 - 0.5 * r } else { jmax(EN2.tempoDol, 0.7 - 1.125 * (r - 0.6)) };
+        let act = if v > b { 0.0 } else if r <= 0.6 { 1.0 - 0.5 * r } else { jmax(en2.tempo_dol, 0.7 - 1.125 * (r - 0.6)) };
         let y0 = p.hal._yog.unwrap_or(0.0);
-        let yog = y0 + (d / Sb - y0) / EN2.yogTau;
-        let _yogF = jmax(EN2.yogMin, 1.0 - EN2.yogK * yog / (EN2.tepe / Sb));
+        let yog = y0 + (d / Sb - y0) / en2.yog_tau;
+        let _yog_f = jmax(en2.yog_min, 1.0 - en2.yog_k * yog / (en2.tepe / Sb));
         let _ = (Sd, act);
         let mut dol;
         if v > 1.02 * b && !p.bekci() {
@@ -115,9 +115,9 @@ pub fn enerji2(m: &mut Mac) {
                     nd = jmin(nd, hypot(q.x - p.x, q.y - p.y));
                 }
             }
-            let dT = hypot(p.tx - p.x, p.ty - p.y);
-            let yerK = if sahip { 0.0 } else { jmax(0.0, 1.0 - dT / EN3.yerD) * jmax(0.0, 1.0 - v / b) };
-            dol = ALAN_EN3_DOL(p, sahip, nd, yerK);
+            let d_t = hypot(p.tx - p.x, p.ty - p.y);
+            let yer_k = if sahip { 0.0 } else { jmax(0.0, 1.0 - d_t / EN3.yer_d) * jmax(0.0, 1.0 - v / b) };
+            dol = alan_en3_dol(p, sahip, nd, yer_k);
         }
         if gt(p.hal._dolYok, tick) {
             dol = 0.0;
@@ -126,7 +126,7 @@ pub fn enerji2(m: &mut Mac) {
         st_ek.push(("dol", jmin(dol, 1.0 - en)));
         let team = p.team;
         for (k, x) in st_ek {
-            enSay_p(&mut m.st, lite, team, pi, k, x);
+            en_say_p(&mut m.st, lite, team, pi, k, x);
         }
         let p = &mut m.ps[pi];
         p.hal_mut()._evx = Some(vx);
@@ -160,7 +160,7 @@ pub fn enerji(m: &mut Mac) {
 }
 
 /// JS enCal(m, kaz, kay, sert): ikiliyi kazanan kaybedenden bar çalar.
-pub fn enCal(m: &mut Mac, kaz: Pid, kay: Pid, sert: f64) {
+pub fn en_cal(m: &mut Mac, kaz: Pid, kay: Pid, sert: f64) {
     if kaz == kay {
         return;
     }
@@ -173,23 +173,23 @@ pub fn enCal(m: &mut Mac, kaz: Pid, kay: Pid, sert: f64) {
         return;
     }
     m.ps[kay].en = Some(m.ps[kay].en.unwrap() - c);
-    enSay(m, kay, "calindi", c);
+    en_say(m, kay, "calindi", c);
     let al = jmin(c, 1.0 - m.ps[kaz].en.unwrap());
     m.ps[kaz].en = Some(m.ps[kaz].en.unwrap() + al);
-    enSay(m, kaz, "caldi", al);
+    en_say(m, kaz, "caldi", al);
     let t = m.ps[kaz].team;
     if !m.mac._lite {
         let (a, b) = (m.ps[kaz].govde.name.clone(), m.ps[kay].govde.name.clone());
         ev(m, "pas", t, format!("{a}, {b}'den bar çaldı"));
     }
-    if m.st.enCal.is_empty() {
-        m.st.enCal = vec![0.0, 0.0];
+    if m.st.en_cal.is_empty() {
+        m.st.en_cal = vec![0.0, 0.0];
     }
-    m.st.enCal[t as usize] += c;
+    m.st.en_cal[t as usize] += c;
 }
 /// JS sertT(a, b): çarpışmanın sertliği
-pub fn sertT(a: &Oyuncu, b: &Oyuncu, k: &MacKural) -> f64 {
-    hypot(or0(a.vx) - or0(b.vx), or0(a.vy) - or0(b.vy)) / jmax(0.05, spd(a) * ALAN_SPR(a, k))
+pub fn sert_t(a: &Oyuncu, b: &Oyuncu, k: &MacKural) -> f64 {
+    hypot(or0(a.vx) - or0(b.vx), or0(a.vy) - or0(b.vy)) / jmax(0.05, spd(a) * alan_spr(a, k))
 }
 
 // ---- alan seçimi ----
@@ -197,9 +197,9 @@ pub fn sertT(a: &Oyuncu, b: &Oyuncu, k: &MacKural) -> f64 {
 const ALAN_YON: f64 = 2.0;
 
 /// JS alanYz(m, p, t0): alanın yönünü seçerken yanılma (baskı altında büyür).
-pub fn alanYz(m: &Mac, pi: Pid, t0: f64) -> (f64, f64) {
+pub fn alan_yz(m: &Mac, pi: Pid, t0: f64) -> (f64, f64) {
     let p = &m.ps[pi];
-    let bb = jmin(1.0, gecici_dis::pressAt(&m.ps, p.team, p.x, p.y));
+    let bb = jmin(1.0, gecici_dis::press_at(&m.ps, p.team, p.x, p.y));
     let w = ALAN_YON * (20.0 - p.govde.yet.y(mek::ALAN_YON) + 10.0 * crate::yetenek::DK_SUT.b * bb * crate::yetenek::yum(&p.govde.yet, "B")) / 10.0;
     if !(w > 0.0) {
         return (0.0, 0.0);
@@ -209,7 +209,7 @@ pub fn alanYz(m: &Mac, pi: Pid, t0: f64) -> (f64, f64) {
 }
 
 /// JS alanSec(m): boştaki topa alan açma/kapama seçimi (am: +1 hızlandır, −1 yavaşlat) ve bedeli.
-pub fn alanSec(m: &mut Mac) {
+pub fn alan_sec(m: &mut Mac) {
     let ok = matches!(&m.ball, Some(b) if m.holder.is_none() && b.done.is_none());
     if !ok {
         for p in m.ps.iter_mut() {
@@ -221,24 +221,24 @@ pub fn alanSec(m: &mut Mac) {
     let b = m.ball.as_ref().unwrap();
     let (bx, by, bt) = (b.x, b.y, b.team as f64);
     let bdefl = dogru(b.defl) || b.defl_b;
-    let fr = frTop(m);
+    let fr = fr_top(m);
     let fl = m.fl.as_ref();
     let sut = fl.map_or(false, |f| f.kind == "gönder") && !bdefl;
     let q = if !sut && !bdefl { fl.and_then(|f| f.q) } else { None };
     let t0 = fl.map_or(m.tick, |f| f.t0);
-    let (mut oE, mut rqE, mut rqT, mut tE) = (1e9, 1e9, 0.0, [1e9, 1e9]);
+    let (mut o_e, mut rq_e, mut rq_t, mut tE) = (1e9, 1e9, 0.0, [1e9, 1e9]);
     let n = fr.as_ref().map_or(0.0, |f| f.pts.len() as f64);
     if let Some(fr) = &fr {
         for (pi, r) in &fr.arr {
             let p = &m.ps[*pi];
             if !p.noTouch {
                 if p.team != bt {
-                    oE = jmin(oE, r.est);
+                    o_e = jmin(o_e, r.est);
                 }
                 tE[p.team as usize] = jmin(tE[p.team as usize], r.est);
                 if Some(*pi) == q {
-                    rqE = r.est;
-                    rqT = r.t;
+                    rq_e = r.est;
+                    rq_t = r.t;
                 }
             }
         }
@@ -261,16 +261,16 @@ pub fn alanSec(m: &mut Mac) {
             continue;
         }
         let r = fr.as_ref().and_then(|f| f.arr.iter().find(|x| x.0 == pi)).is_some();
-        let (e1, e2) = if yz { alanYz(m, pi, t0) } else { (0.0, 0.0) };
+        let (e1, e2) = if yz { alan_yz(m, pi, t0) } else { (0.0, 0.0) };
         let p = &m.ps[pi];
         let pt = p.team as usize;
-        let son = n != 0.0 && rqT + e2 >= n - 3.0;
+        let son = n != 0.0 && rq_t + e2 >= n - 3.0;
         let a = if sut {
             if p.team == bt { 1.0 } else { -1.0 }
         } else if q.is_some() {
             if p.team == bt {
-                if rqE >= 1e8 || son { -1.0 } else if rqE + e1 >= oE - 2.0 { 1.0 } else if son { -1.0 } else { 0.0 }
-            } else if r && tE[pt] + e1 <= rqE + 4.0 {
+                if rq_e >= 1e8 || son { -1.0 } else if rq_e + e1 >= o_e - 2.0 { 1.0 } else if son { -1.0 } else { 0.0 }
+            } else if r && tE[pt] + e1 <= rq_e + 4.0 {
                 -1.0
             } else if son {
                 1.0
@@ -292,7 +292,7 @@ pub fn alanSec(m: &mut Mac) {
             sn += f0 * dd;
         }
     }
-    let dS = |s: f64| if s <= 1.0 { s } else if s <= 2.0 { 1.0 + 0.5 * (s - 1.0) } else { 1.5 + 0.25 * (s - 2.0) };
+    let d_s = |s: f64| if s <= 1.0 { s } else if s <= 2.0 { 1.0 + 0.5 * (s - 1.0) } else { 1.5 + 0.25 * (s - 2.0) };
     for pi in 0..m.ps.len() {
         let am = oo(m.ps[pi].hal.am);
         if am == 0.0 {
@@ -301,10 +301,10 @@ pub fn alanSec(m: &mut Mac) {
         let p = &m.ps[pi];
         let f = p.etki().infl(bx, by);
         let s = if am > 0.0 { sp } else { sn };
-        let pay = if s > 0.0 { dS(s) / s } else { 1.0 };
-        let c = EN.alan * f * pay / ALAN_EN2_SB(p) * p.govde.yet.verim(mek::ALAN_BEDEL);
+        let pay = if s > 0.0 { d_s(s) / s } else { 1.0 };
+        let c = EN.alan * f * pay / alan_en2_sb(p) * p.govde.yet.verim(mek::ALAN_BEDEL);
         let e = p.en.unwrap_or(1.0);
-        enSay(m, pi, "alan", jmin(e, c));
+        en_say(m, pi, "alan", jmin(e, c));
         m.ps[pi].en = Some(jmax(0.0, e - c));
     }
 }
@@ -323,17 +323,17 @@ pub fn sf_kesin_re(j: &str) -> bool {
 
 /// Boştaki topun uçuş tahmini (JS `m.sh.fr`, yalnız top boştayken ve bu topunsa). Yerleşim yazar
 /// (`m.mac.sekil.sh`); maç okur.
-pub fn frAl(m: &Mac) -> Option<crate::model::JMShFr> {
+pub fn fr_al(m: &Mac) -> Option<crate::model::JMShFr> {
     if m.holder.is_some() {
         return None;
     }
-    frTop(m)
+    fr_top(m)
 }
 /// JS `m.sh.fr` (`m.sh.frB === m.ball` ise): yerleşimin uçuş okuması maçın biçiminde.
-pub fn frTop(m: &Mac) -> Option<crate::model::JMShFr> {
+pub fn fr_top(m: &Mac) -> Option<crate::model::JMShFr> {
     let b = m.ball.as_ref()?;
     let sh = &m.mac.sekil.sh;
-    if sh.frB != Some(b.kimlik()) {
+    if sh.fr_b != Some(b.kimlik()) {
         return None;
     }
     let fr = sh.fr.as_ref()?;
@@ -345,12 +345,12 @@ pub fn frTop(m: &Mac) -> Option<crate::model::JMShFr> {
 }
 
 /// JS sprintKarar3(m): her koşucu için koşu hızı (tempo → sprint arası sürekli kat, _hizK).
-pub fn sprintKarar3(m: &mut Mac) {
+pub fn sprint_karar3(m: &mut Mac) {
     let F = &SPR_FAZ;
     let h = m.holder;
-    let fr = frAl(m);
-    let aF = gecici_dis::D::arriveFirm;
-    let Wf = |T: f64, tD: f64| if tD >= 1e8 { 1.0 } else { 1.0 / (1.0 + exp((T - tD) / 5.0)) };
+    let fr = fr_al(m);
+    let a_f = gecici_dis::D::arriveFirm;
+    let wf = |T: f64, tD: f64| if tD >= 1e8 { 1.0 } else { 1.0 / (1.0 + exp((T - tD) / 5.0)) };
     let kk = mac_kurali(m);
     for pi in 0..m.ps.len() {
         {
@@ -360,8 +360,8 @@ pub fn sprintKarar3(m: &mut Mac) {
             p.hal_mut()._hizK = None;
         }
         if m.ps[pi].hal._itK.is_some() {
-            let topBen = h.is_none() && m.fl.as_ref().map_or(false, |f| f.q == Some(pi)) && m.ball.as_ref().map_or(false, |b| b.tt.t.from == Some(pi));
-            if SPK() && topBen {
+            let top_ben = h.is_none() && m.fl.as_ref().map_or(false, |f| f.q == Some(pi)) && m.ball.as_ref().map_or(false, |b| b.tt.t.from == Some(pi));
+            if spk() && top_ben {
                 let p = &mut m.ps[pi];
                 p.hal_mut()._hizK = p.hal._itK;
                 p.sprint = p.hal._itK.unwrap() > 1.001;
@@ -372,7 +372,7 @@ pub fn sprintKarar3(m: &mut Mac) {
         }
         let p = &m.ps[pi];
         let sS = p._sf.as_ref().map_or(false, |s| s.f == "patlama" || s.f == "tepe");
-        if Some(pi) == h || p.bekci() || p.en.is_none() || p.noTouch || kk.sprKar(p) {
+        if Some(pi) == h || p.bekci() || p.en.is_none() || p.noTouch || kk.spr_kar(p) {
             continue;
         }
         let j = job(p).to_string();
@@ -406,7 +406,7 @@ pub fn sprintKarar3(m: &mut Mac) {
         } else if bizde {
             if let Some(h) = h {
                 let hp = &m.ps[h];
-                tD = jmax(0.0, oo(Some(m.decT))) + gecici_dis::ucusT(m, hypot(hp.x - tx, hp.y - ty), aF);
+                tD = jmax(0.0, oo(Some(m.dec_t))) + gecici_dis::ucus_t(m, hypot(hp.x - tx, hp.y - ty), a_f);
             }
         } else {
             for q in &m.ps {
@@ -414,14 +414,14 @@ pub fn sprintKarar3(m: &mut Mac) {
                     continue;
                 }
                 let l = hypot(q.x - tx, q.y - ty);
-                tD = jmin(tD, ALAN_KOSU_T(q, l, spd(q), &kk));
+                tD = jmin(tD, alan_kosu_t(q, l, spd(q), &kk));
             }
         }
         let b = spd(p);
-        let Sb = ALAN_EN2_SB(p);
-        let vm = b * ALAN_SPR_H(p.govde.yet.hiz);
-        let hk = hkK(p, SPR0(p));
-        let pat = SBED();
+        let Sb = alan_en2_sb(p);
+        let vm = b * alan_spr_h(p.govde.yet.hiz);
+        let hk = hk_k(p, SPR0(p));
+        let pat = sbed();
         let e = jmax(0.0, jmin(1.0, p.en.unwrap_or(1.0)));
         let dol = {
             let mut nd = 1e9;
@@ -430,31 +430,31 @@ pub fn sprintKarar3(m: &mut Mac) {
                     nd = jmin(nd, hypot(q.x - p.x, q.y - p.y));
                 }
             }
-            ALAN_EN3_DOL(p, bizde, nd, 0.0)
+            alan_en3_dol(p, bizde, nd, 0.0)
         };
         let dK = dol;
-        let pk = sfPk(p);
+        let pk = sf_pk(p);
         let s0 = SPR0(p);
         let yol = |e0: f64, sur: bool| -> [(f64, f64); 3] {
             let T0 = d / b;
             let T1 = d / (b * hk);
-            let c1 = T1 * (EN2.tepe * pow(jmin(1.0, (b * hk - b) / jmax(1e-6, vm - b)), 1.0) / Sb + dK);
+            let c1 = T1 * (en2.tepe * pow(jmin(1.0, (b * hk - b) / jmax(1e-6, vm - b)), 1.0) / Sb + dK);
             let pa = if sur { 0.0 } else { pat };
             let (mut T2, mut c2) = (1e9, 1e9);
-            if e0 >= (if sur { 0.0 } else { ALAN_EN3_SGIR(p, pa) }) {
-                let ts = ALAN_EN2_TS(p, Some(e0 - pa));
-                let vS = b * ALAN_EN3_TEPE(Some(0.5 * jmax(0.0, e0 - pa) + 0.5 * jmax(0.0, e0 - pa - jmin(ts, d / (b * pk)) * EN2.tepe / Sb)), if F.ust { s0 } else { s0 });
-                let rc = vS * ts;
-                let tS = jmin(ts, d / vS);
-                T2 = if d <= rc { d / vS } else { ts + (d - rc) / b };
-                c2 = pa + tS * (EN2.tepe / Sb + dK);
+            if e0 >= (if sur { 0.0 } else { alan_en3_sgir(p, pa) }) {
+                let ts = alan_en2_ts(p, Some(e0 - pa));
+                let v_s = b * alan_en3_tepe(Some(0.5 * jmax(0.0, e0 - pa) + 0.5 * jmax(0.0, e0 - pa - jmin(ts, d / (b * pk)) * en2.tepe / Sb)), if F.ust { s0 } else { s0 });
+                let rc = v_s * ts;
+                let t_s = jmin(ts, d / v_s);
+                T2 = if d <= rc { d / v_s } else { ts + (d - rc) / b };
+                c2 = pa + t_s * (en2.tepe / Sb + dK);
             }
             [(T0, 0.0), (T1, jmin(c1, e0)), (T2, c2)]
         };
-        let enIyi = |e0: f64| {
+        let en_iyi = |e0: f64| {
             let mut w = 0.0;
             for (T, _) in yol(e0, false) {
-                w = jmax(w, Wf(T, tD));
+                w = jmax(w, wf(T, tD));
             }
             w
         };
@@ -465,65 +465,65 @@ pub fn sprintKarar3(m: &mut Mac) {
             Some(h) => Some((m.ps[h].x, m.ps[h].y)),
             None => m.ball.as_ref().map(|b| (b.x, b.y)),
         };
-        let KU = |x: f64| ALAN_EN3_KUL(p, x, bizde, bxy, &kk);
+        let ku = |x: f64| alan_en3_kul(p, x, bizde, bxy, &kk);
         let tac_t = &m.tac[p.team as usize];
-        let hrK = jmax(0.0, jmin(1.0, tac_t.enHarcama.unwrap_or(0.5))) - 0.5 + 1.0;
-        let sd_p = ALAN_EN2_SD(p);
+        let hr_k = jmax(0.0, jmin(1.0, tac_t.enHarcama.unwrap_or(0.5))) - 0.5 + 1.0;
+        let sd_p = alan_en2_sd(p);
         let DEG = |T: f64, c: f64| -> f64 {
             let mut bd = 0.0;
             if c > 0.0 {
-                let dE = jmax(dol, EN3.r0 * sd_p) * jmax(1.0, T0);
+                let d_e = jmax(dol, EN3.r0 * sd_p) * jmax(1.0, T0);
                 for i in 1..=20 {
-                    let g = dE * i as f64;
+                    let g = d_e * i as f64;
                     if g >= c {
                         break;
                     }
-                    let eA = jmin(1.0, e + g);
-                    let eB = jmin(1.0, e - c + g);
-                    bd += Sy * (enIyi(eA) - enIyi(eB)) + KU(eA) - KU(eB);
+                    let e_a = jmin(1.0, e + g);
+                    let e_b = jmin(1.0, e - c + g);
+                    bd += Sy * (en_iyi(e_a) - en_iyi(e_b)) + ku(e_a) - ku(e_b);
                 }
             }
-            bd *= hrK;
-            Sy * Wf(T, tD) - bd
+            bd *= hr_k;
+            Sy * wf(T, tD) - bd
         };
         // SPK: sürekli kat
         let kM = jmax(1.0, pk);
-        let cK = |f: f64| -> (f64, f64, f64) {
+        let c_k = |f: f64| -> (f64, f64, f64) {
             let k = 1.0 + f * (kM - 1.0);
             let T = d / (b * k);
-            (k, T, if f > 0.0 { T * (EN2.tepe * jmin(1.0, (b * k - b) / jmax(1e-6, vm - b)) / Sb + dK) } else { 0.0 })
+            (k, T, if f > 0.0 { T * (en2.tepe * jmin(1.0, (b * k - b) / jmax(1e-6, vm - b)) / Sb + dK) } else { 0.0 })
         };
-        let (mut fB, mut vB) = (0.0, -1e9);
-        let dene = |f: f64, fB: &mut f64, vB: &mut f64| {
+        let (mut fB, mut v_b) = (0.0, -1e9);
+        let dene = |f: f64, fB: &mut f64, v_b: &mut f64| {
             if !(0.0..=1.0).contains(&f) {
                 return;
             }
-            let (_, T, c) = cK(f);
+            let (_, T, c) = c_k(f);
             if c > e + 1e-9 {
                 return;
             }
             let V = DEG(T, c);
-            if V > *vB + 1e-12 {
-                *vB = V;
+            if V > *v_b + 1e-12 {
+                *v_b = V;
                 *fB = f;
             }
         };
         for f in [0.0, 0.2, 0.4, 0.6, 0.8, 1.0] {
-            dene(f, &mut fB, &mut vB);
+            dene(f, &mut fB, &mut v_b);
         }
         let f0 = fB;
-        dene(f0 - 0.1, &mut fB, &mut vB);
-        dene(f0 + 0.1, &mut fB, &mut vB);
+        dene(f0 - 0.1, &mut fB, &mut v_b);
+        dene(f0 + 0.1, &mut fB, &mut v_b);
         let f1 = fB;
-        dene(f1 - 0.05, &mut fB, &mut vB);
-        dene(f1 + 0.05, &mut fB, &mut vB);
-        let (kS, _, _) = cK(fB);
+        dene(f1 - 0.05, &mut fB, &mut v_b);
+        dene(f1 + 0.05, &mut fB, &mut v_b);
+        let (k_s, _, _) = c_k(fB);
         let _ = sS;
         if crate::iz_acik() && std::env::var("ALAN_K3_IZ").ok().as_deref() == Some(&format!("{}:{}", m.tick, pi)) {
-            eprintln!("K3 tD={tD} sS={sS} e={e} dol={dol} topa={topa} bizde={bizde} j={j} f={fB} b={b} vm={vm} hk={hk} kM={kM} Sy={Sy} decT={}", m.decT);
+            eprintln!("K3 tD={tD} sS={sS} e={e} dol={dol} topa={topa} bizde={bizde} j={j} f={fB} b={b} vm={vm} hk={hk} kM={kM} Sy={Sy} decT={}", m.dec_t);
         }
         let p = &mut m.ps[pi];
-        p.hal_mut()._hizK = Some(kS);
+        p.hal_mut()._hizK = Some(k_s);
         p.hal_mut()._hizF = Some(fB);
         p.hal_mut()._kosuK = Some(if fB < 0.05 { "tempo" } else if fB < 0.7 { "hızlı" } else { "sprint" }.into());
         p.sprint = fB >= 0.05;
@@ -532,21 +532,21 @@ pub fn sprintKarar3(m: &mut Mac) {
 }
 
 /// JS sprintBasla(m, p, F, yazi)
-pub fn sprintBasla(m: &mut Mac, pi: Pid, yazi: Option<String>) {
-    m.ps[pi]._sf = Some(crate::model::JP_sf { t0: m.tick, f: "patlama".into() });
+pub fn sprint_basla(m: &mut Mac, pi: Pid, yazi: Option<String>) {
+    m.ps[pi]._sf = Some(crate::model::JpSf { t0: m.tick, f: "patlama".into() });
     if let Some(e) = m.ps[pi].en {
-        enSay(m, pi, "sprint", SBED());
-        m.ps[pi].en = Some(jmax(0.0, e - SBED()));
+        en_say(m, pi, "sprint", sbed());
+        m.ps[pi].en = Some(jmax(0.0, e - sbed()));
     }
     let t = m.ps[pi].team as usize;
-    if m.st.sprF.is_empty() {
-        m.st.sprF = vec![0.0, 0.0];
+    if m.st.spr_f.is_empty() {
+        m.st.spr_f = vec![0.0, 0.0];
     }
-    m.st.sprF[t] += 1.0;
-    if m.st.sprT.is_empty() {
-        m.st.sprT = vec![0.0, 0.0];
+    m.st.spr_f[t] += 1.0;
+    if m.st.spr_t.is_empty() {
+        m.st.spr_t = vec![0.0, 0.0];
     }
-    m.st.sprT[t] += 1.0;
+    m.st.spr_t[t] += 1.0;
     if !m.mac._lite {
         if let Some(y) = yazi {
             ev(m, "pas", t as f64, y);
@@ -555,7 +555,7 @@ pub fn sprintBasla(m: &mut Mac, pi: Pid, yazi: Option<String>) {
 }
 
 /// JS sfKesin(m, p, F): sprinte çıkmak gerçekten gerekli mi (yarış).
-pub fn sfKesin(m: &Mac, pi: Pid) -> bool {
+pub fn sf_kesin(m: &Mac, pi: Pid) -> bool {
     let F = &SPR_FAZ;
     let p = &m.ps[pi];
     let j = job(p);
@@ -563,13 +563,13 @@ pub fn sfKesin(m: &Mac, pi: Pid) -> bool {
         return false;
     }
     let d = hypot(p.tx - p.x, p.ty - p.y);
-    let tepe = ALAN_EN2_TS(p, None);
-    let r = spd(p) * sfPk(p) * (F.patT + tepe) * 1.0;
+    let tepe = alan_en2_ts(p, None);
+    let r = spd(p) * sf_pk(p) * (F.pat_t + tepe) * 1.0;
     if d < 2.0 || d > r {
         return false;
     }
     if bas(j, &["alıcı", "kovala"]) {
-        if let Some(fr) = frAl(m) {
+        if let Some(fr) = fr_al(m) {
             if let Some((_, rr)) = fr.arr.iter().find(|x| x.0 == pi) {
                 let mut rv = 1e9;
                 for (qi, rq) in &fr.arr {
@@ -578,7 +578,7 @@ pub fn sfKesin(m: &Mac, pi: Pid) -> bool {
                         rv = rq.est;
                     }
                 }
-                if rr.est > F.patT + tepe || rv > rr.est + 4.0 {
+                if rr.est > F.pat_t + tepe || rv > rr.est + 4.0 {
                     return false;
                 }
             }
@@ -588,17 +588,17 @@ pub fn sfKesin(m: &Mac, pi: Pid) -> bool {
 }
 
 /// JS sprFaz(m): sprint evreleri (patlama → tepe → fren → dolum) ve sprint başlangıcı.
-pub fn sprFaz(m: &mut Mac) {
+pub fn spr_faz(m: &mut Mac) {
     let F = &SPR_FAZ;
     let t = m.tick;
-    let T1 = F.patT;
-    let T2 = T1 + F.tepeT;
-    let T3 = T2 + F.frenT;
-    let T4 = T3 + F.dolT;
+    let T1 = F.pat_t;
+    let T2 = T1 + F.tepe_t;
+    let t3 = T2 + F.fren_t;
+    let t4 = t3 + F.dol_t;
     let kk = mac_kurali(m);
     for pi in 0..m.ps.len() {
         let holder = m.holder == Some(pi);
-        let sk = kk.sprKar(&m.ps[pi]);
+        let sk = kk.spr_kar(&m.ps[pi]);
         let p = &mut m.ps[pi];
         if let Some(s) = p._sf.as_mut() {
             let pt = s.f == "patlama" || s.f == "tepe";
@@ -615,7 +615,7 @@ pub fn sprFaz(m: &mut Mac) {
                 s.t0 = t - T2;
             }
             let e = t - s.t0;
-            let f = if e < T1 { "patlama" } else if e < T2 { "tepe" } else if e < T3 { "fren" } else if e < T4 { "dolum" } else { "" };
+            let f = if e < T1 { "patlama" } else if e < T2 { "tepe" } else if e < t3 { "fren" } else if e < t4 { "dolum" } else { "" };
             if f.is_empty() {
                 p._sf = None;
             } else {
@@ -623,27 +623,27 @@ pub fn sprFaz(m: &mut Mac) {
             }
         }
         let p = &m.ps[pi];
-        if p._sf.is_none() && !p.bekci() && p.en.unwrap_or(1.0) >= ALAN_EN3_SGIR(p, SBED()) && p.hal._topSpr && !holder {
-            m.ps[pi]._sf = Some(crate::model::JP_sf { t0: t, f: "patlama".into() });
+        if p._sf.is_none() && !p.bekci() && p.en.unwrap_or(1.0) >= alan_en3_sgir(p, sbed()) && p.hal._topSpr && !holder {
+            m.ps[pi]._sf = Some(crate::model::JpSf { t0: t, f: "patlama".into() });
             if let Some(e) = m.ps[pi].en {
-                enSay(m, pi, "sprint", SBED());
-                m.ps[pi].en = Some(jmax(0.0, e - SBED()));
+                en_say(m, pi, "sprint", sbed());
+                m.ps[pi].en = Some(jmax(0.0, e - sbed()));
             }
-            if m.st.sprF.is_empty() {
-                m.st.sprF = vec![0.0, 0.0];
+            if m.st.spr_f.is_empty() {
+                m.st.spr_f = vec![0.0, 0.0];
             }
-            m.m.st.sprF[m.m.ps[pi].team as usize] += 1.0;
+            m.m.st.spr_f[m.m.ps[pi].team as usize] += 1.0;
         }
     }
 }
 
 /// JS vK(p): koşu katı (sprint evresi, sürekli koşu katı _hizK). mH: hareketin başındaki taşıyıcı, mt: tik.
-pub fn vK(p: &Oyuncu, ph: bool, mt: f64, k: &MacKural) -> f64 {
+pub fn v_k(p: &Oyuncu, ph: bool, mt: f64, k: &MacKural) -> f64 {
     let F = &SPR_FAZ;
     let s = p._sf.as_ref();
     if let Some(hk) = p.hal._hizK {
-        if s.is_none() && !ph && SPK() {
-            return jmin(hk, jmax(1.0, sfPk(p)));
+        if s.is_none() && !ph && spk() {
+            return jmin(hk, jmax(1.0, sf_pk(p)));
         }
     }
     if let Some(s) = s {
@@ -654,23 +654,23 @@ pub fn vK(p: &Oyuncu, ph: bool, mt: f64, k: &MacKural) -> f64 {
     let Some(s) = s else {
         return if p.sprint {
             if p.bekci() {
-                sprK(p, k)
+                spr_k(p, k)
             } else {
-                hkK(p, sprK(p, k))
+                hk_k(p, spr_k(p, k))
             }
         } else {
             1.0
         };
     };
     if s.f == "patlama" || s.f == "tepe" {
-        return sfPk(p);
+        return sf_pk(p);
     }
-    let aS = 1.0;
+    let a_s = 1.0;
     if s.f == "fren" {
-        let T2 = F.patT + F.tepeT;
-        let kf = jmin(1.0, jmax(0.0, (mt - s.t0 - T2) / F.frenT));
+        let T2 = F.pat_t + F.tepe_t;
+        let kf = jmin(1.0, jmax(0.0, (mt - s.t0 - T2) / F.fren_t));
         let kk = kf * kf * (3.0 - 2.0 * kf);
-        return sfPk(p) + (aS - sfPk(p)) * kk;
+        return sf_pk(p) + (a_s - sf_pk(p)) * kk;
     }
-    aS
+    a_s
 }
