@@ -14,7 +14,7 @@ use super::kafa1_baglam::Kafa;
 use super::kafa1_js::{nk, Nk};
 use super::kafa1_tehlike::kuyuD;
 use crate::mat::{cos, exp, hypot, jmax, jmin, kis, sin, PI};
-use crate::model::{JOLaunch, JsDeger, Nokta, Oyuncu, Pid, Secenek};
+use crate::model::{JOLaunch, Nokta, Oyuncu, Pid, Secenek, SutBag};
 use crate::oyuncu::Tepki;
 use crate::saha::{CY as GCY, H as GH, W as GW};
 
@@ -396,7 +396,7 @@ impl Kafa {
         }
         // ---- şut ----
         let gd = hypot(gx - h.x, GCY - h.y);
-        if gd < D.shotRange * (0.75 + 0.5 * match &B._sut { Some(JsDeger::Sayi(v)) => *v, _ => 0.5 }) {
+        if gd < D.shotRange * (0.75 + 0.5 * match &B._sut { Some(SutBag::Egilim(v)) => *v, _ => 0.5 }) {
             for ty in self.sutHedef(h, src, gx) {
                 for sy in [1.0, -1.0] {
                     let mut o = yeni("gönder");

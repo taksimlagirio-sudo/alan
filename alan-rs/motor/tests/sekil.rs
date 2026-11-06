@@ -193,7 +193,7 @@ fn kur(c: &Value) -> Kur {
 }
 impl Kur {
     fn mc(&mut self) -> Mc<'_> {
-        Mc { m: &mut self.m, ps: &mut self.ps, ball: self.ball.as_mut(), ek: &mut self.ek, k: &self.kk, d: &self.d, lite: false, rnd: None, dtik: None }
+        Mc { m: &mut self.m, ps: &mut self.ps, ball: self.ball.as_mut(), ek: &mut self.ek, kafa: None, k: &self.kk, d: &self.d, lite: false, rnd: None, dtik: None }
     }
 }
 
@@ -326,7 +326,7 @@ fn js_ile_bit_bit_ayni() {
             chk(&mut hata, format!("t{tk} bekci {pi} y"), b0.1, h(&y["bk"]["y"]));
             say.entry("slotBase/bekci").or_default().tamam += 1;
             if !y["bkm"].is_null() {
-                let bm = BekM { ps: alan_motor::sekil::yer::BekPs::Duz(&K.ps), holder: K.m.holder.map(|h| alan_motor::dunya::Yerde::oyuncu(&K.ps[h])), sut: K.m.mac.kafa.k.is_some(), ben: Some(pi) };
+                let bm = BekM { ps: alan_motor::sekil::yer::BekPs::Duz(&K.ps), holder: K.m.holder.map(|h| alan_motor::dunya::Yerde::oyuncu(&K.ps[h])), sut: false, ben: Some(pi) };
                 match catch_unwind(AssertUnwindSafe(|| bekci(&K.ps[pi], ex, ey, Some(&bm), &K.kk))) {
                     Ok(b1) => {
                         chk(&mut hata, format!("t{tk} bekci(m) {pi} x"), b1.0, h(&y["bkm"]["x"]));
@@ -472,7 +472,7 @@ fn js_ile_bit_bit_ayni() {
             }
             let lo = &c["lo"];
             let w = K.mc().dunya();
-            let r = laneOpen(&K.m, &w, &K.ps, lo["att"].as_u64().unwrap() as u8, xy(&lo["A"]), xy(&lo["B"]), Some(h(&lo["v"])), &K.kk, &K.d);
+            let r = laneOpen(None, &w, &K.ps, lo["att"].as_u64().unwrap() as u8, xy(&lo["A"]), xy(&lo["B"]), Some(h(&lo["v"])), &K.kk, &K.d);
             chk(&mut hata, format!("t{tk} laneOpen"), r, h(&lo["r"]));
             let yt = &c["yt"];
             let pi = yt["p"].as_u64().unwrap() as usize;

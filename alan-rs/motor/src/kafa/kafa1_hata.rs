@@ -8,7 +8,7 @@ use super::kafa1_param::{GON, SAV};
 use super::kafa1_tehlike::gx_of;
 use crate::core_sabit::IN;
 use crate::mat::{cos, hypot, jmax, jmin, sin};
-use crate::model::{JsDeger, Oyuncu};
+use crate::model::{Oyuncu, SutBag};
 use crate::saha::CY as GCY;
 use crate::yetenek::{durum_pay, mek, Durum, DK_PAS, DK_SUT};
 
@@ -36,7 +36,7 @@ impl Kafa {
     /// D._sut'un metin hâli (şutun türü: "güçlü"/"plase"); sayıysa (taktik) yok.
     pub fn d_sut_tur(&self) -> Option<String> {
         match &self.bag._sut {
-            Some(JsDeger::Metin(s)) => Some(s.clone()),
+            Some(SutBag::Tur(s)) => Some(s.clone()),
             _ => None,
         }
     }

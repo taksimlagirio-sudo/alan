@@ -978,7 +978,6 @@ fn uzak_iz() -> bool {
 /// Alana sür, Çalım, Kalkan, Bekle); sonra arkadaşların ve taşıyanın değerini m._prT'ye yazar.
 pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f64, opts: &mut Vec<Secenek>, lossAt: &KayipRef, T: f64) {
     let h = src[hi].clone();
-    let dir = if t0(team) { 1.0 } else { -1.0 };
     let mut nd: f64 = 1e9;
     for q in src.iter() {
         if !(q.team == team || q.noTouch || bekci(q)) {
@@ -996,7 +995,6 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
             let Lv = L(k, eO.x, eO.y);
             let P = d.Pk.unwrap_or(0.0);
             o.v = Some(P - Pl * Lv);
-            o.prensip = Some("Vur".into());
             o.dok = Some(Dok::yeni(&[("gol", P), ("kayip", -Pl * Lv)]));
         } else if kind == "pas" || kind == "önüne" || kind == "kenardan" {
             let at = o._at.or(d.endD).or(d.endM).or(o.to).unwrap_or_else(|| {
@@ -1006,7 +1004,6 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
             let Pd = dis::alP(Some(&d)).or(d.P).unwrap_or(0.0);
             let Ps = veyo(d.Ps, 0.0);
             let Pl = d.Pl.unwrap_or_else(|| jmax(0.0, 1.0 - d.P.unwrap_or(0.0)));
-            let adv = (at.x - h.x) * dir;
             let rq: Op = match o.q {
                 Some(qi) => match bul_i(src, src[qi].id, src[qi].team) {
                     Some(i) => src[i].clone(),
@@ -1056,9 +1053,7 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
             if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
                 eprintln!("PASV {} {} [{}{}→{} hız {:?}] ->({:.1},{:.1}) Pd {:.3} alici {:.3} durum {:.3} Ps {:.3} Pl {:.3} kayip {:.3} v {:.3} | şut {:.3} zemin {:.3} pas {:.3} sür {:.3} {:?} T {:.0}", k.tick(), h.govde.name, o.kind, if o.tek.map_or(false, crate::mat::dogru) { "·tek" } else { "" }, rq.govde.name, o.launch.as_ref().map(|l| ((l.vx * 100.0).round() / 100.0, (l.vy * 100.0).round() / 100.0)), at.x, at.y, Pd, tA.2, tA.1.v, Ps, Pl, Lv, Pd * tA.0 + Ps * tS - Pl * Lv, tA.1.sut, tA.1.zem, tA.1.pas, tA.1.sur, tA.1.pasK, tf);
             }
-            o.prensip = Some(if adv >= 6.0 { "İlerlet" } else if nd < 4.0 { "Güvene al" } else { "Çevir" }.into());
             o.dok = Some(Dok::yeni(&[("tutar", Pd), ("alici", tA.2), ("durum", tA.1.v), ("sekme", Ps * tS), ("kayip", -Pl * Lv), ("sure", tf)]));
-            o._pw = Some(wE);
             o._pT = Some(tf);
             dok_dk(&tA.1, o);
         } else if kind == "sür" || kind == "çalım" {
@@ -1072,7 +1067,6 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                 Some(p) => p,
                 None => crate::kafa::kafa1_ikili::kp_kal(dis::keepP(k, &h, src, o.dir, Ts)),
             };
-            let adv = (E.x - h.x) * dir;
             // ALAN_SEND_GEC_IZ: sendelemeyle kesilen sürmede varış, topu geri alana dek sonrasının dünyası
             let TsD = Ts + o.sendGec.unwrap_or(0.0);
             let pw = pDunya(k, &mut cx, E, TsD, "drive", Some(&h));
@@ -1084,15 +1078,12 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
                 eprintln!("SURV {} {} ({:.1},{:.1})->({:.1},{:.1}) spr {} gec {:.0} Ts {:.0} P {:.3} durum {:.3} kayip {:.3} v {:.3}", k.tick(), h.govde.name, h.x, h.y, E.x, E.y, o.spr.map_or(false, crate::mat::dogru), o.sendGec.unwrap_or(0.0), Ts, P, tE.v, Lv, P * tE.v - (1.0 - P) * Lv);
                 eprintln!("     şut {:.3} zemin {:.3} pas {:.3} sür {:.3} {:?}", tE.sut, tE.zem, tE.pas, tE.sur, tE.pasK);
             }
-            o.prensip = Some(if kind == "çalım" { "Çalım" } else if adv > 3.0 { "Alana sür" } else { "Sür (yana/geri)" }.into());
             o.dok = Some(Dok::yeni(&[("tutar", P), ("durum", tE.v), ("kayip", -(1.0 - P) * Lv), ("sure", Ts)]));
-            o._pw = Some(wE);
             o._pT = Some(Ts);
             dok_dk(&tE, o);
         } else if kind == "tut" && bekci(&h) && h.hal.bekBas.is_some() && veyo(o.hold, 15.0) >= 90.0 - (k.tick() - h.hal.bekBas.unwrap()) - 4.0 {
             let v = -L(k, h.x, h.y);
             o.v = Some(v);
-            o.prensip = Some("Bekle".into());
             o.dok = Some(Dok::yeni(&[("kayip", v)]));
         } else if kind != "tut" {
             o.v = None;
@@ -1107,13 +1098,11 @@ pub fn prensipDegerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: f
             let tH = en_gec(k, &mut cx, &h.clone(), &wE, |k, cx, hq| durumD(k, cx, &wE, hq, nk(h.x, h.y), Th));
             let Lv = L(k, h.x, h.y);
             o.v = Some(P * tH.v - (1.0 - P) * Lv);
-            o.prensip = Some(if nd < 4.0 { "Kalkan" } else { "Bekle" }.into());
             let simdi = durumD(k, &mut cx, src, &h, nk(h.x, h.y), 0.0).v;
             if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
                 eprintln!("TUTV {} {} Th {:.0} P {:.3} durum {:.3} (şut {:.3} zemin {:.3} pas {:.3} sür {:.3} {:?}) kayıp {:.3} v {:.3}", k.tick(), h.govde.name, Th, P, tH.v, tH.sut, tH.zem, tH.pas, tH.sur, tH.pasK, Lv, P * tH.v - (1.0 - P) * Lv);
             }
             o.dok = Some(Dok::yeni(&[("tutar", P), ("durum", tH.v), ("simdi", simdi), ("kayip", -(1.0 - P) * Lv), ("sure", Th)]));
-            o._pw = Some(wE);
             o._pT = Some(Th);
             dok_dk(&tH, o);
         }

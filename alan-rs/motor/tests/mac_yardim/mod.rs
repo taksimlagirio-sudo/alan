@@ -1,7 +1,8 @@
 //! Maç sınamalarının ortak yükleyicisi (sina/mac-vektor.js çıktısı).
 #![allow(dead_code)]
 use alan_motor::mac::{HamA, HamV};
-use alan_motor::model::{Mac, MacTop, Oyuncu, JMFl, JP_sf};
+use alan_motor::mac::MacTam as Mac;
+use alan_motor::model::{MacTop, Oyuncu, JMFl, JP_sf};
 use alan_motor::temas::{TopT, TopTemas};
 use alan_motor::top::{Bitis, Top};
 use serde_json::Value;

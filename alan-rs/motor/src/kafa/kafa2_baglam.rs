@@ -260,14 +260,11 @@ pub fn kafa_d() -> KafaD {
 pub fn d_alt_bosalt(d: &mut crate::model::KafaBag) {
     d._tekL = None;
     d._sut = None;
-    d._zin = None;
-    d._kuyruk = None;
     d._savT = None;
     d._savW = None;
     d._savU = None;
     d._savCa = None;
     d._kenar = None;
-    d._kayipYap = None;
     d._gPr = None;
     d._enWD = None;
     d._enTm = None;
@@ -277,4 +274,11 @@ pub fn d_alt_bosalt(d: &mut crate::model::KafaBag) {
     d._itme = None;
     d._gon = None;
     d._sYon = None;
+}
+
+// maçın talimatından kafanınkine (maç köprüsünden taşındı, Aşama 7b)
+/// Maçın etkin taktiği → kafanın taktiği
+pub fn kafa_tac(t: &crate::mac_veri::Tac) -> Tac {
+    let mz = t.macZ.map(|z| std::sync::Arc::new(move |dt: f64| z.zaman(dt)) as std::sync::Arc<dyn Fn(f64) -> f64 + Send + Sync>);
+    Tac { risk: t.risk, tempo: t.tempo, sabir: t.sabir, sut: t.sut, pasSurme: t.pasSurme, pasBoy: t.pasBoy, kontra: t.kontra == Some(true), macK: t.macK, macZ: mz, enDinlen: t.enDinlen, enYipratma: t.enYipratma, plan_taraf: None, temel: None }
 }

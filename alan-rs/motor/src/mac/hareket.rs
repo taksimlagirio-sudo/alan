@@ -1,5 +1,6 @@
 //! Hareket (match.js 1597–1834, 2109–2560, 2594–2750): koşu hızı, ivme, dolanma, ilişkiler (boşluk doldurma,
 //! pres tuzağı), perde, fake, savurma, ön hareket ve tikin hareket adımı `move`.
+pub use crate::kural::hareket::kuyuSafe;
 use super::enerji::*;
 use super::gecici_dis as dis;
 use super::ikili::{dengeHiz, govdeAyir, ikOn, kutle, omuzK, IkBag, IkHedef};
@@ -316,8 +317,8 @@ pub fn fakeBasla(m: &mut Mac, h: Pid, o: &Secenek) {
 
 /// JS fakeYonet(m)
 pub fn fakeYonet(m: &mut Mac) {
-    for p in m.ps.iter_mut() {
-        if p.hal.fkBlock && m.tick > oo(p.hal.fkCool) {
+    for p in m.m.ps.iter_mut() {
+        if p.hal.fkBlock && m.m.tick > oo(p.hal.fkCool) {
             p.hal_mut().fkBlock = false;
         }
     }
@@ -331,9 +332,9 @@ pub fn fakeYonet(m: &mut Mac) {
     let h = h.unwrap();
     if hid == Some(f.hid) && m.tick <= f.until {
         let mut f = m.mac.fake.take().unwrap();
-        let hp = &mut m.ps[h];
+        let hp = &mut m.m.ps[h];
         hp.hal_mut().driveTo = None;
-        let fz = (m.tick - f.t0) / jmax(1.0, f.until - f.t0);
+        let fz = (m.m.tick - f.t0) / jmax(1.0, f.until - f.t0);
         let su = atan2(f.to.1 - hp.y, f.to.0 - hp.x);
         if f.k == "gövde" {
             if f.ax.is_none() {
@@ -423,10 +424,6 @@ pub fn korumaBaski(m: &mut Mac) {
 
 /// JS outOfKuyu: Kuyu açıkken bir şey yapmaz (eski kale çemberi).
 pub fn outOfKuyu(_p: &mut Oyuncu, _vel: bool) {}
-/// JS kuyuSafe: Kuyu açıkken null.
-pub fn kuyuSafe(_x: f64, _y: f64) -> Option<(f64, f64)> {
-    None
-}
 
 /// JS corePos(m): Çekirdeğin yeri (taşıyıcının önünde ya da boştaki top).
 pub fn corePos(m: &Mac) -> Option<(f64, f64)> {
@@ -485,7 +482,7 @@ pub fn savurBasla(m: &mut Mac, h: Pid, mut o: Secenek, w0: f64, sYon: f64, uIn: 
             let tick = m.tick;
             let hp = &mut m.ps[h];
             hp.ca = Some(ca0);
-            hp.hal_mut().savur = Some(JPSavur { t0: tick, o: Box::new(o), s: pl2.s, a: pl2.a, wMax: pl2.wMax, wR: pl2.wR, rem: pl2.A, w: pl2.w0, g: pl2.P, u: pl2.uSh, dur: 0.0 });
+            hp.hal_mut().savur = Some(JPSavur { t0: tick, o: Box::new(o), s: pl2.s, a: pl2.a, wMax: pl2.wMax, wR: pl2.wR, rem: pl2.A, w: pl2.w0, g: pl2.P, u: pl2.uSh, });
             hp.hal_mut().holdD = false;
             m.decT = 99.0;
             return;
@@ -500,7 +497,7 @@ pub fn savurBasla(m: &mut Mac, h: Pid, mut o: Secenek, w0: f64, sYon: f64, uIn: 
     let hp = &mut m.ps[h];
     hp.ca = Some(ca0);
     let wR = pl.wR * jmin(1.0, k / if dogru(pl.k) { pl.k } else { 1.0 });
-    hp.hal_mut().savur = Some(JPSavur { t0: tick, o: Box::new(o), s: pl.s, a: pl.a, wMax: pl.wMax, wR, rem: pl.A, w: pl.w0, g: pl.P, u: pl.uSh, dur: 0.0 });
+    hp.hal_mut().savur = Some(JPSavur { t0: tick, o: Box::new(o), s: pl.s, a: pl.a, wMax: pl.wMax, wR, rem: pl.A, w: pl.w0, g: pl.P, u: pl.uSh, });
     hp.hal_mut().holdD = false;
     m.decT = 99.0;
 }
@@ -848,7 +845,7 @@ pub fn r#move(m: &mut Mac) {
                 let gA = kutle(a, m.holder == Some(i)) * omuzK(a);
                 let gB = kutle(b, m.holder == Some(j)) * omuzK(b);
                 let tick = m.tick;
-                let (a, b) = iki(&mut m.ps, i, j);
+                let (a, b) = iki(&mut m.m.ps, i, j);
                 if gA >= 0.95 * gB {
                     a.vx += 0.03 * nx;
                     a.vy += 0.03 * ny;
@@ -872,16 +869,8 @@ pub fn r#move(m: &mut Mac) {
     {
         let lite = m.mac._lite;
         let h = m.holder;
-        let mut bag = IkBag { ikt: None, ikm: Some(IkHedef { st: &mut m.st, lite }), ikl: if lite { None } else { Some(vec![]) } };
-        govdeAyir(&mut m.ps, Some(h), &mut bag);
-        let (ikl, ikt) = (bag.ikl.take(), bag.ikt.take());
-        if let Some(l) = ikl {
-            m._temaslar = Some(crate::model::JM_temaslar { t: m.tick, L: l });
-        }
-        if let Some(mut t) = ikt {
-            t.t = m.tick;
-            m._temas = Some(t);
-        }
+        let mut bag = IkBag { ikt: None, ikm: Some(IkHedef { st: &mut m.m.st, lite }), ikl: None };
+        govdeAyir(&mut m.m.ps, Some(h), &mut bag);
     }
     super::ikili::denge(m);
     topGovdeIt(m);
@@ -893,13 +882,13 @@ fn topGovdeIt(m: &mut Mac) {
     if m.holder.is_some() {
         return;
     }
-    let Some(b) = m.ball.as_mut() else { return };
+    let Some(b) = m.m.ball.as_mut() else { return };
     if b.done.is_some() {
         return;
     }
     let from = b.tt.t.from;
     let bt = b.t;
-    let ps = &m.ps;
+    let ps = &m.m.ps;
     let skip = |pi: usize| {
         let p = &ps[pi];
         (Some(pi) == from && or0(bt) < 4.0) || (p.bekci() && hypot(p.x - if p.team == 0.0 { 0.0 } else { W }, p.y - CY) < KR)

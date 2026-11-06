@@ -190,7 +190,7 @@ pub fn ilkPres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]>
             } else if c.rnd.is_some() {
                 let (Pd, th) = {
                     let ps = &*c.ps;
-                    (dis::duelP(&*c.m, &ps[pi], &h, ps), dis::girThr(&*c.m, &ps[pi], &h, ps))
+                    (dis::duelP(c.kafa, &ps[pi], &h, ps), dis::girThr(c.kafa, &ps[pi], &h, ps))
                 };
                 let koy = !(Pd >= th);
                 c.ps[pi].hal_mut()._onK = Some(JP_onK { h: h.id, koy, t: tik });

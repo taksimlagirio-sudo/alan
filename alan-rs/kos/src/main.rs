@@ -159,7 +159,7 @@ fn main() {
         // seçenekler: önce hepsi bir kez zorlanır; ALAN_DENE_SEC=0,3,7 yalnız bunlar denenir, ALAN_DENE_LISTE seçenek sayısını yazar
         let mut sec: Option<Vec<usize>> = std::env::var("ALAN_DENE_SEC").ok().map(|x| x.split(',').filter_map(|y| y.parse().ok()).collect());
         // kopyalar teker teker kurulur (hepsini birden tutmak belleği doldurur)
-        let kur = |i: usize| -> Option<(alan_motor::model::Mac, alan_motor::mac::ZorlaSonuc)> {
+        let kur = |i: usize| -> Option<(alan_motor::mac::MacTam, alan_motor::mac::ZorlaSonuc)> {
             let mut c = once.clone();
             c.mac.zorla_i = Some(i);
             alan_motor::mac::step(&mut c);
@@ -266,7 +266,7 @@ fn main() {
         let onek = a.get(4).expect("an <önek>").clone();
         let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(120);
         let son = *tikler.iter().max().unwrap_or(&0);
-        let yaz = |m: &alan_motor::model::Mac, kareler: &Vec<String>, olaylar: &Vec<String>, isler: &alan_motor::oyun::IsSozluk, yol: &str| {
+        let yaz = |m: &alan_motor::mac::MacTam, kareler: &Vec<String>, olaylar: &Vec<String>, isler: &alan_motor::oyun::IsSozluk, yol: &str| {
             let ad: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.govde.name).unwrap()).collect();
             let tk: Vec<String> = m.ps.iter().map(|p| format!("{}", p.team)).collect();
             let rl: Vec<String> = m.ps.iter().map(|p| serde_json::to_string(&*p.govde.role).unwrap()).collect();
@@ -497,7 +497,7 @@ fn main() {
     let dt = t0.elapsed().as_secs_f64();
     if kip == "boyut" {
         for p in mt.m.ps.iter().take(3) {
-            eprintln!("{} hist {:?} past {:?} _bk {:?} job {:?} _lc {} sizeof {}", p.govde.name, p.hal.hist.as_ref().map(|v| v.len()), p.hal.past.as_ref().map(|v| v.len()), p.hal._bk.as_ref().map(|v| v.len()), p.job.as_ref().map(|j| j.len()), p.hal._lc.is_some(), std::mem::size_of::<alan_motor::model::Oyuncu>());
+            eprintln!("{} hist {:?} past {:?} _bk {:?} job {:?} sizeof {}", p.govde.name, p.hal.hist.as_ref().map(|v| v.len()), p.hal.past.as_ref().map(|v| v.len()), p.hal._bk.as_ref().map(|v| v.len()), p.job.as_ref().map(|j| j.len()), std::mem::size_of::<alan_motor::model::Oyuncu>());
         }
         let t = std::time::Instant::now();
         let mut n = 0usize;
@@ -555,7 +555,7 @@ fn main() {
 
 
 /// Bir tikin tam durumu (sina karşılaştırması için; durum-js.js ile aynı biçim)
-fn durum(m: &alan_motor::model::Mac) -> String {
+fn durum(m: &alan_motor::mac::MacTam) -> String {
     use serde_json::{json, Value};
     let o = |v: Option<f64>| v.map_or(Value::Null, |x| json!(x));
     let f = |x: f64| if x.is_finite() { json!(x) } else { Value::Null };

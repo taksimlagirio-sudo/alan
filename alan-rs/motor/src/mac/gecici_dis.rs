@@ -31,25 +31,14 @@
 //! | V | decide.js:3666 |
 //! | D (sabitler), DU (sabitler) | decide.js:6–100 (değerler kopyalandı, todo değil) |
 #![allow(unused_variables)]
+pub use crate::kafa::kafa2_baglam::kafa_tac;
+pub use crate::mac_veri::{FakeShow, Karar};
 use crate::kafa::gecici_dis1::KuralErisim as _;
-use crate::model::{Mac, Oyuncu, Pid, Secenek, JP_onH};
+use crate::model::{Oyuncu, Pid, Secenek, JP_onH};
+use crate::mac::MacTam as Mac;
 use crate::rng::Rng;
 
-/// Kafanın kararı (JS r = {best, opts, T}): best, opts içindeki sıra (JS nesne kimliği).
-#[derive(Clone, Debug, Default)]
-pub struct Karar {
-    pub opts: Vec<Secenek>,
-    pub best: Option<usize>,
-    pub T: f64,
-}
 
-/// Fake'in gösterdiği (JS o.show = {k, to, c}).
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct FakeShow {
-    pub k: String,
-    pub to: (f64, f64),
-    pub c: f64,
-}
 
 /// Savurma planı (JS savurPlan sonucu).
 #[derive(Clone, Copy, Debug, Default)]
@@ -120,7 +109,7 @@ pub fn mc_ile<T>(m: &mut Mac, f: impl FnOnce(&mut crate::sekil::varlik::Mc) -> T
         // JS D._tick: gerçek maçın adımı yazar (match.js step). Kafanın hayali maçı (JS m._lite) Rust'ta kurulmaz.
         debug_assert!(!lite, "hayali maç (_lite) Rust'ta kurulmaz");
         let dt = Some(m.tick);
-        let mut c = Mc { m: &mut *m, ps: &mut ps, ball: ball.as_mut(), ek: &mut ek, k: &kural, d, lite, rnd: Some(&mut zar), dtik: dt };
+        let mut c = Mc { m: &mut m.m, ps: &mut ps, ball: ball.as_mut(), ek: &mut ek, kafa: m.mac.kafa.k.as_deref(), k: &kural, d, lite, rnd: Some(&mut zar), dtik: dt };
         f(&mut c)
     };
     m.ps = ps;
@@ -188,11 +177,6 @@ pub fn gercek(_o: &mut Secenek) {}
 // ---- decide.js ----
 use crate::kafa::kafa1_js::nk;
 use crate::mac::kafa_dis::{kafa_mac, op_dunya};
-/// Maçın etkin taktiği → kafanın taktiği
-pub fn kafa_tac(t: &crate::mac::Tac) -> crate::kafa::kafa2_baglam::Tac {
-    let mz = t.macZ.map(|z| std::sync::Arc::new(move |dt: f64| z.zaman(dt)) as std::sync::Arc<dyn Fn(f64) -> f64 + Send + Sync>);
-    crate::kafa::kafa2_baglam::Tac { risk: t.risk, tempo: t.tempo, sabir: t.sabir, sut: t.sut, pasSurme: t.pasSurme, pasBoy: t.pasBoy, kontra: t.kontra == Some(true), macK: t.macK, macZ: mz, enDinlen: t.enDinlen, enYipratma: t.enYipratma, plan_taraf: None, temel: None }
-}
 /// JS `D._mac = m`: kafanın maç görünümü
 pub fn mac_gor(m: &Mac) -> crate::kafa::kafa2_baglam::MacGor {
     let tac = (0..2)
@@ -207,17 +191,14 @@ pub fn mac_gor(m: &Mac) -> crate::kafa::kafa2_baglam::MacGor {
                 risk: q.risk.unwrap_or(n),
                 tempo: q.tempo.unwrap_or(n),
                 kazaninca: q.kazaninca.unwrap_or_default(),
-                sistem: q.sistem.unwrap_or_default(),
                 siddet: q.siddet.unwrap_or(n),
                 savGen: q.savGen.unwrap_or(n),
-                kaleOnu: q.kaleOnu.unwrap_or_default(),
                 pasSurme: q.pasSurme.unwrap_or(n),
                 pasBoy: q.pasBoy.unwrap_or(n),
                 sabir: q.sabir.unwrap_or(n),
                 sut: q.sut.unwrap_or(n),
                 enDinlen: q.enDinlen.unwrap_or(n),
                 enYipratma: q.enYipratma.unwrap_or(n),
-                tetik: q.tetik.unwrap_or_default(),
                 yz: q.yz == Some(true),
                 ..Default::default()
             }

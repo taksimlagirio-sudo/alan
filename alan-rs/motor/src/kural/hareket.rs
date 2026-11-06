@@ -45,3 +45,8 @@ pub fn ivme(p: &mut Oyuncu, wx: f64, wy: f64, vmax: f64) {
     p.vx += ux * ba + tx;
     p.vy += uy * ba + ty;
 }
+
+/// JS kuyuSafe: Kuyu açıkken null.
+pub fn kuyuSafe(_x: f64, _y: f64) -> Option<(f64, f64)> {
+    None
+}

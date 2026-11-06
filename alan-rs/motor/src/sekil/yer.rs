@@ -185,7 +185,7 @@ pub fn bekci(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, k: &dyn Kural) -> (
     if !(hv > 1e-9) {
         return g0;
     }
-    let sp = jmax(1e-6, crate::mac::enerji::spd(p));
+    let sp = jmax(1e-6, crate::kural::enerji::spd(p));
     let mut t = bek_re(p) + hypot(g0.0 - p.x, g0.1 - p.y) / sp;
     // taşıyıcı kale çizgisini geçemez: öngörü çizgide kesilir
     let gx = ownX(p.takim());
@@ -304,7 +304,7 @@ fn bekci_an(p: &Oyuncu, ex: f64, ey: f64, m: Option<&BekM>, _k: &dyn Kural) -> (
 fn bek_derinlik(p: &Oyuncu, ex: f64, ey: f64, gx: f64, L: f64, bxu: f64, byu: f64, vb: f64) -> f64 {
     let (re, dv, dl) = (bek_re(p), bek_dv(p), bek_dl(p));
     let vb = jmax(vb, 1e-6);
-    let adim = jmax(0.05, crate::mac::enerji::spd(p));
+    let adim = jmax(0.05, crate::kural::enerji::spd(p));
     let r_simdi = hypot(p.x - gx, p.y - GCY);
     // saf hesap: girdileri bit bit aynıysa sonuç aynı (L, bxu, byu ex, ey, gx'ten çıkar)
     let anahtar = [re, dv, dl, adim, r_simdi, ex, ey, gx, vb].map(f64::to_bits);

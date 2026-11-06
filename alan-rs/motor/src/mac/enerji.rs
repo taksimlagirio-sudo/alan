@@ -4,6 +4,7 @@
 //! burada `ALAN_SPR(p, k)` açık işlev, maçın bağlamı `MacKural` (çekirdeğin `temas::Kural`'ı).
 //! Bugünkü bayraklar: Enerji 2/3 açık, sürekli koşu açık (ALAN_SUREKLI), sprint evresi açık (SPR_FAZ),
 //! dokunuşla sürme kapalı.
+pub use crate::mac_veri::EnSayac;
 use super::*;
 use crate::mat::{exp, hypot, jmax, jmin, pow};
 use crate::model::JMSt;
@@ -32,8 +33,6 @@ impl MacKural {
 
 // ---- sayaçlar ----
 
-/// Enerji sayacı (JS {sprint: 0, ivme: 0, …}): ekleme sırasıyla.
-pub type EnSayac = Vec<(String, f64)>;
 
 fn ekle(s: &mut EnSayac, k: &str, v: f64) {
     if let Some(e) = s.iter_mut().find(|e| e.0 == k) {
@@ -44,7 +43,7 @@ fn ekle(s: &mut EnSayac, k: &str, v: f64) {
 }
 
 /// JS enSay(m, p, k, v)
-pub fn enSay_p(st: &mut JMSt, lite: bool, team: f64, pi: Pid, k: &str, v: f64) {
+pub fn enSay_p(st: &mut JMSt, lite: bool, team: f64, _pi: Pid, k: &str, v: f64) {
     if lite || !(v > 0.0) {
         return;
     }
@@ -53,12 +52,11 @@ pub fn enSay_p(st: &mut JMSt, lite: bool, team: f64, pi: Pid, k: &str, v: f64) {
         st.enH = vec![z.clone(), z];
     }
     ekle(&mut st.enH[team as usize], k, v);
-    ekle(st.enP.entry(pi).or_default(), k, v);
 }
 pub fn enSay(m: &mut Mac, pi: Pid, k: &str, v: f64) {
     if crate::iz_acik() && !m.mac._lite && v > 0.0 && &*m.ps[pi].govde.name == "Cansu" && std::env::var("ALAN_EN_IZ").ok().and_then(|x| x.parse::<f64>().ok()).map_or(false, |x| m.tick >= x - 1.0 && m.tick <= x) { eprintln!("EN {} {} {} {}", m.tick, m.ps[pi].govde.name, k, v); }
     let t = m.ps[pi].team;
-    enSay_p(&mut m.st, m.mac._lite, t, pi, k, v);
+    enSay_p(&mut m.m.st, m.mac._lite, t, pi, k, v);
 }
 
 /// JS verim(p, ...oz): eski özelliklerin ortalamasıyla harcama katı
@@ -83,7 +81,7 @@ pub fn enHarca_p(st: &mut JMSt, lite: bool, p: &mut Oyuncu, pi: Pid, k: &str, v:
 pub fn enHarca(m: &mut Mac, pi: Pid, k: &str, v: f64) {
     if crate::iz_acik() && !m.mac._lite && &*m.ps[pi].govde.name == "Cansu" && std::env::var("ALAN_EN_IZ").ok().and_then(|x| x.parse::<f64>().ok()).map_or(false, |x| m.tick >= x - 1.0 && m.tick <= x) { eprintln!("ENH {} {} {} {} en {:?}", m.tick, m.ps[pi].govde.name, k, v, m.ps[pi].en); }
     let lite = m.mac._lite;
-    enHarca_p(&mut m.st, lite, &mut m.ps[pi], pi, k, v);
+    enHarca_p(&mut m.m.st, lite, &mut m.m.ps[pi], pi, k, v);
 }
 
 /// JS enerji2(m) (Enerji 3): sprint harcar, dinlenme doldurur; bar alan gücünü (D) ölçekler.
@@ -265,8 +263,8 @@ pub fn alanSec(m: &mut Mac) {
     for pi in 0..m.ps.len() {
         let rt = jmax(2.0, crate::oyuncu::tepki(&m.ps[pi], crate::oyuncu::Tepki::Alan, &ts));
         if m.tick - t0 < rt || m.ps[pi].noTouch {
-            let p = &mut m.ps[pi];
-            p.hal_mut().amA = m.tick - t0 >= rt;
+            let p = &mut m.m.ps[pi];
+            p.hal_mut().amA = m.m.tick - t0 >= rt;
             p.hal_mut().am = Some(0.0);
             continue;
         }
@@ -354,7 +352,7 @@ pub fn frTop(m: &Mac) -> Option<crate::model::JMShFr> {
     }
     let fr = sh.fr.as_ref()?;
     Some(crate::model::JMShFr {
-        arr: fr.arr.iter().enumerate().map(|(i, a)| (i, crate::model::JMShFrArrV { t: a.t, x: a.x, y: a.y, est: a.est, fren: a.fren, direnc: a.direnc, ..Default::default() })).collect(),
+        arr: fr.arr.iter().enumerate().map(|(i, a)| (i, crate::model::JMShFrArrV { t: a.t, x: a.x, y: a.y, est: a.est, direnc: a.direnc, ..Default::default() })).collect(),
         first: fr.first.unwrap_or(0),
         pts: fr.pts.iter().map(|q| crate::model::JMShFrPtsE { x: q.x, y: q.y, e: q.e, ..Default::default() }).collect(),
     })
@@ -681,7 +679,7 @@ pub fn sprFaz(m: &mut Mac) {
             if m.st.sprF.is_empty() {
                 m.st.sprF = vec![0.0, 0.0];
             }
-            m.st.sprF[m.ps[pi].team as usize] += 1.0;
+            m.m.st.sprF[m.m.ps[pi].team as usize] += 1.0;
         }
     }
 }

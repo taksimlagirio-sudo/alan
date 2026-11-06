@@ -2,7 +2,8 @@
 mod mac_yardim;
 use alan_motor::mac::kayit::{macKur_ile, Kayit};
 use alan_motor::mac::kurulum::{tl, KurDis};
-use alan_motor::model::{Mac, Pid};
+use alan_motor::mac::MacTam as Mac;
+use alan_motor::model::{Pid};
 use mac_yardim::*;
 use serde_json::Value;
 

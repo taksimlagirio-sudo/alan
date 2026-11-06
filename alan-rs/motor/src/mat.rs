@@ -443,3 +443,28 @@ pub fn jsign(x: f64) -> f64 {
 pub fn dogru(v: f64) -> bool {
     v != 0.0 && v == v
 }
+
+// Maç modülünden taşındı (Aşama 7b).
+/// JS `x.toFixed(n)` sonra `+` (sayıya): yarıda yukarı (tam ikili değerle).
+pub fn to_fixed(x: f64, n: usize) -> f64 {
+    let s = format!("{:.*}", n, x);
+    let mut v: f64 = s.parse().unwrap_or(x);
+    let k = 10f64.powi(n as i32);
+    let y = x.abs() * k;
+    if y.fract() == 0.5 && y < 1e15 {
+        let up = (y.floor() + 1.0) / k;
+        v = if x < 0.0 { -up } else { up };
+    }
+    v
+}
+
+
+/// JS `String(x)` (sayı), olay yazıları için.
+pub fn js_num(x: f64) -> String {
+    if x == x.trunc() && x.abs() < 1e21 {
+        format!("{}", x as i64)
+    } else {
+        format!("{}", x)
+    }
+}
+

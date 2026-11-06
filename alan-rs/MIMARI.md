@@ -141,7 +141,7 @@ kodda çalıştığı için aşamalar küçük parçalarla ve sık `main`'e birl
 | 4 | Tek dünya | `Dunya` + `Gorunum`; kimlik `Pid`; köprü çevirileri kalkar | `ow`, `op_dunya`, `dunya_kopya`, `Varlik` yok; `Arc::ptr_eq` yok |
 | 5 | Veri | **5-1, 5-2 ✅** (3.6: `Oyuncu` 2704 → 288 bayt). `Oyuncu` → `OyuncuDurum` + `OyuncuGovde`; `KafaD` → `Ayar` + geçici durum; `JsDeger` ve gereksiz `Option`'lar | `Oyuncu` kopyası ~300 bayt; `model.rs` üretilmiş taslak değil |
 | 6 | JS bağı | **Karar (5 Kasım): Rust tek doğru kaynak.** JS ile bit bit aynılık kısıtı kalktı; doğrulama `sina/ayni.sh` ve maç istatistikleriyle | ✅ Temizlik: JS vektörüne bağlı 12 sınama gerekçeli `#[ignore]` (vektör üretilince `--ignored` ile çalışır; temiz klonda düşen ya da sessizce geçen sınama kalmadı); `tests/ayni.rs` `cargo test`'in kendisinde parmak izi başvurusunu denetler; `tests/kafa1.rs`'in JS taklit artıkları silindi; motor ve sınamalar uyarısız. Rust adlandırması ertelendi (bkz. Geri dönülecekler) |
-| 7 | Crate'ler | Katmanlar ayrı crate; döngüyü derleyici yasaklar | `cargo build` katman kuralını zorlar |
+| 7 | Crate'ler | Katmanlar ayrı crate; döngüyü derleyici yasaklar | **7a, 7b ✅** (3.8): temel, yerleşim → maç bağları yok; `MacEk` `Mac`'ten çıktı (`MacTam`); `sina/katman.sh` 7 kural, istisnasız. Katmanlar arasında döngü yok. 7c (fiziksel bölme) bekliyor. Bitti sayılır: `cargo build` katman kuralını zorlar |
 
 ### 3.1 Aşama 3e ve 4'ün birlikte planı (5 Kasım)
 
@@ -303,6 +303,27 @@ alanının hepsini kopyalıyordu: artık paylaşıyor. **Boyut: `Oyuncu` 2704 �
 416, paylaşımlı). Ölçüm: komutlar 34,65 → 34,44 milyar, oyuncu kopyası %0,51 → %0,18; duvar saati 12,58 → 12,21
 ms/tik (−%2,9). 5-1 ile birlikte 13,40 → 12,21 (**−%8,9**). Main ile 20 maç × 2700 tik aynı.
 
+**5-3 ✅ ölü tipler ve alanlar** (5 Kasım): `model.rs` JS'in çalışma anı envanterinden üretilmiş taslaktı (328 tip,
+6015 satır). Hiç başvurulmayan 208 tip (çoğu iç içe anlık görüntü tipleri: `JMCtlRBest_pwE…`) yinelemeli olarak
+silindi. Alanlar derleyiciyle ölçüldü: bütün alanlar geçici kopyada yeniden adlandırılır, her hata bir kullanım yeri;
+bir zincirdeki ilk hata sonrakileri gizlediği için yalnız adaylar yeniden adlandırılarak sabit noktaya dek
+yinelenir; motor derlenemeyince `alan-kos`/wasm/sınamalar hiç denetlenmediği için onlarda adı geçen her aday
+korunur (ihtiyatlı). Hiç okunmayan ve yazılmayan ya da yalnız yapı ifadesinde kurulan alanlar silindi (kurulduğu
+ifadeler de). Sonuç: `model.rs` 6015 → 2379 satır, 328 → 120 tip. Davranış aynı (20 maç × 2700 tik). Yazılan ama
+okunmayan 57 alan (yazma deyimleri yan etkili olabilir) ayrı adımda.
+
+**5-4 ✅ yazılan ama okunmayan alanlar:** 23 alan (Secenek'in günlük alanları, Mac'in istatistik ve anıları, JMSt
+sayaçları, KafaBag'in üç bağlamı); her yazma yerine elle bakıldı (`Mac.ctl` aslında okunuyor: kaldı), onları besleyen
+ölü hesaplar da (iki `sonDunya`, değerlendirmede iki ilerleme hesabı). 39 tip daha ölü.
+**5-5 ✅ `JsDeger` kalktı:** tek gerçek kullanımı `KafaBag._sut` (kararın başında taktiğin şut eğilimi, hayali şutta
+şutun türü) → `SutBag { Egilim(f64), Tur(String) }`; diğer 7 `JsDeger` alanı hiç okunmuyordu.
+**5-6 ✅ gereksiz `Option`'lar (ölçüldü):** `sina/option-olc.rs` (4 maç × 2700 tik, `{:#?}` dökümünden): 272 `Option`
+alanından 41'i hep dolu, 60'ı hep boş, 171'i ikisi de. Hep boşlardan yalnız 3'üne hiçbir yerde değer yazılmıyor
+(`Secenek.next`, `Secenek.why`, `TopEk.bekM`): silindi, okudukları ölü dallar ve yalnız onlar için hesaplanan
+`dis_lookTo` da. Kalan 57'ye yazılıyor (seyrek yollar, bu maçların kullanmadığı taktik ayarları). Hep dolu 41 alanı
+`Option`'sız yapmak her birinde kurulumdaki "yok" anlamını ayrı ayrı düşünmeyi gerektirir: değeri düşük, ertelendi.
+Sonuç: `model.rs` 6015 → 1950 satır, 328 → 82 tip.
+
 Sıra: (1) maç durumu (108 alan, ~500 yer, kafaya dokunmaz: yalnız `mac/`, `sekil/`, `temas`), (2) gövde
 (~1000 okuma, çoğu `p.yet`/`p.team`/`p.id`: düz değiştirme), her biri `sina/ayni.sh` + 20 maçlık parmak iziyle.
 
@@ -350,6 +371,32 @@ derinliğine bağlı değil (yalnız eşitlikte seçer): 118 bin hesabın 55,5 b
 bunlarla önbelleğe almak komutları −%4,2 indirdi (işlevin kendi payı −%43), davranış aynıydı (20 maç). Ama süre:
 20 dönüşümlü koşuda 11,20 → 11,18 ms/tik, örneklemede −%1,4 (önbelleğin dağınık girişleri L1 ıskasını %11 artırdı).
 Gürültüden ayrılmayan kazanç için ikinci önbellek alınmadı.
+
+### 3.8 Aşama 7a–7b: döngülerin kaldırılması (5 Kasım)
+
+Ölçüm: `kafa` yalnız `kural` ve `dunya`'ya bağlıydı (crate'e hazır). İki döngü vardı: temel → maç (`model.rs` 13,
+`temas.rs` 2 başvuru) ve yerleşim ↔ maç (yerleşim → maç 27).
+
+**7a ✅** Maçın veri tipleri (`Tac` ve makrosu, `Durus`, `Kosul`, `MacZ`, `MacW`, `Olay`, `Perde`, `KenarW`, `Diz`,
+`DizV`, `Yer`, `Karar`, `FakeShow`, `EnSayac`) temel katmanda `mac_veri.rs`'e; maç eski yerlerinden yeniden dışa
+açıyor (`crate::mac::Tac` çalışıyor). `temas` `EN3`'ü doğrudan `kural`'dan alıyor.
+**7b ✅** Yerleşimin maçtan aldığı saf işlevler yerlerine: taktik (`tacEff`, `macEff`, `kpAkt`, `mac/tac.rs` →
+`kural/tac.rs`), talimat (`tl`, `TLV` → `kural/tac.rs`), `kuyuSafe` → `kural/hareket.rs`, `kafa_tac` →
+`kafa2_baglam`, `mac_dokunus` → `gecici_dis1`; `spd`, `ALAN_EN3_DOL` `kural::enerji`'den, `op_dunya` `dunya`'dan, `kafa_d`
+yerine `kafa2_baglam::ayar()`. Sahanın ve sayıların yardımcıları (`KX`, `KY`, `dirOf`, `ownX`, `SN` → `saha.rs`;
+`to_fixed`, `js_num` → `mat.rs`). Davranış aynı (20 maç × 2700 tik).
+
+**Kök kaldırıldı: `MacEk` `Mac`'ten çıktı ✅.** Temel maç modeli üst katmanların durumunu (kafa kutusu, yerleşimin belleği,
+kafanın pres tablosu) taşıyordu. Şimdi maç katmanında `MacTam { m: model::Mac, mac: MacEk }`; maç katmanında `Mac`
+bu tiptir (`use crate::mac::MacTam as Mac`), temel alanlara `Deref` ile ulaşır (`m.tick`), `m.mac.kafa` aynen kaldı,
+alt katmanlara `&Mac` olarak kendiliğinden geçer. Aynı anda iki temel alanı ödünç alan 35 satır `m.m.ps` biçimine
+çevrildi (Deref bütün nesneyi ödünç alır). Yerleşim kafaya artık maçın kutusundan değil, maçın bağlamı kurarken
+verdiği elden ulaşır (`Mc::kafa: KafaEl`, `sekil::gecici_dis::kafa_ile`); `laneOpen`, `yolP`, `yerV` ve köprünün 13
+işlevi `m` yerine bu eli alır. Düz veri `kosulAkt` temel modele (taktiğin kendisi temelde). Davranış aynı (20 maç ×
+2700 tik), hız aynı. `sina/katman.sh`'ın 5. ve 6. kuralı istisnasız; katmanlar arasında döngü kalmadı.
+
+Yan bulgu: kural 2 bugün davranış oturumunun bir deneyinde bozuk (`kafa2_imkan.rs` → `kafa2_karar::decide`,
+`ALAN_SUT_GERCEK_IZ`, bayrak arkasında).
 
 ## 4. Dış kütüphaneler
 

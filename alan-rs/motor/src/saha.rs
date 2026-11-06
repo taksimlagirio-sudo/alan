@@ -1,4 +1,5 @@
 //! Saha ölçüleri ve top fiziğinin parametreleri (core.js: ALAN_SAHA, P, W/H/KR/MOUTH/DIREK).
+#![allow(non_snake_case)]
 
 /// Saha boyu (br). JS: `ALAN_SAHA_BOY || [120, 60]`.
 pub const W: f64 = 120.0;
@@ -70,3 +71,32 @@ impl Default for Fizik {
         P
     }
 }
+
+// Maç modülünden taşındı (Aşama 7b): sahanın ve zamanın temel yardımcıları.
+/// JS ALAN_SAHA.KX, KY (saha ölçeği: 100 × 50'ye göre)
+pub const KX: f64 = W / 100.0;
+pub const KY: f64 = H / 50.0;
+#[inline(always)]
+pub fn dirOf(t: f64) -> f64 {
+    if t == 0.0 {
+        1.0
+    } else {
+        -1.0
+    }
+}
+
+#[inline(always)]
+pub fn ownX(t: f64) -> f64 {
+    if t == 0.0 {
+        0.0
+    } else {
+        W
+    }
+}
+
+/// JS `SN()`: saniyedeki tik.
+#[inline(always)]
+pub fn SN() -> f64 {
+    TPS
+}
+
