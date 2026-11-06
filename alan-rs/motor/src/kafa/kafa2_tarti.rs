@@ -379,6 +379,12 @@ pub fn tut_elde() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     TUT_ELDE_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_TUT_ELDE_IZ").is_ok())
 }
+/// Deney (ALAN_SAH_BEKCI_IZ; ölçümde SAH_BEKCI_ZORLA): sahiplik haritasında komşu hücreye varış yarışına rakip Bekçi de girer.
+pub static SAH_BEKCI_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sah_bekci() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAH_BEKCI_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_BEKCI_IZ").is_ok())
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);

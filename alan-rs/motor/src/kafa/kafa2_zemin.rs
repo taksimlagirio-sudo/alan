@@ -590,7 +590,8 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
         }
         let rak: Vec<R> = w
             .iter()
-            .filter(|p| p.team != t && !p.noTouch && !bekci(p))
+            // ALAN_SAH_BEKCI_IZ: komşu hücreye varış yarışına rakip Bekçi de girer (yakın direği kapatır)
+            .filter(|p| p.team != t && !p.noTouch && (!bekci(p) || crate::kafa::kafa2_tarti::sah_bekci()))
             .map(|p| R { p: p.clone(), G: dis::as_gec_tab(k, p), v: dis::as_v_sp(k, p), R: jmin(2.0, crate::temas::menzil(p, 0.35)), rc: jmax(0.0, dis::alan_tepki(k, p, "kovala")) })
             .collect();
         let rv = |x: f64, y: f64| -> f64 {
