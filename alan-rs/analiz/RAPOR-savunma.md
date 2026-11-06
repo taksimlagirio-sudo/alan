@@ -65,4 +65,17 @@ Yorum:
 
 ## Çok kurulumlu kontrol (20 kurulum × 4000 tik, bayrak kapalı → S1+S2+S3)
 
-(eklenecek)
+Oturumun kendi 20 kayıtlı kurulumu (farklı takımlar ve taktikler; `ALAN_YERLESIK_ADAM_ESKI=1` ikisinde de). Maç başına,
+eşleşmiş fark ± standart hata:
+
+| | Kapalı | S1+S2+S3 | Fark | Artan/azalan |
+|---|---|---|---|---|
+| Gol | 1,20 | 1,30 | +0,10 ± 0,33 | 8/6 |
+| Şut | 2,30 | 2,15 | −0,15 ± 0,44 | 6/8 |
+| Pas | 24,4 | 29,7 | +5,4 ± 2,9 | 12/7 |
+| Pas isabeti (%) | 81,1 | 70,3 | **−10,8 ± 3,2** | 5/15 |
+| Top kaybı | 9,9 | 13,4 | **+3,5 ± 1,4** | 14/5 |
+
+Gol ve şut değişmiyor: maç 217468'deki 2-3 tek tohumun oynaklığı gibi görünüyor, çok kurulumda "arkada boşluk, fazla gol"
+yok. Belirgin olan pas isabetinin düşmesi ve top kaybının artması: baskı topu kazanıyor (S1'in amacı). Analizcinin
+başka tohumlarla ölçmesi önerilir: Liman/Kale Duvarı gibi pres = 1 / pres = 0 eşleşmelerinde ayrı ayrı.
