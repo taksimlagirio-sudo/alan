@@ -376,3 +376,27 @@ pub extern "C" fn bek_dalis(acik: i32) {
 pub extern "C" fn bek_yer_bos(acik: i32) {
     alan_motor::kafa::kafa2_imkan::BEK_YER_BOS_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
 }
+
+/// sur_ufuk: 1 açık (varsayılan), 0 kapalı.
+#[no_mangle]
+pub extern "C" fn sur_ufuk(acik: i32) {
+    alan_motor::kafa::kafa2_tarti::SUR_UFUK_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
+}
+
+/// sah_yumusak: 1 açık (varsayılan), 0 kapalı.
+#[no_mangle]
+pub extern "C" fn sah_yumusak(acik: i32) {
+    alan_motor::kafa::kafa2_tarti::SAH_YUMUSAK_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
+}
+
+/// gurultu_surekli: 1 açık (varsayılan), 0 kapalı.
+#[no_mangle]
+pub extern "C" fn gurultu_surekli(acik: i32) {
+    alan_motor::kafa::kafa1_secim::GURULTU_SUREKLI_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
+}
+
+/// bölge değeri haritası (kafa2_tarti::bolge): 1 açık (varsayılan), 0 kapalı (eski sahiplik haritası).
+#[no_mangle]
+pub extern "C" fn bolge(acik: i32) {
+    alan_motor::kafa::kafa2_tarti::BOLGE_KAPALI.store(acik == 0, std::sync::atomic::Ordering::Relaxed);
+}
