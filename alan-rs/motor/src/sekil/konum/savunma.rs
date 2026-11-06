@@ -29,7 +29,7 @@ pub(in super::super) struct Sv {
     pub sweep: Vec<bool>,
     pub up: Vec<bool>,
     pub up_hat: f64,
-    /// Rakip bizim yarı sahamıza yerleşmiş ve top kuyunun önünde (`yerlesik_mi`): arka çizgi de her adamı tutabilir.
+    /// Rakip bizim yarı sahamıza yerleşmiş ve top kuyunun önünde: blok kalkar, savunmacı adamını kale tarafından tutar.
     pub yerlesik: bool,
     pub press: Vec<Pid>,
     pub prs: Option<Prs>,
@@ -251,9 +251,9 @@ impl Sv {
 
     /// Savunma: pres, süpürücüler, markaj, eşleşme, yedek işler, takım düzeltmeleri.
     ///
-    /// Arka çizgi (süpürücüler) yakınında tutacağı adam yokken alanı korur: önündeki adam için orta sahaya çıkmaz,
-    /// yalnız topun gerisindeki (derin) adamı tutar. Rakip yarı sahamıza yerleşmiş ve top kuyunun önündeyken
-    /// (`yerlesik`) korunacak alan kalmaz: arka çizgi de her adamı tutabilir (6 Kasım 2026, kullanıcı kararı).
+    /// Savunmacı, adamının kale tarafı kendi blok derinliğinden öndeyse adamın peşinden çıkmaz, bloğunda kalır
+    /// ("arkada · blokta"): orta sahaya çekilmesin. Rakip yarı sahamıza yerleşmiş ve top kuyunun önündeyken (`yerlesik`)
+    /// korunacak alan kalmaz: blok kalkar, adamını kale tarafından tutar (6 Kasım 2026, kullanıcı kararı).
     pub fn savunma(&mut self, c: &mut Mc) {
         let k = c.k;
         let tick = c.m.tick;
@@ -767,7 +767,7 @@ fn _q() -> f64 {
 
 /// Yerleşik hücumda topun kalemize en çok uzaklığı (kuyunun önü; kuyu yarıçapı 9).
 pub const YERLESIK_TOP_D: f64 = 30.0;
-/// Yerleşik hücumda arka çizginin de adam tutması. Varsayılan açık; eski davranış: ALAN_YERLESIK_ADAM_ESKI=1 ya da
+/// Yerleşik hücumda bloğun kalkması (savunmacı adamını tutar). Varsayılan açık; eski davranış: ALAN_YERLESIK_ADAM_ESKI=1 ya da
 /// YERLESIK_ADAM_KAPALI (wasm: adreste yerlesik=0).
 pub static YERLESIK_ADAM_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn yerlesik_adam() -> bool {

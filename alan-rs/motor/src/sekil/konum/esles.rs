@@ -305,7 +305,7 @@ impl Sv {
                     row.push(0.0);
                     continue;
                 }
-                if tr == 0 && self.sweep[p] && !J.derin && !self.yerlesik {
+                if tr == 0 && self.sweep[p] && !J.derin {
                     row.push(0.0);
                     continue;
                 }
@@ -521,7 +521,10 @@ impl Sv {
                     let pp = &c.ps[p];
                     eprintln!("BULJ {} {} yer ({:.1},{:.1}) J.g ({:.1},{:.1}) hedef ({:.1},{:.1}) job {}", tick, pp.govde.name, pp.x, pp.y, J.g.0, J.g.1, g.0, g.1, J.job);
                 }
-                if J.derin && !J.bul && J.job.starts_with("arkada · ") {
+                // blok: adamın kale tarafı savunmacının blok derinliğinden öndeyse adamın peşinden çıkmaz, bloğunda kalır
+                // (orta sahaya çekilmesin). Yerleşik hücumda (top kuyunun önünde) adam zaten ceza sahası ağzında: blok
+                // yok, adamı kale tarafından tutar.
+                if J.derin && !J.bul && J.job.starts_with("arkada · ") && !self.yerlesik {
                     let d_b = self.base[p].map(|b| self.g_d(b.x, b.y)).unwrap_or(1e9);
                     let d_j = self.g_d(J.g.0, J.g.1);
                     if d_j > d_b + 1.0 {
