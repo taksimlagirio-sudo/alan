@@ -627,10 +627,44 @@ impl Sv {
         if (wx - opp_x(dt)).abs() < 12.0 {
             wx = opp_x(dt) - 12.0 * dir_of(dt);
         }
+        let ty0 = GCY + 11.0 * c.ps[p].govde.slot.l * GKY;
+        // deney (onde_ac): önde bekleyen yerinde durmaz, son çizgi boyunca açığa (rakipten uzak, toptan pas yolu açık) kayar;
+        // kazanç küçükse önceki yerinde kalır (titreme yok)
+        let ty = if onde_ac() {
+            let E = self.E;
+            let puan = |y: f64| -> f64 {
+                let mut dmin: f64 = 1e9;
+                let mut yol: f64 = 1e9;
+                let (vx, vy) = (wx - E.0, y - E.1);
+                let l2 = jmax(1e-9, vx * vx + vy * vy);
+                for &q in &self.atk_all {
+                    let (qx, qy) = (c.ps[q].x, c.ps[q].y);
+                    dmin = jmin(dmin, hypot(qx - wx, qy - y));
+                    let u = jmax(0.0, jmin(1.0, ((qx - E.0) * vx + (qy - E.1) * vy) / l2));
+                    yol = jmin(yol, hypot(E.0 + u * vx - qx, E.1 + u * vy - qy));
+                }
+                jmin(dmin, 8.0) + 0.5 * jmin(yol, 6.0) - 0.1 * (y - ty0).abs()
+            };
+            let mut en = (ty0, puan(ty0));
+            let mut k = -10.0;
+            while k <= 10.0 {
+                let y = cl(ty0 + k, 3.0, GH - 3.0);
+                let v = puan(y);
+                if v > en.1 {
+                    en = (y, v);
+                }
+                k += 2.0;
+            }
+            let pp = &c.ps[p];
+            let once = pp.job.as_deref() == Some("önde bekle") && (pp.ty - ty0).abs() <= 10.5;
+            if once && puan(pp.ty) + 1.0 >= en.1 { pp.ty } else { en.0 }
+        } else {
+            ty0
+        };
         {
             let pp = &mut c.ps[p];
             pp.tx = wx;
-            pp.ty = GCY + 11.0 * pp.govde.slot.l * GKY;
+            pp.ty = ty;
             pp.job = Some("önde bekle".into());
         }
         // önde talimatlı oyuncu savunmaya katılmaz: işi kontra için önde beklemek. Taşıyıcının arkasındaki adama pas yolunu
@@ -950,7 +984,7 @@ impl Sv {
             if on || (self.YR && g_e < 64.0 * GKX) {
                 // S7d: bu tik tutulan adamlar (savunmacıların tutQ'su)
                 // S7f: yalnız adamını gerçekten tutanlar (presçi değil, işi adam işi) sayılır; buluşmaya / prese giden adamını devreder
-                let mut s7_tut: Vec<Pid> = if s7(8) {
+                let mut s7_tut: Vec<Pid> = if s7(8) || s7(64) {
                     self.defs.iter().filter(|&&d| !s7(32) || (!self.press.contains(&d) && bas(&c.ps[d].job, &["markaj", "arkada", "kapatma", "geri koşu", "yolu kes"]))).filter_map(|&d| c.ps[d].hal.tutQ).collect()
                 } else {
                     Vec::new()
@@ -965,8 +999,10 @@ impl Sv {
                     // değilse önce tehlike bölgesinde kimsenin tutmadığı adama (kaleye en yakın), o da yoksa kale önüne döner
                     let gecildi = self.g_d(pp.x, pp.y) >= g_e + 1.0;
                     // S7f: geçilmemiş bölgecisi de tehlike bölgesinde boşta kalan adamı alır (kale önüne gitmez)
-                    let bolgeci = s7(32) && !gecildi && !self.press.contains(&p) && bas(&pp.job, &["bölge"]);
-                    if s7(8) && g_e < S7_D && self.press.first() != Some(&p) && (gecildi || bolgeci) && {
+                    // S7g: alçak blokta top uzaktayken de bölgeci kale önünde (tehlike bölgesinde) boş kalan adamı alır
+                    let dusuk = s7(64) && self.dtac.t.blok.as_deref() == Some("Düşük");
+                    let bolgeci = (s7(32) || dusuk) && !gecildi && !self.press.contains(&p) && bas(&pp.job, &["bölge"]);
+                    if (s7(8) || dusuk) && (g_e < S7_D || (dusuk && bolgeci)) && self.press.first() != Some(&p) && (gecildi || bolgeci) && {
                         let q = pp.hal.tutQ.or(pp.hal.markRef);
                         q.map_or(true, |q| { let d = self.g_d(c.ps[q].x, c.ps[q].y); !(d < g_e - 2.0 || d < S7_D) })
                     } {
@@ -984,7 +1020,7 @@ impl Sv {
                             pp.hal_mut().tutQ = Some(q);
                             continue;
                         }
-                        if gecildi {
+                        if gecildi && g_e < S7_D {
                             let bs = self.base[p].map(|b| (b.x, b.y)).unwrap_or((pp.x, pp.y));
                             let (lx, ly) = (E.0 + 0.55 * (own_x(dt) - E.0), E.1 + 0.55 * (GCY - E.1));
                             let pp = &mut c.ps[p];
@@ -1042,4 +1078,11 @@ impl Sv {
 fn uadeg_eski() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_UADEG_ESKI_IZ").is_ok())
+}
+
+/// Deney (ALAN_ONDE_AC_IZ; ölçümde/wasm'da ONDE_AC_ZORLA): önde bekleyen oyuncu son çizgi boyunca açığa kayar. Varsayılan kapalı.
+pub static ONDE_AC_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn onde_ac() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    ONDE_AC_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_ONDE_AC_IZ").is_ok())
 }
