@@ -670,12 +670,12 @@ pub fn pencere(k: &mut Kafa, cx: &mut Cx, kq: &Op, T: f64, R: Option<Nokta>) -> 
     e
 }
 
-/// JS enIyiPas(cx, w, A, T, haric, der) (decide.js:7021): A'dan (T tik sonra) en iyi pasın değeri ve
-/// penceresi; der > 0 ise alıcıdan bir pas daha.
 thread_local! {
     /// ALAN_SECIM_BEKLENEN_IZ: son enIyiPas çağrısının adaylarının değerleri (durumD beklenen seçimde kullanır)
     static SON_ADAY: std::cell::RefCell<Vec<f64>> = const { std::cell::RefCell::new(Vec::new()) };
 }
+/// JS enIyiPas(cx, w, A, T, haric, der) (decide.js:7021): A'dan (T tik sonra) en iyi pasın değeri ve
+/// penceresi; der > 0 ise alıcıdan bir pas daha.
 pub fn enIyiPas(k: &mut Kafa, cx: &mut Cx, w: &[Op], A: Nokta, T: f64, haric: f64, der: f64) -> (f64, Option<Arc<Pencere>>) {
     let mut adaylar: Vec<f64> = Vec::new();
     let r = enIyiPas0(k, cx, w, A, T, haric, der, &mut adaylar);

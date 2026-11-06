@@ -27,8 +27,25 @@ const TAB_BOY: usize = 9 * 7 * 9 * 3 * 4;
 static IMK_SUT: &[u8; 16 * TAB_BOY] = include_bytes!("kafa2_imk_sut.bin");
 #[inline(always)]
 fn tab_v(tab: usize, i: usize) -> f64 {
-    IMK_SUT[tab * TAB_BOY + i] as i8 as f64
+    match imk_tablo_dis() {
+        Some(t) => t[tab * TAB_BOY + i] as i8 as f64,
+        None => IMK_SUT[tab * TAB_BOY + i] as i8 as f64,
+    }
 }
+/// ALAN_IMK_TABLO=<yol>: gömülü şut tablosu yerine dosyadaki (alan-kos imktablo ile üretilmiş); yalnız yerel ölçüm
+pub fn imk_tablo_dis() -> Option<&'static [u8]> {
+    static T: std::sync::OnceLock<Option<Vec<u8>>> = std::sync::OnceLock::new();
+    T.get_or_init(|| {
+        if !crate::iz_acik() {
+            return None;
+        }
+        let yol = std::env::var("ALAN_IMK_TABLO").ok()?;
+        let v = std::fs::read(&yol).ok()?;
+        if v.len() == 16 * TAB_BOY { Some(v) } else { None }
+    })
+    .as_deref()
+}
+pub const IMK_TAB_BOY: usize = TAB_BOY;
 
 /// JS fr(A, v): A'da v'nin hücresi ve payı
 pub fn fr(A: &[f64], v: f64) -> (usize, f64) {

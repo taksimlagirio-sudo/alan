@@ -461,3 +461,66 @@ pub fn commitThr(m: &Mac, q: Pid, h: Pid) -> f64 {
 pub fn V(m: &Mac, ps: &[Oyuncu], team: f64, x: f64, y: f64, ch: f64) -> f64 {
     kafa_mac(m, |k| k.V(&op_dunya(ps), team, x, y, ch))
 }
+
+// ---- şut tablosu üreteci (alan-kos imktablo) ----
+
+/// Bütün ham özellikleri `L` olan oyuncu (şablonun kimliği, takımı, rolü korunur): imkOrt = L.
+pub fn duzey_oyuncu(sablon: &Oyuncu, L: f64) -> Oyuncu {
+    let mut p = sablon.clone();
+    {
+        let g = p.govde_mut();
+        let a = &mut g.a;
+        for f in [&mut a.hiz, &mut a.ceviklik, &mut a.guc, &mut a.uzanma, &mut a.alan, &mut a.kontrol, &mut a.surme, &mut a.pas, &mut a.gonderme, &mut a.yukleme, &mut a.tepki, &mut a.gorus, &mut a.yeralma, &mut a.sogukkanlilik, &mut a.kesme, &mut a.refleks, &mut a.yerlesim, &mut a.hakimiyet, &mut a.enerji, &mut a.govde, &mut a.caliskanlik] {
+            *f = L;
+        }
+        let mut h = crate::yetenek::Ham::default();
+        for k in ["hiz", "ceviklik", "guc", "uzanma", "alan", "kontrol", "surme", "pas", "gonderme", "yukleme", "tepki", "gorus", "yeralma", "sogukkanlilik", "kesme", "refleks", "yerlesim", "hakimiyet", "enerji", "govde", "caliskanlik", "okuma"] {
+            h.v.insert(k.to_string(), L);
+        }
+        g.yet = std::sync::Arc::new(crate::yetenek::Yetenek::kur(&h));
+    }
+    p
+}
+
+/// Şut tablosunun bir hücresi (JS shotCell / imk tablosunun tanımı): boş sahada şutçu (takım 0, kale GW'de) kaleye
+/// `dd` uzakta, `sy` yanda (y > CY); Bekçi şutçuya göre yerleşim kuralının yerinden (sekil::yer::bekci) şut doğrultusuna
+/// dik `ko`, doğrultu boyunca `kd` (artı: geride) kaymış; kafanın kendi kararının gönder seçeneklerinde en iyi gol
+/// olasılığı (det.Pk). Geçersiz yer: None.
+pub fn imk_hucre(m: &Mac, sut: &Oyuncu, bek: &Oyuncu, dd: f64, sy: f64, ko: f64, kd: f64, ch: f64) -> Option<f64> {
+    use crate::saha::{CY, W};
+    if sy >= dd - 0.5 {
+        return None;
+    }
+    let x = W - (dd * dd - sy * sy).sqrt();
+    let y = CY + sy;
+    if x > W - 0.8 || y > crate::saha::H - 0.8 {
+        return None;
+    }
+    let mut s = sut.clone();
+    s.team = 0.0;
+    s.x = x;
+    s.y = y;
+    s.vx = 0.0;
+    s.vy = 0.0;
+    let mut b = bek.clone();
+    b.team = 1.0;
+    b.vx = 0.0;
+    b.vy = 0.0;
+    b.x = W - 1.0;
+    b.y = CY;
+    let kural = crate::mac::MacKural::of(m);
+    let g0 = vec![s.clone(), b.clone()];
+    let bm = crate::sekil::yer::BekM { ps: crate::sekil::yer::BekPs::Duz(&g0), holder: Some(crate::dunya::Yerde::oyuncu(&g0[0])), sut: true, ben: Some(1) };
+    let (yx, yy) = crate::sekil::yer::bekci(&g0[1], x, y, Some(&bm), &kural);
+    let (ux, uy) = ((W - x) / dd, (CY - y) / dd);
+    let (nx, ny) = (-uy, ux);
+    let sg = if ny >= 0.0 { 1.0 } else { -1.0 };
+    b.x = (yx + sg * ko * nx - kd * ux).clamp(0.8, W - 0.8);
+    b.y = (yy + sg * ko * ny - kd * uy).clamp(0.8, crate::saha::H - 0.8);
+    let g = vec![s.clone(), b];
+    let mut r = Rng::yeni(12345);
+    let tac = m.tac.get(0).cloned().unwrap_or_default();
+    let k = decide(m, &g[0], &g, ch, &mut r, &tac);
+    let v = k.opts.iter().filter(|o| o.kind == "gönder").filter_map(|o| o.det.as_ref().and_then(|d| d.Pk)).fold(0.0, f64::max);
+    Some(v)
+}

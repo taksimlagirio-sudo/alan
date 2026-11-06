@@ -54,6 +54,57 @@ fn main() {
     if kip == "durum" {
         writeln!(out, "{}", durum(&mt.m)).unwrap();
     }
+    // sutizi: <kayıt> <tik> sutizi: şut modelinin parmak izi: sabit 64 deneme şutunun (şutçu/Bekçi düzeyi, uzaklık, yan,
+    // Bekçi kayması) kafanın kendi şut hesabıyla gol olasılığı, binde yuvarlanıp FNV-1a 64; şut tablosu bu izle saklanır,
+    // iz değişince tablo eskimiştir (sina/tablo.sh).
+    if kip == "sutizi" {
+        while mt.tick() < tik && !mt.bitti() {
+            mt.adim();
+        }
+        println!("{}", sut_izi(&mt.m));
+        return;
+    }
+    // imktablo: <kayıt> <tik> imktablo <çıktı> [tab0 tab1]: şut tablosunun tab0..tab1 dilimini (16 tablodan; tablo =
+    // şutçu düzeyi × 4 + Bekçi düzeyi) kafanın kendi şut hesabıyla üretir (mac::gecici_dis::imk_hucre); çıktı: i8 dizisi
+    // (−1 geçersiz, 0..100). ALAN_IMK_ORNEK=1: yalnız birkaç hücre, eski tabloyla yan yana.
+    if kip == "imktablo" {
+        use alan_motor::kafa::kafa2_imkan::{IMK_CH, IMK_DS, IMK_KD, IMK_KO, IMK_L, IMK_SY, IMK_TAB_BOY};
+        let yol = a.get(4).expect("imktablo <çıktı>").clone();
+        let t0: usize = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(0);
+        let t1: usize = a.get(6).and_then(|x| x.parse().ok()).unwrap_or(16);
+        while mt.tick() < tik && !mt.bitti() {
+            mt.adim();
+        }
+        let m = mt.m.clone();
+        let sut0 = m.ps.iter().find(|p| p.team == 0.0 && !p.bekci()).expect("şutçu şablonu").clone();
+        let bek0 = m.ps.iter().find(|p| p.team == 1.0 && p.bekci()).expect("Bekçi şablonu").clone();
+        let ornek = std::env::var("ALAN_IMK_ORNEK").is_ok();
+        let mut out_b: Vec<u8> = Vec::new();
+        for tab in t0..t1 {
+            let (la, lb) = (tab / 4, tab % 4);
+            let s = alan_motor::mac::gecici_dis::duzey_oyuncu(&sut0, IMK_L[la]);
+            let b = alan_motor::mac::gecici_dis::duzey_oyuncu(&bek0, IMK_L[lb]);
+            let mut ix = 0usize;
+            for &dd in IMK_DS.iter() { for &sy in IMK_SY.iter() { for &ko in IMK_KO.iter() { for &kd in IMK_KD.iter() { for &ch in IMK_CH.iter() {
+                let hesapla = !ornek || (ko == 0.0 && kd == 0.0 && (ch == 0.4 || ch == 0.7) && (tab == 5 || tab == 10));
+                let v: i8 = if hesapla {
+                    match alan_motor::mac::gecici_dis::imk_hucre(&m, &s, &b, dd, sy, ko, kd, ch) { Some(p) => (p * 100.0).round().clamp(0.0, 100.0) as i8, None => -1 }
+                } else { -1 };
+                if ornek && hesapla {
+                    let eski = include_bytes!("../../motor/src/kafa/kafa2_imk_sut.bin")[tab * IMK_TAB_BOY + ix] as i8;
+                    println!("tab {} (şutçu {} Bekçi {}) d {} yan {} ko {} kd {} şarj {}: eski {} yeni {}", tab, IMK_L[la], IMK_L[lb], dd, sy, ko, kd, ch, eski, v);
+                }
+                out_b.push(v as u8);
+                ix += 1;
+            }}}}}
+            eprintln!("tablo {} bitti", tab);
+        }
+        if !ornek {
+            std::fs::write(&yol, out_b).expect("yazılamadı");
+            if t0 == 0 && t1 == 16 { std::fs::write(format!("{}.iz", yol), sut_izi(&m) + "\n").expect("yazılamadı"); }
+        }
+        return;
+    }
     // dene: <kayıt> <tik> dene [N] [süre]: tik'teki taşıyıcı kararının her seçeneği zorla seçilir, kopya maç N kez
     // (karardan sonra zar dizisi değiştirilerek) süre tik doğal oynar; seçenek başına kafanın değeri/tutma kestirimi
     // ve gerçekleşen: gol atma, gol yeme, top kaybı (süre içinde rakibe geçti mi), sonda top kimde.
@@ -506,4 +557,21 @@ fn durum(m: &alan_motor::model::Mac) -> String {
         .collect();
     let b = m.ball.as_ref().map_or(Value::Null, |b| json!([b.x, b.y, b.vx, b.vy]));
     json!({"t": m.tick, "h": m.holder.map_or(-1, |h| h as i64), "ch": m.ch, "r": m.r.s, "b": b, "p": ps}).to_string()
+}
+
+/// Şut modelinin parmak izi (sutizi kipi): sabit 64 deneme şutu, kafanın kendi şut hesabıyla.
+fn sut_izi(m: &alan_motor::model::Mac) -> String {
+    use alan_motor::kafa::kafa2_imkan::IMK_L;
+    let sut0 = m.ps.iter().find(|p| p.team == 0.0 && !p.bekci()).expect("şutçu şablonu").clone();
+    let bek0 = m.ps.iter().find(|p| p.team == 1.0 && p.bekci()).expect("Bekçi şablonu").clone();
+    let mut h: u64 = 0xcbf29ce484222325;
+    for tab in [5usize, 10, 9, 6] {
+        let s = alan_motor::mac::gecici_dis::duzey_oyuncu(&sut0, IMK_L[tab / 4]);
+        let b = alan_motor::mac::gecici_dis::duzey_oyuncu(&bek0, IMK_L[tab % 4]);
+        for dd in [13.0, 16.0, 20.0, 28.0] { for sy in [0.0, 10.0] { for ko in [0.0, 4.0] { for kd in [0.0, 2.0] {
+            let v = alan_motor::mac::gecici_dis::imk_hucre(m, &s, &b, dd, sy, ko, kd, 0.7).map_or(-1, |p| (p * 1000.0).round() as i64);
+            for c in format!("{};", v).bytes() { h ^= c as u64; h = h.wrapping_mul(0x100000001b3); }
+        }}}}
+    }
+    format!("{:016x}", h)
 }
