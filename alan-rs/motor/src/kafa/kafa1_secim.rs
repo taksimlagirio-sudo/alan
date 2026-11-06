@@ -197,8 +197,11 @@ impl Kafa {
         let B = jmin(1.0, self.press_at(src, h.team, h.x, h.y));
         let mut bi: Option<usize> = None;
         let mut bv = f64::NEG_INFINITY;
+        let mut bs: Option<usize> = None;
+        let mut bs_v = f64::NEG_INFINITY;
         // ALAN_PLAN_IZ: plana devam eden seçenek: sürmede önceki yöne en yakın sürme (90°'den az sapan), diğerlerinde aynı tür ve alıcı
-        let devam: Vec<bool> = if plan_acik() {
+        let psur = plan_sur() && !plan_acik();
+        let devam: Vec<bool> = if plan_acik() || psur {
             PLAN_SIMDI.with(|p| {
                 let p = p.borrow();
                 let Some(p) = p.as_ref() else { return vec![false; opts.len()] };
@@ -236,12 +239,34 @@ impl Kafa {
             };
             let w = self.secim_w(h, B, false, Some(self.tarti_k(o))) * self.ufuk_k(h, o, T);
             let mut v = if w > 0.0 { ov + self.secim_z(h, o, w, src) } else { ov };
+            if psur {
+                // ALAN_PLAN_SUR_IZ: tür seçimi plansız; plan yalnız sürmelerin arasında yön seçer
+                if v > bv {
+                    bv = v;
+                    bi = Some(i);
+                }
+                if matches!(o.kind.as_str(), "sür" | "çalım") {
+                    let vs = v + if devam.get(i).copied().unwrap_or(false) { self.secim_w(h, B, false, Some(self.tarti_k(o))) } else { 0.0 };
+                    if vs > bs_v {
+                        bs_v = vs;
+                        bs = Some(i);
+                    }
+                }
+                continue;
+            }
             if devam.get(i).copied().unwrap_or(false) {
                 v += self.secim_w(h, B, false, Some(self.tarti_k(o)));
             }
             if v > bv {
                 bv = v;
                 bi = Some(i);
+            }
+        }
+        if psur {
+            if let (Some(i), Some(j)) = (bi, bs) {
+                if matches!(opts[i].kind.as_str(), "sür" | "çalım") {
+                    return Some(j);
+                }
             }
         }
         bi.or(best)
@@ -267,6 +292,13 @@ pub fn gurultu_surekli() -> bool {
 pub static PLAN_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 /// Plan sadakati. Varsayılan açık (sitedeki kafa); kapatmak: PLAN_KAPALI (wasm: adres seçeneği) ya da ALAN_PLAN_ESKI=1.
 pub static PLAN_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+/// Deney (ALAN_PLAN_SUR_IZ; ölçümde PLAN_SUR_ZORLA): plan yalnız sürmeyi kapsar; pas/şut/tut seçimine dokunmaz,
+/// plansız seçimin kazananı sürmeyse planla uyumlu sürme yönü seçilir.
+pub static PLAN_SUR_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn plan_sur() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    PLAN_SUR_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_PLAN_SUR_IZ").is_ok())
+}
 pub fn plan_acik() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     if PLAN_KAPALI.load(std::sync::atomic::Ordering::Relaxed) {
