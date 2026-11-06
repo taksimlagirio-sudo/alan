@@ -443,6 +443,13 @@ Doğrulama: `sina/ayni.sh` aynı, main ile 20 maç × 2700 tik parmak izi birebi
 Hız gürültü içinde (m00/m05/m10, 600 tik, üçer koşu: 19,05/15,41/17,15 → 19,42/15,34/17,24 ms/tik); release
 derlemesi 60 → 30 sn (crate'ler paralel derleniyor).
 
+**Wasm boyutu (6 Kasım):** bölme wasm'ı 2,62 → 2,87 MB büyütmüştü (gzip 805 → 887 KB). Neden: tek crate'te derleyici
+wasm'da hiç kurulmayan paralel bölüştürücünün (`paralel::hazir` hep `false`) ve iz kancalarının (`iz_acik`, wasm'da
+`false`) arkasındaki kodu ölü bulup atıyordu; crate sınırında bunu kanıtlayamadı (112 KB bincode paketleme kodu ve
+iz dökümleri wasm'a girdi). Çözüm: `iz_acik` `#[inline]`, `paralel::hazir` wasm'da sabit `false` (bölüştürücüyü yalnız
+`alan-kos` kurar) → 2,71 MB; `lto = "fat"` (tek crate'teki gibi bütün program birlikte iyileştirilir) → **2,62 MB** (gzip 827 KB; 7c öncesi 805).
+Yerel hız gürültü içinde (fat biraz önde), release derlemesi 30 → 50 sn.
+
 ### 3.10 Rust adlandırması (6 Kasım)
 
 Derleyicinin `non_snake_case` / `non_upper_case_globals` / `non_camel_case_types` uyarıları (izinler kaldırılınca 1544
