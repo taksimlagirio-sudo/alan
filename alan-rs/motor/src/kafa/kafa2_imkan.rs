@@ -500,6 +500,10 @@ struct ImkE {
     kalkis: f64,
     q: Option<Nokta>,
     S: Option<f64>,
+    /// imk_tau(ta) (ta'nın saf işlevi; yalnız kullanılabilir hücrede hesaplanır)
+    tau: f64,
+    /// imk_inan(ta): (imk_ofs, imk_inan_t, değer); kafanın o iki değeri değişirse yeniden hesaplanır
+    inan: Option<(f64, f64, f64)>,
 }
 
 /// JS imkan(w, team, B, h, ch, iz) (decide.js:6270): top B'deyken takımın şut imkânı. Her arkadaş için
@@ -665,9 +669,9 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         // ALAN_IMK_KUYU_IZ: hücumcu da kuyuya ancak süresi yetiyorsa girer
         let kuyu_yok = imk_kuyu() && !crate::kafa::kafa2_tarti::kuyu_olabilir(&o.p, z.x, z.y, ta, &kr);
         if ta > IMK_UFUK || kk <= 0.0 || kuyu_yok {
-            ImkE { ta, k: 0.0, tv: f64::NAN, kalkis: 0.0, q: None, S: None }
+            ImkE { ta, k: 0.0, tv: f64::NAN, kalkis: 0.0, q: None, S: None, tau: f64::NAN, inan: None }
         } else {
-            ImkE { ta, k: kk, tv: ta + k.D.sut_hazir, kalkis, q, S: None }
+            ImkE { ta, k: kk, tv: ta + k.D.sut_hazir, kalkis, q, S: None, tau: imk_tau(ta), inan: None }
         }
     };
     // hücrenin şut yolu açıklığı oyuncuya bağlı değil (sutYol bu girdilerle saf): hücre başına bir kez
@@ -707,7 +711,7 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         if e.ta > IMK_UFUK || e.k <= 0.0 {
             (0.0, e)
         } else {
-            (e.k * imk_sg((t_r - e.tv) / imk_tau(e.ta)), e)
+            (e.k * imk_sg((t_r - e.tv) / e.tau), e)
         }
     };
     let imk_s = |k: &mut Kafa, IC: &mut Vec<Vec<Option<ImkE>>>, oi: usize, zi: usize| -> f64 {
@@ -718,6 +722,23 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         }
         e.S.unwrap()
     };
+    // imk_inan(e.ta) arkadaş × hücre başına bir kez (kafanın imk_ofs / imk_inan_t'si aynı kaldıkça)
+    let inan_al = |k: &Kafa, IC: &mut Vec<Vec<Option<ImkE>>>, oi: usize, zi: usize, ta: f64| -> f64 {
+        if crate::kafa::kafa2_tarti::belirsiz_kaynak() {
+            return 1.0;
+        }
+        let (o, t) = (k.k2.imk_ofs, k.k2.imk_inan_t);
+        if let Some(Some((o0, t0, v))) = IC[oi][zi].map(|e| e.inan) {
+            if o0.to_bits() == o.to_bits() && t0.to_bits() == t.to_bits() {
+                return v;
+            }
+        }
+        let v = imk_inan(k, ta);
+        if let Some(e) = IC[oi][zi].as_mut() {
+            e.inan = Some((o, t, v));
+        }
+        v
+    };
     // açgözlü eşleme
     let mut bos: Vec<usize> = (0..rak.len()).collect();
     let mut atanan: Vec<Option<isize>> = vec![None; biz.len()];
@@ -727,7 +748,8 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         S: f64,
         ta: f64,
     }
-    let en_iyi = |k: &mut Kafa, TY: &mut Vec<Option<TopYol>>, IC: &mut Vec<Vec<Option<ImkE>>>, bos: &Vec<usize>, a: usize, di: Option<isize>| -> EnI {
+    // tmin: hücre başına bos'taki rakiplerin en erken varışı (di yokken; tur boyunca aynı, arkadaş başına yeniden hesaplanmaz)
+    let en_iyi = |k: &mut Kafa, TY: &mut Vec<Option<TopYol>>, IC: &mut Vec<Vec<Option<ImkE>>>, tmin: &[f64], a: usize, di: Option<isize>| -> EnI {
         let mut r = EnI { u: 0.0, z: None, S: 0.0, ta: 0.0 };
         for zi in 0..zs.len() {
             let z = &zs[zi];
@@ -739,23 +761,18 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
                         f64::NAN
                     }
                 }
-                None => {
-                    let mut t = 1e9;
-                    for &i in bos {
-                        t = jmin(t, z.tr[i]);
-                    }
-                    t
-                }
+                None => tmin[zi],
             };
             let (p, e) = imk(k, TY, IC, a, zi, t_r);
             if di.is_none() && &*biz[a].p.govde.name == "Kaan" && z.x == 104.0 && z.y == 36.0 && crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
                 eprintln!("    kaan ön z {} {} tR {:.3} p {:.6} ta {:.3} k {} kalkis {} q {:?}", z.x, z.y, t_r, p, e.ta, e.k, e.kalkis, e.q.map(|q| (q.x, q.y)));
             }
-            if p * imk_inan(k, e.ta) <= r.u {
+            let inan = inan_al(k, IC, a, zi, e.ta);
+            if p * inan <= r.u {
                 continue;
             }
             let S = imk_s(k, IC, a, zi);
-            let u = p * S * imk_inan(k, e.ta);
+            let u = p * S * inan_al(k, IC, a, zi, e.ta);
             if di.is_none() && &*biz[a].p.govde.name == "Kaan" && crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {
                 eprintln!("    kaan z {} {} tR {:.3} p {:.6} ta {:.3} S {:.6} u {:.6}", z.x, z.y, t_r, p, e.ta, S, u);
             }
@@ -766,23 +783,33 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         r
     };
     while !bos.is_empty() {
+        let tmin: Vec<f64> = zs.iter().map(|z| {
+            let mut t = 1e9;
+            for &i in &bos {
+                t = jmin(t, z.tr[i]);
+            }
+            t
+        }).collect();
         let mut ba: Option<usize> = None;
+        let mut bz: Option<usize> = None;
         let mut bu = 0.002;
         for a in 0..biz.len() {
             if atanan[a].is_some() {
                 continue;
             }
-            let r = en_iyi(k, &mut TY, &mut IC, &bos, a, None);
+            let r = en_iyi(k, &mut TY, &mut IC, &tmin, a, None);
             if r.u > bu {
                 bu = r.u;
                 ba = Some(a);
+                bz = r.z;
             }
         }
         let ba = match ba {
             Some(a) => a,
             None => break,
         };
-        let rz = en_iyi(k, &mut TY, &mut IC, &bos, ba, None).z.unwrap();
+        // en iyinin hücresi aramada bulundu (aynı girdilerle yeniden aramaya gerek yok)
+        let rz = bz.unwrap();
         let mut di: isize = -1;
         let mut dt = 1e9;
         for &i in &bos {
@@ -798,8 +825,15 @@ pub fn imkan(k: &mut Kafa, w: &[Op], team: f64, B: Nokta, h: Option<&Oyuncu>, ch
         bos.retain(|&i| i as isize != di);
     }
     let mut v: f64 = 0.0;
+    let tmin: Vec<f64> = zs.iter().map(|z| {
+        let mut t = 1e9;
+        for &i in &bos {
+            t = jmin(t, z.tr[i]);
+        }
+        t
+    }).collect();
     for a in 0..biz.len() {
-        let r = en_iyi(k, &mut TY, &mut IC, &bos, a, atanan[a]);
+        let r = en_iyi(k, &mut TY, &mut IC, &tmin, a, atanan[a]);
         let S = if r.z.is_some() { r.S } else { 0.0 };
         let p = if S > 0.0 { r.u / S } else { 0.0 };
         if crate::iz_acik() && std::env::var("ALAN_IMK_HU").is_ok() {

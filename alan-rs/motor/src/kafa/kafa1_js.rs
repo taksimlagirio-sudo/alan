@@ -132,6 +132,36 @@ pub fn kaynakla<R>(et: &[Etki], kc: Kc, f: impl FnOnce(&mut Kaynak) -> R) -> R {
     }
 }
 
+/// `top::tahmin`, kafanın tik ömürlü önbelleğiyle (`Onbellek::tahmin`). Yalnız seçimli K (`kc` yok) ve günlüğü boş,
+/// bitmemiş top önbelleklenir; anahtar girdinin bütün alanları (bit bit), sonuç birebir aynı.
+pub fn tahmin_ob(ob: &super::onbellek::Onbellek, b: &crate::top::Top, et: &[Etki], kc: Kc, n: usize) -> (Vec<crate::top::YolNokta>, crate::top::Top) {
+    use crate::top::tahmin;
+    if kc.is_some() || !b.log.is_empty() || b.done.is_some() {
+        return kaynakla(et, kc, |k| tahmin(b, k, &crate::saha::P, Some(n)));
+    }
+    let s = |o: Option<f64>| -> [u64; 2] { o.map_or([0, 0], |v| [1, v.to_bits()]) };
+    let mut a: Vec<u64> = Vec::with_capacity(24 + et.len() * 11);
+    a.extend([b.x, b.y, b.vx, b.vy, b.e, b.ch, b.dead, b.t, b.dist, b.walls, b.direk, b.defl].map(f64::to_bits));
+    a.extend([b.team as u64, b.alive as u64, b.defl_b as u64, n as u64]);
+    a.extend(s(b.tp));
+    a.extend(s(b.w0));
+    a.extend(b.d0.map_or([0, 0, 0], |(v, k)| [1, v.to_bits(), k as u64]));
+    for e in et {
+        a.extend([e.x, e.y, e.r, e.d, e.fx, e.fy, e.am, e.en].map(f64::to_bits));
+        a.extend([e.koni as u64, e.team as u64, e.am_a as u64]);
+    }
+    if let Some(r) = ob.tahmin.borrow().get(&a) {
+        return (r.0.clone(), r.1.clone());
+    }
+    let r = tahmin(b, &mut Kaynak::Sec(et), &crate::saha::P, Some(n));
+    let mut t = ob.tahmin.borrow_mut();
+    if t.len() >= 2048 {
+        t.clear();
+    }
+    t.insert(a, std::sync::Arc::new(r.clone()));
+    r
+}
+
 /// JS `Math.tan` (sabit-mat'ta yok; V8'in fdlibm tan'ı: __kernel_tan + __ieee754_rem_pio2).
 pub fn tan(x: f64) -> f64 {
     let hx = (x.to_bits() >> 32) as i32;

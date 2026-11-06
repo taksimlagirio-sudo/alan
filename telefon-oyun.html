@@ -16,10 +16,10 @@ html,body{margin:0;height:100%;background:#0E0D09;color:#F6F3EC;font-family:'Bri
 a{color:#FFD25A}a:hover{color:#FFF2C4}
 button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 </style>
-<script src="alan-v5/kadro.js?v=202611060933"></script>
-<script src="alan-v5/saha-ciz.js?v=202611060933"></script>
-<script src="alan-v5/enerji-gorunum.js?v=202611060933"></script>
-<script src="alan-v5/analiz-panel.js?v=202611060933"></script>
+<script src="alan-v5/kadro.js?v=202611061051"></script>
+<script src="alan-v5/saha-ciz.js?v=202611061051"></script>
+<script src="alan-v5/enerji-gorunum.js?v=202611061051"></script>
+<script src="alan-v5/analiz-panel.js?v=202611061051"></script>
 <script>window.AlanYeEk = a => { const U = 'aeıioöuü'; let v = 'e'; for (let i = a.length - 1; i >= 0; i--) { const ch = a[i].toLocaleLowerCase('tr'); if (U.includes(ch)) { v = ch; break; } } return a + '’' + (U.includes(a.slice(-1).toLocaleLowerCase('tr')) ? 'y' : '') + ('aıou'.includes(v) ? 'a' : 'e'); }; window.AlanDersOzet = d => d.tur === 'takim' ? 'Takım · ' + ({ blok: 'savunma bloğu', pres: 'pres yerleşimi', kurulum: 'oyun kurulumu', gecis: 'geçiş' })[d.alt] : d.tur === 'konum' ? 'yer al' : d.tur === 'pres' ? 'bas' : d.tur === 'pas' ? (d.pas && d.pas.kime ? window.AlanYeEk(d.pas.kime) + ' pas' : 'koşana pas') + (d.pas ? ({ onune: ' · koşusunun önüne', arka: ' · savunmanın arkasına' })[Array.isArray(d.pas.nereye) ? 'onune' : d.pas.nereye] || '' : '') + (d.pas && d.pas.yol === 'kenardan' ? ' · kenardan' : '') : ({ tut: 'tut', sur: 'sür', gonder: 'gönder' })[d.karar] || d.tur;</script>
 <script src="alan-v5/yetenek.js?v=202611060955"></script>
 <script src="alan-v5/core.js?v=202611060955"></script>

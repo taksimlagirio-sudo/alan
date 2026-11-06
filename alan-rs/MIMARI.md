@@ -383,6 +383,16 @@ bunlarla önbelleğe almak komutları −%4,2 indirdi (işlevin kendi payı −%
 20 dönüşümlü koşuda 11,20 → 11,18 ms/tik, örneklemede −%1,4 (önbelleğin dağınık girişleri L1 ıskasını %11 artırdı).
 Gürültüden ayrılmayan kazanç için ikinci önbellek alınmadı.
 
+**Profil (6 Kasım, 7c'den sonra; m00):** oyuncu kararı (`decide0_k`) sürenin ~%66'sı: imkân (`imkan`) ~%36, uçuşu
+hayal etme (`ucus_formul`) ~%24, top kaybı değeri (`KayipF`) ~%15; Bekçinin yeri ~%11; `top::tahmin` ~%10; `mat::exp`
+kendi başına ~%9 (çoğu alan etkisinden, `k_sec` → `infl`: argümanlar sürekli, tablo işe yaramaz).
+- ✅ `top::tahmin` önbelleği (`Onbellek::tahmin`, `kafa1_js::tahmin_ob`): bir tikte çağrıların %38'i aynı top ve aynı alan
+  kaynaklarıyla tekrar ediyordu (`kafa1_varis`, `kafa1_ucus`). Anahtar girdinin bütün alanları. En iyi beş koşu: m00
+  15,09 → 14,03, m10 20,45 → 19,95 ms/tik; 20 maç × 2700 tik aynı.
+- ✗ `exp`'in yuvarlaması `floor`/`ceil` yerine tamsayıya kesme (birebir aynı, 2·10⁸ girdi denendi): ölçülür kazanç yok,
+  geri alındı (wasm'da `floor` zaten tek komut).
+- Kalan büyük kaldıraç: sitede kararları web işçilerine bölüştürmek (wasm bugün tek iş parçacığı; `paralel` + `paket` hazır).
+
 ### 3.8 Aşama 7a–7b: döngülerin kaldırılması (5 Kasım)
 
 Ölçüm: `kafa` yalnız `kural` ve `dunya`'ya bağlıydı (crate'e hazır). İki döngü vardı: temel → maç (`model.rs` 13,
