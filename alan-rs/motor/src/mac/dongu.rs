@@ -702,7 +702,7 @@ fn donus(m: &mut Mac, h: Pid, kk: &MacKural) -> bool {
                 // JS: kovalayanlar (Q) her yön denemesinde yeniden kurulur; göreli yerleri (o.x, o.y) bir denemenin adımları boyunca birikir
                 let qs0: Vec<crate::kafa::kafa1_savur::Kov> = (0..m.ps.len()).filter(|&qi| m.ps[qi].team != ht && !m.ps[qi].noTouch).map(|qi| {
                     let q = &m.ps[qi];
-                    crate::kafa::kafa1_savur::Kov { f: atan2(q.y - hp.y, q.x - hp.x), d: hypot(q.x - hp.x, q.y - hp.y), v: spd(q) * alan_spr(q, kk), x: None, y: None }
+                    crate::kafa::kafa1_savur::Kov { f: atan2(q.y - hp.y, q.x - hp.x), d: hypot(q.x - hp.x, q.y - hp.y), v: spd(q) * alan_spr(q, kk), x: None, y: None, ..Default::default() }
                 }).collect();
                 let yol = |dr: f64, ar: f64| -> bool {
                     let mut qs = qs0.clone();

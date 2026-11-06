@@ -46,6 +46,10 @@ pub struct Kov {
     pub v: f64,
     pub x: Option<f64>,
     pub y: Option<f64>,
+    /// ALAN_SAVUR_TEPKI_IZ: tepki süresi (tik) ve o süre boyunca sürdürdüğü hız
+    pub rc: f64,
+    pub vx: f64,
+    pub vy: f64,
 }
 
 const TP: f64 = 2.0 * PI;
@@ -69,6 +73,24 @@ pub fn rakip_kovala(o: &mut Kov, bx: f64, by: f64, MD: f64) -> (f64, f64) {
         ox += tx / tl * st;
         oy += ty / tl * st;
     }
+    let dq = hypot(ox, oy);
+    if dq < MD {
+        let sc = MD / ya(dq, 1e-6);
+        ox *= sc;
+        oy *= sc;
+    }
+    o.x = Some(ox);
+    o.y = Some(oy);
+    (ox, oy)
+}
+
+/// Tepki süresince rakip kendi (taşıyıcıya göreli) hızıyla sürer.
+pub fn rakip_surdur(o: &mut Kov, MD: f64) -> (f64, f64) {
+    if o.x.is_none() {
+        o.x = Some(cos(o.f) * o.d);
+        o.y = Some(sin(o.f) * o.d);
+    }
+    let (mut ox, mut oy) = (o.x.unwrap() + o.vx, o.y.unwrap() + o.vy);
     let dq = hypot(ox, oy);
     if dq < MD {
         let sc = MD / ya(dq, 1e-6);
@@ -284,7 +306,8 @@ impl Kafa {
             }
             let d = hypot(q.x - h.x, q.y - h.y);
             if !(d > 10.0) {
-                qs.push(Kov { f: atan2(q.y - h.y, q.x - h.x), d, v: self.v_s(q), x: None, y: None });
+                let (rc, vx, vy) = if crate::kafa::kafa2_tarti::savur_tepki() { (jmax(0.0, self.TEPKI(q, crate::oyuncu::Tepki::Kovala)), z0(q.vx) - z0(h.vx), z0(q.vy) - z0(h.vy)) } else { (0.0, 0.0, 0.0) };
+                qs.push(Kov { f: atan2(q.y - h.y, q.x - h.x), d, v: self.v_s(q), x: None, y: None, rc, vx, vy });
             }
         }
         if qs.is_empty() {
@@ -312,7 +335,7 @@ impl Kafa {
             let bx = cos(ca) * B;
             let by = sin(ca) * B;
             for o in qs.iter_mut() {
-                let (qx, qy) = rakip_kovala(o, bx, by, MD);
+                let (qx, qy) = if (k as f64) <= o.rc { rakip_surdur(o, MD) } else { rakip_kovala(o, bx, by, MD) };
                 if hypot(bx - qx, by - qy) < CR {
                     return true;
                 }
