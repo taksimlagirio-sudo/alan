@@ -1413,7 +1413,9 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
     if tut_elde() {
         let g = veyo(k.bag._g_pr, k.D.combo);
         let u = UFUK.with(|u| u.get());
-        let simdi = opts.iter().filter(|o| o.kind != "tut").filter_map(|o| o.v).fold(f64::NEG_INFINITY, jmax);
+        // topu elde tutan seçenekler (pas/sür): şimdiki şut beklemeyle kalmaz; beklemenin sonundaki şut "açılan"da.
+        // Şut sayılsaydı tut şuttan türer, kayıp bedelinin sahiplik değeri (V0) de tuttan: şut kendi bedelini öderdi.
+        let simdi = opts.iter().filter(|o| o.kind != "tut" && o.kind != "gönder").filter_map(|o| o.v).fold(f64::NEG_INFINITY, jmax);
         for o in opts.iter_mut() {
             if o.kind != "tut" || o.v.is_none() {
                 continue;
