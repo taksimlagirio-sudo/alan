@@ -688,7 +688,7 @@ pub fn decide0K(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, rnd: &mut Zar,
                 return dis::laneOk(k, src, team, nk(h.x, h.y), at, None, None) * dis::shotQ(k, src, team, h.x, h.y, ch) * if o.shot.as_deref() == Some("plase") { 1.0 } else { 1.02 };
             }
             {
-                let z = match &k.SAH_F {
+                let z = match if crate::kafa::kafa2_tarti::sahsiz() { &None } else { &k.SAH_F } {
                     Some(f) => f.oku(team, at.x, at.y),
                     None => {
                         let q = o.q.map(|i| (*src[i]).clone());

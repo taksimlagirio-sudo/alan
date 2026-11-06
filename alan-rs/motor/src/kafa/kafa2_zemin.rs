@@ -693,6 +693,10 @@ pub fn sahiplikKur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>
 
 /// JS zeminS(w, team, x, y, ch, k) (decide.js:6747): sahiplik haritası varsa ondan
 pub fn zeminS(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Option<&Oyuncu>) -> f64 {
+    // ALAN_SAHSIZ_IZ: sahiplik haritası değerlendirmede kullanılmaz (basit konum değeri)
+    if crate::kafa::kafa2_tarti::sahsiz() {
+        return zemin(k, w, team, x, y, ch, kq);
+    }
     match &k.SAH_F {
         Some(f) => f.oku(team, x, y),
         None => zemin(k, w, team, x, y, ch, kq),

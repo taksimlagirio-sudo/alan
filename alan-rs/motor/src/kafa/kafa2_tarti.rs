@@ -177,6 +177,14 @@ pub fn gorevYeri(k: &mut Kafa, src: &[Op], team: f64, p: &Op, hid: Option<f64>, 
     if Lp > 1e-6 { kxy(p, p.x + dx / Lp * m, p.y + dy / Lp * m) } else { p.clone() }
 }
 
+/// Deney (ALAN_SAHSIZ_IZ; ölçümde SAHSIZ_ZORLA): sahiplik haritası değerlendirmeden tamamen çıkar: kaleye yakın
+/// zemin yalnız imkân (varış yarışı), uzakta basit konum değeri (zemin: taşıma, ilerleme); budama da haritasız.
+/// Harita yalnız seçenek adaylarının üretiminde kalır.
+pub static SAHSIZ_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sahsiz() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAHSIZ_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAHSIZ_IZ").is_ok())
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
@@ -496,7 +504,7 @@ pub fn zeminH(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Op
     let cx = match cx {
         None => {
             let a = imkan(k, w, team, nk(x, y), kq, ch);
-            let b = if zemin_yaris() { 0.0 } else { zeminS(k, w, team, x, y, ch, kq) };
+            let b = if zemin_yaris() || sahsiz() { 0.0 } else { zeminS(k, w, team, x, y, ch, kq) };
             return jmax(a, b);
         }
         Some(c) => c,
@@ -522,7 +530,7 @@ pub fn zeminH(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Op
     k.k2.IMK_OFS = o0;
     // ALAN_ZEMIN_YARIS_IZ: kaleye yakın bölgede zemin yalnız imkân (varış yarışı); sahiplik haritasının
     // donuk dünyalı, en iyisini yayan değeri katılmaz
-    let zs = if zemin_yaris() { 0.0 } else { zeminS(k, w, team, x, y, ch, kq) };
+    let zs = if zemin_yaris() || sahsiz() { 0.0 } else { zeminS(k, w, team, x, y, ch, kq) };
     if crate::iz_acik() && kq.map_or(false, |q| std::env::var("ALAN_SURD_IZ").ok().as_deref() == Some(&*q.govde.name)) {
         eprintln!("ZEMIN ({:.1},{:.1}) T {:.0} imkan {:.3} zeminS {:.3}", x, y, veyo(T, 0.0), v, zs);
     }
