@@ -10,7 +10,7 @@ def seg_d(px,py,ax,ay,bx,by):
   vx,vy=bx-ax,by-ay; L=vx*vx+vy*vy or 1e-9; u=max(0,min(1,((px-ax)*vx+(py-ay)*vy)/L)); return d(px,py,ax+u*vx,ay+u*vy)
 o={}
 o['skor']='%d-%d'%tuple(K[-1]['s'])
-o['donma_karar']=sum(1 for r in KR if r[5][0][2] is not None and abs(r[5][0][2])<1e-6)
+o['donma_karar']=sum(1 for r in KR if r[5][0][2] is not None and abs(r[5][0][2])<1e-4)
 o['karar']=len(KR)
 # uçuşlar
 uc=Counter();prev=None

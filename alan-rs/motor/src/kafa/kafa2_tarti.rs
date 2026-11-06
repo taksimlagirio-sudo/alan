@@ -351,6 +351,40 @@ pub fn kovsuz_sabit() -> bool {
     }
     KOVSUZ_SABIT_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_KOVSUZ_SABIT_ESKI").is_err())
 }
+/// Deney (ALAN_ON_SIRA_IZ; ölçümde ON_SIRA_ZORLA): pas/sürme adaylarının ön elemesi işarete değil sıraya bakar
+/// (en iyi adaylar eksi değerde de tartıya girer; "tut"a karşı karşılaştırmayı tartı yapar).
+pub static ON_SIRA_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn on_sira() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    ON_SIRA_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_ON_SIRA_IZ").is_ok())
+}
+/// Deney (ALAN_SAH_YAKINSA_IZ; ölçümde SAH_YAKINSA_ZORLA): sahiplik haritası sabit SAH_ADIM yerine değerler
+/// değişmeyene kadar yayılır (değer yinelemesinin sabit noktası).
+pub static SAH_YAKINSA_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sah_yakinsa() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAH_YAKINSA_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_YAKINSA_IZ").is_ok())
+}
+/// Deney (ALAN_SAVUR_TEPKI_IZ; ölçümde SAVUR_TEPKI_ZORLA): savurma yolu denetiminde (kafa ve maç) yakındaki rakip
+/// Çekirdeğe tepki süresinden sonra koşar; o süre boyunca kendi hızıyla sürer (eskisi: hemen, tam hızla).
+pub static SAVUR_TEPKI_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn savur_tepki() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAVUR_TEPKI_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAVUR_TEPKI_IZ").is_ok())
+}
+/// Deney (ALAN_TUT_ELDE_IZ; ölçümde TUT_ELDE_ZORLA): tutmanın değeri eldeki en iyi seçenek × beklemenin indirimi
+/// (tempo/sabır) ya da beklemenin sonunda açılan somut şut/pas/sür; harita değeri tutmaya doğrudan girmez.
+pub static TUT_ELDE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn tut_elde() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    TUT_ELDE_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_TUT_ELDE_IZ").is_ok())
+}
+/// Deney (ALAN_SAH_BEKCI_IZ; ölçümde SAH_BEKCI_ZORLA): sahiplik haritasında komşu hücreye varış yarışına rakip Bekçi de girer.
+pub static SAH_BEKCI_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sah_bekci() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAH_BEKCI_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_BEKCI_IZ").is_ok())
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
@@ -1380,6 +1414,36 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
             m.borrow_mut().clear();
         }
     }
+    // ALAN_TUT_ELDE_IZ: tutmanın değeri haritadan (zemin) değil eldekinden: şu anki en iyi somut seçenek, beklemenin
+    // indirimiyle (pr_gam, tempo/sabır; karar aralığı başına), ya da beklemenin sonunda açılan somut şut/pas/sür
+    if tut_elde() {
+        let g = veyo(k.bag._g_pr, k.D.combo);
+        let u = UFUK.with(|u| u.get());
+        // topu elde tutan seçenekler (pas/sür): şimdiki şut beklemeyle kalmaz; beklemenin sonundaki şut "açılan"da.
+        // Şut sayılsaydı tut şuttan türer, kayıp bedelinin sahiplik değeri (V0) de tuttan: şut kendi bedelini öderdi.
+        let simdi = opts.iter().filter(|o| o.kind != "tut" && o.kind != "gönder").filter_map(|o| o.v).fold(f64::NEG_INFINITY, jmax);
+        for o in opts.iter_mut() {
+            if o.kind != "tut" || o.v.is_none() {
+                continue;
+            }
+            let Some(d) = o.dok.as_ref() else { continue };
+            let (Some(P), Some(Th), Some(ky)) = (d.al("tutar"), d.al("sure"), d.al("kayip")) else { continue };
+            // açılan: beklemenin sonunda gerçekten açılan (pozitif) şut/pas/sür; yoksa sayılmaz (beklemenin 0 tabanı olmaz)
+            let acilan = [d.al("sut"), d.al("ileri"), d.al("surme")].iter().flatten().copied().filter(|x| *x > 1e-9).fold(f64::NEG_INFINITY, jmax);
+            // bekleme indirimi: artı değer beklemeyle azalır, eksi değer beklemeyle kötüleşir (sıfıra yaklaşmaz)
+            let ind = crate::mat::pow(g, Th / jmax(u, 1.0));
+            let bekle = if !simdi.is_finite() { f64::NEG_INFINITY } else if simdi >= 0.0 { simdi * ind } else { simdi / ind };
+            let en = jmax(bekle, acilan);
+            if !en.is_finite() {
+                continue;
+            }
+            let v = P * en + ky;
+            if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
+                eprintln!("TUTE {} {} Th {:.0} P {:.3} şimdi {:.3} g {:.3} bekle {:.3} açılan {:.3} v {:.3} -> {:.3}", k.tick(), h.govde.name, Th, P, simdi, g, bekle, acilan, o.v.unwrap_or(0.0), v);
+            }
+            o.v = Some(v);
+        }
+    }
     if kayip_sahip() {
         let v0 = opts.iter().filter(|o| o.kind != "gönder").filter_map(|o| o.v).fold(0.0, jmax);
         for o in opts.iter_mut() {
@@ -1401,6 +1465,19 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
             if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
                 eprintln!("SAHIP {} {} {} tut {:.3} V0 {:.3} v {:.3} -> {:.3}", k.tick(), h.govde.name, o.kind, tut, v0, v, v - bedel);
             }
+        }
+    }
+    if crate::iz_acik() && std::env::var("ALAN_SUT_SAY_IZ").is_ok() {
+        let gx = if h.team == 0.0 { GW } else { 0.0 };
+        if hypot(gx - h.x, GCY - h.y) < 26.0 {
+            let ng = opts.iter().filter(|o| o.kind == "gönder").count();
+            let nv = opts.iter().filter(|o| o.kind == "gönder" && o.v.is_some()).count();
+            let bg = opts.iter().filter(|o| o.kind == "gönder").filter_map(|o| o.v).fold(f64::NEG_INFINITY, jmax);
+            let bo = opts.iter().filter(|o| o.kind != "gönder").filter_map(|o| o.v).fold(f64::NEG_INFINITY, jmax);
+            let pk = opts.iter().filter(|o| o.kind == "gönder" && o.v.is_some()).filter_map(|o| o.det.as_ref().and_then(|d| d.Pk)).fold(0.0, jmax);
+            let zs = zemin_s(k, src, team, h.x, h.y, ch, Some(&h));
+            let hs = k.sah_f.as_ref().map_or(f64::NAN, |f| f.oku_s(team, h.x, h.y));
+            eprintln!("SUTSON {} {} tartida {} degerli {} en_iyi_sut {:.3} en_iyi_diger {:.3} Pk {:.3} harita {:.3} haritaS {:.3}", k.tick(), h.govde.name, ng, nv, bg, bo, pk, zs, hs);
         }
     }
     // m._prT: arkadaşların ve taşıyanın değeri, bir rakip olmasa ne kazanılırdı
