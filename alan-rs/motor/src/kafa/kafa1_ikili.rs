@@ -979,6 +979,10 @@ impl Kafa {
             if kiz && &*q.govde.name == "Hendek" { let di = dir.unwrap(); eprintln!("   RT hT {} donS {} qT {} yol {} vO {} away {} d {}", h_t, self.don_s(h, di.x, di.y), q_t, yol, v_o, away, d); }
             if kiz { eprintln!("   KQ {} reach {} T {} keep0 {} e {:?} x {} {}", q.govde.name, reach_t, T, keep, self.dis.algi_e(q), q.x, q.y); }
             kp_yaz!(kp_dis, (q.govde.name.to_string(), d, reach_t, keep, if q.bekci() { 9.0 } else { 0.0 }));
+            // ALAN_KP_IZ=<ad>:<tik>: tutma hesabında rakip başına yetişme süresi (en dış hesap)
+            if kp_dis && crate::iz_acik() && std::env::var("ALAN_KP_IZ").ok().as_deref() == Some(&*format!("{}:{}", h.govde.name, self.tick())) {
+                eprintln!("KP {} yön {:?} T {:.0} | {} ({:.1},{:.1}) hız ({:.2},{:.2}) d {:.1} yetişir {:.1} tutma0 {:.3}", h.govde.name, dir.map(|d| ((d.x * 100.0).round() / 100.0, (d.y * 100.0).round() / 100.0)), T, q.govde.name, q.x, q.y, z0(q.vx), z0(q.vy), d, reach_t, keep);
+            }
             if reach_t > T {
                 continue;
             }

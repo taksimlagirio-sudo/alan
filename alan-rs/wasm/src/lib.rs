@@ -358,3 +358,9 @@ fn kafa_json(r: &alan_motor::mac::kafa_bag::KafaKayit) -> serde_json::Value {
 pub extern "C" fn govde_yol(acik: i32) {
     alan_motor::kafa::kafa2_tarti::GOVDE_YOL_ZORLA.store(acik != 0, std::sync::atomic::Ordering::Relaxed);
 }
+
+/// Sürmenin tutma olasılığı değerin tartıldığı ara noktaya dek (kafa2_tarti::sur_e): 1 açık, 0 kapalı.
+#[no_mangle]
+pub extern "C" fn sur_e(acik: i32) {
+    alan_motor::kafa::kafa2_tarti::SUR_E_ZORLA.store(acik != 0, std::sync::atomic::Ordering::Relaxed);
+}
