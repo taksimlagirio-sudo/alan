@@ -231,16 +231,26 @@ pub fn kuyu_olabilir(p: &crate::model::Oyuncu, x: f64, y: f64, t: f64, kr: &dyn 
 /// topa ulaşmış sayılır (maçta temas::govde herkese uygulanır); eskiden yalnız adanmış ya da sendeleyen rakip için.
 /// Kovalamayan savunmacı da (kafa onu o anki hızıyla yürütür) tepkisinden sonra yola koşabilir: görevi değişebilir.
 pub static GOVDE_YOL_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+/// Yoldaki gövde ve kovalamayan savunmacının yola koşabilmesi. Varsayılan açık (sitedeki kafa); kapatmak: GOVDE_YOL_KAPALI (wasm: adres seçeneği) ya da ALAN_GOVDE_YOL_ESKI=1.
+pub static GOVDE_YOL_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn govde_yol() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    GOVDE_YOL_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_GOVDE_YOL_IZ").is_ok())
+    if GOVDE_YOL_KAPALI.load(std::sync::atomic::Ordering::Relaxed) {
+        return false;
+    }
+    GOVDE_YOL_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_GOVDE_YOL_ESKI").is_err())
 }
 /// Deney (ALAN_SUR_E_IZ; ölçümde SUR_E_ZORLA): sürmenin tutma olasılığı değerin tartıldığı ara noktaya (toE) varış süresiyle;
 /// eskiden sürmenin son hedefine (to) dek, değer ise toE'de tartılıyordu (k74-2536: kaleci 12–19. tiklerde yetişir sanıldı).
 pub static SUR_E_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+/// Sürmenin tutma olasılığı ara noktaya dek. Varsayılan açık (sitedeki kafa); kapatmak: SUR_E_KAPALI (wasm: adres seçeneği) ya da ALAN_SUR_E_ESKI=1.
+pub static SUR_E_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub fn sur_e() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    SUR_E_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SUR_E_IZ").is_ok())
+    if SUR_E_KAPALI.load(std::sync::atomic::Ordering::Relaxed) {
+        return false;
+    }
+    SUR_E_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| std::env::var("ALAN_SUR_E_ESKI").is_err())
 }
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
