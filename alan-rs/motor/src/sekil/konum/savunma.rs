@@ -29,6 +29,8 @@ pub(in super::super) struct Sv {
     pub sweep: Vec<bool>,
     pub up: Vec<bool>,
     pub up_hat: f64,
+    /// Rakip bizim yarı sahamıza yerleşmiş ve top kuyunun önünde (`yerlesik_mi`): arka çizgi de her adamı tutabilir.
+    pub yerlesik: bool,
     pub press: Vec<Pid>,
     pub prs: Option<Prs>,
     pub atk_all: Vec<Pid>,
@@ -81,6 +83,7 @@ impl Sv {
             sweep: vec![false; n],
             up: vec![false; n],
             up_hat: 0.0,
+            yerlesik: false,
             press: vec![],
             prs: None,
             atk_all: vec![],
@@ -247,6 +250,10 @@ impl Sv {
     }
 
     /// Savunma: pres, süpürücüler, markaj, eşleşme, yedek işler, takım düzeltmeleri.
+    ///
+    /// Arka çizgi (süpürücüler) yakınında tutacağı adam yokken alanı korur: önündeki adam için orta sahaya çıkmaz,
+    /// yalnız topun gerisindeki (derin) adamı tutar. Rakip yarı sahamıza yerleşmiş ve top kuyunun önündeyken
+    /// (`yerlesik`) korunacak alan kalmaz: arka çizgi de her adamı tutabilir (6 Kasım 2026, kullanıcı kararı).
     pub fn savunma(&mut self, c: &mut Mc) {
         let k = c.k;
         let tick = c.m.tick;
@@ -292,6 +299,10 @@ impl Sv {
             self.pres_sec(c, h, p_lim);
         }
         self.atk_all = (0..n).filter(|&q| c.ps[q].takim() == att && !c.ps[q].bekci()).collect();
+        self.yerlesik = yerlesik_adam() && {
+            let yarida = self.atk_all.iter().filter(|&&q| (c.ps[q].x - own_x(dt)).abs() < crate::saha::W / 2.0).count();
+            self.g_d(E.0, E.1) < YERLESIK_TOP_D && 2 * yarida >= self.atk_all.len() && !self.atk_all.is_empty()
+        };
         self.atk = self.atk_all.iter().copied().filter(|&q| Some(q) != h).collect();
         self.TH = tehlike(c.m, c.ps, h, c.d);
         self.covered = match h {
@@ -752,4 +763,14 @@ pub(super) fn dal_sinir(B: &[Vec<f64>], gi: &[usize]) -> Option<Vec<i64>> {
 #[allow(dead_code)]
 fn _q() -> f64 {
     Q.body
+}
+
+/// Yerleşik hücumda topun kalemize en çok uzaklığı (kuyunun önü; kuyu yarıçapı 9).
+pub const YERLESIK_TOP_D: f64 = 30.0;
+/// Yerleşik hücumda arka çizginin de adam tutması. Varsayılan açık; eski davranış: ALAN_YERLESIK_ADAM_ESKI=1 ya da
+/// YERLESIK_ADAM_KAPALI (wasm: adreste yerlesik=0).
+pub static YERLESIK_ADAM_KAPALI: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn yerlesik_adam() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    !YERLESIK_ADAM_KAPALI.load(std::sync::atomic::Ordering::Relaxed) && *A.get_or_init(|| std::env::var("ALAN_YERLESIK_ADAM_ESKI").is_err())
 }

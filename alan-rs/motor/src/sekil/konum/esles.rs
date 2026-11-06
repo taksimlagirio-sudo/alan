@@ -305,7 +305,7 @@ impl Sv {
                     row.push(0.0);
                     continue;
                 }
-                if tr == 0 && self.sweep[p] && !J.derin {
+                if tr == 0 && self.sweep[p] && !J.derin && !self.yerlesik {
                     row.push(0.0);
                     continue;
                 }

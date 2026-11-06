@@ -21,6 +21,7 @@ mod esles;
 mod hucum;
 pub use hucum::SEYREK_KAPALI;
 mod savunma;
+pub use savunma::{yerlesik_adam, YERLESIK_ADAM_KAPALI};
 mod yardim;
 
 use yardim::*;
