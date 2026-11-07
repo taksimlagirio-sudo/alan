@@ -474,3 +474,5 @@ anahtar!(onde_ac, alan_motor::sekil::konum::ONDE_AC_ZORLA);
 anahtar!(kuyu_pay, alan_motor::mac::kuyu::KUYU_PAY_ZORLA);
 // bütün oyuncular için yürüme: hız seçiminde normal koşunun altı, bar dolumu hıza bağlı (yuru)
 anahtar!(yuru, alan_motor::mac::enerji::YURU_ZORLA);
+// hız tercihi: koşu değeri varışla sürekli, savunmada tehlike anına karşı, bar değeri hedeften bağımsız (hiz2)
+anahtar!(hiz2, alan_motor::mac::enerji::HIZ2_ZORLA);
