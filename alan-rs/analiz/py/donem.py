@@ -31,7 +31,7 @@ for dn in don:
     # savunma: taşıyıcı kaleye 30 br içinde, savunmacılar ve işleri
     if lg<30:
       on=[j for j in savs if d(k['p'][j][0],k['p'][j][1],gx,30)<lg-1]
-      yuru=[AD[j] for j in savs if math.hypot(k['p'][j][2],k['p'][j][3])<0.12 and d(k['p'][j][4],k['p'][j][5],k['p'][j][0],k['p'][j][1])>6]
+      yuru=[AD[j]+':'+k['p'][j][6][:14] for j in savs if not k['p'][j][6].startswith('önde') and math.hypot(k['p'][j][2],k['p'][j][3])<0.12 and d(k['p'][j][4],k['p'][j][5],k['p'][j][0],k['p'][j][1])>6]
       if not on: bul.append((k['t'],'SAV','kale tarafında savunmacı yok',AD[h],round(lg)))
       if yuru: bul.append((k['t'],'SAV','tehlikede yürüyen savunmacı',','.join(yuru),round(lg)))
     # topsuz hücumcular: takım topta, rakip yarıda, taşıyıcıya 25 br içinde açık arkadaş var mı
