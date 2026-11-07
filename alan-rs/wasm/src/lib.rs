@@ -497,6 +497,8 @@ anahtar!(bek_cd, alan_motor::temas::BEK_CD_ZORLA);
 anahtar!(kuyu_kal, alan_motor::mac::kuyu::KUYU_KAL_ZORLA);
 // presçinin yetişme süresi taşıyıcının hızıyla buluşma (preskes)
 anahtar!(pres_kes, alan_motor::sekil::konum::PRES_KES_ZORLA);
+// onde_ac'ın 30 tik tartı / belirgin kazanç kuralı önceki hedefi hal'den okur (ondetut)
+anahtar!(onde_tut, alan_motor::sekil::konum::ONDE_TUT_ZORLA);
 // sahiplik haritasının tahmin dünyası topun gerçek varışında (sahtc) / hücre şutunda dibindeki rakip ikili kesmez (sahdibinde)
 anahtar!(sah_tc, alan_motor::kafa::kafa2_tarti::SAH_TC_ZORLA);
 anahtar!(sah_dibinde, alan_motor::kafa::kafa2_tarti::SAH_DIBINDE_ZORLA);

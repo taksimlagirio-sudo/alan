@@ -700,9 +700,18 @@ impl Sv {
             }
             // hedef uzun süre geçerli: oyuncu başına 30 tikte bir yeniden tartılır, yalnız belirgin kazançta (3) kayar
             let pp = &c.ps[p];
-            let once = pp.job.as_deref() == Some("önde bekle") && (pp.ty - ty0).abs() <= 10.5;
+            // onde_tut: önceki tikin önde bekle hedefi hal._ondeH'den (iş adı bu noktada her tik sıfırlanmış oluyor: eski sınama hiç
+            // tutmuyordu, hedef her tik ızgaranın en iyisine sıçrıyordu; 301–304'te önde hedef sıçramalarının 616/643'ü tartı tiki dışında)
+            let (once, oy) = if onde_tut() {
+                match pp.hal._ondeH {
+                    Some((t, _, oy)) if t == c.m.tick - 1.0 && (oy - ty0).abs() <= 10.5 => (true, oy),
+                    _ => (false, pp.ty),
+                }
+            } else {
+                (pp.job.as_deref() == Some("önde bekle") && (pp.ty - ty0).abs() <= 10.5, pp.ty)
+            };
             let tart = (c.m.tick as i64 + p as i64 * 7) % ONDE_AC_T == 0;
-            if once && (!tart || puan(pp.ty) + 3.0 >= en.1) { pp.ty } else { en.0 }
+            if once && (!tart || puan(oy) + 3.0 >= en.1) { oy } else { en.0 }
         } else {
             ty0
         };
@@ -722,7 +731,7 @@ impl Sv {
             pp.tx = wx;
             pp.ty = ty;
             pp.job = Some("önde bekle".into());
-            if onde_ac() && (s7(131072) || s7(524288)) {
+            if onde_ac() && (s7(131072) || s7(524288) || onde_tut()) {
                 pp.hal_mut()._ondeH = Some((tik, wx, ty));
             }
         }
@@ -1262,6 +1271,13 @@ fn uadeg_eski() -> bool {
 pub const ONDE_ADIM: f64 = 1.0;
 /// onde_ac: önde bekleyenin yerini yeniden tartma aralığı (tik).
 pub const ONDE_AC_T: i64 = 30;
+/// Deney (ALAN_ONDE_TUT_IZ; ölçümde/wasm'da ONDE_TUT_ZORLA): onde_ac'ın "30 tikte bir tart, belirgin kazançta kay" kuralı
+/// gerçekten çalışsın (önceki hedef hal'den). Varsayılan kapalı.
+pub static ONDE_TUT_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn onde_tut() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    ONDE_TUT_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_ONDE_TUT_IZ").is_ok())
+}
 /// Deney (ALAN_ONDE_AC_IZ; ölçümde/wasm'da ONDE_AC_ZORLA): önde bekleyen oyuncu son çizgi boyunca açığa kayar; rakip topu
 /// tutarken yürüyerek (bar dolar), top havadayken normal koşar (mac/enerji.rs sprint_karar3). Varsayılan kapalı.
 pub static ONDE_AC_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);

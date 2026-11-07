@@ -18,7 +18,7 @@ use super::ucus::okuT as okuTb;
 use super::*;
 
 mod esles;
-pub use esles::{onde_ac, ONDE_AC_ZORLA};
+pub use esles::{onde_ac, ONDE_AC_ZORLA, onde_tut, ONDE_TUT_ZORLA};
 mod hucum;
 pub use hucum::SEYREK_KAPALI;
 mod savunma;
