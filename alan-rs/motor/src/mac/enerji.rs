@@ -355,6 +355,17 @@ pub const HIZ2_TASI_V: f64 = 0.3;
 pub const HIZ2_TEH_MIN: f64 = 8.0;
 /// hiz2: kontrada savunmacıya karşı varış payının yumuşaklığı (tik): erken varmak her savunmacıya karşı payı sürekli büyütür.
 pub const HIZ2_KONTRA_W: f64 = 20.0;
+/// hiz2: kontranın değeri, topun önüne dönebilmiş savunmacı sayısına göre (analiz/ZAMAN-DEGERI.md, 38 maç; aralar doğrusal).
+pub const KONTRA_GOL: [f64; 4] = [0.73, 0.50, 0.33, 0.0];
+pub fn kontra_deger(n: f64) -> f64 {
+    let n = jmax(0.0, n);
+    let i = n.floor() as usize;
+    if i >= KONTRA_GOL.len() - 1 {
+        return KONTRA_GOL[KONTRA_GOL.len() - 1];
+    }
+    let f = n - i as f64;
+    KONTRA_GOL[i] + (KONTRA_GOL[i + 1] - KONTRA_GOL[i]) * f
+}
 /// hiz2: barın değer katı (bedel = HIZ2_BAR · ((1−e+c)² − (1−e)²)).
 pub const HIZ2_BAR: f64 = 0.5;
 /// Deney (ALAN_HIZ2_IZ; ölçümde/wasm'da HIZ2_ZORLA; analiz/HIZ-TERCIHI.md): hız seçiminde koşunun değeri varış süresiyle sürekli
@@ -546,10 +557,17 @@ pub fn sprint_karar3(m: &mut Mac) {
                 // hiz2: koşunun değeri varışla sürekli azalır (erken varmak hep biraz iyi, geç kalmak giderek kötü, sıfır
                 // değil); barın değeri hedeften bağımsız: harcamanın birim bedeli bar azaldıkça artar (dolu barda da sıfır değil),
                 // yürümenin kazancı aynası
-                let g = match &kontra {
-                    // pas gelmeden varmak bir şey katmaz: varış en erken pasın varışı (tD) sayılır
-                    Some(v) => { let Tv = if tD < 1e8 { jmax(T, tD) } else { T }; v.iter().map(|&t| 1.0 / (1.0 + exp((Tv - t) / HIZ2_KONTRA_W))).sum::<f64>() / v.len() as f64 }
-                    None => 1.0 / (1.0 + T / HIZ2_TA) / (1.0 + jmax(0.0, T - tD2) / HIZ2_TB),
+                let g = 1.0 / (1.0 + T / HIZ2_TA) / (1.0 + jmax(0.0, T - tD2) / HIZ2_TB);
+                // kontra: durumun kendi değeri (analiz/ZAMAN-DEGERI.md): varışta topun önüne dönebilmiş savunmacı sayısı
+                // (varış süreleriyle yumuşak sayım) → gol olasılığı (0: %73, 1: %50, 2: %33, 3+: %0); pas gelmeden varmak
+                // bir şey katmaz (varış en erken pasın varışı)
+                let vk = match &kontra {
+                    Some(v) => {
+                        let Tv = if tD < 1e8 { jmax(T, tD) } else { T };
+                        let n: f64 = v.iter().map(|&t| 1.0 / (1.0 + exp((t - Tv) / HIZ2_KONTRA_W))).sum();
+                        kontra_deger(n)
+                    }
+                    None => 0.0,
                 };
                 // yürümenin kazancı barın boş kısmını aşamaz (dolu barda yürümek bir şey kazandırmaz)
                 let c = if c < 0.0 { jmax(c, -(1.0 - e)) } else { c };
@@ -557,7 +575,7 @@ pub fn sprint_karar3(m: &mut Mac) {
                 // dolu barda kısa harcama neredeyse bedava (fazlası boşa gidiyordu), uzun harcama giderek pahalı
                 let bos = jmax(0.0, 1.0 - e);
                 let bedel = HIZ2_BAR * ((bos + c) * (bos + c) - bos * bos) * hr_k;
-                return Sy * g - bedel;
+                return Sy * g + vk - bedel;
             }
             let mut bd = 0.0;
             if c > 0.0 {
