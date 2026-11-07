@@ -1500,6 +1500,9 @@ pub struct JODet {
     pub sonra: Option<String>,
     /// `c`: number (kafa1 ekledi: fake'in inanılırlığı)
     pub c: Option<f64>,
+    /// uçuşta pası atmadan önce taşıyıcının bozulmama olasılığı (keep_p, savurma süresince); ölçüm izi için
+    #[serde(default)]
+    pub pre: Option<f64>,
 }
 
 /// JS `o.en`

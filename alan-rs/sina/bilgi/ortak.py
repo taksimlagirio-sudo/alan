@@ -18,7 +18,9 @@ class Izgara:
             idx = idx * len(d) + i
         return idx
     def ekle(self, v, deger, w=1.0):
-        i = self.indeks(v); self.T[i] += w * deger; self.N[i] += w
+        """v: koordinat listesi ya da (indeks,) demeti."""
+        i = v[0] if isinstance(v, tuple) else self.indeks(v)
+        self.T[i] += w * deger; self.N[i] += w
     def koordinat(self, idx):
         c = []
         for b in reversed(self.boy):

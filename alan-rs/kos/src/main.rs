@@ -178,6 +178,7 @@ fn main() {
         alan_motor::kafa::kafa2_tarti::SAH_TC_ZORLA.store(ek.split(',').any(|x| x == "sahtc"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_ZORLA.store(ek.split(',').any(|x| x == "bilgitutma"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_SUT_ZORLA.store(ek.split(',').any(|x| x == "bilgitutmasut"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa2_tarti::PRE_BIR_ZORLA.store(ek.split(',').any(|x| x == "prebir"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::KOVSUZ_SABIT_ZORLA.store(ek.split(',').any(|x| x == "kovsuz"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::KAYIP_SAHIP_ZORLA.store(ek.split(',').any(|x| x == "kayipsahip"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::SEKME_BEDEL_ZORLA.store(ek.split(',').any(|x| x == "sekbedel"), std::sync::atomic::Ordering::Relaxed);
@@ -297,6 +298,40 @@ fn main() {
     // dal: <kayıt> <tik> dal <çıktı klasörü> <süre> <S7 ek bitleri>: maçı tike dek oynatır, oradan iki kol açar:
     // "once" (değişmeden) ve "sonra" (sekil::S7_ZORLA'ya ek bitler, ör. 128 = S7h; virgüllü listede her bit için "b<bit>"), her kol <süre> tik, analiz kipinin satır
     // biçiminde <çıktı>/once.jsonl ve <çıktı>/sonra.jsonl.
+    if kip == "secdal" {
+        // Evre 3: T tikinde maçı kopyalar; her kolda ilk taşıyıcı kararı zorlanır (once: zorlamasız; sut, pas, sur, tut),
+        // `süre` tik oynatılıp analiz satırları <klasör>/<kol>.jsonl'a yazılır
+        // T virgüllü liste olabilir: maç bir kez oynar, her T'de <klasör>/<T>/<kol>.jsonl yazılır
+        let dir0 = a.get(4).expect("secdal <klasör>").clone();
+        let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(300);
+        let kollar: Vec<String> = a.get(6).map(|x| x.split(',').map(|y| y.to_string()).collect()).unwrap_or(vec!["once".into(), "sut".into(), "pas".into(), "sur".into(), "tut".into()]);
+        let mut tler: Vec<u32> = a[2].split(',').filter_map(|x| x.parse().ok()).collect();
+        tler.sort();
+        let cok = tler.len() > 1 || std::env::var("ALAN_SECDAL_ALT").is_ok();
+        for tik in tler {
+        let dir = if cok { format!("{}/{}", dir0, tik) } else { dir0.clone() };
+        std::fs::create_dir_all(&dir).unwrap();
+        while mt.tick() < tik && !mt.bitti() {
+            mt.adim();
+        }
+        let anlik = mt.m.clone();
+        eprintln!("SECDAL {}", tik);
+        for kol in kollar.iter().cloned() {
+            alan_motor::mac::gecici_dis::SECIM_ZORLA.with(|z| *z.borrow_mut() = if kol == "once" { None } else { Some(kol.clone()) });
+            let mut m2 = Motor::yeni(anlik.clone());
+            let mut osay = m2.m.ev_n;
+            let mut sat: Vec<String> = Vec::new();
+            for _ in 0..sure {
+                if m2.bitti() { break; }
+                m2.adim();
+                sat.push(analiz_satir(&m2.m, &mut osay));
+            }
+            alan_motor::mac::gecici_dis::SECIM_ZORLA.with(|z| *z.borrow_mut() = None);
+            std::fs::write(format!("{}/{}.jsonl", dir, kol), sat.join("\n") + "\n").unwrap();
+        }
+        }
+        return;
+    }
     if kip == "dal" {
         let dir = a.get(4).expect("dal <çıktı>").clone();
         let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(300);
@@ -403,6 +438,7 @@ fn main() {
                     alan_motor::kafa::kafa2_tarti::SAH_TC_ZORLA.store(acik && ek.split(',').any(|x| x == "sahtc"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_ZORLA.store(acik && ek.split(',').any(|x| x == "bilgitutma"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_SUT_ZORLA.store(acik && ek.split(',').any(|x| x == "bilgitutmasut"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa2_tarti::PRE_BIR_ZORLA.store(acik && ek.split(',').any(|x| x == "prebir"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::KOVSUZ_SABIT_ZORLA.store(acik && ek.split(',').any(|x| x == "kovsuz"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::KAYIP_SAHIP_ZORLA.store(acik && ek.split(',').any(|x| x == "kayipsahip"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::SEKME_BEDEL_ZORLA.store(acik && ek.split(',').any(|x| x == "sekbedel"), std::sync::atomic::Ordering::Relaxed);
@@ -592,7 +628,7 @@ fn main() {
                     };
                     let P = r.P.unwrap_or(-1.0);
                     let Ps = r.Ps.unwrap_or(0.0);
-                    writeln!(out, "{{\"t\":{},\"ad\":{:?},\"tur\":{:?},\"q\":{:?},\"x\":{:.1},\"y\":{:.1},\"P\":{},\"Ps\":{},\"Pd\":{:.3},\"Pl\":{},\"v\":{},\"sonra\":{:?},\"kim\":{:?}}}", r.t, r.ad, r.kind, r.q.clone().unwrap_or_default(), r.x.unwrap_or(0.0), r.y.unwrap_or(0.0), P, Ps, (P - Ps).max(0.0), r.Pl.unwrap_or(-1.0), r.v.unwrap_or(0.0), rol, s.and_then(|s| s.kim.clone()).unwrap_or_default()).unwrap();
+                    writeln!(out, "{{\"t\":{},\"ad\":{:?},\"tur\":{:?},\"q\":{:?},\"x\":{:.1},\"y\":{:.1},\"P\":{},\"Ps\":{},\"Pd\":{:.3},\"Pl\":{},\"v\":{},\"sonra\":{:?},\"kim\":{:?},\"hiz\":{},\"tf\":{},\"takim\":{},\"kim_t\":{}}}", r.t, r.ad, r.kind, r.q.clone().unwrap_or_default(), r.x.unwrap_or(0.0), r.y.unwrap_or(0.0), P, Ps, (P - Ps).max(0.0), r.Pl.unwrap_or(-1.0), r.v.unwrap_or(0.0), rol, s.and_then(|s| s.kim.clone()).unwrap_or_default(), r.hiz.unwrap_or(-1.0), r.tf.unwrap_or(-1.0), r.team, s.and_then(|s| s.kim_t).unwrap_or(-1.0)).unwrap();
                 }
             }
         }

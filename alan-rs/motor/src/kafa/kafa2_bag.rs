@@ -278,6 +278,7 @@ fn det_of(u: Ucus) -> JODet {
         endD: Some(u.endD),
         Psek: Some(u.Psek),
         endSek: Some(u.endSek),
+        pre: Some(u.pre),
         ..Default::default()
     }
 }
