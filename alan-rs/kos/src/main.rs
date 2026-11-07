@@ -301,15 +301,22 @@ fn main() {
     if kip == "secdal" {
         // Evre 3: T tikinde maçı kopyalar; her kolda ilk taşıyıcı kararı zorlanır (once: zorlamasız; sut, pas, sur, tut),
         // `süre` tik oynatılıp analiz satırları <klasör>/<kol>.jsonl'a yazılır
-        let dir = a.get(4).expect("secdal <klasör>").clone();
+        // T virgüllü liste olabilir: maç bir kez oynar, her T'de <klasör>/<T>/<kol>.jsonl yazılır
+        let dir0 = a.get(4).expect("secdal <klasör>").clone();
         let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(300);
         let kollar: Vec<String> = a.get(6).map(|x| x.split(',').map(|y| y.to_string()).collect()).unwrap_or(vec!["once".into(), "sut".into(), "pas".into(), "sur".into(), "tut".into()]);
+        let mut tler: Vec<u32> = a[2].split(',').filter_map(|x| x.parse().ok()).collect();
+        tler.sort();
+        let cok = tler.len() > 1 || std::env::var("ALAN_SECDAL_ALT").is_ok();
+        for tik in tler {
+        let dir = if cok { format!("{}/{}", dir0, tik) } else { dir0.clone() };
         std::fs::create_dir_all(&dir).unwrap();
         while mt.tick() < tik && !mt.bitti() {
             mt.adim();
         }
         let anlik = mt.m.clone();
-        for kol in kollar {
+        eprintln!("SECDAL {}", tik);
+        for kol in kollar.iter().cloned() {
             alan_motor::mac::gecici_dis::SECIM_ZORLA.with(|z| *z.borrow_mut() = if kol == "once" { None } else { Some(kol.clone()) });
             let mut m2 = Motor::yeni(anlik.clone());
             let mut osay = m2.m.ev_n;
@@ -321,6 +328,7 @@ fn main() {
             }
             alan_motor::mac::gecici_dis::SECIM_ZORLA.with(|z| *z.borrow_mut() = None);
             std::fs::write(format!("{}/{}.jsonl", dir, kol), sat.join("\n") + "\n").unwrap();
+        }
         }
         return;
     }
