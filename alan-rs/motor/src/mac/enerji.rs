@@ -668,6 +668,19 @@ pub fn sprint_karar3(m: &mut Mac) {
         let _ = sS;
         if crate::iz_acik() && std::env::var("ALAN_K3_IZ").ok().as_deref() == Some(&format!("{}:{}", m.tick, pi)) {
             eprintln!("K3 tD={tD} tD2={tD2} kontra={kontra:?} sS={sS} e={e} dol={dol} topa={topa} bizde={bizde} j={j} f={fB} b={b} vm={vm} hk={hk} kM={kM} Sy={Sy} decT={}", m.dec_t);
+            // K3 aday dökümü (yalnız iz): her kat için varış T (durağan hedefe), bar bedeli c, seçim değeri V (hiz2 ise hiz2
+            // kuralı), eski kuralın değeri Sy·wf(T,tD) ve topun yolunda bu katla gerçek yetişme tiki (fr noktaları, tepkisiz,
+            // menzil payıyla; uçuş okumasının alıcı noktası sprintle hesaplı)
+            let R = crate::sekil::ucus::menzil_p(&m.ps[pi], &kk);
+            let pts: Vec<(f64, f64)> = fr.as_ref().map_or(vec![], |f| f.pts.iter().map(|q| (q.x, q.y)).collect());
+            let (px, py) = (m.ps[pi].x, m.ps[pi].y);
+            let yet = |v: f64| -> f64 { pts.iter().enumerate().find(|(i, q)| hypot(q.0 - px, q.1 - py) - R <= v * *i as f64).map_or(-1.0, |(i, _)| i as f64) };
+            eprintln!("K3h hedef=({tx:.2},{ty:.2}) d={d:.2} r.t={:?} R={R:.2} top_son=({:.1},{:.1}) n={}", r.as_ref().map(|r| r.t), pts.last().map_or(f64::NAN, |q| q.0), pts.last().map_or(f64::NAN, |q| q.1), pts.len());
+            for f in [-1.0, -0.6, -0.3, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0] {
+                if !((if yuru_a { -1.0 } else { 0.0 })..=1.0).contains(&f) { continue; }
+                let (k, T, c) = c_k(f);
+                eprintln!("K3a f={f:.1} k={k:.3} v={:.3} T={T:.1} c={c:.4} V={:.5} eski={:.5} yetis={}", b * k, DEG(T, c), Sy * wf(T, tD), yet(b * k));
+            }
         }
         let p = &mut m.ps[pi];
         p.hal_mut()._hizK = Some(k_s);
