@@ -35,6 +35,15 @@ fn kd_ekseni() -> &'static [f64] {
 }
 /// 16 tablo (şutçu L × Bekçi L, sıra L[a]-L[b]), her biri DS×SY×KO×KD×CH, değer −1 (yok) ya da 0–100.
 static IMK_SUT: &[u8; 16 * TAB_BOY] = include_bytes!("kafa2_imk_sut.bin");
+/// BEK_DIREK (dar açıda Bekçi yakın direği tutar) açıkken kafanın şut modeli değişir; o kuralla üretilmiş tablo
+/// (sina/tablo.sh --uret, ALAN_BEK_DIREK_IZ ile; izi yanında). Bayrak kalıcı olunca tek tabloya inilir.
+static IMK_SUT_BEKDIREK: &[u8; 16 * TAB_BOY] = include_bytes!("kafa2_imk_sut_bekdirek.bin");
+/// BEK_DIREK'in kafa tarafı (sekil::yer::bek_direk ile aynı bayrak; wasm'da bek_direk anahtarı ikisini birlikte kurar).
+pub static BEK_DIREK_TABLO_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn bek_direk_tablo() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    BEK_DIREK_TABLO_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_BEK_DIREK_IZ").is_ok())
+}
 /// Dosyadaki tablo ne zaman kullanılır: ALAN_IMK_TABLO_HEP ortamda ya da ölçümde (kopya maçlar) IMK_TABLO_ZORLA
 pub static IMK_TABLO_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 /// Şut tablosunun Bekçi ideali boş sahada (ALAN_BEK_YER_BOS_ESKI=1 ya da BEK_YER_BOS_KAPALI ile eski: dolu dünyada).
@@ -61,6 +70,7 @@ fn tab_v(tab: usize, i: usize) -> f64 {
     match if tablo_dis_acik() { imk_tablo_dis() } else { None } {
         Some(t) if t.len() == 16 * TAB_BOY_ESKI => t[tab * TAB_BOY_ESKI + i] as i8 as f64,
         Some(t) => t[tab * TAB_BOY + i] as i8 as f64,
+        None if bek_direk_tablo() => IMK_SUT_BEKDIREK[tab * TAB_BOY + i] as i8 as f64,
         None => IMK_SUT[tab * TAB_BOY + i] as i8 as f64,
     }
 }

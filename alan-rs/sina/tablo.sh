@@ -21,6 +21,8 @@ if [ "${1:-}" = "--uret" ]; then
 fi
 simdi=$("$kos" "$kayit" 2 sutizi 2>/dev/null)
 izf="motor/src/kafa/kafa2_imk_sut.bin.iz"
+# BEK_DIREK açıkken kafa kendi tablosunu okur (kafa2_imkan IMK_SUT_BEKDIREK)
+[ -n "${ALAN_BEK_DIREK_IZ:-}" ] && izf="motor/src/kafa/kafa2_imk_sut_bekdirek.bin.iz"
 tablo=$( [ -f "$izf" ] && cat "$izf" || echo "izsiz")
 if [ "$simdi" = "$tablo" ]; then
   echo "şut tablosu güncel (iz $simdi)"

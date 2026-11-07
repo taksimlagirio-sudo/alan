@@ -63,6 +63,9 @@ pub struct KafaKayit {
     pub savT: Option<f64>,
     pub tf: Option<f64>,
     pub alis: Option<(Option<f64>, Option<f64>)>,
+    /// ölçüm: alıcının karar anındaki koşu katı (_hizK) ve depar bayrağı
+    pub q_hizk: Option<f64>,
+    pub q_spr: bool,
     pub x: Option<f64>,
     pub y: Option<f64>,
     pub cikis: Option<f64>,
@@ -160,6 +163,8 @@ pub fn kafa_basla(m: &mut Mac, h: Pid, o: &mut Secenek, ot: bool) {
         savT: o.savT,
         tf: o.tf.map(jround),
         alis: e.map(|e| (k3(Some(e.0)), k3(Some(e.1)))),
+        q_hizk: q.filter(|&q| q != h).and_then(|q| m.ps[q].hal._hizK),
+        q_spr: q.filter(|&q| q != h).map_or(false, |q| m.ps[q].sprint),
         x: k3(Some(hp.x)),
         y: k3(Some(hp.y)),
         ..Default::default()
