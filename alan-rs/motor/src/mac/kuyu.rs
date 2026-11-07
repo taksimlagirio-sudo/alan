@@ -144,6 +144,9 @@ pub fn kuyu_saat(m: &mut Mac, mt: f64, m_h: Option<Pid>) {
             let v = jmax(0.05, spd(p) * v_k(p, m_h == Some(pi), mt, &kk));
             let tv = hypot(p.tx - p.x, p.ty - p.y) / v;
             let topa = bas(job(p), &["kovala", "alıcı"]) || m.fl.as_ref().map_or(false, |f| f.q == Some(pi));
+            // kuyu_kal: savunmacı hedefinde işi sürdükçe kalır; giriş sınaması yalnız varışı değil kalışı da saysın
+            let tv = if kuyu_kal() && !topa { jmax(tv, kuyu_kalis(m, pi, tb)) } else { tv };
+            let p = &m.ps[pi];
             if !kuyu_girer(p, p.tx, p.ty, tv, !topa, &kk) {
                 let gx = if hypot(p.tx, p.ty - CY) < hypot(p.tx - W, p.ty - CY) { 0.0 } else { W };
                 let dx = p.tx - gx;
@@ -175,4 +178,38 @@ pub static KUYU_PAY_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::At
 pub fn kuyu_pay() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     KUYU_PAY_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_KUYU_PAY_IZ").is_ok())
+}
+
+/// kuyu_kal: kendi Kuyu'sundaki hedefte savunmacının kalması gereken süre (tik, şimdiden): top bu Kuyu'ya girene dek (saat
+/// orada durur; top sürülerek gelirse en geç, KUYU_KAL_V br/tik) ya da tuttuğu adam Kuyu'daysa adamın saati dolana dek
+/// (adam da çıkmak zorunda). Hedef rakip Kuyu'sundaysa ya da top zaten bu Kuyu'daysa 0. Eski sınama yalnız varışı sayıyordu:
+/// savunmacı top uzaktayken girip saati doluyor, şut anında çıkıyordu (217468 4756–4809 Burç: 'arkada · Kaan' hedefi Kuyu'da,
+/// top 43 br uzakta; 4762'de çıkış başladı, 47 tik sürdü).
+pub fn kuyu_kalis(m: &Mac, pi: Pid, tb: Option<(f64, f64)>) -> f64 {
+    let p = &m.ps[pi];
+    let gx = if p.team == 0.0 { 0.0 } else { W };
+    if hypot(p.tx - gx, p.ty - CY) >= Q.kuyu_a {
+        return 0.0;
+    }
+    let Some((bx, by)) = tb else { return 0.0 };
+    let d = hypot(bx - gx, by - CY) - Q.kuyu_a;
+    if d <= 0.0 {
+        return 0.0;
+    }
+    let mut t = d / KUYU_KAL_V;
+    if let Some(q) = p.hal.tutQ.or(p.hal.markRef) {
+        let qp = &m.ps[q];
+        if hypot(qp.x - gx, qp.y - CY) < Q.kuyu_a {
+            t = jmin(t, jmax(0.0, Q.kuyu_sn - qp.hal.kuyuT.unwrap_or(0.0)));
+        }
+    }
+    t
+}
+/// kuyu_kal: topun en geç geliş hızı (sürüş)
+pub const KUYU_KAL_V: f64 = 0.3;
+/// Deney (ALAN_KUYU_KAL_IZ; ölçümde/wasm'da KUYU_KAL_ZORLA): Kuyu'ya giriş sınamasında savunmacının kalış süresi. Varsayılan kapalı.
+pub static KUYU_KAL_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn kuyu_kal() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    KUYU_KAL_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_KUYU_KAL_IZ").is_ok())
 }

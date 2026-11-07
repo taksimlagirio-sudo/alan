@@ -486,6 +486,8 @@ anahtar!(hiz2_taban, alan_motor::mac::enerji::HIZ2_TABAN_ZORLA);
 anahtar!(kp_hamle, alan_motor::kafa::kafa1_ikili::KP_HAMLE_ZORLA);
 // Bekçi'nin yeniden dokunma beklemesi top hızına göre sürekli (bekcd; çelen Bekçi yavaş topu bekletmez)
 anahtar!(bek_cd, alan_motor::temas::BEK_CD_ZORLA);
+// Kuyu'ya giriş sınamasında savunmacının kalış süresi (kuyukal)
+anahtar!(kuyu_kal, alan_motor::mac::kuyu::KUYU_KAL_ZORLA);
 // sahiplik haritasının tahmin dünyası topun gerçek varışında (sahtc) / hücre şutunda dibindeki rakip ikili kesmez (sahdibinde)
 anahtar!(sah_tc, alan_motor::kafa::kafa2_tarti::SAH_TC_ZORLA);
 anahtar!(sah_dibinde, alan_motor::kafa::kafa2_tarti::SAH_DIBINDE_ZORLA);
