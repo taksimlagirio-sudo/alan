@@ -482,3 +482,9 @@ anahtar!(kayip_harita, alan_motor::kafa::kafa2_tarti::KAYIP_HARITA_ZORLA);
 anahtar!(hiz2, alan_motor::mac::enerji::HIZ2_ZORLA);
 // keep_p hamle süresini ve bekleme süresini tartar (kphamle; B2)
 anahtar!(kp_hamle, alan_motor::kafa::kafa1_ikili::KP_HAMLE_ZORLA);
+// sahiplik haritasının tahmin dünyası topun gerçek varışında (sahtc) / hücre şutunda dibindeki rakip ikili kesmez (sahdibinde)
+anahtar!(sah_tc, alan_motor::kafa::kafa2_tarti::SAH_TC_ZORLA);
+anahtar!(sah_dibinde, alan_motor::kafa::kafa2_tarti::SAH_DIBINDE_ZORLA);
+// A1 tutma bilgi tablosu kayıp bedelinde (bilgitutma) / yalnız şutun bedelinde (bilgitutmasut)
+anahtar!(bilgi_tutma, alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_ZORLA);
+anahtar!(bilgi_tutma_sut, alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_SUT_ZORLA);
