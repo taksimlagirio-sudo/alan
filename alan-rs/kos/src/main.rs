@@ -290,6 +290,34 @@ fn main() {
     }
     // an: <kayıt> <t1,t2,…> an <önek> [süre]: maç bugünkü kafayla oynar; her ti'de kopya maç iki kez oynatılır
     // (bugünkü kafa / tutmayı gerçeğe yakın kestiren kafa), kareler <önek>-<ti>-{eski,yeni}.json (kare kipinin biçimi)
+    // dal: <kayıt> <tik> dal <çıktı klasörü> <süre> <S7 ek bitleri>: maçı tike dek oynatır, oradan iki kol açar:
+    // "once" (değişmeden) ve "sonra" (sekil::S7_ZORLA'ya ek bitler, ör. 128 = S7h), her kol <süre> tik, analiz kipinin satır
+    // biçiminde <çıktı>/once.jsonl ve <çıktı>/sonra.jsonl.
+    if kip == "dal" {
+        let dir = a.get(4).expect("dal <çıktı>").clone();
+        let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(300);
+        let bit: u8 = a.get(6).and_then(|x| x.parse().ok()).unwrap_or(128);
+        std::fs::create_dir_all(&dir).unwrap();
+        while mt.tick() < tik && !mt.bitti() {
+            mt.adim();
+        }
+        let anlik = mt.m.clone();
+        let onceki = alan_motor::sekil::S7_ZORLA.load(std::sync::atomic::Ordering::Relaxed);
+        for (kol, ek) in [("once", 0u8), ("sonra", bit)] {
+            alan_motor::sekil::S7_ZORLA.store(onceki | ek, std::sync::atomic::Ordering::Relaxed);
+            let mut m2 = Motor::yeni(anlik.clone());
+            let mut osay = m2.m.ev_n;
+            let mut sat: Vec<String> = Vec::new();
+            for _ in 0..sure {
+                if m2.bitti() { break; }
+                m2.adim();
+                sat.push(analiz_satir(&m2.m, &mut osay));
+            }
+            std::fs::write(format!("{}/{}.jsonl", dir, kol), sat.join("\n") + "\n").unwrap();
+        }
+        alan_motor::sekil::S7_ZORLA.store(onceki, std::sync::atomic::Ordering::Relaxed);
+        return;
+    }
     if kip == "an" {
         let tikler: Vec<u32> = a[2].split(',').filter_map(|x| x.parse().ok()).collect();
         let onek = a.get(4).expect("an <önek>").clone();
@@ -710,4 +738,16 @@ fn sut_izi(m: &alan_motor::mac::MacTam) -> String {
         }}}}
     }
     format!("{:016x}", h)
+}
+
+/// analiz kipinin bir satırı (dal kipi de kullanır)
+fn analiz_satir(m: &alan_motor::mac::MacTam, olay_say: &mut u64) -> String {
+    let f = |x: f64| if x.is_finite() { format!("{:.2}", x) } else { "null".into() };
+    let b = m.ball.as_ref().map_or("null".to_string(), |b| format!("[{},{},{},{},{:.3},{}]", f(b.x), f(b.y), f(b.vx), f(b.vy), b.ch, b.team));
+    let fl = m.fl.as_ref().map_or("null".to_string(), |x| format!("[{},{},{},{},{}]", serde_json::to_string(&x.kind).unwrap(), x.t0, x.q.map_or(-1, |q| q as i64), x.to.as_ref().map_or("null".into(), |t| format!("[{},{}]", f(t.x), f(t.y))), serde_json::to_string(&x.shot).unwrap()));
+    let ps: Vec<String> = m.ps.iter().map(|p| format!("[{},{},{},{},{},{},{},{},{}]", f(p.x), f(p.y), f(p.vx), f(p.vy), f(p.tx), f(p.ty), serde_json::to_string(&p.job.clone().unwrap_or_default()).unwrap(), p.en.map_or("null".into(), |e| format!("{:.3}", e)), if p.hal.sendT.unwrap_or(0.0) > m.tick { 1 } else { 0 })).collect();
+    let yeni = ((m.ev_n - *olay_say) as usize).min(m.events.len());
+    let ev: Vec<String> = m.events.iter().take(yeni).rev().map(|e| format!("[{},{}]", e.team, serde_json::to_string(&e.text).unwrap())).collect();
+    *olay_say = m.ev_n;
+    format!("{{\"t\":{},\"h\":{},\"s\":[{},{}],\"b\":{},\"fl\":{},\"p\":[{}],\"ev\":[{}]}}", m.tick, m.holder.map_or(-1, |h| h as i64), m.score[0], m.score[1], b, fl, ps.join(","), ev.join(","))
 }
