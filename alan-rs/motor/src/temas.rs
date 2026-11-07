@@ -56,6 +56,8 @@ pub struct TopTemas {
     pub oku: crate::HizliMap<i64, (f64, f64)>,
     /// yeniden dokunma beklemesi: oyuncu → tik (JS b.cds)
     pub cds: crate::HizliMap<usize, f64>,
+    /// bek_cd: Bekçi'nin yeniden dokunma beklemesinin başladığı tik (bekleme topun o anki hızıyla yeniden hesaplanır)
+    pub cds0: crate::HizliMap<usize, f64>,
     /// Bekçi'nin harekete geçirdiği top (bekId: oyuncu id'si, bekM)
     pub bek_id: Option<u32>,
     pub bek_m: f64,
@@ -465,7 +467,13 @@ pub fn contact(b: &mut TopT, ps: &mut [Oyuncu], rnd: &mut dyn FnMut() -> f64, ox
     let (mut bd, mut be, mut b_r) = (1e9f64, 1e9f64, 1.0f64);
     for pi in 0..ps.len() {
         let p = &ps[pi];
-        if p.noTouch || p.hal.sonuk || b.t.cds.get(&pi).copied().unwrap_or(0.0) > b.b.t {
+        // bek_cd: Bekçi'nin beklemesi topun şimdiki hızına göre: çelip dibine düşen yavaş top beklemeden alınabilir (bekleme temas
+        // anındaki hızla 12 tike dek sabitti; 302 / 8317'de çelinen top Bekçi'nin 0,9 br'sinde 9 tik sürünüp girdi)
+        let bekliyor = b.t.cds.get(&pi).copied().unwrap_or(0.0) > b.b.t && !(bek_cd() && p.bekci() && b.t.cds0.get(&pi).map_or(false, |&t0| {
+            let v = hyp(b.b.vx, b.b.vy);
+            b.b.t >= t0 + jmax(Q.cd_min, jround(Q.cd * jmin(1.0, v / Q.cd_v)))
+        }));
+        if p.noTouch || p.hal.sonuk || bekliyor {
             continue;
         }
         if Some(pi) == b.t.from && b.b.t < 8.0 {
@@ -576,6 +584,9 @@ pub fn contact(b: &mut TopT, ps: &mut [Oyuncu], rnd: &mut dyn FnMut() -> f64, ox
     };
     let cdv = if !bp.bekci() { Q.cd - 0.5 * (bp.govde.yet.y(mek::YENIDEN_DOKUN) - 10.0) } else { Q.cd };
     b.t.cds.insert(bi, b.b.t + jmax(Q.cd_min, jround(cdv * jmin(1.0, sp0 / Q.cd_v))));
+    if bek_cd() && bp.bekci() {
+        b.t.cds0.insert(bi, b.b.t);
+    }
     let thru = !mate_t && bd >= 1.0 && {
         let r = rnd();
         r < thru_p(&b.b, bp) * if bp.bekci() { bek_uc(bd, b_r) } else { 1.0 }
@@ -871,4 +882,13 @@ pub fn govde_it(b: &mut Top, ps: &[Oyuncu], skip: &dyn Fn(usize) -> bool, r: f64
             b.vy -= vn * ny;
         }
     }
+}
+
+/// Deney (ALAN_BEK_CD_IZ; ölçümde/wasm'da BEK_CD_ZORLA; analizci onaylı kural değişikliği): Bekçi'nin çeldikten sonraki yeniden
+/// dokunma beklemesi topun şimdiki hızına göre sürekli (Q.cd × min(1, v / Q.cd_v), en az Q.cd_min); temas anındaki hızla sabit
+/// değil. Varsayılan kapalı.
+pub static BEK_CD_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn bek_cd() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    BEK_CD_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_BEK_CD_IZ").is_ok())
 }

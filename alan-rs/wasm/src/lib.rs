@@ -462,7 +462,7 @@ anahtar!(sav_taban, alan_motor::sekil::konum::SAV_TABAN_ZORLA);
 /// S7 taşıyıcıyı durdurmak: bit 1 şut hattı, 2 ikinci presçi, 4 kale önüne dönüş (7 hepsi)
 #[no_mangle]
 pub extern "C" fn s7(bit: i32) {
-    alan_motor::sekil::S7_ZORLA.store(bit as u16, std::sync::atomic::Ordering::Relaxed);
+    alan_motor::sekil::S7_ZORLA.store(bit as u32, std::sync::atomic::Ordering::Relaxed);
 }
 // H4a: hücum dizilişinin ön ucu toptan en çok bir pas menzili ileride (hucumboy)
 anahtar!(hucum_boy, alan_motor::sekil::yer::HUCUM_BOY_ZORLA);
@@ -485,8 +485,18 @@ anahtar!(yuru, alan_motor::mac::enerji::YURU_ZORLA);
 anahtar!(kayip_harita, alan_motor::kafa::kafa2_tarti::KAYIP_HARITA_ZORLA);
 // hız tercihi: koşu değeri varışla sürekli, savunmada tehlike anına karşı, bar değeri hedeften bağımsız (hiz2)
 anahtar!(hiz2, alan_motor::mac::enerji::HIZ2_ZORLA);
+// hiz2: tehlike anından sonraki varışın değer tabanı (hiz2taban)
+anahtar!(hiz2_taban, alan_motor::mac::enerji::HIZ2_TABAN_ZORLA);
+// hiz2_taban'ın uzaklığa bağlı sürümü (hiz2taband)
+anahtar!(hiz2_taban_d, alan_motor::mac::enerji::HIZ2_TABAN_D_ZORLA);
 // keep_p hamle süresini ve bekleme süresini tartar (kphamle; B2)
 anahtar!(kp_hamle, alan_motor::kafa::kafa1_ikili::KP_HAMLE_ZORLA);
+// Bekçi'nin yeniden dokunma beklemesi top hızına göre sürekli (bekcd; çelen Bekçi yavaş topu bekletmez)
+anahtar!(bek_cd, alan_motor::temas::BEK_CD_ZORLA);
+// Kuyu'ya giriş sınamasında savunmacının kalış süresi (kuyukal)
+anahtar!(kuyu_kal, alan_motor::mac::kuyu::KUYU_KAL_ZORLA);
+// presçinin yetişme süresi taşıyıcının hızıyla buluşma (preskes)
+anahtar!(pres_kes, alan_motor::sekil::konum::PRES_KES_ZORLA);
 // sahiplik haritasının tahmin dünyası topun gerçek varışında (sahtc) / hücre şutunda dibindeki rakip ikili kesmez (sahdibinde)
 anahtar!(sah_tc, alan_motor::kafa::kafa2_tarti::SAH_TC_ZORLA);
 anahtar!(sah_dibinde, alan_motor::kafa::kafa2_tarti::SAH_DIBINDE_ZORLA);

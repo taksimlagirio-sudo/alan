@@ -1,0 +1,17 @@
+== kapali (kapali=ALAN_BOS=1)
+kapali-*.jsonl: 16 maç, hedef ters dönüşü 9260 (579/maç), 30 tikte geri dönen 4344 (272/maç)
+kapali-*.jsonl: 16 maç, markaj ↔ geri koşu gidip gelme (30 tikte A→B→A) 997 (62.3/maç)
+kapali-*.jsonl rakip topta 64016 tik: en geri savunmacının arkasında rakip %4.8; 'öne çık' olan tik %1.6; goller [41, 56]
+analiz/olcum/bekcd9-301-316/kapali-*.jsonl: tehlikeli an 18636 tik; hedefine 8 br+ uzak savunmacı-tik 34159, yürüyen (<0,2) %38.5
+== acik (acik=ALAN_BEK_CD_IZ=1)
+acik-*.jsonl: 16 maç, hedef ters dönüşü 9281 (580/maç), 30 tikte geri dönen 4354 (272/maç)
+acik-*.jsonl: 16 maç, markaj ↔ geri koşu gidip gelme (30 tikte A→B→A) 1043 (65.2/maç)
+acik-*.jsonl rakip topta 63649 tik: en geri savunmacının arkasında rakip %4.8; 'öne çık' olan tik %1.6; goller [41, 55]
+analiz/olcum/bekcd9-301-316/acik-*.jsonl: tehlikeli an 18751 tik; hedefine 8 br+ uzak savunmacı-tik 34045, yürüyen (<0,2) %38.5
+kapali-*.jsonl 16 maç: Bekçi çelmesi 55, 1 sn içinde gol 3 (%5.5); 3 sn+ tutmadan yakında 0, 3 sn+ elde 1
+acik-*.jsonl 16 maç: Bekçi çelmesi 55, 1 sn içinde gol 3 (%5.5); 3 sn+ tutmadan yakında 0, 3 sn+ elde 1
+kapalıdan farklı maç 1/16
+Tutunca akış (305, ayrışan tek maç): 5728 şut, 5731 Aras çeliyor, top kale çizgisinde (1,4; 32) duruyor.
+  kapalı: 5743 tutuyor (12 tik bekleme), 5767 kenardan sektirip Tuna'ya, top sonra Cansu'da.
+  açık:   5734 tutuyor (3 tik), 5743 bırakıyor, uzun top 5779 Siper'de (rakip), 5782 Siper çekirdeği çekiyor.
+  İkisinde de gol yok; fark yalnız tutuşun 9 tik erken olması ve ardından gelen bırakış.

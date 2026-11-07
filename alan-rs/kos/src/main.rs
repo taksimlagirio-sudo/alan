@@ -352,7 +352,8 @@ fn main() {
         return;
     }
     // hizdal: <kayıt> <t1,t2,…> hizdal <klasör> <süre> <oyuncu1,oyuncu2,…> <N>: her ti'de maçı kopyalar, iki kol: "depar" ve
-    // "tempo" (oyuncu_i N tik boyunca o hıza zorlanır; mac::enerji::HIZ_ZORLA), her kol <süre> tik, <klasör>/<ti>/<kol>.jsonl
+    // "tempo" (oyuncu_i N tik boyunca o hıza zorlanır; mac::enerji::HIZ_ZORLA) ve "once" (zorlamasız), her kol <süre> tik,
+    // <klasör>/<ti>/<kol>.jsonl
     if kip == "hizdal" {
         let dir0 = a.get(4).expect("hizdal <klasör>").clone();
         let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(360);
@@ -369,8 +370,8 @@ fn main() {
                 mt.adim();
             }
             let anlik = mt.m.clone();
-            for (kol, dep) in [("depar", true), ("tempo", false)] {
-                alan_motor::mac::enerji::HIZ_ZORLA.with(|z| z.set(Some((pi, dep, tik as f64 + nz))));
+            for (kol, dep) in [("once", None), ("depar", Some(true)), ("tempo", Some(false))] {
+                alan_motor::mac::enerji::HIZ_ZORLA.with(|z| z.set(dep.map(|d| (pi, d, tik as f64 + nz))));
                 let mut m2 = Motor::yeni(anlik.clone());
                 let mut osay = m2.m.ev_n;
                 let mut sat: Vec<String> = Vec::new();
@@ -390,12 +391,12 @@ fn main() {
         let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(300);
         // ek bitler: tek sayı ("sonra" kolu) ya da virgüllü liste (her biri "b<bit>" kolu)
         // her öğe: S7 bitleri ("768"), "hiz2" (HIZ2_ZORLA) ya da "hiz2+768"
-        let bl: Vec<(String, bool, u16)> = a.get(6).map(|x| x.split(',').map(|y| {
+        let bl: Vec<(String, bool, u32)> = a.get(6).map(|x| x.split(',').map(|y| {
             let h = y.starts_with("hiz2");
-            let b: u16 = y.trim_start_matches("hiz2").trim_start_matches('+').parse().unwrap_or(0);
+            let b: u32 = y.trim_start_matches("hiz2").trim_start_matches('+').parse().unwrap_or(0);
             (y.replace('+', "_"), h, b)
         }).collect()).unwrap_or(vec![("128".into(), false, 128)]);
-        let mut kollar: Vec<(String, bool, u16)> = vec![("once".into(), false, 0)];
+        let mut kollar: Vec<(String, bool, u32)> = vec![("once".into(), false, 0)];
         if bl.len() == 1 && !bl[0].1 { kollar.push(("sonra".into(), false, bl[0].2)); } else { for (ad, h, b) in &bl { kollar.push((if *h { ad.clone() } else { format!("b{}", b) }, *h, *b)); } }
         std::fs::create_dir_all(&dir).unwrap();
         while mt.tick() < tik && !mt.bitti() {
@@ -733,7 +734,7 @@ fn main() {
             let f = |x: f64| if x.is_finite() { format!("{:.2}", x) } else { "null".into() };
             let b = m.ball.as_ref().map_or("null".to_string(), |b| format!("[{},{},{},{},{:.3},{}]", f(b.x), f(b.y), f(b.vx), f(b.vy), b.ch, b.team));
             let fl = m.fl.as_ref().map_or("null".to_string(), |x| format!("[{},{},{},{},{}]", serde_json::to_string(&x.kind).unwrap(), x.t0, x.q.map_or(-1, |q| q as i64), x.to.as_ref().map_or("null".into(), |t| format!("[{},{}]", f(t.x), f(t.y))), serde_json::to_string(&x.shot).unwrap()));
-            let ps: Vec<String> = m.ps.iter().map(|p| format!("[{},{},{},{},{},{},{},{},{}]", f(p.x), f(p.y), f(p.vx), f(p.vy), f(p.tx), f(p.ty), serde_json::to_string(&p.job.clone().unwrap_or_default()).unwrap(), p.en.map_or("null".into(), |e| format!("{:.3}", e)), if p.hal.sendT.unwrap_or(0.0) > m.tick { 1 } else { 0 })).collect();
+            let ps: Vec<String> = m.ps.iter().map(|p| format!("[{},{},{},{},{},{},{},{},{},{}]", f(p.x), f(p.y), f(p.vx), f(p.vy), f(p.tx), f(p.ty), serde_json::to_string(&p.job.clone().unwrap_or_default()).unwrap(), p.en.map_or("null".into(), |e| format!("{:.3}", e)), if p.hal.sendT.unwrap_or(0.0) > m.tick { 1 } else { 0 }, p.den.map_or("null".into(), |d| format!("{:.2}", d)))).collect();
             let yeni = ((m.ev_n - olay_say) as usize).min(m.events.len());
             let ev: Vec<String> = m.events.iter().take(yeni).rev().map(|e| format!("[{},{}]", e.team, serde_json::to_string(&e.text).unwrap())).collect();
             olay_say = m.ev_n;
@@ -855,7 +856,7 @@ fn analiz_satir(m: &alan_motor::mac::MacTam, olay_say: &mut u64) -> String {
     let f = |x: f64| if x.is_finite() { format!("{:.2}", x) } else { "null".into() };
     let b = m.ball.as_ref().map_or("null".to_string(), |b| format!("[{},{},{},{},{:.3},{}]", f(b.x), f(b.y), f(b.vx), f(b.vy), b.ch, b.team));
     let fl = m.fl.as_ref().map_or("null".to_string(), |x| format!("[{},{},{},{},{}]", serde_json::to_string(&x.kind).unwrap(), x.t0, x.q.map_or(-1, |q| q as i64), x.to.as_ref().map_or("null".into(), |t| format!("[{},{}]", f(t.x), f(t.y))), serde_json::to_string(&x.shot).unwrap()));
-    let ps: Vec<String> = m.ps.iter().map(|p| format!("[{},{},{},{},{},{},{},{},{}]", f(p.x), f(p.y), f(p.vx), f(p.vy), f(p.tx), f(p.ty), serde_json::to_string(&p.job.clone().unwrap_or_default()).unwrap(), p.en.map_or("null".into(), |e| format!("{:.3}", e)), if p.hal.sendT.unwrap_or(0.0) > m.tick { 1 } else { 0 })).collect();
+    let ps: Vec<String> = m.ps.iter().map(|p| format!("[{},{},{},{},{},{},{},{},{},{}]", f(p.x), f(p.y), f(p.vx), f(p.vy), f(p.tx), f(p.ty), serde_json::to_string(&p.job.clone().unwrap_or_default()).unwrap(), p.en.map_or("null".into(), |e| format!("{:.3}", e)), if p.hal.sendT.unwrap_or(0.0) > m.tick { 1 } else { 0 }, p.den.map_or("null".into(), |d| format!("{:.2}", d)))).collect();
     let yeni = ((m.ev_n - *olay_say) as usize).min(m.events.len());
     let ev: Vec<String> = m.events.iter().take(yeni).rev().map(|e| format!("[{},{}]", e.team, serde_json::to_string(&e.text).unwrap())).collect();
     *olay_say = m.ev_n;

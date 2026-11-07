@@ -20,7 +20,7 @@ pub mod konum;
 pub use gec::{gec, gec_of, gec_tab, gec_tab_v, gec_y, GecTab, GecY};
 pub use gor::{bak, gorulen, seen, Gorulen};
 pub use konum::position;
-pub use pres::{ilk_pres, mac_pres, pres_lim, s7, S7H_ON, S7I_MAX, S7I_D, S7J_ARA, S7J_ON, S7K, S7M_ACIL, S7N_ARA, S7N_PAY, S7_D, S7_ZORLA};
+pub use pres::{ilk_pres, mac_pres, pres_lim, s7, S7H_ON, S7I_MAX, S7I_D, S7J_ARA, S7J_ON, S7K, S7M_ACIL, S7P_ARA, S7Q_PAY, S7N_ARA, S7N_PAY, S7_D, S7_ZORLA};
 pub use sabit::*;
 pub use takim::{govde_f, kur_o, yer_v, yol_p, KurO, TvAday, cover_spots, kapat_hat, lane_open, metrics, team_v, tehlike, yol_t, Metrik, Tehlike};
 pub use ucus::{menzil_o, menzil_p, okuT, alici, alici_direnc, flight_read, kendi_topu, Ar, Fr, Nokta};
