@@ -415,6 +415,28 @@ pub fn sah_tc() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     SAH_TC_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_TC_IZ").is_ok())
 }
+mod sah_deger_tab {
+    include!("kafa2_sah_deger.rs");
+}
+/// Deney (ALAN_SAH_DEGER_IZ; ölçümde SAH_DEGER_ZORLA): kayıp bedelinin sahiplik değeri en az bölgenin sahiplik değeri
+/// tablosu (motorun kendi maçlarından "topu burada tutan takımın bu sahipliği golle biter" oranı, sina/sahdeger.py).
+pub static SAH_DEGER_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sah_deger_acik() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAH_DEGER_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_DEGER_IZ").is_ok())
+}
+/// Bölgenin sahiplik değeri (takım `team` topta, (x, y)'de); tablo ikili ara değerli.
+pub fn sah_deger(team: f64, x: f64, y: f64) -> f64 {
+    use sah_deger_tab::{SAH_DEGER as T, SAH_DEGER_KG as K};
+    let nx = T.len();
+    let ny = T[0].len();
+    let dx = if team == 0.0 { GW - x } else { x };
+    let fx = jmax(0.0, jmin(nx as f64 - 1.000001, dx / K));
+    let fy = jmax(0.0, jmin(ny as f64 - 1.000001, (y - GCY).abs() / K));
+    let (i, j) = (fx.floor() as usize, fy.floor() as usize);
+    let (u, w) = (fx - i as f64, fy - j as f64);
+    T[i][j] * (1.0 - u) * (1.0 - w) + T[i + 1][j] * u * (1.0 - w) + T[i][j + 1] * (1.0 - u) * w + T[i + 1][j + 1] * u * w
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
@@ -1479,6 +1501,7 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
         // ALAN_KAYIP_HARITA_IZ: sahipliğin değeri en az bölgenin sahiplik değeri (harita); kısa ufuklu somut seçenekler
         // uzakta topu tutmanın değerini küçük görüyordu (uzak şutun bedeli ucuzluyordu)
         let v0 = if kayip_harita() { jmax(v0, zemin_s(k, src, team, h.x, h.y, ch, Some(&h))) } else { v0 };
+        let v0 = if sah_deger_acik() { jmax(v0, sah_deger(team, h.x, h.y)) } else { v0 };
         for o in opts.iter_mut() {
             let Some(v) = o.v else { continue };
             // pas: rakibe geçme olasılığı (Pl; sekip bizde kalan kayıp değil). ALAN_KAYIP_SAHIP_PD_IZ: eski (1 − doğrudan varma)
