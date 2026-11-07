@@ -16,6 +16,8 @@ alan() { python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get(sys
 if [ "${1:-}" = "--uret" ]; then
   ad="$2"; tur="${3:-4}"; EK=""; IZ=""; source "sina/bilgi/$ad.conf"
   tablo="motor/veri/bilgi/$ad.json"; gec=$(mktemp -d); trap 'rm -rf "$gec"' EXIT
+  # her turun ölçümü ve harmanlanmış tablosu (salınım/gürültü ayrımı için): analiz/bilgi-gecmis/<ad>/<zaman>/
+  gecmis="analiz/bilgi-gecmis/$ad/$(date -u +%Y%m%dT%H%M)"
   for t in $(seq 1 "$tur"); do
     cargo build --release -q -p alan-kos
     ls=()
@@ -27,21 +29,30 @@ if [ "${1:-}" = "--uret" ]; then
     printf '%s\n' $TOHUMLAR | xargs -P4 -I{} sh -c "env $(grep -v '^#' analiz/bayraklar.env | tr '\n' ' ') $(bayrak_ad "$ad")=1 ${EK:-} '$kos' '$gec/kayit-{}.json' 9000 analiz > '$gec/a-{}.jsonl' 2>\$( [ -n '${IZ:-}' ] && echo '$gec/a-{}.iz' || echo /dev/null )"
     meta=$(python3 -c "import json,sys; print(json.dumps({'k':float(sys.argv[1]),'tohumlar':[int(x) for x in sys.argv[2].split()],'bayraklar':sys.argv[3].split()}))" "$K" "$TOHUMLAR" "$(grep -v '^#' analiz/bayraklar.env | tr '\n' ' ') $(bayrak_ad "$ad")=1 ${EK:-}")
     BILGI_META="$meta" python3 "$URETICI" "$gec/yeni.json" $ARG "${ls[@]}"
-    fark=$(python3 - "$tablo" "$gec/yeni.json" <<'P'
+    mkdir -p "$gecmis"; cp "$gec/yeni.json" "$gecmis/tur$t-olcum.json"
+    out=$(python3 - "$tablo" "$gec/yeni.json" "${ORAN:-0.5}" <<'P'
 import json,sys,os
 sys.path.insert(0,'sina/bilgi')
 from ortak import harmanla
-eski,yeni=sys.argv[1],sys.argv[2]
+eski,yeni,oran=sys.argv[1],sys.argv[2],float(sys.argv[3])
 y=json.load(open(yeni))
-d,f=harmanla(eski,y['deger'],y['n'])
+e=json.load(open(eski))['deger'] if os.path.exists(eski) else None
+d,f=harmanla(eski,y['deger'],y['n'],oran)
+# n ağırlıklı ortalama değişim (az örnekli hücrenin sıçraması ölçüyü sürüklemesin)
+fn=None
+if f is not None and e and len(e)==len(d):
+    W=sum(y['n']); fn=sum(n*abs(a-b) for a,b,n in zip(e,d,y['n']))/W if W else 0.0
 y['deger']=d
 if os.path.exists(eski): y['surum']=json.load(open(eski)).get('surum',0)+1
 json.dump(y,open(eski,'w'),ensure_ascii=False)
-print('ilk' if f is None else f'{f:.4f}')
+print('ilk ilk' if f is None else f'{f:.4f} {fn:.4f}')
 P
 )
-    echo "tur $t: $ad en büyük değişim $fark ($(alan "$tablo" mac) maç)"
-    if [ "$fark" != "ilk" ] && python3 -c "import sys; sys.exit(0 if float(sys.argv[1])<float(sys.argv[2]) else 1)" "$fark" "$ESIK"; then break; fi
+    fark=${out% *}; farkn=${out#* }
+    cp "$tablo" "$gecmis/tur$t.json"
+    python3 sina/bilgi/uzaksut.py "${ls[@]}" > "$gecmis/tur$t-sut.txt"; echo "tur $t şut: $(cat "$gecmis/tur$t-sut.txt")"
+    echo "tur $t: $ad en büyük değişim $fark, n ağırlıklı $farkn ($(alan "$tablo" mac) maç)"
+    if [ "$farkn" != "ilk" ] && python3 -c "import sys; sys.exit(0 if float(sys.argv[1])<float(sys.argv[2]) else 1)" "$farkn" "$ESIK"; then break; fi
   done
   cargo build --release -q -p alan-kos
   python3 - "$tablo" "$(kural_izi)" "$(davranis_izi "$ad")" <<'P'

@@ -39,6 +39,7 @@ fn kafa_sapmasi_js_ile_ayni() {
             hiz: n(&r["hiz"]),
             savT: n(&r["savT"]),
             tf: n(&r["tf"]),
+            q_hizk: None, q_spr: false,
             alis: if r["alis"].is_object() { Some((n(&r["alis"]["x"]), n(&r["alis"]["y"]))) } else { None },
             x: n(&r["x"]),
             y: n(&r["y"]),

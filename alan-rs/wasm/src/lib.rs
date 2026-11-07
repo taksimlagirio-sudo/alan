@@ -468,7 +468,12 @@ pub extern "C" fn s7(bit: i32) {
 anahtar!(hucum_boy, alan_motor::sekil::yer::HUCUM_BOY_ZORLA);
 // haritada komşu hücreye varış yarışına rakip Bekçi de girer (sahbekci); Bekçi dar açıda yakın direği tutar (bekdirek)
 anahtar!(sah_bekci, alan_motor::kafa::kafa2_tarti::SAH_BEKCI_ZORLA);
-anahtar!(bek_direk, alan_motor::sekil::yer::BEK_DIREK_ZORLA);
+// bek_direk: Bekçi kuralı (sekil) ve kafanın o kuralla üretilmiş şut tablosu birlikte
+#[no_mangle]
+pub extern "C" fn bek_direk(acik: i32) {
+    alan_motor::sekil::yer::BEK_DIREK_ZORLA.store(acik != 0, std::sync::atomic::Ordering::Relaxed);
+    alan_motor::kafa::kafa2_imkan::BEK_DIREK_TABLO_ZORLA.store(acik != 0, std::sync::atomic::Ordering::Relaxed);
+}
 // önde bekleyen pasa açılır (ondeac); Kuyu alanından paylı ve koşarak çıkış (kuyupay)
 anahtar!(onde_ac, alan_motor::sekil::konum::ONDE_AC_ZORLA);
 anahtar!(kuyu_pay, alan_motor::mac::kuyu::KUYU_PAY_ZORLA);
@@ -500,5 +505,6 @@ anahtar!(bilgi_tutma, alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_ZORLA);
 anahtar!(bilgi_tutma_sut, alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_SUT_ZORLA);
 anahtar!(bilgi_tutma_tut, alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_TUT_ZORLA);
 anahtar!(bilgi_tutma_olcek, alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_OLCEK_ZORLA);
+anahtar!(sah_varis, alan_motor::kafa::kafa2_zemin::SAH_VARIS_ZORLA);
 // kontra koşusunun değeri değer tablosundan (ktab; hiz2 ile)
 anahtar!(ktab, alan_motor::mac::kontra_tablo::KTAB_ZORLA);

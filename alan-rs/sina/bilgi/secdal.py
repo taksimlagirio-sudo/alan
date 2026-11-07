@@ -106,7 +106,15 @@ def rapor(kl):
                 T[k][kol].append((g, rg, Z[Tn].get(kol), sure))
                 kv = ZD.get((Tn, kol))
                 if kol == 'once': ONCE[k].append(SEC.get(Tn, '?'))
-                if kol == 'sut' and kv: SUT.append((k, float(kv.get('Pk', 'nan')), g))
+                if kol == 'sut' and kv:
+                    # şutun kendi sonucu: şut uçuşu başladıktan sonra kimse topu tutmadan gol (dönen top / ikinci şut sayılmaz)
+                    s0 = R[0]['s'] if R else [0, 0]; uc = False; kg = False
+                    for r in R:
+                        f = r.get('fl')
+                        if f and f[4]: uc = True
+                        if r['s'] != s0: kg = uc and r['s'][tm] > s0[tm]; break
+                        if uc and r['h'] is not None and r['h'] >= 0 and not (f and f[4]): break
+                    SUT.append((k, float(kv.get('Pk', 'nan')), g, kg))
                 if kol == 'pas' and kv:
                     # pasın sonucu: topu ilk tutan (taşıyıcı dışında) ya da gol
                     s0 = R[0]['s'] if R else [0, 0]; son = ('yok', None); ucti = False
@@ -144,10 +152,10 @@ def rapor(kl):
         print('   ' + ' × '.join(k) + f'  n {n:3}  ' + '  '.join(f'{a} %{100*b/n:.0f}' for a, b in c.most_common()))
     print('== sut kolu: kafanın Pk ortalaması ile zorlanan şutun gerçek gol oranı (katman başına)')
     B = collections.defaultdict(list)
-    for k, pk, g in SUT: B[k].append((pk, g))
+    for k, pk, g, kg in SUT: B[k].append((pk, g, kg))
     for k in sorted(B):
         X = B[k]; n = len(X)
-        print('   ' + ' × '.join(k) + f'  n {n:3}  kafa Pk {sum(x[0] for x in X)/n:.3f}  gerçek gol %{100*sum(x[1] for x in X)/n:.0f}')
+        print('   ' + ' × '.join(k) + f'  n {n:3}  kafa Pk {sum(x[0] for x in X)/n:.3f}  şutun kendi golü %{100*sum(x[2] for x in X)/n:.0f}  sahiplikte gol (dönen top dahil) %{100*sum(x[1] for x in X)/n:.0f}')
     # tür başına kafa v ile gerçek (bütün katmanlar)
     print('== tür başına: kafa v ortalaması ile gerçek (gol − rakip gol)')
     for kol in ['sut', 'pas', 'sur', 'tut']:
