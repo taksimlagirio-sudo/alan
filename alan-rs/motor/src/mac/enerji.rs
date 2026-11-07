@@ -353,9 +353,21 @@ pub const HIZ2_TB: f64 = 15.0;
 pub const HIZ2_SUT_D: f64 = 18.0;
 pub const HIZ2_TASI_V: f64 = 0.3;
 pub const HIZ2_TEH_MIN: f64 = 8.0;
-/// hiz2: barın birim değeri ve dolu bardaki payı.
+/// hiz2: kontrada savunmacıya karşı varış payının yumuşaklığı (tik): erken varmak her savunmacıya karşı payı sürekli büyütür.
+pub const HIZ2_KONTRA_W: f64 = 20.0;
+/// hiz2: kontranın değeri, topun önüne dönebilmiş savunmacı sayısına göre (analiz/ZAMAN-DEGERI.md, 38 maç; aralar doğrusal).
+pub const KONTRA_GOL: [f64; 4] = [0.73, 0.50, 0.33, 0.0];
+pub fn kontra_deger(n: f64) -> f64 {
+    let n = jmax(0.0, n);
+    let i = n.floor() as usize;
+    if i >= KONTRA_GOL.len() - 1 {
+        return KONTRA_GOL[KONTRA_GOL.len() - 1];
+    }
+    let f = n - i as f64;
+    KONTRA_GOL[i] + (KONTRA_GOL[i + 1] - KONTRA_GOL[i]) * f
+}
+/// hiz2: barın değer katı (bedel = HIZ2_BAR · ((1−e+c)² − (1−e)²)).
 pub const HIZ2_BAR: f64 = 0.5;
-pub const HIZ2_BAR_TABAN: f64 = 0.3;
 /// Deney (ALAN_HIZ2_IZ; ölçümde/wasm'da HIZ2_ZORLA; analiz/HIZ-TERCIHI.md): hız seçiminde koşunun değeri varış süresiyle sürekli
 /// azalır, savunmada yarış tehlike anına karşı ölçülür, barın değeri hedeften bağımsızdır. Varsayılan kapalı.
 pub static HIZ2_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
@@ -389,6 +401,13 @@ pub fn sprint_karar3(m: &mut Mac) {
     let a_f = gecici_dis::D::arriveFirm;
     let wf = |T: f64, tD: f64| if tD >= 1e8 { 1.0 } else { 1.0 / (1.0 + exp((T - tD) / 5.0)) };
     let kk = mac_kurali(m);
+    // topun son el değiştirdiği an (kontra değer tablosunun 'top kazanılalı geçen süre'si)
+    if let Some(hh) = h {
+        let t = m.ps[hh].team;
+        if m.mac.kazan.map_or(true, |k| k.0 != t) {
+            m.mac.kazan = Some((t, m.tick));
+        }
+    }
     for pi in 0..m.ps.len() {
         {
             let p = &mut m.ps[pi];
@@ -532,16 +551,46 @@ pub fn sprint_karar3(m: &mut Mac) {
         } else {
             tD
         };
+        // hiz2: hücumda son tarih yoksa (pas havada, kontra) koşunun değeri, varışta henüz dönememiş rakip savunmacıların payı:
+        // her tik erken = geri dönemeyen bir savunmacı daha (yalnız en yakınının varışı değil)
+        // kontra tablosunun girdileri: hedefin rakip kaleye uzaklığı, top kazanılalı geçen süre (sn, şimdi)
+        let ktab_uzak = hypot(tx - if p.team == 0.0 { W } else { 0.0 }, ty - crate::saha::H / 2.0);
+        let ktab_t0 = m.mac.kazan.filter(|k| k.0 == p.team).map_or(0.0, |k| (m.tick - k.1) / crate::saha::TPS);
+        let kontra: Option<Vec<f64>> = if hiz2() && bizde && !topa && (tD >= 1e8 || j.starts_with("kontra")) {
+            let v: Vec<f64> = m.ps.iter().filter(|q| q.team != p.team && !q.noTouch && !q.bekci()).map(|q| alan_kosu_t(q, hypot(q.x - tx, q.y - ty), spd(q), &kk)).collect();
+            if v.is_empty() { None } else { Some(v) }
+        } else {
+            None
+        };
         let DEG = |T: f64, c: f64| -> f64 {
             if hiz2() {
                 // hiz2: koşunun değeri varışla sürekli azalır (erken varmak hep biraz iyi, geç kalmak giderek kötü, sıfır
                 // değil); barın değeri hedeften bağımsız: harcamanın birim bedeli bar azaldıkça artar (dolu barda da sıfır değil),
                 // yürümenin kazancı aynası
                 let g = 1.0 / (1.0 + T / HIZ2_TA) / (1.0 + jmax(0.0, T - tD2) / HIZ2_TB);
+                // kontra: durumun kendi değeri (analiz/ZAMAN-DEGERI.md): varışta topun önüne dönebilmiş savunmacı sayısı
+                // (varış süreleriyle yumuşak sayım) → gol olasılığı (0: %73, 1: %50, 2: %33, 3+: %0); pas gelmeden varmak
+                // bir şey katmaz (varış en erken pasın varışı)
+                let vk = match &kontra {
+                    Some(v) => {
+                        let Tv = if tD < 1e8 { jmax(T, tD) } else { T };
+                        let n: f64 = v.iter().map(|&t| 1.0 / (1.0 + exp((t - Tv) / HIZ2_KONTRA_W))).sum();
+                        // ALAN_KTAB_IZ: değer tablosundan (kaleye uzaklık × savunmacı × top kazanılalı geçen süre)
+                        if super::kontra_tablo::ktab() {
+                            super::kontra_tablo::deger(ktab_uzak, n, ktab_t0 + Tv / crate::saha::TPS, kontra_deger(n))
+                        } else {
+                            kontra_deger(n)
+                        }
+                    }
+                    None => 0.0,
+                };
                 // yürümenin kazancı barın boş kısmını aşamaz (dolu barda yürümek bir şey kazandırmaz)
                 let c = if c < 0.0 { jmax(c, -(1.0 - e)) } else { c };
-                let bedel = c * HIZ2_BAR * (HIZ2_BAR_TABAN + (1.0 - HIZ2_BAR_TABAN) * 2.0 * (1.0 - e)) * hr_k;
-                return Sy * g - bedel;
+                // barın değeri dışbükey: birim değer barın boş kısmıyla artar (2·(1−x)); bedel e−c'den e'ye integral:
+                // dolu barda kısa harcama neredeyse bedava (fazlası boşa gidiyordu), uzun harcama giderek pahalı
+                let bos = jmax(0.0, 1.0 - e);
+                let bedel = HIZ2_BAR * ((bos + c) * (bos + c) - bos * bos) * hr_k;
+                return Sy * g + vk - bedel;
             }
             let mut bd = 0.0;
             if c > 0.0 {
@@ -618,7 +667,7 @@ pub fn sprint_karar3(m: &mut Mac) {
         let (k_s, _, _) = c_k(fB);
         let _ = sS;
         if crate::iz_acik() && std::env::var("ALAN_K3_IZ").ok().as_deref() == Some(&format!("{}:{}", m.tick, pi)) {
-            eprintln!("K3 tD={tD} sS={sS} e={e} dol={dol} topa={topa} bizde={bizde} j={j} f={fB} b={b} vm={vm} hk={hk} kM={kM} Sy={Sy} decT={}", m.dec_t);
+            eprintln!("K3 tD={tD} tD2={tD2} kontra={kontra:?} sS={sS} e={e} dol={dol} topa={topa} bizde={bizde} j={j} f={fB} b={b} vm={vm} hk={hk} kM={kM} Sy={Sy} decT={}", m.dec_t);
         }
         let p = &mut m.ps[pi];
         p.hal_mut()._hizK = Some(k_s);

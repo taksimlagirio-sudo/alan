@@ -488,3 +488,5 @@ anahtar!(sah_dibinde, alan_motor::kafa::kafa2_tarti::SAH_DIBINDE_ZORLA);
 // A1 tutma bilgi tablosu kayıp bedelinde (bilgitutma) / yalnız şutun bedelinde (bilgitutmasut)
 anahtar!(bilgi_tutma, alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_ZORLA);
 anahtar!(bilgi_tutma_sut, alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_SUT_ZORLA);
+// kontra koşusunun değeri değer tablosundan (ktab; hiz2 ile)
+anahtar!(ktab, alan_motor::mac::kontra_tablo::KTAB_ZORLA);

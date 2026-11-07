@@ -43,6 +43,17 @@ pub const S7_D: f64 = 32.0 * GKX;
 pub const S7H_ON: f64 = 3.0;
 /// S7j: markajcının adamından kaleye doğru uzaklığı (br).
 pub const S7J_ARA: f64 = 1.6;
+/// S7j: kaleye koşan adamın yerini öne alma (tik).
+pub const S7J_ON: f64 = 10.0;
+/// S7k: tehlike bölgesindeki önceki adamın atamada değer katı.
+pub const S7K: f64 = 3.0;
+/// S7i: öne çıkacak savunmacının şut hattı noktasına en çok uzaklığı (br).
+pub const S7I_MAX: f64 = 8.0;
+/// S7l: kaleye bu uzaklıktan (br) yakın taşıyıcının önünde gövde koyan presçi en çok S7L_T tik bekler, sonra topa girer.
+pub const S7L_D: f64 = 20.0;
+pub const S7L_T: f64 = 15.0;
+/// S7m: taşıyıcı kaleye bundan yakınken (br) markajcı Kuyu'ya girer (şut yakın).
+pub const S7M_ACIL: f64 = 20.0;
 /// Deney (GOREV-savunma S7): taşıyıcıyı durdurmak. Parçalar ayrı ölçülsün diye: ALAN_S7A_IZ (kale tarafında değilsen şut
 /// hattına geç), ALAN_S7B_IZ (tehlike bölgesinde ikinci presçi), ALAN_S7C_IZ (geçilen savunmacı adamına değil kale önüne);
 /// ALAN_S7_IZ üçü birden. Sonradan: ALAN_S7D_IZ (bit 8; geniş dönüş: geçilen herkes, baskıcılar da, adamı topun önünde
@@ -52,7 +63,10 @@ pub const S7J_ARA: f64 = 1.6;
 /// tehlike bölgesinde boş kalan adamı alır. ALAN_S7H_IZ (bit 128): taşıyıcı kaleye presçiden hızlı sürmüyorsa şut hattında
 /// derinde beklemez, kale tarafından taşıyıcıya çıkar (en çok S7H_ON br önüne). ALAN_S7I_IZ (bit 256): ilk presçi taşıyıcının
 /// gerisindeyse ya da kale önüne çekildiyse kale tarafındaki en yakın savunmacı şut hattına çıkar. ALAN_S7J_IZ (bit 512):
-/// tehlike bölgesinde markajcı adamıyla kale arasında (S7J_ARA br) durur. Ölçümde S7_ZORLA (bitler). Varsayılan kapalı.
+/// tehlike bölgesinde markajcı adamıyla kale arasında (S7J_ARA br) durur. ALAN_S7K_IZ (bit 1024): tehlike bölgesindeki adamını
+/// tutan markajcı atamada onu güçlü önceler (S7K). ALAN_S7L_IZ (bit 2048): kaleye S7L_D'den yakın taşıyıcının önünde gövde
+/// koyan presçi S7L_T tikten sonra topa girer. ALAN_S7M_IZ (bit 4096): şut yakın değilken markajcı Kuyu sınırında bekler
+/// (Kuyu süresini şut anına saklar). Ölçümde S7_ZORLA (bitler). Varsayılan kapalı.
 pub static S7_ZORLA: std::sync::atomic::AtomicU16 = std::sync::atomic::AtomicU16::new(0);
 pub fn s7(parca: u16) -> bool {
     static A: std::sync::OnceLock<u16> = std::sync::OnceLock::new();
@@ -61,7 +75,7 @@ pub fn s7(parca: u16) -> bool {
             return 0;
         }
         let v = |k: &str| std::env::var(k).is_ok();
-        (if v("ALAN_S7_IZ") { 7 } else { 0 }) | (if v("ALAN_S7A_IZ") { 1 } else { 0 }) | (if v("ALAN_S7B_IZ") { 2 } else { 0 }) | (if v("ALAN_S7C_IZ") { 4 } else { 0 }) | (if v("ALAN_S7D_IZ") { 8 } else { 0 }) | (if v("ALAN_S7E_IZ") { 16 } else { 0 }) | (if v("ALAN_S7F_IZ") { 32 } else { 0 }) | (if v("ALAN_S7G_IZ") { 64 } else { 0 }) | (if v("ALAN_S7H_IZ") { 128 } else { 0 }) | (if v("ALAN_S7I_IZ") { 256 } else { 0 }) | (if v("ALAN_S7J_IZ") { 512 } else { 0 })
+        (if v("ALAN_S7_IZ") { 7 } else { 0 }) | (if v("ALAN_S7A_IZ") { 1 } else { 0 }) | (if v("ALAN_S7B_IZ") { 2 } else { 0 }) | (if v("ALAN_S7C_IZ") { 4 } else { 0 }) | (if v("ALAN_S7D_IZ") { 8 } else { 0 }) | (if v("ALAN_S7E_IZ") { 16 } else { 0 }) | (if v("ALAN_S7F_IZ") { 32 } else { 0 }) | (if v("ALAN_S7G_IZ") { 64 } else { 0 }) | (if v("ALAN_S7H_IZ") { 128 } else { 0 }) | (if v("ALAN_S7I_IZ") { 256 } else { 0 }) | (if v("ALAN_S7J_IZ") { 512 } else { 0 }) | (if v("ALAN_S7K_IZ") { 1024 } else { 0 }) | (if v("ALAN_S7L_IZ") { 2048 } else { 0 }) | (if v("ALAN_S7M_IZ") { 4096 } else { 0 })
     });
     (e | S7_ZORLA.load(std::sync::atomic::Ordering::Relaxed)) & parca != 0
 }
@@ -251,6 +265,12 @@ pub fn ilk_pres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]
             let tik = c.m.tick;
             let suren = c.ps[pi].hal._onK.as_ref().filter(|o| o.h == h.id).map(|o| o.koy);
             let _ = (tik, Tepki::Karar);
+            // S7l: kaleye yakın taşıyıcının önünde gövde koymak süresiz değil: S7L_T tik sonra topa gir (şutçu bekleyip
+            // yerleşiyordu: 1:23 golü, Cansu 4 sn 2 br önünde)
+            let suren = match suren {
+                Some(true) if s7(2048) && hypot(own_x(dt) - h.x, GCY - h.y) < S7L_D && c.ps[pi].hal._onK.as_ref().map_or(false, |o| tik - o.t > S7L_T) => Some(false),
+                x => x,
+            };
             let koy = if let (Some(kk), true) = (suren, c.rnd.is_some()) {
                 kk
             } else if c.rnd.is_some() {
