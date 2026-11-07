@@ -291,19 +291,22 @@ fn main() {
     // an: <kayıt> <t1,t2,…> an <önek> [süre]: maç bugünkü kafayla oynar; her ti'de kopya maç iki kez oynatılır
     // (bugünkü kafa / tutmayı gerçeğe yakın kestiren kafa), kareler <önek>-<ti>-{eski,yeni}.json (kare kipinin biçimi)
     // dal: <kayıt> <tik> dal <çıktı klasörü> <süre> <S7 ek bitleri>: maçı tike dek oynatır, oradan iki kol açar:
-    // "once" (değişmeden) ve "sonra" (sekil::S7_ZORLA'ya ek bitler, ör. 128 = S7h), her kol <süre> tik, analiz kipinin satır
+    // "once" (değişmeden) ve "sonra" (sekil::S7_ZORLA'ya ek bitler, ör. 128 = S7h; virgüllü listede her bit için "b<bit>"), her kol <süre> tik, analiz kipinin satır
     // biçiminde <çıktı>/once.jsonl ve <çıktı>/sonra.jsonl.
     if kip == "dal" {
         let dir = a.get(4).expect("dal <çıktı>").clone();
         let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(300);
-        let bit: u8 = a.get(6).and_then(|x| x.parse().ok()).unwrap_or(128);
+        // ek bitler: tek sayı ("sonra" kolu) ya da virgüllü liste (her biri "b<bit>" kolu)
+        let bl: Vec<u16> = a.get(6).map(|x| x.split(',').filter_map(|y| y.parse().ok()).collect()).unwrap_or(vec![128]);
+        let mut kollar: Vec<(String, u16)> = vec![("once".into(), 0)];
+        if bl.len() == 1 { kollar.push(("sonra".into(), bl[0])); } else { for b in &bl { kollar.push((format!("b{}", b), *b)); } }
         std::fs::create_dir_all(&dir).unwrap();
         while mt.tick() < tik && !mt.bitti() {
             mt.adim();
         }
         let anlik = mt.m.clone();
         let onceki = alan_motor::sekil::S7_ZORLA.load(std::sync::atomic::Ordering::Relaxed);
-        for (kol, ek) in [("once", 0u8), ("sonra", bit)] {
+        for (kol, ek) in kollar {
             alan_motor::sekil::S7_ZORLA.store(onceki | ek, std::sync::atomic::Ordering::Relaxed);
             let mut m2 = Motor::yeni(anlik.clone());
             let mut osay = m2.m.ev_n;

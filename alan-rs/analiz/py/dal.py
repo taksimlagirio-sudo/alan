@@ -1,10 +1,12 @@
-# dal kipinin iki kolunu karşılaştır: python3 dal.py <klasör>  (once.jsonl, sonra.jsonl)
+# dal kipinin kollarını karşılaştır: python3 dal.py <klasör> [kollar...]  (varsayılan: once + klasördeki diğer .jsonl)
 import json,sys,math
 AD=['Aras','Deniz','Mert','Ece','Cansu','Kaan','Tuna','Sur','Burç','Kale','Siper','Hendek','Mancınık','Ok']
 def d(a,b,c,e): return math.hypot(a-c,b-e)
 def seg_d(px,py,ax,ay,bx,by):
   vx,vy=bx-ax,by-ay; L=vx*vx+vy*vy or 1e-9; u=max(0,min(1,((px-ax)*vx+(py-ay)*vy)/L)); return d(px,py,ax+u*vx,ay+u*vy)
-for kol in ('once','sonra'):
+import glob,os
+KOL=sys.argv[2:] or ['once']+sorted(os.path.basename(f)[:-6] for f in glob.glob(sys.argv[1]+'/*.jsonl') if not f.endswith('/once.jsonl'))
+for kol in KOL:
   K=[json.loads(l) for l in open(f'{sys.argv[1]}/{kol}.jsonl')]
   s0=K[0]['s']; out=[]
   prev=None;lasth=-1
