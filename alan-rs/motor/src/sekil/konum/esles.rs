@@ -1042,7 +1042,10 @@ impl Sv {
                     // S7d: tehlike bölgesinde geçilmiş (topun gerisinde kalmış) savunmacı, ilk presçi dışında (baskıcılar da):
                     // adamı tehlikeliyse (topun önünde ya da kendisi tehlike bölgesinde, uzak taraf dahil) onu tutmayı sürdürür;
                     // değilse önce tehlike bölgesinde kimsenin tutmadığı adama (kaleye en yakın), o da yoksa kale önüne döner
-                    let gecildi = self.g_d(pp.x, pp.y) >= g_e + 1.0;
+                    // S7q: önceki tik S7d uygulandıysa topun açıkça kale tarafına geçmeden çıkmaz; uygulanmadıysa açıkça gerisinde
+                    // kalmadan girmez (markaj ↔ geri koşu gidip gelmesi: maç başına ~50, oyuncu yerinde sayıyordu)
+                    let s7d_once = s7(65536) && pp.hal._s7dT == Some(tick - 1.0);
+                    let gecildi = if !s7(65536) { self.g_d(pp.x, pp.y) >= g_e + 1.0 } else if s7d_once { self.g_d(pp.x, pp.y) >= g_e - S7Q_PAY } else { self.g_d(pp.x, pp.y) >= g_e + 1.0 + S7Q_PAY };
                     // S7f: geçilmemiş bölgecisi de tehlike bölgesinde boşta kalan adamı alır (kale önüne gitmez)
                     // S7g: alçak blokta top uzaktayken de bölgeci kale önünde (tehlike bölgesinde) boş kalan adamı alır
                     let dusuk = s7(64) && self.dtac.t.blok.as_deref() == Some("Düşük");
@@ -1050,9 +1053,11 @@ impl Sv {
                     // (897–925 Kale 82 br'deki Cansu'yu tutuyordu)
                     let tehlikesiz_adam = s7(32768) && bas(&pp.job, &["markaj", "arkada", "kapatma"]) && pp.hal.tutQ.or(pp.hal.markRef).map_or(false, |m| self.g_d(c.ps[m].x, c.ps[m].y) >= S7_D);
                     let bolgeci = (s7(32) || dusuk || s7(32768)) && !gecildi && !self.press.contains(&p) && (bas(&pp.job, &["bölge"]) && (s7(32) || dusuk) || tehlikesiz_adam);
-                    if (s7(8) || dusuk) && (g_e < S7_D || (dusuk && bolgeci)) && self.press.first() != Some(&p) && (gecildi || bolgeci) && {
+                    // S7q: süren S7d'de bölge ve adamın tehlikesi eşikleri de payla (eşikte titremesin)
+                    let qpay = if s7d_once { S7Q_PAY } else { 0.0 };
+                    if (s7(8) || dusuk) && (g_e < S7_D + qpay || (dusuk && bolgeci)) && self.press.first() != Some(&p) && (gecildi || bolgeci) && {
                         let q = pp.hal.tutQ.or(pp.hal.markRef);
-                        q.map_or(true, |q| { let d = self.g_d(c.ps[q].x, c.ps[q].y); !(d < g_e - 2.0 || d < S7_D) })
+                        q.map_or(true, |q| { let d = self.g_d(c.ps[q].x, c.ps[q].y); !(d < g_e - 2.0 - qpay || d < S7_D - qpay) })
                     } {
                         let bos = self.atk.iter().copied().filter(|&q| Some(q) != h && !s7_tut.contains(&q) && self.g_d(c.ps[q].x, c.ps[q].y) < S7_D).min_by(|&u, &v| sira(self.g_d(c.ps[u].x, c.ps[u].y) - self.g_d(c.ps[v].x, c.ps[v].y)));
                         if let Some(q) = bos {
@@ -1066,9 +1071,12 @@ impl Sv {
                             pp.sprint = true;
                             pp.job = Some(format!("geri koşu · {}", nm).into());
                             pp.hal_mut().tutQ = Some(q);
+                            if s7(65536) {
+                                pp.hal_mut()._s7dT = Some(tick);
+                            }
                             continue;
                         }
-                        if (gecildi || tehlikesiz_adam) && g_e < S7_D {
+                        if (gecildi || tehlikesiz_adam) && g_e < S7_D + qpay {
                             let bs = self.base[p].map(|b| (b.x, b.y)).unwrap_or((pp.x, pp.y));
                             // S7h: kutunun ağzını tutar (topun 6 br önü, kaleye 10–20 br; top 10 br içindeyse yarı yol), kale dibine inmez
                             let kk = if s7(128) { 1.0 - jmax(jmin(10.0, 0.5 * g_e), jmin(20.0, g_e - 6.0)) / jmax(1.0, g_e) } else { 0.55 };
@@ -1079,6 +1087,9 @@ impl Sv {
                             pp.sprint = true;
                             pp.job = Some("geri koşu · kale önü".into());
                             pp.hal_mut().tutQ = None;
+                            if s7(65536) {
+                                pp.hal_mut()._s7dT = Some(tick);
+                            }
                             continue;
                         }
                     }

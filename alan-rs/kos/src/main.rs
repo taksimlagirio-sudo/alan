@@ -388,7 +388,7 @@ fn main() {
         let anlik = mt.m.clone();
         let onceki = alan_motor::sekil::S7_ZORLA.load(std::sync::atomic::Ordering::Relaxed);
         for (kol, hz, ek) in kollar {
-            alan_motor::sekil::S7_ZORLA.store(onceki | ek, std::sync::atomic::Ordering::Relaxed);
+            alan_motor::sekil::S7_ZORLA.store(onceki | ek as u32, std::sync::atomic::Ordering::Relaxed);
             alan_motor::mac::enerji::HIZ2_ZORLA.store(hz, std::sync::atomic::Ordering::Relaxed);
             let mut m2 = Motor::yeni(anlik.clone());
             let mut osay = m2.m.ev_n;

@@ -221,6 +221,9 @@ pub struct OyuncuMac {
     pub _savD: Option<f64>,
     /// `_blokT`: number (sonradan eklenir)
     pub _blokT: Option<f64>,
+    /// (Rust) S7q: S7d'nin geri dönüşünün (kale önü / boştaki adam) son uygulandığı tik
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub _s7dT: Option<f64>,
     /// `past`: dizi (sonradan eklenir)
     pub past: Option<std::sync::Arc<Vec<JPPastE>>>,
     /// `holdD`: boolean
