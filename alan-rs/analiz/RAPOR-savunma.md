@@ -155,3 +155,7 @@ KP_HAMLE (`ALAN_KP_HAMLE_IZ`). Ölçü betikleri: oturumun çalışma klasörün
   3 → %8 (ZAMAN-DEGERI yönü). Tablo izleme setine / siteye girmiyor; ktab yeni=1 dışında.
 - Nedensel ölçü: `alan-kos hizdal` + `sina/bilgi/hizdal.{sh,py}` (6b9f94b): kontra anında koşucu 90 tik depar / tempo
   (mac::enerji::HIZ_ZORLA), iki kol 360 tik; sonuç 12 sn içinde gol, kutuya varış, bitiş. 200 an, 301–316 çalışıyor.
+- hizdal ara sonuç (70 an, kanca kafanın kopyasında kapalıyken): 12 sn içinde gol depar %1,4 / tempo %20,0; kutuya varış
+  %35,7 / %41,4. **Geçersiz:** taşıyıcının kafası koşucuyu zorlanmamış (tempo) hızla öngörüp pası oraya atıyor, depar atan
+  koşucu başka yerde kalıyor; ölçülen depar değil, kafayla gerçeğin uyuşmazlığı. Kanca kafanın kopyasında da açıldı, ölçüm
+  yeniden çalışıyor (83 an).

@@ -437,8 +437,9 @@ pub fn sprint_karar3(m: &mut Mac) {
             continue;
         }
         let j = job(p).to_string();
-        // ölçüm kancası (alan-kos hizdal): bu oyuncu bu tike dek depar ya da tempoya zorlanır; kafanın kopyasında değil
-        if !m.mac._lite {
+        // ölçüm kancası (alan-kos hizdal): bu oyuncu bu tike dek depar ya da tempoya zorlanır. Kafanın kopyasında da: yoksa
+        // taşıyıcının kafası koşucuyu tempo hızında öngörüp pası oraya atıyor, depar atan koşucu başka yerde kalıyordu
+        if true {
             if let Some((zp, dep, bit)) = HIZ_ZORLA.with(|z| z.get()) {
                 if zp == pi && m.tick < bit {
                     let k = if dep { jmax(1.0, sf_pk(p)) } else { 1.0 };
