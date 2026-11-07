@@ -335,7 +335,8 @@ fn main() {
         return;
     }
     // hizdal: <kayıt> <t1,t2,…> hizdal <klasör> <süre> <oyuncu1,oyuncu2,…> <N>: her ti'de maçı kopyalar, iki kol: "depar" ve
-    // "tempo" (oyuncu_i N tik boyunca o hıza zorlanır; mac::enerji::HIZ_ZORLA), her kol <süre> tik, <klasör>/<ti>/<kol>.jsonl
+    // "tempo" (oyuncu_i N tik boyunca o hıza zorlanır; mac::enerji::HIZ_ZORLA) ve "once" (zorlamasız), her kol <süre> tik,
+    // <klasör>/<ti>/<kol>.jsonl
     if kip == "hizdal" {
         let dir0 = a.get(4).expect("hizdal <klasör>").clone();
         let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(360);
@@ -352,8 +353,8 @@ fn main() {
                 mt.adim();
             }
             let anlik = mt.m.clone();
-            for (kol, dep) in [("depar", true), ("tempo", false)] {
-                alan_motor::mac::enerji::HIZ_ZORLA.with(|z| z.set(Some((pi, dep, tik as f64 + nz))));
+            for (kol, dep) in [("once", None), ("depar", Some(true)), ("tempo", Some(false))] {
+                alan_motor::mac::enerji::HIZ_ZORLA.with(|z| z.set(dep.map(|d| (pi, d, tik as f64 + nz))));
                 let mut m2 = Motor::yeni(anlik.clone());
                 let mut osay = m2.m.ev_n;
                 let mut sat: Vec<String> = Vec::new();

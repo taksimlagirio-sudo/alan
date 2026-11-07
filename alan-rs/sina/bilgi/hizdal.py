@@ -54,16 +54,18 @@ def sonuc(f, tm):
             if math.hypot(gx - r['p'][h][0], CY - r['p'][h][1]) < 25: kutu = True
     return gol, kutu, bitis
 
-kl = sys.argv[2]; T = collections.defaultdict(lambda: [0, 0, 0, 0, 0, 0.0]); n = 0; S = [0, 0, 0, 0]
+kl = sys.argv[2]; T = collections.defaultdict(lambda: [0, 0, 0, 0, 0, 0.0]); n = 0; S = [0, 0, 0, 0]; O = [0, 0, 0]
 for d in sorted(glob.glob(f'{kl}/t*/')):
     if not os.path.exists(d + 'kontra.json'): continue
     for (t0, kos, tm, uz, onde, kk) in json.load(open(d + 'kontra.json')):
-        a = sonuc(f'{d}{t0}/depar.jsonl', tm); b = sonuc(f'{d}{t0}/tempo.jsonl', tm)
+        a = sonuc(f'{d}{t0}/depar.jsonl', tm); b = sonuc(f'{d}{t0}/tempo.jsonl', tm); o = sonuc(f'{d}{t0}/once.jsonl', tm)
         if a is None or b is None: continue
         n += 1; S[0] += a[0]; S[1] += b[0]; S[2] += a[1]; S[3] += b[1]
+        if o: O[0] += 1; O[1] += o[0]; O[2] += o[1]
         key = (min(90, 10 * round(uz / 10)), onde, '≤40' if kk <= 40 else '>40')
         c = T[key]; c[0] += 1; c[1] += a[0]; c[2] += b[0]; c[3] += a[1]; c[4] += b[1]; c[5] += a[2] - b[2]
 print(f'{n} kontra anı: 12 sn içinde gol depar %{100*S[0]/max(1,n):.1f} / tempo %{100*S[1]/max(1,n):.1f}; kutuya varış depar %{100*S[2]/max(1,n):.1f} / tempo %{100*S[3]/max(1,n):.1f}')
+print(f'zorlamasız (once) kol: {O[0]} an, gol %{100*O[1]/max(1,O[0]):.1f}, kutuya varış %{100*O[2]/max(1,O[0]):.1f}')
 print('kazanım (uzaklık, önde, koşucunun kaleye kalan): n | gol depar−tempo | kutu depar−tempo | bitiş farkı (tik)')
 for k in sorted(T):
     c = T[k]
