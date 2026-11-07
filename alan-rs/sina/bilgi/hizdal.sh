@@ -15,5 +15,5 @@ done
 printf '%s\n' $TOH | xargs -P4 -I{} sh -c "[ -s '$kl/t{}/analiz.jsonl' ] || env $BAY '$kos' '$kl/t{}/kayit.json' 9000 analiz > '$kl/t{}/analiz.jsonl' 2>/dev/null"
 python3 sina/bilgi/hizdal.py sec "$kl" "$an"
 for s in $TOH; do [ -s "$kl/t$s/tler" ] && paste -d' ' <(tr ',' '\n' < "$kl/t$s/tler") <(tr ',' '\n' < "$kl/t$s/oy") | sed "s|^|$s |"; done \
-  | xargs -P4 -n3 sh -c "env $BAY '$kos' '$kl/t\$0/kayit.json' \$1 hizdal '$kl/t\$0' 360 \$2 $N 2>/dev/null < /dev/null; :" 2>/dev/null || true
+  | xargs -P4 -n3 sh -c "env $BAY '$kos' \"$kl/t\$0/kayit.json\" \$1 hizdal \"$kl/t\$0\" 360 \$2 $N 2>/dev/null < /dev/null; :" 2>/dev/null || true
 python3 sina/bilgi/hizdal.py rapor "$kl"
