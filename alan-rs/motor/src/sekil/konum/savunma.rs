@@ -156,7 +156,11 @@ impl Sv {
         let p = &c.ps[pi];
         let hp = &c.ps[h];
         let d = hypot(p.x - hp.x, p.y - hp.y);
-        let t_r = jmax(0.0, TEPKI(p, Tepki::Kovala, k)) + jmax(0.0, d - 2.4) / v_sp(p, k) + gec(p, hp.x, hp.y, Some(d - 2.4), k);
+        // pres_kes: taşıyıcı yerinde durmuyor; yetişme süresi onun hızıyla buluşma süresi (gerideki kovalayan yaklaşamaz, kale
+        // tarafındaki karşıdan gelir). Eski model taşıyıcıyı durgun sayıyordu (301/3287–3381: 18 br gerideki iki kovalayan
+        // seçildi, 25 br önündeki Burç'un değeri 6 kat düşük kaldı; Kaan 26 br boyunca baskısız sürdü).
+        let t_y = if pres_kes() { pres_bulus(p.x, p.y, v_sp(p, k), hp.x, hp.y, hp.vx, hp.vy) } else { jmax(0.0, d - 2.4) / v_sp(p, k) };
+        let t_r = jmax(0.0, TEPKI(p, Tepki::Kovala, k)) + t_y + gec(p, hp.x, hp.y, Some(d - 2.4), k);
         let sdp = jmax(0.0, jmin(1.0, sd + 0.8 * (tl0(p, "sav", "pres") - 0.5)));
         let th_p = Th / (0.6 + 0.8 * sd) * (0.6 + 0.8 * sdp);
         let P = 1.0 / (1.0 + exp((t_r - th_p) / 8.0));
@@ -897,4 +901,38 @@ pub static SAV_TABAN_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::A
 pub fn sav_taban() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     SAV_TABAN_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAV_TABAN_IZ").is_ok())
+}
+
+/// pres_kes: (px, py)'den v hızla, (hx, hy)'den (vx, vy) ile giden taşıyıcıya 2.4 br erişimle buluşma süresi (tik);
+/// yetişemiyorsa PRES_KES_UFUK (taşıyıcı o kadar düz gitmez).
+pub fn pres_bulus(px: f64, py: f64, v: f64, hx: f64, hy: f64, vx: f64, vy: f64) -> f64 {
+    let (rx, ry) = (hx - px, hy - py);
+    let R = 2.4;
+    let c0 = rx * rx + ry * ry - R * R;
+    if c0 <= 0.0 {
+        return 0.0;
+    }
+    let a = vx * vx + vy * vy - v * v;
+    let b = 2.0 * (rx * vx + ry * vy - R * v);
+    let t = if a.abs() < 1e-9 {
+        if b < 0.0 { -c0 / b } else { f64::INFINITY }
+    } else {
+        let D = b * b - 4.0 * a * c0;
+        if D < 0.0 {
+            f64::INFINITY
+        } else {
+            let q = D.sqrt();
+            let (t1, t2) = ((-b - q) / (2.0 * a), (-b + q) / (2.0 * a));
+            let (lo, hi) = if t1 < t2 { (t1, t2) } else { (t2, t1) };
+            if lo > 0.0 { lo } else if hi > 0.0 { hi } else { f64::INFINITY }
+        }
+    };
+    jmin(t, PRES_KES_UFUK)
+}
+pub const PRES_KES_UFUK: f64 = 90.0;
+/// Deney (ALAN_PRES_KES_IZ; ölçümde/wasm'da PRES_KES_ZORLA): presçinin yetişme süresi taşıyıcının hızıyla buluşma. Varsayılan kapalı.
+pub static PRES_KES_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn pres_kes() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    PRES_KES_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_PRES_KES_IZ").is_ok())
 }

@@ -22,7 +22,7 @@ pub use esles::{onde_ac, ONDE_AC_ZORLA};
 mod hucum;
 pub use hucum::SEYREK_KAPALI;
 mod savunma;
-pub use savunma::{yerlesik_adam, YERLESIK_ADAM_ZORLA, PRES_KAZANC_ZORLA, UA_HIST_ZORLA, SAV_TABAN_ZORLA};
+pub use savunma::{yerlesik_adam, YERLESIK_ADAM_ZORLA, PRES_KAZANC_ZORLA, UA_HIST_ZORLA, SAV_TABAN_ZORLA, PRES_KES_ZORLA};
 mod yardim;
 
 use yardim::*;

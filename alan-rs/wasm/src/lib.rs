@@ -490,6 +490,8 @@ anahtar!(kp_hamle, alan_motor::kafa::kafa1_ikili::KP_HAMLE_ZORLA);
 anahtar!(bek_cd, alan_motor::temas::BEK_CD_ZORLA);
 // Kuyu'ya giriş sınamasında savunmacının kalış süresi (kuyukal)
 anahtar!(kuyu_kal, alan_motor::mac::kuyu::KUYU_KAL_ZORLA);
+// presçinin yetişme süresi taşıyıcının hızıyla buluşma (preskes)
+anahtar!(pres_kes, alan_motor::sekil::konum::PRES_KES_ZORLA);
 // sahiplik haritasının tahmin dünyası topun gerçek varışında (sahtc) / hücre şutunda dibindeki rakip ikili kesmez (sahdibinde)
 anahtar!(sah_tc, alan_motor::kafa::kafa2_tarti::SAH_TC_ZORLA);
 anahtar!(sah_dibinde, alan_motor::kafa::kafa2_tarti::SAH_DIBINDE_ZORLA);
