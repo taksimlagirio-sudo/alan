@@ -482,3 +482,5 @@ anahtar!(kayip_harita, alan_motor::kafa::kafa2_tarti::KAYIP_HARITA_ZORLA);
 anahtar!(hiz2, alan_motor::mac::enerji::HIZ2_ZORLA);
 // kontra koşusunun değeri değer tablosundan (ktab; hiz2 ile)
 anahtar!(ktab, alan_motor::mac::kontra_tablo::KTAB_ZORLA);
+// keep_p hamle süresini ve bekleme süresini tartar (kphamle; B2)
+anahtar!(kp_hamle, alan_motor::kafa::kafa1_ikili::KP_HAMLE_ZORLA);
