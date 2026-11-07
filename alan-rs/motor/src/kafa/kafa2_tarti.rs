@@ -1489,6 +1489,7 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
     }
     if crate::iz_acik() && std::env::var("ALAN_SUT_SAY_IZ").is_ok() {
         let gx = if h.team == 0.0 { GW } else { 0.0 };
+        eprintln!("HARITA {} {} {:.1} {:.4}", k.tick(), h.govde.name, hypot(gx - h.x, GCY - h.y), zemin_s(k, src, team, h.x, h.y, ch, Some(&h)));
         if hypot(gx - h.x, GCY - h.y) < 26.0 {
             let ng = opts.iter().filter(|o| o.kind == "gönder").count();
             let nv = opts.iter().filter(|o| o.kind == "gönder" && o.v.is_some()).count();
