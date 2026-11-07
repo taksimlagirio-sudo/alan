@@ -716,7 +716,7 @@ fn main() {
             let f = |x: f64| if x.is_finite() { format!("{:.2}", x) } else { "null".into() };
             let b = m.ball.as_ref().map_or("null".to_string(), |b| format!("[{},{},{},{},{:.3},{}]", f(b.x), f(b.y), f(b.vx), f(b.vy), b.ch, b.team));
             let fl = m.fl.as_ref().map_or("null".to_string(), |x| format!("[{},{},{},{},{}]", serde_json::to_string(&x.kind).unwrap(), x.t0, x.q.map_or(-1, |q| q as i64), x.to.as_ref().map_or("null".into(), |t| format!("[{},{}]", f(t.x), f(t.y))), serde_json::to_string(&x.shot).unwrap()));
-            let ps: Vec<String> = m.ps.iter().map(|p| format!("[{},{},{},{},{},{},{},{},{}]", f(p.x), f(p.y), f(p.vx), f(p.vy), f(p.tx), f(p.ty), serde_json::to_string(&p.job.clone().unwrap_or_default()).unwrap(), p.en.map_or("null".into(), |e| format!("{:.3}", e)), if p.hal.sendT.unwrap_or(0.0) > m.tick { 1 } else { 0 })).collect();
+            let ps: Vec<String> = m.ps.iter().map(|p| format!("[{},{},{},{},{},{},{},{},{},{}]", f(p.x), f(p.y), f(p.vx), f(p.vy), f(p.tx), f(p.ty), serde_json::to_string(&p.job.clone().unwrap_or_default()).unwrap(), p.en.map_or("null".into(), |e| format!("{:.3}", e)), if p.hal.sendT.unwrap_or(0.0) > m.tick { 1 } else { 0 }, p.den.map_or("null".into(), |d| format!("{:.2}", d)))).collect();
             let yeni = ((m.ev_n - olay_say) as usize).min(m.events.len());
             let ev: Vec<String> = m.events.iter().take(yeni).rev().map(|e| format!("[{},{}]", e.team, serde_json::to_string(&e.text).unwrap())).collect();
             olay_say = m.ev_n;
@@ -838,7 +838,7 @@ fn analiz_satir(m: &alan_motor::mac::MacTam, olay_say: &mut u64) -> String {
     let f = |x: f64| if x.is_finite() { format!("{:.2}", x) } else { "null".into() };
     let b = m.ball.as_ref().map_or("null".to_string(), |b| format!("[{},{},{},{},{:.3},{}]", f(b.x), f(b.y), f(b.vx), f(b.vy), b.ch, b.team));
     let fl = m.fl.as_ref().map_or("null".to_string(), |x| format!("[{},{},{},{},{}]", serde_json::to_string(&x.kind).unwrap(), x.t0, x.q.map_or(-1, |q| q as i64), x.to.as_ref().map_or("null".into(), |t| format!("[{},{}]", f(t.x), f(t.y))), serde_json::to_string(&x.shot).unwrap()));
-    let ps: Vec<String> = m.ps.iter().map(|p| format!("[{},{},{},{},{},{},{},{},{}]", f(p.x), f(p.y), f(p.vx), f(p.vy), f(p.tx), f(p.ty), serde_json::to_string(&p.job.clone().unwrap_or_default()).unwrap(), p.en.map_or("null".into(), |e| format!("{:.3}", e)), if p.hal.sendT.unwrap_or(0.0) > m.tick { 1 } else { 0 })).collect();
+    let ps: Vec<String> = m.ps.iter().map(|p| format!("[{},{},{},{},{},{},{},{},{},{}]", f(p.x), f(p.y), f(p.vx), f(p.vy), f(p.tx), f(p.ty), serde_json::to_string(&p.job.clone().unwrap_or_default()).unwrap(), p.en.map_or("null".into(), |e| format!("{:.3}", e)), if p.hal.sendT.unwrap_or(0.0) > m.tick { 1 } else { 0 }, p.den.map_or("null".into(), |d| format!("{:.2}", d)))).collect();
     let yeni = ((m.ev_n - *olay_say) as usize).min(m.events.len());
     let ev: Vec<String> = m.events.iter().take(yeni).rev().map(|e| format!("[{},{}]", e.team, serde_json::to_string(&e.text).unwrap())).collect();
     *olay_say = m.ev_n;
