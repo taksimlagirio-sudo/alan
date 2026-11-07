@@ -13,6 +13,7 @@ pub mod kafa2_baglam;
 pub mod kafa2_dunya;
 pub mod kafa2_imkan;
 pub mod kafa2_karar;
+pub mod kafa2_bilgi;
 pub mod kafa2_tarti;
 pub mod kafa2_zemin;
 pub mod kafa1_baglam;

@@ -472,8 +472,12 @@ anahtar!(bek_direk, alan_motor::sekil::yer::BEK_DIREK_ZORLA);
 // önde bekleyen pasa açılır (ondeac); Kuyu alanından paylı ve koşarak çıkış (kuyupay)
 anahtar!(onde_ac, alan_motor::sekil::konum::ONDE_AC_ZORLA);
 anahtar!(kuyu_pay, alan_motor::mac::kuyu::KUYU_PAY_ZORLA);
+// harita kenarının indirimi eylemin süresine göre (sahzaman; yeni=1'de yok)
+anahtar!(sah_zaman, alan_motor::kafa::kafa2_tarti::SAH_ZAMAN_ZORLA);
 // bütün oyuncular için yürüme: hız seçiminde normal koşunun altı, bar dolumu hıza bağlı (yuru)
 anahtar!(yuru, alan_motor::mac::enerji::YURU_ZORLA);
+// kayıp bedelinde sahipliğin değeri en az bölgenin harita değeri (kayipharita)
+anahtar!(kayip_harita, alan_motor::kafa::kafa2_tarti::KAYIP_HARITA_ZORLA);
 // hız tercihi: koşu değeri varışla sürekli, savunmada tehlike anına karşı, bar değeri hedeften bağımsız (hiz2)
 anahtar!(hiz2, alan_motor::mac::enerji::HIZ2_ZORLA);
 // kontra koşusunun değeri değer tablosundan (ktab; hiz2 ile)

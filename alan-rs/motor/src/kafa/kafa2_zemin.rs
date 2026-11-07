@@ -537,6 +537,8 @@ struct SahYol {
     k: f64,
     lx: f64,
     ly: f64,
+    /// ALAN_SAH_ZAMAN_IZ: bu kenarın indirimi (g ya da g^(süre / karar aralığı))
+    g: f64,
 }
 
 /// JS sahiplikKur(w, team, ch, B0) (decide.js:6634): her hücrede şut değeri (S) ve komşu hücreye
@@ -569,6 +571,9 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
     let NX = (GW / KG).round() as usize + 1;
     let NY = (GH / KG).round() as usize + 1;
     let g = gam(k);
+    // ALAN_SAH_ZAMAN_IZ: indirim kenar başına değil, eylemin süresine göre (sürme de pas da harcadığı zamanla öder)
+    let zaman = crate::kafa::kafa2_tarti::sah_zaman();
+    let u_k = jmax(1.0, crate::kafa::kafa2_tarti::ufuk_simdi());
     let v_c = 0.1955;
     let PM = dis::pas_max(k);
     struct F {
@@ -621,7 +626,8 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
                 let c = i * NY + j;
                 if !imk_uzak(t, x, y) {
                     let Tc = match B0 {
-                        Some(b) => jmax(30.0, dis::ucus_t(k, hypot(x - b.x, y - b.y), k.D.arriveFirm, None)),
+                        // ALAN_SAH_TC_IZ: tahmin dünyasının süresi topun hücreye gerçek varışı (30 tik tabanı yok)
+                        Some(b) => if crate::kafa::kafa2_tarti::sah_tc() { dis::ucus_t(k, hypot(x - b.x, y - b.y), k.D.arriveFirm, None) } else { jmax(30.0, dis::ucus_t(k, hypot(x - b.x, y - b.y), k.D.arriveFirm, None)) },
                         None => 30.0,
                     };
                     let P = nk(x, y);
@@ -648,10 +654,26 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
                     };
                     let mut sv = s_of(k, &wb0);
                     let sv0 = sv;
+                    if crate::iz_acik() && t == team {
+                        if let Ok(v) = std::env::var("ALAN_SAH_IZ") {
+                            let p: Vec<f64> = v.split(',').filter_map(|z| z.parse().ok()).collect();
+                            if p.len() == 2 && (p[0] / KG).round() as usize == i && (p[1] / KG).round() as usize == j {
+                                let k0 = k_of(&wb0);
+                                let r = crate::kafa::kafa2_imkan::sut_tab(k, &wb0, t, x, y, c_t, k0.as_ref(), None, None, None, None);
+                                let yl = crate::kafa::kafa2_imkan::sut_yol(k, &wb0, t, x, y, None);
+                                let va = sut_vakit(k, &wb0, t, x, y, k0.as_ref());
+                                let yakin: Vec<String> = wb0.iter().filter(|o| o.team != t && hypot(o.x - x, o.y - y) < 8.0).map(|o| format!("{}({:.1},{:.1})", o.govde.name, o.x, o.y)).collect();
+                                eprintln!("SAHS0 {} hücre ({:.0},{:.0}) sv0 {:.3} tablo {:.3} yol {:.3} vakit {:.3} vurucu {:?} yakın {}", k.tick(), x, y, sv0, r, yl, va, k0.as_ref().map(|q| q.govde.name.clone()), yakin.join(" "));
+                            }
+                        }
+                    }
                     if sv > 0.005 {
                         let pw = predict_world(k, w, t, P, Tc, false, None, false, None);
                         let wb = bek_yer_w(k, &pw, t, P, Some(Tc));
+                        // ALAN_SAH_DIBINDE_IZ: tahmin dünyasında topa koşan savunmacı şutu ikili kesmez; baskı sut_vakit'te
+                        let fb0 = crate::kafa::kafa2_imkan::FB_YOK.with(|c| c.replace(crate::kafa::kafa2_tarti::sah_dibinde()));
                         sv = s_of(k, &wb);
+                        crate::kafa::kafa2_imkan::FB_YOK.with(|c| c.set(fb0));
                         if crate::iz_acik() && t == team {
                             if let Ok(v) = std::env::var("ALAN_SAH_IZ") {
                                 let p: Vec<f64> = v.split(',').filter_map(|z| z.parse().ok()).collect();
@@ -681,7 +703,7 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
                     let y2 = b as f64 * KG;
                     let tk = hypot(x2 - x, y2 - y) / v_c;
                     let kk = jmin(imk_sg((rv((x + x2) / 2.0, (y + y2) / 2.0) - tk / 2.0) / imk_tau(tk / 2.0)), imk_sg((rv(x2, y2) - tk) / imk_tau(tk)));
-                    yol.push(SahYol { x: x2, y: y2, k: kk, lx: x2, ly: y2 });
+                    yol.push(SahYol { x: x2, y: y2, k: kk, lx: x2, ly: y2, g: if zaman { crate::mat::pow(g, tk / u_k) } else { g } });
                 }
                 for q in &biz {
                     let L = hypot(q.x - x, q.y - y);
@@ -691,7 +713,8 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
                     let A = nk(x, y);
                     let acik = if crate::kafa::kafa2_tarti::sah_surekli() { yol_sure(k, w, t, A, nk(q.x, q.y)) } else { dis::lane_ok(k, w, t, A, nk(q.x, q.y), Some(k.D.arriveFirm), Some(k.D.sut_hazir)) };
                     let kk = acik * bek_yol(k, w, t, A, nk(q.x, q.y), Some(k.D.sut_hazir));
-                    yol.push(SahYol { x: q.x, y: q.y, k: kk, lx: (x + q.x) / 2.0, ly: (y + q.y) / 2.0 });
+                    let tp = dis::ucus_t(k, L, k.D.arriveFirm, None) + k.D.sut_hazir;
+                    yol.push(SahYol { x: q.x, y: q.y, k: kk, lx: (x + q.x) / 2.0, ly: (y + q.y) / 2.0, g: if zaman { crate::mat::pow(g, tp / u_k) } else { g } });
                 }
                 H[c] = yol;
             }
@@ -733,7 +756,7 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
             for c in 0..f.S.len() {
                 let mut b = if f.S[c] > 0.0 { f.S[c] - (1.0 - f.S[c]) * kac } else { f64::NEG_INFINITY };
                 if bek && BW[t][c] > 0.0 {
-                    let mut vs: Vec<f64> = f.H[c].iter().map(|e| e.k * g * Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y) - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly)).collect();
+                    let mut vs: Vec<f64> = f.H[c].iter().map(|e| e.k * e.g * Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y) - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly)).collect();
                     if b > f64::NEG_INFINITY {
                         vs.push(b);
                     }
@@ -754,7 +777,7 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
                 }
                 if crate::kafa::kafa2_tarti::sah_yumusak() && !bek {
                     // ALAN_SAH_YUMUSAK_IZ: şut ve en iyi üç yolun ortalaması
-                    let mut vs: Vec<f64> = f.H[c].iter().map(|e| e.k * g * Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y) - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly)).collect();
+                    let mut vs: Vec<f64> = f.H[c].iter().map(|e| e.k * e.g * Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y) - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly)).collect();
                     vs.sort_by(|a, b| b.partial_cmp(a).unwrap_or(std::cmp::Ordering::Equal));
                     let n = vs.len().min(3);
                     let yol = if n > 0 { vs[..n].iter().sum::<f64>() / n as f64 } else { f64::NEG_INFINITY };
@@ -762,7 +785,7 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
                     continue;
                 }
                 for e in &f.H[c] {
-                    let v = e.k * g * Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y) - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly);
+                    let v = e.k * e.g * Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y) - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly);
                     if v > b {
                         b = v;
                     }
@@ -796,7 +819,7 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
                 let mut ys: Vec<(f64, String)> = vec![(if f.S[c] > 0.0 { f.S[c] - (1.0 - f.S[c]) * kac } else { f64::NEG_INFINITY }, format!("şut S {:.3}", f.S[c]))];
                 for e in &f.H[c] {
                     let a = Sahiplik::oku_n(&f.N, NX, NY, e.x, e.y);
-                    let v = e.k * g * a - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly);
+                    let v = e.k * e.g * a - (1.0 - e.k) * Sahiplik::oku_n(&o.N, NX, NY, e.lx, e.ly);
                     ys.push((v, format!("→ ({:.0},{:.0}) k {:.3} hedefN {:.3} hedefS {:.3}", e.x, e.y, e.k, a, f.S[((e.x / KG).round() as usize).min(NX - 1) * NY + ((e.y / KG).round() as usize).min(NY - 1)])));
                 }
                 ys.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
