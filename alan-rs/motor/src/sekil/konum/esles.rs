@@ -1065,13 +1065,16 @@ impl Sv {
                     let dusuk = s7(64) && self.dtac.t.blok.as_deref() == Some("Düşük");
                     // S7p: tehlikesiz adamı (tehlike bölgesinin dışında) tutan markajcı da bölgeci gibi boştaki tehlikeli adamı alır
                     // (897–925 Kale 82 br'deki Cansu'yu tutuyordu)
-                    let tehlikesiz_adam = s7(32768) && bas(&pp.job, &["markaj", "arkada", "kapatma"]) && pp.hal.tutQ.or(pp.hal.markRef).map_or(false, |m| self.g_d(c.ps[m].x, c.ps[m].y) >= S7_D);
+                    let tehlikesiz_adam = s7(32768) && bas(&pp.job, &["markaj", "arkada", "kapatma"]) && pp.hal.tutQ.or(pp.hal.markRef).map_or(false, |m| self.g_d(c.ps[m].x, c.ps[m].y) >= if g_e < S7M_ACIL { jmin(S7_D, g_e + S7P_ARA) } else { S7_D });
                     let bolgeci = (s7(32) || dusuk || s7(32768)) && !gecildi && !self.press.contains(&p) && (bas(&pp.job, &["bölge"]) && (s7(32) || dusuk) || tehlikesiz_adam);
                     // S7q: süren S7d'de bölge ve adamın tehlikesi eşikleri de payla (eşikte titremesin)
                     let qpay = if s7d_once { S7Q_PAY } else { 0.0 };
                     if (s7(8) || dusuk) && (g_e < S7_D + qpay || (dusuk && bolgeci)) && self.press.first() != Some(&p) && (gecildi || bolgeci) && {
                         let q = pp.hal.tutQ.or(pp.hal.markRef);
-                        q.map_or(true, |q| { let d = self.g_d(c.ps[q].x, c.ps[q].y); !(d < g_e - 2.0 - qpay || d < S7_D - qpay) })
+                        // S7p: kutuda taşıyıcı varken (kaleye S7M_ACIL içinde) tehlikeli adam, kaleye taşıyıcıdan en çok S7P_ARA uzak olan:
+                        // tehlike bölgesinin sınırındaki adama dönülmez (8476–8512 Kaan kale önünden 32 br'deki Kale'ye dönüyordu)
+                        let esik = if s7(32768) && g_e < S7M_ACIL { jmin(S7_D, g_e + S7P_ARA) } else { S7_D };
+                        q.map_or(true, |q| { let d = self.g_d(c.ps[q].x, c.ps[q].y); !(d < g_e - 2.0 - qpay || d < esik - qpay) })
                     } {
                         let bos = self.atk.iter().copied().filter(|&q| Some(q) != h && !s7_tut.contains(&q) && self.g_d(c.ps[q].x, c.ps[q].y) < S7_D).min_by(|&u, &v| sira(self.g_d(c.ps[u].x, c.ps[u].y) - self.g_d(c.ps[v].x, c.ps[v].y)));
                         if let Some(q) = bos {
@@ -1169,6 +1172,25 @@ impl Sv {
                         }
                     }
                     // S7j: tehlike bölgesinde markajcı adamının yanında değil, adamıyla kale arasında (hattın üstünde) durur
+                    // S7s: S7m'nin Kuyu kuralı bütün savunma işlerinde (blok, bölge, arkada, kapatma): şut yakın değilken hedef Kuyu'nun
+                    // içindeyse sınırında (4780–4804 Burç Kuyu'da bekleyip şut anında çıkmak zorunda kaldı)
+                    if s7(262144) && g_e < S7_D && g_e >= S7M_ACIL {
+                        let pas_q = c.m.fl.as_ref().and_then(|f| f.q);
+                        for &d in &self.defs.clone() {
+                            let pp = &c.ps[d];
+                            if pp.bekci() || bas(&pp.job, &["pres", "kovala", "alıcı", "karşıla", "sekme", "geri koşu", "adandı"]) || pas_q == Some(d) {
+                                continue;
+                            }
+                            let r = self.g_d(pp.tx, pp.ty);
+                            if r < Q.kuyu_a && r > 1e-6 {
+                                let gx = own_x(dt);
+                                let (ux, uy) = ((pp.tx - gx) / r, (pp.ty - GCY) / r);
+                                let pp = &mut c.ps[d];
+                                pp.tx = gx + ux * (Q.kuyu_a + 0.3);
+                                pp.ty = GCY + uy * (Q.kuyu_a + 0.3);
+                            }
+                        }
+                    }
                     if (s7(512) || s7(4096)) && g_e < S7_D {
                         // S7m: şut yakın değilken (taşıyıcı S7M_ACIL'den uzak, pas adama gitmiyor) Kuyu süresi harcanmaz
                         let acil = g_e < S7M_ACIL;
