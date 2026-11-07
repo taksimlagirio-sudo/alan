@@ -373,3 +373,29 @@ pub fn alan_en3_kul(p: &Oyuncu, e: f64, bizde: bool, bxy: Option<(f64, f64)>, k:
     }
     u
 }
+
+/// Ortak buluşma süresi (hareketli hedefe yetişme; savunma presi, hücumun varış hesapları aynı formülü okusun): (px, py)'den
+/// sabit v hızla, (hx, hy)'den sabit (vx, vy) ile giden hedefe R erişimle en erken buluşma (tik); yetişilemiyorsa ufuk.
+pub fn bulus_t(px: f64, py: f64, v: f64, hx: f64, hy: f64, vx: f64, vy: f64, R: f64, ufuk: f64) -> f64 {
+    let (rx, ry) = (hx - px, hy - py);
+    let c0 = rx * rx + ry * ry - R * R;
+    if c0 <= 0.0 {
+        return 0.0;
+    }
+    let a = vx * vx + vy * vy - v * v;
+    let b = 2.0 * (rx * vx + ry * vy - R * v);
+    let t = if a.abs() < 1e-9 {
+        if b < 0.0 { -c0 / b } else { f64::INFINITY }
+    } else {
+        let D = b * b - 4.0 * a * c0;
+        if D < 0.0 {
+            f64::INFINITY
+        } else {
+            let q = D.sqrt();
+            let (t1, t2) = ((-b - q) / (2.0 * a), (-b + q) / (2.0 * a));
+            let (lo, hi) = if t1 < t2 { (t1, t2) } else { (t2, t1) };
+            if lo > 0.0 { lo } else if hi > 0.0 { hi } else { f64::INFINITY }
+        }
+    };
+    jmin(t, ufuk)
+}
