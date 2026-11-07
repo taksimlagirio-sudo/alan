@@ -14,7 +14,7 @@ davranis_izi() { env $(grep -v '^#' analiz/bayraklar.env) "$(bayrak_ad "$1")=1" 
 alan() { python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get(sys.argv[2],''))" "$1" "$2"; }
 
 if [ "${1:-}" = "--uret" ]; then
-  ad="$2"; tur="${3:-4}"; EK=""; source "sina/bilgi/$ad.conf"
+  ad="$2"; tur="${3:-4}"; EK=""; IZ=""; source "sina/bilgi/$ad.conf"
   tablo="motor/veri/bilgi/$ad.json"; gec=$(mktemp -d); trap 'rm -rf "$gec"' EXIT
   for t in $(seq 1 "$tur"); do
     cargo build --release -q -p alan-kos
@@ -24,7 +24,7 @@ if [ "${1:-}" = "--uret" ]; then
       python3 -c "import json,sys; v=json.load(open('analiz/mac-217468.json')); v['yeni']['tohum']=int(sys.argv[1]); json.dump(v,open(sys.argv[2],'w'),ensure_ascii=False)" "$s" "$k"
       ls+=("$gec/a-$s.jsonl")
     done
-    printf '%s\n' $TOHUMLAR | xargs -P4 -I{} sh -c "env $(grep -v '^#' analiz/bayraklar.env | tr '\n' ' ') $(bayrak_ad "$ad")=1 ${EK:-} '$kos' '$gec/kayit-{}.json' 9000 analiz > '$gec/a-{}.jsonl' 2>/dev/null"
+    printf '%s\n' $TOHUMLAR | xargs -P4 -I{} sh -c "env $(grep -v '^#' analiz/bayraklar.env | tr '\n' ' ') $(bayrak_ad "$ad")=1 ${EK:-} '$kos' '$gec/kayit-{}.json' 9000 analiz > '$gec/a-{}.jsonl' 2>\$( [ -n '${IZ:-}' ] && echo '$gec/a-{}.iz' || echo /dev/null )"
     meta=$(python3 -c "import json,sys; print(json.dumps({'k':float(sys.argv[1]),'tohumlar':[int(x) for x in sys.argv[2].split()],'bayraklar':sys.argv[3].split()}))" "$K" "$TOHUMLAR" "$(grep -v '^#' analiz/bayraklar.env | tr '\n' ' ') $(bayrak_ad "$ad")=1 ${EK:-}")
     BILGI_META="$meta" python3 "$URETICI" "$gec/yeni.json" $ARG "${ls[@]}"
     fark=$(python3 - "$tablo" "$gec/yeni.json" <<'P'

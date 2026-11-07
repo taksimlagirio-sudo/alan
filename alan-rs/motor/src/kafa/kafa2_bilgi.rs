@@ -34,8 +34,10 @@ fn coz(ad: &str, metin: &str) -> Option<Bilgi> {
 /// Gömülü tablo (adıyla); yoksa ya da bozuksa None.
 pub fn bilgi(ad: &str) -> Option<&'static Bilgi> {
     static TUTMA: std::sync::OnceLock<Option<Bilgi>> = std::sync::OnceLock::new();
+    static HARITA: std::sync::OnceLock<Option<Bilgi>> = std::sync::OnceLock::new();
     match ad {
         "tutma" => TUTMA.get_or_init(|| coz("tutma", include_str!("../../veri/bilgi/tutma.json"))).as_ref(),
+        "harita" => HARITA.get_or_init(|| coz("harita", include_str!("../../veri/bilgi/harita.json"))).as_ref(),
         _ => None,
     }
 }

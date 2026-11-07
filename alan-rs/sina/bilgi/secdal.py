@@ -25,6 +25,7 @@ def katman(fr, tm, x, y):
     rak = range(8, 14) if tm == 0 else range(1, 7)
     hat = any(seg(fr['p'][q][0], fr['p'][q][1], x, y, gx, CY) < 3 and abs(gx - fr['p'][q][0]) < abs(gx - x) for q in rak)
     onde = sum(1 for q in rak if abs(gx - fr['p'][q][0]) < abs(gx - x))
+    if 35 <= d <= 45 and (y < 8 or y > CY * 2 - 8): return ('kenar', '35–45', 'uzak'), d
     return ('kesik' if hat else 'açık', '≤15' if d <= 15 else '15–25', '0–2' if onde <= 2 else '3+'), d
 def sec(kl, toplam):
     aday = collections.defaultdict(list)
@@ -37,7 +38,7 @@ def sec(kl, toplam):
             T = int(r[0]) - 1; fr = F.get(T); si = sid.get(T)
             if not fr or not si or si[0] != r[2]: continue
             k, d = katman(fr, r[2], r[3], r[4])
-            if d > 25: continue
+            if d > 25 and k[0] != 'kenar': continue
             aday[k].append((t, T, si))
     rnd = random.Random(7); her = max(1, toplam // 8); secilen = collections.defaultdict(list); say = collections.Counter()
     for k in sorted(aday):
@@ -64,7 +65,7 @@ def sonuc(R, tm):
     return (False, None, None, False, len(R))
 def rapor(kl):
     T = collections.defaultdict(lambda: collections.defaultdict(list)); yok = collections.Counter(); kontrol = [0, 0]
-    PAS = []; TUT = []
+    PAS = []; TUT = []; ONCE = collections.defaultdict(list); SUT = []
     for t in sorted(glob.glob(kl + '/t*/')):
         A = {}; Al = []
         for l in open(t + 'analiz.jsonl'):
@@ -75,6 +76,10 @@ def rapor(kl):
         ZD = {}                              # (T, kol) → ZORLA ayrıntısı
         try: AD = json.load(open(t + 'ad.json'))['ad']
         except Exception: AD = []
+        SEC = {}
+        for l in open(t + 'kararlar.txt'):
+            q = json.loads(l)
+            if q[5]: SEC[int(q[0]) - 1] = q[5][0][0].split()[0]
         cur = None
         for l in open(t + 'secdal.err'):
             p = l.split()
@@ -100,6 +105,8 @@ def rapor(kl):
                 g, tk, xk, rg, sure = sonuc(R, tm)
                 T[k][kol].append((g, rg, Z[Tn].get(kol), sure))
                 kv = ZD.get((Tn, kol))
+                if kol == 'once': ONCE[k].append(SEC.get(Tn, '?'))
+                if kol == 'sut' and kv: SUT.append((k, float(kv.get('Pk', 'nan')), g))
                 if kol == 'pas' and kv:
                     # pasın sonucu: topu ilk tutan (taşıyıcı dışında) ya da gol
                     s0 = R[0]['s'] if R else [0, 0]; son = ('yok', None); ucti = False
@@ -131,6 +138,16 @@ def rapor(kl):
             s = sum(x[3] for x in L) / max(1, n)
             print(f"   {kol:5} n {n:3} (seçenek yok {yok[(k, kol)]:2})  gol %{100*g:4.0f}  rakip gol %{100*r:4.0f}  fark %{100*(g-r):+4.0f}  kol−once %{100*((g-r)-(go-ro)):+4.0f}  kafa v {v:6.3f}  sahiplik {s:5.0f} tik")
     rapor_ek(PAS, TUT)
+    print('== once kolunda kafanın asıl seçimi (katman başına; gönder = şut)')
+    for k in sorted(ONCE):
+        c = collections.Counter(ONCE[k]); n = len(ONCE[k])
+        print('   ' + ' × '.join(k) + f'  n {n:3}  ' + '  '.join(f'{a} %{100*b/n:.0f}' for a, b in c.most_common()))
+    print('== sut kolu: kafanın Pk ortalaması ile zorlanan şutun gerçek gol oranı (katman başına)')
+    B = collections.defaultdict(list)
+    for k, pk, g in SUT: B[k].append((pk, g))
+    for k in sorted(B):
+        X = B[k]; n = len(X)
+        print('   ' + ' × '.join(k) + f'  n {n:3}  kafa Pk {sum(x[0] for x in X)/n:.3f}  gerçek gol %{100*sum(x[1] for x in X)/n:.0f}')
     # tür başına kafa v ile gerçek (bütün katmanlar)
     print('== tür başına: kafa v ortalaması ile gerçek (gol − rakip gol)')
     for kol in ['sut', 'pas', 'sur', 'tut']:

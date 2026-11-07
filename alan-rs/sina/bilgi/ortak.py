@@ -46,6 +46,7 @@ def harmanla(eski_yol, yeni_deger, yeni_n, oran=0.5):
     if not eski_yol or not os.path.exists(eski_yol):
         return yeni_deger, None
     e = json.load(open(eski_yol))
+    if not e.get('mac') or not any(e.get('n', [])): return yeni_deger, None   # ölçülmemiş başlangıç tablosuyla harmanlanmaz
     if len(e.get('deger', [])) != len(yeni_deger):
         return yeni_deger, None
     # ölçülmemiş (maçsız, bütün n = 0) eski tablo harmanlanmaz: başlangıç tablosunun sıfırları ilk ölçümü yarıya indiriyordu
