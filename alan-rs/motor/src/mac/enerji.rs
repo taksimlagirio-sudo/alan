@@ -353,9 +353,8 @@ pub const HIZ2_TB: f64 = 15.0;
 pub const HIZ2_SUT_D: f64 = 18.0;
 pub const HIZ2_TASI_V: f64 = 0.3;
 pub const HIZ2_TEH_MIN: f64 = 8.0;
-/// hiz2: barın birim değeri ve dolu bardaki payı.
+/// hiz2: barın değer katı (bedel = HIZ2_BAR · ((1−e+c)² − (1−e)²)).
 pub const HIZ2_BAR: f64 = 0.5;
-pub const HIZ2_BAR_TABAN: f64 = 0.3;
 /// Deney (ALAN_HIZ2_IZ; ölçümde/wasm'da HIZ2_ZORLA; analiz/HIZ-TERCIHI.md): hız seçiminde koşunun değeri varış süresiyle sürekli
 /// azalır, savunmada yarış tehlike anına karşı ölçülür, barın değeri hedeften bağımsızdır. Varsayılan kapalı.
 pub static HIZ2_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
@@ -529,6 +528,16 @@ pub fn sprint_karar3(m: &mut Mac) {
                 }
                 _ => tD,
             }
+        } else if hiz2() && bizde && tD >= 1e8 {
+            // hiz2: hücumda son tarih yoksa (pas havada, kontra) koşunun son tarihi rakibin oraya varacağı an (boşluk kapanır)
+            let mut t = 1e9;
+            for q in &m.ps {
+                if q.team == p.team || q.noTouch || q.bekci() {
+                    continue;
+                }
+                t = jmin(t, alan_kosu_t(q, hypot(q.x - tx, q.y - ty), spd(q), &kk));
+            }
+            t
         } else {
             tD
         };
@@ -540,7 +549,10 @@ pub fn sprint_karar3(m: &mut Mac) {
                 let g = 1.0 / (1.0 + T / HIZ2_TA) / (1.0 + jmax(0.0, T - tD2) / HIZ2_TB);
                 // yürümenin kazancı barın boş kısmını aşamaz (dolu barda yürümek bir şey kazandırmaz)
                 let c = if c < 0.0 { jmax(c, -(1.0 - e)) } else { c };
-                let bedel = c * HIZ2_BAR * (HIZ2_BAR_TABAN + (1.0 - HIZ2_BAR_TABAN) * 2.0 * (1.0 - e)) * hr_k;
+                // barın değeri dışbükey: birim değer barın boş kısmıyla artar (2·(1−x)); bedel e−c'den e'ye integral:
+                // dolu barda kısa harcama neredeyse bedava (fazlası boşa gidiyordu), uzun harcama giderek pahalı
+                let bos = jmax(0.0, 1.0 - e);
+                let bedel = HIZ2_BAR * ((bos + c) * (bos + c) - bos * bos) * hr_k;
                 return Sy * g - bedel;
             }
             let mut bd = 0.0;

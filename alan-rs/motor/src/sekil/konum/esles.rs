@@ -382,6 +382,16 @@ impl Sv {
                 } else {
                     val
                 };
+                // S7k: tehlike bölgesindeki (kaleye S7_D) adamını tutan markajcı onu devretmeden bırakmaz: önceki adamına
+                // değeri S7K kat (başka adama ya da alana geçmesi ancak çok daha değerliyse)
+                let val = if s7(1024) && tr == 0 && val > 0.0 && J.qp().map_or(false, |q| {
+                    let pp = &c.ps[p];
+                    (pp.hal.uaPrev == Some(q) || pp.hal.markRef == Some(q)) && self.g_d(c.ps[q].x, c.ps[q].y) < S7_D
+                }) {
+                    val * S7K
+                } else {
+                    val
+                };
                 row.push(val);
             }
             Bs.push(row);
@@ -1081,6 +1091,8 @@ impl Sv {
                         let s = jmin(S7H_ON, g_e - 2.0);
                         let (qx, qy) = (E.0 + ux * s, E.1 + uy * s);
                         let ad = self.defs.iter().copied().filter(|&d| Some(d) != f && !c.ps[d].bekci() && !self.up[d] && self.g_d(c.ps[d].x, c.ps[d].y) < g_e - 1.0).min_by(|&u, &v| sira(hypot(c.ps[u].x - qx, c.ps[u].y - qy) - hypot(c.ps[v].x - qx, c.ps[v].y - qy)));
+                        // varış sınırı: şut hattı noktasına S7I_MAX'tan uzaktaki çıkamaz (analizci 6850: 19 br'deki çağrılıyordu)
+                        let ad = ad.filter(|&d| hypot(c.ps[d].x - qx, c.ps[d].y - qy) <= S7I_MAX);
                         if let Some(d) = ad {
                             let pp = &mut c.ps[d];
                             pp.tx = qx;
