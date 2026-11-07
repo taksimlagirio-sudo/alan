@@ -436,6 +436,26 @@ pub fn bilgi_tutma_tut() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     BILGI_TUTMA_TUT_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_BILGI_TUTMA_TUT_IZ").is_ok())
 }
+/// Deney (ALAN_BILGI_TUTMA_OLCEK_IZ; ölçümde BILGI_TUTMA_OLCEK_ZORLA): TUT'un tabanı yerine ölçek. Gönder dışı seçeneğin
+/// değeri, varış hücresinin ölçeğiyle çarpılır: f = tutma / harita (harita: o hücrede kafanın zemin_s ortalaması,
+/// motor/veri/bilgi/harita.json), az örnekte 1'e harmanlı: (n·f + k) / (n + k), n = iki tablonun küçük n'i. Hücre içi
+/// sıralama haritadan (pas yolu, boşluk), ölçek tablodan. Şutun kayıp bedeli yok (TUT gibi).
+pub static BILGI_TUTMA_OLCEK_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn bilgi_tutma_olcek() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    BILGI_TUTMA_OLCEK_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_BILGI_TUTMA_OLCEK_IZ").is_ok())
+}
+/// Ölçek kipinin hücre ölçeği (tablo yoksa 1).
+pub fn tutma_olcek(x: &[(&str, f64); 2]) -> f64 {
+    let (Some(t), Some(m)) = (crate::kafa::kafa2_bilgi::bilgi("tutma"), crate::kafa::kafa2_bilgi::bilgi("harita")) else { return 1.0 };
+    let (tv, tn) = t.oku(x);
+    let (mv, mn) = m.oku(x);
+    let n = jmin(tn, mn);
+    if !(n > 0.0) || !(mv > 1e-3) {
+        return 1.0;
+    }
+    (n * (tv / mv) + t.k) / (n + t.k)
+}
 /// Tutma tablosunun eksenleri, (x, y) noktasında (taşıyıcının takımıyla).
 pub fn tutma_eksen_xy(w: &[Op], h: &Oyuncu, x: f64, y: f64) -> [(&'static str, f64); 2] {
     let gx = if h.team == 0.0 { GW } else { 0.0 };
@@ -1535,9 +1555,16 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
                 None => None,
             };
             let Some(tut) = tut else { continue };
-            let bedel = if o.kind == "gönder" && bilgi_tutma_tut() { 0.0 } else { jmax(0.0, 1.0 - tut) * if o.kind == "gönder" { v0_sut } else { v0 } };
+            let bedel = if o.kind == "gönder" && (bilgi_tutma_tut() || bilgi_tutma_olcek()) { 0.0 } else { jmax(0.0, 1.0 - tut) * if o.kind == "gönder" { v0_sut } else { v0 } };
             let mut yeni = v - bedel;
-            if bilgi_tutma_tut() && o.kind != "gönder" {
+            if bilgi_tutma_olcek() && o.kind != "gönder" {
+                let (x, y) = o.to.as_ref().map_or((h.x, h.y), |t| (t.x, t.y));
+                let f = tutma_olcek(&tutma_eksen_xy(src, &h, x, y));
+                if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
+                    eprintln!("TUTOLC {} {} {} ({:.1},{:.1}) v {:.3} f {:.2} -> {:.3}", k.tick(), h.govde.name, o.kind, x, y, yeni, f, yeni * f);
+                }
+                yeni *= f;
+            } else if bilgi_tutma_tut() && o.kind != "gönder" {
                 if let Some(b) = crate::kafa::kafa2_bilgi::bilgi("tutma") {
                     let (x, y) = o.to.as_ref().map_or((h.x, h.y), |t| (t.x, t.y));
                     let taban = jmax(0.0, jmin(1.0, tut)) * b.harmanla(&tutma_eksen_xy(src, &h, x, y), jmax(0.0, v));
@@ -1547,7 +1574,7 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
                     yeni = jmax(yeni, taban);
                 }
             }
-            let bedel = if bilgi_tutma_tut() { v - yeni } else { bedel };
+            let bedel = if bilgi_tutma_tut() || bilgi_tutma_olcek() { v - yeni } else { bedel };
             o.v = Some(yeni);
             if let Some(d) = o.dok.as_mut() {
                 d.koy("sahip", -bedel);
