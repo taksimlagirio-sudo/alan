@@ -21,6 +21,12 @@ def kontralar(R):
             if abs(gx - x) > 50 and onde <= 3:
                 biz = [q for q in (range(1, 7) if tm == 0 else range(8, 14)) if q != h]
                 kos = min(biz, key=lambda q: math.hypot(gx - r['p'][q][0], CY - r['p'][q][1]))
+                if os.environ.get('HIZDAL_KOSUCU') == 'savunma':
+                    # savunma kolu: topun gerisinde kalmış (kendi kalesine toptan uzak) rakip saha oyuncularından kalesine en yakını
+                    # (geri koşunun değeri: depar / tempo farkı rakibin golüyle ölçülür)
+                    gecik = [q for q in rak if math.hypot(gx - r['p'][q][0], CY - r['p'][q][1]) > math.hypot(gx - x, CY - y)]
+                    if not gecik: son = tm; continue
+                    kos = min(gecik, key=lambda q: math.hypot(gx - r['p'][q][0], CY - r['p'][q][1]))
                 out.append((int(r['t']), kos, tm, math.hypot(gx - x, CY - y), onde, math.hypot(gx - r['p'][kos][0], CY - r['p'][kos][1])))
         son = tm
     return out
@@ -53,6 +59,27 @@ def sonuc(f, tm):
             if TK(h) != tm: bitis = min(bitis, i); break
             if math.hypot(gx - r['p'][h][0], CY - r['p'][h][1]) < 25: kutu = True
     return gol, kutu, bitis
+
+if sys.argv[1] == 'ozet':
+    # an başına kısa sonuç (işçiler ham kayıt yerine bunu iter): [tohum, t0, koşucu, takım, uzaklık, önde, kalan, geçerli, {kol: [gol, kutu, bitiş]}]
+    kl, cikti = sys.argv[2], sys.argv[3]; out = []
+    for d in sorted(glob.glob(f'{kl}/t*/')):
+        if not os.path.exists(d + 'kontra.json'): continue
+        taban = {}
+        for l in open(d + 'analiz.jsonl'):
+            r = json.loads(l); taban[int(r['t'])] = (r['h'], [round(v, 3) for p in r['p'] for v in p[:2]])
+        for (t0, kos, tm, uz, onde, kk) in json.load(open(d + 'kontra.json')):
+            of = f'{d}{t0}/once.jsonl'; gecerli = os.path.exists(of)
+            if gecerli:
+                for i, l in enumerate(open(of)):
+                    if i >= 360: break
+                    r = json.loads(l)
+                    if taban.get(int(r['t'])) != (r['h'], [round(v, 3) for p in r['p'] for v in p[:2]]): gecerli = False; break
+            kol = {k: sonuc(f'{d}{t0}/{k}.jsonl', tm) for k in ('once', 'depar', 'tempo')}
+            out.append([os.path.basename(d.rstrip('/')), t0, kos, tm, round(uz, 1), onde, round(kk, 1), gecerli, kol])
+    json.dump(out, open(cikti, 'w'))
+    print(f'{len(out)} an yazıldı ({sum(1 for o in out if o[7])} geçerli)', file=sys.stderr)
+    sys.exit(0)
 
 kl = sys.argv[2]; T = collections.defaultdict(lambda: [0, 0, 0, 0, 0, 0.0]); n = 0; S = [0, 0, 0, 0]; O = [0, 0, 0]; gecersiz = 0
 for d in sorted(glob.glob(f'{kl}/t*/')):
