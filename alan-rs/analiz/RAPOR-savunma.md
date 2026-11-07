@@ -159,3 +159,7 @@ KP_HAMLE (`ALAN_KP_HAMLE_IZ`). Ölçü betikleri: oturumun çalışma klasörün
   %35,7 / %41,4. **Geçersiz:** taşıyıcının kafası koşucuyu zorlanmamış (tempo) hızla öngörüp pası oraya atıyor, depar atan
   koşucu başka yerde kalıyor; ölçülen depar değil, kafayla gerçeğin uyuşmazlığı. Kanca kafanın kopyasında da açıldı, ölçüm
   yeniden çalışıyor (83 an).
+- hizdal 2. deneme (83 an, zorlamasız kol eklendi): gol depar %13,3 / tempo %9,6 / zorlamasız %7,2. **Bu da geçersiz:**
+  taban maçlar (kontra anı seçimi) eski bayraklar.env ile, kollar S7o + KP_HAMLE eklenmiş setle oynandı; maç tike dek farklı
+  akabilir. Bütünüyle tek setle yeniden çalışıyor (taban maçlar dahil); aynı 16 maçta S7o + KP_HAMLE açıkken "en geri
+  savunmacının arkasında rakip" de ölçülecek.
