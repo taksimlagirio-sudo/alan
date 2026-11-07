@@ -427,6 +427,21 @@ pub fn bilgi_tutma_sut() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     BILGI_TUTMA_SUT_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_BILGI_TUTMA_SUT_IZ").is_ok())
 }
+/// Deney (ALAN_BILGI_TUTMA_TUT_IZ; ölçümde BILGI_TUTMA_TUT_ZORLA): tutma tablosu şuta ceza olarak değil, topu tutmanın
+/// değeri olarak girer. Seçenek değerleri mutlak (sür: varılan yerin değeri) olduğundan şutun (1 − Pk)·V bedeli şutu iki kez
+/// cezalandırıyordu (şut ancak Pk > ~2V/(1+V) ise). Bu bayrakla: şutun kayıp bedeli yok; topu bizde tutan seçenekler
+/// (gönder dışı) en az tut · V(varış), V = tutma tablosu (n·tablo + k·seçeneğin kendi değeri)/(n + k).
+pub static BILGI_TUTMA_TUT_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn bilgi_tutma_tut() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    BILGI_TUTMA_TUT_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_BILGI_TUTMA_TUT_IZ").is_ok())
+}
+/// Tutma tablosunun eksenleri, (x, y) noktasında (taşıyıcının takımıyla).
+pub fn tutma_eksen_xy(w: &[Op], h: &Oyuncu, x: f64, y: f64) -> [(&'static str, f64); 2] {
+    let gx = if h.team == 0.0 { GW } else { 0.0 };
+    let onde = w.iter().filter(|q| q.team != h.team && !q.noTouch && !bekci(q) && (gx - q.x).abs() < (gx - x).abs()).count() as f64;
+    [("uzaklik", hypot(gx - x, GCY - y)), ("onde", onde)]
+}
 /// Tutma tablosunun eksenleri: taşıyıcının rakip kale merkezine uzaklığı, rakip saha oyuncularından kale çizgisine toptan yakın olanlar.
 pub fn tutma_eksen(w: &[Op], h: &Oyuncu) -> [(&'static str, f64); 2] {
     let gx = if h.team == 0.0 { GW } else { 0.0 };
@@ -1520,8 +1535,20 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
                 None => None,
             };
             let Some(tut) = tut else { continue };
-            let bedel = jmax(0.0, 1.0 - tut) * if o.kind == "gönder" { v0_sut } else { v0 };
-            o.v = Some(v - bedel);
+            let bedel = if o.kind == "gönder" && bilgi_tutma_tut() { 0.0 } else { jmax(0.0, 1.0 - tut) * if o.kind == "gönder" { v0_sut } else { v0 } };
+            let mut yeni = v - bedel;
+            if bilgi_tutma_tut() && o.kind != "gönder" {
+                if let Some(b) = crate::kafa::kafa2_bilgi::bilgi("tutma") {
+                    let (x, y) = o.to.as_ref().map_or((h.x, h.y), |t| (t.x, t.y));
+                    let taban = jmax(0.0, jmin(1.0, tut)) * b.harmanla(&tutma_eksen_xy(src, &h, x, y), jmax(0.0, v));
+                    if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
+                        eprintln!("TUTTAB {} {} {} ({:.1},{:.1}) tut {:.3} v {:.3} taban {:.3}", k.tick(), h.govde.name, o.kind, x, y, tut, yeni, taban);
+                    }
+                    yeni = jmax(yeni, taban);
+                }
+            }
+            let bedel = if bilgi_tutma_tut() { v - yeni } else { bedel };
+            o.v = Some(yeni);
             if let Some(d) = o.dok.as_mut() {
                 d.koy("sahip", -bedel);
             }
