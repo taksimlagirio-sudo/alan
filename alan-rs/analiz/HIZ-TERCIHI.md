@@ -31,3 +31,18 @@ Yuru bu iki hatayı görünür yaptı: yarış "kaybedilince" değer 0, yürüme
 (0.29), sprint hiç yok. Yasaklamak değil, değer düzeltilmeli: (1) koşunun değeri sürekli olmalı (varış ne kadar erkense tehlike o kadar azalır;
 savunmada yarış rakibin hedefe değil, tehlikenin gerçekleşeceği ana — şut/pas/kaleye giriş — karşı), (2) barın değeri hedeften bağımsız,
 oyuncunun ve takımın yakın gelecekteki ihtiyacıyla ölçülmeli.
+
+## hiz2 (savunma 8e7c297) dal sınaması — aynı 6 gol anı, golden 200 tik önce, 400 tik (once = asıl maç, birebir)
+| Gol | hiz2 | hiz2 + S7i/j |
+|---|---|---|
+| 0:57 Mancınık | gol (Ok 11 br, Deniz hatta 2.4 br'de) | gol erken (Hendek 14 br) |
+| 1:38 Mancınık | **gol yok** (Mancınık 18 br, Mert hatta) | gol (daha geç) |
+| 1:55 Ok | **şut yok**: Deniz 0.10→0.28–0.33 koşuyor, Ok'u içeride kale tarafında karşılıyor | şut yok |
+| 2:43 Mancınık | gol erken: Siper geç koşu, Ece 4812'de "markaj · Siper"ı bırakıp bölgeye geçti, arkadan kovaladı | gol |
+| 3:55 Ok | **gol yok**: Mert Ok'la birlikte kale tarafına geçti (eskide 0.18 yürüyordu, Deniz 0.10) | gol yok |
+| 4:28 Ok | **gol yok** (Hendek 31 br) | gol yok |
+
+Hız dağılımı (6 an, hedefe >8 br; yürü / sprint): pres · şut hattı %36/%1 → %10/%46; arkada %39/%22 → %10/%5; güvence %4/%48 → %8/%0;
+boşluk %8/%30 → %5/%3; geri koşu %42/%0 → %26/%1; markaj %39/%25 → %30/%5.
+Kalan: uzak geri koşu hâlâ yürüyor (1543 Kaan/Tuna hedefe 55 br, taşıyıcı kaleye 33 br, v 0.10): sprintte bile T≈134 tik, tehlike anı
+tD2≈50 → `1/(1+(T−tD2)/15)` geç kalanı yine ~0'a indiriyor, yarış modelinin kalıntısı. Hücumda kontra koşusu hiç depar atmıyor (%0, eskide %1).
