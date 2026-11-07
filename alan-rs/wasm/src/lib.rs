@@ -495,5 +495,6 @@ anahtar!(bilgi_tutma, alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_ZORLA);
 anahtar!(bilgi_tutma_sut, alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_SUT_ZORLA);
 anahtar!(bilgi_tutma_tut, alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_TUT_ZORLA);
 anahtar!(bilgi_tutma_olcek, alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_OLCEK_ZORLA);
+anahtar!(sah_varis, alan_motor::kafa::kafa2_zemin::SAH_VARIS_ZORLA);
 // kontra koşusunun değeri değer tablosundan (ktab; hiz2 ile)
 anahtar!(ktab, alan_motor::mac::kontra_tablo::KTAB_ZORLA);

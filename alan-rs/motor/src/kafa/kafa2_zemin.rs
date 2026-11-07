@@ -566,6 +566,13 @@ pub fn yol_sure(k: &mut Kafa, w: &[Op], team: f64, A: Nokta, B: Nokta) -> f64 {
     acik
 }
 
+/// Deney (ALAN_SAH_VARIS_IZ; ölçümde/wasm'da SAH_VARIS_ZORLA): sahiplik haritasında hücrenin tahmin dünyası, takımın topu o
+/// hücrede kontrol edebileceği ana göre (sürme ya da pas + alıcının varışı; bkz. sahiplik_kur).
+pub static SAH_VARIS_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sah_varis() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAH_VARIS_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_VARIS_IZ").is_ok())
+}
 /// Teşhis (ALAN_SAH_G=<sayı>; kaldırılacak ya da tablodan uydurulan değere bağlanacak): sahiplik haritasının kenar indirimi.
 pub fn sah_g() -> Option<f64> {
     static A: std::sync::OnceLock<Option<f64>> = std::sync::OnceLock::new();
@@ -631,7 +638,17 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
                 let c = i * NY + j;
                 if !imk_uzak(t, x, y) {
                     let Tc = match B0 {
-                        // ALAN_SAH_TC_IZ: tahmin dünyasının süresi topun hücreye gerçek varışı (30 tik tabanı yok)
+                        // ALAN_SAH_VARIS_IZ: tahmin dünyasının süresi takımın topu o hücrede kontrol edebileceği an: taşıyıcının
+                        // oraya sürmesi ya da pasla (topun uçuşu ile alıcının oraya varışının geç olanı), hangisi erkense.
+                        // Topun uçuş süresi tek başına, sürerek ya da alıcı bekleyerek varılan hücrede savunmanın tepki
+                        // süresini kısa sayıyordu (savunmacı taşıyıcıyı gölgeleyemiyor sanılıyordu).
+                        Some(b) if t == team && sah_varis() => {
+                            let L = hypot(x - b.x, y - b.y);
+                            let surme = L / v_c;
+                            let alici = biz.iter().filter(|q| !bekci(q) && hypot(q.x - b.x, q.y - b.y) > 1.5).map(|q| hypot(q.x - x, q.y - y) / jmax(0.05, dis::as_v_sp(k, q))).fold(f64::INFINITY, jmin);
+                            let pas = jmax(dis::ucus_t(k, L, k.D.arriveFirm, None) + k.D.sut_hazir, alici);
+                            jmin(surme, pas)
+                        }
                         Some(b) => if crate::kafa::kafa2_tarti::sah_tc() { dis::ucus_t(k, hypot(x - b.x, y - b.y), k.D.arriveFirm, None) } else { jmax(30.0, dis::ucus_t(k, hypot(x - b.x, y - b.y), k.D.arriveFirm, None)) },
                         None => 30.0,
                     };
