@@ -11,6 +11,6 @@ BAY="$(grep -v '^#' "$kl/bayraklar.env" | tr '\n' ' ')"
 for s in $TOH; do python3 -c "import json,sys; v=json.load(open('analiz/mac-217468.json')); v['yeni']['tohum']=int(sys.argv[1]); json.dump(v,open(sys.argv[2],'w'),ensure_ascii=False)" "$s" "$kl/kayit-$s.json"; done
 # boş ENV'li kol satırı boşlukla bitmesin (xargs -L1 öyle satırı sonrakiyle birleştirir): her satıra etkisiz ALAN_BOS=1
 for k in "$@"; do ad="${k%%=*}"; ek="${k#*=}"; [ "$ek" = "$k" ] && ek=""; for s in $TOH; do echo "$ad $s ALAN_BOS=1 $ek" | sed 's/ *$//'; done; done \
-  | xargs -P4 -L1 sh -c "ad=\$0; s=\$1; shift 2; [ -s \"$kl/\$ad-\$s.jsonl\" ] || env $BAY \"\$@\" '$kos' \"$kl/kayit-\$s.json\" $tik analiz > \"$kl/\$ad-\$s.jsonl\" 2>/dev/null"
+  | xargs -P4 -L1 sh -c "ad=\$0; s=\$1; shift; [ -s \"$kl/\$ad-\$s.jsonl\" ] || env $BAY \"\$@\" '$kos' \"$kl/kayit-\$s.json\" $tik analiz > \"$kl/\$ad-\$s.jsonl\" 2>/dev/null"
 { for k in "$@"; do ad="${k%%=*}"; echo "== $ad ($k)";
   python3 analiz/py/ters.py "$kl/$ad-*.jsonl"; python3 analiz/py/gidip.py "$kl/$ad-*.jsonl"; python3 analiz/py/hat.py "$kl/$ad-*.jsonl"; python3 analiz/py/tehlike_yuru.py "$kl/$ad-*.jsonl"; done; } | tee "$kl/ozet.txt"
