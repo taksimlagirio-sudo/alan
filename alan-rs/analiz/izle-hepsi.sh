@@ -24,6 +24,7 @@ birles() { git -c user.email=analiz@yerel -c user.name=analiz merge -q --no-edit
         awk 'FILENAME==ARGV[1]{b[$0]=1;next} FILENAME==ARGV[2]{o[$0]=1;L[++n]=$0;next} {t[$0]=1;L[++n]=$0}
              END{for(i=1;i<=n;i++){x=L[i]; if(g[x]++)continue; if(b[x]&&!(o[x]&&t[x]))continue; print x}}' /tmp/izb1 /tmp/izb2 /tmp/izb3 > "$f"; git add "$f";;
       alan-v5/*.js|alan-v5/*.html) git checkout --ours -- "$f"; git add "$f";;
+      */__pycache__/*) git rm -q -f --cached "$f" >/dev/null 2>&1; rm -f "$f";;
       alan-rs/wasm/src/lib.rs) git show :1:"$f" > /tmp/izl1; git show :2:"$f" > /tmp/izl2; git show :3:"$f" > /tmp/izl3; git merge-file --union -p /tmp/izl2 /tmp/izl1 /tmp/izl3 > "$f"; git add "$f";;
       *) return 1;;
     esac
