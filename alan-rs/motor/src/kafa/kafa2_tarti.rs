@@ -402,6 +402,19 @@ pub fn kayip_harita() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     KAYIP_HARITA_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_KAYIP_HARITA_IZ").is_ok())
 }
+/// Deney (ALAN_SAH_DIBINDE_IZ; ölçümde SAH_DIBINDE_ZORLA): sahiplik haritasında hücrenin şutu tahmin dünyasında "dibinde
+/// rakip varsa 0" ile kesilmez; savunmacının baskısı şuta hazırlanma süresinde (sut_vakit) sürekli sayılır.
+pub static SAH_DIBINDE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sah_dibinde() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAH_DIBINDE_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_DIBINDE_IZ").is_ok())
+}
+/// Deney (ALAN_SAH_TC_IZ; ölçümde SAH_TC_ZORLA): sahiplik haritasının tahmin dünyası topun hücreye gerçek varış süresinde.
+pub static SAH_TC_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn sah_tc() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    SAH_TC_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_TC_IZ").is_ok())
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);

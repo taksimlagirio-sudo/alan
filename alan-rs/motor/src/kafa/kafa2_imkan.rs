@@ -933,6 +933,8 @@ pub fn sut_yol(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, t_s: Option<f6
 /// JS sutS(w, team, x, y, ch, k, tS) (decide.js:6618): (x, y)'den şutun değeri (dibindeki rakip
 /// şutu keser; tS: ne kadar sonra).
 thread_local! {
+    /// ALAN_SAH_DIBINDE_IZ: sut_s'nin "dibinde rakip varsa 0" kuralı atlanır (baskı sut_vakit'te)
+    pub static FB_YOK: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
     /// sut_tab'ın gövde engeli için savunmacı yer belirsizliği (0: keskin eşik)
     static GOV_SG: std::cell::Cell<f64> = const { std::cell::Cell::new(0.0) };
 }
@@ -947,7 +949,7 @@ pub fn sut_s(k: &mut Kafa, w: &[Op], team: f64, x: f64, y: f64, ch: f64, kq: Opt
             let dd = hypot(p.x - x, p.y - y);
             if sg > 0.0 {
                 fB *= 1.0 - imk_sg((2.4 - dd) / sg);
-            } else if dd < 2.4 {
+            } else if dd < 2.4 && !FB_YOK.with(|c| c.get()) {
                 return 0.0;
             }
         }

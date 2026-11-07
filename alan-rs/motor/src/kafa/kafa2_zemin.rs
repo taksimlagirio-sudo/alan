@@ -626,7 +626,8 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
                 let c = i * NY + j;
                 if !imk_uzak(t, x, y) {
                     let Tc = match B0 {
-                        Some(b) => jmax(30.0, dis::ucus_t(k, hypot(x - b.x, y - b.y), k.D.arriveFirm, None)),
+                        // ALAN_SAH_TC_IZ: tahmin dünyasının süresi topun hücreye gerçek varışı (30 tik tabanı yok)
+                        Some(b) => if crate::kafa::kafa2_tarti::sah_tc() { dis::ucus_t(k, hypot(x - b.x, y - b.y), k.D.arriveFirm, None) } else { jmax(30.0, dis::ucus_t(k, hypot(x - b.x, y - b.y), k.D.arriveFirm, None)) },
                         None => 30.0,
                     };
                     let P = nk(x, y);
@@ -669,7 +670,10 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
                     if sv > 0.005 {
                         let pw = predict_world(k, w, t, P, Tc, false, None, false, None);
                         let wb = bek_yer_w(k, &pw, t, P, Some(Tc));
+                        // ALAN_SAH_DIBINDE_IZ: tahmin dünyasında topa koşan savunmacı şutu ikili kesmez; baskı sut_vakit'te
+                        let fb0 = crate::kafa::kafa2_imkan::FB_YOK.with(|c| c.replace(crate::kafa::kafa2_tarti::sah_dibinde()));
                         sv = s_of(k, &wb);
+                        crate::kafa::kafa2_imkan::FB_YOK.with(|c| c.set(fb0));
                         if crate::iz_acik() && t == team {
                             if let Ok(v) = std::env::var("ALAN_SAH_IZ") {
                                 let p: Vec<f64> = v.split(',').filter_map(|z| z.parse().ok()).collect();
