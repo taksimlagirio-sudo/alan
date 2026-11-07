@@ -415,99 +415,23 @@ pub fn sah_tc() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     SAH_TC_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_TC_IZ").is_ok())
 }
-mod sah_deger_tab {
-    include!("kafa2_sah_deger.rs");
-}
-/// Deney (ALAN_SAH_DEGER_IZ; ölçümde SAH_DEGER_ZORLA): kayıp bedelinin sahiplik değeri en az bölgenin sahiplik değeri
-/// tablosu (motorun kendi maçlarından "topu burada tutan takımın bu sahipliği golle biter" oranı, sina/sahdeger.py).
-pub static SAH_DEGER_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
-pub fn sah_deger_acik() -> bool {
+/// Deney (ALAN_BILGI_TUTMA_IZ; ölçümde BILGI_TUTMA_ZORLA): kayıp bedelinin sahiplik değeri, tutma bilgi tablosuyla
+/// (motor/veri/bilgi/tutma.json) harmanlanır: (n·tablo + k·V0) / (n + k). ALAN_BILGI_TUTMA_SUT_IZ: yalnız şutun bedelinde.
+pub static BILGI_TUTMA_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn bilgi_tutma() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    SAH_DEGER_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_DEGER_IZ").is_ok())
+    BILGI_TUTMA_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_BILGI_TUTMA_IZ").is_ok())
 }
-/// Bölgenin sahiplik değeri (takım `team` topta, (x, y)'de); tablo ikili ara değerli.
-pub fn sah_deger(team: f64, x: f64, y: f64) -> f64 {
-    use sah_deger_tab::{SAH_DEGER as T, SAH_DEGER_KG as K};
-    let nx = T.len();
-    let ny = T[0].len();
-    let dx = if team == 0.0 { GW - x } else { x };
-    let fx = jmax(0.0, jmin(nx as f64 - 1.000001, dx / K));
-    let fy = jmax(0.0, jmin(ny as f64 - 1.000001, (y - GCY).abs() / K));
-    let (i, j) = (fx.floor() as usize, fy.floor() as usize);
-    let (u, w) = (fx - i as f64, fy - j as f64);
-    T[i][j] * (1.0 - u) * (1.0 - w) + T[i + 1][j] * u * (1.0 - w) + T[i][j + 1] * (1.0 - u) * w + T[i + 1][j + 1] * u * w
-}
-/// Sahiplik değeri tablosu (bicim 1, kafa2_sah_deger.json): eksenler `uzaklik` (taşıyıcının rakip kale merkezine
-/// uzaklığı, br), `onde` (rakip saha oyuncularından kale çizgisine toptan yakın olanlar; Bekçi hariç), isteğe bağlı `sure`
-/// (sahipliğin tik sayısı; kafa bilmez, 0 alınır). `deger` ilk eksen en dışta düz dizi; çoklu doğrusal ara değer.
-struct SahDegerTab {
-    eksen: Vec<(String, Vec<f64>)>,
-    deger: Vec<f64>,
-}
-fn sah_deger_tab() -> Option<&'static SahDegerTab> {
-    static T: std::sync::OnceLock<Option<SahDegerTab>> = std::sync::OnceLock::new();
-    T.get_or_init(|| {
-        let j: serde_json::Value = serde_json::from_str(include_str!("kafa2_sah_deger.json")).ok()?;
-        if j.get("bicim").and_then(|b| b.as_i64()) != Some(1) {
-            eprintln!("kafa2_sah_deger.json: bilinmeyen biçim");
-            return None;
-        }
-        let eksen: Vec<(String, Vec<f64>)> = j["eksen"].as_array()?.iter().filter_map(|e| Some((e["ad"].as_str()?.to_string(), e["dugum"].as_array()?.iter().filter_map(|x| x.as_f64()).collect()))).collect();
-        let deger: Vec<f64> = j["deger"].as_array()?.iter().filter_map(|x| x.as_f64()).collect();
-        let boy: usize = eksen.iter().map(|e| e.1.len()).product();
-        if boy != deger.len() || eksen.iter().any(|e| !matches!(e.0.as_str(), "uzaklik" | "onde" | "sure")) {
-            eprintln!("kafa2_sah_deger.json: eksen/değer boyu uyuşmuyor ya da bilinmeyen eksen");
-            return None;
-        }
-        Some(SahDegerTab { eksen, deger })
-    })
-    .as_ref()
-}
-/// Deney (ALAN_SAH_DEGER2_IZ; ölçümde SAH_DEGER2_ZORLA): kayıp bedelinin sahiplik değeri en az tablonun değeri.
-/// ALAN_SAH_DEGER_SUT_IZ (SAH_DEGER_SUT_ZORLA): taban yalnız şutun bedeline girer.
-pub static SAH_DEGER2_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
-pub fn sah_deger2() -> bool {
+pub static BILGI_TUTMA_SUT_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn bilgi_tutma_sut() -> bool {
     static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    SAH_DEGER2_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_DEGER2_IZ").is_ok())
+    BILGI_TUTMA_SUT_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_BILGI_TUTMA_SUT_IZ").is_ok())
 }
-pub static SAH_DEGER_SUT_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
-pub fn sah_deger_sut() -> bool {
-    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    SAH_DEGER_SUT_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_SAH_DEGER_SUT_IZ").is_ok())
-}
-/// Tablodan değer: taşıyıcı `h` topta, dünya `w`.
-pub fn sah_deger_oku(w: &[Op], h: &Oyuncu) -> Option<f64> {
-    let t = sah_deger_tab()?;
+/// Tutma tablosunun eksenleri: taşıyıcının rakip kale merkezine uzaklığı, rakip saha oyuncularından kale çizgisine toptan yakın olanlar.
+pub fn tutma_eksen(w: &[Op], h: &Oyuncu) -> [(&'static str, f64); 2] {
     let gx = if h.team == 0.0 { GW } else { 0.0 };
-    let uz = hypot(gx - h.x, GCY - h.y);
     let onde = w.iter().filter(|q| q.team != h.team && !q.noTouch && !bekci(q) && (gx - q.x).abs() < (gx - h.x).abs()).count() as f64;
-    // her eksende (alt düğüm, ağırlık)
-    let mut parca: Vec<(usize, f64, usize)> = Vec::new();
-    for (ad, d) in &t.eksen {
-        let v = match ad.as_str() { "uzaklik" => uz, "onde" => onde, _ => 0.0 };
-        let n = d.len();
-        let (i, f) = if n < 2 || v <= d[0] { (0, 0.0) } else if v >= d[n - 1] { (n - 2, 1.0) } else {
-            let i = (0..n - 1).find(|&i| v < d[i + 1]).unwrap_or(n - 2);
-            (i, (v - d[i]) / (d[i + 1] - d[i]))
-        };
-        parca.push((i, f, n));
-    }
-    let k = parca.len();
-    let mut top = 0.0;
-    for m in 0..(1usize << k) {
-        let mut idx = 0usize;
-        let mut wg = 1.0;
-        for (e, &(i, f, n)) in parca.iter().enumerate() {
-            let ust = (m >> e) & 1 == 1;
-            let ii = if n < 2 { 0 } else { i + ust as usize };
-            wg *= if n < 2 { if ust { 0.0 } else { 1.0 } } else if ust { f } else { 1.0 - f };
-            idx = idx * n + ii;
-        }
-        if wg > 0.0 {
-            top += wg * t.deger[idx];
-        }
-    }
-    Some(top)
+    [("uzaklik", hypot(gx - h.x, GCY - h.y)), ("onde", onde)]
 }
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
@@ -1573,10 +1497,12 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
         // ALAN_KAYIP_HARITA_IZ: sahipliğin değeri en az bölgenin sahiplik değeri (harita); kısa ufuklu somut seçenekler
         // uzakta topu tutmanın değerini küçük görüyordu (uzak şutun bedeli ucuzluyordu)
         let v0 = if kayip_harita() { jmax(v0, zemin_s(k, src, team, h.x, h.y, ch, Some(&h))) } else { v0 };
-        let v0 = if sah_deger_acik() { jmax(v0, sah_deger(team, h.x, h.y)) } else { v0 };
-        // ALAN_SAH_DEGER2_IZ: tablo tabanı; ALAN_SAH_DEGER_SUT_IZ ile yalnız şutun bedelinde
-        let v0_sut = if sah_deger2() { jmax(v0, sah_deger_oku(src, &h).unwrap_or(0.0)) } else { v0 };
-        let v0 = if sah_deger2() && !sah_deger_sut() { v0_sut } else { v0 };
+        // ALAN_BILGI_TUTMA_IZ: tutma bilgi tablosuyla harmanlanmış sahiplik değeri; ALAN_BILGI_TUTMA_SUT_IZ ile yalnız şutun bedelinde
+        let v0_sut = match crate::kafa::kafa2_bilgi::bilgi("tutma").filter(|_| bilgi_tutma()) {
+            Some(b) => b.harmanla(&tutma_eksen(src, &h), v0),
+            None => v0,
+        };
+        let v0 = if bilgi_tutma() && !bilgi_tutma_sut() { v0_sut } else { v0 };
         for o in opts.iter_mut() {
             let Some(v) = o.v else { continue };
             // pas: rakibe geçme olasılığı (Pl; sekip bizde kalan kayıp değil). ALAN_KAYIP_SAHIP_PD_IZ: eski (1 − doğrudan varma)
