@@ -478,3 +478,5 @@ anahtar!(sah_zaman, alan_motor::kafa::kafa2_tarti::SAH_ZAMAN_ZORLA);
 anahtar!(yuru, alan_motor::mac::enerji::YURU_ZORLA);
 // kayıp bedelinde sahipliğin değeri en az bölgenin harita değeri (kayipharita)
 anahtar!(kayip_harita, alan_motor::kafa::kafa2_tarti::KAYIP_HARITA_ZORLA);
+// hız tercihi: koşu değeri varışla sürekli, savunmada tehlike anına karşı, bar değeri hedeften bağımsız (hiz2)
+anahtar!(hiz2, alan_motor::mac::enerji::HIZ2_ZORLA);

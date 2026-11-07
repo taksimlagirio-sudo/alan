@@ -297,17 +297,23 @@ fn main() {
         let dir = a.get(4).expect("dal <çıktı>").clone();
         let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(300);
         // ek bitler: tek sayı ("sonra" kolu) ya da virgüllü liste (her biri "b<bit>" kolu)
-        let bl: Vec<u16> = a.get(6).map(|x| x.split(',').filter_map(|y| y.parse().ok()).collect()).unwrap_or(vec![128]);
-        let mut kollar: Vec<(String, u16)> = vec![("once".into(), 0)];
-        if bl.len() == 1 { kollar.push(("sonra".into(), bl[0])); } else { for b in &bl { kollar.push((format!("b{}", b), *b)); } }
+        // her öğe: S7 bitleri ("768"), "hiz2" (HIZ2_ZORLA) ya da "hiz2+768"
+        let bl: Vec<(String, bool, u16)> = a.get(6).map(|x| x.split(',').map(|y| {
+            let h = y.starts_with("hiz2");
+            let b: u16 = y.trim_start_matches("hiz2").trim_start_matches('+').parse().unwrap_or(0);
+            (y.replace('+', "_"), h, b)
+        }).collect()).unwrap_or(vec![("128".into(), false, 128)]);
+        let mut kollar: Vec<(String, bool, u16)> = vec![("once".into(), false, 0)];
+        if bl.len() == 1 && !bl[0].1 { kollar.push(("sonra".into(), false, bl[0].2)); } else { for (ad, h, b) in &bl { kollar.push((if *h { ad.clone() } else { format!("b{}", b) }, *h, *b)); } }
         std::fs::create_dir_all(&dir).unwrap();
         while mt.tick() < tik && !mt.bitti() {
             mt.adim();
         }
         let anlik = mt.m.clone();
         let onceki = alan_motor::sekil::S7_ZORLA.load(std::sync::atomic::Ordering::Relaxed);
-        for (kol, ek) in kollar {
+        for (kol, hz, ek) in kollar {
             alan_motor::sekil::S7_ZORLA.store(onceki | ek, std::sync::atomic::Ordering::Relaxed);
+            alan_motor::mac::enerji::HIZ2_ZORLA.store(hz, std::sync::atomic::Ordering::Relaxed);
             let mut m2 = Motor::yeni(anlik.clone());
             let mut osay = m2.m.ev_n;
             let mut sat: Vec<String> = Vec::new();
@@ -319,6 +325,7 @@ fn main() {
             std::fs::write(format!("{}/{}.jsonl", dir, kol), sat.join("\n") + "\n").unwrap();
         }
         alan_motor::sekil::S7_ZORLA.store(onceki, std::sync::atomic::Ordering::Relaxed);
+        alan_motor::mac::enerji::HIZ2_ZORLA.store(false, std::sync::atomic::Ordering::Relaxed);
         return;
     }
     if kip == "an" {
