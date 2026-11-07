@@ -1,0 +1,13 @@
+56 çatal, geçersiz (once taban maçtan ayrıştı) 0
+  b131072    rakip topta 7662 tik, en geri savunmacının arkasında %6.19, gol 14
+  b196608    rakip topta 7441 tik, en geri savunmacının arkasında %5.25, gol 12
+  b32768     rakip topta 7007 tik, en geri savunmacının arkasında %4.32, gol 7
+  b65536     rakip topta 7224 tik, en geri savunmacının arkasında %3.41, gol 9
+  once       rakip topta 7399 tik, en geri savunmacının arkasında %2.73, gol 8
+
+[exited with code 0]
+Kollar: b131072 S7r, b65536 S7q, b32768 S7p, b196608 S7q+S7r (bayraklar.env'deki S7 bitlerine eklenir). 4 tohum × 14 çatal (300–4200), çatal başına 300 tik.
+Arkaya geçme tiklerinde en geri savunmacının işi ve son 30 tikte uçuş:
+  once    202 tik, uçuş sonrası 125; markaj 92, arkada 75, bölge 20
+  S7r     474 tik, uçuş sonrası 316; markaj 224, arkada 208, Kuyu'dan çıkıyor 12
+  S7q     246 tik, uçuş sonrası 187; markaj 129, arkada 102
