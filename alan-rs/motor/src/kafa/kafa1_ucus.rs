@@ -48,6 +48,8 @@ pub struct Ucus {
     pub endD: Nk,
     pub Psek: f64,
     pub endSek: Nk,
+    /// pası atmadan önce bozulmama olasılığı (ölçüm izi)
+    pub pre: f64,
 }
 
 /// Bir yerden vurulan topun başlangıcı (JS `{x, y, team}` ya da oyuncu): `vur` vuranın kendisi.
@@ -398,16 +400,8 @@ impl Kafa {
         let giz1 = if ok1 { h.govde.yet.y(mek::VURUS_GIZLE) - 10.0 } else { 0.0 };
         let h_ic = h.id >= 0.0 && h_i.is_some();
         let h_ki: Option<usize> = if h.id >= 0.0 { bul_i(src, h) } else { None };
-        // ALAN_PRE_TEPKI_IZ: savurma süresince taşıyıcıyı ancak tepkisini tamamlamış rakip bozabilir; süreden yakın rakiplerin
-        // (6 br) en kısa tepkisi düşülür (keep_p yakın rakibi hemen müdahale eden sayıyordu: kutu önünde pas riski şişiyordu)
-        let gecik_k = if crate::kafa::kafa2_tarti::pre_tepki() && h_ic {
-            let hh = &src[h_i.unwrap()];
-            let rc = src.iter().filter(|q| q.team != team && !q.noTouch && hypot(q.x - hh.x, q.y - hh.y) < 6.0).map(|q| jmax(0.0, self.TEPKI(q, crate::oyuncu::Tepki::Kovala))).fold(f64::INFINITY, jmin);
-            if rc.is_finite() { gecik - rc } else { gecik }
-        } else {
-            gecik
-        };
-        let pre = if gecik_k >= 1.0 && h_ic { jmax(0.0, jmin(1.0, self.keep_p(&src[h_i.unwrap()], src, None, gecik_k))) } else { 1.0 };
+        // ALAN_PRE_BIR_IZ (yalnız teşhis, kaldırılacak): pre = 1, pas atılmadan önce bozulma sayılmaz
+        let pre = if crate::kafa::kafa2_tarti::pre_bir() { 1.0 } else if gecik >= 1.0 && h_ic { jmax(0.0, jmin(1.0, self.keep_p(&src[h_i.unwrap()], src, None, gecik))) } else { 1.0 };
         let p_k1 = self.pas_k(gon, b0in.vx, b0in.vy, Some(h));
         let Ah = (match savW {
             Some(w) => SAV.tau * w * yf.b + D.aim_err * p_k1 * z0(savU.unwrap_or(0.0)) * yf.y,
@@ -1314,7 +1308,7 @@ impl Kafa {
         }
         let Psek = dk / wt * if pre < 1.0 { pre } else { 1.0 };
         let endSek = if dk > 1e-9 { nk(dxs / dk, dys / dk) } else { end };
-        Ucus { P: m, Pk: k, Pl: o, end, endM, endO, Ps, endS, endD, Psek, endSek }
+        Ucus { P: m, Pk: k, Pl: o, end, endM, endO, Ps, endS, endD, Psek, endSek, pre }
     }
 }
 

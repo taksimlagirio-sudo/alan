@@ -178,7 +178,7 @@ fn main() {
         alan_motor::kafa::kafa2_tarti::SAH_TC_ZORLA.store(ek.split(',').any(|x| x == "sahtc"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_ZORLA.store(ek.split(',').any(|x| x == "bilgitutma"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_SUT_ZORLA.store(ek.split(',').any(|x| x == "bilgitutmasut"), std::sync::atomic::Ordering::Relaxed);
-        alan_motor::kafa::kafa2_tarti::PRE_TEPKI_ZORLA.store(ek.split(',').any(|x| x == "pretepki"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa2_tarti::PRE_BIR_ZORLA.store(ek.split(',').any(|x| x == "prebir"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::KOVSUZ_SABIT_ZORLA.store(ek.split(',').any(|x| x == "kovsuz"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::KAYIP_SAHIP_ZORLA.store(ek.split(',').any(|x| x == "kayipsahip"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::SEKME_BEDEL_ZORLA.store(ek.split(',').any(|x| x == "sekbedel"), std::sync::atomic::Ordering::Relaxed);
@@ -438,7 +438,7 @@ fn main() {
                     alan_motor::kafa::kafa2_tarti::SAH_TC_ZORLA.store(acik && ek.split(',').any(|x| x == "sahtc"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_ZORLA.store(acik && ek.split(',').any(|x| x == "bilgitutma"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_SUT_ZORLA.store(acik && ek.split(',').any(|x| x == "bilgitutmasut"), std::sync::atomic::Ordering::Relaxed);
-                    alan_motor::kafa::kafa2_tarti::PRE_TEPKI_ZORLA.store(acik && ek.split(',').any(|x| x == "pretepki"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa2_tarti::PRE_BIR_ZORLA.store(acik && ek.split(',').any(|x| x == "prebir"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::KOVSUZ_SABIT_ZORLA.store(acik && ek.split(',').any(|x| x == "kovsuz"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::KAYIP_SAHIP_ZORLA.store(acik && ek.split(',').any(|x| x == "kayipsahip"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::SEKME_BEDEL_ZORLA.store(acik && ek.split(',').any(|x| x == "sekbedel"), std::sync::atomic::Ordering::Relaxed);

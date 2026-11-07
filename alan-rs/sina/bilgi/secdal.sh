@@ -13,5 +13,7 @@ for s in $TOH; do
 done
 printf '%s\n' $TOH | xargs -P4 -I{} sh -c "env $BAY '$kos' '$kl/t{}/kayit.json' 9000 analiz > '$kl/t{}/analiz.jsonl' 2>/dev/null; env $BAY '$kos' '$kl/t{}/kayit.json' 9000 kararlar > '$kl/t{}/kararlar.txt' 2>/dev/null"
 python3 sina/bilgi/secdal.py sec "$kl" "$an"
-printf '%s\n' $TOH | xargs -P4 -I{} sh -c "[ -s '$kl/t{}/tler' ] && env $BAY ALAN_SECDAL_ALT=1 '$kos' '$kl/t{}/kayit.json' \$(cat '$kl/t{}/tler') secdal '$kl/t{}' 300 once,sut,pas,sur,tut 2> '$kl/t{}/secdal.err' > /dev/null || true"
+# her an ayrı süreçte (iş parçacığı önbellekleri anlar arasında taşınmasın: once kolu asıl maçla birebir aynı kalsın)
+for s in $TOH; do [ -s "$kl/t$s/tler" ] && tr ',' '\n' < "$kl/t$s/tler" | sed "s|^|$s |"; done | env $BAY KOS="$kos" xargs -P4 -n2 sina/bilgi/secdal_an.sh "$kl"
+for s in $TOH; do cat "$kl/t$s"/secdal-*.err > "$kl/t$s/secdal.err" 2>/dev/null || true; done
 python3 sina/bilgi/secdal.py rapor "$kl"

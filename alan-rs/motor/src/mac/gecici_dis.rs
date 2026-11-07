@@ -411,7 +411,9 @@ pub fn secim(m: &Mac, h: Pid, r: &Karar, g: &[Oyuncu]) -> usize {
         if let Some(t) = SECIM_ZORLA.with(|z| z.borrow_mut().take()) {
             let en = r.opts.iter().enumerate().filter(|(_, o)| secim_turu(&t, o.kind.as_str()) && o.v.is_some()).max_by(|a, b| a.1.v.partial_cmp(&b.1.v).unwrap_or(std::cmp::Ordering::Equal));
             if let Some((i, o)) = en {
-                eprintln!("ZORLA {} {} {} {} v {:.4}", m.tick, m.ps[h].govde.name, t, o.kind, o.v.unwrap_or(f64::NAN));
+                let d = o.det.clone().unwrap_or_default();
+                let dk = |k: &str| o.dok.as_ref().and_then(|x| x.al(k)).unwrap_or(f64::NAN);
+                eprintln!("ZORLA {} {} {} {} v {:.4} P {:.4} Ps {:.4} Pl {:.4} Pk {:.4} pre {:.4} tutar {:.4} sure {:.0} q {}", m.tick, m.ps[h].govde.name, t, o.kind, o.v.unwrap_or(f64::NAN), d.P.unwrap_or(f64::NAN), d.Ps.unwrap_or(f64::NAN), d.Pl.unwrap_or(f64::NAN), d.Pk.unwrap_or(f64::NAN), d.pre.unwrap_or(f64::NAN), dk("tutar"), dk("sure"), o.q.map(|i| m.ps[i].govde.name.to_string()).unwrap_or_default());
                 return i;
             }
             eprintln!("ZORLA {} {} {} seçenek yok", m.tick, m.ps[h].govde.name, t);
