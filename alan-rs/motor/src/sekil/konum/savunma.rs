@@ -159,7 +159,7 @@ impl Sv {
         // pres_kes: taşıyıcı yerinde durmuyor; yetişme süresi onun hızıyla buluşma süresi (gerideki kovalayan yaklaşamaz, kale
         // tarafındaki karşıdan gelir). Eski model taşıyıcıyı durgun sayıyordu (301/3287–3381: 18 br gerideki iki kovalayan
         // seçildi, 25 br önündeki Burç'un değeri 6 kat düşük kaldı; Kaan 26 br boyunca baskısız sürdü).
-        let t_y = if pres_kes() { crate::kural::enerji::bulus_t(p.x, p.y, v_sp(p, k), hp.x, hp.y, hp.vx, hp.vy, 2.4, PRES_KES_UFUK) } else { jmax(0.0, d - 2.4) / v_sp(p, k) };
+        let t_y = if pres_kes() { crate::kural::enerji::bulus_t(p.x, p.y, v_sp(p, k), hp.x, hp.y, hp.vx, hp.vy, 2.4, PRES_KES_UFUK, 0.0) } else { jmax(0.0, d - 2.4) / v_sp(p, k) };
         let t_r = jmax(0.0, TEPKI(p, Tepki::Kovala, k)) + t_y + gec(p, hp.x, hp.y, Some(d - 2.4), k);
         let sdp = jmax(0.0, jmin(1.0, sd + 0.8 * (tl0(p, "sav", "pres") - 0.5)));
         let th_p = Th / (0.6 + 0.8 * sd) * (0.6 + 0.8 * sdp);

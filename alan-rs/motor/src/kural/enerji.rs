@@ -374,28 +374,58 @@ pub fn alan_en3_kul(p: &Oyuncu, e: f64, bizde: bool, bxy: Option<(f64, f64)>, k:
     u
 }
 
-/// Ortak buluşma süresi (hareketli hedefe yetişme; savunma presi, hücumun varış hesapları aynı formülü okusun): (px, py)'den
-/// sabit v hızla, (hx, hy)'den sabit (vx, vy) ile giden hedefe R erişimle en erken buluşma (tik); yetişilemiyorsa ufuk.
-pub fn bulus_t(px: f64, py: f64, v: f64, hx: f64, hy: f64, vx: f64, vy: f64, R: f64, ufuk: f64) -> f64 {
+/// Ortak buluşma süresi (hareketli hedefe yetişme; savunma presi, hücumun varış hesapları aynı formülü okusun): (px, py)'deki
+/// oyuncu `gecikme` tik (tepki + dönüş/hızlanma; çağıran kendi modeliyle verir) bekleyip sonra sabit v hızla gider; hedef
+/// (hx, hy)'den sabit (vx, vy) ile gider (sabit hedefte 0). R erişimle en erken buluşma (tik); yetişilemiyorsa ufuk.
+/// Gecikme içinde hedef erişime kendisi girerse o an.
+pub fn bulus_t(px: f64, py: f64, v: f64, hx: f64, hy: f64, vx: f64, vy: f64, R: f64, ufuk: f64, gecikme: f64) -> f64 {
     let (rx, ry) = (hx - px, hy - py);
     let c0 = rx * rx + ry * ry - R * R;
     if c0 <= 0.0 {
         return 0.0;
     }
-    let a = vx * vx + vy * vy - v * v;
-    let b = 2.0 * (rx * vx + ry * vy - R * v);
-    let t = if a.abs() < 1e-9 {
-        if b < 0.0 { -c0 / b } else { f64::INFINITY }
-    } else {
-        let D = b * b - 4.0 * a * c0;
-        if D < 0.0 {
-            f64::INFINITY
-        } else {
-            let q = D.sqrt();
-            let (t1, t2) = ((-b - q) / (2.0 * a), (-b + q) / (2.0 * a));
-            let (lo, hi) = if t1 < t2 { (t1, t2) } else { (t2, t1) };
-            if lo > 0.0 { lo } else if hi > 0.0 { hi } else { f64::INFINITY }
+    let t0 = jmax(0.0, gecikme);
+    // |r + vh t| = Rt + w t'nin [alt, ∞) içindeki en küçük kökü
+    let kok = |Rt: f64, w: f64, alt: f64, ust: f64| -> f64 {
+        let a = vx * vx + vy * vy - w * w;
+        let b = 2.0 * (rx * vx + ry * vy - Rt * w);
+        let c = rx * rx + ry * ry - Rt * Rt;
+        let ok = |t: f64| t >= alt && t <= ust;
+        if a.abs() < 1e-9 {
+            if b.abs() < 1e-12 { return f64::INFINITY; }
+            let t = -c / b;
+            return if ok(t) { t } else { f64::INFINITY };
         }
+        let D = b * b - 4.0 * a * c;
+        if D < 0.0 {
+            return f64::INFINITY;
+        }
+        let q = D.sqrt();
+        let (t1, t2) = ((-b - q) / (2.0 * a), (-b + q) / (2.0 * a));
+        let (lo, hi) = if t1 < t2 { (t1, t2) } else { (t2, t1) };
+        if ok(lo) { lo } else if ok(hi) { hi } else { f64::INFINITY }
     };
+    // gecikmede hedef kendiliğinden erişime girer mi
+    let t_a = if t0 > 0.0 { kok(R, 0.0, 0.0, t0) } else { f64::INFINITY };
+    let t_b = if t_a.is_finite() { t_a } else { kok(R - v * t0, v, t0, f64::INFINITY) };
+    // gecikme bittiğinde zaten erişimdeyse
+    let t = if !t_b.is_finite() && t0 > 0.0 && { let (x, y) = (rx + vx * t0, ry + vy * t0); x * x + y * y <= R * R } { t0 } else { t_b };
     jmin(t, ufuk)
+}
+#[cfg(test)]
+mod bulus_sina {
+    use super::bulus_t;
+    #[test]
+    fn bulus() {
+        // durgun hedef: (d - R) / v
+        assert!((bulus_t(0.0, 0.0, 0.5, 10.0, 0.0, 0.0, 0.0, 2.0, 90.0, 0.0) - 16.0).abs() < 1e-9);
+        // gecikme eklenir
+        assert!((bulus_t(0.0, 0.0, 0.5, 10.0, 0.0, 0.0, 0.0, 2.0, 90.0, 4.0) - 20.0).abs() < 1e-9);
+        // karşıdan gelen: (10 - 2) / (0.5 + 0.3) = 10
+        assert!((bulus_t(0.0, 0.0, 0.5, 10.0, 0.0, -0.3, 0.0, 2.0, 90.0, 0.0) - 10.0).abs() < 1e-9);
+        // kaçan, aynı hız: ufuk
+        assert_eq!(bulus_t(0.0, 0.0, 0.3, 10.0, 0.0, 0.3, 0.0, 2.0, 90.0, 0.0), 90.0);
+        // gecikmede hedef erişime girer: 10 br, hedef 1 br/tik geliyor, R 2 → 8
+        assert!((bulus_t(0.0, 0.0, 0.5, 10.0, 0.0, -1.0, 0.0, 2.0, 90.0, 20.0) - 8.0).abs() < 1e-9);
+    }
 }
