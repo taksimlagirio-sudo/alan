@@ -46,3 +46,12 @@ Hız dağılımı (6 an, hedefe >8 br; yürü / sprint): pres · şut hattı %36
 boşluk %8/%30 → %5/%3; geri koşu %42/%0 → %26/%1; markaj %39/%25 → %30/%5.
 Kalan: uzak geri koşu hâlâ yürüyor (1543 Kaan/Tuna hedefe 55 br, taşıyıcı kaleye 33 br, v 0.10): sprintte bile T≈134 tik, tehlike anı
 tD2≈50 → `1/(1+(T−tD2)/15)` geç kalanı yine ~0'a indiriyor, yarış modelinin kalıntısı. Hücumda kontra koşusu hiç depar atmıyor (%0, eskide %1).
+
+## Düzeltme (02:45): "enerji hiç harcanmıyor" yanlıştı
+Önceki turda 2:30'daki barlara bakmıştım: 4500. tik devre arası, barlar doluyor. Gerçek (bar ortalaması 1:15 / 3:45 / 4:58):
+hiz2 yok 0.93 / 0.78 / 0.76; hiz2 ilk 0.76 / 0.87 / 0.92; S7k/S7l + dışbükey bedel 0.86 / 0.89 / 0.83. hiz2 biraz tutumlu, "hiç harcamıyor" değil.
+## Kontra koşusu hâlâ depar atmıyor (0f15c40 sonrası %2)
+796 Ok kontra: hedef (10,9) 36 br, bar 1.00, f=0 (tempo). Son tarih = en yakın savunmacının hedefe varışı (~50 tik); sprint T≈88, tempo T≈124:
+g sprint≈0.115, tempo≈0.055 → fark ×Sy(0.26)≈0.016 < 88 tik sprintin bedeli (≈0.03). Geç kalan (15 tik ölçekli düşüş) yine iki seçeneği de
+küçültüyor; kontrada asıl kazanç "her tik erken = geri dönemeyen bir savunmacı daha" (savunmacıların hepsinin geri dönüş süreleri) modelde yok.
+(Not: ALAN_K3_IZ satırındaki tD eski değişken; hiz2'de kullanılan tD2 yazılmıyor.)
