@@ -30,8 +30,10 @@ birles() { git -c user.email=analiz@yerel -c user.name=analiz merge -q --no-edit
   git -c user.email=analiz@yerel -c user.name=analiz commit -q --no-edit >/dev/null 2>&1; }
 ( cd "$WT" && birles "origin/$HUC" && birles "origin/$SAV" ) || { echo "BİRLEŞME ÇAKIŞMASI: main + $HUC + $SAV"; (cd "$WT" && git diff --name-only --diff-filter=U); git worktree remove --force "$WT"; exit 1; }
 grep -q 'kip == "analiz"' "$WT/alan-rs/kos/src/main.rs" || { echo "analiz kipi yok (beklenmedik)"; }
-# bayraklar: dalda daha yeni bir liste varsa onu kullan
-B="$KOK/analiz/bayraklar.env"; [ -f "$WT/alan-rs/analiz/bayraklar.env" ] && B="$WT/alan-rs/analiz/bayraklar.env"
+# bayraklar: yetkili liste analiz dalındaki analiz/bayraklar.env; dalların listelerinde olup bizde olmayanlar yalnız bildirilir
+B="$KOK/analiz/bayraklar.env"
+for d in "$HUC" "$SAV"; do for f in $(git show "origin/$d:alan-rs/analiz/bayraklar.env" 2>/dev/null | grep -o '^ALAN_[A-Z0-9_]*'); do grep -q "^$f=" "$B" || echo "BAYRAK_BIZDE_YOK $d $f"; done; done
+for f in $(cd "$WT" && git log --format=%B -12 -- alan-rs/motor | grep -o 'ALAN_[A-Z0-9_]*_IZ' | sort -u); do grep -q "^$f=" "$B" || echo "COMMITTE_YENI_BAYRAK $f"; done
 cp "$KOK"/analiz/{olc.sh,cok.sh} "$WT/alan-rs/analiz/"; cp "$KOK"/analiz/py/*.py "$WT/alan-rs/analiz/py/"
 mkdir -p "$KOK/target-izle"; ln -sfn "$KOK/target-izle" "$WT/alan-rs/target"
 OUT="$KOK/analiz/out/izle-hepsi/$uc"; mkdir -p "$OUT"
