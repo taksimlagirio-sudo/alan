@@ -41,6 +41,8 @@ mkdir -p "$KOK/target-izle"; ln -sfn "$KOK/target-izle" "$WT/alan-rs/target"
 OUT="$KOK/analiz/out/izle-hepsi/$uc"; mkdir -p "$OUT"
 ( cd "$WT" && git log --format='%h %ci %s' -12 -- alan-rs/motor alan-rs/katman ) > "$OUT/commitler.txt"
 cp "$B" "$OUT/bayraklar.env"
+# şut tablosu bu bayrak setiyle güncel mi (kafanın şut modeli bayraklarla değişebilir: ör. BEK_DIREK)
+( cd "$WT/alan-rs" && env $(grep -v '^#' "$B") ./sina/tablo.sh 2>&1 | tail -1 ) | sed 's/^/TABLO: /' | tee "$OUT/tablo.txt"
 ( cd "$WT/alan-rs" && env $(grep -v '^#' "$B") analiz/cok.sh "$OUT" $T ) > "$OUT/cok.txt" 2>&1 || { echo "OYUN HATASI"; tail -5 "$OUT/cok.txt"; }
 for t in $T; do [ -f "$OUT/t$t/kararlar.txt" ] && ANALIZ_OUT="$OUT/t$t" python3 analiz/py/davranis.py > "$OUT/t$t.davranis.json"; done
 python3 - "$OUT" "$(tail -1 "$DURUM" 2>/dev/null)" $T <<'P'
