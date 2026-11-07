@@ -996,6 +996,18 @@ impl Kafa {
                     Some(g) if g.h == h.id && tick0 - g.t <= 4.0 => g.kaz,
                     _ => 1.0,
                 };
+                // kp_hamle: gövde vuruşu da hamle (mac::dongu::govde_vur: W tik sonra, menzilde kalırsa; sonra 14 tik bekleme):
+                // ufukta bitmeyen vuruş topu ufukta düşürmez
+                let pv = if kp_hamle() {
+                    let tk = self.tick();
+                    let bitis = match &q.hal.gvH {
+                        Some(g) if g.hid == h.id => g.t0 + g.W - tk,
+                        _ => jmax(reach_t, jmax(0.0, q.hal.gvCd.unwrap_or(f64::NEG_INFINITY) - tk)) + jmax(2.0, jround(4.0 - 0.15 * (q.govde.yet.y(mek::HAMLE) - 10.0))),
+                    };
+                    if bitis >= T { 0.0 } else { pv }
+                } else {
+                    pv
+                };
                 if pv > 0.0 {
                     keep *= 1.0 - pv * gk;
                 }
@@ -1099,7 +1111,17 @@ impl Kafa {
             }
             let d0 = self.duel_p_k(&qv, h_arg, src, None);
             let P = d0.P;
-            let tries = 1.0 + ((T - reach_t) / DU.cd).floor();
+            // kp_hamle: topu almak hamle ister (uzan / omuz, 2–5 tik; mac::dongu::ikili_giris) ve rakibin bekleme süresi (cd)
+            // dolmadan yeni hamle yok: ilk alış = max(yetişme, cd bitişi) + hamle süresi; ufukta (T) bitmeyen hamle sayılmaz
+            let tries = if kp_hamle() {
+                let t0 = jmax(reach_t, jmax(0.0, q.cd - self.tick()));
+                let w0 = jmax(2.0, jround(4.0 - 0.25 * (q.govde.yet.y(mek::HAMLE) - 10.0)));
+                // ufukla aynı tikte biten hamle sayılmaz: pas o tikte çıkar (taşıyıcının tiki ikiliden önce)
+                let kalan = T - t0 - w0;
+                if kalan <= 0.0 { 0.0 } else { 1.0 + ((kalan - 1e-9) / DU.cd).floor() }
+            } else {
+                1.0 + ((T - reach_t) / DU.cd).floor()
+            };
             let w = jmax(0.01, 0.03 * (20.0 - q.govde.yet.y(mek::IKILI_KARAR)));
             let thr = self.gir_thr(q, h, src);
             let pc_of = |s: &mut Kafa, Pk: f64| jmax(0.0, jmin(1.0, (Pk + s.en_ikili_ek(q, h) + w / 2.0 - thr + s.gir_ek(q, h, thr, src)) / w));
@@ -1143,6 +1165,8 @@ impl Kafa {
                 sd0 = d1.son;
             }
             let HS = q.hal.hamle.as_ref().map_or(false, |hm| hm.hid == h.id);
+            // kp_hamle: sürmekte olan hamle ufuktan sonra bitiyorsa topu ufukta almaz
+            let HS = HS && !(kp_hamle() && q.hal.hamle.as_ref().map_or(false, |hm| hm.t0 + hm.W - self.tick() >= T));
             let tr_k = if HS { tries - 1.0 } else { tries };
             if HS {
                 let hk = q.hal.hamle.as_ref().unwrap().k == "omuz";
@@ -1596,3 +1620,11 @@ pub fn send_gec() -> bool {
 }
 /// alan-kos an: mekanizma düzeltmesini (sendeleme yarışı + dolanma kimliği) maçın ortasında açmak için
 pub static MEKANIZMA_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
+/// Deney (ALAN_KP_HAMLE_IZ; ölçümde/wasm'da KP_HAMLE_ZORLA; analizci B2): keep_p topu almayı hamlenin süresi ve rakibin bekleme
+/// süresiyle tartar (kısa ufukta aşırı karamsardı: 1–5 tikte tahmin 0,3–0,5, gerçek tutma ~1). Varsayılan kapalı.
+pub static KP_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn kp_hamle() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    KP_HAMLE_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_KP_HAMLE_IZ").is_ok())
+}
