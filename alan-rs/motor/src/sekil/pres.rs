@@ -39,22 +39,29 @@ pub fn mac_pres(c: &mut Mc, t: u8) -> f64 {
 
 /// S7 tehlike bölgesi: taşıyıcı kalemize bundan yakınken (br, kale ortasına) tek savunmacı yetmez.
 pub const S7_D: f64 = 32.0 * GKX;
+/// S7h: kale tarafından çıkan presçinin taşıyıcının en çok ne kadar önünde durduğu (br).
+pub const S7H_ON: f64 = 3.0;
+/// S7j: markajcının adamından kaleye doğru uzaklığı (br).
+pub const S7J_ARA: f64 = 1.6;
 /// Deney (GOREV-savunma S7): taşıyıcıyı durdurmak. Parçalar ayrı ölçülsün diye: ALAN_S7A_IZ (kale tarafında değilsen şut
 /// hattına geç), ALAN_S7B_IZ (tehlike bölgesinde ikinci presçi), ALAN_S7C_IZ (geçilen savunmacı adamına değil kale önüne);
 /// ALAN_S7_IZ üçü birden. Sonradan: ALAN_S7D_IZ (bit 8; geniş dönüş: geçilen herkes, baskıcılar da, adamı topun önünde
 /// değilse kale önüne), ALAN_S7E_IZ (bit 16; varılamayan şut hattı yerine kendi tarafından kale önüne çekil).
 /// ALAN_S7F_IZ (bit 32): tehlike bölgesinde, adamı tehlike bölgesinde olan markajcı ikinci (ve sonraki) presçi olmaz:
 /// adamını devretmeden buluşmaya / kale önüne gitmesin. ALAN_S7G_IZ (bit 64): alçak blokta top uzaktayken de bölgeci
-/// tehlike bölgesinde boş kalan adamı alır. Ölçümde S7_ZORLA (bitler). Varsayılan kapalı.
-pub static S7_ZORLA: std::sync::atomic::AtomicU8 = std::sync::atomic::AtomicU8::new(0);
-pub fn s7(parca: u8) -> bool {
-    static A: std::sync::OnceLock<u8> = std::sync::OnceLock::new();
+/// tehlike bölgesinde boş kalan adamı alır. ALAN_S7H_IZ (bit 128): taşıyıcı kaleye presçiden hızlı sürmüyorsa şut hattında
+/// derinde beklemez, kale tarafından taşıyıcıya çıkar (en çok S7H_ON br önüne). ALAN_S7I_IZ (bit 256): ilk presçi taşıyıcının
+/// gerisindeyse ya da kale önüne çekildiyse kale tarafındaki en yakın savunmacı şut hattına çıkar. ALAN_S7J_IZ (bit 512):
+/// tehlike bölgesinde markajcı adamıyla kale arasında (S7J_ARA br) durur. Ölçümde S7_ZORLA (bitler). Varsayılan kapalı.
+pub static S7_ZORLA: std::sync::atomic::AtomicU16 = std::sync::atomic::AtomicU16::new(0);
+pub fn s7(parca: u16) -> bool {
+    static A: std::sync::OnceLock<u16> = std::sync::OnceLock::new();
     let e = *A.get_or_init(|| {
         if !crate::iz_acik() {
             return 0;
         }
         let v = |k: &str| std::env::var(k).is_ok();
-        (if v("ALAN_S7_IZ") { 7 } else { 0 }) | (if v("ALAN_S7A_IZ") { 1 } else { 0 }) | (if v("ALAN_S7B_IZ") { 2 } else { 0 }) | (if v("ALAN_S7C_IZ") { 4 } else { 0 }) | (if v("ALAN_S7D_IZ") { 8 } else { 0 }) | (if v("ALAN_S7E_IZ") { 16 } else { 0 }) | (if v("ALAN_S7F_IZ") { 32 } else { 0 }) | (if v("ALAN_S7G_IZ") { 64 } else { 0 })
+        (if v("ALAN_S7_IZ") { 7 } else { 0 }) | (if v("ALAN_S7A_IZ") { 1 } else { 0 }) | (if v("ALAN_S7B_IZ") { 2 } else { 0 }) | (if v("ALAN_S7C_IZ") { 4 } else { 0 }) | (if v("ALAN_S7D_IZ") { 8 } else { 0 }) | (if v("ALAN_S7E_IZ") { 16 } else { 0 }) | (if v("ALAN_S7F_IZ") { 32 } else { 0 }) | (if v("ALAN_S7G_IZ") { 64 } else { 0 }) | (if v("ALAN_S7H_IZ") { 128 } else { 0 }) | (if v("ALAN_S7I_IZ") { 256 } else { 0 }) | (if v("ALAN_S7J_IZ") { 512 } else { 0 })
     });
     (e | S7_ZORLA.load(std::sync::atomic::Ordering::Relaxed)) & parca != 0
 }
@@ -141,6 +148,15 @@ pub fn ilk_pres_h(c: &mut Mc, pi: Pid, h: &Oyuncu, dt: u8, TH: Option<&[Tehlike]
                 let vp = jmax(0.05, v_sp(&c.ps[pi], k));
                 let vh = jmax(0.02, hypot(h.vx, h.vy));
                 let sm = jmax(2.0, lg - 4.0);
+                // S7h: taşıyıcı kaleye presçiden hızlı sürmüyorsa (pas oyunu, yana / yavaş sürme) yarış yok: şut hattının
+                // derininde ya da kale önünde beklemek baskı değil, kale tarafından taşıyıcıya çık
+                if s7(128) && h.vx * ux + h.vy * uy < 0.6 * vp {
+                    let s = jmin(S7H_ON, sm);
+                    set(c, h.x + ux * s, h.y + uy * s);
+                    job(c, "pres · şut hattı".into());
+                    c.ps[pi].sprint = true;
+                    return;
+                }
                 let mut s = 2.0;
                 while s < sm && hypot(h.x + ux * s - px, h.y + uy * s - py) / vp > s / vh {
                     s += 0.5;

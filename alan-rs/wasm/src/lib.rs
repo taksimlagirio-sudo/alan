@@ -462,7 +462,7 @@ anahtar!(sav_taban, alan_motor::sekil::konum::SAV_TABAN_ZORLA);
 /// S7 taşıyıcıyı durdurmak: bit 1 şut hattı, 2 ikinci presçi, 4 kale önüne dönüş (7 hepsi)
 #[no_mangle]
 pub extern "C" fn s7(bit: i32) {
-    alan_motor::sekil::S7_ZORLA.store(bit as u8, std::sync::atomic::Ordering::Relaxed);
+    alan_motor::sekil::S7_ZORLA.store(bit as u16, std::sync::atomic::Ordering::Relaxed);
 }
 // H4a: hücum dizilişinin ön ucu toptan en çok bir pas menzili ileride (hucumboy)
 anahtar!(hucum_boy, alan_motor::sekil::yer::HUCUM_BOY_ZORLA);
@@ -478,3 +478,5 @@ anahtar!(sah_zaman, alan_motor::kafa::kafa2_tarti::SAH_ZAMAN_ZORLA);
 anahtar!(yuru, alan_motor::mac::enerji::YURU_ZORLA);
 // kayıp bedelinde sahipliğin değeri en az bölgenin harita değeri (kayipharita)
 anahtar!(kayip_harita, alan_motor::kafa::kafa2_tarti::KAYIP_HARITA_ZORLA);
+// hız tercihi: koşu değeri varışla sürekli, savunmada tehlike anına karşı, bar değeri hedeften bağımsız (hiz2)
+anahtar!(hiz2, alan_motor::mac::enerji::HIZ2_ZORLA);

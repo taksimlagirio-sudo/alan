@@ -1024,7 +1024,9 @@ impl Sv {
                         }
                         if gecildi && g_e < S7_D {
                             let bs = self.base[p].map(|b| (b.x, b.y)).unwrap_or((pp.x, pp.y));
-                            let (lx, ly) = (E.0 + 0.55 * (own_x(dt) - E.0), E.1 + 0.55 * (GCY - E.1));
+                            // S7h: kutunun ağzını tutar (topun 6 br önü, kaleye 10–20 br; top 10 br içindeyse yarı yol), kale dibine inmez
+                            let kk = if s7(128) { 1.0 - jmax(jmin(10.0, 0.5 * g_e), jmin(20.0, g_e - 6.0)) / jmax(1.0, g_e) } else { 0.55 };
+                            let (lx, ly) = (E.0 + kk * (own_x(dt) - E.0), E.1 + kk * (GCY - E.1));
                             let pp = &mut c.ps[p];
                             pp.tx = lx;
                             pp.ty = cl(ly + 0.25 * (bs.1 - ly), 3.0, GH - 3.0);
@@ -1065,6 +1067,47 @@ impl Sv {
                     pp.sprint = true;
                     pp.job = Some("geri koşu · kale".into());
                     pp.hal_mut().tutQ = None;
+                }
+                if let (Some(hh), true) = (h, g_e < S7_D && g_e > 4.0) {
+                    let (ux, uy) = ((own_x(dt) - E.0) / g_e, (GCY - E.1) / g_e);
+                    // S7i: ilk presçi taşıyıcının gerisindeyse ya da yarışı kaybedip kale önüne çekildiyse, kale tarafındaki en
+                    // yakın savunmacı şut hattına, taşıyıcının önüne çıkar
+                    let f = self.press.first().copied();
+                    let geride = f.map_or(true, |f| {
+                        let fp = &c.ps[f];
+                        self.g_d(fp.x, fp.y) >= g_e - 0.5 || fp.job.as_deref() == Some("pres · kale önü")
+                    });
+                    if s7(256) && geride {
+                        let s = jmin(S7H_ON, g_e - 2.0);
+                        let (qx, qy) = (E.0 + ux * s, E.1 + uy * s);
+                        let ad = self.defs.iter().copied().filter(|&d| Some(d) != f && !c.ps[d].bekci() && !self.up[d] && self.g_d(c.ps[d].x, c.ps[d].y) < g_e - 1.0).min_by(|&u, &v| sira(hypot(c.ps[u].x - qx, c.ps[u].y - qy) - hypot(c.ps[v].x - qx, c.ps[v].y - qy)));
+                        if let Some(d) = ad {
+                            let pp = &mut c.ps[d];
+                            pp.tx = qx;
+                            pp.ty = qy;
+                            pp.sprint = true;
+                            pp.job = Some("pres · öne çık".into());
+                            pp.hal_mut().tutQ = None;
+                        }
+                    }
+                    // S7j: tehlike bölgesinde markajcı adamının yanında değil, adamıyla kale arasında (hattın üstünde) durur
+                    if s7(512) {
+                        for &d in &self.defs.clone() {
+                            let pp = &c.ps[d];
+                            if pp.bekci() || !bas(&pp.job, &["markaj"]) {
+                                continue;
+                            }
+                            let Some(q) = pp.hal.tutQ.or(pp.hal.markRef).filter(|&q| q != hh) else { continue };
+                            let (mx, my) = (c.ps[q].x, c.ps[q].y);
+                            let l = self.g_d(mx, my);
+                            if l >= S7_D || l < 2.0 {
+                                continue;
+                            }
+                            let pp = &mut c.ps[d];
+                            pp.tx = mx + (own_x(dt) - mx) / l * S7J_ARA;
+                            pp.ty = my + (GCY - my) / l * S7J_ARA;
+                        }
+                    }
                 }
             }
         }

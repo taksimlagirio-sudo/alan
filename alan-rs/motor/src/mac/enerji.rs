@@ -346,6 +346,24 @@ pub fn fr_top(m: &Mac) -> Option<crate::model::JMShFr> {
     })
 }
 
+/// hiz2: koşu değerinin varışla azalması (tik): her zaman (TA) ve tehlike anından sonra (TB).
+pub const HIZ2_TA: f64 = 60.0;
+pub const HIZ2_TB: f64 = 15.0;
+/// hiz2: tehlike anı: taşıyıcının şut uzaklığı (br), kaleye yaklaşma hızı (br/tik), en erken (tik).
+pub const HIZ2_SUT_D: f64 = 18.0;
+pub const HIZ2_TASI_V: f64 = 0.3;
+pub const HIZ2_TEH_MIN: f64 = 8.0;
+/// hiz2: barın birim değeri ve dolu bardaki payı.
+pub const HIZ2_BAR: f64 = 0.5;
+pub const HIZ2_BAR_TABAN: f64 = 0.3;
+/// Deney (ALAN_HIZ2_IZ; ölçümde/wasm'da HIZ2_ZORLA; analiz/HIZ-TERCIHI.md): hız seçiminde koşunun değeri varış süresiyle sürekli
+/// azalır, savunmada yarış tehlike anına karşı ölçülür, barın değeri hedeften bağımsızdır. Varsayılan kapalı.
+pub static HIZ2_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn hiz2() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    HIZ2_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_HIZ2_IZ").is_ok())
+}
+
 /// yürü: en yavaş kat (normal koşunun).
 pub const YURU_MIN: f64 = 0.35;
 /// Deney (ALAN_YURU_IZ; ölçümde/wasm'da YURU_ZORLA): hız seçimine normal koşunun altı (yürüme) girer ve bar dolumu hıza
@@ -500,7 +518,31 @@ pub fn sprint_karar3(m: &mut Mac) {
         let tac_t = &m.tac[p.team as usize];
         let hr_k = jmax(0.0, jmin(1.0, tac_t.enHarcama.unwrap_or(0.5))) - 0.5 + 1.0;
         let sd_p = alan_en2_sd(p);
+        // hiz2: savunmada (rakip topta, topun peşinde değil) yarış, taşıyıcının şut uzaklığına gireceği ana karşı
+        let tD2 = if hiz2() && !bizde && !topa {
+            match h {
+                Some(hh) if m.ps[hh].team != p.team => {
+                    let hp = &m.ps[hh];
+                    let gx = if p.team == 0.0 { 0.0 } else { W };
+                    let lh = hypot(hp.x - gx, hp.y - crate::saha::H / 2.0);
+                    jmax(tD, jmax(HIZ2_TEH_MIN, (lh - HIZ2_SUT_D) / HIZ2_TASI_V))
+                }
+                _ => tD,
+            }
+        } else {
+            tD
+        };
         let DEG = |T: f64, c: f64| -> f64 {
+            if hiz2() {
+                // hiz2: koşunun değeri varışla sürekli azalır (erken varmak hep biraz iyi, geç kalmak giderek kötü, sıfır
+                // değil); barın değeri hedeften bağımsız: harcamanın birim bedeli bar azaldıkça artar (dolu barda da sıfır değil),
+                // yürümenin kazancı aynası
+                let g = 1.0 / (1.0 + T / HIZ2_TA) / (1.0 + jmax(0.0, T - tD2) / HIZ2_TB);
+                // yürümenin kazancı barın boş kısmını aşamaz (dolu barda yürümek bir şey kazandırmaz)
+                let c = if c < 0.0 { jmax(c, -(1.0 - e)) } else { c };
+                let bedel = c * HIZ2_BAR * (HIZ2_BAR_TABAN + (1.0 - HIZ2_BAR_TABAN) * 2.0 * (1.0 - e)) * hr_k;
+                return Sy * g - bedel;
+            }
             let mut bd = 0.0;
             if c > 0.0 {
                 let d_e = jmax(dol, EN3.r0 * sd_p) * jmax(1.0, T0);
