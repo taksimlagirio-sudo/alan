@@ -576,9 +576,10 @@ pub fn sprint_karar3(m: &mut Mac) {
                         let Tv = if tD < 1e8 { jmax(T, tD) } else { T };
                         let n: f64 = v.iter().map(|&t| 1.0 / (1.0 + exp((t - Tv) / HIZ2_KONTRA_W))).sum();
                         // ALAN_KTAB_IZ: değer tablosundan (kaleye uzaklık × savunmacı × top kazanılalı geçen süre)
-                        match super::kontra_tablo::tablo().filter(|_| super::kontra_tablo::ktab()) {
-                            Some(tb) => tb.oku(ktab_uzak, n, ktab_t0 + Tv / crate::saha::TPS, &|j| kontra_deger(j)),
-                            None => kontra_deger(n),
+                        if super::kontra_tablo::ktab() {
+                            super::kontra_tablo::deger(ktab_uzak, n, ktab_t0 + Tv / crate::saha::TPS, kontra_deger(n))
+                        } else {
+                            kontra_deger(n)
                         }
                     }
                     None => 0.0,
