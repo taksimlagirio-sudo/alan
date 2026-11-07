@@ -12,6 +12,7 @@ for s in $TOH; do
   python3 -c "import json,sys; v=json.load(open('analiz/mac-217468.json')); v['yeni']['tohum']=int(sys.argv[1]); json.dump(v,open(sys.argv[2],'w'),ensure_ascii=False)" "$s" "$kl/t$s/kayit.json"
 done
 printf '%s\n' $TOH | xargs -P4 -I{} sh -c "env $BAY '$kos' '$kl/t{}/kayit.json' 9000 analiz > '$kl/t{}/analiz.jsonl' 2>/dev/null; env $BAY '$kos' '$kl/t{}/kayit.json' 9000 kararlar > '$kl/t{}/kararlar.txt' 2>/dev/null"
+for s in $TOH; do "$kos" "$kl/t$s/kayit.json" 1 kare "$kl/t$s/ad.json" > /dev/null 2>&1 || true; done
 python3 sina/bilgi/secdal.py sec "$kl" "$an"
 # her an ayrı süreçte (iş parçacığı önbellekleri anlar arasında taşınmasın: once kolu asıl maçla birebir aynı kalsın)
 for s in $TOH; do [ -s "$kl/t$s/tler" ] && tr ',' '\n' < "$kl/t$s/tler" | sed "s|^|$s |"; done | env $BAY KOS="$kos" xargs -P4 -n2 sina/bilgi/secdal_an.sh "$kl"

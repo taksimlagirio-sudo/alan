@@ -64,6 +64,7 @@ def sonuc(R, tm):
     return (False, None, None, False, len(R))
 def rapor(kl):
     T = collections.defaultdict(lambda: collections.defaultdict(list)); yok = collections.Counter(); kontrol = [0, 0]
+    PAS = []; TUT = []
     for t in sorted(glob.glob(kl + '/t*/')):
         A = {}; Al = []
         for l in open(t + 'analiz.jsonl'):
@@ -71,6 +72,9 @@ def rapor(kl):
         Ar = [json.loads(v) for v in A.values()]
         F = {r['t']: r for r in Ar}
         Z = collections.defaultdict(dict)   # T → kol → (v ya da None)
+        ZD = {}                              # (T, kol) → ZORLA ayrıntısı
+        try: AD = json.load(open(t + 'ad.json'))['ad']
+        except Exception: AD = []
         cur = None
         for l in open(t + 'secdal.err'):
             p = l.split()
@@ -78,7 +82,9 @@ def rapor(kl):
             if p[0] == 'SECDAL': cur = int(p[1])
             elif p[0] == 'ZORLA' and cur is not None:
                 kol = p[3]
-                Z[cur][kol] = None if 'yok' in l else float(p[-1])
+                if 'yok' in l: Z[cur][kol] = None; continue
+                kv = {p[i]: p[i + 1] for i in range(5, len(p) - 1, 2)}
+                Z[cur][kol] = float(kv.get('v', 'nan')); ZD[(cur, kol)] = kv
         for d in sorted(glob.glob(t + '[0-9]*/')):
             Tn = int(os.path.basename(d.rstrip('/'))); fr = F.get(Tn)
             if not fr or fr['h'] is None or fr['h'] < 0: continue
@@ -93,6 +99,24 @@ def rapor(kl):
                 R = [json.loads(l) for l in open(d + kol + '.jsonl') if l.strip()]
                 g, tk, xk, rg, sure = sonuc(R, tm)
                 T[k][kol].append((g, rg, Z[Tn].get(kol), sure))
+                kv = ZD.get((Tn, kol))
+                if kol == 'pas' and kv:
+                    # pasın sonucu: topu ilk tutan (taşıyıcı dışında) ya da gol
+                    s0 = R[0]['s'] if R else [0, 0]; son = ('yok', None)
+                    for r in R:
+                        if r['s'] != s0: son = ('gol' if r['s'][tm] > s0[tm] else 'rakip gol', r['t'] - Tn); break
+                        hh = r['h']
+                        if hh is not None and hh >= 0 and hh != h:
+                            nm = AD[hh] if hh < len(AD) else str(hh)
+                            son = ('alıcı' if nm == kv.get('q') else ('rakip' if (0 if hh < 7 else 1) != tm else 'başka arkadaş'), r['t'] - Tn); break
+                    PAS.append((k, kv, son))
+                if kol == 'tut' and kv:
+                    th = float(kv.get('sure', 'nan')); kept = True
+                    for r in R:
+                        if r['t'] - Tn > th: break
+                        hh = r['h']
+                        if r['s'] != (R[0]['s'] if R else r['s']) or (hh is not None and hh >= 0 and (0 if hh < 7 else 1) != tm): kept = False; break
+                    TUT.append((k, float(kv.get('tutar', 'nan')), th, kept))
     print(f'kontrol: once kolu asıl maçla aynı {kontrol[1]}/{kontrol[0]}')
     for k in sorted(T):
         print('==', ' × '.join(k))
@@ -104,10 +128,29 @@ def rapor(kl):
             vs = [x[2] for x in L if x[2] is not None]; v = sum(vs) / len(vs) if vs else float('nan')
             s = sum(x[3] for x in L) / max(1, n)
             print(f"   {kol:5} n {n:3} (seçenek yok {yok[(k, kol)]:2})  gol %{100*g:4.0f}  rakip gol %{100*r:4.0f}  fark %{100*(g-r):+4.0f}  kol−once %{100*((g-r)-(go-ro)):+4.0f}  kafa v {v:6.3f}  sahiplik {s:5.0f} tik")
+    rapor_ek(PAS, TUT)
     # tür başına kafa v ile gerçek (bütün katmanlar)
     print('== tür başına: kafa v ortalaması ile gerçek (gol − rakip gol)')
     for kol in ['sut', 'pas', 'sur', 'tut']:
         L = [x for k in T for x in T[k].get(kol, []) if x[2] is not None]
         if L: print(f"   {kol:5} n {len(L):3}  kafa v {sum(x[2] for x in L)/len(L):.3f}  gerçek gol %{100*sum(x[0] for x in L)/len(L):.0f}  rakip gol %{100*sum(x[1] for x in L)/len(L):.0f}")
+def rapor_ek(PAS, TUT):
+    print('== pas kolu (B1, seçilimsiz): kafanın Pd dilimine göre gerçek sonuç')
+    B = collections.defaultdict(list)
+    for k, kv, son in PAS:
+        try: P, Ps = float(kv['P']), float(kv['Ps'])
+        except Exception: continue
+        Pd = max(0.0, P - Ps); B[min(4, int(Pd * 5))].append((kv, son))
+    for b in sorted(B):
+        X = B[b]; c = collections.Counter(s[0] for _, s in X); n = len(X)
+        ort = lambda a: sum(float(kv.get(a, 'nan')) for kv, _ in X) / n
+        print(f"   Pd {b/5:.1f}–{(b+1)/5:.1f}: n {n:3}  alıcıya %{100*c['alıcı']/n:3.0f}  başka arkadaş %{100*c['başka arkadaş']/n:3.0f}  rakibe %{100*c['rakip']/n:3.0f}  gol %{100*c['gol']/n:3.0f} | kafa Pl %{100*ort('Pl'):3.0f}  pre {ort('pre'):.2f}  v {ort('v'):.3f}")
+    print('== tut kolu (B2): kafanın keep_p dilimine göre topun bekleme süresince gerçekten tutulması')
+    B = collections.defaultdict(list)
+    for k, kp, th, kept in TUT:
+        if kp == kp: B[min(4, int(kp * 5))].append((th, kept))
+    for b in sorted(B):
+        X = B[b]; n = len(X)
+        print(f"   keep_p {b/5:.1f}–{(b+1)/5:.1f}: n {n:3}  gerçekte tuttu %{100*sum(x[1] for x in X)/n:3.0f}  bekleme ort {sum(x[0] for x in X)/n:.0f} tik")
 if __name__ == '__main__':
     {'sec': lambda: sec(sys.argv[2], int(sys.argv[3])), 'rapor': lambda: rapor(sys.argv[2])}[sys.argv[1]]()
