@@ -391,8 +391,32 @@ pub fn secim_n(m: &Mac, p: Pid, o: &Secenek, g: &[Oyuncu], T: f64) -> f64 {
     let src = op_dunya(g);
     kafa_mac(m, |k| k.secim_n(ozne(g, &src, &m.ps[p]), Some(o), &src, T))
 }
+thread_local! {
+    /// Evre 3 (seçenek dallanması, deney izi): gerçek maçın ilk taşıyıcı kararında bu türden en değerli seçenek seçilir,
+    /// sonra istek silinir. Türler: "sut" (gönder), "pas" (pas/önüne/kenardan), "sur" (sür/çalım), "tut". Yalnız kos secdal kurar.
+    pub static SECIM_ZORLA: std::cell::RefCell<Option<String>> = const { std::cell::RefCell::new(None) };
+}
+fn secim_turu(t: &str, kind: &str) -> bool {
+    match t {
+        "sut" => kind == "gönder",
+        "pas" => matches!(kind, "pas" | "önüne" | "kenardan"),
+        "sur" => matches!(kind, "sür" | "çalım"),
+        "tut" => kind == "tut",
+        _ => false,
+    }
+}
 /// Seçim: r.opts içindeki sıra
 pub fn secim(m: &Mac, h: Pid, r: &Karar, g: &[Oyuncu]) -> usize {
+    if !m.mac._lite {
+        if let Some(t) = SECIM_ZORLA.with(|z| z.borrow_mut().take()) {
+            let en = r.opts.iter().enumerate().filter(|(_, o)| secim_turu(&t, o.kind.as_str()) && o.v.is_some()).max_by(|a, b| a.1.v.partial_cmp(&b.1.v).unwrap_or(std::cmp::Ordering::Equal));
+            if let Some((i, o)) = en {
+                eprintln!("ZORLA {} {} {} {} v {:.4}", m.tick, m.ps[h].govde.name, t, o.kind, o.v.unwrap_or(f64::NAN));
+                return i;
+            }
+            eprintln!("ZORLA {} {} {} seçenek yok", m.tick, m.ps[h].govde.name, t);
+        }
+    }
     crate::mac::kafa_dis::kural_tazele(m);
     let src = op_dunya(g);
     // ALAN_PLAN_IZ: oyuncunun son planı (topu sürekli tuttuğu sürece: son kararından bu yana en çok 30 tik)
