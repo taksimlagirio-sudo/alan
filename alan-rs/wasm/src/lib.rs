@@ -476,3 +476,5 @@ anahtar!(kuyu_pay, alan_motor::mac::kuyu::KUYU_PAY_ZORLA);
 anahtar!(yuru, alan_motor::mac::enerji::YURU_ZORLA);
 // hız tercihi: koşu değeri varışla sürekli, savunmada tehlike anına karşı, bar değeri hedeften bağımsız (hiz2)
 anahtar!(hiz2, alan_motor::mac::enerji::HIZ2_ZORLA);
+// kontra koşusunun değeri değer tablosundan (ktab; hiz2 ile)
+anahtar!(ktab, alan_motor::mac::kontra_tablo::KTAB_ZORLA);

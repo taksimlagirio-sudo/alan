@@ -33,6 +33,7 @@ pub use crate::mat::{js_num, to_fixed};
 pub use crate::saha::{dir_of, own_x, KX, KY, SN};
 pub mod dongu;
 pub mod enerji;
+pub mod kontra_tablo;
 pub mod gecici_dis;
 pub mod hareket;
 pub mod ikili;
@@ -152,6 +153,8 @@ pub struct MacEk {
     pub zorla_sonuc: Option<ZorlaSonuc>,
     /// ölçüm (alan-kos dene): kararın r.opts[i] seçeneği zorla seçilir; sonuç zorla_sonuc'a (to yoksa (NaN,NaN))
     pub zorla_i: Option<usize>,
+    /// topun son el değiştirdiği an (takım, tik): kontra değer tablosunun 'top kazanılalı geçen süre'si (hız kararı yazar)
+    pub kazan: Option<(f64, f64)>,
 }
 
 /// Zorlanan sürmenin kafadaki kestirimi: hedef, tutma olasılığı, değer, kafa kendisi de seçer miydi, kaç sürme vardı.

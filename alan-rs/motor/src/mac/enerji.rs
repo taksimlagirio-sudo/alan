@@ -401,6 +401,13 @@ pub fn sprint_karar3(m: &mut Mac) {
     let a_f = gecici_dis::D::arriveFirm;
     let wf = |T: f64, tD: f64| if tD >= 1e8 { 1.0 } else { 1.0 / (1.0 + exp((T - tD) / 5.0)) };
     let kk = mac_kurali(m);
+    // topun son el değiştirdiği an (kontra değer tablosunun 'top kazanılalı geçen süre'si)
+    if let Some(hh) = h {
+        let t = m.ps[hh].team;
+        if m.mac.kazan.map_or(true, |k| k.0 != t) {
+            m.mac.kazan = Some((t, m.tick));
+        }
+    }
     for pi in 0..m.ps.len() {
         {
             let p = &mut m.ps[pi];
@@ -546,6 +553,9 @@ pub fn sprint_karar3(m: &mut Mac) {
         };
         // hiz2: hücumda son tarih yoksa (pas havada, kontra) koşunun değeri, varışta henüz dönememiş rakip savunmacıların payı:
         // her tik erken = geri dönemeyen bir savunmacı daha (yalnız en yakınının varışı değil)
+        // kontra tablosunun girdileri: hedefin rakip kaleye uzaklığı, top kazanılalı geçen süre (sn, şimdi)
+        let ktab_uzak = hypot(tx - if p.team == 0.0 { W } else { 0.0 }, ty - crate::saha::H / 2.0);
+        let ktab_t0 = m.mac.kazan.filter(|k| k.0 == p.team).map_or(0.0, |k| (m.tick - k.1) / crate::saha::TPS);
         let kontra: Option<Vec<f64>> = if hiz2() && bizde && !topa && (tD >= 1e8 || j.starts_with("kontra")) {
             let v: Vec<f64> = m.ps.iter().filter(|q| q.team != p.team && !q.noTouch && !q.bekci()).map(|q| alan_kosu_t(q, hypot(q.x - tx, q.y - ty), spd(q), &kk)).collect();
             if v.is_empty() { None } else { Some(v) }
@@ -565,7 +575,11 @@ pub fn sprint_karar3(m: &mut Mac) {
                     Some(v) => {
                         let Tv = if tD < 1e8 { jmax(T, tD) } else { T };
                         let n: f64 = v.iter().map(|&t| 1.0 / (1.0 + exp((t - Tv) / HIZ2_KONTRA_W))).sum();
-                        kontra_deger(n)
+                        // ALAN_KTAB_IZ: değer tablosundan (kaleye uzaklık × savunmacı × top kazanılalı geçen süre)
+                        match super::kontra_tablo::tablo().filter(|_| super::kontra_tablo::ktab()) {
+                            Some(tb) => tb.oku(ktab_uzak, n, ktab_t0 + Tv / crate::saha::TPS, &|j| kontra_deger(j)),
+                            None => kontra_deger(n),
+                        }
                     }
                     None => 0.0,
                 };
