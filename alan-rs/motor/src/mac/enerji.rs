@@ -355,6 +355,22 @@ pub const HIZ2_TASI_V: f64 = 0.3;
 pub const HIZ2_TEH_MIN: f64 = 8.0;
 /// hiz2_taban: tehlike anından sonraki varışın değer tabanı (anında varışın payı).
 pub const HIZ2_TABAN: f64 = 0.3;
+/// hiz2_taban_d: tabanın uzaklığa bağlılığı, hizdal savunma kolundan (S2, 317–348, 156 geçerli kontra anı; gerideki en yakın
+/// savunmacıya depar / tempo zorlaması, rakibin kutuya varışı depar−tempo): kontra başında taşıyıcı kaleye 50–59 br iken −0,54
+/// (n 14), 60–69 br −0,15 (n 34), 70+ br ≈ 0 (n 108). Geç varmanın payı bu fark kadar: 55 br'de 0,55, 65 br'de 0,18, 70+ 0;
+/// 50 br'den yakında (tehlike zaten başlamış) en çok. Önde sayısına bağlılık ayrılamıyor (anların %80'i 3 önde).
+pub const HIZ2_TABAN_MAX: f64 = 0.55;
+pub const HIZ2_TABAN_U0: f64 = 70.0;
+pub const HIZ2_TABAN_UW: f64 = 15.0;
+pub fn hiz2_taban_u(lh: f64) -> f64 {
+    HIZ2_TABAN_MAX * jmax(0.0, jmin(1.0, (HIZ2_TABAN_U0 - lh) / HIZ2_TABAN_UW))
+}
+/// Deney (ALAN_HIZ2_TABAN_D_IZ; ölçümde/wasm'da HIZ2_TABAN_D_ZORLA): hiz2_taban'ın uzaklığa bağlı sürümü (kendisi açar).
+pub static HIZ2_TABAN_D_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn hiz2_taban_d() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    HIZ2_TABAN_D_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_HIZ2_TABAN_D_IZ").is_ok())
+}
 /// Deney (ALAN_HIZ2_TABAN_IZ; ölçümde/wasm'da HIZ2_TABAN_ZORLA): hiz2'de tehlike anından sonra varmanın değeri sıfıra inmez
 /// (analizci: 217468 897–925 Kale tehlikede 'geri koşu · kale önü' ile yürüyordu; bütün seçenekler tehlike anından sonra
 /// varınca yürümenin bar kazancı koşunun değerini geçiyordu). Varsayılan kapalı.
@@ -568,12 +584,14 @@ pub fn sprint_karar3(m: &mut Mac) {
         let hr_k = jmax(0.0, jmin(1.0, tac_t.enHarcama.unwrap_or(0.5))) - 0.5 + 1.0;
         let sd_p = alan_en2_sd(p);
         // hiz2: savunmada (rakip topta, topun peşinde değil) yarış, taşıyıcının şut uzaklığına gireceği ana karşı
+        let mut lh_d: Option<f64> = None;
         let tD2 = if hiz2() && !bizde && !topa {
             match h {
                 Some(hh) if m.ps[hh].team != p.team => {
                     let hp = &m.ps[hh];
                     let gx = if p.team == 0.0 { 0.0 } else { W };
                     let lh = hypot(hp.x - gx, hp.y - crate::saha::H / 2.0);
+                    lh_d = Some(lh);
                     jmax(tD, jmax(HIZ2_TEH_MIN, (lh - HIZ2_SUT_D) / HIZ2_TASI_V))
                 }
                 _ => tD,
@@ -581,6 +599,8 @@ pub fn sprint_karar3(m: &mut Mac) {
         } else {
             tD
         };
+        // hiz2_taban_d: taban taşıyıcının kaleye uzaklığına bağlı (hizdal savunma kolu, 317–348); taşıyıcı yoksa sabit taban
+        let taban = if hiz2_taban_d() { lh_d.map_or(HIZ2_TABAN, hiz2_taban_u) } else { HIZ2_TABAN };
         // hiz2: hücumda son tarih yoksa (pas havada, kontra) koşunun değeri, varışta henüz dönememiş rakip savunmacıların payı:
         // her tik erken = geri dönemeyen bir savunmacı daha (yalnız en yakınının varışı değil)
         // kontra tablosunun girdileri: hedefin rakip kaleye uzaklığı, top kazanılalı geçen süre (sn, şimdi)
@@ -599,7 +619,7 @@ pub fn sprint_karar3(m: &mut Mac) {
                 // yürümenin kazancı aynası
                 // hiz2_taban: tehlike anından sonra varmanın değeri sıfıra inmez (ikinci top, seken top, ikinci dalga): taban payı
                 let gec = 1.0 / (1.0 + jmax(0.0, T - tD2) / HIZ2_TB);
-                let gec = if hiz2_taban() { HIZ2_TABAN + (1.0 - HIZ2_TABAN) * gec } else { gec };
+                let gec = if hiz2_taban() || hiz2_taban_d() { taban + (1.0 - taban) * gec } else { gec };
                 let g = 1.0 / (1.0 + T / HIZ2_TA) * gec;
                 // kontra: durumun kendi değeri (analiz/ZAMAN-DEGERI.md): varışta topun önüne dönebilmiş savunmacı sayısı
                 // (varış süreleriyle yumuşak sayım) → gol olasılığı (0: %73, 1: %50, 2: %33, 3+: %0); pas gelmeden varmak

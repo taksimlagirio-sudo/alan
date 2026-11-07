@@ -482,6 +482,8 @@ anahtar!(kayip_harita, alan_motor::kafa::kafa2_tarti::KAYIP_HARITA_ZORLA);
 anahtar!(hiz2, alan_motor::mac::enerji::HIZ2_ZORLA);
 // hiz2: tehlike anından sonraki varışın değer tabanı (hiz2taban)
 anahtar!(hiz2_taban, alan_motor::mac::enerji::HIZ2_TABAN_ZORLA);
+// hiz2_taban'ın uzaklığa bağlı sürümü (hiz2taband)
+anahtar!(hiz2_taban_d, alan_motor::mac::enerji::HIZ2_TABAN_D_ZORLA);
 // keep_p hamle süresini ve bekleme süresini tartar (kphamle; B2)
 anahtar!(kp_hamle, alan_motor::kafa::kafa1_ikili::KP_HAMLE_ZORLA);
 // Bekçi'nin yeniden dokunma beklemesi top hızına göre sürekli (bekcd; çelen Bekçi yavaş topu bekletmez)
