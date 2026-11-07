@@ -632,7 +632,7 @@ fn main() {
                     };
                     let P = r.P.unwrap_or(-1.0);
                     let Ps = r.Ps.unwrap_or(0.0);
-                    writeln!(out, "{{\"t\":{},\"ad\":{:?},\"tur\":{:?},\"q\":{:?},\"x\":{:.1},\"y\":{:.1},\"P\":{},\"Ps\":{},\"Pd\":{:.3},\"Pl\":{},\"v\":{},\"sonra\":{:?},\"kim\":{:?},\"hiz\":{},\"tf\":{},\"takim\":{},\"kim_t\":{}}}", r.t, r.ad, r.kind, r.q.clone().unwrap_or_default(), r.x.unwrap_or(0.0), r.y.unwrap_or(0.0), P, Ps, (P - Ps).max(0.0), r.Pl.unwrap_or(-1.0), r.v.unwrap_or(0.0), rol, s.and_then(|s| s.kim.clone()).unwrap_or_default(), r.hiz.unwrap_or(-1.0), r.tf.unwrap_or(-1.0), r.team, s.and_then(|s| s.kim_t).unwrap_or(-1.0)).unwrap();
+                    writeln!(out, "{{\"t\":{},\"ad\":{:?},\"tur\":{:?},\"q\":{:?},\"x\":{:.1},\"y\":{:.1},\"P\":{},\"Ps\":{},\"Pd\":{:.3},\"Pl\":{},\"v\":{},\"sonra\":{:?},\"kim\":{:?},\"hiz\":{},\"tf\":{},\"takim\":{},\"kim_t\":{},\"alis\":{},\"son\":{},\"qk\":{},\"qspr\":{}}}", r.t, r.ad, r.kind, r.q.clone().unwrap_or_default(), r.x.unwrap_or(0.0), r.y.unwrap_or(0.0), P, Ps, (P - Ps).max(0.0), r.Pl.unwrap_or(-1.0), r.v.unwrap_or(0.0), rol, s.and_then(|s| s.kim.clone()).unwrap_or_default(), r.hiz.unwrap_or(-1.0), r.tf.unwrap_or(-1.0), r.team, s.and_then(|s| s.kim_t).unwrap_or(-1.0), r.alis.map_or("null".into(), |(x, y)| format!("[{},{}]", x.unwrap_or(f64::NAN), y.unwrap_or(f64::NAN))), s.map_or("null".into(), |s| format!("[{},{},{}]", s.t, s.x.unwrap_or(f64::NAN), s.y.unwrap_or(f64::NAN))), r.q_hizk.map_or("null".into(), |k| format!("{:.3}", k)), r.q_spr).unwrap();
                 }
             }
         }
