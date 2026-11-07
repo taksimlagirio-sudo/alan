@@ -706,11 +706,25 @@ impl Sv {
         } else {
             ty0
         };
+        // S7r ile onde_ac: önde bekleyenin hedefi sıçramaz, yeni yere tikte en çok ONDE_ADIM br yaklaşır (son savunmacı değişince derinlik,
+        // 30 tikte bir yer yeniden tartılınca y birden kayıyordu: savunan takımda hedef ters dönüşlerinin en büyük kaynağı)
+        let tik = c.m.tick;
+        let (wx, ty) = match c.ps[p].hal._ondeH {
+            Some((t, ox, oy)) if onde_ac() && s7(131072) && t == tik - 1.0 => {
+                let (dx, dy) = (wx - ox, ty - oy);
+                let l = hypot(dx, dy);
+                if l > ONDE_ADIM { (ox + dx / l * ONDE_ADIM, oy + dy / l * ONDE_ADIM) } else { (wx, ty) }
+            }
+            _ => (wx, ty),
+        };
         {
             let pp = &mut c.ps[p];
             pp.tx = wx;
             pp.ty = ty;
             pp.job = Some("önde bekle".into());
+            if onde_ac() && s7(131072) {
+                pp.hal_mut()._ondeH = Some((tik, wx, ty));
+            }
         }
         // önde talimatlı oyuncu savunmaya katılmaz: işi kontra için önde beklemek. Taşıyıcının arkasındaki adama pas yolunu
         // kapatmak için geriye koşmak (eski 'geri pası kapat') onu hem kontradan koparıyordu hem de kaleden uzak, tehlikesiz bir pası kesiyordu.
@@ -1222,6 +1236,8 @@ fn uadeg_eski() -> bool {
     *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_UADEG_ESKI_IZ").is_ok())
 }
 
+/// onde_ac: önde bekleyenin hedefinin bir tikte en çok kayması (br).
+pub const ONDE_ADIM: f64 = 1.0;
 /// onde_ac: önde bekleyenin yerini yeniden tartma aralığı (tik).
 pub const ONDE_AC_T: i64 = 30;
 /// Deney (ALAN_ONDE_AC_IZ; ölçümde/wasm'da ONDE_AC_ZORLA): önde bekleyen oyuncu son çizgi boyunca açığa kayar; rakip topu

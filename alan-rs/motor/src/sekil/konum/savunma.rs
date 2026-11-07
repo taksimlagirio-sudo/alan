@@ -452,6 +452,47 @@ impl Sv {
             self.taban(c);
         }
         self.takim(c);
+        if s7(131072) {
+            self.s7r_ucus(c);
+        }
+    }
+
+    /// S7r: top havadayken (taşıyıcı yok, uçuş var) savunmacının hedefi uçuşun başında bir kez seçilir, uçuş boyunca her tik
+    /// baştan seçilmez (analizci: top havada / boştayken iş ve hedef 2–4 tikte gidip geliyordu, 395–419'da 24 tikte 6 iş);
+    /// adamını tutanın hedefi adama göreli kalır (adam kayınca kayar). Topla ilgili işler (kovala, alıcı, karşıla, sekme, adandı)
+    /// dondurulmaz.
+    fn s7r_ucus(&mut self, c: &mut Mc) {
+        let t0 = match (c.m.holder, c.m.fl.as_ref()) {
+            (None, Some(fl)) => fl.t0,
+            _ => {
+                for &p in &self.defs {
+                    if c.ps[p].hal._s7rUc.is_some() {
+                        c.ps[p].hal_mut()._s7rUc = None;
+                    }
+                }
+                return;
+            }
+        };
+        for &p in &self.defs.clone() {
+            let pp = &c.ps[p];
+            if pp.bekci() || bas(&pp.job, &["kovala", "alıcı", "karşıla", "sekme", "adandı", "pres"]) {
+                c.ps[p].hal_mut()._s7rUc = None;
+                continue;
+            }
+            match pp.hal._s7rUc {
+                Some((u0, x, y, q)) if u0 == t0 => {
+                    let (tx, ty) = match q { Some(q) => (c.ps[q].x + x, c.ps[q].y + y), None => (x, y) };
+                    let pp = &mut c.ps[p];
+                    pp.tx = tx;
+                    pp.ty = ty;
+                }
+                _ => {
+                    let q = pp.hal.tutQ;
+                    let (x, y) = match q { Some(q) => (pp.tx - c.ps[q].x, pp.ty - c.ps[q].y), None => (pp.tx, pp.ty) };
+                    c.ps[p].hal_mut()._s7rUc = Some((t0, x, y, q));
+                }
+            }
+        }
     }
 
     /// ALAN_SAV_TABAN_IZ (GOREV-savunma S3): adam işlerinin hedefine derinlik tabanı. Top uzaktayken savunmacı kale

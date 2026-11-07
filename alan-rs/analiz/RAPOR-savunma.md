@@ -163,3 +163,21 @@ KP_HAMLE (`ALAN_KP_HAMLE_IZ`). Ölçü betikleri: oturumun çalışma klasörün
   taban maçlar (kontra anı seçimi) eski bayraklar.env ile, kollar S7o + KP_HAMLE eklenmiş setle oynandı; maç tike dek farklı
   akabilir. Bütünüyle tek setle yeniden çalışıyor (taban maçlar dahil); aynı 16 maçta S7o + KP_HAMLE açıkken "en geri
   savunmacının arkasında rakip" de ölçülecek.
+- **hizdal 301–316, tek setle (geçerli):** 77 kontra anı, 1 geçersiz (zorlamasız kol taban maçtan ayrıştı); 76 an: 12 sn içinde
+  gol depar %11,8 / tempo %7,9 / zorlamasız %6,6; kutuya varış %32,9 / %39,5 / %42,1. Fark küçük ve örnek az (±4 puan);
+  S1 (317–348, koşucu) ve S2 (317–348, savunma kolu) işçileri çalışıyor. Kısa sonuç: `analiz/olcum/hizdal-kosucu-301-316/`.
+- Aynı 16 taban maçta (bayraklar.env, S7o + KP_HAMLE dahil) en geri savunmacının arkasında rakip %4,8.
+
+## İş / hedef gidip gelmesi (S7q, S7r)
+Ölçüler `analiz/py/gidip.py` (markaj ↔ geri koşu A→B→A, 30 tik), `analiz/py/ters.py` (savunan takımda hedef 10 br+ sıçrayıp
+yönü 90°+ dönerse; 30 tikte geri dönen), `analiz/py/hat.py` (arkadaki rakip). 4 tohum × 4500 tik, bütün set:
+
+| | taban | S7q | S7q + S7r |
+|---|---|---|---|
+| markaj ↔ geri koşu gidip gelme / maç | 53 | 16 | 19 |
+| hedef ters dönüşü / maç (30 tikte geri dönen) | 264 (120) | 260 (116) | 230 (90) |
+
+En büyük ters dönüş kaynağı 'önde bekle' → 'önde bekle' idi (95 / 4 maç): onde_ac'ın yer koruması iş adına bakıyordu, iş
+adı her tik sıfırlandığı için hiç çalışmamış. S7r ile önde bekleyenin hedefi tikte en çok 1 br kayıyor (o kaynak listeden çıktı;
+toplam 4 tohumda akış farkıyla değişmedi). Kalan büyük kaynaklar: markaj → markaj (adam ya da adamın yeri), 'boşluk' ↔
+'arkada · blokta' (top el değiştirirken; gerçek gidip gelme değil). 16 tohumla doğrulanmalı.
