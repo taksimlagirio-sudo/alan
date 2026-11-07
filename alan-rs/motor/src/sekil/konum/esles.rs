@@ -1024,7 +1024,9 @@ impl Sv {
                         }
                         if gecildi && g_e < S7_D {
                             let bs = self.base[p].map(|b| (b.x, b.y)).unwrap_or((pp.x, pp.y));
-                            let (lx, ly) = (E.0 + 0.55 * (own_x(dt) - E.0), E.1 + 0.55 * (GCY - E.1));
+                            // S7h: kutunun ağzını tutar (topun 6 br önü, kaleye 10–20 br; top 10 br içindeyse yarı yol), kale dibine inmez
+                            let kk = if s7(128) { 1.0 - jmax(jmin(10.0, 0.5 * g_e), jmin(20.0, g_e - 6.0)) / jmax(1.0, g_e) } else { 0.55 };
+                            let (lx, ly) = (E.0 + kk * (own_x(dt) - E.0), E.1 + kk * (GCY - E.1));
                             let pp = &mut c.ps[p];
                             pp.tx = lx;
                             pp.ty = cl(ly + 0.25 * (bs.1 - ly), 3.0, GH - 3.0);
