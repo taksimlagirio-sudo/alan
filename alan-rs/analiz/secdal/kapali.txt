@@ -1,0 +1,93 @@
+katman başına an: {('açık', '15–25', '0–2'): 30, ('açık', '15–25', '3+'): 30, ('açık', '≤15', '0–2'): 30, ('açık', '≤15', '3+'): 5, ('kenar', '35–45', 'uzak'): 30, ('kesik', '15–25', '0–2'): 30, ('kesik', '15–25', '3+'): 30, ('kesik', '≤15', '0–2'): 30, ('kesik', '≤15', '3+'): 10} toplam 225
+kontrol: once kolu asıl maçla aynı 224/225
+== açık × 15–25 × 0–2
+   once  n  30 (seçenek yok  0)  gol %  40  rakip gol %   0  fark % +40  kol−once %  +0  kafa v    nan  sahiplik   119 tik
+   sut   n  30 (seçenek yok  0)  gol %  20  rakip gol %   0  fark % +20  kol−once % -20  kafa v -0.079  sahiplik    67 tik
+   pas   n  30 (seçenek yok  0)  gol %  13  rakip gol %   0  fark % +13  kol−once % -27  kafa v  0.025  sahiplik   133 tik
+   sur   n  30 (seçenek yok  0)  gol %  23  rakip gol %   0  fark % +23  kol−once % -17  kafa v  0.176  sahiplik   146 tik
+   tut   n  30 (seçenek yok  0)  gol %  27  rakip gol %   0  fark % +27  kol−once % -13  kafa v  0.107  sahiplik   109 tik
+== açık × 15–25 × 3+
+   once  n  29 (seçenek yok  0)  gol %  31  rakip gol %   3  fark % +28  kol−once %  +0  kafa v    nan  sahiplik    97 tik
+   sut   n  29 (seçenek yok  0)  gol %  31  rakip gol %   0  fark % +31  kol−once %  +3  kafa v -0.020  sahiplik    58 tik
+   pas   n  29 (seçenek yok  0)  gol %  24  rakip gol %   3  fark % +21  kol−once %  -7  kafa v  0.119  sahiplik   123 tik
+   sur   n  29 (seçenek yok  0)  gol %  31  rakip gol %   3  fark % +28  kol−once %  +0  kafa v  0.239  sahiplik   106 tik
+   tut   n  29 (seçenek yok  0)  gol %  31  rakip gol %   0  fark % +31  kol−once %  +3  kafa v  0.119  sahiplik   124 tik
+== açık × ≤15 × 0–2
+   once  n  27 (seçenek yok  0)  gol %  56  rakip gol %   0  fark % +56  kol−once %  +0  kafa v    nan  sahiplik    77 tik
+   sut   n  24 (seçenek yok  3)  gol %  71  rakip gol %   0  fark % +71  kol−once % +15  kafa v  0.178  sahiplik    41 tik
+   pas   n  25 (seçenek yok  2)  gol %  36  rakip gol %   0  fark % +36  kol−once % -20  kafa v  0.037  sahiplik   129 tik
+   sur   n  27 (seçenek yok  0)  gol %  48  rakip gol %   0  fark % +48  kol−once %  -7  kafa v  0.315  sahiplik    76 tik
+   tut   n  27 (seçenek yok  0)  gol %  41  rakip gol %   0  fark % +41  kol−once % -15  kafa v  0.266  sahiplik    89 tik
+== açık × ≤15 × 3+
+   once  n   3 (seçenek yok  0)  gol %  67  rakip gol %   0  fark % +67  kol−once %  +0  kafa v    nan  sahiplik    54 tik
+   sut   n   3 (seçenek yok  0)  gol %  33  rakip gol %   0  fark % +33  kol−once % -33  kafa v  0.770  sahiplik   105 tik
+   pas   n   3 (seçenek yok  0)  gol %  33  rakip gol %   0  fark % +33  kol−once % -33  kafa v  0.119  sahiplik   118 tik
+   sur   n   3 (seçenek yok  0)  gol % 100  rakip gol %   0  fark %+100  kol−once % +33  kafa v  0.593  sahiplik    17 tik
+   tut   n   3 (seçenek yok  0)  gol %  33  rakip gol %   0  fark % +33  kol−once % -33  kafa v  0.223  sahiplik   145 tik
+== kenar × 35–45 × uzak
+   once  n  29 (seçenek yok  0)  gol %   7  rakip gol %   3  fark %  +3  kol−once %  +0  kafa v    nan  sahiplik   161 tik
+   sut   n  20 (seçenek yok  9)  gol %   5  rakip gol %   5  fark %  +0  kol−once %  -3  kafa v -0.007  sahiplik    88 tik
+   pas   n  29 (seçenek yok  0)  gol %  17  rakip gol %   3  fark % +14  kol−once % +10  kafa v  0.021  sahiplik   158 tik
+   sur   n  29 (seçenek yok  0)  gol %   3  rakip gol %   0  fark %  +3  kol−once %  +0  kafa v  0.028  sahiplik   193 tik
+   tut   n  29 (seçenek yok  0)  gol %   3  rakip gol %   0  fark %  +3  kol−once %  +0  kafa v  0.022  sahiplik   220 tik
+== kesik × 15–25 × 0–2
+   once  n  35 (seçenek yok  0)  gol %  26  rakip gol %   0  fark % +26  kol−once %  +0  kafa v    nan  sahiplik   148 tik
+   sut   n  26 (seçenek yok  9)  gol %   8  rakip gol %   0  fark %  +8  kol−once % -18  kafa v -0.208  sahiplik   109 tik
+   pas   n  33 (seçenek yok  2)  gol %  12  rakip gol %   3  fark %  +9  kol−once % -17  kafa v  0.026  sahiplik   124 tik
+   sur   n  35 (seçenek yok  0)  gol %  20  rakip gol %   0  fark % +20  kol−once %  -6  kafa v  0.108  sahiplik   118 tik
+   tut   n  35 (seçenek yok  0)  gol %  26  rakip gol %   3  fark % +23  kol−once %  -3  kafa v  0.038  sahiplik   155 tik
+== kesik × 15–25 × 3+
+   once  n  30 (seçenek yok  0)  gol %  20  rakip gol %   0  fark % +20  kol−once %  +0  kafa v    nan  sahiplik   100 tik
+   sut   n  24 (seçenek yok  6)  gol %  17  rakip gol %   0  fark % +17  kol−once %  -3  kafa v -0.184  sahiplik   137 tik
+   pas   n  30 (seçenek yok  0)  gol %  10  rakip gol %   3  fark %  +7  kol−once % -13  kafa v  0.055  sahiplik   160 tik
+   sur   n  30 (seçenek yok  0)  gol %  27  rakip gol %   0  fark % +27  kol−once %  +7  kafa v  0.161  sahiplik   143 tik
+   tut   n  30 (seçenek yok  0)  gol %  13  rakip gol %   0  fark % +13  kol−once %  -7  kafa v  0.037  sahiplik   139 tik
+== kesik × ≤15 × 0–2
+   once  n  30 (seçenek yok  0)  gol %  37  rakip gol %   3  fark % +33  kol−once %  +0  kafa v    nan  sahiplik    99 tik
+   sut   n  20 (seçenek yok 10)  gol %  20  rakip gol %   5  fark % +15  kol−once % -18  kafa v -0.231  sahiplik    34 tik
+   pas   n  30 (seçenek yok  0)  gol %  33  rakip gol %   0  fark % +33  kol−once %  +0  kafa v  0.018  sahiplik    99 tik
+   sur   n  30 (seçenek yok  0)  gol %  23  rakip gol %   0  fark % +23  kol−once % -10  kafa v  0.202  sahiplik    96 tik
+   tut   n  30 (seçenek yok  0)  gol %  33  rakip gol %   0  fark % +33  kol−once %  +0  kafa v  0.013  sahiplik    85 tik
+== kesik × ≤15 × 3+
+   once  n  12 (seçenek yok  0)  gol %  33  rakip gol %   0  fark % +33  kol−once %  +0  kafa v    nan  sahiplik    58 tik
+   sut   n   9 (seçenek yok  3)  gol %  44  rakip gol %   0  fark % +44  kol−once % +11  kafa v  0.203  sahiplik    48 tik
+   pas   n  12 (seçenek yok  0)  gol %  25  rakip gol %   0  fark % +25  kol−once %  -8  kafa v  0.082  sahiplik   121 tik
+   sur   n  12 (seçenek yok  0)  gol %  42  rakip gol %   0  fark % +42  kol−once %  +8  kafa v  0.280  sahiplik    41 tik
+   tut   n  12 (seçenek yok  0)  gol %  42  rakip gol %   0  fark % +42  kol−once %  +8  kafa v  0.152  sahiplik   156 tik
+== pas kolu (B1, seçilimsiz): kafanın Pd dilimine göre gerçek sonuç
+   Pd 0.0–0.2: n  40  alıcıya % 25  başka arkadaş % 40  rakibe: bırakmadan %  2 uçuşta % 25  gol %  8 | kafa Pl % 32  pre 0.79  v -0.071
+   Pd 0.2–0.4: n  13  alıcıya % 46  başka arkadaş %  8  rakibe: bırakmadan %  8 uçuşta % 38  gol %  0 | kafa Pl % 48  pre 0.61  v -0.043
+   Pd 0.4–0.6: n  31  alıcıya % 87  başka arkadaş %  3  rakibe: bırakmadan %  0 uçuşta %  6  gol %  3 | kafa Pl % 34  pre 0.80  v -0.006
+   Pd 0.6–0.8: n  27  alıcıya % 59  başka arkadaş % 11  rakibe: bırakmadan %  4 uçuşta % 26  gol %  0 | kafa Pl % 23  pre 0.96  v 0.073
+   Pd 0.8–1.0: n 110  alıcıya % 60  başka arkadaş % 18  rakibe: bırakmadan %  4 uçuşta % 13  gol %  5 | kafa Pl %  2  pre 1.00  v 0.107
+== tut kolu (B2): kafanın keep_p dilimine göre topun bekleme süresince gerçekten tutulması
+   keep_p 0.0–0.2: n  37  gerçekte tuttu % 84  bekleme ort 19 tik
+   keep_p 0.2–0.4: n  18  gerçekte tuttu % 89  bekleme ort 23 tik
+   keep_p 0.4–0.6: n  20  gerçekte tuttu % 85  bekleme ort 24 tik
+   keep_p 0.6–0.8: n  13  gerçekte tuttu % 85  bekleme ort 20 tik
+   keep_p 0.8–1.0: n 137  gerçekte tuttu % 99  bekleme ort 19 tik
+== once kolunda kafanın asıl seçimi (katman başına; gönder = şut)
+   açık × 15–25 × 0–2  n  30  sür %73  pas %10  gönder %7  tut %7  kenardan %3
+   açık × 15–25 × 3+  n  29  sür %79  pas %10  gönder %10
+   açık × ≤15 × 0–2  n  27  gönder %44  sür %41  tut %15
+   açık × ≤15 × 3+  n   3  gönder %67  sür %33
+   kenar × 35–45 × uzak  n  29  sür %62  pas %28  gönder %10
+   kesik × 15–25 × 0–2  n  35  sür %71  pas %17  tut %6  kenardan %3  önüne %3
+   kesik × 15–25 × 3+  n  30  sür %60  pas %33  tut %3  kenardan %3
+   kesik × ≤15 × 0–2  n  30  sür %60  pas %20  gönder %13  kenardan %7
+   kesik × ≤15 × 3+  n  12  sür %67  gönder %25  pas %8
+== sut kolu: kafanın Pk ortalaması ile zorlanan şutun gerçek gol oranı (katman başına)
+   açık × 15–25 × 0–2  n  30  kafa Pk 0.093  gerçek gol %20
+   açık × 15–25 × 3+  n  29  kafa Pk 0.172  gerçek gol %31
+   açık × ≤15 × 0–2  n  24  kafa Pk 0.411  gerçek gol %71
+   açık × ≤15 × 3+  n   3  kafa Pk 0.860  gerçek gol %33
+   kenar × 35–45 × uzak  n  20  kafa Pk 0.027  gerçek gol %5
+   kesik × 15–25 × 0–2  n  26  kafa Pk 0.046  gerçek gol %8
+   kesik × 15–25 × 3+  n  24  kafa Pk 0.065  gerçek gol %17
+   kesik × ≤15 × 0–2  n  20  kafa Pk 0.137  gerçek gol %20
+   kesik × ≤15 × 3+  n   9  kafa Pk 0.402  gerçek gol %44
+== tür başına: kafa v ortalaması ile gerçek (gol − rakip gol)
+   sut   n 185  kafa v -0.049  gerçek gol %26  rakip gol %1
+   pas   n 221  kafa v 0.046  gerçek gol %21  rakip gol %2
+   sur   n 225  kafa v 0.184  gerçek gol %27  rakip gol %0
+   tut   n 225  kafa v 0.088  gerçek gol %26  rakip gol %0
