@@ -102,13 +102,15 @@ def rapor(kl):
                 kv = ZD.get((Tn, kol))
                 if kol == 'pas' and kv:
                     # pasın sonucu: topu ilk tutan (taşıyıcı dışında) ya da gol
-                    s0 = R[0]['s'] if R else [0, 0]; son = ('yok', None)
+                    s0 = R[0]['s'] if R else [0, 0]; son = ('yok', None); ucti = False
                     for r in R:
+                        if r.get('fl'): ucti = True
                         if r['s'] != s0: son = ('gol' if r['s'][tm] > s0[tm] else 'rakip gol', r['t'] - Tn); break
                         hh = r['h']
                         if hh is not None and hh >= 0 and hh != h:
                             nm = AD[hh] if hh < len(AD) else str(hh)
-                            son = ('alıcı' if nm == kv.get('q') else ('rakip' if (0 if hh < 7 else 1) != tm else 'başka arkadaş'), r['t'] - Tn); break
+                            rk = (0 if hh < 7 else 1) != tm
+                            son = ('alıcı' if nm == kv.get('q') else (('rakip uçuşta' if ucti else 'rakip bırakmadan') if rk else 'başka arkadaş'), r['t'] - Tn); break
                     PAS.append((k, kv, son))
                 if kol == 'tut' and kv:
                     th = float(kv.get('sure', 'nan')); kept = True
@@ -144,7 +146,7 @@ def rapor_ek(PAS, TUT):
     for b in sorted(B):
         X = B[b]; c = collections.Counter(s[0] for _, s in X); n = len(X)
         ort = lambda a: sum(float(kv.get(a, 'nan')) for kv, _ in X) / n
-        print(f"   Pd {b/5:.1f}–{(b+1)/5:.1f}: n {n:3}  alıcıya %{100*c['alıcı']/n:3.0f}  başka arkadaş %{100*c['başka arkadaş']/n:3.0f}  rakibe %{100*c['rakip']/n:3.0f}  gol %{100*c['gol']/n:3.0f} | kafa Pl %{100*ort('Pl'):3.0f}  pre {ort('pre'):.2f}  v {ort('v'):.3f}")
+        print(f"   Pd {b/5:.1f}–{(b+1)/5:.1f}: n {n:3}  alıcıya %{100*c['alıcı']/n:3.0f}  başka arkadaş %{100*c['başka arkadaş']/n:3.0f}  rakibe: bırakmadan %{100*c['rakip bırakmadan']/n:3.0f} uçuşta %{100*c['rakip uçuşta']/n:3.0f}  gol %{100*c['gol']/n:3.0f} | kafa Pl %{100*ort('Pl'):3.0f}  pre {ort('pre'):.2f}  v {ort('v'):.3f}")
     print('== tut kolu (B2): kafanın keep_p dilimine göre topun bekleme süresince gerçekten tutulması')
     B = collections.defaultdict(list)
     for k, kp, th, kept in TUT:
