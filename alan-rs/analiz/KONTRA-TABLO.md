@@ -11,7 +11,7 @@ Biçim ve altyapı bilgi tablolarınınki (analiz/TASARIM-BILGI.md; hücum dalı
 Kontra: top rakip kaleye 50+ br'de kazanılır, topun kale tarafında en çok 3 rakip saha oyuncusu vardır (analiz/py/kontra.py).
 Kontra boyunca (12 sn'ye, gole ya da rakip topu alana dek) her 5 tikte durum örneklenir; sonuç: o andan 12 sn içinde gol.
 Eksenler: `uzaklik` (top / taşıyıcının rakip kale merkezine, br: 10–90) × `onde` (rakip saha oyuncularından kale çizgisine toptan
-yakın olanlar: 0–5) × `sure` (top kazanılalı geçen süre, sn: 0–12). Az örnekli hücre komşularla yumuşatılır (en az 60 örneğe dek);
+yakın olanlar: 0–5) × `sure` (top kazanılalı geçen süre, sn: 0–12). Az örnekli hücre komşularla yumuşatılır (en az 20 bağımsız kontraya dek);
 `n` ölçülen örnek.
 
 ## Okuma (mac/kontra_tablo.rs, enerji::sprint_karar3)

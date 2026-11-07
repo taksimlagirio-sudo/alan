@@ -35,6 +35,7 @@ for f in sys.argv[3:]:
             onde0 = sum(1 for q in rak if abs(gx - r['p'][q][0]) < abs(gx - x))
             if abs(gx - x) > KAZAN_D and onde0 <= KAZAN_ONDE:
                 kontra += 1; t0 = r['t']
+                ornek = []                                       # bu kontranın örnekleri: (durum, sonuç)
                 j = i
                 while j < len(R) and R[j]['t'] - t0 <= SURE * TPS:
                     q = R[j]; hq = q['h']
@@ -49,11 +50,16 @@ for f in sys.argv[3:]:
                             j += 1; continue
                         onde = sum(1 for k in rak if abs(gx - q['p'][k][0]) < abs(gx - bx))
                         oldu = any(q['t'] < t <= q['t'] + H and t2 == tm for t, t2 in gol)
-                        g.ekle([math.hypot(gx - bx, CY - by), onde, (q['t'] - t0) / TPS], 1.0 if oldu else 0.0)
+                        ornek.append(([math.hypot(gx - bx, CY - by), onde, (q['t'] - t0) / TPS], 1.0 if oldu else 0.0))
                     if any(t == q['t'] for t, _ in gol): break
                     j += 1
+                # bağımsızlık: bir kontra bir hücreye en çok 1 ağırlıkla katılır (aynı hücredeki örnekleri ortalanır); n = bağımsız kontra
+                say = {}
+                for v, _ in ornek: say[g.indeks(v)] = say.get(g.indeks(v), 0) + 1
+                for v, d in ornek: g.ekle(v, d, 1.0 / say[g.indeks(v)])
         son = tm; i += 1
 meta = json.loads(os.environ.get("BILGI_META", "{}")); meta["mac"] = mac
-meta.setdefault("aciklama", f"kontra (top rakip kaleye {KAZAN_D:g}+ br'de, önünde en çok {KAZAN_ONDE} rakip kazanıldı): bu durumdan {N:g} sn içinde gol; {kontra} kontra")
-yaz(cikti, "kontra", eksen, g.yumusat(60), g.N, meta)
-print(f"kontra: {mac} maç, {kontra} kontra, {int(sum(g.N))} örnek", file=sys.stderr)
+meta.setdefault("aciklama", f"kontra (top rakip kaleye {KAZAN_D:g}+ br'de, önünde en çok {KAZAN_ONDE} rakip kazanıldı): bu durumdan {N:g} sn içinde gol; {kontra} kontra; n = hücreye katılan bağımsız kontra sayısı (bir kontra bir hücreye en çok 1). Not: tek kurulumla (217468, Liman – Kale Duvarı, tohum değiştirerek) üretildi, bu iki takımın taktiğine uyar; ileride başka kurulumlarla da üretilmeli")
+yaz(cikti, "kontra", eksen, g.yumusat(20), g.N, meta)
+dolu = sorted(x for x in g.N if x > 0)
+print(f"kontra: {mac} maç, {kontra} kontra; örnekli hücre {len(dolu)}/{len(g.N)}, hücre başına bağımsız kontra en az {dolu[0] if dolu else 0:.1f} / medyan {dolu[len(dolu)//2] if dolu else 0:.1f} / en çok {dolu[-1] if dolu else 0:.1f}", file=sys.stderr)
