@@ -1563,7 +1563,10 @@ pub fn prensip_degerle0(k: &mut Kafa, hi: Pid, src: &Arc<Dunya>, ch: f64, team: 
                 if crate::iz_acik() && std::env::var("ALAN_SURV_IZ").is_ok() {
                     eprintln!("TUTOLC {} {} {} ({:.1},{:.1}) v {:.3} f {:.2} -> {:.3}", k.tick(), h.govde.name, o.kind, x, y, yeni, f, yeni * f);
                 }
-                yeni *= f;
+                // negatif değer ölçeklenmez (kaybın büyüklüğü ölçekle değil kendi bedeliyle)
+                if yeni > 0.0 {
+                    yeni *= f;
+                }
             } else if bilgi_tutma_tut() && o.kind != "gönder" {
                 if let Some(b) = crate::kafa::kafa2_bilgi::bilgi("tutma") {
                     let (x, y) = o.to.as_ref().map_or((h.x, h.y), |t| (t.x, t.y));
