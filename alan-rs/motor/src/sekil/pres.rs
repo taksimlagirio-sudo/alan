@@ -82,7 +82,7 @@ pub fn s7(parca: u16) -> bool {
             return 0;
         }
         let v = |k: &str| std::env::var(k).is_ok();
-        (if v("ALAN_S7_IZ") { 7 } else { 0 }) | (if v("ALAN_S7A_IZ") { 1 } else { 0 }) | (if v("ALAN_S7B_IZ") { 2 } else { 0 }) | (if v("ALAN_S7C_IZ") { 4 } else { 0 }) | (if v("ALAN_S7D_IZ") { 8 } else { 0 }) | (if v("ALAN_S7E_IZ") { 16 } else { 0 }) | (if v("ALAN_S7F_IZ") { 32 } else { 0 }) | (if v("ALAN_S7G_IZ") { 64 } else { 0 }) | (if v("ALAN_S7H_IZ") { 128 } else { 0 }) | (if v("ALAN_S7I_IZ") { 256 } else { 0 }) | (if v("ALAN_S7J_IZ") { 512 } else { 0 }) | (if v("ALAN_S7K_IZ") { 1024 } else { 0 }) | (if v("ALAN_S7L_IZ") { 2048 } else { 0 }) | (if v("ALAN_S7M_IZ") { 4096 } else { 0 }) | (if v("ALAN_S7N_IZ") { 8192 } else { 0 }) | (if v("ALAN_S7O_IZ") { 16384 } else { 0 })
+        (if v("ALAN_S7_IZ") { 7 } else { 0 }) | (if v("ALAN_S7A_IZ") { 1 } else { 0 }) | (if v("ALAN_S7B_IZ") { 2 } else { 0 }) | (if v("ALAN_S7C_IZ") { 4 } else { 0 }) | (if v("ALAN_S7D_IZ") { 8 } else { 0 }) | (if v("ALAN_S7E_IZ") { 16 } else { 0 }) | (if v("ALAN_S7F_IZ") { 32 } else { 0 }) | (if v("ALAN_S7G_IZ") { 64 } else { 0 }) | (if v("ALAN_S7H_IZ") { 128 } else { 0 }) | (if v("ALAN_S7I_IZ") { 256 } else { 0 }) | (if v("ALAN_S7J_IZ") { 512 } else { 0 }) | (if v("ALAN_S7K_IZ") { 1024 } else { 0 }) | (if v("ALAN_S7L_IZ") { 2048 } else { 0 }) | (if v("ALAN_S7M_IZ") { 4096 } else { 0 }) | (if v("ALAN_S7N_IZ") { 8192 } else { 0 }) | (if v("ALAN_S7O_IZ") { 16384 } else { 0 }) | (if v("ALAN_S7P_IZ") { 32768 } else { 0 })
     });
     (e | S7_ZORLA.load(std::sync::atomic::Ordering::Relaxed)) & parca != 0
 }

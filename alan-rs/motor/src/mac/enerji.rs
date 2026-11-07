@@ -353,6 +353,16 @@ pub const HIZ2_TB: f64 = 15.0;
 pub const HIZ2_SUT_D: f64 = 18.0;
 pub const HIZ2_TASI_V: f64 = 0.3;
 pub const HIZ2_TEH_MIN: f64 = 8.0;
+/// hiz2_taban: tehlike anından sonraki varışın değer tabanı (anında varışın payı).
+pub const HIZ2_TABAN: f64 = 0.3;
+/// Deney (ALAN_HIZ2_TABAN_IZ; ölçümde/wasm'da HIZ2_TABAN_ZORLA): hiz2'de tehlike anından sonra varmanın değeri sıfıra inmez
+/// (analizci: 217468 897–925 Kale tehlikede 'geri koşu · kale önü' ile yürüyordu; bütün seçenekler tehlike anından sonra
+/// varınca yürümenin bar kazancı koşunun değerini geçiyordu). Varsayılan kapalı.
+pub static HIZ2_TABAN_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn hiz2_taban() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    HIZ2_TABAN_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_HIZ2_TABAN_IZ").is_ok())
+}
 /// hiz2: kontrada savunmacıya karşı varış payının yumuşaklığı (tik): erken varmak her savunmacıya karşı payı sürekli büyütür.
 pub const HIZ2_KONTRA_W: f64 = 20.0;
 /// hiz2: kontranın değeri, topun önüne dönebilmiş savunmacı sayısına göre (analiz/ZAMAN-DEGERI.md, 38 maç; aralar doğrusal).
@@ -587,7 +597,10 @@ pub fn sprint_karar3(m: &mut Mac) {
                 // hiz2: koşunun değeri varışla sürekli azalır (erken varmak hep biraz iyi, geç kalmak giderek kötü, sıfır
                 // değil); barın değeri hedeften bağımsız: harcamanın birim bedeli bar azaldıkça artar (dolu barda da sıfır değil),
                 // yürümenin kazancı aynası
-                let g = 1.0 / (1.0 + T / HIZ2_TA) / (1.0 + jmax(0.0, T - tD2) / HIZ2_TB);
+                // hiz2_taban: tehlike anından sonra varmanın değeri sıfıra inmez (ikinci top, seken top, ikinci dalga): taban payı
+                let gec = 1.0 / (1.0 + jmax(0.0, T - tD2) / HIZ2_TB);
+                let gec = if hiz2_taban() { HIZ2_TABAN + (1.0 - HIZ2_TABAN) * gec } else { gec };
+                let g = 1.0 / (1.0 + T / HIZ2_TA) * gec;
                 // kontra: durumun kendi değeri (analiz/ZAMAN-DEGERI.md): varışta topun önüne dönebilmiş savunmacı sayısı
                 // (varış süreleriyle yumuşak sayım) → gol olasılığı (0: %73, 1: %50, 2: %33, 3+: %0); pas gelmeden varmak
                 // bir şey katmaz (varış en erken pasın varışı)

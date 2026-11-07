@@ -480,6 +480,8 @@ anahtar!(yuru, alan_motor::mac::enerji::YURU_ZORLA);
 anahtar!(kayip_harita, alan_motor::kafa::kafa2_tarti::KAYIP_HARITA_ZORLA);
 // hız tercihi: koşu değeri varışla sürekli, savunmada tehlike anına karşı, bar değeri hedeften bağımsız (hiz2)
 anahtar!(hiz2, alan_motor::mac::enerji::HIZ2_ZORLA);
+// hiz2: tehlike anından sonraki varışın değer tabanı (hiz2taban)
+anahtar!(hiz2_taban, alan_motor::mac::enerji::HIZ2_TABAN_ZORLA);
 // keep_p hamle süresini ve bekleme süresini tartar (kphamle; B2)
 anahtar!(kp_hamle, alan_motor::kafa::kafa1_ikili::KP_HAMLE_ZORLA);
 // sahiplik haritasının tahmin dünyası topun gerçek varışında (sahtc) / hücre şutunda dibindeki rakip ikili kesmez (sahdibinde)

@@ -1046,7 +1046,10 @@ impl Sv {
                     // S7f: geçilmemiş bölgecisi de tehlike bölgesinde boşta kalan adamı alır (kale önüne gitmez)
                     // S7g: alçak blokta top uzaktayken de bölgeci kale önünde (tehlike bölgesinde) boş kalan adamı alır
                     let dusuk = s7(64) && self.dtac.t.blok.as_deref() == Some("Düşük");
-                    let bolgeci = (s7(32) || dusuk) && !gecildi && !self.press.contains(&p) && bas(&pp.job, &["bölge"]);
+                    // S7p: tehlikesiz adamı (tehlike bölgesinin dışında) tutan markajcı da bölgeci gibi boştaki tehlikeli adamı alır
+                    // (897–925 Kale 82 br'deki Cansu'yu tutuyordu)
+                    let tehlikesiz_adam = s7(32768) && bas(&pp.job, &["markaj", "arkada", "kapatma"]) && pp.hal.tutQ.or(pp.hal.markRef).map_or(false, |m| self.g_d(c.ps[m].x, c.ps[m].y) >= S7_D);
+                    let bolgeci = (s7(32) || dusuk || s7(32768)) && !gecildi && !self.press.contains(&p) && (bas(&pp.job, &["bölge"]) && (s7(32) || dusuk) || tehlikesiz_adam);
                     if (s7(8) || dusuk) && (g_e < S7_D || (dusuk && bolgeci)) && self.press.first() != Some(&p) && (gecildi || bolgeci) && {
                         let q = pp.hal.tutQ.or(pp.hal.markRef);
                         q.map_or(true, |q| { let d = self.g_d(c.ps[q].x, c.ps[q].y); !(d < g_e - 2.0 || d < S7_D) })
@@ -1065,7 +1068,7 @@ impl Sv {
                             pp.hal_mut().tutQ = Some(q);
                             continue;
                         }
-                        if gecildi && g_e < S7_D {
+                        if (gecildi || tehlikesiz_adam) && g_e < S7_D {
                             let bs = self.base[p].map(|b| (b.x, b.y)).unwrap_or((pp.x, pp.y));
                             // S7h: kutunun ağzını tutar (topun 6 br önü, kaleye 10–20 br; top 10 br içindeyse yarı yol), kale dibine inmez
                             let kk = if s7(128) { 1.0 - jmax(jmin(10.0, 0.5 * g_e), jmin(20.0, g_e - 6.0)) / jmax(1.0, g_e) } else { 0.55 };
