@@ -54,6 +54,10 @@ pub const S7L_D: f64 = 20.0;
 pub const S7L_T: f64 = 15.0;
 /// S7m: taşıyıcı kaleye bundan yakınken (br) markajcı Kuyu'ya girer (şut yakın).
 pub const S7M_ACIL: f64 = 20.0;
+/// S7n: blok hattın arkasındaki rakip forvetin en çok bu kadar önünde (br); forvet en geri savunmacımızdan en çok S7N_PAY
+/// önde bile olsa sayılır (hattın arkasına geçmek üzere).
+pub const S7N_ARA: f64 = 25.0;
+pub const S7N_PAY: f64 = 3.0;
 /// Deney (GOREV-savunma S7): taşıyıcıyı durdurmak. Parçalar ayrı ölçülsün diye: ALAN_S7A_IZ (kale tarafında değilsen şut
 /// hattına geç), ALAN_S7B_IZ (tehlike bölgesinde ikinci presçi), ALAN_S7C_IZ (geçilen savunmacı adamına değil kale önüne);
 /// ALAN_S7_IZ üçü birden. Sonradan: ALAN_S7D_IZ (bit 8; geniş dönüş: geçilen herkes, baskıcılar da, adamı topun önünde
@@ -66,7 +70,8 @@ pub const S7M_ACIL: f64 = 20.0;
 /// tehlike bölgesinde markajcı adamıyla kale arasında (S7J_ARA br) durur. ALAN_S7K_IZ (bit 1024): tehlike bölgesindeki adamını
 /// tutan markajcı atamada onu güçlü önceler (S7K). ALAN_S7L_IZ (bit 2048): kaleye S7L_D'den yakın taşıyıcının önünde gövde
 /// koyan presçi S7L_T tikten sonra topa girer. ALAN_S7M_IZ (bit 4096): şut yakın değilken markajcı Kuyu sınırında bekler
-/// (Kuyu süresini şut anına saklar). Ölçümde S7_ZORLA (bitler). Varsayılan kapalı.
+/// (Kuyu süresini şut anına saklar). ALAN_S7N_IZ (bit 8192): hattın arkasında rakip forvet varken en yakın savunmacı onu kale
+/// tarafından alır, blok ondan en çok S7N_ARA önde durur. Ölçümde S7_ZORLA (bitler). Varsayılan kapalı.
 pub static S7_ZORLA: std::sync::atomic::AtomicU16 = std::sync::atomic::AtomicU16::new(0);
 pub fn s7(parca: u16) -> bool {
     static A: std::sync::OnceLock<u16> = std::sync::OnceLock::new();
@@ -75,7 +80,7 @@ pub fn s7(parca: u16) -> bool {
             return 0;
         }
         let v = |k: &str| std::env::var(k).is_ok();
-        (if v("ALAN_S7_IZ") { 7 } else { 0 }) | (if v("ALAN_S7A_IZ") { 1 } else { 0 }) | (if v("ALAN_S7B_IZ") { 2 } else { 0 }) | (if v("ALAN_S7C_IZ") { 4 } else { 0 }) | (if v("ALAN_S7D_IZ") { 8 } else { 0 }) | (if v("ALAN_S7E_IZ") { 16 } else { 0 }) | (if v("ALAN_S7F_IZ") { 32 } else { 0 }) | (if v("ALAN_S7G_IZ") { 64 } else { 0 }) | (if v("ALAN_S7H_IZ") { 128 } else { 0 }) | (if v("ALAN_S7I_IZ") { 256 } else { 0 }) | (if v("ALAN_S7J_IZ") { 512 } else { 0 }) | (if v("ALAN_S7K_IZ") { 1024 } else { 0 }) | (if v("ALAN_S7L_IZ") { 2048 } else { 0 }) | (if v("ALAN_S7M_IZ") { 4096 } else { 0 })
+        (if v("ALAN_S7_IZ") { 7 } else { 0 }) | (if v("ALAN_S7A_IZ") { 1 } else { 0 }) | (if v("ALAN_S7B_IZ") { 2 } else { 0 }) | (if v("ALAN_S7C_IZ") { 4 } else { 0 }) | (if v("ALAN_S7D_IZ") { 8 } else { 0 }) | (if v("ALAN_S7E_IZ") { 16 } else { 0 }) | (if v("ALAN_S7F_IZ") { 32 } else { 0 }) | (if v("ALAN_S7G_IZ") { 64 } else { 0 }) | (if v("ALAN_S7H_IZ") { 128 } else { 0 }) | (if v("ALAN_S7I_IZ") { 256 } else { 0 }) | (if v("ALAN_S7J_IZ") { 512 } else { 0 }) | (if v("ALAN_S7K_IZ") { 1024 } else { 0 }) | (if v("ALAN_S7L_IZ") { 2048 } else { 0 }) | (if v("ALAN_S7M_IZ") { 4096 } else { 0 }) | (if v("ALAN_S7N_IZ") { 8192 } else { 0 })
     });
     (e | S7_ZORLA.load(std::sync::atomic::Ordering::Relaxed)) & parca != 0
 }

@@ -560,6 +560,9 @@ impl Sv {
                 // yok, adamı kale tarafından tutar.
                 if J.derin && !J.bul && J.job.starts_with("arkada · ") && !self.yerlesik {
                     let d_b = self.base[p].map(|b| self.g_d(b.x, b.y)).unwrap_or(1e9);
+                    // S7n: hattın arkasında bekleyen rakip forvet varken blok ondan kopmaz (en çok S7N_ARA önünde): ofsaytsız
+                    // oyunda hat rakibin en gerideki adamına göre kurulur (7340: hat 72–78 br, Ok 38 br'de, arada yalnız Deniz)
+                    let d_b = if s7(8192) { jmin(d_b, self.s7n_forvet(c).map_or(1e9, |(_, d)| d + S7N_ARA)) } else { d_b };
                     let d_j = self.g_d(J.g.0, J.g.1);
                     if d_j > d_b + 1.0 {
                         c.ps[p].hal_mut()._blokT = Some(tick);
@@ -596,7 +599,37 @@ impl Sv {
             }
             self.markaj_bolge(c, p, &bs, &sn);
         }
+        // S7n: rakip topu tutarken hattın arkasındaki forveti en yakın savunmacı kale tarafından alır
+        if s7(8192) && h.is_some() {
+            if let Some((f, df)) = self.s7n_forvet(c) {
+                let (fx, fy) = (c.ps[f].x, c.ps[f].y);
+                let g = gside(fx, fy, dt, 2.0);
+                let tutan = self.defs.iter().any(|&d| c.ps[d].hal.tutQ == Some(f) && self.g_d(c.ps[d].tx, c.ps[d].ty) < df);
+                if !tutan {
+                    let ad = self.defs.iter().copied().filter(|&d| !self.press.contains(&d) && !self.up[d] && !c.ps[d].bekci()).min_by(|&u, &v| sira(hypot(c.ps[u].x - g.0, c.ps[u].y - g.1) - hypot(c.ps[v].x - g.0, c.ps[v].y - g.1)));
+                    if let Some(d) = ad {
+                        let nm = c.ps[f].govde.name.clone();
+                        let pp = &mut c.ps[d];
+                        pp.tx = g.0;
+                        pp.ty = g.1;
+                        pp.job = Some(format!("arkada · {} (forvet)", nm).into());
+                        pp.hal_mut().tutQ = Some(f);
+                        if hypot(pp.x - g.0, pp.y - g.1) > 6.0 {
+                            pp.sprint = true;
+                        }
+                    }
+                }
+            }
+        }
         let _ = (att, E, h);
+    }
+
+    /// S7n: hattımızın arkasındaki (kalemize bütün savunmacılarımızın hedeflerinden yakın) en geri rakip saha oyuncusu ve
+    /// kalemize uzaklığı; taşıyıcı ve Bekçi sayılmaz.
+    fn s7n_forvet(&self, c: &Mc) -> Option<(Pid, f64)> {
+        let en_geri_biz = self.defs.iter().filter(|&&d| !c.ps[d].bekci()).map(|&d| self.g_d(c.ps[d].x, c.ps[d].y)).fold(1e9, jmin);
+        let (f, df) = self.atk.iter().copied().filter(|&q| Some(q) != self.h && !c.ps[q].bekci()).map(|q| (q, self.g_d(c.ps[q].x, c.ps[q].y))).min_by(|a, b| sira(a.1 - b.1))?;
+        if df < en_geri_biz + S7N_PAY { Some((f, df)) } else { None }
     }
 
     fn geri_kosu(&self, c: &mut Mc, p: Pid, bs: &Yer) -> bool {
