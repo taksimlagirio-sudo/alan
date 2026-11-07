@@ -1,8 +1,11 @@
-S3 ölçümü. Kod bd70178 (claude/youthful-cerf-w5mm8b), alan-kos release.
-Komut (alan-rs içinde): bash sina/bilgi/dogrula.sh /tmp/dg-s3 9000 "$(seq -s ' ' 301 316)" "taban=ALAN_BOS=1" "s7q=ALAN_S7Q_IZ=1" "s7qr=ALAN_S7Q_IZ=1 ALAN_S7R_IZ=1" "hepsi=ALAN_S7Q_IZ=1 ALAN_S7R_IZ=1 ALAN_S7P_IZ=1 ALAN_HIZ2_TABAN_IZ=1"
-Tohumlar 301–316; 4 kol × 16 = 64 maç, her maç ayrı süreç, xargs -P4.
+S3 ölçümü (DÜZELTİLMİŞ; 810fe9e'deki özetin s7q/s7qr/hepsi kolları geçersizdi).
+Kod bd70178 (claude/youthful-cerf-w5mm8b), alan-kos release. Tohum 301–316, 9000 tik, 4 kol × 16 = 64 maç, her maç ayrı süreç, xargs -P4.
 Bayrak dosyası: bd70178'deki analiz/bayraklar.env kopyası, sha256 666277afd87613bce3d14e8950faaf5d1c86b669a59d8f2c81239fc70974e073.
-İlk koşuda "taban=" (boş ENV) kolu xargs -L1 satır birleştirmesi yüzünden koşmadı (taban 301–316 ve s7q-301 eksik kaldı);
-savunmanın onayıyla taban kolu "taban=ALAN_BOS=1" (motorda okunmayan değişken) ile aynı klasörde tamamlandı, öteki 47 maç ilk koşudan.
-Geçersiz maç: 0. Belirlenimcilik (once) denetimi bu betikte yok, gerekmedi (savunma).
-Gözlem: s7q kolunun 16 jsonl'i taban ile bayt bayt aynı (16/16): bu tohumlarda S7Q tek başına hiçbir şeyi değiştirmiyor.
+Komut (alan-rs içinde):
+KOS=<sarmalayıcı> bash sina/bilgi/dogrula.sh /tmp/dg-s3b 9000 "$(seq -s ' ' 301 316)" "taban=ALAN_BOS=1" "s7q=ALAN_BOS=1 ALAN_S7Q_IZ=1" "s7qr=ALAN_BOS=1 ALAN_S7Q_IZ=1 ALAN_S7R_IZ=1" "hepsi=ALAN_BOS=1 ALAN_S7Q_IZ=1 ALAN_S7R_IZ=1 ALAN_S7P_IZ=1 ALAN_HIZ2_TABAN_IZ=1"
+Neden ALAN_BOS=1 başta: bd70178'deki dogrula.sh'ta `sh -c "...shift 2..."` tohumla birlikte kolun İLK ENV'ini de atıyor ($0 konumsal değil).
+İlk koşuda s7q bayraksız, s7qr yalnız S7R, hepsi S7Q'suz koşmuştu. ALAN_BOS motorda okunmuyor; atılan o.
+Sarmalayıcı (KOS) her maçın gerçek ALAN_ ortamını env-kayit.txt'ye yazdı (kayıt dosyası | ALAN_ değişkenleri; kol, satır sırasından çıkar):
+S7Q 48, S7R 32, S7P 16, HIZ2_TABAN 16 maçta; ALAN_BOS hiçbirinde (beklendiği gibi atıldı).
+Denetim: s7q, s7qr, hepsi kollarının jsonl'leri tabandan 16/16 farklı. Taban, önceki koşunun tabanıyla 16/16 bayt bayt aynı.
+Geçersiz maç: 0. Belirlenimcilik (once) denetimi bu betikte yok (savunma: gerekmiyor).

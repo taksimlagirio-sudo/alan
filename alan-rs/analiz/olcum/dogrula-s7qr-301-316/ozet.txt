@@ -2,19 +2,19 @@
 taban-*.jsonl: 16 maç, hedef ters dönüşü 9260 (579/maç), 30 tikte geri dönen 4344 (272/maç)
 taban-*.jsonl: 16 maç, markaj ↔ geri koşu gidip gelme (30 tikte A→B→A) 997 (62.3/maç)
 taban-*.jsonl rakip topta 64016 tik: en geri savunmacının arkasında rakip %4.8; 'öne çık' olan tik %1.6; goller [41, 56]
-/tmp/dg-s3/taban-*.jsonl: tehlikeli an 18636 tik; hedefine 8 br+ uzak savunmacı-tik 34159, yürüyen (<0,2) %38.5
-== s7q (s7q=ALAN_S7Q_IZ=1)
-s7q-*.jsonl: 16 maç, hedef ters dönüşü 9260 (579/maç), 30 tikte geri dönen 4344 (272/maç)
-s7q-*.jsonl: 16 maç, markaj ↔ geri koşu gidip gelme (30 tikte A→B→A) 997 (62.3/maç)
-s7q-*.jsonl rakip topta 64016 tik: en geri savunmacının arkasında rakip %4.8; 'öne çık' olan tik %1.6; goller [41, 56]
-/tmp/dg-s3/s7q-*.jsonl: tehlikeli an 18636 tik; hedefine 8 br+ uzak savunmacı-tik 34159, yürüyen (<0,2) %38.5
-== s7qr (s7qr=ALAN_S7Q_IZ=1 ALAN_S7R_IZ=1)
-s7qr-*.jsonl: 16 maç, hedef ters dönüşü 6732 (421/maç), 30 tikte geri dönen 2623 (164/maç)
-s7qr-*.jsonl: 16 maç, markaj ↔ geri koşu gidip gelme (30 tikte A→B→A) 927 (57.9/maç)
-s7qr-*.jsonl rakip topta 63425 tik: en geri savunmacının arkasında rakip %6.3; 'öne çık' olan tik %2.0; goller [52, 63]
-/tmp/dg-s3/s7qr-*.jsonl: tehlikeli an 20131 tik; hedefine 8 br+ uzak savunmacı-tik 37877, yürüyen (<0,2) %33.2
-== hepsi (hepsi=ALAN_S7Q_IZ=1 ALAN_S7R_IZ=1 ALAN_S7P_IZ=1 ALAN_HIZ2_TABAN_IZ=1)
-hepsi-*.jsonl: 16 maç, hedef ters dönüşü 7469 (467/maç), 30 tikte geri dönen 2960 (185/maç)
-hepsi-*.jsonl: 16 maç, markaj ↔ geri koşu gidip gelme (30 tikte A→B→A) 883 (55.2/maç)
-hepsi-*.jsonl rakip topta 60341 tik: en geri savunmacının arkasında rakip %7.1; 'öne çık' olan tik %2.1; goller [39, 67]
-/tmp/dg-s3/hepsi-*.jsonl: tehlikeli an 17821 tik; hedefine 8 br+ uzak savunmacı-tik 32711, yürüyen (<0,2) %26.7
+/tmp/dg-s3b/taban-*.jsonl: tehlikeli an 18636 tik; hedefine 8 br+ uzak savunmacı-tik 34159, yürüyen (<0,2) %38.5
+== s7q (s7q=ALAN_BOS=1 ALAN_S7Q_IZ=1)
+s7q-*.jsonl: 16 maç, hedef ters dönüşü 9016 (564/maç), 30 tikte geri dönen 4135 (258/maç)
+s7q-*.jsonl: 16 maç, markaj ↔ geri koşu gidip gelme (30 tikte A→B→A) 540 (33.8/maç)
+s7q-*.jsonl rakip topta 61991 tik: en geri savunmacının arkasında rakip %4.7; 'öne çık' olan tik %2.1; goller [38, 51]
+/tmp/dg-s3b/s7q-*.jsonl: tehlikeli an 17159 tik; hedefine 8 br+ uzak savunmacı-tik 30392, yürüyen (<0,2) %39.1
+== s7qr (s7qr=ALAN_BOS=1 ALAN_S7Q_IZ=1 ALAN_S7R_IZ=1)
+s7qr-*.jsonl: 16 maç, hedef ters dönüşü 6880 (430/maç), 30 tikte geri dönen 2782 (174/maç)
+s7qr-*.jsonl: 16 maç, markaj ↔ geri koşu gidip gelme (30 tikte A→B→A) 456 (28.5/maç)
+s7qr-*.jsonl rakip topta 63191 tik: en geri savunmacının arkasında rakip %6.0; 'öne çık' olan tik %1.5; goller [39, 44]
+/tmp/dg-s3b/s7qr-*.jsonl: tehlikeli an 18781 tik; hedefine 8 br+ uzak savunmacı-tik 36215, yürüyen (<0,2) %36.1
+== hepsi (hepsi=ALAN_BOS=1 ALAN_S7Q_IZ=1 ALAN_S7R_IZ=1 ALAN_S7P_IZ=1 ALAN_HIZ2_TABAN_IZ=1)
+hepsi-*.jsonl: 16 maç, hedef ters dönüşü 7411 (463/maç), 30 tikte geri dönen 2997 (187/maç)
+hepsi-*.jsonl: 16 maç, markaj ↔ geri koşu gidip gelme (30 tikte A→B→A) 780 (48.8/maç)
+hepsi-*.jsonl rakip topta 61187 tik: en geri savunmacının arkasında rakip %5.4; 'öne çık' olan tik %2.0; goller [37, 66]
+/tmp/dg-s3b/hepsi-*.jsonl: tehlikeli an 17715 tik; hedefine 8 br+ uzak savunmacı-tik 34333, yürüyen (<0,2) %25.7
