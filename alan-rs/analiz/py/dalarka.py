@@ -9,7 +9,7 @@ def arka(r):
     dd=min(math.hypot(r['p'][i][0]-gx,r['p'][i][1]-30) for i in range(dt*7+1,dt*7+7))
     da=min(math.hypot(r['p'][i][0]-gx,r['p'][i][1]-30) for i in range(tm*7+1,tm*7+7) if i!=h)
     return da<dd
-T=defaultdict(lambda:[0,0,0]); gec=0; top=0; tab={}
+T=defaultdict(lambda:[0,0,0,0]); gec=0; top=0; tab={}
 for d in sorted(glob.glob(kl+'/d-*')):
     s,t=d.split('/d-')[-1].split('-'); t=int(t)
     if s not in tab: tab[s]=[l for l in open(f"{kl}/taban-{s}.jsonl")]
@@ -18,10 +18,23 @@ for d in sorted(glob.glob(kl+'/d-*')):
     if O!=[x.rstrip('\n') for x in tab[s][t:t+len(O)]]: gec+=1; continue
     for f in glob.glob(d+'/*.jsonl'):
         k=os.path.basename(f)[:-6]; R=[json.loads(l) for l in open(f)]
+        on={}; son_tm=None; evt={}
         for r in R:
+            h=r['h']
+            if h is not None and h>=0: son_tm=0 if h<7 else 1
+            if son_tm is not None:
+                dt=1-son_tm
+                for i in range(dt*7+1,dt*7+7):
+                    p=r['p'][i]; Tg=(p[4],p[5])
+                    if i in on and on[i][0]==dt:
+                        T0=on[i][1]; ax,ay=T0[0]-p[0],T0[1]-p[1]; bx,by=Tg[0]-p[0],Tg[1]-p[1]; la,lb=math.hypot(ax,ay),math.hypot(bx,by)
+                        if math.hypot(Tg[0]-T0[0],Tg[1]-T0[1])>10 and la>1 and lb>1 and (ax*bx+ay*by)/(la*lb)<0 and not p[6].startswith('önde'):
+                            if i in evt and r['t']-evt[i]<=30: T[k][3]+=1
+                            evt[i]=r['t']
+                    on[i]=(dt,Tg)
             a=arka(r)
             if a is None: continue
             T[k][0]+=1; T[k][1]+=a
         T[k][2]+=sum(R[-1]['s'])-sum(R[0]['s']) if R else 0
 print(f"{top} çatal, geçersiz (once taban maçtan ayrıştı) {gec}")
-for k,(n,a,g) in sorted(T.items()): print(f"  {k:10s} rakip topta {n} tik, en geri savunmacının arkasında %{100*a/max(1,n):.2f}, gol {g}")
+for k,(n,a,g,q) in sorted(T.items()): print(f"  {k:10s} rakip topta {n} tik, en geri savunmacının arkasında %{100*a/max(1,n):.2f}, gol {g}, 30 tikte geri dönen ters dönüş ('önde' hariç) {q}")

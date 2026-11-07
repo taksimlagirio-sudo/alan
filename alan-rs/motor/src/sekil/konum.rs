@@ -78,6 +78,9 @@ pub fn position(c: &mut Mc) {
         let first = f0.first.unwrap();
         let f = f0.arr[first];
         E = (f.x, f.y);
+        if crate::iz_acik() && !c.lite && std::env::var("ALAN_E_IZ").is_ok() {
+            eprintln!("E {} {} {:.2} {:.2} {:.1} {}", tick, att_dbg(c), f.x, f.y, f.t, first);
+        }
         let ps = &*c.ps;
         let mut other = 1e9;
         for (q, r) in f0.arr.iter().enumerate() {
@@ -378,3 +381,7 @@ fn kovala(c: &mut Mc, fr: Option<&Fr>, att: u8, top_id: Option<TopRef>, chase: &
 
 #[allow(unused_imports)]
 use Oyuncu as _O;
+
+fn att_dbg(c: &Mc) -> u8 {
+    c.ball.as_ref().map_or(9, |b| b.b.team)
+}

@@ -710,7 +710,7 @@ impl Sv {
         // 30 tikte bir yer yeniden tartılınca y birden kayıyordu: savunan takımda hedef ters dönüşlerinin en büyük kaynağı)
         let tik = c.m.tick;
         let (wx, ty) = match c.ps[p].hal._ondeH {
-            Some((t, ox, oy)) if onde_ac() && s7(131072) && t == tik - 1.0 => {
+            Some((t, ox, oy)) if onde_ac() && (s7(131072) || s7(524288)) && t == tik - 1.0 => {
                 let (dx, dy) = (wx - ox, ty - oy);
                 let l = hypot(dx, dy);
                 if l > ONDE_ADIM { (ox + dx / l * ONDE_ADIM, oy + dy / l * ONDE_ADIM) } else { (wx, ty) }
@@ -722,7 +722,7 @@ impl Sv {
             pp.tx = wx;
             pp.ty = ty;
             pp.job = Some("önde bekle".into());
-            if onde_ac() && s7(131072) {
+            if onde_ac() && (s7(131072) || s7(524288)) {
                 pp.hal_mut()._ondeH = Some((tik, wx, ty));
             }
         }
