@@ -334,6 +334,40 @@ fn main() {
         }
         return;
     }
+    // hizdal: <kayıt> <t1,t2,…> hizdal <klasör> <süre> <oyuncu1,oyuncu2,…> <N>: her ti'de maçı kopyalar, iki kol: "depar" ve
+    // "tempo" (oyuncu_i N tik boyunca o hıza zorlanır; mac::enerji::HIZ_ZORLA), her kol <süre> tik, <klasör>/<ti>/<kol>.jsonl
+    if kip == "hizdal" {
+        let dir0 = a.get(4).expect("hizdal <klasör>").clone();
+        let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(360);
+        let oy: Vec<usize> = a.get(6).expect("hizdal <oyuncular>").split(',').filter_map(|x| x.parse().ok()).collect();
+        let nz: f64 = a.get(7).and_then(|x| x.parse().ok()).unwrap_or(90.0);
+        let tler: Vec<u32> = a[2].split(',').filter_map(|x| x.parse().ok()).collect();
+        assert_eq!(tler.len(), oy.len(), "hizdal: tik ve oyuncu sayısı eşit olmalı");
+        let mut sira: Vec<(u32, usize)> = tler.into_iter().zip(oy).collect();
+        sira.sort();
+        for (tik, pi) in sira {
+            let dir = format!("{}/{}", dir0, tik);
+            std::fs::create_dir_all(&dir).unwrap();
+            while mt.tick() < tik && !mt.bitti() {
+                mt.adim();
+            }
+            let anlik = mt.m.clone();
+            for (kol, dep) in [("depar", true), ("tempo", false)] {
+                alan_motor::mac::enerji::HIZ_ZORLA.with(|z| z.set(Some((pi, dep, tik as f64 + nz))));
+                let mut m2 = Motor::yeni(anlik.clone());
+                let mut osay = m2.m.ev_n;
+                let mut sat: Vec<String> = Vec::new();
+                for _ in 0..sure {
+                    if m2.bitti() { break; }
+                    m2.adim();
+                    sat.push(analiz_satir(&m2.m, &mut osay));
+                }
+                alan_motor::mac::enerji::HIZ_ZORLA.with(|z| z.set(None));
+                std::fs::write(format!("{}/{}.jsonl", dir, kol), sat.join("\n") + "\n").unwrap();
+            }
+        }
+        return;
+    }
     if kip == "dal" {
         let dir = a.get(4).expect("dal <çıktı>").clone();
         let sure: u32 = a.get(5).and_then(|x| x.parse().ok()).unwrap_or(300);

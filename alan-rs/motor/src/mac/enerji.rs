@@ -376,6 +376,11 @@ pub fn hiz2() -> bool {
     HIZ2_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_HIZ2_IZ").is_ok())
 }
 
+thread_local! {
+    /// Ölçüm kancası (alan-kos hizdal, analizci: kontra hızının nedensel değeri): (oyuncu, depar mı, bitiş tiki). Maçta hep boş.
+    pub static HIZ_ZORLA: std::cell::Cell<Option<(usize, bool, f64)>> = const { std::cell::Cell::new(None) };
+}
+
 /// yürü: en yavaş kat (normal koşunun).
 pub const YURU_MIN: f64 = 0.35;
 /// Deney (ALAN_YURU_IZ; ölçümde/wasm'da YURU_ZORLA): hız seçimine normal koşunun altı (yürüme) girer ve bar dolumu hıza
@@ -432,6 +437,20 @@ pub fn sprint_karar3(m: &mut Mac) {
             continue;
         }
         let j = job(p).to_string();
+        // ölçüm kancası (alan-kos hizdal): bu oyuncu bu tike dek depar ya da tempoya zorlanır; kafanın kopyasında değil
+        if !m.mac._lite {
+            if let Some((zp, dep, bit)) = HIZ_ZORLA.with(|z| z.get()) {
+                if zp == pi && m.tick < bit {
+                    let k = if dep { jmax(1.0, sf_pk(p)) } else { 1.0 };
+                    let p = &mut m.ps[pi];
+                    p.hal_mut()._hizK = Some(k);
+                    p.hal_mut()._hizF = Some(if dep { 1.0 } else { 0.0 });
+                    p.sprint = dep;
+                    p.hal_mut()._kosuK = Some(if dep { "zorla depar" } else { "zorla tempo" }.into());
+                    continue;
+                }
+            }
+        }
         // onde_ac: önde bekleyen, rakip topu tutarken acelesi yok: yürür (bar dolar); top havadayken (kazanılabilir) normal hız
         if crate::sekil::konum::onde_ac() && j == "önde bekle" && h.map_or(false, |h| m.ps[h].team != p.team) {
             let p = &mut m.ps[pi];

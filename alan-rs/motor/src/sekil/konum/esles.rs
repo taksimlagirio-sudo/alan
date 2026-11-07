@@ -1111,7 +1111,9 @@ impl Sv {
                     pp.job = Some("geri koşu · kale".into());
                     pp.hal_mut().tutQ = None;
                 }
-                if let (Some(hh), true) = (h, g_e < S7_D && g_e > 4.0) {
+                // S7o (S7i'nin düzeltmesi, bit 16384): S7i taşıyıcı S7I_D'den (tehlike bölgesinden önce) başlar; S7j / S7m yalnız
+                // tehlike bölgesinde
+                if let (Some(hh), true) = (h, g_e < if s7(256) && s7(16384) { jmax(S7_D, S7I_D) } else { S7_D } && g_e > 4.0) {
                     let (ux, uy) = ((own_x(dt) - E.0) / g_e, (GCY - E.1) / g_e);
                     // S7i: ilk presçi taşıyıcının gerisindeyse ya da yarışı kaybedip kale önüne çekildiyse, kale tarafındaki en
                     // yakın savunmacı şut hattına, taşıyıcının önüne çıkar
@@ -1123,7 +1125,10 @@ impl Sv {
                     if s7(256) && geride {
                         let s = jmin(S7H_ON, g_e - 2.0);
                         let (qx, qy) = (E.0 + ux * s, E.1 + uy * s);
-                        let ad = self.defs.iter().copied().filter(|&d| Some(d) != f && !c.ps[d].bekci() && !self.up[d] && self.g_d(c.ps[d].x, c.ps[d].y) < g_e - 1.0).min_by(|&u, &v| sira(hypot(c.ps[u].x - qx, c.ps[u].y - qy) - hypot(c.ps[v].x - qx, c.ps[v].y - qy)));
+                        // S7o: adamı topun önünde (kaleye toptan yakın) olan markajcı çağrılmaz: S7k'nin önceliğiyle çatışıp takasa yol açıyordu
+                        // (7734 Mert Mancınık'tan, 3048 Deniz / Mert)
+                        let tutuyor = |d: Pid| s7(16384) && c.ps[d].hal.tutQ.or(c.ps[d].hal.markRef).map_or(false, |m| m != hh && bas(&c.ps[d].job, &["markaj", "arkada", "kapatma"]) && self.g_d(c.ps[m].x, c.ps[m].y) < g_e - 1.0);
+                        let ad = self.defs.iter().copied().filter(|&d| Some(d) != f && !c.ps[d].bekci() && !self.up[d] && !tutuyor(d) && self.g_d(c.ps[d].x, c.ps[d].y) < g_e - 1.0).min_by(|&u, &v| sira(hypot(c.ps[u].x - qx, c.ps[u].y - qy) - hypot(c.ps[v].x - qx, c.ps[v].y - qy)));
                         // varış sınırı: şut hattı noktasına S7I_MAX'tan uzaktaki çıkamaz (analizci 6850: 19 br'deki çağrılıyordu)
                         let ad = ad.filter(|&d| hypot(c.ps[d].x - qx, c.ps[d].y - qy) <= S7I_MAX);
                         if let Some(d) = ad {
@@ -1136,7 +1141,7 @@ impl Sv {
                         }
                     }
                     // S7j: tehlike bölgesinde markajcı adamının yanında değil, adamıyla kale arasında (hattın üstünde) durur
-                    if s7(512) || s7(4096) {
+                    if (s7(512) || s7(4096)) && g_e < S7_D {
                         // S7m: şut yakın değilken (taşıyıcı S7M_ACIL'den uzak, pas adama gitmiyor) Kuyu süresi harcanmaz
                         let acil = g_e < S7M_ACIL;
                         let pas_q = c.m.fl.as_ref().and_then(|f| f.q);

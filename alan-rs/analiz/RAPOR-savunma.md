@@ -129,3 +129,29 @@ Yorum:
   `ALAN_S7_IZ` yerine `ALAN_S7A_IZ`.
 - **bek_direk** yalnız yakın direk şutunda (`c718f9b`; top kale çizgisine 12 br içinde, en az 45° yanda): Kale Duvarı 30+ br'den
   6 şut / 0 gol (önce 25 / 19).
+
+## B2 (KP_HAMLE) ve S7o, 16 tohum (7 Kasım ~15:35)
+Tohum 301–316 × 4500 tik, `analiz/bayraklar.env` (S7n dahil); kollar: taban (6699e8b sonrası dal), S7o (`ALAN_S7O_IZ`),
+KP_HAMLE (`ALAN_KP_HAMLE_IZ`). Ölçü betikleri: oturumun çalışma klasöründe `b16/pas2.py`, `hat.py` (git dışı).
+
+| | taban | S7o | KP_HAMLE |
+|---|---|---|---|
+| kaleye ≤25 br pas | 193 | 176 | 210 |
+| … alıcıya | %80 | %85 | %91 |
+| … (b) uçuşta rakibe | %17 (33) | %14 (24) | %8 (16) |
+| (a) pas çıkmadan top kaybı (kaleye ≤25 br) | 14 | 16 | 13 |
+| rakip topta en geri savunmacının arkasında rakip | %3,9 | %3,7 | %4,9 |
+| 'öne çık' (S7i) olan tik | %2,3 | %1,2 | %2,4 |
+| goller (iki takım, 16 maç) | 43 | 39 | 61 |
+
+- KP_HAMLE: rakibe pas ve pas çıkmadan kayıp artmadı, azaldı (4 tohumdaki %11 → %16 gürültüydü). Sansürlü keep_p kalibrasyonu
+  (4 tohum): bayraksız kutu önü pre 0,34 → gerçek tutma 0,90, 0,46 → 1,00; KP_HAMLE'de düşük tahminler gerçek kayıplara denk.
+- S7o: arkadaki rakip artmadı (tohum başına yayılım %0–8). Kutuda takas ayrıca sayılmadı.
+- Karar analizcide (izleme seti, site).
+
+## Kontra tablosu (A2) ve hız kancası
+- `motor/veri/bilgi/kontra.json` sürüm 2 (8fae8d7): yakınsamadı (0,16 > 0,03) ve hayatta kalma seçilimi (kazanım sonrası
+  örnekler): 40–60 br'de öndeki savunmacı arttıkça değer artıyor. Kazanım-anı sınaması (86 kayıt): önde 1 → %19, 2 → %12,
+  3 → %8 (ZAMAN-DEGERI yönü). Tablo izleme setine / siteye girmiyor; ktab yeni=1 dışında.
+- Nedensel ölçü: `alan-kos hizdal` + `sina/bilgi/hizdal.{sh,py}` (6b9f94b): kontra anında koşucu 90 tik depar / tempo
+  (mac::enerji::HIZ_ZORLA), iki kol 360 tik; sonuç 12 sn içinde gol, kutuya varış, bitiş. 200 an, 301–316 çalışıyor.

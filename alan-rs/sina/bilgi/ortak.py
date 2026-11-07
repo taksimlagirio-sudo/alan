@@ -49,6 +49,9 @@ def harmanla(eski_yol, yeni_deger, yeni_n, oran=0.5):
     if not e.get('mac') or not any(e.get('n', [])): return yeni_deger, None   # ölçülmemiş başlangıç tablosuyla harmanlanmaz
     if len(e.get('deger', [])) != len(yeni_deger):
         return yeni_deger, None
+    # ölçülmemiş (maçsız, bütün n = 0) eski tablo harmanlanmaz: başlangıç tablosunun sıfırları ilk ölçümü yarıya indiriyordu
+    if not e.get('mac') or not any(e.get('n', [])):
+        return yeni_deger, None
     d = [round(oran * a + (1 - oran) * b, 4) for a, b in zip(e['deger'], yeni_deger)]
     # en büyük değişim yalnız örneği olan hücrelerde
     fark = max((abs(a - b) for a, b, n in zip(e['deger'], d, yeni_n) if n > 0), default=0.0)
