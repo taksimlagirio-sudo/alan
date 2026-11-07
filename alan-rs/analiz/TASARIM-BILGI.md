@@ -189,3 +189,16 @@ Analizci tablo üretmez, okuyucu yazmaz: ölçüm tanımı verir, sonucu dal ile
 - **Ezber:** tek tohum ya da tek taktikle ölçülen tablo o maça uyar. Çare: tohum ve taktik çeşitliliği, takımdan bağımsız hücreler.
 - **Gizli kural:** tablo "neden" sorusunu cevaplamaz. Çare: her tablo bir modelin yanında durur, onun yerine geçmez. Model ile tablo arasındaki büyük fark bir analiz konusu olarak raporlanır.
 - **Sessiz eskime:** çare eskime izi; eski tablo uyarı verir.
+
+## İlke (7 Kasım, kullanıcı onayıyla): tablo önce teşhis aracıdır
+Bugünkü deneyler: tutma tablosu kafanın tutma değerinin 15–40 kat düşük olduğunu, şutun bedelindeki çift cezayı ve kafanın değer
+ölçeğinin kaleden uzaklaştıkça 11 kata kadar düşük olduğunu gösterdi. Kontra tablosu ölçümdeki hayatta kalma seçilimini gösterdi.
+keep_p kalibrasyonu, kafanın hamle süresini bilmediğini gösterdi (kural uyuşmazlığı).
+Sıra her tabloda şu:
+1. Tablo ile kafanın tahmini arasındaki farkı ölç (seçilimsiz: secdal / hizdal kolları ya da sansürlü ölçüm).
+2. Fark büyükse önce mekanizmayı bul: kural uyuşmazlığı, hesap hatası (çift ceza gibi), ölçek mi?
+3. Kural ya da hesap hatasıysa modelde düzelt (bayraklı); tablo kurma.
+4. Tablo yalnız modelin hiç göremediği yerde kalır (zamanın değeri: yerleşik hücumda sabır, kontrada acele) ve orada da
+   modelin yerine geçmez, onu tamamlar (ölçek / harmanlama; taban (max) değil).
+5. Doğrulama skorla değil davranışla: maçı izleyerek, yan etkiler için ölçütlerle (uzak şut, kutu önü dolanma, top kaybı,
+   donma, hattın arkası).
