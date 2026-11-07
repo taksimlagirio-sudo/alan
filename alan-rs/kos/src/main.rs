@@ -178,6 +178,7 @@ fn main() {
         alan_motor::kafa::kafa2_tarti::SAH_TC_ZORLA.store(ek.split(',').any(|x| x == "sahtc"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_ZORLA.store(ek.split(',').any(|x| x == "bilgitutma"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_SUT_ZORLA.store(ek.split(',').any(|x| x == "bilgitutmasut"), std::sync::atomic::Ordering::Relaxed);
+        alan_motor::kafa::kafa2_tarti::PRE_TEPKI_ZORLA.store(ek.split(',').any(|x| x == "pretepki"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::KOVSUZ_SABIT_ZORLA.store(ek.split(',').any(|x| x == "kovsuz"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::KAYIP_SAHIP_ZORLA.store(ek.split(',').any(|x| x == "kayipsahip"), std::sync::atomic::Ordering::Relaxed);
         alan_motor::kafa::kafa2_tarti::SEKME_BEDEL_ZORLA.store(ek.split(',').any(|x| x == "sekbedel"), std::sync::atomic::Ordering::Relaxed);
@@ -429,6 +430,7 @@ fn main() {
                     alan_motor::kafa::kafa2_tarti::SAH_TC_ZORLA.store(acik && ek.split(',').any(|x| x == "sahtc"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_ZORLA.store(acik && ek.split(',').any(|x| x == "bilgitutma"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::BILGI_TUTMA_SUT_ZORLA.store(acik && ek.split(',').any(|x| x == "bilgitutmasut"), std::sync::atomic::Ordering::Relaxed);
+                    alan_motor::kafa::kafa2_tarti::PRE_TEPKI_ZORLA.store(acik && ek.split(',').any(|x| x == "pretepki"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::KOVSUZ_SABIT_ZORLA.store(acik && ek.split(',').any(|x| x == "kovsuz"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::KAYIP_SAHIP_ZORLA.store(acik && ek.split(',').any(|x| x == "kayipsahip"), std::sync::atomic::Ordering::Relaxed);
                     alan_motor::kafa::kafa2_tarti::SEKME_BEDEL_ZORLA.store(acik && ek.split(',').any(|x| x == "sekbedel"), std::sync::atomic::Ordering::Relaxed);
@@ -618,7 +620,7 @@ fn main() {
                     };
                     let P = r.P.unwrap_or(-1.0);
                     let Ps = r.Ps.unwrap_or(0.0);
-                    writeln!(out, "{{\"t\":{},\"ad\":{:?},\"tur\":{:?},\"q\":{:?},\"x\":{:.1},\"y\":{:.1},\"P\":{},\"Ps\":{},\"Pd\":{:.3},\"Pl\":{},\"v\":{},\"sonra\":{:?},\"kim\":{:?}}}", r.t, r.ad, r.kind, r.q.clone().unwrap_or_default(), r.x.unwrap_or(0.0), r.y.unwrap_or(0.0), P, Ps, (P - Ps).max(0.0), r.Pl.unwrap_or(-1.0), r.v.unwrap_or(0.0), rol, s.and_then(|s| s.kim.clone()).unwrap_or_default()).unwrap();
+                    writeln!(out, "{{\"t\":{},\"ad\":{:?},\"tur\":{:?},\"q\":{:?},\"x\":{:.1},\"y\":{:.1},\"P\":{},\"Ps\":{},\"Pd\":{:.3},\"Pl\":{},\"v\":{},\"sonra\":{:?},\"kim\":{:?},\"hiz\":{},\"tf\":{},\"takim\":{},\"kim_t\":{}}}", r.t, r.ad, r.kind, r.q.clone().unwrap_or_default(), r.x.unwrap_or(0.0), r.y.unwrap_or(0.0), P, Ps, (P - Ps).max(0.0), r.Pl.unwrap_or(-1.0), r.v.unwrap_or(0.0), rol, s.and_then(|s| s.kim.clone()).unwrap_or_default(), r.hiz.unwrap_or(-1.0), r.tf.unwrap_or(-1.0), r.team, s.and_then(|s| s.kim_t).unwrap_or(-1.0)).unwrap();
                 }
             }
         }

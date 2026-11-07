@@ -433,6 +433,12 @@ pub fn tutma_eksen(w: &[Op], h: &Oyuncu) -> [(&'static str, f64); 2] {
     let onde = w.iter().filter(|q| q.team != h.team && !q.noTouch && !bekci(q) && (gx - q.x).abs() < (gx - h.x).abs()).count() as f64;
     [("uzaklik", hypot(gx - h.x, GCY - h.y)), ("onde", onde)]
 }
+/// Deney (ALAN_PRE_TEPKI_IZ; ölçümde PRE_TEPKI_ZORLA): uçuşta "pası atmadan önce bozulma" (pre) rakibin tepki süresini sayar.
+pub static PRE_TEPKI_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub fn pre_tepki() -> bool {
+    static A: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    PRE_TEPKI_ZORLA.load(std::sync::atomic::Ordering::Relaxed) || *A.get_or_init(|| crate::iz_acik() && std::env::var("ALAN_PRE_TEPKI_IZ").is_ok())
+}
 /// Deney (ALAN_IKI_HAMLE_IZ; ölçümde IKI_HAMLE_ZORLA): kafanın planı en çok iki top hareketi (kendi hamlesi + topu
 /// alanın bir hamlesi); sonrası alıcının durumu (şut, tek dokunuş, zemin, sürme), gelecek kararlar sıralanmaz.
 pub static IKI_HAMLE_ZORLA: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
