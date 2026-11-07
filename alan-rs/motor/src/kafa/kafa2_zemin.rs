@@ -653,6 +653,19 @@ pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta
                     };
                     let mut sv = s_of(k, &wb0);
                     let sv0 = sv;
+                    if crate::iz_acik() && t == team {
+                        if let Ok(v) = std::env::var("ALAN_SAH_IZ") {
+                            let p: Vec<f64> = v.split(',').filter_map(|z| z.parse().ok()).collect();
+                            if p.len() == 2 && (p[0] / KG).round() as usize == i && (p[1] / KG).round() as usize == j {
+                                let k0 = k_of(&wb0);
+                                let r = crate::kafa::kafa2_imkan::sut_tab(k, &wb0, t, x, y, c_t, k0.as_ref(), None, None, None, None);
+                                let yl = crate::kafa::kafa2_imkan::sut_yol(k, &wb0, t, x, y, None);
+                                let va = sut_vakit(k, &wb0, t, x, y, k0.as_ref());
+                                let yakin: Vec<String> = wb0.iter().filter(|o| o.team != t && hypot(o.x - x, o.y - y) < 8.0).map(|o| format!("{}({:.1},{:.1})", o.govde.name, o.x, o.y)).collect();
+                                eprintln!("SAHS0 {} hücre ({:.0},{:.0}) sv0 {:.3} tablo {:.3} yol {:.3} vakit {:.3} vurucu {:?} yakın {}", k.tick(), x, y, sv0, r, yl, va, k0.as_ref().map(|q| q.govde.name.clone()), yakin.join(" "));
+                            }
+                        }
+                    }
                     if sv > 0.005 {
                         let pw = predict_world(k, w, t, P, Tc, false, None, false, None);
                         let wb = bek_yer_w(k, &pw, t, P, Some(Tc));
