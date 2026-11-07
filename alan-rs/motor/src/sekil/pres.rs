@@ -43,6 +43,8 @@ pub const S7_D: f64 = 32.0 * GKX;
 pub const S7H_ON: f64 = 3.0;
 /// S7j: markajcının adamından kaleye doğru uzaklığı (br).
 pub const S7J_ARA: f64 = 1.6;
+/// S7j: kaleye koşan adamın yerini öne alma (tik).
+pub const S7J_ON: f64 = 10.0;
 /// S7k: tehlike bölgesindeki önceki adamın atamada değer katı.
 pub const S7K: f64 = 3.0;
 /// S7i: öne çıkacak savunmacının şut hattı noktasına en çok uzaklığı (br).

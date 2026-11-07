@@ -1119,9 +1119,21 @@ impl Sv {
                                 continue;
                             }
                             let (mut tx, mut ty) = (pp.tx, pp.ty);
+                            let mut depar = false;
                             if s7(512) {
                                 tx = mx + (own_x(dt) - mx) / l * S7J_ARA;
                                 ty = my + (GCY - my) / l * S7J_ARA;
+                                // adam kaleye koşuyorsa (kontra) hedef onun S7J_ON tik ilerideki yerine göre: şimdiki yerinin kale
+                                // tarafı onun hizasında kalıyor, markajcı yanında koşup hiç önüne geçemiyordu (7533–7653)
+                                let (vx, vy) = (c.ps[q].vx, c.ps[q].vy);
+                                let kos = (vx * (own_x(dt) - mx) + vy * (GCY - my)) / l;
+                                if kos > 0.15 {
+                                    let (fx, fy) = (mx + vx * S7J_ON, my + vy * S7J_ON);
+                                    let lf = jmax(1.0, self.g_d(fx, fy));
+                                    tx = fx + (own_x(dt) - fx) / lf * S7J_ARA;
+                                    ty = fy + (GCY - fy) / lf * S7J_ARA;
+                                    depar = true;
+                                }
                             }
                             // S7m: hedef Kuyu'nun içindeyse ve acil değilse Kuyu sınırında, adamla kale arasında bekler
                             if s7(4096) && !acil && pas_q != Some(q) {
@@ -1136,6 +1148,9 @@ impl Sv {
                             let pp = &mut c.ps[d];
                             pp.tx = tx;
                             pp.ty = ty;
+                            if depar {
+                                pp.sprint = true;
+                            }
                         }
                     }
                 }

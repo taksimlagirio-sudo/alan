@@ -750,7 +750,10 @@ impl Sv {
                             // maliyeti); yoksa yetişme sınırındaki adam her tik verilip alınıyor (markaj ↔ arkada · alan)
                             let hist = ua_hist() && once;
                             let t = hypot(g.0 - pp.x, g.1 - pp.y) / v - if once { rc } else { 0.0 } - if hist { UA_HIST * SH } else { 0.0 };
-                            DG[j] * jmax(0.0, jmin(1.0, (TQ[j] + SH - t) / SH)) * if hist { 1.0 + UA_HIST } else { 1.0 }
+                            // S7k: tehlike bölgesindeki adamını tutan markajcı adam adama atamada da onu güçlü önceler (kutuda iki
+                            // markajcının adam takası: takas anında adam boşa çıkıyordu, 3948–3988)
+                            let kor = s7(1024) && once && self.g_d(c.ps[q].x, c.ps[q].y) < S7_D;
+                            DG[j] * jmax(0.0, jmin(1.0, (TQ[j] + SH - t) / SH)) * if hist { 1.0 + UA_HIST } else { 1.0 } * if kor { S7K } else { 1.0 }
                         })
                         .collect(),
                 );
