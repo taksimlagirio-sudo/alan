@@ -16,7 +16,19 @@ if grep -qx "$uc" "$DURUM"; then echo "YENI_YOK $uc"; exit 0; fi
 echo "OYNAT $uc"
 WT=/tmp/izle-hepsi-wt; rm -rf "$WT"; git worktree prune
 git worktree add -q --detach "$WT" origin/main || exit 1
-( cd "$WT" && git -c user.email=analiz@yerel -c user.name=analiz merge -q --no-edit "origin/$HUC" "origin/$SAV" ) > /dev/null 2>&1 || { echo "BİRLEŞME ÇAKIŞMASI: main + $HUC + $SAV"; (cd "$WT" && git diff --name-only --diff-filter=U); git worktree remove --force "$WT"; exit 1; }
+# sırayla birleştir; yalnız oyunu etkilemeyen dosyalarda çakışma kendiliğinden çözülür (bayraklar.env: birleşim, site js/html: ilk taraf)
+birles() { git -c user.email=analiz@yerel -c user.name=analiz merge -q --no-edit "$1" >/dev/null 2>&1 && return 0
+  for f in $(git diff --name-only --diff-filter=U); do
+    case "$f" in
+      alan-rs/analiz/bayraklar.env) for i in 1 2 3; do git show :$i:"$f" > /tmp/izb$i 2>/dev/null || : > /tmp/izb$i; done
+        awk 'FILENAME==ARGV[1]{b[$0]=1;next} FILENAME==ARGV[2]{o[$0]=1;L[++n]=$0;next} {t[$0]=1;L[++n]=$0}
+             END{for(i=1;i<=n;i++){x=L[i]; if(g[x]++)continue; if(b[x]&&!(o[x]&&t[x]))continue; print x}}' /tmp/izb1 /tmp/izb2 /tmp/izb3 > "$f"; git add "$f";;
+      alan-v5/*.js|alan-v5/*.html) git checkout --ours -- "$f"; git add "$f";;
+      *) return 1;;
+    esac
+  done
+  git -c user.email=analiz@yerel -c user.name=analiz commit -q --no-edit >/dev/null 2>&1; }
+( cd "$WT" && birles "origin/$HUC" && birles "origin/$SAV" ) || { echo "BİRLEŞME ÇAKIŞMASI: main + $HUC + $SAV"; (cd "$WT" && git diff --name-only --diff-filter=U); git worktree remove --force "$WT"; exit 1; }
 grep -q 'kip == "analiz"' "$WT/alan-rs/kos/src/main.rs" || { echo "analiz kipi yok (beklenmedik)"; }
 # bayraklar: dalda daha yeni bir liste varsa onu kullan
 B="$KOK/analiz/bayraklar.env"; [ -f "$WT/alan-rs/analiz/bayraklar.env" ] && B="$WT/alan-rs/analiz/bayraklar.env"
