@@ -1103,7 +1103,10 @@ impl Sv {
                         }
                     }
                     // S7j: tehlike bölgesinde markajcı adamının yanında değil, adamıyla kale arasında (hattın üstünde) durur
-                    if s7(512) {
+                    if s7(512) || s7(4096) {
+                        // S7m: şut yakın değilken (taşıyıcı S7M_ACIL'den uzak, pas adama gitmiyor) Kuyu süresi harcanmaz
+                        let acil = g_e < S7M_ACIL;
+                        let pas_q = c.m.fl.as_ref().and_then(|f| f.q);
                         for &d in &self.defs.clone() {
                             let pp = &c.ps[d];
                             if pp.bekci() || !bas(&pp.job, &["markaj"]) {
@@ -1115,9 +1118,24 @@ impl Sv {
                             if l >= S7_D || l < 2.0 {
                                 continue;
                             }
+                            let (mut tx, mut ty) = (pp.tx, pp.ty);
+                            if s7(512) {
+                                tx = mx + (own_x(dt) - mx) / l * S7J_ARA;
+                                ty = my + (GCY - my) / l * S7J_ARA;
+                            }
+                            // S7m: hedef Kuyu'nun içindeyse ve acil değilse Kuyu sınırında, adamla kale arasında bekler
+                            if s7(4096) && !acil && pas_q != Some(q) {
+                                let r = self.g_d(tx, ty);
+                                if r < Q.kuyu_a {
+                                    let (gx, l2) = (own_x(dt), jmax(1e-6, r));
+                                    let (ux, uy) = if r > 1e-6 { ((tx - gx) / l2, (ty - GCY) / l2) } else { ((mx - gx) / l, (my - GCY) / l) };
+                                    tx = gx + ux * (Q.kuyu_a + 0.3);
+                                    ty = GCY + uy * (Q.kuyu_a + 0.3);
+                                }
+                            }
                             let pp = &mut c.ps[d];
-                            pp.tx = mx + (own_x(dt) - mx) / l * S7J_ARA;
-                            pp.ty = my + (GCY - my) / l * S7J_ARA;
+                            pp.tx = tx;
+                            pp.ty = ty;
                         }
                     }
                 }
