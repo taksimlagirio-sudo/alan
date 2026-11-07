@@ -566,11 +566,16 @@ pub fn yol_sure(k: &mut Kafa, w: &[Op], team: f64, A: Nokta, B: Nokta) -> f64 {
     acik
 }
 
+/// Teşhis (ALAN_SAH_G=<sayı>; kaldırılacak ya da tablodan uydurulan değere bağlanacak): sahiplik haritasının kenar indirimi.
+pub fn sah_g() -> Option<f64> {
+    static A: std::sync::OnceLock<Option<f64>> = std::sync::OnceLock::new();
+    *A.get_or_init(|| if crate::iz_acik() { std::env::var("ALAN_SAH_G").ok().and_then(|v| v.parse().ok()) } else { None })
+}
 pub fn sahiplik_kur(k: &mut Kafa, w: &[Op], team: f64, ch: f64, B0: Option<Nokta>) -> Sahiplik {
     let KG = IMK_HUC;
     let NX = (GW / KG).round() as usize + 1;
     let NY = (GH / KG).round() as usize + 1;
-    let g = gam(k);
+    let g = sah_g().unwrap_or_else(|| gam(k));
     // ALAN_SAH_ZAMAN_IZ: indirim kenar başına değil, eylemin süresine göre (sürme de pas da harcadığı zamanla öder)
     let zaman = crate::kafa::kafa2_tarti::sah_zaman();
     let u_k = jmax(1.0, crate::kafa::kafa2_tarti::ufuk_simdi());
