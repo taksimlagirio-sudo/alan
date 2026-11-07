@@ -131,7 +131,7 @@ Kafa tabloyu doğrudan almaz, kendi modeliyle harmanlar:
 `sina/bilgi.sh --uret <ad>`:
 - N maç oynatır (4 süreç), tohum ve taktik çeşitliliğiyle;
 - olayları toplar, hücrelere yazar, az örnekli hücreleri komşulara yumuşatır.
-- Ölçüm kodu analiz tarafında; `analiz/py/kontra.py` ilk örneği.
+- Üretim betikleri oturumların; `analiz/py/kontra.py` analizcinin ölçüm tanımı (örnek).
 
 ### 4. Seçenek dallanması: maç dışında hayal
 Sonuç bilgisinin zor kısmı şu: oyuncu bir durumda hep şut atıyorsa, orada "tutsaydı ne olurdu" maç kayıtlarından ölçülemez.
@@ -169,15 +169,20 @@ Tablo davranışı, davranış da tabloyu değiştirir. Döngü şöyle oturur:
 - Gece görevi: bütün tabloların eskime denetimi; eskiyse üretim ve doğrulama; sonuç raporu.
 - Her motor değişikliğinde çalışmaz.
 
-## Evreler
-| evre | iş | kim | çıktı |
-|---|---|---|---|
-| 0 | Dosya biçimi, `sina/bilgi.sh` (üret / denetle), eskime izi, güvenli okuma (n/k) | analizci + bir oturum (motor tarafı) | altyapı |
-| 1 | A1 tutma değeri, A2 kontra değeri: düz kayıtlardan ölçüm, bayraklı okuyucular, dal doğrulaması | analizci (üretim), hücum (A1), savunma (A2) | uzak şut ve kontra deparı düzelir mi |
-| 2 | Kalibrasyon ölçümü (B1, B2): karar izine tahmini P; tahmin → gerçek eğrileri; sapan modellerde tablo | analizci + hücum | sapma raporu, gerekirse tablolar |
-| 3 | Seçenek dallanması (zorla seçenek kancası); A1/A3'ü dallanmayla yeniden ölç | motor (bir oturum) + analizci | maç dışı hayal |
-| 4 | A5 Kuyu, A6 enerji, A4 pres, A7 ikinci top | savunma + analizci | |
-| 5 | Gece görevi: denetim → üretim → doğrulama → rapor | analizci | kendini yenileyen bilgi |
+## Evreler ve iş bölümü
+Analizci tablo üretmez, okuyucu yazmaz: ölçüm tanımı verir, sonucu dal ile ve maç izleyerek doğrular, raporlar.
+| evre | iş | kim |
+|---|---|---|
+| 0 | Ortak altyapı: dosya biçimi (sürüm, kural izi, bayraklar, maç sayısı, hücre başına n), `sina/bilgi.sh` (üret / denetle), eskime izi, güvenli okuma (n/k harmanlama), sabit nokta yinelemesi | hücum (sahdeger üreticisini genişletir) |
+| 1a | A1 tutma değeri (sahdeger): biçimi ortak altyapıya taşı | hücum |
+| 1b | A2 kontra değeri: tablo üretimi (tanım: analiz/py/kontra.py, analiz/ZAMAN-DEGERI.md) | savunma |
+| 2 | B1 pas olasılığı kalibrasyonu: karar izine tahmini P, tahmin → gerçek eğrisi | hücum |
+| 2 | B2 ikili / tutma kalibrasyonu (duel_p, keep_p) | savunma |
+| 3 | Seçenek dallanması: kafaya "bu tik şu seçeneği seç" kancası (deney izinde) + dal kipiyle seçenek değerleri | hücum (kafa) |
+| 4 | A3 kayıp bedeli | hücum |
+| 4 | A4 pres, A5 Kuyu (S7m ile), A6 enerji, A7 ikinci top | savunma |
+| 5 | Gece görevi: denetim → üretim → doğrulama → rapor | analizci kurar (kullanıcı onayıyla), üretim betikleri oturumların |
+| her evre | Doğrulama: dal açık/kapalı, davranış ölçüleri, an an izleme; sapma raporu | analizci |
 
 ## Riskler
 - **Politika yanlılığı:** tablo bugünkü davranışın sonucunu ölçer. Davranış kötüyse değer de yanlış olur. Çare: dallanma (evre 3) ve sabit nokta.
